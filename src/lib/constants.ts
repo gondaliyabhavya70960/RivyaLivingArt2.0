@@ -22,7 +22,23 @@ function envOr(value: string | undefined, fallback: string): string {
 export const SITE = {
   name: "Rivya Living Art",
   tagline: "Luxury custom resin art & 3D printing, made to order in India",
-  url: envOr(process.env.NEXT_PUBLIC_SITE_URL, "https://www.rivyalivingart.com"),
+  /**
+   * Canonical origin, never with a trailing slash.
+   *
+   * ~30 call sites build on this as `${SITE.url}/path`, so a value entered as
+   * `https://www.rivyalivingart.com/` — which is how a browser presents a URL,
+   * and how it gets pasted into a dashboard — produced a double slash in every
+   * one. It shipped: the live homepage carried 14 of them, including the
+   * JSON-LD `@id`s for `#organization`, `#website` and `#localbusiness`, whose
+   * whole purpose is to be a stable identifier that other nodes reference.
+   *
+   * Normalised here rather than at the call sites, because the next one added
+   * would not know to do it.
+   */
+  url: envOr(
+    process.env.NEXT_PUBLIC_SITE_URL,
+    "https://www.rivyalivingart.com",
+  ).replace(/\/+$/, ""),
   whatsappNumber: envOr(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "917096036250"),
   phoneDisplay: "+91 7096036250",
   phoneTel: "+917096036250",
