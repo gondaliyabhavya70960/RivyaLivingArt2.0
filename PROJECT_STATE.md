@@ -53,19 +53,34 @@ The 25-entry LQIP manifest could only have come from a completed `masters` run, 
 built in the original repo; the ZIP this repo was imported from was simply exported without
 `public/`.
 
-### The runbook — two workflow_dispatch runs, once Actions has minutes
+### The runbook — FASTEST PATH IS LOCAL, no Actions minutes needed
 
-1. `.github/workflows/fetch-media-v3.yml` → mode **`masters`**
-   (skip `candidates`: the cull is already made). Writes the AVIFs into
-   `public/media/v3/` and refreshes `src/lib/media-v3-blur.json`, then commits to the branch it
-   runs on.
-2. `.github/workflows/fetch-media-v3-video.yml` → mode **`masters`**.
-   Writes `process-pour.mp4` + `.webm` and cuts the AVIF poster from frame 0 of that same clip —
-   which is what keeps the poster matching the video.
+The fetch scripts take **no credentials** (`grep 'process.env' scripts/media-v3-*fetch.mjs` →
+nothing). They need only Node 22, `sharp` from `npm ci`, and open internet. So the quickest way to
+finish this is on any machine with normal internet — a laptop will do:
 
-Then redeploy and confirm the build logs no longer say `imported 0 site image(s)`.
+```bash
+git clone https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git
+cd RivyaLivingArt2.0 && npm ci --ignore-scripts
 
-**Why it must run on Actions and not in a session:** the Higgsfield CDN
+node scripts/media-v3-preflight.mjs      # offline check; expect "PREFLIGHT CLEAN"
+node scripts/media-v3-fetch.mjs          # 24 AVIF masters + LQIP manifest
+node scripts/media-v3-video-fetch.mjs    # mp4 + webm + poster (needs ffmpeg)
+
+git add public/media/v3 src/lib/media-v3-blur.json
+git commit -m "Fetch Part 15 media masters" && git push
+```
+
+`--candidates` is NOT needed: the cull is already made.
+
+**Or, if Actions minutes are restored**, the same thing runs unattended:
+`fetch-media-v3.yml` → mode `masters`, then `fetch-media-v3-video.yml` → mode `masters`. Both
+commit to the branch they run on.
+
+Either way, redeploy afterwards and confirm the build log no longer says
+`imported 0 site image(s)`.
+
+**Why it cannot run in THIS session:** the Higgsfield CDN
 (`d8j0ntlcm91z4.cloudfront.net`) answers **403 to a sandbox's egress policy** — re-verified
 2026-08-31 by generating one image successfully and then failing to download it
 (`CONNECT tunnel failed, response 403`). The agent-proxy README says to report such a denial, not
