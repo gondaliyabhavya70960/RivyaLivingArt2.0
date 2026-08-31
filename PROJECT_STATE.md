@@ -170,15 +170,32 @@ introduced.
 
 ## KNOWN ISSUES
 
-15 pre-existing defects catalogued in `docs/PROJECT-AUDIT.md` §9. Most severe:
-1. **CI is inert** — `ci.yml` triggers on branch `Main`, repo default is `main`. No gate has ever run.
-2. **CSP is report-only** with `script-src 'unsafe-inline'` and `img-src https:`.
-3. 14 unwired scripts; 7 hardcode a dead Chromium path; audit ports drift `:3111` vs `:3000`.
-4. `.env.example` ↔ `env.ts` disagree in both directions.
-5. `happy-dom` in `dependencies`; `three` present with zero imports.
-6. Hardcoded dev credentials in `verify-phase4.mjs`.
-7. 4 asset workflows pinned to deleted branches.
-8. `README.md:34` advertises a design palette that `CLAUDE.md` retired.
+### BLOCKER — GitHub Actions cannot run on this repository
+`ci.yml` now triggers correctly (fixed in Phase 0.5) and fired [run #1](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33363959495),
+the first in the project's history. **Both attempts failed in ~2–6s with `runner_id: 0`, no runner
+name, and HTTP 404 on log download** — no step ever executed. The repository is **private** with
+Actions enabled, so this is an Actions minutes / spending-limit condition, not a code failure.
+
+Two independent attempts on commit `f3d1ab9` produced the identical signature, ruling out a
+transient glitch. The single sanctioned re-run has been spent.
+
+**Owner action required:** Settings → Billing and licensing → Plans and usage → Actions — raise the
+spending limit, wait for the monthly reset, or make the repository public (Actions minutes are free
+for public repos). Until then CI cannot verify anything, and the local gate run recorded under
+BUILD STATUS is the only evidence available.
+
+### Pre-existing defects
+15 catalogued in `docs/PROJECT-AUDIT.md` §9; 8 fixed in Phase 0.5. Most severe remaining:
+1. **CSP is report-only** with `script-src 'unsafe-inline'` and `img-src https:` (open).
+2. `.env.example` ↔ `env.ts` disagree in both directions (open — `.env*` edits denied here).
+3. `happy-dom` in `dependencies`; `three` present with zero imports (open, deferred).
+4. Audit-script port drift `:3111` vs `:3000` (open).
+5. Zero tests for API routes, server actions, components or queries (open).
+6. `mirror-images.yml` asserts exactly 5 category + 55 blog webp files (open).
+7. `fetch-tiers.yml` embeds a Sheet id and gid in three places (open).
+
+Fixed in Phase 0.5: the inert CI trigger, 11 scripts' dead Chromium path, hardcoded dev
+credentials, the 4 dead-branch workflow pins, and the stale `README.md` design section.
 
 ## DESIGN DECISIONS
 
