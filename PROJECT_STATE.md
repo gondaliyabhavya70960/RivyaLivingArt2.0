@@ -16,110 +16,54 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 0.5 — baseline defect fixes: COMPLETE**
 **Phase 1 — brand rename: COMPLETE**
 **Phase 2a — art-first storefront: COMPLETE**
+**Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
 ## CURRENT MILESTONE
-Phase 0 and Phase 0.5 delivered and committed. CI now actually runs, and every gate was proven
-green locally before it was enabled. **Phase 1 (rename) is blocked pending two owner decisions —
-see BLOCKING DECISIONS below.**
+
+**The site is LIVE at https://www.rivyalivingart.com** and correct: `/shop` serves the art
+ecosystem (1,373 pieces, not the 4,373 mixed catalogue), the brand is Rivya Living Art throughout,
+and no old-brand or old-domain strings remain in the served HTML.
+
+Five PRs merged: Phase 0 (audit) · Phase 0.5 (baseline defects) · Phase 1 (rename) ·
+Phase 2a (art-first shop) · production launch fixes.
+
+**Phase 2c (imagery) is the next substantial work** and is now the largest open defect — see below.
 
 ---
 
-## COMPLETED
-
-- [x] ZIP located (`/root/.claude/uploads/.../8d2fb0f0-ResinRiva2.0.zip`; the brief's
-      `/mnt/data/ResinRiva2.0-Main.zip` does not exist in this environment)
-- [x] Extracted and imported **unmodified** into the repo as baseline commit `32f21a6`
-- [x] Dependencies installed (`npm install --legacy-peer-deps`, exit 0)
-- [x] **Original project verified working end to end** (see BUILD STATUS)
-- [x] Local Postgres 16.13 + `pg_trgm` stood up; all **43 migrations** applied
-- [x] `prisma/bootstrap.ts` run — **4,373** tier products + 12 owner-ready drafts = **4,385** rows
-- [x] `npm run db:seed` run — 16 categories, 6 FAQs, 2 legal pages
-- [x] Production build passed; server started; all 12 public routes return 200
-- [x] Screenshots captured at 1440px and 390px
-- [x] 8-subsystem forensic audit, each area adversarially verified against the files
-- [x] Brand-reference census: **799 occurrences / 133 files**, classified by rename risk
-- [x] `docs/PROJECT-AUDIT.md` written (485 lines)
-- [x] `PROJECT_STATE.md` + `CHANGELOG.md` created
-
-## IN PROGRESS
-
-Nothing. Phase 0 is closed.
-
 ## NEXT EXACT TASK
 
-**Phase 2b — commission-led copy (decision D5).** Phase 2a separated the catalogue; 2b makes the
-language match.
+**Phase 2c — imagery.** The site has **no photography at all**. Every deploy logs
+`bootstrap: imported 0 site image(s) into Blob` with `ENOENT` for all 25 bundled files, and
+`git ls-files public` returns **0**. 60 slot references point into `/media/v3/`, a directory git
+tracks nothing in. This is why every screenshot of the storefront shows blank image areas.
 
-The storefront still describes the old proposition — the hero eyebrow reads *"custom resin art ·
-3D printing · made to order"* and the lede *"crafts bespoke resin art, personalized gifts and
-3D-printed pieces"*. Under D5 the front door should lead with **bespoke commissions** for furniture
-and large art, with the ready-made catalogue behind it.
+Under decision **D3** the fix is to **generate new imagery for the new domain**, not to recover the
+old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals and is the
+ledger to extend. `scripts/media-v3-fetch.mjs` is the existing pipeline
+(`.github/workflows/fetch-media-v3.yml`, `workflow_dispatch`, mode `candidates` then `masters`) —
+but **GitHub Actions cannot allocate a runner**, so that workflow cannot be used until billing is
+resolved. Generating in-session and committing the masters is the available path.
 
-Scope it by namespace rather than all at once — `messages/en.json` has 1,181 leaf keys across 30
-namespaces (Shop 311, Homepage 151, Site chrome 120, Commission 114, Portfolio 74, Contact 67,
-Workshops 65). Start with **Homepage + site metadata/SEO**, which is where the proposition is
-stated.
-
-Workflow, in this order — the registry step is a CI gate, not optional:
-1. Edit `messages/en.json` (English first).
-2. `node scripts/site-copy-registry.mjs` — regenerates `src/lib/site-copy.generated.ts`.
-   `npm run copy:check` fails the build when it is stale.
-3. Translate the batch into ar/de/es/fr/gu/hi/ja/zh; `node scripts/i18n-missing.mjs` is the gate
-   (currently 0 missing — keep it there).
-
-### Known traps for Phase 2b+ (found by the Phase 2 research, verified against the files)
-
-- **`prisma/seed.ts` never reaches an existing database.** `bootstrap.ts:30` computes
-  `alreadySeeded = category.count() > 0` and skips the seed when true. Categories that must reach
-  a live database go in **`CANONICAL_CATEGORIES`** (`src/lib/catalog-taxonomy.ts`), which
-  `import-tiers.ts:427-451` creates-if-absent on **every** deploy.
-- **Adding a site-image slot breaks two tests and a CI gate** unless done fully: the alt key must
-  go through `scripts/site-copy-registry.mjs`, and `src/lib/site-images.test.ts` hard-codes slot
+Traps, verified against the files:
+- Adding a site-image slot breaks two tests and a CI gate unless done fully: the alt key must go
+  through `node scripts/site-copy-registry.mjs`, and `src/lib/site-images.test.ts` hard-codes slot
   counts (`withAlt` 42, `wide` 13).
-- **`public/` is empty — CONFIRMED IN PRODUCTION, not just inferred.** `git ls-files public` returns
-  0, and the Vercel production build for `4083d4b` logs
-  `bootstrap: imported 0 site image(s) into Blob; failed: <25 files>` with
-  `ENOENT ... /vercel/path0/public/media/v3/*.avif` for every one. 60 slot references point into
-  `/media/v3/`. **Every editorial image on the storefront resolves to a file that does not exist**,
-  which is why local screenshots render blank image areas. The import is non-fatal (it logs and
-  continues), so the build still succeeds — the site just has no photography.
-  Pre-existing: the uploaded ZIP shipped with an empty `public/`. This is Phase 2c's work, and
-  under decision D3 the fix is to generate NEW imagery for the new domain rather than to recover
-  the old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals.
+- `bundledProvenance` is a **path-prefix** test (`/media/v3/`), so moving masters elsewhere silently
+  reclassifies them as photography in the media library.
+- §15.2: the maker is never AI. `home.maker` / `about.maker` are protected — and note
+  `src/lib/site-images-import.test.ts` already records that the file behind them is itself a
+  generation, which is the owner's to replace with a real photograph.
+- The site-image import is gated on `BLOB_READ_WRITE_TOKEN` and on the table being empty
+  (`prisma/bootstrap.ts`).
 
-- **Vercel builds now COMPLETE — this is the project's working verification.** GitHub Actions still
-  cannot allocate a runner (billing), so the design, a11y, studio and Lighthouse audits still run
-  only in local runs. But Vercel runs the real production path on every push —
-  `prisma migrate deploy` → `prisma/bootstrap.ts` → `next build` — against a live Neon database with
-  per-branch preview databases, and as of `4b8aac7` it reports `Build Completed in /vercel/output`.
-  That is the first completed build in this project's history.
-  Read the logs with `mcp__Vercel__get_deployment_build_logs`; project
-  `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+**Phase 2b (commission-led copy, decision D5) follows.** The storefront still describes the old
+proposition — the hero eyebrow reads *"custom resin art · 3D printing · made to order"*. English
+first in `messages/en.json`, then `node scripts/site-copy-registry.mjs` (a CI gate), then translate
+the batch into all 8 locales with `scripts/i18n-missing.mjs` as the gate.
 
-  Two earlier env failures are resolved and should not be re-diagnosed:
-  `Connection url is empty` (the production DB URL was unset — the owner set it), and
-  `AUTH_SECRET is required` / `NEXT_PUBLIC_SITE_URL: Invalid URL`. The second was half owner action
-  (`AUTH_SECRET`) and half a real code bug, fixed in `f1538ac`: a variable declared with **no value**
-  arrives as `""`, which `.optional()` does not admit and `??` does not replace. `env.ts` strips
-  blanks before parsing and `constants.ts` falls back on blank as well as absent — the latter
-  mattered most, because a blank `NEXT_PUBLIC_WHATSAPP_NUMBER` would have emptied every `wa.me`
-  link on a WhatsApp-only business with the build still passing.
-
-- **Production env vars were missing and are now set.** The first production deploy (Phase 1 merge,
-  `2382d02`) died at `Error: Connection url is empty` because the Vercel Production environment had
-  none of `DATABASE_URL_UNPOOLED` / `POSTGRES_URL_NON_POOLING` / `DATABASE_URL`. Not a code
-  regression — `prisma.config.ts` has only ever been touched by the baseline import. The next
-  production deploy (`4083d4b`) connects and reports `database already seeded`, so the variables
-  were added in between.
-- **`src/lib/media.ts` is dead code** — zero importers, holds 8 of the Cloudinary URLs. Deleting it
-  changes nothing that renders.
-- **Categories do not nest.** `Category` has no `parentId`; grouping is presentation-only via
-  `CATALOG_GROUPS` slug lists.
-- **Doc drift:** CLAUDE.md says 57 image slots / 21 bundled files; the truth is 62 / 25. The same
-  stale numbers appear in comments in `site-images-import.ts` and `actions/site-images.ts`.
-
-Two items still open from Phase 0.5:
-- **`.env.example`** needs `DATABASE_URL_UNPOOLED` and `RESEND_FROM` — `.env*` edits are denied in
+Still open from earlier phases:
+- **`.env.example`** omits `DATABASE_URL_UNPOOLED` and `RESEND_FROM`; `.env*` edits are denied in
   this environment, so the owner must add them.
 - **`happy-dom` → `devDependencies`**, and decide on `three` (zero imports today).
 
