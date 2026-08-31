@@ -87,11 +87,28 @@ Workflow, in this order — the registry step is a CI gate, not optional:
   under decision D3 the fix is to generate NEW imagery for the new domain rather than to recover
   the old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals.
 
-- **Vercel is the working CI.** GitHub Actions cannot allocate a runner (billing), but Vercel runs
-  the real production path on every push: `prisma migrate deploy` → `prisma/bootstrap.ts` →
-  `next build` against a live Neon database, with per-branch preview databases. Treat a Vercel
-  build as the independent verification Actions cannot give, and read its logs
-  (`mcp__Vercel__get_deployment_build_logs`) after every merge.
+- **NOTHING currently verifies this project except local runs.** Both CI paths are down, for two
+  unrelated reasons, and an earlier version of this file wrongly called Vercel "the working CI" —
+  it is not.
+  - **GitHub Actions**: cannot allocate a runner (minutes/spending limit). Jobs die in ~2s with
+    `runner_id: 0` and no logs. The design, a11y, studio and Lighthouse audits run ONLY here, so
+    they have never executed in CI.
+  - **Vercel**: every build — preview and production alike — fails at `next build` with
+    `Invalid environment configuration: AUTH_SECRET is required` and
+    `NEXT_PUBLIC_SITE_URL: Invalid URL` (`src/lib/env.ts:50`, reached via `src/lib/db.ts:3`).
+  - **What Vercel DOES verify, and it is not nothing:** it gets through `prisma migrate deploy`
+    and `prisma/bootstrap.ts` against a live Neon database before failing, so migrations, the
+    seed, the four-tier import (4,373 products) and the portfolio seed are genuinely exercised on
+    the production path. The build and render path is not.
+  - Read the logs with `mcp__Vercel__get_deployment_build_logs`; project
+    `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+
+- **OWNER ACTION — two env vars unblock every Vercel build** (Settings → Environment Variables,
+  all environments): `AUTH_SECRET` (unset; any strong random string, `openssl rand -base64 32`) and
+  `NEXT_PUBLIC_SITE_URL` (currently fails `z.string().url()` — needs a full absolute URL with
+  scheme, e.g. `https://store.bhavyagondaliya.co.in`; it is `.optional()`, so clearing it also
+  passes). Neither is a code problem: `git log --all -- src/lib/env.ts` returns only the baseline
+  import commit.
   Project `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
 
 - **Production env vars were missing and are now set.** The first production deploy (Phase 1 merge,
