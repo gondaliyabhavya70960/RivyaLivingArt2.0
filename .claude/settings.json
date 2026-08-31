@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": ["Bash(npm run *)", "Bash(npx prettier *)", "Bash(git *)"],
+    "deny": [
+      "Read(.env*)",
+      "Edit(.env*)",
+      "Write(.env*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | grep -E '\\.(ts|tsx|css)$' | xargs -r npx --no-install prettier --write 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

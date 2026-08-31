@@ -1,0 +1,62 @@
+# Mirrors the Step-4 generated covers (public Higgsfield CDN) into
+# public/images/{categories,blog}/<slug>.webp and commits them back to this
+# branch. Exists because the build sandboxes' egress policy blocks the CDN
+# host — Actions runners have open internet (backlog #2; see
+# scripts/mirror-generated-images.mjs). Safe to delete once the images are
+# committed and production has flipped to the local paths.
+name: Mirror generated images
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/resinriva-audit-tasks-tfz6cs]
+    paths: [".github/workflows/mirror-images.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-images
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/resinriva-audit-tasks-tfz6cs
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # --ignore-scripts skips the prisma-generate postinstall (needless here);
+      # sharp still gets its prebuilt binary via its own install-time optional
+      # dependencies, which npm resolves from the lockfile, not postinstall.
+      - run: npm ci --ignore-scripts
+
+      - run: node scripts/mirror-generated-images.mjs
+
+      - name: Verify 60 files
+        run: |
+          c=$(ls public/images/categories/*.webp | wc -l)
+          b=$(ls public/images/blog/*.webp | wc -l)
+          echo "categories: $c, blog: $b"
+          test "$c" -eq 5 && test "$b" -eq 55
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images
+          if git diff --cached --quiet; then
+            echo "Nothing to commit — images already mirrored."
+          else
+            git commit \
+              -m "Mirror the 60 generated covers first-party (backlog #2, via Actions)" \
+              -m "public/images/{categories,blog}/<slug>.webp downloaded from the public Higgsfield CDN by scripts/mirror-generated-images.mjs (sharp -> WebP, 1200w/1600w). prisma/generated-cover.ts prefers these local paths, so the category seed and the reconcile-blog-covers step flip the DB rows off the third-party CDN on the next deploy."
+            git pull --rebase origin claude/resinriva-audit-tasks-tfz6cs
+            git push origin HEAD:claude/resinriva-audit-tasks-tfz6cs
+          fi

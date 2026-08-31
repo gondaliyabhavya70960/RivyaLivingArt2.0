@@ -1,0 +1,67 @@
+# Mirrors the v6 brand media first-party (public/media/v6/*.webp) — the build
+# sandbox's egress policy blocks the Higgsfield CDN host, Actions runners
+# don't. Safe to delete once the assets are committed.
+name: Mirror v6 media
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/revert-vercel-deployment-rxpd4p]
+    paths:
+      - ".github/workflows/mirror-v6-media.yml"
+      - "scripts/v6-media.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-v6-media
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Mirror media
+        run: node scripts/mirror-v6-media.mjs
+
+      - name: Verify manifest coverage
+        run: |
+          node - <<'EOF'
+          const fs = require("node:fs");
+          const manifest = JSON.parse(
+            fs.readFileSync("scripts/v6-media.json", "utf8"),
+          );
+          const missing = Object.keys(manifest.images).filter(
+            (name) => !fs.existsSync(`public/media/v6/${name}.webp`),
+          );
+          if (missing.length) {
+            console.error("Missing:", missing.join(", "));
+            process.exit(1);
+          }
+          console.log("All manifest assets present.");
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/media/v6
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "Mirror v6 brand media first-party (via Actions)"
+            git pull --rebase origin "${{ github.ref_name }}"
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi

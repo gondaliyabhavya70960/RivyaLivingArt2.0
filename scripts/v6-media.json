@@ -1,0 +1,55 @@
+{
+  "_comment": "v6 'Sapphire Atelier — Grand Collection' brand media. Generated on Higgsfield (Cinema Studio Image 2.5, 2k, one consistent art direction: deep sapphire night, porcelain daylight bands, restrained antique gold). Mirrored first-party into public/media/v6/ by scripts/mirror-v6-media.mjs via the mirror-v6-media Actions workflow (the build sandbox's egress policy blocks the CDN host).",
+  "images": {
+    "hero-atelier": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_ecf18913-c6a7-4874-b758-6c61916cd12d.png",
+      "width": 1920,
+      "alt": "Liquid sapphire-blue resin mid-pour with gold pigment veins"
+    },
+    "story-pour-light": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_b01b3831-01ce-4da3-86d2-81f8b979721f.png",
+      "width": 1920,
+      "alt": "Porcelain daylight studio table with resin coasters and brass tools"
+    },
+    "collection-resin-art": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_f3527394-fb4d-4506-884f-fc4c6933bcbb.png",
+      "width": 1200,
+      "alt": "Framed ocean-resin art panels in a dark gallery"
+    },
+    "collection-custom": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_f3feac5b-bf24-4cea-ae16-6d9f73d504c9.png",
+      "width": 1200,
+      "alt": "Hands placing wedding-garland petals into a silicone mold"
+    },
+    "collection-supplies": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_b1a6dcda-b14e-4ebf-97f2-ac9a97185576.png",
+      "width": 1200,
+      "alt": "Jars of mica pigment powders on dark slate"
+    },
+    "collection-3dprint": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_3b943605-978b-4f81-ad74-6a3fa72e1422.png",
+      "width": 1200,
+      "alt": "3D printer mid-print of a translucent sculptural vase in blue light"
+    },
+    "portfolio-banner": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_f9c6343b-0a3b-42be-bd2a-6190476027fb.png",
+      "width": 1920,
+      "alt": "Resin objects on stone plinths in a midnight-blue gallery"
+    },
+    "texture-marble": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_c925d0d7-9959-40ac-becb-2665d7f24570.png",
+      "width": 1600,
+      "alt": "Deep sapphire resin marbling with antique-gold veins"
+    },
+    "pdp-lifestyle": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_d7935271-2667-4ae8-aa71-66b6ac31d7b8.png",
+      "width": 1600,
+      "alt": "Deep-blue resin serving tray with gold flake edges on a marble console"
+    },
+    "process-cure": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260813_093151_92f3241a-272d-42aa-996c-4ba889d6a933.png",
+      "width": 1600,
+      "alt": "Artisan torch passing over a freshly poured resin surface"
+    }
+  }
+}

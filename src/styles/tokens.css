@@ -1,0 +1,222 @@
+/* ————————————————————————————————————————————————————————————————
+   ResinRiva v3 · "Liquid Luxury" foundation tokens
+   Master UI/UX Redesign Specification v1.0 — Part 3 (design system),
+   Part 14 (motion) and Part 20.1 (code), verbatim values.
+
+   This file holds RAW values only. src/app/globals.css bridges them to
+   Tailwind utilities via `@theme inline` (bg-obsidian, text-graphite,
+   font-display, section-major, …). One vocabulary, no aliases: the v2.0
+   "Midnight Gild" names were renamed in place by the same pass that landed
+   this file, so nothing in src/ still asks for a token that is not here.
+   ———————————————————————————————————————————————————————————————— */
+
+:root {
+  /* ————— Part 3.1 · Colour ————————————————————————————————————————
+     Thirteen roles, no more. Champagne discipline (never a fill, never a
+     button background, never text below 16px, max two per viewport) is a
+     review rule, not something CSS can enforce — see globals.css. */
+  --obsidian: #080a0e; /* hero, footer, premium sections, studio UI */
+  --deep-ocean: #08283a; /* brand backgrounds, resin storytelling bands */
+  --sapphire: #164e6b; /* primary action, links, cure-line fill, focus */
+  --sapphire-hi: #1d6389; /* hover only */
+  --mineral: #f4f1e9; /* light page ground */
+  --sand: #e7e0d5; /* warm neutral — alternate ground, card surface */
+  --champagne: #b89b63; /* accent: tiny highlights, active states, hairlines */
+  --ink: #12141a; /* body text on light */
+  --graphite: #5b6068; /* secondary text, all mono metadata (5.6:1 on mineral) */
+  --mist: #a9b4bc; /* secondary text on dark (9.4:1 on obsidian) */
+  --hairline: rgba(18, 20, 26, 0.12); /* every divider on light */
+  --hairline-dk: rgba(244, 241, 233, 0.16); /* every divider on dark */
+  --whatsapp: #128c7e; /* WhatsApp actions only, never decorative */
+  --alert: #9b3a2e; /* errors, destructive (6.1:1 on mineral) */
+  --success: #2c6b5b; /* success, in-stock (5.5:1 on mineral) */
+
+  /* AA companions. Part 17 puts body text at ≥4.5:1 and large display /
+     mono micro at ≥3:1, so two palette roles need a darker twin for the
+     jobs the base value cannot hold:
+       champagne-ink — champagne is 2.35:1 on mineral, i.e. unusable as text
+                       on light. This value clears AA on BOTH light grounds —
+                       5.4:1 on mineral and 4.6:1 on the darker sand, which is
+                       the one that actually binds. Champagne itself stays for
+                       hairlines, dark-ground micro labels and active marks.
+       whatsapp-deep — white on #128C7E is 4.14:1, short of AA for a 14–16px
+                       button label. 5.2:1 here. The brand green stays for
+                       icons, rules and the block accent. */
+  --champagne-ink: #75602f;
+  --whatsapp-deep: #0f7a6d;
+  /* sapphire-ink — the same idea for the other direction. Sapphire is 6.2:1
+     as text on mineral, so on LIGHT grounds the ink is simply sapphire; the
+     Studio's dark scope (globals.css) lifts it, because #164E6B is 2.4:1 as
+     text on obsidian while the sapphire FILL stays correct there (mineral on
+     it is 8:1). Fills, focus rings and the cure line keep `--sapphire`;
+     only link and label ink reads this. */
+  --sapphire-ink: var(--sapphire);
+
+  /* Studio-only status extras. The redesign spec defines no warning/info
+     role (the storefront has no use for one); the Studio's data screens do,
+     so both are drawn from the palette rather than invented: warning sits in
+     the champagne family, info in the sapphire family. Both clear AA on
+     mineral. */
+  --warning: #8a6a1e;
+  --info: #1a5f80;
+
+  /* Form-control boundary — graphite dropped to the 3:1 non-text floor so a
+     resting input outline is visible without reading as a box (Part 3.5:
+     "1px only, at very low contrast"). */
+  --field-border: #8a8f96;
+
+  /* Focus ring (Part 16): 2px sapphire at 3px offset. Scope-resolved — the
+     dark bands below flip it to champagne, which clears 7.5:1 on obsidian
+     where sapphire only reaches 3.2:1. */
+  --focus: var(--sapphire);
+
+  /* ————— Part 3.2 · Type scale ——————————————————————————————————
+     One fluid scale, not a desktop set and a mobile set. Mobile floors and
+     desktop ceilings come straight from the two tables in Part 3.2. */
+  --text-hero: clamp(3rem, 7vw + 0.5rem, 7.5rem); /* 48 → 120px */
+  --text-h1: clamp(2.5rem, 4.5vw + 0.5rem, 5.5rem); /* 40 → 88px */
+  --text-h2: clamp(2.125rem, 2.8vw + 0.75rem, 4rem); /* 34 → 64px */
+  --text-h3: clamp(1.5rem, 1.4vw + 0.875rem, 2.25rem); /* 24 → 36px */
+  --text-body: clamp(0.9375rem, 0.35vw + 0.875rem, 1.125rem); /* 15 → 18px */
+  --text-small: 0.875rem; /* 14px */
+  --text-micro: 0.6875rem; /* 11px — mono micro labels */
+
+  /* The 1.25 major-third step scale (text-12 … text-76) the Studio and the
+     form primitives are built on. Retained deliberately: Part 12 asks for a
+     "functional counterpoint", and a fluid editorial scale is the wrong
+     instrument for a dense admin table. */
+  --step-12: 12px;
+  --step-14: 14px;
+  --step-16: 16px;
+  --step-20: 20px;
+  --step-25: 25px;
+  --step-31: 31px;
+  --step-39: 39px;
+  --step-49: 49px;
+  --step-61: 61px;
+  --step-76: 76px;
+  --tracking-display: -0.02em; /* Part 3.2: hero tracks at -.02em */
+  /* Mono-micro tracking. Part 3.2 sets it at .14em, which is right for Latin
+     and wrong for Arabic: letter-spacing breaks cursive letter-joining, so a
+     spaced Arabic eyebrow renders as disconnected glyphs. The RTL scope below
+     drops it to zero — the only place on the site where a Part 3 value is
+     overridden, and Part 17's "an unmirrored RTL is worse than none" is why. */
+  --tracking-micro: 0.14em;
+
+  /* ————— Part 3.3 · Grid ————————————————————————————————————————— */
+  --shell-max: 1440px;
+  --shell-pad: clamp(
+    20px,
+    4vw,
+    72px
+  ); /* mobile 20–24 · tablet 32–48 · desktop 48–72 */
+  --gutter-cure: 56px; /* reserved outside the shell at ≥1024px */
+  /* The shell's start padding carries the cure gutter from ≥1024px up (see
+     the media query below), so every rail on the site — the header included —
+     clears the fixed cure line without any page opting in. Kept as its own
+     token rather than a nested at-rule inside the `u-shell` utility, which
+     Tailwind flattens away. */
+  --shell-pad-start: var(--shell-pad);
+
+  /* ————— Part 3.4 · Spacing ——————————————————————————————————————
+     8px base, three section tiers. The tiers are the fix for the flat
+     hierarchy: max two `major` per page. */
+  --space-major: clamp(120px, 14vw, 200px);
+  --space-standard: clamp(80px, 9vw, 120px);
+  --space-compact: clamp(24px, 4vw, 48px);
+
+  /* ————— Part 3.5 · Radius ————————————————————————————————————————
+     Architectural, not SaaS: image containers 0–2px, cards and inputs 0–4px,
+     large editorial blocks 0. Buttons are the one full-round element and use
+     `rounded-full` directly. */
+  --r-sm: 2px; /* inputs, image containers */
+  --r-md: 4px; /* cards, panels */
+  --r-lg: 8px; /* modals, sheets, the one drawer surface */
+
+  /* Elevation. Part 3.5 removes drop shadows from the storefront entirely —
+     separation is hairlines and a mineral → sand surface shift. The two
+     sanctioned exceptions (mobile bottom bar, Studio bulk-action bar) plus
+     the Studio's own dense surfaces keep these three tiers. */
+  --shadow-e1: 0 1px 2px rgba(8, 10, 14, 0.06);
+  --shadow-e2: 0 4px 12px rgba(8, 10, 14, 0.08);
+  --shadow-e3: 0 12px 32px rgba(8, 10, 14, 0.12);
+
+  /* ————— Part 3.8 · Motion ————————————————————————————————————————
+     Two curves, four durations. --ease-out is kept as an alias of the house
+     curve so the ~200 existing `ease-(--ease-out)` call sites keep animating
+     on the specified easing instead of a second, competing one. */
+  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-settle: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: var(--ease-luxury);
+  --dur-fast: 180ms;
+  --dur-base: 350ms;
+  --dur-slow: 800ms;
+  --dur-reveal: 900ms;
+  /* Legacy duration names still referenced by the chrome and the studio
+     primitives, re-pointed onto the Part 3.8 set. */
+  --dur-micro: var(--dur-fast);
+  --dur-enter: var(--dur-base);
+
+  /* ————— Semantic layer (shadcn-compatible) ————————————————————————
+     The storefront consumes the palette names directly; this set exists for
+     the shadcn primitives and is re-pointed wholesale by the .studio-v2
+     scope in globals.css. */
+  --bg: var(--mineral);
+  --surface: var(--sand);
+  --text: var(--ink);
+  --text-secondary: var(--graphite);
+  --border: var(--hairline);
+  --primary: var(--sapphire);
+  --primary-hover: var(--sapphire-hi);
+  --accent: var(--champagne);
+  --accent-on-light: var(--champagne-ink);
+}
+
+/* Dark bands. Every dark section on the storefront scopes itself with
+   data-theme="navy" (the attribute name predates this palette; the surface
+   it now paints is obsidian). Inside it the light-ground roles flip so a
+   band nested in a light page resolves correct inks without per-element
+   overrides — and the focus ring moves to champagne, the only accent that
+   clears 3:1 on obsidian. */
+.dark,
+[data-theme="navy"] {
+  --bg: var(--obsidian);
+  --surface: var(--deep-ocean);
+  --text: var(--mineral);
+  --text-secondary: var(--mist);
+  --border: var(--hairline-dk);
+  --accent-on-light: var(--champagne);
+  --focus: var(--champagne);
+}
+
+/* Arabic (and any RTL script) never takes mono-micro tracking — see
+   --tracking-micro above. */
+[dir="rtl"] {
+  --tracking-micro: 0;
+}
+
+/* Part 3.3 — "On ≥1024px, a 56px cure gutter sits outside the content shell
+   at the left." Reserved globally rather than per page: the cure line is
+   fixed chrome, and a rail that overlaps the text on some pages and not on
+   others is worse than no rail at all. */
+@media (min-width: 1024px) {
+  :root {
+    --shell-pad-start: calc(var(--shell-pad) + var(--gutter-cure));
+  }
+}
+
+/* Part 14 · reduced motion. The single global collapse for the whole site —
+   parallax, pinned scrubs, the marquee and every reveal jump to their final
+   state. Components that need a different resting state (the cure line's
+   static ruler, the meniscus mask's open position) check the media query in
+   JS as well; nothing relies on this rule alone to look finished. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

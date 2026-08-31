@@ -1,0 +1,561 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+/* Tailwind v4 auto-detects sources repo-wide, so class-shaped strings in
+   markdown (DESIGN.md, docs/, CLAUDE.md) generated dead utilities in every
+   chunk (Phase 7 perf review: animate-mesh-drift & co. shipped with zero
+   component consumers). Exclude non-source trees from scanning. */
+@source not "../../docs";
+@source not "../../DESIGN.md";
+@source not "../../CLAUDE.md";
+@source not "../../README.md";
+@source not "../../REDESIGN.md";
+@source not "../../scripts";
+
+/* ————————————————————————————————————————————————————————————————
+   ResinRiva v3 · "Liquid Luxury"
+   Master UI/UX Redesign Specification v1.0
+
+   src/styles/tokens.css holds the raw values (Part 3 + Part 20.1). This
+   file is the bridge: it maps them onto Tailwind utilities, defines the
+   handful of composite utilities the spec names by hand (.u-micro, .u-num,
+   .u-shell, .u-prose, the three section tiers, the two rules), and carries
+   the Studio's own scope.
+
+   Hallmark · genre: editorial (luxury craft atelier) · macrostructure:
+   families (Photographic / Editorial / Catalogue) · design-system:
+   REDESIGN.md · designed-as-app
+   Hallmark · pre-emit critique: P5 H5 E5 S5 R4 V5 — mineral ground, obsidian
+   bands, sapphire as the only "clickable" colour, champagne rationed to two
+   elements per viewport, and two signature devices (the cure line, the
+   meniscus reveal) carrying all the boldness the rest of the page refuses.
+   ———————————————————————————————————————————————————————————————— */
+@import "../styles/tokens.css";
+
+@theme inline {
+  /* ————— Part 3.1 · Palette → utilities —————————————————————————— */
+  --color-obsidian: var(--obsidian);
+  --color-deep-ocean: var(--deep-ocean);
+  --color-sapphire: var(--sapphire);
+  --color-sapphire-hi: var(--sapphire-hi);
+  --color-sapphire-ink: var(--sapphire-ink);
+  --color-mineral: var(--mineral);
+  --color-sand: var(--sand);
+  --color-champagne: var(--champagne);
+  --color-champagne-ink: var(--champagne-ink);
+  --color-ink: var(--ink);
+  --color-graphite: var(--graphite);
+  --color-mist: var(--mist);
+  --color-hairline: var(--hairline);
+  --color-hairline-dk: var(--hairline-dk);
+  --color-whatsapp: var(--whatsapp);
+  --color-whatsapp-deep: var(--whatsapp-deep);
+  --color-alert: var(--alert);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-field: var(--field-border);
+  /* ring-focus / outline-focus — scope-resolved: sapphire on light,
+     champagne inside [data-theme="navy"] (Part 16 + Part 17). */
+  --color-focus: var(--focus);
+
+  /* Semantic layer (shadcn primitives + the Studio). Re-pointed wholesale by
+     the .studio-v2 scope further down. */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--mineral);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--mineral);
+  --color-secondary: var(--sand);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--sand);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent: var(--sand);
+  --color-accent-foreground: var(--sapphire);
+  --color-destructive: var(--alert);
+  --color-destructive-foreground: var(--mineral);
+  --color-border: var(--border);
+  --color-input: var(--field-border);
+  --color-ring: var(--focus);
+
+  /* ————— Part 3.2 · Type ————————————————————————————————————————
+     One fluid editorial scale (text-hero … text-micro) plus the retained
+     step scale the Studio and the form primitives are built on. */
+  --text-hero: var(--text-hero);
+  --text-h1: var(--text-h1);
+  --text-h2: var(--text-h2);
+  --text-h3: var(--text-h3);
+  --text-body: var(--text-body);
+  --text-small: var(--text-small);
+  --text-micro: var(--text-micro);
+  --text-12: var(--step-12);
+  --text-14: var(--step-14);
+  --text-16: var(--step-16);
+  --text-20: var(--step-20);
+  --text-25: var(--step-25);
+  --text-31: var(--step-31);
+  --text-39: var(--step-39);
+  --text-49: var(--step-49);
+  --text-61: var(--step-61);
+  --text-76: var(--step-76);
+  --tracking-display: var(--tracking-display);
+
+  /* Font stacks. `--font-script` is defined per non-Latin locale by the
+     [locale] layout (Noto Sans Devanagari/Gujarati/Arabic/JP/SC via
+     next/font) so native glyphs get a real face after the Latin brand
+     fonts; Latin locales leave it unset and the var() fallback holds. */
+  --font-display:
+    var(--font-display-face), var(--font-script, ui-serif), Georgia, serif;
+  --font-body:
+    var(--font-body-face), var(--font-script, ui-sans-serif), system-ui,
+    sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "SF Mono", Menlo, monospace;
+  /* Un-classed body text (and Tailwind's own font-sans) resolves to Inter. */
+  --font-sans: var(--font-body);
+
+  /* ————— Part 3.3/3.4 · Grid + spacing —————————————————————————— */
+  --container-shell: var(--shell-max);
+  --spacing-major: var(--space-major);
+  --spacing-standard: var(--space-standard);
+  --spacing-compact: var(--space-compact);
+  --spacing-cure: var(--gutter-cure);
+
+  /* ————— Part 3.5 · Radius + elevation ——————————————————————————
+     Architectural: rounded-input 2px · rounded-card 4px · rounded-modal 8px.
+     Buttons use rounded-full, image containers rounded-image (2px), large
+     editorial blocks stay square. */
+  --radius-image: var(--r-sm);
+  --radius-input: var(--r-sm);
+  --radius-card: var(--r-md);
+  --radius-modal: var(--r-lg);
+  --radius-sm: 0px;
+  --radius-md: var(--r-sm);
+  --radius-lg: var(--r-md);
+  --radius-xl: var(--r-lg);
+  --shadow-e1: var(--shadow-e1);
+  --shadow-e2: var(--shadow-e2);
+  --shadow-e3: var(--shadow-e3);
+
+  /* ————— Part 14 · Motion ————————————————————————————————————————
+     The marquee track is duplicated once, so -50% loops seamlessly; the
+     global reduced-motion collapse in tokens.css kills it. */
+  --animate-marquee: marquee 32s linear infinite;
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Preloader wordmark fill — the champagne front sweeps across the clipped
+     letters once, inside the show window. Pairs with .gild-fill-text. */
+  --animate-gild-fill: gild-fill var(--dur-base) var(--ease-luxury) both;
+  @keyframes gild-fill {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0% 0;
+    }
+  }
+
+  /* Cure-line droplet — the hero scroll indicator's slow champagne pulse
+     (Part 6 §01). Two-second cycle, opacity only, no transform. */
+  --animate-droplet: droplet 2.4s var(--ease-settle) infinite;
+  @keyframes droplet {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(6px);
+    }
+  }
+}
+
+/* ————— Studio skin (Part 12: "a creative atelier management system") ——
+   The Studio consumes the shadcn SEMANTIC layer throughout, so re-pointing
+   it under one scope reskins every panel screen at once. The storefront's
+   editorial restraint does not apply here: the Studio is allowed density,
+   the two sanctioned shadows, and a tighter radius. Champagne stays the
+   active-item marker only. */
+.studio-v2 {
+  /* `light dark`, not a forced value: forcing `light` made lightningcss drop
+     the @media dark block below as unreachable. */
+  color-scheme: light dark;
+  --bg: var(--mineral);
+  --surface: #ffffff;
+  --text: var(--ink);
+  --text-secondary: var(--graphite);
+  --border: var(--hairline);
+  --focus: var(--sapphire);
+}
+
+@media (prefers-color-scheme: dark) {
+  .studio-v2 {
+    --bg: var(--obsidian);
+    --surface: var(--deep-ocean);
+    --text: var(--mineral);
+    --text-secondary: var(--mist);
+    --border: var(--hairline-dk);
+    --focus: var(--champagne);
+    /* Status inks lift on obsidian — the light-ground values sit at 2–3:1
+       there. Each is the same hue opened up until it clears 4.5:1 on
+       obsidian and 4.5:1 on the deep-ocean surface. */
+    --alert: #e08575;
+    --success: #4fb99a;
+    --warning: #d8b26a;
+    --info: #63b3d8;
+    --champagne-ink: var(--champagne);
+    /* Sapphire as TEXT is 2.4:1 on obsidian. Lifted to 8.1:1 on obsidian and
+       6.3:1 on the deep-ocean surface, same hue family. The sapphire FILL is
+       untouched — porcelain on it already clears 8:1 — so buttons keep their
+       dark blue and only ink moves. */
+    --sapphire-ink: #5fafd6;
+    --field-border: #6f7680;
+    /* Named palette tokens the Studio's own surfaces consume directly
+       (bg-mineral, text-ink, bg-sand, text-graphite) flip with the scope so
+       an un-semantic utility is never a light patch on a dark screen. */
+    --mineral: #f4f1e9;
+    --ink: #f4f1e9;
+    --sand: #0f3247;
+    --graphite: #a9b4bc;
+  }
+}
+
+/* Part 3.6 · the Studio's buttons carry no decorative sweep — the storefront
+   flourish is inert inside the admin scope. */
+.studio-v2 [data-slot="button"]::after {
+  display: none;
+}
+
+/* ————————————————————— Base —————————————————————
+   Wrapped in @layer base so utilities (a higher layer) always win —
+   unlayered rules would silently override every Tailwind utility. */
+
+@layer base {
+  * {
+    /* --color-border is inlined by `@theme inline`, so it is never emitted as
+       a real custom property; reference the source var instead. */
+    border-color: var(--border);
+  }
+
+  /* Focused/errored form fields must clear the fixed header when scrolled
+     into view. */
+  input,
+  select,
+  textarea,
+  [data-slot="select-trigger"] {
+    scroll-margin-top: 8.5rem;
+  }
+
+  html {
+    scroll-behavior: auto; /* Lenis owns scrolling */
+    scrollbar-gutter: stable; /* no layout shift when the scrollbar appears */
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--graphite) 45%, transparent)
+      transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--graphite) 45%, transparent);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Part 3.2 · headings are Instrument Serif, and every one of them tracks
+     tight. Set once here so a section that forgets the class still reads
+     right. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: var(--tracking-display);
+  }
+
+  ::selection {
+    background: var(--sapphire);
+    color: var(--mineral);
+  }
+
+  :focus-visible {
+    /* Part 16: 2px sapphire ring at 3px offset, never removed. --focus
+       resolves champagne inside dark bands, where sapphire is invisible. */
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+}
+
+/* ————————————————————— Composite utilities —————————————————————
+   The handful the spec names by hand (Part 20.1). Everything else is a
+   Tailwind utility built from the tokens above. */
+
+/* Part 3.2 · mono micro. Every eyebrow, every metadata line, every count.
+   Colour is deliberately part of the utility: graphite on light, and the
+   dark-band scope flips it to mist so an eyebrow inside an obsidian section
+   never has to opt out by hand. */
+@utility u-micro {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+/* Part 3.2 · every number on the site: price, count, date, dimension,
+   project number, cure time, timer, spec value. */
+@utility u-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Part 3.3 · the content shell. The cure gutter sits OUTSIDE it — the shell
+   is centred in the remaining width at ≥1024px so the hairline never
+   overlaps text. */
+@utility u-shell {
+  /* `width: 100%` is not decoration: `margin-inline: auto` on a FLEX ITEM
+     disables the default `align-items: stretch`, so a shell inside a column
+     flex section would shrink-to-fit its content instead of filling the
+     viewport. Every full-bleed section on this site is exactly that shape. */
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  /* Part 3.3: the 56px cure gutter sits OUTSIDE the shell at ≥1024px, so the
+     start padding carries it (--shell-pad-start, tokens.css). The header
+     rides the same shell, which is why the spec's own header diagram draws
+     the gutter as a column beside it. */
+  padding-inline-start: var(--shell-pad-start);
+  padding-inline-end: var(--shell-pad);
+}
+
+/* Part 3.2 · prose measure never exceeds 68ch. */
+@utility u-prose {
+  max-width: 68ch;
+}
+
+/* Section intros cap at 52ch. */
+@utility u-lede {
+  max-width: 52ch;
+}
+
+/* Part 3.4 · the three section tiers. `major` is capped at two per page —
+   a review rule, not a CSS one. */
+@utility section-major {
+  padding-block: var(--space-major);
+}
+
+@utility section-standard {
+  padding-block: var(--space-standard);
+}
+
+@utility section-compact {
+  padding-block: var(--space-compact);
+}
+
+/* Part 3.5 · the only two dividers on the site. */
+@utility rule {
+  border-top: 1px solid var(--hairline);
+}
+
+@utility rule-dk {
+  border-top: 1px solid var(--hairline-dk);
+}
+
+/* Font-family utilities. Named for their role, so a component never has to
+   know which face is loaded. */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility font-body {
+  font-family: var(--font-body);
+}
+
+@utility font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Header ink helper — consumed by the header's children so the wordmark and
+   actions can cross from a transparent-over-hero state to the opaque one in
+   a single transition. */
+@utility text-header-ink {
+  color: var(--header-ink, var(--ink));
+  transition: color var(--dur-fast) var(--ease-luxury);
+}
+
+/* Preloader wordmark: a champagne gradient clipped to the glyphs. The image
+   is 3× the text width — champagne-ink → champagne → mineral plus a
+   transparent tail — so animate-gild-fill's position sweep reads as liquid
+   metal filling the letters. */
+@utility gild-fill-text {
+  background-image: linear-gradient(
+    100deg,
+    var(--champagne-ink) 0%,
+    var(--champagne) 20%,
+    var(--mineral) 34%,
+    transparent 46%
+  );
+  background-size: 300% 100%;
+  background-position: 0% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ————————————————————— Motion —————————————————————
+   Part 14. Everything here is opacity/transform/clip-path only, every rule
+   is behind `prefers-reduced-motion: no-preference`, and none of it touches
+   the LCP element. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Load-more batch entrance: the PLP staggers ONLY cards a visitor appends
+     via load-more — below the fold by construction, so the initial page
+     (which carries the LCP) always renders instantly. Per-card delay is set
+     inline by the shop explorer. */
+  .sf-card-enter {
+    animation: sf-card-enter var(--dur-base) var(--ease-luxury) both;
+  }
+  @keyframes sf-card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+
+  /* App Router navigations morph the shop card's photograph into the PDP
+     gallery stage via paired view-transition-name. */
+  ::view-transition-group(*),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--dur-fast);
+    animation-timing-function: var(--ease-luxury);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* A static film-grain wash over the storefront — SVG turbulence inline (no
+   asset, no request; CSP img-src already allows data:). soft-light reads on
+   both the obsidian and mineral bands; 2% is texture, never noise. z-25:
+   over content, under every piece of fixed chrome, so UI text stays crisp. */
+.sf-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0.02;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ————————————————————————————————————————————————————————————————
+   Print — the commission card (external audit OPS-02)
+
+   /studio/inquiries/[id]/card exists to be printed: it is the authenticity
+   card that travels with a confirmed commission. Until now the repo had no
+   `@media print` and no `@page` at all, so printing it used screen CSS, and
+   the screen CSS has a dark scope — `.studio-v2` under
+   `prefers-color-scheme: dark` (:197) repoints --bg to obsidian. An operator
+   whose OS is in dark mode was printing a dark card: mineral text on an
+   obsidian field, which either wastes a cartridge or comes out unreadable
+   depending on the driver's background-graphics setting.
+
+   Forcing the light palette here is not a theme override for its own sake —
+   paper has exactly one background and it is white.
+   ———————————————————————————————————————————————————————————————— */
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm;
+  }
+
+  /* Beat the dark scope regardless of the operator's OS setting. Scoped to
+     the print context, so the on-screen Studio keeps its dark mode. */
+  :root,
+  .studio-v2 {
+    color-scheme: light;
+    /* Paper is white — that is the one value here that is a printing fact
+       rather than a palette choice. Everything else references the token that
+       already owns the role: the first cut hardcoded #12141a and #5b6068,
+       which are byte-for-byte --ink and --graphite, and invented
+       rgba(18,20,26,.28) for a divider role --hairline already defines.
+       Re-typing a token's value is how the two drift apart later. */
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --text: var(--ink);
+    --text-secondary: var(--graphite);
+    --border: var(--hairline);
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: var(--ink) !important;
+  }
+
+  /* The card's route renders no chrome — its root layout is children plus
+     analytics, and its own toolbar is already `print:hidden`. What has to be
+     killed globally is the fixed furniture, for the day someone prints a
+     public page. Selectors for a header or a FAB were drafted here and
+     removed: neither matched anything in src/ (the header is sticky, and the
+     FAB is `hidden lg:flex`, so print's ~673px page box keeps it hidden), and
+     CSS that targets nothing is worse than no CSS, because it reads as
+     covered. These two are verified against the markup.
+
+     The bottom bar is the one that actually bites: it is `fixed bottom-0` and
+     hides only at `lg`, which print's page box never reaches — so it printed
+     across the foot of every storefront sheet. Its in-flow spacer is a bare
+     div with no handle to target and stays; it costs 72px of whitespace at the
+     end of the flow, which is not worth reaching into a storefront component
+     for. */
+  .sf-grain,
+  [data-slot="sf-bottom-bar"] {
+    display: none !important;
+  }
+
+  /* A commission card that breaks across two sheets is not a card. */
+  [aria-label="Commission card"] {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  /* A definition row split across the page break loses its label. */
+  dl > div {
+    break-inside: avoid;
+  }
+
+}

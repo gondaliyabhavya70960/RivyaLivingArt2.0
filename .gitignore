@@ -1,0 +1,66 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files — secrets never enter git; use .env.example for names
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# prisma
+/src/generated
+
+# IDE
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# dev-only local media uploads
+/public/uploads
+
+# agent skills installed via `npx skills add` (regenerable third-party tooling)
+/.agents/
+/skills-lock.json
+
+# .claude/ scaffolding is committed team infrastructure (DESIGN.md Part E3);
+# only per-machine local state stays out
+/.claude/settings.local.json
+screenshots/
+
+# Agent scratch space — screenshots and probe scripts, never committed
+.scratch/
+.studio-shots/
+shots/
+
+# §15.5 cull workspace — candidate downloads + contact sheet
+.media-v3-candidates/
+.media-v3-video-tmp/

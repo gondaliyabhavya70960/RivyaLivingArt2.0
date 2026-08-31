@@ -1,0 +1,341 @@
+# ResinRiva 2.0
+
+Premium resin-art brand site. **The design spec is REDESIGN.md** (Master UI/UX
+Redesign Specification v1.0) — read the relevant Part BEFORE building any UI,
+motion or studio feature. `docs/redesign-contract.md` is the short version: the
+token vocabulary, the review rules and the hard constraints, in the form a
+change actually needs. Never invent colours, spacing or animation values; they
+are all defined in REDESIGN.md Part 3.
+
+`DESIGN.md` (v2.0 "Midnight Gild") and `docs/design-v7-sapphire-atelier.md` are
+superseded and kept for history only.
+
+**`RESINRIVA_2.0_UI_MASTER_PLAN.md` is not a plan for this repo.** It was
+written against an older tree in the superseded v2/v6/v7 vocabulary, assumes a
+`motion` dependency that is not installed, and 90% of it is already built,
+factually wrong here, or forbidden by the contract above. Do not act on it —
+`docs/ui-master-plan-reconciliation.md` verifies all 213 entries against HEAD,
+records what shipped, and lists what genuinely remains.
+
+## HARD RULES — business model (REDESIGN.md §1.1 · Part 0 wins all conflicts)
+- NO payment gateway, online checkout, or cart payment (no Stripe/Razorpay/PayPal).
+- NO customer login/membership/accounts. The ONLY login is the staff studio
+  (admin/editor roles) at /studio.
+- NO AI-invented products, ever. Catalog is filled ONLY by the owner via
+  scraper review+approval, Bulk Import (Google Sheets/CSV), or manual /studio adds.
+- Every order finalizes through WhatsApp: Place Order → generate order summary
+  → save Inquiry record via Server Action → redirect to wa.me/917096036250
+  with the complete pre-filled message.
+- The redesign changes the **visual layer only**. Product data, filtering,
+  search, customization fields, uploads, Server Actions, auth, Studio/CMS
+  behaviour, URLs and routes are off-limits (§1.1).
+
+## Commands
+- dev: `npm run dev`
+- test: `npm run test`   (vitest unit suite over src/lib pure functions)
+- e2e smoke: `BASE_URL=… npm run test:e2e`   (10 checks against a running server)
+- CI: `.github/workflows/ci.yml` runs typecheck · lint · copy:check · test on
+  every PR to Main, plus the real `npm run build` against a throwaway Postgres
+  — and then starts that build and runs `redesign-audit.mjs` + `a11y-audit.mjs`
+  over 12 public routes at 1440px and 390px. Both gate the build.
+- typecheck: `npm run typecheck`   (tsc --noEmit)
+- lint: `npm run lint -- --fix`
+- build: `npm run build`   (runs prisma migrate deploy + bootstrap first — needs DATABASE_URL)
+
+### Part 15 imagery (`docs/media-v3-manifest.json`)
+- The §15.4 asset set — six collection tiles, the pour/gild/cure/polish story,
+  four material macros and ten atmospheric heroes — was generated through the
+  Higgsfield MCP and is recorded, prompt by prompt, in the manifest. The masters
+  come off the model at 3584px, so §15.5's upscale pass is already satisfied.
+- `node scripts/media-v3-fetch.mjs --candidates` downloads all 46 candidates and
+  writes a contact sheet; cull to one keeper per id and set `"keeper": "a"|"b"`.
+- `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
+  `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
+  next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
+- **Done.** Both steps ran on an Actions runner —
+  `.github/workflows/fetch-media-v3.yml` (`workflow_dispatch`, mode `candidates`
+  then `masters`) — because the CDN is blocked from the build sandboxes.
+  `public/media/v3/` holds 24 AVIF masters (1.0 MB for the set) and
+  `src/lib/media-v3-blur.json` the 20px LQIPs. `docs/media-v3-review/` keeps the
+  four contact sheets the cull was made from.
+- **Wired.** 53 of the 57 slots default to these masters. Four keep what they
+  had: `home.maker` and `about.maker` (§15.2 — the maker is never AI) and the
+  process hero video with its poster (no video was generated; a poster must
+  match the video it stands in for). Twelve alt keys described the frame being
+  replaced and were rewritten across all nine locales — the rest were left
+  alone because the slot→master mapping was chosen to keep them true.
+- Two masters are deliberately unused: `not-found` (the design puts no image on
+  the 404) and `tile-keep` (it belongs to the homepage collection band, which
+  reads the owner's `Category.image`). Both are selectable from
+  /studio/site-images.
+
+### The studio CMS — one pattern, eight surfaces
+
+`docs/studio-cms/` is the plan; it is now built. Every surface follows the same
+shape, and the shape is the point:
+
+    registry in code   →   overrides in the database   →   a TOTAL resolver
+
+The registry is the source of truth for what EXISTS. The table stores only what
+the owner CHANGED. The resolver is total, so an empty table, a fresh database
+and an unreachable one all render the page the repo ships with rather than a
+blank one. Adding a surface means following this, not inventing a ninth shape.
+
+| Surface | Registry | Table | Resolver |
+|---|---|---|---|
+| `/studio/site-copy` | `site-copy.ts` (1,115 slots) | `SiteCopy` | `getSiteCopy()` |
+| `/studio/site-images` | `site-images.ts` (57 slots) | `SiteImage` | `getSiteImages()` |
+| `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
+| `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
+| `/studio/sections` | `page-sections.ts` (6 pages) | `PageSection` | `getPageSections()` |
+| `/studio/custom-pages` | `custom-blocks.ts` (6 types) | `CustomPage` · `CustomBlock` | `getCustomPage()` |
+| `/studio/media` | — | `Media` | — |
+| `/studio/settings` · `/studio/seo` | `constants.ts` (fallbacks) | `SiteSettings` | `getSiteSettings()` |
+
+Four rules that hold across all of them:
+
+- **A save is a DRAFT.** Copy and images stage in `draftValue`/`draft`, preview
+  behind the staff cookie (`/api/draft`), and publish per SURFACE — a page
+  rewrite reaches visitors as one change, not forty. `ContentRevision` keeps
+  history; restore goes back into the draft, never straight to live.
+- **Guardrails refuse, they do not warn.** `describeArrangementProblem` and
+  `describeBlockArrangementProblem` enforce REDESIGN.md §3.1's band rhythm and
+  Part 17's single `h1` at save time, because CI does not run when an owner
+  presses Publish. They also run in the board before the call, since
+  `runAction` reports every throw as "something went wrong".
+- **Landing pages are the ONE place content lives in the row** (§4.8). A
+  seasonal lander has no copy slot because nobody wrote one. The guard against
+  layout rot is the block catalogue's SIZE — six types, asserted by a test.
+  Scheduling is resolved at read time by `isLive()`, never by a cron.
+- **Every new table that stores a media URL goes into `media-usages.ts` in the
+  same commit.** That header rule was broken three times in one week and each
+  break was silent — the worst 404'd only the phone layout.
+
+### Site Images (`/studio/site-images`)
+- The storefront's editorial photography is no longer hardcoded. Every call
+  site is a **named slot** in `src/lib/site-images.ts` (57 slots, 21 bundled
+  files) carrying its surface, the ratio the layout crops to and the
+  `public/media` file used when the owner has not replaced it.
+- Pages read `getSiteImages()` (`src/lib/site-images-server.ts`) — a total map,
+  so an unset slot always resolves to a file that exists in the repo. Cached
+  24h behind the `site-images` tag, invalidated by the studio actions.
+- `SiteImage` (key → url/mediaId) stores only overrides. Reset is a DELETE.
+- The **Import bundled images** button on that screen copies every default into
+  storage (Vercel Blob in production, `public/uploads` locally) and repoints its
+  slot, one upload per distinct file. Idempotent — slots already changed are
+  skipped. `prisma/bootstrap.ts` runs the same routine on deploy so a new
+  environment comes up Blob-backed without anyone logging in; it is gated on
+  `BLOB_READ_WRITE_TOKEN` (no token ⇒ `putFile` would write into the build
+  container's throwaway disk) and on the table being empty (reset-to-default is
+  a row DELETE, so re-importing every deploy would undo it).
+- Slot values are restricted to site-root paths or hosts in `next.config.ts`'s
+  `remotePatterns`; next/image throws at request time on anything else.
+- Two things are deliberately NOT slots: `public/sequences/pour-cure/*` (121
+  canvas-scrub frames — one animation, not editorial imagery) and
+  `CANONICAL_CATEGORIES[].image` (seed defaults for `Category.image`, already
+  editable in the category editor).
+
+### The Product Scraper → Sheet → Studio pipeline
+
+Full docs in `docs/scraper.md`, `google-sheets.md`, `product-lifecycle.md`,
+`studio-workflow.md`, `source-adapters.md`, `troubleshooting.md`. The rules
+below are the ones that are expensive to rediscover.
+
+- **Staged rows are immutable.** `ScrapedProduct` is what the site said;
+  promotion writes a separate catalog `Product`. Corrections never edit the
+  staged row, so a normalisation change needs no re-scrape.
+- **Owner edits outrank every writer.** Both the sheet importer and the
+  scraper's promote path refresh availability ONLY when `ownerTouched` — never
+  content, never images. The rule lives once, in `merge-policy.ts`, and is
+  checked BEFORE `needsRewrite`. It used to be checked after, which silently
+  overwrote edited products and deleted their galleries (fixed, Phase 9).
+- **One run per source.** A second Scrape returns the job already in flight
+  rather than queueing a duplicate — that is what makes the action idempotent.
+  `QUEUED` counts as in flight. Applies to the tier fan-out too.
+- **Five consecutive failures pauses a source.** Resume clears the pause AND
+  the counter; a success resets it to zero rather than decaying.
+- **`CONFIRMED_PRODUCTS ≡ { p : p.confirmedAt IS NOT NULL }`.** Nothing but the
+  Confirm action sets it. There is no path from scrape to confirmed.
+- **Sheet writes go through one engine, gated by a per-source policy**
+  (`MANUAL` default · `ON_COMPLETE` · `OFF`). Two write paths into a shared
+  document is how rows get duplicated. A FAILED job never auto-pushes.
+- **Sheets being down never fails a scrape.** Rows mark `SYNC_PENDING`; the
+  retry re-pushes whole jobs, which the merge key makes free of charge.
+- **Sheet→catalog fill has run on every deploy since long before it was a
+  feature** (`bootstrap.ts` → `import-tiers.ts`). Its settings all default to
+  that behaviour, so a fresh environment still self-populates on first boot.
+  The blast-radius cap guards CREATES specifically — the direction that hurts.
+- **Deleting a product clears it from the website mirror and the confirmed tab,
+  never from the tier tabs.** Those record what a supplier's site said; a
+  deletion here does not un-happen the scrape.
+- **Sheet row deletion is not upsert-in-reverse.** It needs `deleteDimension`
+  and the tab's NUMERIC id, and rows must be removed in DESCENDING index order
+  — an ascending pass deletes the wrong rows from the second one onward, and
+  succeeds while doing it.
+- **Extraction failures are recorded, not nulled.** The checked fields are the
+  same ones that block confirmation, so clearing `/studio/scraper/quality` is
+  what unblocks the final list. Fields most storefronts never publish are
+  deliberately not checked.
+- **Price history is append-only**, written on first sighting and thereafter
+  only when the price moves. A gap between points means the price held.
+
+### Design QA (needs a running server)
+The first two now run in CI over 12 routes at both widths; run them locally
+when you want a route CI does not cover — anything under /product, /blog,
+/portfolio or /p needs content the CI database has no seed for.
+- `node scripts/redesign-audit.mjs "/en,/en/shop,…" [--w 390]` — REDESIGN.md
+  Part 19.1 as an executable check: one `h1`, no duplicated section heading,
+  max two `section-major`, max three dark bands and never adjacent, numbers in
+  mono, no ellipsis in an accessible name, alt text that describes the picture,
+  no horizontal overflow.
+- `node scripts/a11y-audit.mjs "/en,/en/shop,…" [--w 390]` — axe-core over the
+  rendered routes; fails on critical or serious findings (§19.6). Moderate and
+  minor are printed, not failed.
+- `node scripts/shots.mjs <out-dir> "/en,/en/shop" [--w 375] [--full] [--reduced]`
+  — screenshots via the pre-installed Chromium; reports overflow and console
+  errors.
+- `node scripts/i18n-missing.mjs [--list] [--json out.json]` — keys present in
+  `messages/en.json` and missing from (or identical to English in) the other
+  eight locales. English-first is the workflow: add the key to `en.json`, then
+  translate the whole batch.
+- `node scripts/i18n-merge.mjs patch.json [--partial]` — deep-merges
+  `{locale: {…}}` into every `messages/*.json`. It refuses a patch missing a
+  locale unless you pass `--partial`, because a key that lands in English and
+  nowhere else renders as its own path in eight languages.
+
+## Stack
+Next.js App Router + TS, Tailwind v4 (v3 tokens in src/styles/tokens.css +
+the utility bridge in src/app/globals.css), shadcn/ui, Prisma + Postgres,
+Auth.js (STAFF ONLY, /studio), @vercel/blob uploads, WhatsApp deep-link
+ordering (lib/whatsapp.ts), React Hook Form + Zod forms, Lenis + GSAP/
+ScrollTrigger for the two pinned scrubs.
+
+## Design system — v3 "Liquid Luxury"
+- **Colour**: obsidian · deep-ocean · sapphire/-hi · mineral · sand ·
+  champagne · ink · graphite · mist · hairline/-dk · whatsapp · alert ·
+  success. Two AA companions exist because a palette role cannot carry text:
+  `champagne-ink` (champagne is 2.35:1 on mineral) and `whatsapp-deep` (white
+  on the brand green is 4.14:1). Champagne is never a fill, never a button
+  background, never text below 16px on light, **max two per viewport**.
+  Dark bands never sit adjacent; **max three per page**.
+- **Type**: `font-display` Instrument Serif · `font-body` Inter · `font-mono`
+  JetBrains Mono. Every price, count, date, dimension, cure time and eyebrow
+  is mono and tabular. Scale: `text-hero/h1/h2/h3/body/small/micro`, all
+  clamped — one scale, no mobile fork. The `text-12 … text-76` step scale is
+  retained for the Studio and the form primitives only.
+- **Composite utilities**: `u-micro` (every eyebrow and metadata line),
+  `u-num`, `u-shell` (the content rail — it also reserves the 56px cure gutter
+  at ≥1024px), `u-prose` (68ch), `u-lede` (52ch), `section-major|standard|
+  compact`, `rule`/`rule-dk`.
+- **Surfaces**: 1px hairlines and a mineral → sand shift, never boxes. No drop
+  shadows on the storefront — two exceptions, the mobile bottom bar and the
+  Studio's bulk-action bar. Blur in exactly one place: the sticky header.
+- **Signature devices**: `CureLine` (§2.6) and `MeniscusImage` (§2.7). No image
+  on this site fades in; the meniscus reveal replaces every fade-up, and it
+  masks rather than clips — a clipped element never loads its image.
+
+## Current repo reality (adapt to it — never break it)
+- Code lives under `src/`: storefront routes in `src/app/[locale]/(v2)`
+  (next-intl, 9 locales incl. RTL — do NOT restructure); staff panel in
+  `src/app/studio`; route guard at `src/proxy.ts` (Next 16.3 renamed
+  middleware → proxy).
+- Uploads use @vercel/blob (Cloudinary is the spec's target, not yet wired).
+- The chrome is `SiteHeader` (four nav items, mega menu, drawer) +
+  `AnnouncementBar` + `MobileBottomBar` + `WhatsAppFab` + `SearchOverlay` +
+  `Footer`, all mounted by `src/app/[locale]/(v2)/layout.tsx`. The drawer and
+  the search overlay are opened through module signals
+  (`src/lib/search-signal.ts`), because their triggers are not descendants of
+  the components that own them.
+- Two ornaments are deliberately unmounted: the first-visit `Preloader` and
+  the `CursorFollower`. Part 14 forbids anything that delays the LCP and opens
+  by rejecting motion that is a technology demo. Both files remain — remounting
+  either is one line in the layout.
+- The Studio is English-only by design and consumes the shadcn semantic layer,
+  re-pointed under the `.studio-v2` scope in globals.css (with its own
+  `prefers-color-scheme: dark` block). The commission board is built on the
+  real `InquiryStatus` enum, not the nine columns §12.4 lists — those do not
+  exist in the schema, and §1.1 forbids changing it.
+- Vitest covers the pure `src/lib` functions (naming, search vocabulary,
+  localize, WhatsApp links, form-token gate, day bucketing) plus
+  `scripts/e2e-smoke.mjs`. There is no component-test runner.
+
+## Conventions
+- TypeScript strict; no `any`; named exports; server components by default,
+  `"use client"` only for interactivity/motion.
+- **Never call setState synchronously in an effect body** — the repo lints for
+  it (`react-hooks/set-state-in-effect`). Use `useSyncExternalStore` (see
+  `src/hooks/use-prefers-reduced-motion.ts` and `use-overlay-signal.ts`), an
+  event callback, or a direct DOM write.
+- Styling: Tailwind classes referencing the tokens only. **No raw hex in
+  components.** Logical properties everywhere (`ps-`/`pe-`/`ms-`/`me-`/
+  `start-`/`end-`) — Arabic is a shipped locale and an unmirrored RTL is worse
+  than none.
+- Motion: every effect must (1) use the Part 3.8 tokens, (2) have a
+  reduced-motion fallback, (3) never scroll-jack beyond the two sanctioned
+  pins (the homepage material story, the process steps).
+- All user-facing copy goes through next-intl. Add the key to
+  `messages/en.json` first, then translate the batch into ar/de/es/fr/gu/hi/
+  ja/zh — `scripts/i18n-missing.mjs` is the gate that catches a key rendering
+  as English in eight languages.
+- Commits: feat|fix|chore|refactor(scope): message. Small, verified commits.
+
+## Known gaps (data, not design)
+
+These are places where the spec asks for something the database cannot express.
+Each renders nothing rather than inventing content, and each becomes real the
+moment the owner fills the field.
+
+Three former entries are gone, closed by migration `20260824110000`:
+`BlogCategory`/`Tag` now carry `translations` (names in nine languages),
+`PortfolioImage` carries a translatable `caption`, and `Media` carries
+`provenance` — so §12.5's "AI Generated" filter and indicator are built.
+
+**There are no `/* i18n-debt */` markers left.** The PDP's lexical rows resolve
+through `localizeLexical` (per row and per field, so a partial translation
+never deletes the rows it did not reach) and the search overlay's journal
+category through `localizeName`. The rate-limited login now shows its
+countdown: `authorize()` is unchanged — still a bare `null` for a throttled
+attempt, which is what stops a lockout becoming an account-existence oracle —
+and the login Server Action asks the counters separately, after its own
+attempt has already failed and been recorded.
+
+- **No portfolio row carries `beforeImageUrl`**, so the before/after slider —
+  built to §4.6 and §20.5, and wired on the varmala collection and the case
+  studies — never renders on the current data. The column exists; the data
+  does not.
+- **`Inquiry` has no priority column and no cure tracking**, so the commission
+  board's stage timer measures days in pipeline against the published lead-time
+  bands rather than §12.4's invented "Layer 2 · 48 of 72 h".
+- **Product commission "from" prices** are not shown on the bespoke tiles: the
+  catalogue's floor in those categories is a ₹7 bezel finding and a ₹350
+  ornament, so a derived figure would be a real number attached to the wrong
+  thing. The tiles carry timelines instead.
+- **The section manifest covers six pages**, not every page. `/shop`, `/blog`,
+  `/portfolio` and `/faq` are a hero plus their listing — hiding the listing
+  makes the page pointless — and the detail routes are driven by content rather
+  than by an arrangement. See `src/lib/page-sections.ts`.
+- **Account disabled has no state behind it, and a column would not be
+  enough.** `User` has no disabled/suspended flag — access is revoked by
+  deleting the row or bumping `tokenVersion`. Even given one, a distinct
+  "account disabled" banner would answer the account-enumeration question the
+  generic sign-in message exists to withhold. `?error=disabled` renders; nothing
+  sets it.
+
+## Definition of done (every task)
+typecheck ✓ lint ✓ build ✓ · works at 360px and 1280px · keyboard reachable ·
+reduced-motion checked · screenshots verified · HARD RULES respected ·
+`scripts/redesign-audit.mjs` and `scripts/a11y-audit.mjs` gate every PR over 12
+public routes, so run them by hand only for a route CI cannot reach (/product,
+/blog, /portfolio, /p) · order flow intact:
+Place Order saves an Inquiry and opens wa.me/917096036250 with the correct
+pre-filled message.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

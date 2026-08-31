@@ -1,0 +1,217 @@
+# Quality gates on every pull request: typecheck, lint, unit tests, the real
+# production build, and the two design gates.
+#
+# The build job runs the REAL build command, so it exercises `prisma migrate
+# deploy` + bootstrap against a throwaway Postgres exactly as Vercel does:
+# a migration that would break the deploy fails here first. It then STARTS the
+# server it just built and runs `redesign-audit.mjs` and `a11y-audit.mjs`
+# against it — the two checks that used to be run by hand, and the reason a
+# §3.1 band-rhythm violation reached a pull request before anyone noticed.
+#
+# Not in CI: scripts/e2e-smoke.mjs — it needs a populated catalog, so it runs
+# against a running server (`BASE_URL=… npm run test:e2e`), local or deployed.
+name: CI
+
+on:
+  pull_request:
+    branches: [Main]
+  push:
+    branches: [Main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Typecheck · lint · unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Plain `npm ci` (no --ignore-scripts): the postinstall prisma generate
+      # writes src/generated/prisma, which typecheck and the unit suite import.
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm run lint
+
+      # The Site Copy registry is generated from messages/en.json. If a key is
+      # added without regenerating, the owner has no field for it in
+      # /studio/site-copy — the string ships un-editable and nobody notices
+      # until they go looking for it.
+      - run: npm run copy:check
+
+      # A key added to `en.json` and nowhere else renders as its own dotted
+      # path in eight languages, and nothing else in this pipeline notices.
+      # The script already exited 1 on a missing key — it was simply never
+      # mounted. Keys merely IDENTICAL to English are printed, not failed:
+      # a brand name, "OK" and a unit are legitimately the same word.
+      - name: Translation coverage
+        run: node scripts/i18n-missing.mjs
+
+      - run: npm run test
+
+  build:
+    name: Production build · design & a11y audits
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: resinriva_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/resinriva_ci
+      # Was build-time only; the Studio audit below now signs in against the
+      # throwaway server, so CI does issue a session. AUTH_TRUST_HOST is what
+      # makes that work off Vercel — without it Auth.js answers every login
+      # with UntrustedHost and the audit fails at the sign-in step.
+      AUTH_SECRET: ci-build-secret-0000000000000000000000
+      AUTH_TRUST_HOST: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # The routes the audits sweep. Every public page that renders on a
+      # freshly bootstrapped database — which is what CI has: `prisma/seed.ts`
+      # gives it categories, FAQs and legal pages, `seed-blogs.ts` the journal,
+      # and there is no catalogue. Detail routes (/product/…, /blog/…,
+      # /portfolio/…) are deliberately absent: their slugs depend on content CI
+      # does not have, and a gate that guesses a URL fails on the wrong thing.
+      # /search is a query-only noindex route with nothing to audit empty.
+      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms"
+      # Arabic is a shipped locale and nothing in CI ever loaded one. The repo
+      # carries 29 `rtl:` variants across 19 files and four JS direction
+      # inversions (lightbox, gallery, cure line) that no gate protected: a
+      # `pl-`/`left-` slipping back in mirrors the page for `ar` readers and
+      # passes every English check. A short set is enough — the chrome, a
+      # grid, a form and a prose page cover every layout family, and the
+      # horizontal-overflow assertion is what catches an unmirrored rule.
+      # Detail routes stay out for the same reason they do above: CI has no
+      # catalogue.
+      AR_ROUTES: "/ar,/ar/shop,/ar/about,/ar/contact,/ar/privacy,/ar/large-resin-art"
+      BASE_URL: http://127.0.0.1:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # `npm run build` = prisma migrate deploy && tsx prisma/bootstrap.ts &&
+      # next build — the same sequence Vercel runs.
+      - run: npm run build
+
+      # The audits drive a real browser. The version is read from
+      # `playwright-core` rather than pinned here, so bumping the dependency
+      # cannot leave CI installing a revision its own library refuses to use.
+      - name: Install Chromium
+        run: |
+          npx --yes playwright@"$(node -p "require('playwright-core/package.json').version")" \
+            install --with-deps chromium
+
+      - name: Start the built server
+        run: |
+          nohup npx next start -p 3000 > /tmp/next.log 2>&1 &
+          for _ in $(seq 1 60); do
+            if curl -sf -o /dev/null http://127.0.0.1:3000/; then
+              echo "server up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::the built server did not come up within 60s"
+          cat /tmp/next.log
+          exit 1
+
+      # REDESIGN.md Part 19.1: one h1, no repeated section heading, at most
+      # two major sections, at most three dark bands and never adjacent,
+      # numbers in mono, alt text that describes the picture, no horizontal
+      # overflow. Both widths, because overflow is a width-specific bug.
+      - name: Design audit
+        run: |
+          node scripts/redesign-audit.mjs "$AUDIT_ROUTES"
+          node scripts/redesign-audit.mjs "$AUDIT_ROUTES" --w 390
+
+      # The same structural gate under `dir="rtl"`. 390px is the one that
+      # matters: an unmirrored physical property shows up as horizontal
+      # overflow long before it shows up as anything a reviewer would notice.
+      - name: Design audit (RTL)
+        run: |
+          node scripts/redesign-audit.mjs "$AR_ROUTES"
+          node scripts/redesign-audit.mjs "$AR_ROUTES" --w 390
+
+      # §19.6: zero axe critical or serious violations. Moderate and minor are
+      # printed, not failed — a gate that cries wolf stops being read.
+      - name: Accessibility audit
+        run: |
+          node scripts/a11y-audit.mjs "$AUDIT_ROUTES"
+          node scripts/a11y-audit.mjs "$AUDIT_ROUTES" --w 390
+          node scripts/a11y-audit.mjs "$AR_ROUTES" --w 390
+
+      # The Studio's own gate — the 30 staff routes the two audits above
+      # cannot reach, because every one of them is behind `requireStaffPage`.
+      # It signs in once and runs axe plus the structural checks (single h1,
+      # no horizontal overflow, tables with headers, every control named).
+      #
+      # Both widths, and 390px is the one that matters: the Studio gets used
+      # on a phone in the workshop, and eight of these screens used to scroll
+      # the whole page sideways — /studio/scraper/sources rendered 783px into
+      # a 390px viewport.
+      #
+      # The credentials are literals for the same reason AUTH_SECRET above is:
+      # the database is a throwaway container the runner destroys, and the
+      # script that creates the row refuses any non-local DATABASE_URL.
+      - name: Studio audit
+        env:
+          STUDIO_EMAIL: studio-audit@example.com
+          STUDIO_PASSWORD: ci-studio-audit-only
+        run: |
+          npx tsx scripts/ci-staff-user.ts
+          node scripts/studio-audit.mjs
+          node scripts/studio-audit.mjs --w 390
+
+      # Lighthouse over the two routes that exist without an owner-fed
+      # catalog. Performance, a11y, SEO and best-practices are ALL enforced
+      # (defaults: perf >= 85, a11y >= 95; the site measures 98/100/96/100).
+      #
+      # Perf was ungated for exactly one run, because the first numbers looked
+      # like a site problem - 43 on this runner - and a budget guessed from a
+      # number you cannot explain is worthless. The cause was this script
+      # asking for a desktop form factor while leaving Lighthouse's MOBILE
+      # throttling default in place; correcting it moved the same page from
+      # 59 to 98.
+      - name: Lighthouse budget
+        run: LH_BASE=http://127.0.0.1:3000 node scripts/lighthouse-audit.mjs
+
+      # `next start` detaches its real server into a process group of its own,
+      # so neither the launcher's `$!` nor `setsid $!` is the thing to kill —
+      # both were tried and both leave the server running. Resolve it instead.
+      - name: Stop the server
+        if: always()
+        run: |
+          pids=$(ps -eo pid,args | awk '/next-server/ && !/awk/ {print $1}')
+          if [ -n "$pids" ]; then kill $pids 2>/dev/null || true; fi
+          exit 0
+
+      # The server log is where a 500 during an audit explains itself.
+      - name: Server log
+        if: failure()
+        run: cat /tmp/next.log || true
