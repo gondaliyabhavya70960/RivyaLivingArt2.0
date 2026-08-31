@@ -87,29 +87,23 @@ Workflow, in this order — the registry step is a CI gate, not optional:
   under decision D3 the fix is to generate NEW imagery for the new domain rather than to recover
   the old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals.
 
-- **NOTHING currently verifies this project except local runs.** Both CI paths are down, for two
-  unrelated reasons, and an earlier version of this file wrongly called Vercel "the working CI" —
-  it is not.
-  - **GitHub Actions**: cannot allocate a runner (minutes/spending limit). Jobs die in ~2s with
-    `runner_id: 0` and no logs. The design, a11y, studio and Lighthouse audits run ONLY here, so
-    they have never executed in CI.
-  - **Vercel**: every build — preview and production alike — fails at `next build` with
-    `Invalid environment configuration: AUTH_SECRET is required` and
-    `NEXT_PUBLIC_SITE_URL: Invalid URL` (`src/lib/env.ts:50`, reached via `src/lib/db.ts:3`).
-  - **What Vercel DOES verify, and it is not nothing:** it gets through `prisma migrate deploy`
-    and `prisma/bootstrap.ts` against a live Neon database before failing, so migrations, the
-    seed, the four-tier import (4,373 products) and the portfolio seed are genuinely exercised on
-    the production path. The build and render path is not.
-  - Read the logs with `mcp__Vercel__get_deployment_build_logs`; project
-    `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+- **Vercel builds now COMPLETE — this is the project's working verification.** GitHub Actions still
+  cannot allocate a runner (billing), so the design, a11y, studio and Lighthouse audits still run
+  only in local runs. But Vercel runs the real production path on every push —
+  `prisma migrate deploy` → `prisma/bootstrap.ts` → `next build` — against a live Neon database with
+  per-branch preview databases, and as of `4b8aac7` it reports `Build Completed in /vercel/output`.
+  That is the first completed build in this project's history.
+  Read the logs with `mcp__Vercel__get_deployment_build_logs`; project
+  `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
 
-- **OWNER ACTION — two env vars unblock every Vercel build** (Settings → Environment Variables,
-  all environments): `AUTH_SECRET` (unset; any strong random string, `openssl rand -base64 32`) and
-  `NEXT_PUBLIC_SITE_URL` (currently fails `z.string().url()` — needs a full absolute URL with
-  scheme, e.g. `https://store.bhavyagondaliya.co.in`; it is `.optional()`, so clearing it also
-  passes). Neither is a code problem: `git log --all -- src/lib/env.ts` returns only the baseline
-  import commit.
-  Project `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+  Two earlier env failures are resolved and should not be re-diagnosed:
+  `Connection url is empty` (the production DB URL was unset — the owner set it), and
+  `AUTH_SECRET is required` / `NEXT_PUBLIC_SITE_URL: Invalid URL`. The second was half owner action
+  (`AUTH_SECRET`) and half a real code bug, fixed in `f1538ac`: a variable declared with **no value**
+  arrives as `""`, which `.optional()` does not admit and `??` does not replace. `env.ts` strips
+  blanks before parsing and `constants.ts` falls back on blank as well as absent — the latter
+  mattered most, because a blank `NEXT_PUBLIC_WHATSAPP_NUMBER` would have emptied every `wa.me`
+  link on a WhatsApp-only business with the build still passing.
 
 - **Production env vars were missing and are now set.** The first production deploy (Phase 1 merge,
   `2382d02`) died at `Error: Connection url is empty` because the Vercel Production environment had
