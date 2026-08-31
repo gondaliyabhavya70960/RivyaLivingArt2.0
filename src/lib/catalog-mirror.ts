@@ -76,7 +76,7 @@ const CONCURRENCY = 6;
 const MAX_BYTES = 8 * 1024 * 1024;
 /** Honest self-identification for the source hosts we fetch from. */
 const USER_AGENT =
-  "Rivya Living ArtImageMirror/1.0 (+https://store.bhavyagondaliya.co.in; catalog image mirroring)";
+  "Rivya Living ArtImageMirror/1.0 (+https://www.rivyalivingart.com; catalog image mirroring)";
 
 /**
  * Shopify's CDN resizes server-side via ?width=. One mirrored 1600px file

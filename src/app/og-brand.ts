@@ -6,7 +6,7 @@ import { getSiteSettings } from "@/lib/site-settings";
  * domain under it.
  *
  * Both used to be literals in each of the four `opengraph-image.tsx` files —
- * `Rivya Living Art` and `store.bhavyagondaliya.co.in`, written out four times. The
+ * `Rivya Living Art` and `www.rivyalivingart.com`, written out four times. The
  * name is owner-editable in Settings and the domain follows
  * `NEXT_PUBLIC_SITE_URL`, so a rebrand or a domain move left four sharing
  * cards quietly wrong, in the one place nobody looks: other people's chats.

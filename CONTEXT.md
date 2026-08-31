@@ -146,7 +146,7 @@
 - Favicons: `src/app/icon.svg` (RR monogram, sapphire gradient + gold glint) + generated `public/icon-512.png` + `src/app/apple-icon.png`; scaffold favicon.ico removed.
 - **DEMO cleanup DONE**: seed.ts no longer creates DEMO products; DB purged (0 products, 0 testimonials — catalog is 100% owner-fed). All 7 docs completed to launch state.
 - Verified: sitemap 29 URLs, robots correct, manifest #0F52BA, OG 200 image/png, Organization+LocalBusiness+FAQPage JSON-LD present.
-- **Deploy is owner-run** (no Vercel CLI creds here): import repo in Vercel → Neon + Blob storage → env vars → `prisma migrate deploy` + `db:seed` + `db:seed:blogs` → domain store.bhavyagondaliya.co.in → enable Analytics/Speed Insights. Full steps in DEPLOYMENT.md. Vercel MCP `deploy_to_vercel` returns CLI instructions only (needs a linked .vercel dir).
+- **Deploy is owner-run** (no Vercel CLI creds here): import repo in Vercel → Neon + Blob storage → env vars → `prisma migrate deploy` + `db:seed` + `db:seed:blogs` → domain www.rivyalivingart.com → enable Analytics/Speed Insights. Full steps in DEPLOYMENT.md. Vercel MCP `deploy_to_vercel` returns CLI instructions only (needs a linked .vercel dir).
 
 ### ✅ Phase 11 — Competitor Research + Blog + Catalog Channels (complete — PROJECT DONE)
 - **COMPETITOR.md**: 17 evidence-based entries (11 India direct incl. the verified seed list, 4 global, 2 marketplace-lens) in the mandated 7-field template with honest search-snippet hedges; 39 deduped scrape-source candidates (19 RESIN_GOODS / 11 SUPPLIES / 9 PRINT3D) cross-checked against the 34 seeded sources — **added only after live fingerprint verification in production** (egress policy blocked probes here); market-gap + India-pricing + blog-opportunity synthesis.
@@ -214,7 +214,7 @@ Currency & locale: prices in INR with Indian digit grouping via `Intl.NumberForm
 - All orders finalized through WhatsApp (save Inquiry to DB first, then redirect to wa.me)
 - Scraped content is research reference ONLY: scraper imports are DRAFT + needsRewrite=true; publish blocked until the owner confirms rewrite
 - Never copy competitor text, images, or product names — category concepts and structure only
-- Exact business values everywhere: WhatsApp `wa.me/917096036250`, phone +91 7096036250, email gondaliyabhavya70960@gmail.com, site https://store.bhavyagondaliya.co.in, maps https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6
+- Exact business values everywhere: WhatsApp `wa.me/917096036250`, phone +91 7096036250, email gondaliyabhavya70960@gmail.com, site https://www.rivyalivingart.com, maps https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6
 
 ## 6. FOLDER STRUCTURE (target — created in Phase 2+)
 
@@ -302,7 +302,7 @@ _None built yet. Planned:_
 ```
 DATABASE_URL=                # AUTO-INJECTED by Neon native integration; pull locally with `vercel env pull`
 AUTH_SECRET=
-AUTH_URL=https://store.bhavyagondaliya.co.in
+AUTH_URL=https://www.rivyalivingart.com
 ADMIN_EMAIL=gondaliyabhavya70960@gmail.com
 ADMIN_PASSWORD=              # used by seed script only
 BLOB_READ_WRITE_TOKEN=       # AUTO-INJECTED when Vercel Blob store is connected
@@ -310,14 +310,14 @@ RESEND_API_KEY=              # optional — Resend via Vercel Marketplace
 GOOGLE_SERVICE_ACCOUNT_JSON= # optional — enables direct Google Sheet sync from the Product Scraper
 SCRAPE_SHEET_ID=             # optional — the designated Google Sheet for scraped products
 NEXT_PUBLIC_WHATSAPP_NUMBER=917096036250
-NEXT_PUBLIC_SITE_URL=https://store.bhavyagondaliya.co.in
+NEXT_PUBLIC_SITE_URL=https://www.rivyalivingart.com
 ```
 
 ## 12. PROJECT STATUS — COMPLETE
 
 **All 12 build phases are done and pushed.** There is no "next phase." The remaining work is the owner's, not a build phase:
 
-1. **Deploy** (DEPLOYMENT.md): import the repo in Vercel → create Neon Postgres + Blob store in the Storage tab → set env vars (AUTH_SECRET, AUTH_URL, ADMIN_EMAIL/PASSWORD, NEXT_PUBLIC_*) → `prisma migrate deploy` → `npm run db:seed` then `npm run db:seed:blogs` → add domain store.bhavyagondaliya.co.in → enable Web Analytics + Speed Insights.
+1. **Deploy** (DEPLOYMENT.md): import the repo in Vercel → create Neon Postgres + Blob store in the Storage tab → set env vars (AUTH_SECRET, AUTH_URL, ADMIN_EMAIL/PASSWORD, NEXT_PUBLIC_*) → `prisma migrate deploy` → `npm run db:seed` then `npm run db:seed:blogs` → add domain www.rivyalivingart.com → enable Web Analytics + Speed Insights.
 2. **Fill the catalog** — owner-only, three channels: Product Scraper (Studio → Scraper; run the tier-1 sites live, review, approve to DRAFT, rewrite, publish), Bulk Import (Google Sheet/CSV), or manual adds. NO products are auto-generated, ever.
 3. **Assets** — replace placeholder blog cover images with real photos, set the real Instagram handle in Site Settings. (Brand logo SVG + favicon are now in place.)
 

@@ -1,6 +1,6 @@
 # Rivya Living Art — Luxury Resin Art & 3D Printing Platform
 
-**Live site:** [store.bhavyagondaliya.co.in](https://store.bhavyagondaliya.co.in) · **Admin studio:** [store.bhavyagondaliya.co.in/studio](https://store.bhavyagondaliya.co.in/studio)
+**Live site:** [www.rivyalivingart.com](https://www.rivyalivingart.com) · **Admin studio:** [www.rivyalivingart.com/studio](https://www.rivyalivingart.com/studio)
 
 Rivya Living Art is a production-ready, luxury e-commerce **showcase** platform for custom resin art, custom 3D printing, personalized resin gifts, nameplates, wedding resin art, corporate gifting, and home decor — built on Next.js and Vercel-native services, with every order finalized on **WhatsApp** (no payment gateway, no checkout, no customer accounts).
 
@@ -11,8 +11,8 @@ Rivya Living Art is a production-ready, luxury e-commerce **showcase** platform 
 | | |
 |---|---|
 | Brand | **Rivya Living Art** |
-| Website | https://store.bhavyagondaliya.co.in |
-| Admin Panel | https://store.bhavyagondaliya.co.in/studio |
+| Website | https://www.rivyalivingart.com |
+| Admin Panel | https://www.rivyalivingart.com/studio |
 | Phone | +91 7096036250 |
 | WhatsApp | +91 7096036250 (`wa.me/917096036250`) |
 | Email | gondaliyabhavya70960@gmail.com |

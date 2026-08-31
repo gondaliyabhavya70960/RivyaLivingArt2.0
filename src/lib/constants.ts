@@ -1,8 +1,29 @@
+/**
+ * Fall back when a variable is absent OR declared with no value.
+ *
+ * `??` catches only `null`/`undefined`. A hosting dashboard makes it easy to
+ * add a key and leave the value blank, which arrives as `""` — a defined
+ * string, so `??` keeps it and the fallback never fires.
+ *
+ * That is a silent failure here, not a loud one: the build succeeds and
+ * `SITE.url` becomes `""`, breaking every canonical link, OG card, sitemap
+ * entry and `metadataBase`. `SITE.whatsappNumber` is worse — blank it and
+ * every `wa.me` link breaks, which on a WhatsApp-only business is the entire
+ * conversion path, with nothing in the build to say so.
+ *
+ * `src/lib/env.ts` strips blanks for the validated server env; this is the
+ * same rule for the two public values, which client components read directly
+ * and which therefore cannot import that server-only module.
+ */
+function envOr(value: string | undefined, fallback: string): string {
+  return value !== undefined && value.trim() !== "" ? value : fallback;
+}
+
 export const SITE = {
   name: "Rivya Living Art",
   tagline: "Luxury custom resin art & 3D printing, made to order in India",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://store.bhavyagondaliya.co.in",
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "917096036250",
+  url: envOr(process.env.NEXT_PUBLIC_SITE_URL, "https://www.rivyalivingart.com"),
+  whatsappNumber: envOr(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "917096036250"),
   phoneDisplay: "+91 7096036250",
   phoneTel: "+917096036250",
   email: "gondaliyabhavya70960@gmail.com",

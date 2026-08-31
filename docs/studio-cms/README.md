@@ -1,6 +1,6 @@
 # Studio CMS — Making Every Word and Every Picture Editable
 
-**Goal:** every word, image, link and section on `store.bhavyagondaliya.co.in`
+**Goal:** every word, image, link and section on `www.rivyalivingart.com`
 editable from `/studio`, with no deploy.
 
 > ## ✅ Built.

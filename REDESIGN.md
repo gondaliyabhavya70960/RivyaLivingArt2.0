@@ -1,7 +1,7 @@
 # RIVYA LIVING ART — Master UI/UX Redesign Specification
 
 **v1.0 · Consolidated**
-**Storefront:** store.bhavyagondaliya.co.in · **Studio:** /studio
+**Storefront:** www.rivyalivingart.com · **Studio:** /studio
 **Scope:** visual design, UI and UX only
 
 This document merges three sources into one buildable spec:

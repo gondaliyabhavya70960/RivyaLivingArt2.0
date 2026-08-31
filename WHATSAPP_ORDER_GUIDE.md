@@ -41,7 +41,7 @@ https://xxxx.public.blob.vercel-storage.com/refs/ref2.jpg
 Name: Priya Sharma
 Phone: +91 98XXXXXXXX
 Email: priya@example.com
-(#RR-1042 · Sent from store.bhavyagondaliya.co.in)
+(#RR-1042 · Sent from www.rivyalivingart.com)
 ```
 
 Line-by-line rules:
@@ -52,7 +52,7 @@ Line-by-line rules:
 - `*Reference Images:*` heading + one URL per line — only when images were uploaded.
 - `*Additional Notes:*` — only when notes exist. On the custom-order form, the design idea and extra notes are combined into this block.
 - `*Customer Details:*` — Name and Phone always; Email only when provided.
-- Final (provenance) line: `(#RR-<n> · Sent from store.bhavyagondaliya.co.in)` — the `#RR-<n>` inquiry reference is assigned by the database, so the **server-rebuilt** message carries it; the live client preview shows the line without it.
+- Final (provenance) line: `(#RR-<n> · Sent from www.rivyalivingart.com)` — the `#RR-<n>` inquiry reference is assigned by the database, so the **server-rebuilt** message carries it; the live client preview shows the line without it.
 - **Localization:** on non-English locales the intro is localized and every label renders bilingually as `<localized> / <English>` (so staff can always read the message); the `#RR` reference stays script-neutral.
 
 ### Message length — character + encoded-length budgets

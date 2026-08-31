@@ -4,7 +4,7 @@ How Rivya Living Art is found on Google — the metadata system, structured data
 
 ## 1. Metadata system
 
-- Every route uses the **Next.js Metadata API**. The root layout sets `metadataBase` to `https://store.bhavyagondaliya.co.in`, a default title ("Rivya Living Art — Luxury Custom Resin Art & 3D Printing"), a `%s · Rivya Living Art` title template, and the default description.
+- Every route uses the **Next.js Metadata API**. The root layout sets `metadataBase` to `https://www.rivyalivingart.com`, a default title ("Rivya Living Art — Luxury Custom Resin Art & 3D Printing"), a `%s · Rivya Living Art` title template, and the default description.
 - **Per-entity SEO fields**, editable in the Studio on each item's form:
   - **Products** — `seoTitle`, `seoDescription`, `ogImage` (custom share image)
   - **Blog posts** — `seoTitle`, `seoDescription`
@@ -12,7 +12,7 @@ How Rivya Living Art is found on Google — the metadata system, structured data
   - Portfolio items, categories, and other public pages derive their metadata from their own content (title, story/description, first image) — they carry no separate SEO fields.
 - **Site-wide defaults** live in Site Settings (`defaultSeo`) and are edited at **/studio/seo**. Anything left blank on an item falls back to these, then to the layout defaults.
 - Dynamic pages (`/shop/[category]`, `/product/[slug]`, `/blog/[slug]`, `/portfolio/[slug]`) build their metadata from the database via `generateMetadata`.
-- **Canonical URLs** are set on all indexable pages, pointing at the `https://store.bhavyagondaliya.co.in` domain, so preview deployments and query-string variants never split ranking signal.
+- **Canonical URLs** are set on all indexable pages, pointing at the `https://www.rivyalivingart.com` domain, so preview deployments and query-string variants never split ranking signal.
 - Noindex where it belongs: `/whatsapp-order` (private landing pad) is `robots: noindex`; `/api` is blocked in robots and `/studio` is de-indexed via header (both below); draft previews (staff-only Next draft mode via `/api/draft`) are never linked publicly.
 
 ### Localized SEO (9 locales)
@@ -32,7 +32,7 @@ Structured data rendered server-side, using **only the exact business facts**:
 
 | Schema type | Where | Notes |
 |---|---|---|
-| `Organization` | site-wide | Rivya Living Art, logo, `https://store.bhavyagondaliya.co.in`, social profiles |
+| `Organization` | site-wide | Rivya Living Art, logo, `https://www.rivyalivingart.com`, social profiles |
 | `LocalBusiness` | site-wide / contact | phone `+91 7096036250`, email `gondaliyabhavya70960@gmail.com`, maps `https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6` |
 | `Product` | product pages | name, images, description, INR price range (`priceCurrency: INR`) matching the visible band; omitted when the product hides its price |
 | `Article` | blog posts | headline, cover, author, publish date |

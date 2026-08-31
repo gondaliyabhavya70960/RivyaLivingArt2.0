@@ -155,7 +155,7 @@ const FAQS: { question: string; answer: string }[] = [
 const PRIVACY_MD = `
 ## Who we are
 
-Rivya Living Art is a made-to-order resin art and 3D-printing studio, and this website — store.bhavyagondaliya.co.in — is our online showcase. This policy explains what information we collect when you use the site, why we collect it, and the choices you have. We have kept it in plain language on purpose: if anything is unclear, you are always welcome to ask us directly on WhatsApp.
+Rivya Living Art is a made-to-order resin art and 3D-printing studio, and this website — www.rivyalivingart.com — is our online showcase. This policy explains what information we collect when you use the site, why we collect it, and the choices you have. We have kept it in plain language on purpose: if anything is unclear, you are always welcome to ask us directly on WhatsApp.
 
 ## What we collect
 
@@ -218,13 +218,13 @@ If our practices change, we will update this page and revise the "last updated" 
 Rivya Living Art
 Email: gondaliyabhavya70960@gmail.com
 WhatsApp: +91 7096036250
-Website: store.bhavyagondaliya.co.in
+Website: www.rivyalivingart.com
 `.trim();
 
 const TERMS_MD = `
 ## The nature of our service
 
-Rivya Living Art — store.bhavyagondaliya.co.in — is a showcase website for made-to-order resin art, personalized gifts, 3D-printed pieces and workshop sessions. The site itself has no online checkout: every order is finalized personally on WhatsApp, where we confirm your customizations, quote, timeline and delivery details before any work begins. By placing an inquiry or ordering with us, you agree to these terms.
+Rivya Living Art — www.rivyalivingart.com — is a showcase website for made-to-order resin art, personalized gifts, 3D-printed pieces and workshop sessions. The site itself has no online checkout: every order is finalized personally on WhatsApp, where we confirm your customizations, quote, timeline and delivery details before any work begins. By placing an inquiry or ordering with us, you agree to these terms.
 
 ## Quotes & payment
 
@@ -265,7 +265,7 @@ Questions about these terms, an order, or anything else:
 Rivya Living Art
 Email: gondaliyabhavya70960@gmail.com
 WhatsApp: +91 7096036250
-Website: store.bhavyagondaliya.co.in
+Website: www.rivyalivingart.com
 `.trim();
 
 async function main() {
