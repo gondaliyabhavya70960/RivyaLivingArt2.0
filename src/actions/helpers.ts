@@ -1,0 +1,168 @@
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+import { defaultLocale, locales } from "@/i18n/config";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import type { Role } from "@/generated/prisma/enums";
+
+export type ActionResult<T = undefined> =
+  | { ok: true; data?: T }
+  | { ok: false; error: string };
+
+/**
+ * Guard for studio server actions. Throws for unauthenticated calls
+ * (middleware should have blocked them already — this is defense in depth).
+ *
+ * Beyond the token check it re-validates the principal against the database
+ * on every call (SEC-106): a deleted user (row gone), a demoted user (fresh
+ * role no longer in `roles`), or a session invalidated by a password reset
+ * (tokenVersion bumped) is rejected immediately, instead of retaining access
+ * until the JWT expires. One indexed primary-key lookup per call.
+ */
+export async function requireStaff(roles: Role[] = ["ADMIN", "EDITOR"]) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const fresh = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true, tokenVersion: true },
+  });
+  if (
+    !fresh ||
+    fresh.tokenVersion !== session.user.tokenVersion ||
+    !roles.includes(fresh.role)
+  ) {
+    throw new Error("Unauthorized");
+  }
+
+  // Reflect the authoritative role back onto the session for callers.
+  session.user.role = fresh.role;
+  return session;
+}
+
+/**
+ * Page-level twin of requireStaff for studio server components: redirects to
+ * the login screen instead of throwing when the principal is no longer valid,
+ * so a revoked session can't keep *viewing* the admin either (SEC-106).
+ */
+export async function requireStaffPage(roles: Role[] = ["ADMIN", "EDITOR"]) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/studio/login");
+
+  const fresh = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true, tokenVersion: true },
+  });
+  if (!fresh || fresh.tokenVersion !== session.user.tokenVersion) {
+    redirect("/studio/login");
+  }
+  // Valid staff session but insufficient role (an EDITOR opening an
+  // ADMIN-only page): send them to the dashboard, not the login screen —
+  // they ARE logged in, and middleware would bounce login straight back.
+  if (!roles.includes(fresh.role)) {
+    redirect("/studio");
+  }
+  session.user.role = fresh.role;
+  return session;
+}
+
+/**
+ * Public-route revalidation after a content mutation (ENG-801). Studio actions
+ * revalidate their own /studio/* paths; this maps a mutated entity to the
+ * public routes that render it so owner edits appear on the live site without
+ * waiting out the 5-minute ISR window. A new content type is one map entry
+ * rather than edits scattered across the action files.
+ */
+export type RevalidatableEntity =
+  | "product"
+  | "category"
+  | "blogPost"
+  | "portfolio"
+  | "faq"
+  | "testimonial"
+  | "page"
+  | "customPage";
+
+/**
+ * Every URL one public path is served at.
+ *
+ * `localePrefix: "as-needed"` (src/i18n/routing.ts) keeps English on the
+ * unprefixed URL and gives every other locale its own — and every one of those
+ * is a SEPARATE cache entry. Revalidating only `/shop` therefore refreshed
+ * English and left the other eight languages serving stale content for the
+ * rest of the ISR window: up to 300s on most routes, 86400s on a PDP. An owner
+ * editing a Hindi product saw nothing change and edited it again.
+ */
+function localizedPaths(path: string): string[] {
+  return locales.map((locale) =>
+    locale === defaultLocale ? path : `/${locale}${path}`,
+  );
+}
+
+/** Same expansion for a dynamic route pattern revalidated as a "page". */
+function revalidateLocalizedPattern(pattern: string) {
+  for (const path of localizedPaths(pattern)) revalidatePath(path, "page");
+}
+
+export function revalidatePublic(entity: RevalidatableEntity, slug?: string) {
+  // Not localized — one file at the root, listing every locale's URLs.
+  revalidatePath("/sitemap.xml");
+
+  const paths: string[] = [];
+  switch (entity) {
+    case "product":
+      paths.push("/", "/shop");
+      revalidateLocalizedPattern("/shop/[category]");
+      if (slug) paths.push(`/product/${slug}`);
+      else revalidateLocalizedPattern("/product/[slug]");
+      break;
+    case "category":
+      paths.push("/", "/shop");
+      revalidateLocalizedPattern("/shop/[category]");
+      break;
+    case "blogPost":
+      paths.push("/blog");
+      if (slug) paths.push(`/blog/${slug}`);
+      else revalidateLocalizedPattern("/blog/[slug]");
+      break;
+    case "portfolio":
+      paths.push("/portfolio");
+      if (slug) paths.push(`/portfolio/${slug}`);
+      else revalidateLocalizedPattern("/portfolio/[slug]");
+      break;
+    case "faq":
+      paths.push("/faq");
+      break;
+    case "testimonial":
+      paths.push("/");
+      break;
+    case "page":
+      if (slug) paths.push(`/${slug}`);
+      break;
+    case "customPage":
+      if (slug) paths.push(`/p/${slug}`);
+      else revalidateLocalizedPattern("/p/[slug]");
+      break;
+  }
+  for (const path of paths) {
+    for (const localized of localizedPaths(path)) revalidatePath(localized);
+  }
+}
+
+/** Wraps an action body into a uniform ActionResult, hiding raw errors. */
+export async function runAction<T>(
+  fn: () => Promise<T>,
+): Promise<ActionResult<T>> {
+  try {
+    const data = await fn();
+    return { ok: true, data };
+  } catch (error) {
+    console.error("Action failed:", error);
+    const message =
+      error instanceof Error && error.message === "Unauthorized"
+        ? "You are not allowed to do that."
+        : "Something went wrong. Please try again.";
+    return { ok: false, error: message };
+  }
+}

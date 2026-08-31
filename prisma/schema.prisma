@@ -1,0 +1,998 @@
+// ResinRiva — full data model (CONTEXT.md §3, verbatim structure)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ————————————————————— Auth & staff —————————————————————
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+model User {
+  id               String        @id @default(cuid())
+  name             String
+  email            String        @unique
+  hashedPassword   String
+  role             Role          @default(EDITOR)
+  /// Bumped on delete/demote/password-reset to invalidate outstanding JWT
+  /// sessions immediately (SEC-106). The value is embedded in the token at
+  /// sign-in and re-checked in requireStaff().
+  tokenVersion     Int           @default(0)
+  createdAt        DateTime      @default(now())
+  /// Self-service password reset — SHA-256 of a single-use token, cleared on use.
+  resetTokenHash   String?
+  resetTokenExpiry DateTime?
+  activityLogs     ActivityLog[]
+}
+
+// ————————————————————— Catalog —————————————————————
+
+model Category {
+  id           String      @id @default(cuid())
+  name         String
+  slug         String      @unique
+  image        String?
+  description  String?
+  order        Int         @default(0)
+  /// Per-locale { name, description } overrides; base is English (I3).
+  translations Json?
+  products     Product[]
+  portfolios   Portfolio[]
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Product {
+  id             String               @id @default(cuid())
+  title          String
+  /// Short editorial name for cards and the PDP hero. Null → storefront
+  /// derives one from `title` (cut at the first qualifier separator). The
+  /// full `title` stays canonical for SEO metadata, JSON-LD and WhatsApp.
+  displayName    String?
+  slug           String               @unique
+  shortTagline   String?
+  description    String               @default("")
+  priceMin       Int?
+  priceMax       Int?
+  showPrice      Boolean              @default(true)
+  timeline       String?
+  materials      String?
+  dimensions     String?
+  occasions      Json                 @default("[]") // string array
+  /// Aesop-style lexical rows (benchmark gap 4): [{ label, value }] shown in
+  /// the PDP spec sheet — labels the owner's own ("Suited to", "Pour story").
+  lexical        Json                 @default("[]")
+  /// Cross-tier provenance (benchmark gap 3): the actual supplies/print
+  /// products this piece is made with; the reverse side surfaces "What this
+  /// creates" on the supply's PDP. Owner-linked in the studio, never guessed.
+  madeWith       Product[]            @relation("ProductProvenance")
+  usedIn         Product[]            @relation("ProductProvenance")
+  careNotes      String?              @db.Text
+  status         ContentStatus        @default(DRAFT)
+  featured       Boolean              @default(false)
+  videoUrl       String?
+  model3dUrl     String?
+  categoryId     String
+  category       Category             @relation(fields: [categoryId], references: [id])
+  seoTitle       String?
+  seoDescription String?
+  ogImage        String?
+  /// Per-locale field overrides, shape { [locale]: { field: value } }. The base
+  /// row is English (default locale); missing locales/fields fall back to it (I3).
+  translations   Json?
+  /// Set by the Product Scraper — publish is BLOCKED while true.
+  needsRewrite   Boolean              @default(false)
+  /// Scraper dedupe keys: importSource = source registry key, importRef =
+  /// the competitor's external product id. Re-importing the same pair UPDATES
+  /// this product instead of creating a duplicate.
+  importSource   String?
+  importRef      String?
+  /// Owner-sheet tier (1 owner · 2 resin goods · 3 supplies · 4 3D-print).
+  /// Null for products created in the studio by hand.
+  tier           Int?
+  /// Sheet `status` mapped: active → true, out_of_stock → false.
+  inStock        Boolean              @default(true)
+  /// contentHash of the imported sheet row — lets re-imports skip unchanged
+  /// rows so a 4,000-product deploy pass stays fast.
+  sourceHash     String?
+  /// H5 merge-protection: set by every studio save. The sheet importer
+  /// refreshes availability (inStock/sourceHash) on touched rows but never
+  /// overwrites owner-edited content or images.
+  ownerTouched   Boolean              @default(false)
+  /// When the studio last saved this row. `ownerTouched` says THAT a human
+  /// edited it; this says WHEN, which is what conflict detection needs to
+  /// decide whether the sheet or the studio has the newer version.
+  studioEditedAt DateTime?
+  /// The final-list blessing. CONFIRMED_PRODUCTS is exactly the set of rows
+  /// where this is non-null — never "everything scraped", never "everything
+  /// in the studio". Only an explicit operator action sets it.
+  confirmedAt    DateTime?
+  /// Who blessed it, for the audit trail. Kept as an id rather than a
+  /// relation: a confirmation outlives the staff account that made it, and
+  /// deleting a user must not erase the record that someone approved this.
+  confirmedById  String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  images         ProductImage[]
+  customFields   CustomizationField[]
+  inquiries      Inquiry[]
+
+  @@unique([importSource, importRef])
+  @@index([categoryId, status])
+  @@index([status, featured])
+  @@index([status, createdAt])
+  @@index([status, priceMin])
+  @@index([tier, status])
+  // The confirmed list is read as a whole every time it is synced.
+  @@index([confirmedAt])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String  @default("")
+  order     Int     @default(0)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+enum FieldType {
+  SELECT
+  TEXT
+  SWATCH
+  SIZE
+  NUMBER
+  FILE
+}
+
+model CustomizationField {
+  id        String    @id @default(cuid())
+  productId String
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String
+  type      FieldType
+  options   Json      @default("[]")
+  required  Boolean   @default(false)
+  helpText  String?
+  order     Int       @default(0)
+
+  @@index([productId])
+}
+
+// ————————————————————— Inquiries (WhatsApp orders) —————————————————————
+
+enum InquirySource {
+  PRODUCT
+  CUSTOM_ORDER
+  CONTACT
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  /// Active back-and-forth before a price is set (audit OPS-01).
+  DISCUSSION
+  /// Price shared with the customer, awaiting their confirmation (C1
+  /// pipeline; sits between CONTACTED and CONFIRMED).
+  QUOTED
+  CONFIRMED
+  /// Confirmed and on the bench — poured, curing, finishing (audit OPS-01).
+  IN_PRODUCTION
+  DELIVERED
+  /// Terminal resting place for dead/declined leads — kept for history
+  /// instead of being deleted, and filtered out of the active pipeline (UIUX-610).
+  CLOSED
+  /// Terminal: the lead went quiet or declined after real discussion (audit
+  /// OPS-01) — history kept, filtered from the active pipeline like CLOSED.
+  LOST
+}
+
+model Inquiry {
+  id                 String        @id @default(cuid())
+  /// Human-readable reference (#RR-<number>) shared with the customer in the
+  /// WhatsApp message and shown in the studio inbox (DESIGN.md E6 Phase 3).
+  /// Postgres sequence — assigned on insert, never reused.
+  number             Int           @unique @default(autoincrement())
+  source             InquirySource
+  productId          String?
+  product            Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  customerName       String
+  phone              String
+  email              String?
+  selections         Json          @default("{}")
+  referenceImageUrls Json          @default("[]")
+  budgetRange        String?
+  timeline           String?
+  notes              String        @default("")
+  whatsappMessage    String        @db.Text
+  /// SHA-256 of a one-time claim token returned to the submitter, required to
+  /// re-read this inquiry from the public /whatsapp-order fallback (ENG-811).
+  claimTokenHash     String?
+  /// First-touch marketing attribution captured client-side (utm_*, referrer,
+  /// landing) so per-lead acquisition survives the WhatsApp app switch (MKT-201).
+  attribution        Json?
+  /// Owner-entered pricing (C1: price is settled manually in WhatsApp —
+  /// these fields RECORD that conversation, they never charge anything).
+  quotedPrice        Int?
+  finalPrice         Int?
+  /// Internal notes for the studio team — never shown to the customer.
+  staffNotes         String?       @db.Text
+  status             InquiryStatus @default(NEW)
+  createdAt          DateTime      @default(now())
+
+  @@index([status, createdAt])
+}
+
+// ————————————————————— Portfolio —————————————————————
+
+model Portfolio {
+  id             String           @id @default(cuid())
+  title          String
+  slug           String           @unique
+  story          String           @default("")
+  /// Case-study narrative (audit CS-01) — optional; the public piece page
+  /// renders each section only when filled. brief = the client's ask,
+  /// process = how it was made, clientNote = the client's words after
+  /// delivery (real words only — the no-invented-content rule applies).
+  brief          String?          @db.Text
+  process        String?          @db.Text
+  clientNote     String?          @db.Text
+  /// Editorial card meta — the "Surat · 2026" line on archive tiles.
+  location       String?
+  year           Int?
+  beforeImageUrl String?
+  afterImageUrl  String?
+  videoUrl       String?
+  resultsMeta    Json             @default("{}") // ADM-style: type, material, size, timeline
+  /// Per-locale { title, story } overrides; base row is English (I3).
+  translations   Json?
+  categoryId     String?
+  category       Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status         ContentStatus    @default(DRAFT)
+  createdAt      DateTime         @default(now())
+  images         PortfolioImage[]
+
+  // Public list/home/sitemap filter by status + order by createdAt; the detail
+  // "related" query filters categoryId + status. Product/BlogPost carry the
+  // equivalent indexes; Portfolio had none, forcing scan+sort (PERF audit).
+  @@index([status, createdAt])
+  @@index([categoryId, status])
+}
+
+model PortfolioImage {
+  id          String    @id @default(cuid())
+  url         String
+  alt         String    @default("")
+  /// What this frame shows, in the owner's words — printed beside the plate
+  /// number. Distinct from `alt`: alt describes the picture for someone who
+  /// cannot see it, a caption tells everyone something the picture does not.
+  caption     String?
+  /// Per-locale { caption } overrides; base is English (I3).
+  translations Json?
+  order       Int       @default(0)
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+// ————————————————————— Blog —————————————————————
+
+model BlogCategory {
+  id           String     @id @default(cuid())
+  name         String
+  slug         String     @unique
+  /// Per-locale { name } overrides; base is English (I3). The slug is NOT
+  /// translated — it is the URL the category filter is linked by.
+  translations Json?
+  posts        BlogPost[]
+}
+
+model Tag {
+  id           String     @id @default(cuid())
+  name         String
+  slug         String     @unique
+  /// Per-locale { name } overrides; base is English (I3). Same reasoning as
+  /// BlogCategory — the slug stays the URL, the name is what a reader sees.
+  translations Json?
+  posts        BlogPost[]
+}
+
+model BlogPost {
+  id             String        @id @default(cuid())
+  title          String
+  slug           String        @unique
+  excerpt        String        @default("")
+  content        Json          @default("{}") // Tiptap JSON
+  coverImage     String?
+  authorName     String        @default("ResinRiva Studio")
+  blogCategoryId String?
+  blogCategory   BlogCategory? @relation(fields: [blogCategoryId], references: [id], onDelete: SetNull)
+  tags           Tag[]
+  status         ContentStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  /// Per-locale { title, excerpt, content, seoTitle, seoDescription } overrides;
+  /// base row is English (I3).
+  translations   Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+// ————————————————————— Site content —————————————————————
+
+model Testimonial {
+  id           String  @id @default(cuid())
+  name         String
+  location     String?
+  quote        String
+  rating       Int     @default(5) // 1–5
+  avatarUrl    String?
+  order        Int     @default(0)
+  /// Per-locale { quote, location } overrides; base is English (I3).
+  /// The customer's name is never translated.
+  translations Json?
+}
+
+model Faq {
+  id           String @id @default(cuid())
+  question     String
+  answer       String @db.Text
+  order        Int    @default(0)
+  /// Per-locale { question, answer } overrides; base is English (I3).
+  translations Json?
+}
+
+/// Where an asset came from. Recorded at the two places a Media row is
+/// created, and correctable by the owner afterwards — a photograph run
+/// through a generative tool before upload is something only they know.
+enum Provenance {
+  /// Uploaded by a member of staff through the studio.
+  UPLOAD
+  /// Imported from the images this repository ships with.
+  BUNDLED
+  /// Generated by a model. The v3 masters are this, prompt by prompt, per
+  /// docs/media-v3-manifest.json.
+  AI
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  MODEL3D
+}
+
+model Media {
+  id           String    @id @default(cuid())
+  url          String
+  /// Vercel Blob pathname — used for delete/list.
+  pathname     String    @unique
+  type         MediaType @default(IMAGE)
+  folder       String    @default("")
+  bytes        Int       @default(0)
+  width        Int?
+  height       Int?
+  /// The name the file arrived with, kept only so search can find it. The
+  /// stored pathname is normalised — "WhatsApp Image 2026-07-07 at 15.05.34"
+  /// must never reach a production URL.
+  originalName String?
+  /// Default alt text for this asset, inherited anywhere it is used unless
+  /// that place overrides it. One description per picture, not per placement.
+  alt          String?
+  /// sha256 of the bytes. Unique, so re-uploading the same varmala shot
+  /// returns the row that already exists instead of a fourth copy.
+  checksum     String?   @unique
+  /// 20px LQIP data URI, the same treatment the v3 masters get.
+  blurDataUrl  String?   @db.Text
+  /// Average colour as #rrggbb — the ground under a picture before it loads.
+  dominantHex  String?
+  /// How this asset came to be here. Null on rows that predate the column —
+  /// unknown, which renders as no claim rather than a wrong one.
+  provenance   Provenance?
+  createdAt    DateTime  @default(now())
+
+  @@index([folder])
+  // Indexed so the delete guard can look up references by URL (ENG-806).
+  @@index([url])
+}
+
+/// Durable per-key sliding-window counter for security-sensitive rate limits
+/// (login, password reset) so throttling survives serverless cold starts and
+/// fan-out (SEC-102). Public-form spam buckets stay in-memory (rate-limit.ts).
+model RateLimitHit {
+  id  String   @id @default(cuid())
+  key String
+  at  DateTime @default(now())
+
+  @@index([key, at])
+}
+
+model Page {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  content        Json     @default("{}") // Tiptap JSON
+  seoTitle       String?
+  seoDescription String?
+  /// Per-locale { title, content } overrides; base is English (I3).
+  translations   Json?
+  updatedAt      DateTime @updatedAt
+}
+
+/// Singleton — always id "main".
+model SiteSettings {
+  id                   String    @id @default("main")
+  brandName            String    @default("ResinRiva")
+  tagline              String    @default("")
+  logoUrl              String?
+  heroVideoUrl         String?
+  announcement         String?
+  /// Day boundary for the studio charts' buckets: "UTC" (default) or "IST".
+  chartTimezone        String    @default("UTC")
+  phone                String    @default("")
+  whatsappNumber       String    @default("")
+  email                String    @default("")
+  mapsUrl              String    @default("")
+  address              String    @default("")
+  socials              Json      @default("{}")
+  defaultSeo           Json      @default("{}")
+  /// Brand marks. Null falls back to the files bundled in src/app, so an
+  /// environment that has never opened Settings still has a favicon.
+  faviconUrl           String?
+  appIconUrl           String?
+  defaultCareNotes     String?   @db.Text
+  /// Opening hours as [{ days: "Mon–Sat", hours: "10:00–19:00" }, …].
+  /// Empty renders nothing — /contact shows the address alone, as it did
+  /// before this field existed.
+  businessHours        Json      @default("[]")
+  /// "We usually reply within 4 hours." — shown beside the WhatsApp CTA.
+  responseNote         String?
+  /// Announcement scheduling. Null start/end means "no bound on that side",
+  /// so an announcement with neither behaves exactly as it always has.
+  /// Without these a festival strip runs until somebody remembers to clear it.
+  announcementStartsAt DateTime?
+  announcementEndsAt   DateTime?
+  announcementHref     String?
+
+  /* ——— Sheet → catalog auto-fill (Phase 7) ———
+     The importer already ran on every deploy; these put the owner in charge
+     of it. All three default to today's behaviour, so an environment that
+     never opens this screen keeps self-populating exactly as it did. */
+
+  /// Master switch. False stops the fill entirely, deploy included.
+  sheetFillEnabled     Boolean   @default(true)
+  /// Whether a deploy triggers a fill. True keeps a fresh environment
+  /// self-populating from the sheet on first boot, which is the point of
+  /// having it in bootstrap at all.
+  sheetFillOnDeploy    Boolean   @default(true)
+  /// Abort the whole run if it would CREATE more than this many products.
+  /// Null means no cap — today's behaviour. Creates are the dangerous
+  /// direction: a mis-sorted or re-keyed sheet inserts thousands, while
+  /// updates are already held back by `ownerTouched`.
+  sheetFillMaxCreates  Int?
+}
+
+/// One run of the sheet → catalog fill: what it read, what it changed, and
+/// why it stopped if it did. Without this the only record of what a deploy
+/// did to the catalog is a build log nobody keeps.
+model ImportRun {
+  id            String   @id @default(cuid())
+  /// DEPLOY (bootstrap) · MANUAL (studio button) · PREVIEW (dry run)
+  trigger       String
+  dryRun        Boolean  @default(false)
+  rowsRead      Int      @default(0)
+  created       Int      @default(0)
+  updated       Int      @default(0)
+  unchanged     Int      @default(0)
+  failed        Int      @default(0)
+  /// Set when the run refused to write — the cap, or the master switch.
+  abortedReason String?
+  detail        Json     @default("{}")
+  startedAt     DateTime @default(now())
+  finishedAt    DateTime?
+
+  @@index([startedAt])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([entity, createdAt])
+}
+
+/// Tombstones for sheet-imported products the owner deleted in the studio —
+/// the deploy-time importer skips these (importSource, importRef) pairs so a
+/// deletion is never silently resurrected by the next sheet import (audit H5).
+model DeletedImport {
+  id           String   @id @default(cuid())
+  importSource String
+  importRef    String
+  deletedAt    DateTime @default(now())
+
+  @@unique([importSource, importRef])
+}
+
+// ————————————————————— Product Scraper —————————————————————
+
+enum ScrapeTier {
+  OWNER
+  RESIN_GOODS
+  SUPPLIES
+  PRINT3D
+}
+
+/// When a completed scrape pushes its rows to the Google Sheet.
+///
+/// One sync ENGINE, one policy deciding when it fires — not two write paths.
+/// MANUAL is the default because it is what the owner asked for and because
+/// the safe default for writing into a shared document somebody else works in
+/// is "don't".
+enum SheetSyncPolicy {
+  /// Staged only. Rows go to the sheet when the operator says so.
+  MANUAL
+  /// Fires automatically when a job reaches DONE.
+  ON_COMPLETE
+  /// Never. This source's flow does not involve the sheet.
+  OFF
+}
+
+/// Where one staged product stands with the sheet. A row nobody has pushed
+/// must look different from one whose push FAILED — that distinction is the
+/// entire value of showing this.
+enum SheetSyncStatus {
+  NOT_SYNCED
+  SYNC_PENDING
+  SYNCED
+  SYNC_FAILED
+}
+
+enum ScrapePlatform {
+  SHOPIFY
+  WOOCOMMERCE
+  JSONLD
+  UNKNOWN
+}
+
+enum ScrapeJobStatus {
+  QUEUED
+  RUNNING
+  DONE
+  FAILED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IMPORTED
+}
+
+model ScrapeSource {
+  id         String         @id @default(cuid())
+  key        String         @unique
+  name       String
+  baseUrl    String
+  tier       ScrapeTier
+  vertical   String         @default("resin")
+  country    String         @default("IN")
+  platform   ScrapePlatform @default(UNKNOWN)
+  /// Supplies catalogs (moulds, pigments…) — huge, capped runs.
+  supply     Boolean        @default(false)
+  enabled    Boolean        @default(true)
+  verifiedAt DateTime?
+  notes      String?
+  /// Politeness. Null uses the shared default; a site that rate-limits us can
+  /// be slowed without a deploy.
+  requestDelayMs     Int?
+  /// Circuit breaker. Counts consecutive FAILED jobs and resets on the first
+  /// success — a source that fails, succeeds, then fails is having a bad day,
+  /// not blocking us.
+  consecutiveFailures Int      @default(0)
+  /// Set when the breaker trips. A paused source refuses new jobs until an
+  /// operator resumes it, so we stop hammering a site that is down or
+  /// blocking us.
+  pausedAt           DateTime?
+  pausedReason       String?
+  /// When this source's completed scrapes reach the sheet. See SheetSyncPolicy.
+  sheetSyncPolicy    SheetSyncPolicy @default(MANUAL)
+  /// Last successful push, and the last failure — kept separately so a source
+  /// that synced yesterday and failed today still shows both facts.
+  lastSheetSyncAt    DateTime?
+  lastSheetSyncError String?
+  jobs       ScrapeJob[]
+
+  @@index([tier, enabled])
+}
+
+model ScrapeJob {
+  id           String           @id @default(cuid())
+  sourceId     String?
+  source       ScrapeSource?    @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  inputUrl     String
+  sourceKey    String
+  sourceName   String
+  platform     ScrapePlatform
+  vertical     String           @default("resin")
+  status       ScrapeJobStatus  @default(QUEUED)
+  cursorPage   Int              @default(0)
+  totalScraped Int              @default(0)
+  newCount     Int              @default(0)
+  updatedCount Int              @default(0)
+  sheetSynced  Boolean          @default(false)
+  error        String?
+  createdAt    DateTime         @default(now())
+  finishedAt   DateTime?
+  products     ScrapedProduct[]
+
+  @@index([status, createdAt])
+}
+
+model ScrapedProduct {
+  id                String       @id @default(cuid())
+  jobId             String
+  job               ScrapeJob    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  sourceKey         String
+  externalId        String
+  url               String
+  vertical          String       @default("resin")
+  currency          String       @default("INR")
+  title             String
+  slug              String
+  category          String?
+  shortTagline      String?
+  description       String?      @db.Text
+  priceMin          Int?
+  priceMax          Int?
+  showPrice         Boolean?
+  timeline          String?
+  materials         String?
+  dimensions        String?
+  status            String?
+  featured          Boolean?
+  images            Json         @default("[]")
+  imageAlts         Json         @default("[]")
+  fields            Json         @default("{}")
+  seoTitle          String?
+  seoDescription    String?
+  contentHash       String
+  firstSeen         DateTime     @default(now())
+  lastSeen          DateTime     @default(now())
+  reviewStatus      ReviewStatus @default(PENDING)
+  /// Per-row sheet state. Job-level `ScrapeJob.sheetSynced` says a push ran;
+  /// this says whether THIS row made it, which is what a retry needs to know.
+  sheetSyncStatus   SheetSyncStatus @default(NOT_SYNCED)
+  sheetSyncedAt     DateTime?
+  sheetSyncError    String?
+  importedProductId String?
+
+  @@unique([sourceKey, externalId])
+  @@index([reviewStatus])
+  @@index([jobId])
+  // The retry drain asks "what is still pending?" — without this it is a
+  // sequential scan of every staged row, and there are tens of thousands.
+  @@index([sheetSyncStatus])
+}
+
+/// A field that could not be extracted, recorded rather than silently nulled.
+///
+/// "The price is missing" and "the price is null because nobody looked" are
+/// indistinguishable in a nullable column, and only one of them is a problem
+/// somebody should fix. This table is the difference.
+///
+/// One row per (staged product, field): re-scraping the same broken field
+/// updates the existing row instead of adding a second, so the backlog
+/// reflects how many things are wrong, not how often we looked.
+model ValidationFailure {
+  id               String    @id @default(cuid())
+  scrapedProductId String
+  sourceKey        String
+  jobId            String?
+  /// The field that failed — "price", "images", "description".
+  field            String
+  /// Why, in words an operator can act on.
+  reason           String
+  severity         String    @default("WARNING")
+  /// OPEN · REVIEWING · RESOLVED · IGNORED
+  status           String    @default("OPEN")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  resolvedAt       DateTime?
+  resolvedById     String?
+
+  @@unique([scrapedProductId, field])
+  @@index([status, field])
+  @@index([sourceKey, status])
+}
+
+/// A price as it stood at one moment, for one product, from one source.
+///
+/// Append-only: a point is never updated or deleted, because the value of the
+/// series is that it says what the price WAS. Overwriting the last point would
+/// turn a price history into a price.
+///
+/// Deliberately holds plain ids rather than relations. History outlives the
+/// staged row it came from — a scrape job can be deleted to tidy the queue,
+/// and losing three months of price movement with it would be a poor trade.
+model PriceHistory {
+  id               String   @id @default(cuid())
+  /// The staged row this reading came from, when it came from a scrape.
+  scrapedProductId String?
+  /// The catalog product, once the row has been promoted.
+  productId        String?
+  sourceKey        String
+  priceMin         Int?
+  priceMax         Int?
+  currency         String   @default("INR")
+  capturedAt       DateTime @default(now())
+
+  @@index([scrapedProductId, capturedAt])
+  @@index([productId, capturedAt])
+  @@index([sourceKey, capturedAt])
+}
+
+/// Top-of-funnel email capture (MKT-003) — a low-friction owned channel for
+/// high-intent visitors who aren't ready to open WhatsApp (launches, gifting).
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  /// Where they subscribed from — footer, launching-soon, etc.
+  source    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/// Owner override for one named site-image slot (src/lib/site-images.ts).
+///
+/// The storefront's editorial imagery — hero bands, material macros, process
+/// steps, the mega-menu tiles — used to be hardcoded `/media/…` paths that only
+/// a deploy could change. Each of those call sites is now a named slot with a
+/// bundled default, and a row here replaces one slot with something the owner
+/// uploaded through /studio/site-images. No row means the slot renders its
+/// bundled default, so the site is never broken by a missing override and
+/// "reset to default" is a DELETE.
+model SiteImage {
+  /// Slot key from SITE_IMAGE_SLOTS — e.g. "home.hero", "about.material1.macro".
+  key           String   @id
+  /// Resolved public URL (Vercel Blob in production, /uploads locally).
+  url           String
+  /// The Media row this came from, when it was picked from the library.
+  /// Nullable: a slot can point at any URL the owner pastes in.
+  mediaId       String?
+  /// Optional separate crop for viewports below 768px. Ten slots are 16:9 and
+  /// two are 21:9; at 390px those lose their subject entirely. Null renders
+  /// `url` at every width, which is what every slot did before this existed.
+  mobileUrl     String?
+  mobileMediaId String?
+  /// object-position for the desktop crop, 0–1 on each axis. Defaults to dead
+  /// centre, which is what CSS does anyway — so an untouched row renders
+  /// exactly as it did before these columns were added.
+  focalX        Float    @default(0.5)
+  focalY        Float    @default(0.5)
+  /// Staged changes: { url?, mobileUrl?, focalX?, focalY? }. One column rather
+  /// than four parallel `draft*` ones — a slot is staged or it is not, and a
+  /// partial draft is exactly what the object shape expresses.
+  draft         Json?
+  updatedAt     DateTime @updatedAt
+
+  @@index([mediaId])
+}
+
+/// Owner overrides for storefront copy — the text twin of SiteImage.
+///
+/// The message catalogues in /messages stay the source of DEFAULTS and stay in
+/// git; a row here replaces one next-intl key for one locale. No row means the
+/// key renders its shipped default, so an empty table renders the site exactly
+/// as the repo does, a database outage degrades to the shipped copy rather
+/// than to a blank page, and "reset to default" is a DELETE.
+model SiteCopy {
+  /// next-intl message path, e.g. "Home.hero.headline". Validated against the
+  /// generated slot registry on write — an unknown key is refused, not stored.
+  key         String
+  /// Locale code from src/i18n/config.ts. One row per key per locale.
+  locale      String
+  /// The replacement text the storefront renders. Never empty: blanking a
+  /// field deletes the row, because blanking is how an owner asks for the
+  /// default back.
+  value       String   @db.Text
+  /// Staged edit, not yet published. Null means "no pending change", so a row
+  /// with only a `value` behaves exactly as it did before drafts existed.
+  draftValue  String?  @db.Text
+  /// Who last touched it, for the activity trail.
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+
+  @@id([key, locale])
+  @@index([locale])
+}
+
+/// Which commission-form dropdown an option belongs to.
+enum FormOptionList {
+  MATERIAL
+  OCCASION
+  BUDGET
+  TIMELINE
+}
+
+/// The commission form's dropdown choices, owner-editable.
+///
+/// These four lists used to be English string literals in the form component
+/// (`custom-order-form.tsx`), which made them two problems at once: adding a
+/// budget band needed a deploy, and every option rendered in English in all
+/// nine locales inside a form whose labels *were* translated.
+///
+/// `value` and `label` are deliberately separate. `value` is minted once and
+/// never changes — it is what lands on the Inquiry row and what the WhatsApp
+/// message carries, so renaming a band must not rewrite what past customers
+/// asked for. `label` is what the customer reads, per locale, and is the part
+/// the owner edits.
+model FormOption {
+  id      String         @id @default(cuid())
+  list    FormOptionList
+  /// Stable machine value stored on the Inquiry and sent to WhatsApp.
+  value   String
+  /// Localized label, shape { en: "…", hi: "…" }. Missing locales fall back
+  /// to `value`, which is the English text the form shipped with.
+  label   Json           @default("{}")
+  order   Int            @default(0)
+  /// Soft disable — a removed option would orphan the inquiries that chose
+  /// it, so an option is retired by hiding it from the form, never deleted.
+  enabled Boolean        @default(true)
+
+  @@unique([list, value])
+  @@index([list, order])
+}
+
+/// A named navigation menu — the header's four links, the mobile drawer's
+/// quiet second group, and the footer's four columns.
+model NavMenu {
+  /// Registry key from NAV_MENUS — e.g. "header", "footer-explore".
+  key   String    @id
+  items NavItem[]
+}
+
+/// One link in a menu.
+///
+/// Structure only. The LABEL still comes from the `Nav.*` message catalogue by
+/// default, which the copy layer already makes editable in nine languages —
+/// duplicating it here would give one word two owners. `label` is an override,
+/// used for links the owner adds that have no catalogue key of their own.
+model NavItem {
+  id      String  @id @default(cuid())
+  menuKey String
+  menu    NavMenu @relation(fields: [menuKey], references: [key], onDelete: Cascade)
+  /// Stable key. Doubles as the `Nav.*` message key and as the behaviour hook
+  /// — the header renders the mega menu for the item keyed "shop".
+  key     String
+  /// Localized label override, { en: "…", hi: "…" }. Empty falls back to the
+  /// catalogue, so a seeded link keeps its nine translations.
+  label   Json    @default("{}")
+  href    String
+  order   Int     @default(0)
+  /// Hidden rather than deleted, so a link can be taken down for a season and
+  /// put back without retyping it.
+  visible Boolean @default(true)
+  newTab  Boolean @default(false)
+
+  @@unique([menuKey, key])
+  @@index([menuKey, order])
+}
+
+/// A snapshot of one surface's published content, taken just before it is
+/// replaced.
+///
+/// Written by `publishSurface` BEFORE promotion, so a revision always describes
+/// the state that was overwritten rather than the one that replaced it.
+/// Restoring writes back into the DRAFT columns, never straight to live — a
+/// mis-clicked restore is then recoverable by discarding the draft.
+model ContentRevision {
+  id        String   @id @default(cuid())
+  /// Surface group from the copy/image registries — "Homepage", "About", …
+  surface   String
+  /// { copy: { "<key>::<locale>": "…" }, images: { "<key>": { … } } }
+  payload   Json
+  /// Human-readable: "Hero headline, Hero image, 3 more".
+  summary   String?
+  authorId  String?
+  createdAt DateTime @default(now())
+
+  @@index([surface, createdAt])
+}
+
+/// Per-page section manifest: ORDER and VISIBILITY, plus a staged copy of both.
+///
+/// Never the copy or the pictures. Those already have stable addresses in
+/// SiteCopy and SiteImage, and duplicating them here would give one headline
+/// two owners. A row is a manifest entry; the component still calls t() and
+/// reads its slots exactly as it did.
+model PageSection {
+  id           String   @id @default(cuid())
+  /// Registry page key — "home", "about", …
+  pageKey      String
+  /// Registry section key, also the DOM id and the cure-line anchor.
+  key          String
+  order        Int
+  visible      Boolean  @default(true)
+  /// Staged order/visibility, promoted by publishing the surface.
+  draftOrder   Int?
+  draftVisible Boolean?
+  /// Internal staff note: "matches the Diwali campaign — don't reorder".
+  notes        String?
+  updatedById  String?
+  updatedAt    DateTime @updatedAt
+
+  @@unique([pageKey, key])
+  @@index([pageKey, order])
+}
+
+/// A custom landing page — a seasonal drop, a campaign, a one-off.
+///
+/// Unlike every other surface, THIS content lives in the row. A Diwali lander
+/// has no copy slot and no image slot because nobody wrote one before the
+/// owner invented the page (docs/studio-cms §4.8). The guard against layout
+/// rot is the block catalogue's size, not the storage.
+model CustomPage {
+  id             String        @id @default(cuid())
+  /// → /p/diwali-2026
+  slug           String        @unique
+  /// Base title; English. Other locales live in `translations`.
+  title          String
+  status         ContentStatus @default(DRAFT)
+  /// Go-live moment. A PUBLISHED page with a future publishAt is scheduled:
+  /// the storefront treats it as not-yet-live, so the date is enforced at read
+  /// time rather than by whether a cron happened to run.
+  publishAt      DateTime?
+  /// Keep the page out of search results and the sitemap.
+  noindex        Boolean       @default(false)
+  seoTitle       String?
+  seoDescription String?
+  ogImage        String?
+  /// Per-locale { title, seoTitle, seoDescription } overrides; base is English.
+  translations   Json?
+  blocks         CustomBlock[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  updatedById    String?
+
+  @@index([status, publishAt])
+}
+
+/// One block on a custom page. `type` is a key from CUSTOM_BLOCKS — a
+/// deliberately small catalogue — and `data` is Zod-validated per type.
+model CustomBlock {
+  id           String     @id @default(cuid())
+  pageId       String
+  page         CustomPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type         String
+  order        Int
+  /// The block's content. This one holds text, because there is no key.
+  data         Json       @default("{}")
+  /// Per-locale overrides of this block's text fields; base is English.
+  translations Json?
+
+  @@index([pageId, order])
+}

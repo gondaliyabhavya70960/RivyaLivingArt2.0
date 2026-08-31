@@ -1,0 +1,263 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  PAGE_SECTIONS,
+  applyReorder,
+  PAGE_SECTION_LABELS,
+  SECTION_PAGES,
+  describeArrangementProblem,
+  isSectionPageKey,
+  sectionDef,
+} from "./page-sections";
+
+/** The shipped homepage, in registry order, with everything showing. */
+function shipped() {
+  return PAGE_SECTIONS.home.map((s) => ({ ...s, visible: true }));
+}
+
+describe("the section manifest", () => {
+  it("labels every page it declares", () => {
+    for (const page of SECTION_PAGES) {
+      expect(PAGE_SECTION_LABELS[page].title, page).toBeTruthy();
+      expect(PAGE_SECTION_LABELS[page].path.startsWith("/"), page).toBe(true);
+    }
+  });
+
+  it("has no duplicate key within a page", () => {
+    for (const page of SECTION_PAGES) {
+      const keys = PAGE_SECTIONS[page].map((s) => s.key);
+      expect(new Set(keys).size, page).toBe(keys.length);
+    }
+  });
+
+  it("gives every page exactly one section carrying the h1", () => {
+    // REDESIGN.md Part 19.1, and `scripts/redesign-audit.mjs` fails on it. Two
+    // sections claiming the heading would let an owner hide the wrong one.
+    for (const page of SECTION_PAGES) {
+      const owners = PAGE_SECTIONS[page].filter((s) => s.ownsH1);
+      expect(owners.length, page).toBe(1);
+    }
+  });
+
+  it("never lets the h1 section be hidden or moved", () => {
+    for (const page of SECTION_PAGES) {
+      const owner = PAGE_SECTIONS[page].find((s) => s.ownsH1);
+      expect(owner?.hideable).toBe(false);
+      expect(owner?.movable).toBe(false);
+    }
+  });
+
+  it("ships an arrangement its own validator accepts", () => {
+    // If the page as it ships could not pass the rule the studio enforces, the
+    // rule is wrong — this catches that before an owner hits it.
+    for (const page of SECTION_PAGES) {
+      const all = PAGE_SECTIONS[page].map((s) => ({ ...s, visible: true }));
+      expect(describeArrangementProblem(all), page).toBeNull();
+    }
+  });
+
+  it("resolves a key to its definition and rejects a stranger", () => {
+    expect(sectionDef("home", "pour")?.label).toBe("Hero");
+    expect(sectionDef("home", "nope")).toBeUndefined();
+  });
+
+  it("recognises only the pages it declares", () => {
+    expect(isSectionPageKey("home")).toBe(true);
+    expect(isSectionPageKey("checkout")).toBe(false);
+  });
+});
+
+describe("the arrangement guardrails", () => {
+  it("allows the shipped homepage", () => {
+    expect(describeArrangementProblem(shipped())).toBeNull();
+  });
+
+  it("refuses to hide the section carrying the heading", () => {
+    const sections = shipped().map((s) =>
+      s.ownsH1 ? { ...s, visible: false } : s,
+    );
+    expect(describeArrangementProblem(sections)).toMatch(/only heading/);
+  });
+
+  it("refuses to hide a section the page cannot lose", () => {
+    // The closing invitation is unhideable but does not carry the h1, so this
+    // exercises the second rule rather than the first.
+    const sections = shipped().map((s) =>
+      s.key === "closing" ? { ...s, visible: false } : s,
+    );
+    expect(describeArrangementProblem(sections)).toMatch(/cannot be hidden/);
+  });
+
+  it("refuses a fourth dark band", () => {
+    const sections = [
+      ...shipped(),
+      {
+        key: "extra",
+        label: "A fourth dark band",
+        dark: true,
+        visible: true,
+        hideable: true,
+      },
+    ];
+    const problem = describeArrangementProblem(sections);
+    expect(problem).toMatch(/4 dark bands/);
+    // The refusal has to name them, or the owner has nothing to act on.
+    expect(problem).toMatch(/Hero/);
+  });
+
+  it("refuses two dark bands sitting edge to edge", () => {
+    const problem = describeArrangementProblem([
+      { key: "a", label: "Hero", dark: true, visible: true, hideable: false },
+      {
+        key: "b",
+        label: "Commission band",
+        dark: true,
+        visible: true,
+        hideable: true,
+      },
+    ]);
+    expect(problem).toMatch(/edge to edge/);
+    expect(problem).toMatch(/Hero/);
+    expect(problem).toMatch(/Commission band/);
+  });
+
+  it("counts only the sections that show", () => {
+    // Two dark bands adjacent in the LIST but with the second hidden is a page
+    // with one dark band, not a violation.
+    expect(
+      describeArrangementProblem([
+        { key: "a", label: "Hero", dark: true, visible: true, hideable: false },
+        {
+          key: "b",
+          label: "Commission band",
+          dark: true,
+          visible: false,
+          hideable: true,
+        },
+        { key: "c", label: "Journal", visible: true, hideable: true },
+      ]),
+    ).toBeNull();
+  });
+
+  it("sees through a hidden light section between two dark ones", () => {
+    // Hiding the light band in the middle is what makes the two dark ones
+    // adjacent — the rule has to read the rendered order, not the stored one.
+    expect(
+      describeArrangementProblem([
+        { key: "a", label: "Hero", dark: true, visible: true, hideable: false },
+        { key: "b", label: "Manifesto", visible: false, hideable: true },
+        {
+          key: "c",
+          label: "Commission band",
+          dark: true,
+          visible: true,
+          hideable: true,
+        },
+      ]),
+    ).toMatch(/edge to edge/);
+  });
+
+  it("allows an empty page rather than throwing on one", () => {
+    expect(describeArrangementProblem([])).toBeNull();
+  });
+});
+
+describe("applyReorder", () => {
+  const current = [
+    { key: "pour", movable: false },
+    { key: "manifesto", movable: true },
+    { key: "pieces", movable: true },
+    { key: "material", movable: false },
+    { key: "collections", movable: true },
+  ];
+
+  it("applies a swap of two movable sections", () => {
+    const next = applyReorder(current, [
+      "pour",
+      "pieces",
+      "manifesto",
+      "material",
+      "collections",
+    ]);
+    expect(next.map((s) => s.key)).toEqual([
+      "pour",
+      "pieces",
+      "manifesto",
+      "material",
+      "collections",
+    ]);
+  });
+
+  it("keeps a pinned section at its index whatever the caller asks", () => {
+    // A client that tried to drag the hero into the middle gets the hero back
+    // where it was, with the movable sections closing up around it.
+    const next = applyReorder(current, [
+      "manifesto",
+      "pieces",
+      "pour",
+      "collections",
+      "material",
+    ]);
+    expect(next.map((s) => s.key)).toEqual([
+      "pour",
+      "manifesto",
+      "pieces",
+      "material",
+      "collections",
+    ]);
+  });
+
+  it("keeps every section when the caller sends a short list", () => {
+    // A truncated or stale request must not silently drop a section off the
+    // page — the ones it forgot keep their place in the tail.
+    const next = applyReorder(current, ["manifesto"]);
+    expect(next.map((s) => s.key)).toEqual([
+      "pour",
+      "manifesto",
+      "pieces",
+      "material",
+      "collections",
+    ]);
+  });
+
+  it("ignores a key the caller sent twice", () => {
+    const next = applyReorder(current, [
+      "collections",
+      "collections",
+      "manifesto",
+      "pieces",
+    ]);
+    expect(next.map((s) => s.key)).toEqual([
+      "pour",
+      "collections",
+      "manifesto",
+      "material",
+      "pieces",
+    ]);
+  });
+
+  it("ignores a key that is not on the page", () => {
+    const next = applyReorder(current, [
+      "ghost",
+      "manifesto",
+      "pieces",
+      "collections",
+    ]);
+    expect(next.map((s) => s.key)).toEqual([
+      "pour",
+      "manifesto",
+      "pieces",
+      "material",
+      "collections",
+    ]);
+  });
+
+  it("agrees with the shipped homepage when handed its own order", () => {
+    const home = PAGE_SECTIONS.home.map((s) => ({ ...s }));
+    const next = applyReorder(
+      home,
+      home.map((s) => s.key),
+    );
+    expect(next.map((s) => s.key)).toEqual(home.map((s) => s.key));
+  });
+});

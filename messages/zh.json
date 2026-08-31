@@ -1,0 +1,1493 @@
+{
+  "Nav": {
+    "shop": "商店",
+    "customOrder": "定制订单",
+    "workshops": "工作坊",
+    "portfolio": "作品集",
+    "process": "工艺",
+    "blog": "博客",
+    "studio": "工作室",
+    "journal": "手记",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "search": "搜索",
+    "ourProcess": "我们的工艺",
+    "faq": "常见问题",
+    "privacy": "隐私政策",
+    "terms": "条款与条件",
+    "collections": "系列",
+    "groupArt": "树脂艺术与礼品",
+    "groupSupplies": "工作室材料",
+    "groupPrint": "3D 打印",
+    "viewAll": "查看全部",
+    "megaPortfolio": "作品集",
+    "megaPortfolioLine": "定制作品，逐件记录。",
+    "wishlist": "心愿单",
+    "bespoke": "定制",
+    "home": "首页",
+    "menu": "菜单",
+    "whatsapp": "WhatsApp",
+    "primaryMobile": "快捷导航",
+    "journalStories": "故事",
+    "journalGuides": "指南",
+    "largeFormat": "大型作品"
+  },
+  "Common": {
+    "startOnWhatsApp": "通过 WhatsApp 联系",
+    "enquire": "咨询",
+    "readMore": "阅读更多",
+    "viewAll": "查看全部",
+    "loading": "加载中…",
+    "openInNewTab": "（在新标签页中打开）",
+    "home": "首页",
+    "breadcrumb": "面包屑导航",
+    "skipToContent": "跳转到内容",
+    "close": "关闭",
+    "whatsappChatLabel": "通过 WhatsApp 与 ResinRiva 聊天（在新标签页中打开）",
+    "pauseMotion": "暂停动画",
+    "playMotion": "播放动画",
+    "pagination": {
+      "label": "分页",
+      "previous": "上一页",
+      "next": "下一页",
+      "page": "第 {number} 页"
+    },
+    "pauseAnnouncements": "暂停公告轮播",
+    "resumeAnnouncements": "继续公告轮播",
+    "copyLink": "复制链接",
+    "linkCopied": "链接已复制",
+    "logoHome": "ResinRiva — 首页",
+    "dismissAnnouncement": "关闭公告",
+    "announcementDefault": "当前制作周期 · 小件 7–10 天 · 大件 3–6 周"
+  },
+  "Header": {
+    "search": "搜索",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "siteMenu": "网站菜单",
+    "primaryNav": "主导航",
+    "mobileNav": "移动端导航",
+    "catalogMenu": "目录",
+    "exploreAll": "浏览全部作品",
+    "skipToContent": "跳至正文"
+  },
+  "Footer": {
+    "tagline": "手工树脂艺术，按需定制。",
+    "rights": "© {year} ResinRiva. 版权所有。",
+    "explore": "探索",
+    "studio": "工作室",
+    "contact": "联系",
+    "newsletterLabel": "抢先获取新品发布资讯。",
+    "newsletterPlaceholder": "you@email.com",
+    "newsletterEmailAria": "用于接收新品资讯的邮箱地址",
+    "newsletterSubmit": "通知我",
+    "newsletterSuccess": "您已加入名单——新品发布时，我们将第一时间通过邮件通知您。",
+    "findStudio": "查找我们的工作室",
+    "chatOnWhatsApp": "通过 WhatsApp 聊天",
+    "blurb": "小批量手工制作，每一件都是传世珍藏。",
+    "socialInstagram": "ResinRiva 的 Instagram（在新标签页中打开）",
+    "socialFacebook": "ResinRiva 的 Facebook（在新标签页中打开）",
+    "socialYoutube": "ResinRiva 的 YouTube（在新标签页中打开）",
+    "socialPinterest": "ResinRiva 的 Pinterest（在新标签页中打开）",
+    "socialWhatsapp": "ResinRiva 的 WhatsApp（在新标签页中打开）",
+    "madeIn": "印度制造",
+    "journal": "日志",
+    "ctaEyebrow": "定制委托",
+    "ctaHeadline": "心中已有构想？让我们把它变成实物。",
+    "ctaAction": "开始定制",
+    "newsletterHint": "一年三四封信"
+  },
+  "Language": {
+    "label": "语言",
+    "select": "选择语言"
+  },
+  "Home": {
+    "meta": {
+      "title": "ResinRiva — 奢华定制树脂艺术与 3D 打印",
+      "description": "以深邃海洋蓝呈现的定制树脂艺术、个性化礼品与 3D 打印作品——小批量手工打造，通过 WhatsApp 下单。一件值得珍藏一生的传家之作。"
+    },
+    "hero": {
+      "eyebrow": "定制树脂艺术 · 3D 打印 · 按需定制",
+      "headline": "流动的奢华，永恒的凝铸。",
+      "lead": "ResinRiva 以深邃海洋蓝，打造定制树脂艺术、个性化礼品与 3D 打印作品——纯手工浇铸，专属为你而作，只需通过 WhatsApp 轻松下单。一件值得珍藏一生的传家之作。",
+      "ctaExplore": "探索系列",
+      "ctaBespoke": "定制一件作品",
+      "badgeHand": "纯手工浇铸",
+      "badgeUnique": "件件独一无二",
+      "badgeWhatsApp": "通过 WhatsApp 下单",
+      "scroll": "向下滚动",
+      "factPlace": "印度苏拉特",
+      "factMadeToOrder": "按需定制",
+      "factLeadTime": "7 天–6 周",
+      "factCommissions": "{count} 件定制记录在案"
+    },
+    "collections": {
+      "heading": "精选系列",
+      "cta": "浏览商店",
+      "previous": "上一组系列",
+      "next": "下一组系列",
+      "pieceCount": "{count, plural, one {# 件作品} other {# 件作品}}",
+      "launchingSoon": "即将上线",
+      "eyebrow": "六道入口",
+      "intro": "通往工作室的六道门——从一条被永远留住的花环，到一件上周还不存在的打印造型。",
+      "tiles": {
+        "preserve": {
+          "name": "封存",
+          "promise": "让那一天永存",
+          "alt": "一条婚礼 Varmala 花环，封存于清透树脂中，置于木质底座之上"
+        },
+        "keep": {
+          "name": "留存",
+          "promise": "照片，托于树脂之中",
+          "alt": "一只托着人像照片的树脂相框"
+        },
+        "live": {
+          "name": "日常",
+          "promise": "为日常而作的器物",
+          "alt": "桌上的树脂家居器物，正映着光"
+        },
+        "gift": {
+          "name": "馈赠",
+          "promise": "为某一个人而作",
+          "alt": "一套包装好的树脂纪念礼盒"
+        },
+        "create": {
+          "name": "创造",
+          "promise": "开启一件只存在一次的作品",
+          "alt": "双手将花瓣排布于空模具之中"
+        },
+        "print": {
+          "name": "打印",
+          "promise": "从数字形态到实体之物",
+          "alt": "一件半透明 3D 打印造型，正在成型中"
+        }
+      }
+    },
+    "featured": {
+      "heading": "精选作品",
+      "cta": "查看全部作品",
+      "emptyEyebrow": "首批浇铸正在进行",
+      "emptyHeading": "系列即将上线",
+      "emptyBody": "首批作品正在工作室中固化。在它们面世之前，不妨定制一件专属之作——为你的故事而作，按你的节奏呈现。",
+      "emptyOrderBespoke": "定制下单",
+      "emptyNewsletterLabel": "或留下你的邮箱，抢先获取新品面世资讯。",
+      "eyebrow": "标志之作"
+    },
+    "how": {
+      "heading": "定制流程",
+      "step1Title": "选择",
+      "step1Copy": "浏览各个系列，寻找触动你心的那一件。",
+      "step2Title": "定制",
+      "step2Copy": "选择尺寸、色彩与刻字；上传你的参考照片。",
+      "step3Title": "通过 WhatsApp 下单",
+      "step3Copy": "完整的订单摘要将在 WhatsApp 中打开——无需结账，无需注册账户。",
+      "step4Title": "我们制作并配送",
+      "step4Copy": "我们浇铸、固化并打磨你的作品，随后安全送达印度各地。",
+      "eyebrow": "定制流程",
+      "reassurance": "本网站无需付款——价格在浇铸开始之前于 WhatsApp 上敲定。"
+    },
+    "why": {
+      "heading": "为何选择 ResinRiva",
+      "badge": "印度制造",
+      "pillar1Title": "纯手工打造",
+      "pillar1Copy": "每一件作品均以小批量手工浇铸、镶嵌与抛光——绝非量产之物。",
+      "pillar2Title": "专属定制",
+      "pillar2Copy": "你的名字、你的花卉、你的故事——全程个性化定制，并通过 WhatsApp 亲自敲定每一处细节。",
+      "pillar3Title": "传家品质",
+      "pillar3Copy": "博物馆级树脂与工艺，只为珍藏、馈赠，世代相传。",
+      "eyebrow": "我们的坚持",
+      "factLayer": "每层 24–72 小时",
+      "factGrit": "400 → 3000 目",
+      "factCommissions": "{count} 件定制记录在案",
+      "proof": {
+        "handcrafted": {
+          "label": "纯手工打造",
+          "copy": "每一件作品都经过人手。",
+          "alt": "戴手套的双手用热风枪在蓝色树脂上拉出细密波纹"
+        },
+        "bespoke": {
+          "label": "专属定制",
+          "copy": "围绕你的故事而作，而非围绕目录。",
+          "alt": "永生花封存于一块清透的树脂之中"
+        },
+        "slowMade": {
+          "label": "慢工细作",
+          "copy": "时间是工序的一部分，而非阻碍。",
+          "alt": "注满的模具在工作灯下彻夜固化"
+        },
+        "heirloom": {
+          "label": "传家之作",
+          "copy": "为珍藏、馈赠与传承而作。",
+          "alt": "深蓝树脂在打磨完成的表面上承接光线"
+        }
+      }
+    },
+    "portfolio": {
+      "eyebrow": "工作室近期作品",
+      "heading": "近期定制之作",
+      "cta": "查看作品集",
+      "projectNumber": "项目 {number}"
+    },
+    "testimonials": {
+      "eyebrow": "真挚评价",
+      "heading": "藏家心声",
+      "previous": "上一组评价",
+      "next": "下一组评价",
+      "rating": "5 星中的 {rating} 星"
+    },
+    "journal": {
+      "eyebrow": "来自手记",
+      "heading": "工作室手记",
+      "cta": "阅读博客"
+    },
+    "cta": {
+      "heading": "定制一件专属于你的作品",
+      "body": "在 WhatsApp 上分享你的想法——尺寸、色彩、预算与时间，一次对话即可全部敲定。",
+      "headingLine1": "定制一件",
+      "headingLine2": "世上仅有一次的作品。",
+      "primary": "开始定制",
+      "whatsapp": "在 WhatsApp 上联系"
+    },
+    "custom": {
+      "heading": "依你的故事而作",
+      "body": "你的花、你的名字、你的日子 — 封存于树脂，成为独一无二的作品。定制委托在一次 WhatsApp 对话中开始并完成。",
+      "cta": "开始定制",
+      "imageAlt": "双手将婚礼花环花瓣放入硅胶模具",
+      "eyebrow": "定制委托",
+      "lineFlowers": "你的花。",
+      "lineNames": "你的名字。",
+      "lineDates": "你的日子。"
+    },
+    "showcase": {
+      "eyebrow": "标志之作",
+      "heading": "从流光到凝辉",
+      "stage1Title": "浇注",
+      "stage1Copy": "深邃的宝石蓝树脂，一气呵成倾泻而下——每一件作品由此开始。",
+      "stage2Title": "鎏金",
+      "stage2Copy": "金箔在渐渐沉静的树脂中游移，捕捉光线，如浪花承接阳光。",
+      "stage3Title": "固化",
+      "stage3Copy": "数日的耐心固化，将那份流动永远定格——流动的光，永久留存。",
+      "staticAlt": "深蓝树脂间金箔流转，从初次浇注到固化成品",
+      "stage4Title": "抛光",
+      "stage4Copy": "从 400 目磨到 3000 目，再上抛光膏——直到表面消失，只余深邃。"
+    },
+    "printStudio": {
+      "heading": "打印工作室",
+      "body": "浇筑之旁是打印区 — 由你的照片点亮的透光浮雕灯、雕塑般的打印造型，以及制作它们的耗材与部件。",
+      "cta": "浏览 3D 打印",
+      "imageAlt": "FDM 打印头正逐层堆叠半透明的蓝色线材",
+      "eyebrow": "打印工作室",
+      "headingLine1": "从数字形态",
+      "headingLine2": "到实体之物。",
+      "steps": {
+        "cad": "先建模成形，或将你的照片转译为深浅起伏。",
+        "print": "以半透明耗材逐层打印。",
+        "finish": "接缝由手工削平、打磨并收尾。"
+      }
+    },
+    "cure": {
+      "pour": "浇铸",
+      "manifesto": "宣言",
+      "pieces": "作品",
+      "material": "材料",
+      "collections": "系列",
+      "maker": "匠人",
+      "work": "近期作品",
+      "bespoke": "定制",
+      "print": "3D 打印",
+      "process": "工艺",
+      "journal": "手记",
+      "words": "真挚评价"
+    },
+    "manifesto": {
+      "line1": "缓慢造物。",
+      "line2": "让回忆恒久。",
+      "body": "这里没有库存。每一件作品都为一个人而浇铸，以数日而非数小时固化，并由最初动手的那双手亲自完成。"
+    },
+    "maker": {
+      "eyebrow": "匠人",
+      "heading": "出自同一双手。",
+      "body": "每一件 ResinRiva 作品都经由同一双手，从第一次浇铸，到 3000 目砂纸的最后一遍。这里没有流水线——只有一张工作台、一套模具，以及一件作品所需的时间。",
+      "cta": "认识这位匠人",
+      "imageAlt": "工作台前，双手正在抛光已固化的树脂表面"
+    }
+  },
+  "Process": {
+    "meta": {
+      "title": "我们的工艺",
+      "description": "一件 ResinRiva 定制之作如何诞生——从第一次 WhatsApp 对话，到层层浇铸、手工打磨，再到可追踪配送至印度各地。"
+    },
+    "hero": {
+      "eyebrow": "我们的工艺",
+      "headline": "从灵感到传家之作。",
+      "lead": "从你的第一条讯息，到作品交到你手中，其间是六个从容不迫的步骤。这里将如实呈现一件 ResinRiva 定制之作如何诞生——以及它真正需要多久。"
+    },
+    "timeline": {
+      "heading": "六个步骤，绝不走捷径",
+      "step1Title": "创意沟通",
+      "step1Copy": "一切始于一次 WhatsApp 对话。你分享你的想法、参考照片、心中构想的尺寸，以及你能接受的预算——而我们则提出那些塑造设计的问题。",
+      "step2Title": "设计与效果图",
+      "step2Copy": "我们将你的需求转化为草图；对于 3D 打印作品，还会呈现数字预览。在你确认设计之前，我们绝不动手浇铸——每一处细节都在树脂注入模具之前敲定。",
+      "step3Title": "材料",
+      "step3Copy": "艺术级环氧树脂、矿物颜料、永生花与精选木材。若作品将封存你自己的花卉或珍藏之物，我们会先以其应得的悉心，为它们做好处理与保存。",
+      "step4Title": "浇铸",
+      "step4Copy": "树脂层层注入，每一次浇铸都需静置固化 24–72 小时，方能进行下一层。层层叠加正是作品深邃感的来源——也正因如此，它绝不能被催促。",
+      "step5Title": "打磨",
+      "step5Copy": "完全固化后，作品会以 400 至 3000 目砂纸逐级打磨，再抛光至宛如玻璃般澄澈。五金配件、挂钩或支架皆由手工安装并检验。",
+      "step6Title": "品质与发货",
+      "step6Copy": "在发货之前，你会收到成品照片以供确认。随后，作品将以防碎包装妥善封装，并通过可追踪物流寄送至印度各地。",
+      "eyebrow": "一件作品如何诞生",
+      "step1Meta": "在 WhatsApp 上",
+      "step2Meta": "未经你确认，绝不浇铸",
+      "step3Meta": "艺术级环氧树脂",
+      "step4Meta": "每层 24–72 小时",
+      "step5Meta": "400 → 3000 目",
+      "step6Meta": "可追踪，寄送印度各地",
+      "step1Alt": "一件定制开始时的工作台",
+      "step2Alt": "FDM 打印头正将半透明的蓝色线材铺在打印平台上",
+      "step3Alt": "金箔碎片悬浮在正在沉降的蓝色树脂中",
+      "step4Alt": "深宝石蓝树脂正在浇铸，于圆形模具中缓缓漫开",
+      "step5Alt": "戴手套的双手用精密热风枪处理蓝色树脂",
+      "step6Alt": "完成的树脂作品陈列在铺衬的礼盒中"
+    },
+    "materials": {
+      "heading": "你的作品由什么构成",
+      "m1Title": "环氧树脂",
+      "m1Copy": "艺术级品质，完全固化后晶莹剔透。",
+      "m2Title": "柚木与河床木",
+      "m2Copy": "经风干处理的硬木，由手工封边与打磨。",
+      "m3Title": "矿物颜料",
+      "m3Copy": "耐光色彩，深邃之感历经数十年而不褪。",
+      "m4Title": "永生植物",
+      "m4Copy": "你的花卉，经干燥定形处理，永葆原有姿态。",
+      "eyebrow": "材料",
+      "headingEndure": "选材，只为经久。",
+      "intro": "博物馆级、抗紫外线的树脂。颜料与金属的选择，看的是它们如何老去，而不只是上镜好不好看。",
+      "alt1": "清透的环氧树脂在浇铸中承接光线",
+      "alt2": "风干硬木的纹理，封存于树脂表面之下",
+      "alt3": "工作台上盛着宝蓝色树脂的调配杯与散落的矿物颜料",
+      "alt4": "永生花瓣嵌于已固化的树脂层之间"
+    },
+    "timelines": {
+      "heading": "如实的时间安排",
+      "intro": "每一件作品皆为按需定制，因此时间会随复杂程度与固化时长而有所浮动。以下可作为大致参考：",
+      "e1Title": "小型作品",
+      "e1Copy": "杯垫、首饰、纪念小物及类似作品，通常 7–10 天即可完成。",
+      "e2Title": "大型主题之作",
+      "e2Copy": "桌几、大型墙饰艺术与多层封存之作需 3–6 周，具体取决于固化时长与复杂程度。",
+      "e3Title": "节庆旺季",
+      "e3Copy": "临近节庆与婚嫁旺季时，排期会迅速排满——请及早预订，以确保你所需的交期。",
+      "footnote": "在任何工作开始之前，我们都会确认一个切合实际的时间安排——并在每一个阶段，从首次浇铸到发货，随时向你通报进展。",
+      "eyebrow": "需要多久",
+      "e1Value": "7–10 天",
+      "e2Value": "3–6 周",
+      "quotingLabel": "当前报价排期"
+    },
+    "cta": {
+      "heading": "开启对话",
+      "body": "在 WhatsApp 上分享你的想法——参考、尺寸与预算，皆在浇铸开始之前，于一次温暖的对话中一并敲定。",
+      "customOrder": "规划一份定制订单"
+    }
+  },
+  "About": {
+    "meta": {
+      "title": "关于我们",
+      "description": "ResinRiva 的故事——一间按需定制的树脂艺术工作室，于印度以海洋蓝匠心打造传家品质之作，每次只专注于一件定制。"
+    },
+    "hero": {
+      "eyebrow": "工作室",
+      "headline": "当树脂邂逅敬意。",
+      "lead": "ResinRiva 是一间位于印度的按需定制树脂艺术工作室——一方小小的天地，专注于将你生命中最珍视之物封存于晶莹剔透的深邃之中：你的花卉、你的照片、你的重要时刻。"
+    },
+    "story": {
+      "heading": "我们的故事",
+      "imageAlt": "在 ResinRiva 工作室手工打造的永生花树脂相框",
+      "p1": "ResinRiva 始于一位艺术家的独立工作室——一张工作台，以及对光穿过浇铸树脂时那份变化的静默痴迷。它随着一件件定制而成长，却始终如初：每次只做一件，每一个阶段都出自同一双悉心的手。",
+      "p2": "调色的灵感源自大海。蓝宝石蓝、蔚蓝与深海蓝几乎贯穿于我们的每一件作品——这些色彩自有真正的深邃，如同海水层叠光影般层层铺陈。金色仅作点缀：边缘的一抹微光，蓝色之中一缕细致的纹理。",
+      "p3": "我们不做量产，也不备存货。每一件定制都始于一次 WhatsApp 对话——你的想法、你的参考、你的预算——最终成就一件世上独一无二的作品。",
+      "eyebrow": "我们的故事"
+    },
+    "values": {
+      "heading": "我们的坚守",
+      "v1Title": "耐心",
+      "v1Copy": "树脂急不得。每一层都按自己的节奏固化，而我们静待其成——澄澈，正是等待的回报。",
+      "v2Title": "本源",
+      "v2Copy": "你的花卉、你的照片、你的故事。那些最重要的材料，皆源自你的生活，而非某本商品目录。",
+      "v3Title": "精准",
+      "v3Copy": "3D 打印邂逅手工打磨——以数字般的精准成形，再以人手与匠眼雕琢每一处表面。",
+      "v4Title": "恒久",
+      "v4Copy": "传家品质的材料与工艺，只为让每一件作品皆可珍藏、馈赠，世代相传。"
+    },
+    "craft": {
+      "heading": "慢工细作，唯此一件",
+      "panel1Eyebrow": "01 — 浇铸",
+      "panel1Title": "于静默中浇铸",
+      "panel1Copy": "每一层都需静置 24–72 小时，方能进行下一层——树脂厚待耐心，却惩罚仓促。",
+      "panel2Eyebrow": "02 — 固化",
+      "panel2Title": "由时间来收尾",
+      "panel2Copy": "缓慢固化，让晶莹剔透的深邃不见气泡与应力纹路。我们绝不催促一件作品提前脱模。",
+      "panel3Eyebrow": "03 — 抛光",
+      "panel3Title": "手工打磨如玻璃般澄澈",
+      "panel3Copy": "从 400 目到 3000 目，再行抛光——直至表面仿佛消隐，只余其中那一片海洋。",
+      "seeProcess": "查看完整工艺"
+    },
+    "chapters": {
+      "embedTitle": "以金与花瓣封存",
+      "embedCopy": "鲜花、金箔与纪念物由手工置于层与层之间——每一个元素都被封存在它应在的位置，让作品留住的不只是材料，更是一段时刻。",
+      "alt1": "深宝石蓝的树脂正在浇注，于圆形模具中缓缓铺展",
+      "alt2": "金箔碎片漂浮在正在沉降的半透明蓝色树脂中",
+      "alt3": "深夜的工作室——浇注好的模具在温暖的工作灯下固化",
+      "alt4": "镜面抛光的树脂表面上的水珠，下方悬着金箔"
+    },
+    "sustain": {
+      "heading": "材质，为经年而选",
+      "body": "博物馆级、抗UV的树脂。颜料与金属的挑选标准，是它们如何随岁月变化，而不只是上镜与否。而且每件作品都按订单制作，绝不过量生产——没有库存，没有浪费，只有人们真正向我们定制的作品。"
+    },
+    "maker": {
+      "eyebrow": "认识匠人",
+      "heading": "ResinRiva 由 Bhavya Gondaliya 主理",
+      "body": "每一次咨询、每一张草图、每一次浇铸，都经由匠人之手。当你向工作室发来讯息，与你交谈的，正是那位将亲手打造你作品的人——没有中间环节，没有生产线，只有你与你的艺术家之间的一次对话。",
+      "cta": "打声招呼",
+      "name": "Bhavya Gondaliya",
+      "imageAlt": "双手将已固化的蓝金树脂作品抛光至玻璃般澄澈",
+      "ctaConversation": "开启一段对话"
+    },
+    "cta": {
+      "heading": "开启你的定制",
+      "body": "告诉我们你想永远珍藏的是什么——我们将以蓝、金与晶莹剔透的树脂，为你凝铸成形。一件值得珍藏一生的传家之作。",
+      "planCustom": "规划一份定制订单"
+    },
+    "chapterLabels": {
+      "beginning": "起点",
+      "material": "材料",
+      "philosophy": "理念",
+      "maker": "匠人"
+    },
+    "materials": {
+      "eyebrow": "由什么构成"
+    },
+    "studio": {
+      "eyebrow": "我们工作的地方",
+      "heading": "工作台、模具，以及光。",
+      "body": "印度的一个房间，每一件定制都在这里调配、浇铸、固化与收尾。没有任何一道工序外包。",
+      "addressLabel": "地址",
+      "alt1": "摆放着模具与调配杯的工作台",
+      "alt2": "注满的模具在暖色工作灯下彻夜固化",
+      "alt3": "工作室桌上一块完成的树脂与柚木托板和一只碗"
+    }
+  },
+  "Workshops": {
+    "meta": {
+      "title": "工作坊",
+      "description": "来自 ResinRiva 工作室的沉浸式树脂艺术工作坊——小班授课，材料全备，新手友好。通过 WhatsApp 预订你的席位。"
+    },
+    "hero": {
+      "eyebrow": "研习这门手艺",
+      "headline": "浇铸你的第一件杰作。",
+      "lead": "在 ResinRiva 工作室，亲手体验树脂艺术——你亲自调和、着色、浇铸，带走一件完全属于你的作品。",
+      "cta": "咨询工作坊"
+    },
+    "intro": {
+      "heading": "一个下午，尽享色彩、树脂与静谧专注",
+      "point1Title": "小班授课",
+      "point1Copy": "每一场都刻意保持小班规模，让每一张工作台都能获得真正一对一的悉心指导——绝非人头攒动、只能远远踮脚观看演示。",
+      "point2Title": "材料全备",
+      "point2Copy": "树脂、颜料、模具、工具、手套与围裙皆已备妥，静候你的到来。你只需带上自己——或许，再点上一首心仪的歌。",
+      "point3Title": "新手友好",
+      "point3Copy": "无需任何经验。初次尝试者正是我们最钟爱的学员；亦可安排私享场次，随你的节奏与场合从容定制。",
+      "eyebrow": "为何前来",
+      "alt1": "一小群人在工作台前动手创作",
+      "alt2": "颜料、模具与工具已备妥，静候一场课程",
+      "alt3": "第一次浇铸在模具中漫开"
+    },
+    "sessions": {
+      "heading": "选择你的场次",
+      "eyebrow": "近期场次"
+    },
+    "card": {
+      "materialsLabel": "材料：",
+      "makeItYoursLabel": "专属定制：",
+      "book": "预订这场工作坊",
+      "seats": "{seats} 个席位"
+    },
+    "empty": {
+      "eyebrow": "工作台正在铺陈",
+      "heading": "工作坊正在筹备排期",
+      "body": "抢先获悉席位开放的消息——在 WhatsApp 上给我们留言，我们将与你分享日期、形式，以及你将亲手浇铸的一切。",
+      "cta": "咨询即将开设的工作坊",
+      "statement": "下一批日期正在敲定。"
+    },
+    "takeHome": {
+      "heading": "你将带走什么",
+      "item1Title": "一件你亲手浇铸的作品",
+      "item1Copy": "一件专属于你的手工浇铸树脂作品——由你亲手着色、叠层、收尾，值得珍藏，亦可馈赠。",
+      "item2Title": "这门技艺",
+      "item2Copy": "调配比例、颜料融合、层层浇铸与收尾打磨——这些正是你在家中继续浇铸所需掌握的根基。",
+      "item3Title": "结束后的工作室支持",
+      "item3Copy": "课后仍有疑问？WhatsApp 随时为你敞开——我们乐于陪你一步步聊透下一次浇铸。"
+    },
+    "private": {
+      "heading": "为你的伙伴预订一桌私享场",
+      "body": "生日派对、婚前派对、团队日——我们提供私享与企业专场，围绕你的团队、你的场合，以及你们心之所向的作品悉心定制。在 WhatsApp 上告诉我们，我们一同筹划。",
+      "cta": "筹划一场私享场次",
+      "eyebrow": "私享与企业专场",
+      "headingShort": "为你的伙伴留一张桌。"
+    },
+    "facts": {
+      "label": "工作坊要点",
+      "duration": "2.5 小时",
+      "seats": "最多 8 个席位",
+      "materials": "材料全备",
+      "place": "苏拉特"
+    },
+    "experience": {
+      "eyebrow": "这场课程",
+      "heading": "一个下午如何度过。",
+      "arrive": "抵达",
+      "mix": "调配",
+      "pour": "浇铸",
+      "create": "创作",
+      "takeHome": "带回家"
+    },
+    "room": {
+      "eyebrow": "这个空间",
+      "heading": "你将在这里浇铸。",
+      "body": "这是一间真正在运转的工作室，而非租来的场地——每一件定制都出自这同一张工作台。",
+      "alt1": "为课程铺陈好的工作坊长桌",
+      "alt2": "摆放着模具与调配杯的工作台",
+      "alt3": "夜里的工作室，模具在暖色工作灯下固化",
+      "alt4": "工作室桌上一块完成的树脂与柚木托板和一只碗"
+    },
+    "waitlist": {
+      "label": "邮箱地址",
+      "placeholder": "you@email.com",
+      "submit": "加入候补名单",
+      "submitting": "正在添加",
+      "hint": "日期开放时通知一次，仅此而已。",
+      "success": "你已在名单上——日期一确定，我们就写信给你。"
+    }
+  },
+  "CustomOrder": {
+    "meta": {
+      "title": "定制订单",
+      "description": "向 ResinRiva 定制专属树脂艺术——分享你的想法、预算与时间，我们将在 WhatsApp 上与你一同设计。于印度按需定制。"
+    },
+    "page": {
+      "heroEyebrow": "专属定制",
+      "heroHeadline": "定制一件专属之作。",
+      "heroLead": "那件你遍寻不获的作品，正是我们最爱亲手打造的。告诉我们你的想法——我们将为你塑形、浇铸并悉心收尾，按需定制。",
+      "formHeading": "告诉我们你的想法",
+      "formSubcopy": "一个粗略的构想便已足够——细节将在 WhatsApp 上与你一同成形。",
+      "howTitle": "定制如何进行",
+      "step1Title": "分享你的想法",
+      "step1Body": "描述这件作品，附上参考照片，选择一个预算区间——两分钟即可，绝无任何约束。",
+      "step2Title": "我们设计并报价",
+      "step2Body": "匠人将在 WhatsApp 上回复你，附上草图、材料建议，以及一个确定的价格与时间安排。",
+      "step3Title": "浇铸、固化，送达",
+      "step3Body": "固化期间，你会收到进度照片；随后，作品将以妥善的包装寄送至印度各地，直达你家门口。",
+      "proofEyebrow": "过往定制",
+      "proofHeading": "人们将他们的想法托付于我们",
+      "seeCommissions": "查看近期定制之作",
+      "heroImageAlt": "封存于清透树脂中的婚礼花卉，侧面打光",
+      "heroCta": "开启你的定制",
+      "heroAnchorSmall": "小型作品 7–10 天",
+      "heroAnchorStatement": "大型主题之作 3–6 周",
+      "heroAnchorLayer": "每层 24–72 小时",
+      "kindsEyebrow": "人们常定制什么",
+      "kindsHeading": "定制通常由这四种方式开始",
+      "kindsIntro": "多数需求都落在其中之一。你的，不必如此。",
+      "kinds": {
+        "varmala": {
+          "label": "封存",
+          "name": "Varmala 花环封存",
+          "alt": "一条婚礼花环封存于清透的树脂块中"
+        },
+        "frames": {
+          "label": "留存",
+          "name": "相框与人像",
+          "alt": "一只托着情侣合影的树脂相框"
+        },
+        "lettering": {
+          "label": "铭刻",
+          "name": "名牌与企业礼品",
+          "alt": "一套礼品，装于工作室自制的礼盒中"
+        },
+        "surfaces": {
+          "label": "日常相伴",
+          "name": "桌面与台面",
+          "alt": "树脂与木材构成的台面，光沿着中间的河流纹路流转"
+        }
+      },
+      "leadTime": {
+        "small": "通常 7–10 天",
+        "statement": "通常 3–6 周"
+      },
+      "formEyebrow": "创意沟通",
+      "cure": {
+        "commission": "定制",
+        "kinds": "我们做什么",
+        "how": "如何进行",
+        "brief": "你的需求",
+        "questions": "问题",
+        "work": "近期作品"
+      }
+    },
+    "form": {
+      "designIdeaLabel": "你的设计构想",
+      "designIdeaPlaceholder": "一张封存着我们婚礼花卉的河床桌……一块如海洋般流光的名牌……告诉我们那件你心中反复描摹的作品。",
+      "materialLabel": "材料",
+      "materialPlaceholder": "选择一种材料",
+      "occasionLabel": "场合",
+      "occasionPlaceholder": "为何而作？",
+      "budgetLabel": "预算",
+      "budgetPlaceholder": "一个舒心的区间",
+      "timelineLabel": "时间安排",
+      "timelinePlaceholder": "你何时需要？",
+      "referenceLabel": "参考图片",
+      "notesLabel": "补充说明",
+      "notesPlaceholder": "尺寸、日期、需封入的名字，以及任何你希望我们知道的信息……",
+      "nameLabel": "姓名",
+      "namePlaceholder": "你的姓名",
+      "phoneLabel": "电话",
+      "emailLabel": "邮箱",
+      "optional": "（可选）",
+      "summaryEyebrow": "实时定制摘要",
+      "summaryNote": "随你输入实时更新——照片上传完成后，图片链接便会一并加入。",
+      "disclaimer": "此处无需付款——WhatsApp 将带着你的订单摘要打开；价格与配送将在那里敲定。",
+      "submitUploading": "正在上传图片…",
+      "submitUploadingProgress": "正在上传图片 {done}/{total}…",
+      "submitPreparing": "正在准备你的 WhatsApp 订单…",
+      "submitSend": "发送定制请求",
+      "validationDesignIdeaShort": "为我们描摹一幅画面——请至少用 10 个字符讲述你的想法。",
+      "validationDesignIdeaLong": "请将你的想法控制在 2000 个字符以内。",
+      "validationNameRequired": "请告诉我们你的姓名。",
+      "validationPhoneInvalid": "请输入有效的电话号码。",
+      "validationEmailInvalid": "请输入有效的邮箱地址。",
+      "validationNotesLong": "请将说明控制在 1500 个字符以内。",
+      "errorGeneric": "出了点问题——请重试。",
+      "steps": {
+        "piece": "作品构想",
+        "details": "材质与细节",
+        "references": "参考与备注",
+        "contact": "您的信息"
+      },
+      "rail": {
+        "idea": "你的想法",
+        "details": "细节",
+        "references": "参考",
+        "contact": "你的信息"
+      },
+      "progressLabel": "定制步骤",
+      "stepOf": "第 {current} 步，共 {total} 步",
+      "back": "上一步",
+      "continue": "继续",
+      "designIdeaHint": "尺寸、色彩、想要封入其中的文字——任何信息都有帮助。",
+      "budgetHint": "给出一个区间即可。报价会通过 WhatsApp 回复你。",
+      "timelineHint": "小型作品需 7–10 天；大型主题之作需 3–6 周。",
+      "phoneHint": "工作室将在此处回复你。",
+      "ctaContinue": "在 WhatsApp 上继续",
+      "ctaNote": "你的信息将自动整理好。",
+      "blockerIdea": "请先描述你的想法",
+      "blockerName": "请填写你的姓名",
+      "blockerPhone": "请填写你的电话号码",
+      "errorSummaryTitle": "{count, plural, other {有 # 处信息需要检查}}",
+      "summaryTitle": "你的定制摘要",
+      "summaryToggle": "预览你的消息",
+      "summaryMessageLabel": "WhatsApp 将收到的内容",
+      "summaryClose": "关闭摘要",
+      "rows": {
+        "idea": "想法",
+        "material": "材料",
+        "occasion": "场合",
+        "budget": "预算",
+        "timeline": "时间安排",
+        "references": "参考图片",
+        "referencesValue": "{count, plural, other {# 张图片}}",
+        "name": "姓名",
+        "phone": "电话",
+        "email": "邮箱"
+      }
+    }
+  },
+  "Contact": {
+    "meta": {
+      "title": "联系我们",
+      "description": "写信给 ResinRiva 工作室——电话、WhatsApp、邮箱或联系表单皆可。我们在 WhatsApp 上回复最快，通常几小时内便会答复。"
+    },
+    "page": {
+      "heroEyebrow": "联系工作室",
+      "heroHeadline": "让我们一同成就一件专属之作。",
+      "heroLead": "一份定制、一个疑问，或只是你心中反复琢磨的一个灵感——写信给我们，你将收到来自创作者的亲笔回音。",
+      "heroBadge": "我们通常在 WhatsApp 上几小时内回复",
+      "gridHeading": "以你喜欢的方式联系我们",
+      "phoneLabel": "电话",
+      "whatsappLabel": "WhatsApp",
+      "whatsappBody": "联系我们最快的方式——道一声你好，余下的便交给我们。",
+      "whatsappCta": "在 WhatsApp 上留言",
+      "emailLabel": "邮箱",
+      "mapsLabel": "找到工作室",
+      "mapsCta": "在 Google Maps 中打开",
+      "mapsNote": "Google Maps 将为你打开导航路线。",
+      "hours": "我们在 WhatsApp 上回复最快，通常几小时内答复，营业时间为上午10点–晚上8点 IST。",
+      "faqHeading": "常见提问",
+      "faqCta": "所有问题",
+      "heroImageAlt": "夜里的工作室长凳，模具在一盏工作灯下固化",
+      "channelsEyebrow": "四种联系方式",
+      "phoneMeta": "上午10点–晚上8点 IST",
+      "whatsappMeta": "通常几小时内",
+      "whatsappHeadline": "联系匠人最快的方式。",
+      "emailMeta": "比 WhatsApp 慢一些",
+      "studioLabel": "工作室",
+      "studioMeta": "上午10点–晚上8点 IST",
+      "mapActivate": "显示地图",
+      "mapNote": "仅在你点击时才加载 Google Maps",
+      "mapFrameTitle": "ResinRiva 工作室地图",
+      "formEyebrow": "写信给我们",
+      "formHeading": "给工作室留言",
+      "formIntro": "所有留言都直达匠人本人——没有工单排队，也没有机器人。"
+    },
+    "form": {
+      "nameLabel": "姓名",
+      "namePlaceholder": "你的姓名",
+      "phoneLabel": "电话",
+      "emailLabel": "邮箱",
+      "optional": "（可选）",
+      "messageLabel": "留言",
+      "messagePlaceholder": "告诉我们你心中构想的那件作品、一个疑问，或只是道一声你好……",
+      "sending": "发送中…",
+      "send": "发送留言",
+      "successEyebrow": "留言已收到",
+      "successHeading": "谢谢你——我们会尽快回复。",
+      "successBody": "你的留言已送达工作室。想即刻回应？在 WhatsApp 上联系我们，我们会立即接续这段对话。",
+      "successCta": "在 WhatsApp 上联系我们",
+      "validationName": "请告诉我们你的姓名。",
+      "validationPhone": "请输入有效的电话号码。",
+      "validationEmail": "请输入有效的邮箱地址。",
+      "validationMessageMin": "请再多写几句——至少 10 个字符。",
+      "validationMessageMax": "请将留言控制在 2000 个字符以内。",
+      "topicLabel": "关于什么？",
+      "topicPlaceholder": "选择一个主题",
+      "topics": {
+        "commission": "一份专属定制",
+        "order": "我已下的订单",
+        "workshop": "工作坊",
+        "printing": "3D 打印",
+        "other": "其他事宜"
+      },
+      "messagePrompts": {
+        "commission": "你心中构想的作品、大致的尺寸，以及你何时需要……",
+        "order": "你的订单编号，以及你想了解的事……",
+        "workshop": "哪一场工作坊、你们共几位，以及合适的日期……",
+        "printing": "你需要打印什么、使用什么材料，以及是否已有文件……",
+        "other": "告诉我们你在想什么……"
+      },
+      "commissionNudge": "通过创意沟通表提交，定制会更快——它一次性询问尺寸、参考与预算区间。",
+      "commissionNudgeCta": "开始一份定制",
+      "phoneHint": "以便我们通过 WhatsApp 回复你。",
+      "errorSummaryTitle": "{count, plural, other {有 # 处信息需要检查}}",
+      "sendNote": "我们从工作室回复你，通常在几小时内。"
+    }
+  },
+  "Faq": {
+    "meta": {
+      "title": "常见问题",
+      "description": "关于定制树脂艺术、委托创作、制作周期与保养，我们汇集了人们问得最多的问题与解答——皆来自 ResinRiva 工作室。"
+    },
+    "heroEyebrow": "常见提问",
+    "heroHeadline": "疑问，皆有回应。",
+    "heroLead": "这里汇集了人们在委托定制前通常会问的一切——若你的疑问不在其中，WhatsApp 始终为你敞开。",
+    "askOnWhatsApp": "在 WhatsApp 上提问",
+    "closingHeading": "仍有好奇？",
+    "closingBody": "任何问题都可在 WhatsApp 上问我们——尺寸、周期、材料，或你一直心心念念的那件作品。",
+    "searchLabel": "搜索答案",
+    "searchPlaceholder": "配送、养护、价格…",
+    "clearSearch": "清除搜索",
+    "indexHeading": "所有问题",
+    "indexLabel": "问题索引",
+    "answersLabel": "答案",
+    "resultCount": "{count, plural, =0 {没有匹配项} other {# 个问题}}",
+    "noMatchStatement": "没有与之匹配的答案。",
+    "noMatchDirection": "换个词试试——或者直接在 WhatsApp 上问我们。",
+    "copyAnswerLink": "复制此答案的链接",
+    "answerLinkCopied": "链接已复制",
+    "emptyStatement": "我们正在撰写答案。",
+    "emptyDirection": "在此期间，任何问题都可直接问我们——我们很乐意聊聊这门手艺。"
+  },
+  "Shop": {
+    "meta": {
+      "title": "商店",
+      "description": "浏览 ResinRiva 的定制系列——奢华树脂艺术、个性化礼品与 3D 打印作品，从头到尾专属定制，通过 WhatsApp 下单。",
+      "titlePaged": "商店——第 {page} 页"
+    },
+    "categoryMetaDescription": "来自 ResinRiva 工作室的定制 {category}——从头到尾专属定制，通过 WhatsApp 下单。",
+    "heroEyebrow": "臻选系列",
+    "heroHeadline": "选购 ResinRiva",
+    "heroLead": "每一件都为您量身定制——挑选心仪之作，融入您的故事，只需一段 WhatsApp 对话即可敲定所有细节。",
+    "tabsAria": "按类别浏览",
+    "tabAll": "全部",
+    "tabArt": "树脂艺术",
+    "tabSupplies": "工作室材料",
+    "tabPrint": "3D 打印",
+    "collectionsAria": "按系列筛选",
+    "allCollections": "全部系列",
+    "searchPlaceholder": "搜索作品…",
+    "searchAria": "搜索作品",
+    "occasionAria": "按场合筛选",
+    "occasionPlaceholder": "场合",
+    "allOccasions": "全部场合",
+    "priceAria": "按价格筛选",
+    "pricePlaceholder": "价格",
+    "allPrices": "全部价格",
+    "inStockOnly": "仅显示有货",
+    "sortAria": "作品排序",
+    "sortPlaceholder": "排序",
+    "sortFeatured": "精选推荐",
+    "sortNewest": "最新上架",
+    "sortPriceAsc": "价格从低到高",
+    "sortPriceDesc": "价格从高到低",
+    "allPieces": "全部作品",
+    "resultsShowing": "{total, plural, one {共 # 件作品} other {共 # 件作品}}，当前显示 {shown, number} 件",
+    "loadMore": "加载更多作品",
+    "loadMoreProgress": "加载更多（已显示 {shown, number} 件，共 {total, number} 件）",
+    "emptyFilteredEyebrow": "暂无作品",
+    "emptyFilteredHeading": "没有符合当前筛选的作品",
+    "emptyFilteredBody": "试试清除筛选，或定制一件专属之作——为你的故事而作，按你的节奏呈现。",
+    "emptyCatalogEyebrow": "按需定制",
+    "emptyCatalogHeading": "首批作品正在浇铸",
+    "emptyCatalogBody": "每一件 ResinRiva 作品都为您定制。现在就开启您的专属定制，或通过 WhatsApp 联系我们，我们将帮您迈出第一步。",
+    "clearFilters": "清除筛选",
+    "commissionCta": "定制专属之作",
+    "quickViewAria": "快速查看：{title}",
+    "quickViewTaglineFallback": "手工树脂之作，从头到尾专属定制，通过 WhatsApp 敲定细节。",
+    "quickViewCustomize": "查看并定制",
+    "quickViewWhatsApp": "通过 WhatsApp 咨询",
+    "card": {
+      "badgeStudioOriginal": "工作室原创",
+      "badgeAtelierPick": "工坊臻选",
+      "badgeOutOfStock": "暂时售罄",
+      "customize": "定制",
+      "viewDetails": "查看详情",
+      "optionsCount": "{count} 个选项",
+      "wishlistSave": "将 {title} 加入心愿单",
+      "wishlistRemove": "将 {title} 移出心愿单",
+      "madeToOrder": "接单制作",
+      "viewPiece": "查看作品",
+      "shipsIn": "7–10 天发货"
+    },
+    "collection": {
+      "count": "{count, plural, =0 {暂无作品} one {# 件作品} other {# 件作品}}",
+      "featuredHeading": "本系列精选",
+      "relatedHeading": "相关系列",
+      "explore": "探索作品",
+      "aboutEyebrow": "关于本系列",
+      "beforeAfterEyebrow": "蜕变",
+      "beforeAfterHeading": "我们从什么开始，又将什么封存。",
+      "beforeAfterIntro": "拖动滑块，看看作品浇铸之前与固化之后的模样。",
+      "beforeAfterCta": "阅读这件定制",
+      "beforeAlt": "{title} 封存之前。",
+      "afterAlt": "{title} 封存之后，凝于已固化的树脂中。",
+      "commissionEyebrow": "还不太对？",
+      "commissionHeading": "定制一件属于你的 {collection} 作品。",
+      "commissionBody": "告诉我们你心中的画面——色彩、尺寸、要封入其中的名字——我们便为你浇铸。",
+      "commissionCta": "描述你的作品"
+    },
+    "collectionTitle": "臻选系列",
+    "collectionLead": "器物、纪念之作与按需定制的作品。",
+    "pieceNoun": "{count, plural, other {件作品}}",
+    "resultsMono": "{shown, number} / {total, number}",
+    "loadError": "无法加载更多作品。",
+    "retry": "重试",
+    "emptyStatement": "暂无符合这些筛选条件的作品。",
+    "emptyDirection": "放宽一个筛选条件以扩大范围——或者告诉我们你心中的构想，我们为你浇铸。",
+    "tab": {
+      "all": "全部",
+      "art": "树脂艺术",
+      "gifts": "礼品",
+      "supplies": "工作室材料",
+      "print": "3D 打印"
+    },
+    "strip": {
+      "eyebrow": "系列",
+      "heading": "按系列浏览",
+      "intro": "艺术靠眼睛去看，而非靠清单去翻。从你感觉对的那一架开始。",
+      "railLabel": "系列，可横向滚动"
+    },
+    "toolbar": {
+      "searchLabel": "搜索",
+      "searchSubmit": "搜索作品",
+      "clearSearch": "清除搜索",
+      "sortLabel": "排序",
+      "sortMenuLabel": "作品排序方式",
+      "filterLabel": "筛选"
+    },
+    "drawer": {
+      "title": "筛选",
+      "sectionCollection": "系列",
+      "sectionOccasion": "场合",
+      "sectionPrice": "价格",
+      "sectionAvailability": "库存状态",
+      "anyAvailability": "不限库存状态",
+      "clearAll": "全部清除",
+      "apply": "应用（{count, plural, other {# 件作品}}）",
+      "unavailable": "此视图下暂无作品"
+    },
+    "activeFilters": {
+      "remove": "移除 {filter}"
+    },
+    "editorialBreak": {
+      "eyebrow": "工作室里",
+      "heading": "手工浇铸、固化与打磨。",
+      "body": "这里的每一件作品，都要等自己的固化走完，才会有人碰它。目录之所以是这个速度，原因就在这里。",
+      "cta": "看看它如何诞生",
+      "imageAlt": "一次树脂浇铸正在工作室灯光下固化，表面仍在缓缓沉静。"
+    },
+    "sortName": "名称"
+  },
+  "Search": {
+    "meta": {
+      "title": "搜索",
+      "description": "搜索 ResinRiva 的定制作品、手记文章与作品集故事。"
+    },
+    "heroEyebrow": "找到属于你的那件",
+    "heroHeadline": "探索工作室",
+    "inputPlaceholder": "作品、手记、作品集…",
+    "inputAria": "站内搜索",
+    "submit": "搜索",
+    "resultsCount": "{total, plural, =0 {没有找到与“{query}”相关的结果} one {# 个与“{query}”相关的结果} other {# 个与“{query}”相关的结果}}",
+    "tooShortHint": "请至少输入两个字符，以搜索作品、手记和我们的作品集。",
+    "productsEyebrow": "作品",
+    "productsHeading": "定制作品",
+    "postsEyebrow": "手记",
+    "postsHeading": "来自手记",
+    "portfolioEyebrow": "作品集",
+    "portfolioHeading": "受托之作",
+    "sectionCount": "{count, plural, one {# 个结果} other {# 个结果}}",
+    "zeroEyebrow": "尚未开始",
+    "zeroHeading": "这一件我们还未浇铸——目前如此。",
+    "zeroBody": "每一件 ResinRiva 作品都为您定制，因此目录只是起点。告诉我们您心中的构想——色彩、名字、尺寸——我们便为您悉心打造。",
+    "zeroWhatsappCta": "通过 WhatsApp 咨询我们",
+    "browseShop": "浏览商店",
+    "emptyEyebrow": "从任何地方开始",
+    "emptyHeading": "您在寻找什么？",
+    "emptyBody": "试试某件作品（“名牌”、“时钟”）、某个场合（“纪念日”）或某种材质（“树脂”）——也可以直接前往臻选系列。",
+    "productsShowMore": "前往商店查看{total, plural, one {全部 # 件作品} other {全部 # 件作品}}",
+    "zeroWhatsappMessage": "您好 ResinRiva，我在你们网站上搜索了\"{query}\"，但没有找到。你们能为我定制类似的作品吗？\n（发自 {site}）",
+    "overlay": {
+      "dialogLabel": "站内搜索",
+      "label": "搜索",
+      "placeholder": "探索工作室…",
+      "resultsLabel": "搜索结果",
+      "groupProducts": "作品",
+      "groupCollections": "系列",
+      "groupPortfolio": "作品集",
+      "groupJournal": "手记",
+      "collectionCount": "{count, plural, other {# 件}}",
+      "recent": "最近搜索",
+      "clearRecent": "清除",
+      "suggestionsLabel": "试试",
+      "suggestionAria": "搜索 {term}",
+      "nothingHeading": "没有找到。",
+      "nothingBody": "换个词再试——或者<commission>开始定制订单 →</commission>",
+      "errorHeading": "搜索未能完成。",
+      "errorBody": "工作室还在这里——请再试一次，或告诉我们你的想法。",
+      "retry": "重试",
+      "commission": "开始定制订单",
+      "seeAll": "查看全部结果",
+      "hintType": "请至少输入两个字符。",
+      "hints": "↑↓ 移动 · ↵ 打开 · esc 关闭",
+      "loading": "搜索中…",
+      "countAnnounce": "{count, plural, =0 {无结果} other {# 条结果}}"
+    }
+  },
+  "Blog": {
+    "meta": {
+      "title": "手记",
+      "titlePaged": "手记——第 {page} 页",
+      "description": "来自 ResinRiva 工作室的手记——创作历程、材质探究，以及每一件定制树脂艺术委托背后的故事。"
+    },
+    "journalFallbackCategory": "手记",
+    "minRead": "阅读约需 {minutes} 分钟",
+    "readStory": "阅读故事",
+    "heroEyebrow": "手记",
+    "heroHeadline": "来自工作室的手记。",
+    "heroLead": "创作历程、材质探究与作品背后的故事——在一次次浇铸之间，于工作台旁写就。",
+    "allPosts": "全部文章",
+    "viewAllPosts": "查看全部文章",
+    "pageOf": "第 {page} 页，共 {totalPages} 页",
+    "post": {
+      "notFoundTitle": "未找到文章",
+      "draftPreview": "草稿预览 — 只有持有此链接的工作人员可以查看本页。",
+      "shareStory": "分享这个故事",
+      "moreFromJournal": "更多日志文章",
+      "contents": "目录",
+      "contentsLabel": "本页内容",
+      "topics": "主题",
+      "relatedProductsEyebrow": "本文之中",
+      "relatedProductsHeading": "文中提到的作品",
+      "inlineProductEyebrow": "本文提及",
+      "viewPiece": "查看作品"
+    },
+    "featuredEyebrow": "头条故事",
+    "archiveEyebrow": "往期存档",
+    "archiveHeading": "我们写下的其余一切",
+    "taggedLabel": "标签 #{tag}",
+    "removeTag": "移除 #{tag} 筛选",
+    "entryCount": "{count, plural, =0 {暂无文章} other {# 篇文章}}",
+    "emptyStatement": "该主题下暂无内容。",
+    "emptyDirection": "手记写于一次次浇铸之间——换个主题，或者全部读一遍。",
+    "emptyStatementUnfiltered": "手记即将上线。",
+    "emptyDirectionUnfiltered": "我们正在一次次浇铸之间写下最初的几篇。请稍后再来。"
+  },
+  "Portfolio": {
+    "meta": {
+      "title": "作品集",
+      "description": "来自 ResinRiva 工作室的真实委托——蜕变前后的对比、永生花与定制树脂作品，一次讲述一个故事。",
+      "titlePaged": "作品集 — 第 {page} 页",
+      "notFound": "未找到该委托作品"
+    },
+    "heroEyebrow": "我们的委托之作",
+    "heroHeadline": "我们引以为傲的作品。",
+    "heroLead": "这里的每一件都源自某个人的构想——一束花、一段回忆、一个里程碑——最终以独一无二的姿态离开工作室。这些是它们的故事。",
+    "filterAria": "按类别筛选作品集",
+    "allCommissions": "全部委托",
+    "emptyEyebrow": "第一篇章",
+    "emptyHeading": "委托故事正在书写——你的故事或许会是第一个。",
+    "emptyBody": "告诉我们您想永远珍藏的事物，本页下一个案例，或许就是我们为您浇铸的作品。",
+    "emptyCta": "开启定制订单",
+    "caseCount": "{count, plural, one {# 个案例} other {# 个案例}}",
+    "pagination": "分页",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageOf": "第 {page} 页，共 {totalPages} 页",
+    "case": {
+      "draftPreview": "草稿预览——只有持有此链接的工作人员才能查看本页。",
+      "fallbackCategory": "委托之作",
+      "completed": "完成于 {date}",
+      "specAria": "委托作品规格",
+      "specType": "类型",
+      "specMaterial": "材质",
+      "specTechnique": "技法",
+      "specComplexity": "复杂度",
+      "specSize": "尺寸",
+      "specTimeline": "工期",
+      "storyHeading": "这件作品的诞生故事",
+      "tagsLabel": "标签",
+      "beforeAfterHeading": "蜕变前后",
+      "beforeAfterHint": "拖动滑块，或使用方向键，看看它抵达工作室时的模样，与离开时的蜕变。",
+      "videoHeading": "观看作品视频",
+      "galleryHeading": "来自工作台",
+      "relatedHeading": "工作室的其他故事",
+      "ctaHeading": "定制一件这样的作品",
+      "ctaBody": "本页的每个故事，都始于一条简单的消息。告诉我们您的故事——那束花、那张照片、那个里程碑——下一件，我们为您浇铸。",
+      "ctaWhatsApp": "通过 WhatsApp 联系我们",
+      "ctaCustomOrder": "开启定制订单",
+      "commissionWhatsappMessage": "您好 ResinRiva，我在你们的作品集中看到了\"{title}\"，希望定制一件类似的作品。\n（发自 {site}）",
+      "caseStudy": {
+        "briefHeading": "委托背景",
+        "processHeading": "制作过程",
+        "clientHeading": "客户心声"
+      },
+      "viewArchive": "查看存档",
+      "specCompleted": "完成时间",
+      "statLayers": "层数",
+      "statCure": "固化",
+      "statGrit": "目数",
+      "statBuild": "制作",
+      "frameCaption": "第 {index} 帧",
+      "beforeAlt": "{title}——定制开始之前",
+      "afterAlt": "{title}——完成后的作品",
+      "eyebrowStory": "故事",
+      "eyebrowBrief": "委托背景",
+      "eyebrowMaterial": "材料",
+      "eyebrowProcess": "制作过程",
+      "eyebrowFinal": "最终成品",
+      "eyebrowRelated": "出自同一张工作台",
+      "eyebrowCommission": "定制类似之作"
+    },
+    "beforeAfter": {
+      "before": "之前",
+      "after": "之后",
+      "sliderLabel": "前后对比 — 拖动或使用方向键查看",
+      "sliderValue": "正在显示前图的 {percent}%"
+    },
+    "projectNumber": "项目 {number}",
+    "wallHeading": "定制作品存档",
+    "viewProject": "查看项目",
+    "countLabel": "{count, plural, other {# 件定制}}",
+    "clearAll": "全部清除",
+    "removeFilter": "移除 {filter}",
+    "index": {
+      "commissions": "{count, plural, other {# 件定制}}",
+      "collections": "{count, plural, other {# 个系列}}"
+    },
+    "filterEmpty": {
+      "statement": "本系列尚无定制作品。",
+      "direction": "工作室按需接单，因此系列会随着作品离开工作台而逐渐充实。换一个看看——或者，由你来开启第一件。",
+      "action": "查看全部定制"
+    }
+  },
+  "WhatsApp": {
+    "greeting": "您好 ResinRiva，我想进一步了解你们的定制树脂艺术。",
+    "intro": "您好 ResinRiva，\n我想订购：",
+    "product": "产品",
+    "budget": "预算",
+    "timeline": "时间安排",
+    "referenceImages": "参考图片",
+    "notes": "补充备注",
+    "customerDetails": "客户信息",
+    "name": "姓名",
+    "phone": "电话",
+    "email": "邮箱",
+    "sentFrom": "发送自 {host}",
+    "material": "材质",
+    "occasion": "场合"
+  },
+  "InstagramFeed": {
+    "fallbackLead": "我们的最新作品都在 Instagram。",
+    "viewOnInstagram": "在 Instagram 上看看我们",
+    "seeOnWhatsApp": "在 WhatsApp 上查看我们的最新作品"
+  },
+  "WhatsAppOrder": {
+    "metaTitle": "您的 WhatsApp 订单",
+    "eyebrowSaved": "一键即达",
+    "eyebrowExpired": "聊聊吧",
+    "headingSaved": "您的订单摘要已保存",
+    "headingExpired": "在 WhatsApp 上打个招呼",
+    "bodySaved": "如果 WhatsApp 没有自动打开，请使用下方按钮 — 您的订单详情已准备好发送。",
+    "bodyExpired": "此订单链接已过期或不存在 — 别担心。请在 WhatsApp 上给我们留言，我们会立即跟进您的订单。",
+    "openWhatsApp": "打开 WhatsApp",
+    "replyHours": "我们在上午10点至晚上8点（IST）回复最快。",
+    "changedMind": "改变主意了？",
+    "keepBrowsing": "继续逛商店",
+    "copy": "复制消息",
+    "copied": "已复制",
+    "headingCommission": "你的需求已送达匠人手中。",
+    "bodyCommission": "WhatsApp 本应带着你写下的全部内容打开。若没有，消息已保存在下方——准备好了随时发送。",
+    "messageLabel": "WhatsApp 将收到的内容",
+    "seeCommissions": "查看近期定制之作",
+    "next": {
+      "step1": "你的消息会带着你填写的每一处细节在 WhatsApp 中打开——无需重新输入。",
+      "step2": "匠人会回复草图、材料建议，以及确定的价格与时间安排。",
+      "step3": "此处不收取任何费用。价格与配送在那次对话中敲定，然后才开始动工。"
+    }
+  },
+  "OrderErrors": {
+    "generic": "出了点问题 — 请重试，或在 WhatsApp 上联系我们。",
+    "rateLimited": "您连续提交了多个订单 — 请稍等片刻，或直接通过 WhatsApp 联系我们。",
+    "missingFields": "请填写：{fields}"
+  },
+  "Wishlist": {
+    "meta": {
+      "title": "心愿单",
+      "description": "您在浏览 ResinRiva 时收藏的作品——保存在此设备上，随时可通过 WhatsApp 分享给工作室。"
+    },
+    "heroEyebrow": "您的心选清单",
+    "heroHeadline": "收藏的作品",
+    "heroLead": "点击任意作品上的心形图标，即可将它收藏于此——无需注册账户，清单只保存在此设备上。准备好后通过 WhatsApp 分享给我们，接下来交给我们即可。",
+    "count": "{count, plural, =0 {暂无收藏的作品} one {已收藏 # 件作品} other {已收藏 # 件作品}}",
+    "countLabel": "心愿单中共有 {count, plural, one {# 件作品} other {# 件作品}}",
+    "loading": "正在整理您收藏的作品…",
+    "emptyEyebrow": "暂无收藏",
+    "emptyHeading": "您的心愿单还是空的",
+    "emptyBody": "浏览各个系列，点击任意作品上的心形图标，即可在您做决定时把它收藏在这里。",
+    "unavailableHeading": "那些作品已经启程",
+    "unavailableBody": "您收藏的作品已不在目录之中。不妨浏览各个系列，寻找它们的后继之作——或定制一件专属之作。",
+    "browseCta": "浏览臻选系列",
+    "shareLead": "将您的心选清单发送给工作室——细节、价格与工期，一段 WhatsApp 对话即可确认。",
+    "shareCta": "通过 WhatsApp 分享",
+    "waIntro": "你好 ResinRiva，我在你们网站上心选了这些作品：",
+    "waMore": "……另有 {count, plural, one {# 件收藏的作品} other {# 件收藏的作品}}。",
+    "waSentFrom": "（发送自 {host}）"
+  },
+  "Product": {
+    "aboutHeading": "关于这件作品",
+    "badges": {
+      "studioOriginal": "工作室原创",
+      "outOfStock": "暂时售罄"
+    },
+    "specs": {
+      "heading": "规格",
+      "materials": "材质",
+      "dimensions": "尺寸",
+      "timeline": "工期",
+      "category": "类别",
+      "ecosystem": "系列",
+      "ecosystemArt": "树脂艺术",
+      "ecosystemSupplies": "工作室材料",
+      "ecosystemPrint": "3D 打印",
+      "availability": "库存状态",
+      "availableNow": "现货可订",
+      "outOfStock": "目前暂时售罄"
+    },
+    "production": {
+      "title": "制作",
+      "body": "在我们的工作室内手工打造、按需定制——每件作品在寄出前，都经由匠人亲手制备、打磨并检验品质。色彩与表面的细微差异是手工创作的天性，也正因如此，没有两件作品完全相同。",
+      "timeline": "这件作品的通常制作周期：{timeline}。"
+    },
+    "delivery": {
+      "title": "配送",
+      "body": "我们配送至印度各地，为易碎作品悉心包装，并全程跟踪直至送达您的家门。下单时，我们会在 WhatsApp 上与您亲自协调配送事宜——在那里确认细节，并随时向您通报进度，直到作品安全抵达。"
+    },
+    "faqs": {
+      "heading": "常见问题",
+      "viewAll": "全部问题"
+    },
+    "lifestyle": {
+      "line": "深水凝驻——在浇铸凝固之后，作品仍长久留存着暮色微光。"
+    },
+    "sameShelf": {
+      "heading": "同架之选"
+    },
+    "sameTitle": {
+      "heading": "此作品的更多版本"
+    },
+    "pourVariance": "每一次浇筑都独一无二 — 你的作品会与照片略有不同。",
+    "gallery": {
+      "viewFullScreen": "全屏查看图片",
+      "showImage": "显示第 {index} 张图片，共 {count} 张",
+      "playVideo": "播放作品视频",
+      "videoChip": "视频",
+      "view3d": "以 3D 查看",
+      "threeDChip": "3D",
+      "modelAlt": "{title} 的 3D 模型",
+      "lightboxTitle": "{title}——第 {index} 张，共 {count} 张",
+      "counter": "{index} / {count}",
+      "previousImage": "上一张图片",
+      "nextImage": "下一张图片",
+      "lightboxStatus": "第 {index} 张，共 {count} 张：{alt}",
+      "railLabel": "作品图片"
+    },
+    "referenceUploader": {
+      "addImages": "添加参考图片",
+      "hint": "拖放或点击——最多 {maxImages} 张照片，支持 JPG/PNG/WebP，每张不超过 {maxMb}MB",
+      "errorTooMany": "最多 {max} 张图片——请先移除一张，再添加新的。",
+      "errorType": "“{name}”不是 JPG、PNG 或 WebP 图片。",
+      "errorSize": "“{name}”超过了 {max}MB——请换一张更小的照片。",
+      "remove": "移除 {name}"
+    },
+    "trust": {
+      "artHandmade": "在我们的工作室中，由手工浇铸、固化与打磨",
+      "artConfirm": "价格与工期在 WhatsApp 上确认——现在无需付款",
+      "shipping": "全程投保，安全寄送至印度各地",
+      "functionalQuality": "发货前经过品质检验",
+      "functionalConfirm": "价格与库存在 WhatsApp 上确认"
+    },
+    "oosCta": "通过 WhatsApp 咨询补货",
+    "oosSummaryNote": "库存咨询——这件作品目前暂时售罄。",
+    "oosWaIntro": "您好 ResinRiva，\n这件作品目前暂时售罄——我想咨询一下补货事宜：",
+    "notFound": "未找到该作品",
+    "draftPreview": "草稿预览 — 只有持有此链接的工作人员才能查看此页面。",
+    "careHeading": "养护与收藏",
+    "relatedHeading": "您可能还会喜欢",
+    "relatedEyebrow": "更多来自{category}",
+    "order": {
+      "errors": {
+        "required": "此项为必填。",
+        "referenceRequired": "{label}：请至少附上一张参考图片。",
+        "name": "请告诉我们您的姓名。",
+        "phone": "请输入有效的电话号码。",
+        "email": "请输入有效的电子邮箱地址。",
+        "notesLength": "备注请控制在 {max} 字以内。",
+        "generic": "出了点问题 — 请重试。"
+      },
+      "uploadProgress": "正在上传图片 {done}/{total}…",
+      "referenceImagesLabel": "参考图片",
+      "attachAbove": "— 请与上方的参考图片一并附上。",
+      "notesLabel": "补充备注",
+      "notesPlaceholder": "想嵌入的名字、您喜爱的颜色、它背后的故事…",
+      "nameLabel": "姓名",
+      "namePlaceholder": "您的姓名",
+      "phoneLabel": "电话",
+      "phonePlaceholder": "+91 98765 43210",
+      "emailLabel": "邮箱",
+      "emailPlaceholder": "you@example.com",
+      "required": "（必填）",
+      "optional": "（选填）",
+      "summaryTitle": "实时订单摘要",
+      "priceOnWhatsApp": "价格详询 WhatsApp",
+      "craftedIn": "· 制作周期 {timeline}",
+      "updatesHint": "随输入实时更新 — 照片上传后将自动添加图片链接。",
+      "uploading": "正在上传图片…",
+      "preparing": "正在准备您的 WhatsApp 订单…",
+      "placeOrder": "提交订单",
+      "noPayment": "此处无需付款 — WhatsApp 将打开并附上您的订单摘要；价格与配送在那里确认。",
+      "choose": "选择{label}",
+      "fieldRequired": "{label}（必填）",
+      "yourLabel": "您的{label}",
+      "referenceAttached": "{count, plural, other {已附上 # 张参考图片}}",
+      "eyebrow": "定制与下单",
+      "intro": "选择细节，附上任何你希望我们看到的信息，然后发送。价格与工期我们会在 WhatsApp 上确认——此处无需付款。",
+      "previewMessage": "预览你的消息",
+      "whatsappMessageLabel": "WhatsApp 消息",
+      "summaryPiece": "作品",
+      "summaryPrice": "价格",
+      "engravingPreview": "预览",
+      "engravingPreviewEmpty": "此处是你的文字"
+    },
+    "share": {
+      "hintLabel": "送个暗示",
+      "hintMessage": "觉得你会喜欢这个 — {title}。"
+    },
+    "provenanceLinks": {
+      "madeWith": "制作材料",
+      "creates": "可创作的作品"
+    },
+    "customizationNote": "色彩、尺寸与刻字都会在浇铸之前与你敲定——在你于 WhatsApp 上确认之前，一切都还可以改。",
+    "leadTimeChip": "按需定制 · {timeline}",
+    "leadTimeMadeToOrder": "按需定制",
+    "ctaCustomize": "定制这件作品",
+    "ctaWhatsApp": "通过 WhatsApp 咨询",
+    "waAsk": "您好 ResinRiva，我想咨询一下“{title}”。",
+    "sections": {
+      "pieceEyebrow": "这件作品",
+      "detailsEyebrow": "细节",
+      "detailsHeading": "如何制作、养护与送达",
+      "viewCollection": "查看该系列"
+    }
+  },
+  "Consent": {
+    "label": "Cookie 与分析同意",
+    "body": "我们希望使用分析 Cookie，以了解网站的使用情况并加以改进。在您做出选择之前，不会加载任何跟踪。",
+    "decline": "拒绝",
+    "accept": "接受"
+  },
+  "Legal": {
+    "lastUpdated": "最后更新 {date}",
+    "privacyTitle": "隐私政策",
+    "termsTitle": "条款与条件",
+    "eyebrow": "法律信息",
+    "contents": "本页内容",
+    "contentsLabel": "本文档的章节"
+  },
+  "Errors": {
+    "generic": "出了点问题——请重试，或通过 WhatsApp 联系我们。",
+    "invalidEmail": "请输入有效的电子邮箱地址。",
+    "contactRateLimited": "您连续发送了多条消息——请稍等片刻，或直接通过 WhatsApp 联系我们。",
+    "subscribeRateLimited": "请稍等片刻后再试。"
+  },
+  "Upload": {
+    "add": "+ 添加参考图",
+    "drop": "将图片拖到这里，或点击浏览",
+    "formats": "JPG · PNG · WEBP · 最大 {maxMb} MB",
+    "counter": "{count} / {max}",
+    "counterLong": "已添加 {count} / {max} 张参考图片",
+    "retry": "重试"
+  },
+  "Newsletter": {
+    "heading": "工作室来信。",
+    "body": "新作品、创作手记，以及偶尔的工作坊日期。仅此而已。",
+    "fieldLabel": "邮箱地址",
+    "submit": "订阅",
+    "submitting": "正在订阅",
+    "retry": "重试",
+    "success": "你已在名单上。",
+    "already": "你已经在名单上了。",
+    "helper": "一年三四封信"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "这件作品不在这里。",
+    "body": "你访问的页面已经搬走，或者从未被浇铸出来。搜索工作室，或从以下入口开始。",
+    "searchLabel": "探索工作室",
+    "searchPlaceholder": "作品、手记、作品集…",
+    "searchSubmit": "搜索",
+    "collectionsLabel": "热门系列",
+    "collections": {
+      "varmala": "Varmala 花环封存",
+      "frames": "婚礼相框",
+      "decor": "树脂家居装饰",
+      "gifts": "礼品系列"
+    },
+    "home": "返回工作室",
+    "whatsapp": "通过 WhatsApp 咨询"
+  },
+  "ErrorPage": {
+    "eyebrow": "错误",
+    "heading": "出了点问题。",
+    "body": "请重试。若问题持续出现，请给工作室留言，我们会与你一起解决。",
+    "retry": "重试",
+    "whatsapp": "给工作室留言",
+    "referenceLabel": "错误编号"
+  },
+  "LargeFormat": {
+    "meta": {
+      "title": "大型树脂艺术",
+      "description": "在印度定制大型树脂作品——桌面、台面、墙面板与雕塑作品，围绕你的空间设计，按订单浇筑。"
+    },
+    "cure": {
+      "scale": "尺度",
+      "scope": "大件",
+      "how": "如何进行",
+      "brief": "你的需求",
+      "gallery": "作品"
+    },
+    "hero": {
+      "eyebrow": "大型定制",
+      "headline": "大型树脂艺术，为你的空间而作。",
+      "lead": "大件作品在设计之前先围绕空间规划：放在哪里、怎么使用、怎么进门。所以这个尺度的工作从一次对话开始，而不是一张订单。",
+      "startCta": "开始大型定制",
+      "briefCta": "打开定制表单"
+    },
+    "scope": {
+      "eyebrow": "大型涵盖什么",
+      "heading": "大件的四种形态",
+      "intro": "尺度改变的是做法，不是方法。大型需求通常呈现为这几种形态——你的不必是其中之一。",
+      "k1Title": "桌面与台面",
+      "k1Copy": "餐桌与茶几、台面、层板与玄关柜面——树脂浇筑于陈化木材之上，再手工找平抛光。",
+      "k1Alt": "一块树脂与柚木的餐板斜靠在低矮的圆形树脂器皿上，两者都以深蓝浇筑",
+      "k2Title": "墙面板与大型作品",
+      "k2Copy": "单块面板，或成组悬挂的一套，按所在墙面的比例浇筑，而不是按标准画框尺寸。",
+      "k2Alt": "固化透明树脂板的倒角边缘，折射出一道细窄的宝蓝色光带",
+      "k3Title": "雕塑作品与摆件",
+      "k3Copy": "独立站立的形体、置于基座的作品与捕捉光线的块体，逐层叠筑，让深度在房间另一端仍然可读。",
+      "k3Alt": "昏暗工作室中，浇筑好的树脂模具在一盏暖色工作灯下固化",
+      "k4Title": "大尺度的保存",
+      "k4Copy": "将花、织物与纪念物嵌入一件足以长久共处的大作品——先整理稳定，再在四周浇筑。",
+      "k4Alt": "一块浅圆形透明树脂，深蓝的通透中悬浮着压制的万寿菊与玫瑰花瓣",
+      "materials": "艺术级环氧树脂、矿物颜料、陈化木材与保存植物——与小件作品同样的材料，只是用量更多。"
+    },
+    "how": {
+      "eyebrow": "大型定制如何进行",
+      "heading": "先规划，后浇筑",
+      "intro": "正是工序的次序，让大件作品不至于变成大件错误。",
+      "s1Title": "空间与需求",
+      "s1Copy": "你发来空间、用途，以及手上已有的尺寸。我们会问搬运通道、它将放在什么之上，以及还需要谁点头。",
+      "s2Title": "设计与确认",
+      "s2Copy": "草图，以及在有帮助时提供数字预览。在设计、饰面与尺寸双方确定之前，不会浇筑任何东西。",
+      "s3Title": "浇筑与固化",
+      "s3Copy": "树脂一层层注入，每层固化后再进行下一层。大件层数更多，而这正是日程中谁也压缩不了的部分。",
+      "s4Title": "收尾与交付",
+      "s4Copy": "打磨、抛光，并装上站立或悬挂所需的五金。你会看到成品照片，运送方式在作品离开工作室之前就已谈妥。"
+    },
+    "brief": {
+      "eyebrow": "需要发来什么",
+      "heading": "什么能让报价更快",
+      "intro": "这些都不必精确。大致的数字和一张手机照片就足以开始。",
+      "b1Label": "空间",
+      "b1Copy": "作品要放置的墙面、角落或地面的照片，从你平时站立的位置拍摄。",
+      "b2Label": "你手上的尺寸",
+      "b2Copy": "如果知道，长、宽、高——以及从街道到房间之间最窄的门、楼梯或电梯。",
+      "b3Label": "将如何使用",
+      "b3Copy": "日常用餐、陈列作品、办公室前台——厚度、饰面与边缘更多由用途决定，而非偏好。",
+      "b4Label": "参考",
+      "b4Copy": "颜色、木纹、你喜欢的作品照片，或者那件你一直想着却哪里都找不到的作品。",
+      "disclaimer": "此处不收取任何款项。材料、价格与日期都会在开始之前通过 WhatsApp 与你确认。"
+    },
+    "gallery": {
+      "eyebrow": "大件作品",
+      "heading": "这个尺度的作品",
+      "intro": "工作室归入大型的作品。若某件作品记录了尺寸或材料，会一并列出。",
+      "materialsLabel": "材料",
+      "sizeLabel": "尺寸",
+      "catalogCta": "查看完整目录",
+      "emptyHeading": "在离开工作室时记录",
+      "emptyBody": "这个尺度目前还没有可浏览的作品。对话不必等待展厅——描述你想要的作品，我们会从空间出发为你设计。",
+      "emptyCta": "描述你的作品"
+    },
+    "cta": {
+      "heading": "说说这个空间",
+      "body": "发来空间、用途，以及那个重要的日期。在浇下第一层之前，设计、材料与价格都会通过 WhatsApp 与你敲定。",
+      "formCta": "规划定制订单"
+    }
+  }
+}

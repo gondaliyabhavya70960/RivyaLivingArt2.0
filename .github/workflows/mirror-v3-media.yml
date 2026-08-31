@@ -1,0 +1,73 @@
+# Mirrors the v3 "Midnight Gallery" ambient media (public Higgsfield CDN) into
+# public/media/ and commits it back to this branch. Exists because the build
+# sandboxes' egress policy blocks the CDN host — Actions runners have open
+# internet and ship ffmpeg (see scripts/mirror-v3-media.mjs). Safe to delete
+# once the assets are committed.
+name: Mirror v3 media
+
+# NOTE: this workflow's `push` trigger was pinned to a feature branch that no longer
+# exists, so it has never fired. Removed rather than re-pointed at `main`: these jobs
+# mirror remote assets and push commits back, and enabling that is an owner decision,
+# not a side effect of fixing a stale ref. Run it with workflow_dispatch.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-v3-media
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # ubuntu-latest runners no longer ship ffmpeg (run #1 failed with
+      # spawnSync ffmpeg ENOENT) — install it for the video transcode+poster.
+      - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+
+      # --ignore-scripts skips the prisma-generate postinstall (needless here);
+      # sharp still gets its prebuilt binary via optional dependencies.
+      - run: npm ci --ignore-scripts
+
+      - run: node scripts/mirror-v3-media.mjs
+
+      - name: Verify manifest coverage
+        run: |
+          node -e '
+            const m = require("./scripts/v3-media.json");
+            const { existsSync } = require("fs");
+            let missing = 0;
+            for (const n of Object.keys(m.images ?? {}))
+              if (!existsSync(`public/media/${n}.webp`)) { console.error(`missing ${n}.webp`); missing++; }
+            for (const n of Object.keys(m.videos ?? {})) {
+              if (!existsSync(`public/media/${n}.mp4`)) { console.error(`missing ${n}.mp4`); missing++; }
+              if (!existsSync(`public/media/${n}-poster.jpg`)) { console.error(`missing ${n}-poster.jpg`); missing++; }
+            }
+            process.exit(missing ? 1 : 0);
+          '
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/media
+          if git diff --cached --quiet; then
+            echo "Nothing to commit — media already mirrored."
+          else
+            git commit \
+              -m "Mirror v3 ambient media first-party (via Actions)" \
+              -m "public/media/<name>.webp|.mp4|-poster.jpg downloaded from the public Higgsfield CDN by scripts/mirror-v3-media.mjs (sharp WebP q82; ffmpeg h264 CRF28 silent faststart + first-frame posters). Consumed by the v3 redesign as /media/* paths."
+            git pull --rebase origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
+          fi

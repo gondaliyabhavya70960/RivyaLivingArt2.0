@@ -1,0 +1,973 @@
+import type { Metadata } from "next";
+import { Fragment, type ReactNode } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { Link } from "@/i18n/navigation";
+import { localeAlternates } from "@/i18n/seo";
+import { Button } from "@/components/storefront/button";
+import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
+import { CollectionCard } from "@/components/storefront/collection-card";
+import { TestimonialCard } from "@/components/storefront/testimonial-card";
+import { CureLine, type CureMark } from "@/components/storefront/cure-line";
+import {
+  Eyebrow,
+  SectionHeading,
+} from "@/components/storefront/section-heading";
+import { HeroMedia } from "@/components/storefront/hero-media";
+import { MeniscusImage } from "@/components/storefront/meniscus-image";
+import { PourCureShowcase } from "@/components/storefront/pour-cure-showcase";
+import { db } from "@/lib/db";
+import {
+  isOptimizableImageSrc,
+  isRenderableSrc,
+  sizedExternalSrc,
+} from "@/lib/image-src";
+import { localize, localizeName } from "@/lib/localize";
+import { buildProductWhere, fetchProductsPage } from "@/lib/shop";
+import { getSiteImageRefs, getSiteImages } from "@/lib/site-images-server";
+import { getPageSections } from "@/lib/page-sections-server";
+import { SlotImage } from "@/components/storefront/slot-image";
+import { getSiteSettings } from "@/lib/site-settings";
+import { getTestimonials } from "@/lib/testimonials";
+import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
+
+/** ISR: home reflects studio edits within 5 minutes. */
+export const revalidate = 300;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Home.meta" });
+  return {
+    title: { absolute: t("title") },
+    description: t("description"),
+    alternates: localeAlternates("/", locale),
+  };
+}
+
+/**
+ * The six editorial collection tiles — REDESIGN.md §6 05.
+ *
+ * "Reduce the many visible categories to six editorial tiles." Each one is a
+ * doorway with a real destination; nothing here is invented, and the imagery
+ * comes from the owner's own category rows (Part 0: the catalogue is
+ * owner-fed). This block absorbs and replaces BOTH the eight-link collections
+ * list and the separate "three studios" block, which used to compete on
+ * adjacent screens.
+ */
+const COLLECTION_TILES = [
+  {
+    key: "preserve",
+    slug: "varmala-preservation",
+    href: "/shop/varmala-preservation",
+  },
+  {
+    key: "keep",
+    slug: "wedding-photo-frames",
+    href: "/shop/wedding-photo-frames",
+  },
+  { key: "live", slug: "resin-home-decor", href: "/shop/resin-home-decor" },
+  { key: "gift", slug: "gift-collections", href: "/shop/gift-collections" },
+  { key: "create", slug: null, href: "/custom-order" },
+  { key: "print", slug: "print-decor", href: "/shop?type=print" },
+] as const;
+
+/** The subset of tiles backed by a real category row. */
+const TILE_CATEGORY_SLUGS: string[] = COLLECTION_TILES.map(
+  (tile) => tile.slug,
+).filter((slug): slug is NonNullable<typeof slug> => slug !== null);
+
+/**
+ * The v3 homepage — REDESIGN.md Part 6.
+ *
+ * Thirteen sections, two of them `major`. The content the old page carried is
+ * all still here; what changed is that it now has a hierarchy. The deletions
+ * the audit called for are real deletions:
+ *
+ * - the duplicate "From liquid to light" (it rendered twice)
+ * - the eight-link collections list (absorbed into §05's six tiles)
+ * - the separate "three studios" block (same)
+ * - the arbitrary single-featured-piece spotlight
+ * - the second portfolio strip and the second marquee
+ * - the standalone duplicate newsletter section
+ * - the undefendable stat row (100% handcrafted / 500+ hours / 1 of 1)
+ *
+ * **Band rhythm.** §3.1 allows a maximum of three dark bands and forbids two
+ * adjacent. The spec's own section list would put a dark §08 (bespoke) next
+ * to a dark §09 (3D printing), so §09 keeps its technical, monochrome
+ * character on a sand ground instead — the absolute rule wins over the
+ * sectional description. Dark bands: the hero, §08 and §13.
+ *
+ * **The cure line** (§2.6) runs the whole page in the reserved left gutter.
+ */
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations("Home");
+  const tCommon = await getTranslations("Common");
+  const tWa = await getTranslations("WhatsApp");
+
+  const [
+    catalog,
+    portfolioRows,
+    tileCategories,
+    posts,
+    settings,
+    commissionCount,
+    images,
+    imageRefs,
+    sections,
+    testimonials,
+  ] = await Promise.all([
+    // §03 takes four pieces — one hero and three supporting. "featured"
+    // sort puts the owner's curated picks first.
+    fetchProductsPage({
+      where: buildProductWhere({}),
+      sort: "featured",
+      take: 4,
+      locale,
+      withTotal: false,
+    }),
+    // §07 recent commissions: one huge, two smaller.
+    db.portfolio.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        translations: true,
+        afterImageUrl: true,
+        images: {
+          orderBy: { order: "asc" },
+          take: 1,
+          select: { url: true, alt: true },
+        },
+      },
+    }),
+    // §05 tile photography — the owner's own category images.
+    db.category.findMany({
+      where: { slug: { in: TILE_CATEGORY_SLUGS } },
+      select: { slug: true, image: true },
+    }),
+    // §12 journal: one featured, two smaller.
+    db.blogPost.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        coverImage: true,
+        publishedAt: true,
+        translations: true,
+        blogCategory: { select: { name: true, translations: true } },
+      },
+    }),
+    getSiteSettings(),
+    // The hero's fact row states a real number, not a slogan (§6 11:
+    // "replace with defensible mono facts").
+    db.portfolio.count({ where: { status: "PUBLISHED" } }),
+    // Slot-resolved editorial imagery (/studio/site-images). Falls back to the
+    // bundled file for every slot the owner has not replaced.
+    getSiteImages(),
+    getSiteImageRefs(),
+    getPageSections("home"),
+    // §08 the proof pair: three voices beside the three commissions above.
+    // Returns [] when the owner has published none, and the band renders
+    // nothing rather than inventing a customer.
+    getTestimonials(3, locale),
+  ]);
+
+  const waHref = buildWaLink(
+    defaultWaGreeting(tWa("greeting")),
+    settings.whatsappNumber,
+  );
+
+  const [heroPiece, ...supportingPieces] = catalog.items;
+  const tileImages = new Map(
+    tileCategories.map((row) => [row.slug, row.image]),
+  );
+
+  const commissions = portfolioRows.map((piece) => {
+    const cover = piece.afterImageUrl ?? piece.images[0]?.url;
+    return {
+      id: piece.id,
+      slug: piece.slug,
+      title: localize(piece, locale, ["title"]).title,
+      cover: isRenderableSrc(cover) ? cover : null,
+      coverAlt: piece.images[0]?.alt?.trim() || null,
+    };
+  });
+
+  const journal = posts.map((post) => {
+    const p = localize(post, locale, ["title", "excerpt"]);
+    return {
+      id: post.id,
+      slug: post.slug,
+      title: p.title,
+      excerpt: p.excerpt,
+      cover: isRenderableSrc(post.coverImage) ? post.coverImage : null,
+      category: post.blogCategory
+        ? localizeName(post.blogCategory, locale)
+        : null,
+      date: post.publishedAt,
+    };
+  });
+  const [featuredPost, ...restPosts] = journal;
+
+  /**
+   * §2.6 — one tick per section boundary, labelled in mono.
+   *
+   * GENERATED from the same resolved list the page renders, not maintained
+   * beside it. The two used to be separate arrays kept in step by hand, which
+   * was fine only while the order was fixed: the moment an owner could hide or
+   * move a section, a hand-written rail would point at sections that are not
+   * there and list them in an order the page no longer uses.
+   *
+   * Sections with no `cureLabelKey` — the closing invitation, the Why band —
+   * deliberately have no tick, exactly as before.
+   */
+  const cureMarks: CureMark[] = sections
+    .filter((section) => section.visible && section.cureLabelKey)
+    .map((section) => ({
+      id: section.key,
+      label: t(section.cureLabelKey as "cure.pour"),
+      ...(section.dark ? { dark: true } : {}),
+    }));
+
+  const dateFormatter = new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  /**
+   * The page, keyed by section.
+   *
+   * The JSX is unchanged — each block is exactly what it was, in the same
+   * file. What changed is that the fragment no longer hard-codes the order:
+   * the manifest below decides which of these render and in what sequence,
+   * so the owner can reorder and hide sections without a deploy.
+   *
+   * Building a node the manifest then hides costs nothing — these are React
+   * elements, not rendered output, and every query the page makes already
+   * happened above.
+   */
+  const sectionNodes: Record<string, ReactNode> = {
+    /* ════════ 01 · Fullscreen hero — major ════════
+    100svh, full-bleed cinematic, text bottom-left (not centred), and a
+    fact row in mono where the old page had three decorative chips. The
+    poster image is the LCP: it is `priority`, never revealed, never
+    animated (Part 14). */
+    pour: (
+      <section
+        id="pour"
+        data-theme="navy"
+        aria-labelledby="hero-heading"
+        className="relative -mt-20 flex min-h-svh flex-col justify-end overflow-hidden bg-obsidian text-mineral"
+      >
+        <div className="absolute inset-0">
+          <HeroMedia
+            videoUrl={settings.heroVideoUrl ?? undefined}
+            posterSrc={images["home.hero"]}
+          />
+          {/* §6 01 specifies a flat rgba(8,10,14,.6) overlay. A gradient
+              weighted to the text block does the same job with less of the
+              photograph lost — but it must not drop below 60% anywhere the
+              copy sits, or the mono eyebrow falls under the 3:1 floor over a
+              bright frame of the pour. */}
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-t from-obsidian/92 via-obsidian/65 to-obsidian/20"
+          />
+        </div>
+
+        <div className="u-shell relative flex flex-col gap-8 pt-32 pb-24">
+          <Eyebrow rule={false} className="text-champagne">
+            {t("hero.eyebrow")}
+          </Eyebrow>
+
+          <h1
+            id="hero-heading"
+            className="max-w-[14ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+          >
+            {t("hero.headline")}
+          </h1>
+
+          <p className="u-prose font-body text-body leading-relaxed text-mist">
+            {t("hero.lead")}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <Button asChild variant="primary" size="lg">
+              <Link href="/shop">{t("hero.ctaExplore")}</Link>
+            </Button>
+            <Button asChild variant="premium" size="lg">
+              <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
+            </Button>
+          </div>
+
+          {/* The fact row. Every value is true and checkable: the studio's
+              city, the house rule, the published lead-time band, and a
+              commission count read from the database. */}
+          <p className="u-micro flex flex-wrap items-center gap-x-3 gap-y-2 text-mist">
+            <span>{t("hero.factPlace")}</span>
+            <span aria-hidden>·</span>
+            <span>{t("hero.factMadeToOrder")}</span>
+            <span aria-hidden>·</span>
+            <span>{t("hero.factLeadTime")}</span>
+            <span aria-hidden>·</span>
+            <span>{t("hero.factCommissions", { count: commissionCount })}</span>
+          </p>
+        </div>
+
+        {/* Scroll indicator: a thin vertical line with a slowly pulsing
+            champagne droplet at its head. */}
+        <span
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 pb-6"
+        >
+          <span className="block h-10 w-px bg-gradient-to-b from-transparent to-champagne/50" />
+          <span className="block size-1.5 rounded-full bg-champagne animate-droplet" />
+        </span>
+      </section>
+    ),
+    /* ════════ 02 · Manifesto — standard ════════
+    Large blank space, centred type. THE ONLY CENTRED BLOCK ON THE SITE
+    (§6 02). No cards, no CTA — this is the breathing room the old page
+    never took. */
+    manifesto: (
+      <section
+        id="manifesto"
+        aria-labelledby="manifesto-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell flex flex-col items-center gap-8 text-center">
+          <h2
+            id="manifesto-heading"
+            className="max-w-[18ch] font-display text-h1 leading-[1.05] tracking-display text-balance"
+          >
+            {t("manifesto.line1")}
+            <br />
+            {t("manifesto.line2")}
+          </h2>
+          <p className="u-lede font-body text-body text-graphite">
+            {t("manifesto.body")}
+          </p>
+        </div>
+      </section>
+    ),
+    /* ════════ 03 · Featured pieces — standard ════════
+    One hero piece plus three supporting — never eight dense cards. */
+    pieces: heroPiece ? (
+      <section
+        id="pieces"
+        aria-labelledby="pieces-heading"
+        className="section-standard bg-sand"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="pieces-heading"
+            eyebrow={t("featured.eyebrow")}
+            title={t("featured.heading")}
+            action={
+              <Button asChild variant="secondary" size="sm">
+                <Link href="/shop">{t("featured.cta")}</Link>
+              </Button>
+            }
+          />
+          <div className="grid gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              {/* NOT `priority`. This card sits a full screen below the
+                  hero — 1812px down at 1440x900 — and `priority` preloaded a
+                  full-size image from the third-party catalogue host on the
+                  critical path, competing with the hero poster that IS the
+                  LCP. One priority image per page (§19.4); the hero owns it.
+                  Losing it also gives this card the meniscus reveal every
+                  other card gets, which is what a below-the-fold image
+                  should do. */}
+              <CatalogProductCard item={heroPiece} variant="full" morph />
+            </div>
+            <div className="grid gap-8 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
+              {supportingPieces.map((item) => (
+                <CatalogProductCard key={item.id} item={item} variant="full" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    ) : null,
+    /* ════════ 04 · Material story — major ════════
+    The climax. Sticky visual, four steps scrubbing beside it. Rendered
+    exactly once — the old page shipped this block twice. */
+    material: (
+      <section
+        id="material"
+        aria-labelledby="material-heading"
+        className="bg-mineral"
+      >
+        <PourCureShowcase
+          eyebrow={t("showcase.eyebrow")}
+          heading={t("showcase.heading")}
+          headingId="material-heading"
+          stages={[
+            {
+              title: t("showcase.stage1Title"),
+              copy: t("showcase.stage1Copy"),
+            },
+            {
+              title: t("showcase.stage2Title"),
+              copy: t("showcase.stage2Copy"),
+            },
+            {
+              title: t("showcase.stage3Title"),
+              copy: t("showcase.stage3Copy"),
+            },
+            {
+              title: t("showcase.stage4Title"),
+              copy: t("showcase.stage4Copy"),
+            },
+          ]}
+          staticAlt={t("showcase.staticAlt")}
+        />
+      </section>
+    ),
+    /* ════════ 05 · Collections — standard ════════ */
+    collections: (
+      <section
+        id="collections"
+        aria-labelledby="collections-heading"
+        className="section-standard bg-sand"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="collections-heading"
+            eyebrow={t("collections.eyebrow")}
+            title={t("collections.heading")}
+            intro={t("collections.intro")}
+          />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {COLLECTION_TILES.map((tile) => (
+              <CollectionCard
+                key={tile.key}
+                href={tile.href}
+                name={t(`collections.tiles.${tile.key}.name`)}
+                promise={t(`collections.tiles.${tile.key}.promise`)}
+                image={tile.slug ? tileImages.get(tile.slug) : null}
+                imageAlt={t(`collections.tiles.${tile.key}.alt`)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    ),
+    /* ════════ 06 · The maker — standard ════════
+    Real photography. The maker portrait is never AI-generated (§15.2). */
+    maker: (
+      <section
+        id="maker"
+        aria-labelledby="maker-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
+          <MeniscusImage
+            src={images["home.maker"]}
+            alt={t("maker.imageAlt")}
+            width={1200}
+            height={1500}
+            sizes="(min-width:1024px) 45vw, 90vw"
+            className="aspect-[4/5] lg:col-span-5"
+            imageClassName="object-cover"
+          />
+          <div className="flex flex-col gap-6 lg:col-span-6 lg:col-start-7">
+            <Eyebrow>{t("maker.eyebrow")}</Eyebrow>
+            <h2
+              id="maker-heading"
+              className="max-w-[16ch] font-display text-h2 leading-[1.08] tracking-display"
+            >
+              {t("maker.heading")}
+            </h2>
+            <p className="u-prose font-body text-body text-graphite">
+              {t("maker.body")}
+            </p>
+            <Button asChild variant="secondary" size="md" className="w-fit">
+              <Link href="/about">{t("maker.cta")}</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+    ),
+    /* ════════ 07 · Recent commissions — standard ════════
+    Editorial, not a grid: one huge image, two smaller, project numbers
+    in mono over the corner. The strongest proof on the site, no longer
+    sitting eighth. */
+    work:
+      commissions.length > 0 ? (
+        <section
+          id="work"
+          aria-labelledby="work-heading"
+          className="section-standard bg-sand"
+        >
+          <div className="u-shell flex flex-col gap-12">
+            <SectionHeading
+              id="work-heading"
+              eyebrow={t("portfolio.eyebrow")}
+              title={t("portfolio.heading")}
+              action={
+                <Button asChild variant="secondary" size="sm">
+                  <Link href="/portfolio">{t("portfolio.cta")}</Link>
+                </Button>
+              }
+            />
+            <div className="grid gap-6 lg:grid-cols-12">
+              {commissions.map((piece, index) => (
+                <article
+                  key={piece.id}
+                  className={
+                    index === 0
+                      ? "group relative lg:col-span-8"
+                      : "group relative lg:col-span-4"
+                  }
+                >
+                  <div
+                    className={
+                      index === 0
+                        ? "relative aspect-[16/10] overflow-hidden rounded-image bg-sand"
+                        : "relative aspect-[4/3] overflow-hidden rounded-image bg-sand"
+                    }
+                  >
+                    {piece.cover ? (
+                      <MeniscusImage
+                        src={sizedExternalSrc(piece.cover, 1400)}
+                        alt={piece.coverAlt ?? piece.title}
+                        fill
+                        sizes={
+                          index === 0
+                            ? "(min-width:1024px) 66vw, 100vw"
+                            : "(min-width:1024px) 33vw, 100vw"
+                        }
+                        unoptimized={!isOptimizableImageSrc(piece.cover)}
+                        className="absolute inset-0"
+                        imageClassName="object-cover"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden
+                        className="flex h-full w-full items-center justify-center bg-deep-ocean font-display text-49 text-mineral/70"
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    )}
+                    <span className="u-micro absolute start-4 top-4 text-mineral mix-blend-difference">
+                      {t("portfolio.projectNumber", {
+                        number: String(index + 1).padStart(2, "0"),
+                      })}
+                    </span>
+                  </div>
+                  <h3 className="mt-4 font-body text-16 font-medium text-ink">
+                    <Link
+                      href={`/portfolio/${piece.slug}`}
+                      className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
+                    >
+                      {piece.title}
+                    </Link>
+                  </h3>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null,
+    /* ════════ 08 · In their words — standard ════════
+       The proof pair. Recent commissions above show the work; this shows the
+       people who bought it, and the bespoke band below asks. `Home.testimonials.*`
+       has been translated into all nine locales and editable at
+       /studio/site-copy since the copy layer shipped — it just had no section
+       to render in. Light ground: the page is at Part 19.1's three-dark-band
+       ceiling already, and mineral holds the alternation on both sides. */
+    words:
+      testimonials.length > 0 ? (
+        <section
+          id="words"
+          aria-labelledby="words-heading"
+          className="section-standard bg-mineral"
+        >
+          <div className="u-shell flex flex-col gap-12">
+            <SectionHeading
+              id="words-heading"
+              eyebrow={t("testimonials.eyebrow")}
+              title={t("testimonials.heading")}
+            />
+            <div className="grid gap-6 md:grid-cols-3">
+              {testimonials.map((item) => (
+                <TestimonialCard
+                  key={item.id}
+                  quote={item.quote}
+                  name={item.name}
+                  location={item.location ?? undefined}
+                  rating={item.rating}
+                  avatarUrl={item.avatarUrl}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null,
+    /* ════════ 09 · Bespoke — major-weight dark band ════════ */
+    bespoke: (
+      <section
+        id="bespoke"
+        data-theme="navy"
+        aria-labelledby="bespoke-heading"
+        className="relative section-major overflow-hidden bg-obsidian text-mineral"
+      >
+        <SlotImage
+          slot={imageRefs["home.bespoke"]}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-35"
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-obsidian/30"
+        />
+        <div className="u-shell relative flex flex-col gap-8">
+          <Eyebrow rule={false} className="text-champagne">
+            {t("custom.eyebrow")}
+          </Eyebrow>
+          <h2
+            id="bespoke-heading"
+            className="max-w-[14ch] font-display text-h1 leading-[1.02] tracking-display text-mineral"
+          >
+            {t("custom.heading")}
+          </h2>
+          <p className="font-display text-h3 leading-[1.3] text-mineral/90">
+            {t("custom.lineFlowers")}
+            <br />
+            {t("custom.lineNames")}
+            <br />
+            {t("custom.lineDates")}
+          </p>
+          <p className="u-prose font-body text-body text-mist">
+            {t("custom.body")}
+          </p>
+          <Button asChild variant="premium" size="lg" className="w-fit">
+            <Link href="/custom-order">{t("custom.cta")}</Link>
+          </Button>
+        </div>
+      </section>
+    ),
+    /* ════════ 09 · 3D printing — standard ════════
+    Technical and monochrome, and deliberately NOT a dark band: §3.1
+    forbids two dark sections touching, and §08 above is dark. */
+    print: (
+      <section
+        id="print"
+        aria-labelledby="print-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
+          <div className="flex flex-col gap-6 lg:col-span-5">
+            <Eyebrow>{t("printStudio.eyebrow")}</Eyebrow>
+            <h2
+              id="print-heading"
+              className="max-w-[14ch] font-display text-h2 leading-[1.08] tracking-display"
+            >
+              {t("printStudio.headingLine1")}
+              <br />
+              {t("printStudio.headingLine2")}
+            </h2>
+            <p className="u-prose font-body text-body text-graphite">
+              {t("printStudio.body")}
+            </p>
+            <dl className="flex flex-col gap-2 border-t border-hairline pt-5">
+              {(["cad", "print", "finish"] as const).map((step, index) => (
+                <div key={step} className="flex items-baseline gap-4">
+                  <dt className="u-micro w-8 shrink-0">
+                    {String(index + 1).padStart(2, "0")}
+                  </dt>
+                  <dd className="font-body text-14 text-ink">
+                    {t(`printStudio.steps.${step}`)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <Button asChild variant="secondary" size="md" className="w-fit">
+              <Link href="/shop?type=print">{t("printStudio.cta")}</Link>
+            </Button>
+          </div>
+          <MeniscusImage
+            src={images["home.print"]}
+            alt={t("printStudio.imageAlt")}
+            width={1400}
+            height={1050}
+            sizes="(min-width:1024px) 55vw, 90vw"
+            className="aspect-[4/3] grayscale lg:col-span-6 lg:col-start-7"
+            imageClassName="object-cover"
+          />
+        </div>
+      </section>
+    ),
+    /* ════════ 10 · How it works — standard ════════
+    A horizontal timeline with a connecting hairline, one numeral per
+    step in mono, and the reassurance line the old page was missing. */
+    process: (
+      <section
+        id="process"
+        aria-labelledby="how-heading"
+        className="section-standard bg-sand"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="how-heading"
+            eyebrow={t("how.eyebrow")}
+            title={t("how.heading")}
+          />
+          <div className="relative">
+            {/* The connecting rule. Decorative — the ordered list already
+                carries the sequence — and a sibling of the <ol> rather than a
+                child of it: a <span> inside <ol> is invalid nesting, and the
+                parser relocates it, which breaks hydration. */}
+            <span
+              aria-hidden
+              className="absolute inset-x-0 top-3 hidden h-px bg-hairline md:block"
+            />
+            <ol className="grid gap-10 md:grid-cols-4 md:gap-6">
+              {(["step1", "step2", "step3", "step4"] as const).map(
+                (step, index) => (
+                  <li key={step} className="relative flex flex-col gap-3">
+                    <span className="relative flex items-center gap-3">
+                      <span
+                        aria-hidden
+                        className="block size-1.5 shrink-0 rounded-full bg-champagne ring-4 ring-sand"
+                      />
+                      <span className="u-num text-14 text-graphite">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    </span>
+                    <h3 className="font-body text-16 font-medium text-ink">
+                      {t(`how.${step}Title`)}
+                    </h3>
+                    <p className="font-body text-14 leading-relaxed text-graphite">
+                      {t(`how.${step}Copy`)}
+                    </p>
+                  </li>
+                ),
+              )}
+            </ol>
+          </div>
+          <p className="u-micro border-t border-hairline pt-6 text-champagne-ink">
+            {t("how.reassurance")}
+          </p>
+        </div>
+      </section>
+    ),
+    /* ════════ 11 · Why ResinRiva — standard ════════
+    Four proof points with photography and mono numerals — no icons
+    (§3.7). The old page's stat row (100% handcrafted / 500+ hours /
+    1 of 1) is gone: none of the three was checkable. */
+    why: (
+      <section
+        aria-labelledby="why-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="why-heading"
+            eyebrow={t("why.eyebrow")}
+            title={t("why.heading")}
+          />
+          <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {(
+              [
+                { key: "handcrafted", src: images["home.why.handcrafted"] },
+                { key: "bespoke", src: images["home.why.bespoke"] },
+                { key: "slowMade", src: images["home.why.slowMade"] },
+                { key: "heirloom", src: images["home.why.heirloom"] },
+              ] as const
+            ).map((proof) => (
+              <li key={proof.key} className="flex flex-col gap-4">
+                <MeniscusImage
+                  src={proof.src}
+                  alt={t(`why.proof.${proof.key}.alt`)}
+                  width={800}
+                  height={1000}
+                  sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
+                  className="aspect-[4/5]"
+                  imageClassName="object-cover"
+                />
+                <p className="u-micro">{t(`why.proof.${proof.key}.label`)}</p>
+                <p className="font-body text-14 leading-relaxed text-graphite">
+                  {t(`why.proof.${proof.key}.copy`)}
+                </p>
+              </li>
+            ))}
+          </ul>
+          {/* Defensible mono facts replacing the old stat row. */}
+          <p className="u-micro flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-hairline pt-6">
+            <span>{t("why.factLayer")}</span>
+            <span aria-hidden>·</span>
+            <span>{t("why.factGrit")}</span>
+            <span aria-hidden>·</span>
+            <span>{t("why.factCommissions", { count: commissionCount })}</span>
+          </p>
+        </div>
+      </section>
+    ),
+    /* ════════ 12 · Journal — standard ════════
+    Three articles: one large featured, two smaller. No tag wall. The
+    ONLY section on the site allowed the heading "Notes from the
+    studio" (§6 12 + Part 17's no-duplicate-headings rule). */
+    journal: featuredPost ? (
+      <section
+        id="journal"
+        aria-labelledby="journal-heading"
+        className="section-standard bg-sand"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="journal-heading"
+            eyebrow={t("journal.eyebrow")}
+            title={t("journal.heading")}
+            action={
+              <Button asChild variant="secondary" size="sm">
+                <Link href="/blog">{t("journal.cta")}</Link>
+              </Button>
+            }
+          />
+          <div className="grid gap-10 lg:grid-cols-12">
+            <article className="group relative flex flex-col gap-4 lg:col-span-7">
+              {featuredPost.cover ? (
+                <MeniscusImage
+                  src={sizedExternalSrc(featuredPost.cover, 1400)}
+                  alt=""
+                  width={1400}
+                  height={875}
+                  sizes="(min-width:1024px) 60vw, 100vw"
+                  unoptimized={!isOptimizableImageSrc(featuredPost.cover)}
+                  className="aspect-[16/10]"
+                  imageClassName="object-cover"
+                />
+              ) : null}
+              {featuredPost.category ? (
+                <p className="u-micro">{featuredPost.category}</p>
+              ) : null}
+              <h3 className="font-display text-h3 leading-[1.15] text-ink">
+                <Link
+                  href={`/blog/${featuredPost.slug}`}
+                  className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
+                >
+                  {featuredPost.title}
+                </Link>
+              </h3>
+              {featuredPost.excerpt ? (
+                <p className="u-prose font-body text-body text-graphite">
+                  {featuredPost.excerpt}
+                </p>
+              ) : null}
+              {featuredPost.date ? (
+                <p className="u-micro">
+                  {dateFormatter.format(featuredPost.date)}
+                </p>
+              ) : null}
+            </article>
+
+            <div className="flex flex-col gap-8 lg:col-span-4 lg:col-start-9">
+              {restPosts.map((post) => (
+                <article
+                  key={post.id}
+                  className="group relative flex flex-col gap-3"
+                >
+                  {post.category ? (
+                    <p className="u-micro">{post.category}</p>
+                  ) : null}
+                  <h3 className="font-body text-16 leading-snug font-medium text-ink">
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
+                    >
+                      {post.title}
+                    </Link>
+                  </h3>
+                  {post.date ? (
+                    <p className="u-micro">{dateFormatter.format(post.date)}</p>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    ) : null,
+    /* ════════ 13 · Final CTA — compact ════════
+    Two spec passages meet here and only one can be right. §6 13 lists
+    this section as "Newsletter + final CTA — compact + dark band"; §5.8
+    says the newsletter has "two placements only (footer, journal index)"
+    and names the homepage's duplicate as the bug it is correcting. §5.8
+    wins: it is the corrective statement, and the footer's own newsletter
+    sits three hundred pixels below this line.
+
+    The band is light for a second reason. §3.1 caps a page at three dark
+    bands and forbids two adjacent; the hero, the material story and the
+    bespoke band already spend all three, and the obsidian footer follows
+    immediately — a dark section here would both break the cap and put two
+    dark grounds edge to edge. */
+    closing: (
+      <section
+        aria-labelledby="closing-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell flex flex-col gap-8">
+          <h2
+            id="closing-heading"
+            className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
+          >
+            {t("cta.headingLine1")}
+            <br />
+            {t("cta.headingLine2")}
+          </h2>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button asChild variant="primary" size="lg">
+              <Link href="/custom-order">{t("cta.primary")}</Link>
+            </Button>
+            <Button asChild variant="whatsapp" size="lg">
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-wa-source="home_closing"
+              >
+                {t("cta.whatsapp")}
+                <span className="sr-only"> {tCommon("openInNewTab")}</span>
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+    ),
+  };
+
+  return (
+    <>
+      <CureLine marks={cureMarks} />
+      {sections
+        .filter((section) => section.visible)
+        .map((section) => (
+          <Fragment key={section.key}>{sectionNodes[section.key]}</Fragment>
+        ))}
+    </>
+  );
+}

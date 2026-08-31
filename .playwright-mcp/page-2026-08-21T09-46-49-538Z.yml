@@ -1,0 +1,138 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - link "Skip to content" [ref=f2e3] [cursor=pointer]:
+      - /url: "#main-content"
+    - generic [ref=f2e4]:
+      - generic [ref=f2e5]:
+        - link "Made-to-order luxury resin art — every order finalized personally on WhatsApp" [ref=f2e6] [cursor=pointer]:
+          - /url: /shop
+        - button "Pause announcements" [ref=f2e8]
+      - banner:
+        - generic [ref=f2e13]:
+          - link "ResinRiva — home" [ref=f2e14] [cursor=pointer]:
+            - /url: /
+            - img "ResinRiva" [ref=f2e15]
+          - generic [ref=f2e18]:
+            - generic [ref=f2e20]:
+              - generic [ref=f2e21]: Language
+              - combobox "Choose a language" [ref=f2e22] [cursor=pointer]:
+                - option "English" [selected]
+                - option "हिन्दी"
+                - option "ગુજરાતી"
+                - option "العربية"
+                - option "Español"
+                - option "Deutsch"
+                - option "Français"
+                - option "中文"
+                - option "日本語"
+            - button "Open menu" [ref=f2e23]
+      - main [ref=f2e25]:
+        - status [ref=f2e27]
+      - contentinfo [ref=f2e117]:
+        - generic [ref=f2e119]:
+          - generic [ref=f2e120]:
+            - paragraph [ref=f2e121]: Handcrafted in small batches. Every piece an heirloom.
+            - generic [ref=f2e122]:
+              - link "ResinRiva — home" [ref=f2e123] [cursor=pointer]:
+                - /url: /
+                - img "ResinRiva" [ref=f2e124]
+              - paragraph [ref=f2e127]: Luxury custom resin art & 3D printing, made to order in India
+          - generic [ref=f2e128]:
+            - generic [ref=f2e129]:
+              - navigation "explore" [ref=f2e130]:
+                - list [ref=f2e131]:
+                  - listitem [ref=f2e132]:
+                    - link "Shop" [ref=f2e133] [cursor=pointer]:
+                      - /url: /shop
+                  - listitem [ref=f2e134]:
+                    - link "Resin Art & Gifting" [ref=f2e135] [cursor=pointer]:
+                      - /url: /shop?type=art
+                  - listitem [ref=f2e136]:
+                    - link "Studio Supplies" [ref=f2e137] [cursor=pointer]:
+                      - /url: /shop?type=supplies
+                  - listitem [ref=f2e138]:
+                    - link "3D Printing" [ref=f2e139] [cursor=pointer]:
+                      - /url: /shop?type=print
+                  - listitem [ref=f2e140]:
+                    - link "Custom Order" [ref=f2e141] [cursor=pointer]:
+                      - /url: /custom-order
+                  - listitem [ref=f2e142]:
+                    - link "Workshops" [ref=f2e143] [cursor=pointer]:
+                      - /url: /workshops
+                  - listitem [ref=f2e144]:
+                    - link "Portfolio" [ref=f2e145] [cursor=pointer]:
+                      - /url: /portfolio
+                  - listitem [ref=f2e146]:
+                    - link "Blog" [ref=f2e147] [cursor=pointer]:
+                      - /url: /blog
+                  - listitem [ref=f2e148]:
+                    - link "Search" [ref=f2e149] [cursor=pointer]:
+                      - /url: /search
+              - navigation "studio" [ref=f2e150]:
+                - list [ref=f2e151]:
+                  - listitem [ref=f2e152]:
+                    - link "About" [ref=f2e153] [cursor=pointer]:
+                      - /url: /about
+                  - listitem [ref=f2e154]:
+                    - link "Our Process" [ref=f2e155] [cursor=pointer]:
+                      - /url: /process
+                  - listitem [ref=f2e156]:
+                    - link "FAQ" [ref=f2e157] [cursor=pointer]:
+                      - /url: /faq
+                  - listitem [ref=f2e158]:
+                    - link "Contact" [ref=f2e159] [cursor=pointer]:
+                      - /url: /contact
+            - generic [ref=f2e160]:
+              - generic [ref=f2e161]: Get first access to new drops.
+              - generic [ref=f2e162]:
+                - textbox [ref=f2e163]
+                - generic [ref=f2e164]:
+                  - textbox "Get first access to new drops." [ref=f2e165]:
+                    - /placeholder: you@email.com
+                  - button "Notify me" [ref=f2e166]
+            - generic [ref=f2e167]:
+              - generic [ref=f2e169]:
+                - generic [ref=f2e170]: Language
+                - combobox "Choose a language" [ref=f2e171] [cursor=pointer]:
+                  - option "English" [selected]
+                  - option "हिन्दी"
+                  - option "ગુજરાતી"
+                  - option "العربية"
+                  - option "Español"
+                  - option "Deutsch"
+                  - option "Français"
+                  - option "中文"
+                  - option "日本語"
+              - navigation "contact" [ref=f2e172]:
+                - list [ref=f2e173]:
+                  - listitem [ref=f2e174]:
+                    - link "+91 7096036250" [ref=f2e175] [cursor=pointer]:
+                      - /url: tel:+917096036250
+                  - listitem [ref=f2e178]:
+                    - link "gondaliyabhavya70960@gmail.com" [ref=f2e179] [cursor=pointer]:
+                      - /url: mailto:gondaliyabhavya70960@gmail.com
+                  - listitem [ref=f2e183]:
+                    - link "Find our studio (opens in new tab)" [ref=f2e184] [cursor=pointer]:
+                      - /url: https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6
+                      - text: Find our studio
+                      - generic [ref=f2e188]: (opens in new tab)
+                  - listitem [ref=f2e189]:
+                    - link "Chat on WhatsApp (opens in new tab)" [ref=f2e190] [cursor=pointer]:
+                      - /url: https://wa.me/917096036250?text=Hello%20ResinRiva%2C%20I'd%20like%20to%20know%20more%20about%20your%20custom%20resin%20art.%0A(Sent%20from%20store.bhavyagondaliya.co.in)
+                      - text: Chat on WhatsApp
+                      - generic [ref=f2e193]: (opens in new tab)
+              - link "ResinRiva on WhatsApp (opens in new tab)" [ref=f2e195] [cursor=pointer]:
+                - /url: https://wa.me/917096036250?text=Hello%20ResinRiva%2C%20I'd%20like%20to%20know%20more%20about%20your%20custom%20resin%20art.%0A(Sent%20from%20store.bhavyagondaliya.co.in)
+            - generic [ref=f2e198]:
+              - paragraph [ref=f2e199]: © 2026 ResinRiva. All rights reserved.
+              - list [ref=f2e200]:
+                - listitem [ref=f2e201]:
+                  - link "Privacy Policy" [ref=f2e202] [cursor=pointer]:
+                    - /url: /privacy
+                - listitem [ref=f2e203]:
+                  - generic [ref=f2e204]: ·
+                  - link "Terms & Conditions" [ref=f2e205] [cursor=pointer]:
+                    - /url: /terms
+              - paragraph [ref=f2e206]: Made in India ✦
+      - region "Notifications alt+T"
+  - alert [ref=f2e207]

@@ -1,0 +1,90 @@
+# Fetches the four tier tabs of the owner's scraped-products Google Sheet
+# (public CSV export) and commits them gzipped to data/tiers/ — the build
+# sandbox's egress policy blocks docs.google.com, Actions runners don't.
+#
+# MANUAL ONLY. It used to retry every 2 hours on the premise that "once the
+# full CSVs are committed the fetch finds no changes and commits nothing".
+# That premise was false: `gzip` writes the current time into the gzip header,
+# so byte-identical CSVs compress to a DIFFERENT .gz on every run, the commit
+# guard below always saw a change, and it pushed ~15 MB of binary churn every
+# two hours — 96 commits, each one triggering a deployment, with `git diff`
+# reporting 0 insertions and 0 deletions every time.
+#
+# The data it fetches is already committed in data/tiers/ and is read at
+# deploy time by prisma/bootstrap.ts -> prisma/import-tiers.ts, so the fetch
+# has nothing left to do on a schedule. Run it by hand when the owner's sheet
+# has actually changed.
+name: Fetch product tier sheets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-tiers
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Download tier CSVs
+        run: |
+          mkdir -p data/tiers
+          # Probe first: a private sheet 401s every anonymous endpoint. Tell the
+          # owner exactly what to do instead of failing cryptically.
+          probe=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://docs.google.com/spreadsheets/d/1f4_cl3-8JrYIFTPNhSsuMEl8GAET1n61L9ZZKL8npa8/export?format=csv&gid=630660076")
+          if [ "$probe" = "401" ] || [ "$probe" = "403" ]; then
+            echo "::error::The sheet is still private (HTTP $probe). In Google Sheets: Share → General access → 'Anyone with the link' → Viewer. This workflow retries on a schedule and will pick it up automatically."
+            exit 1
+          fi
+          for tab in Tier1_Owner Tier2_ResinGoods Tier3_Supplies Tier4_3DPrint; do
+            curl -sSL --fail --retry 3 \
+              "https://docs.google.com/spreadsheets/d/1f4_cl3-8JrYIFTPNhSsuMEl8GAET1n61L9ZZKL8npa8/gviz/tq?tqx=out:csv&sheet=${tab}" \
+              -o "data/tiers/${tab}.csv"
+            # A private sheet returns an HTML login page, not CSV — fail loudly.
+            if head -c 512 "data/tiers/${tab}.csv" | grep -qi "<html\|<!DOCTYPE"; then
+              echo "::error::${tab}: got HTML instead of CSV — sheet/tab not link-public or tab name wrong."
+              exit 1
+            fi
+            echo "== ${tab}: $(wc -l < "data/tiers/${tab}.csv") lines, $(wc -c < "data/tiers/${tab}.csv") bytes"
+            head -c 500 "data/tiers/${tab}.csv"; echo
+          done
+          # gviz falls back to the first tab on an unknown sheet name — identical
+          # files mean a tab name is wrong, so fail instead of committing garbage.
+          if [ "$(md5sum data/tiers/Tier*.csv | awk '{print $1}' | sort -u | wc -l)" != "4" ]; then
+            echo "::error::Two or more tabs returned identical CSVs — check tab names."
+            md5sum data/tiers/Tier*.csv
+            exit 1
+          fi
+          # Also fetch the tab the owner's shared URL points at (gid=630660076)
+          # — the prepared import-ready batch. The importer sniffs its schema
+          # and only uses it when it really is the 45-column studio template.
+          curl -sSL --fail --retry 3 \
+            "https://docs.google.com/spreadsheets/d/1f4_cl3-8JrYIFTPNhSsuMEl8GAET1n61L9ZZKL8npa8/export?format=csv&gid=630660076" \
+            -o "data/tiers/OwnerSheet_gid630660076.csv" || echo "gid tab fetch failed (non-fatal)"
+          # -n omits the timestamp and original name from the gzip header.
+          # Without it the same CSV compresses to different bytes every run,
+          # which is what made the commit guard below fire every time.
+          gzip -9 -n -f data/tiers/*.csv
+          ls -la data/tiers/
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/tiers
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "Add owner sheet tier CSVs (gzipped, via Actions)"
+            git pull --rebase origin "${{ github.ref_name }}"
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi

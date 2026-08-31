@@ -1,0 +1,66 @@
+# Mirrors the v6 brand media first-party (public/media/v6/*.webp) — the build
+# sandbox's egress policy blocks the Higgsfield CDN host, Actions runners
+# don't. Safe to delete once the assets are committed.
+name: Mirror v6 media
+
+# NOTE: this workflow's `push` trigger was pinned to a feature branch that no longer
+# exists, so it has never fired. Removed rather than re-pointed at `main`: these jobs
+# mirror remote assets and push commits back, and enabling that is an owner decision,
+# not a side effect of fixing a stale ref. Run it with workflow_dispatch.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-v6-media
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Mirror media
+        run: node scripts/mirror-v6-media.mjs
+
+      - name: Verify manifest coverage
+        run: |
+          node - <<'EOF'
+          const fs = require("node:fs");
+          const manifest = JSON.parse(
+            fs.readFileSync("scripts/v6-media.json", "utf8"),
+          );
+          const missing = Object.keys(manifest.images).filter(
+            (name) => !fs.existsSync(`public/media/v6/${name}.webp`),
+          );
+          if (missing.length) {
+            console.error("Missing:", missing.join(", "));
+            process.exit(1);
+          }
+          console.log("All manifest assets present.");
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/media/v6
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "Mirror v6 brand media first-party (via Actions)"
+            git pull --rebase origin "${{ github.ref_name }}"
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi

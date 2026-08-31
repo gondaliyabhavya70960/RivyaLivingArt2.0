@@ -1,0 +1,1493 @@
+{
+  "Nav": {
+    "shop": "Boutique",
+    "customOrder": "Commande sur mesure",
+    "workshops": "Ateliers",
+    "portfolio": "Portfolio",
+    "process": "Processus",
+    "blog": "Blog",
+    "studio": "Atelier",
+    "journal": "Journal",
+    "about": "À propos",
+    "contact": "Contact",
+    "search": "Recherche",
+    "ourProcess": "Notre processus",
+    "faq": "FAQ",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales",
+    "collections": "Collections",
+    "groupArt": "Art résine & cadeaux",
+    "groupSupplies": "Fournitures d'atelier",
+    "groupPrint": "Impression 3D",
+    "viewAll": "Tout voir",
+    "megaPortfolio": "Le portfolio",
+    "megaPortfolioLine": "Œuvres sur commande, documentées pièce par pièce.",
+    "wishlist": "Liste d'envies",
+    "bespoke": "Sur mesure",
+    "home": "Accueil",
+    "menu": "Menu",
+    "whatsapp": "WhatsApp",
+    "primaryMobile": "Navigation rapide",
+    "journalStories": "Récits",
+    "journalGuides": "Guides",
+    "largeFormat": "Grand format"
+  },
+  "Common": {
+    "startOnWhatsApp": "Démarrer sur WhatsApp",
+    "enquire": "Se renseigner",
+    "readMore": "Lire la suite",
+    "viewAll": "Voir tout",
+    "loading": "Chargement…",
+    "openInNewTab": "(s'ouvre dans un nouvel onglet)",
+    "home": "Accueil",
+    "breadcrumb": "Fil d'Ariane",
+    "skipToContent": "Aller au contenu",
+    "close": "Fermer",
+    "whatsappChatLabel": "Discuter avec ResinRiva sur WhatsApp (s'ouvre dans un nouvel onglet)",
+    "pauseMotion": "Mettre les animations en pause",
+    "playMotion": "Lancer les animations",
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Page précédente",
+      "next": "Page suivante",
+      "page": "Page {number}"
+    },
+    "pauseAnnouncements": "Mettre les annonces en pause",
+    "resumeAnnouncements": "Reprendre les annonces",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "logoHome": "ResinRiva — accueil",
+    "dismissAnnouncement": "Masquer l'annonce",
+    "announcementDefault": "Délai actuel · Petites pièces 7–10 jours · Grandes pièces 3–6 semaines"
+  },
+  "Header": {
+    "search": "Recherche",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "siteMenu": "Menu du site",
+    "primaryNav": "Navigation principale",
+    "mobileNav": "Navigation mobile",
+    "catalogMenu": "Catalogue",
+    "exploreAll": "Découvrir toutes les pièces",
+    "skipToContent": "Aller au contenu"
+  },
+  "Footer": {
+    "tagline": "Art en résine fait main, sur commande.",
+    "rights": "© {year} ResinRiva. Tous droits réservés.",
+    "explore": "explorer",
+    "studio": "atelier",
+    "contact": "contact",
+    "newsletterLabel": "Accédez en avant-première à nos nouveautés.",
+    "newsletterPlaceholder": "votre@email.com",
+    "newsletterEmailAria": "Adresse e-mail pour les annonces de nouveautés",
+    "newsletterSubmit": "Me prévenir",
+    "newsletterSuccess": "Vous êtes sur la liste — nous vous écrirons pour un accès en avant-première à nos nouveautés.",
+    "findStudio": "Trouver notre atelier",
+    "chatOnWhatsApp": "Discuter sur WhatsApp",
+    "blurb": "Fait main, en petites séries. Chaque pièce est un trésor à transmettre.",
+    "socialInstagram": "ResinRiva sur Instagram (ouvre un nouvel onglet)",
+    "socialFacebook": "ResinRiva sur Facebook (ouvre un nouvel onglet)",
+    "socialYoutube": "ResinRiva sur YouTube (ouvre un nouvel onglet)",
+    "socialPinterest": "ResinRiva sur Pinterest (ouvre un nouvel onglet)",
+    "socialWhatsapp": "ResinRiva sur WhatsApp (ouvre un nouvel onglet)",
+    "madeIn": "Fabriqué en Inde",
+    "journal": "Journal",
+    "ctaEyebrow": "commandes sur mesure",
+    "ctaHeadline": "Une idée en tête ? Donnons-lui vie.",
+    "ctaAction": "Lancer une commande",
+    "newsletterHint": "Trois ou quatre lettres par an"
+  },
+  "Language": {
+    "label": "Langue",
+    "select": "Choisir une langue"
+  },
+  "Home": {
+    "meta": {
+      "title": "ResinRiva — Art en résine sur mesure et impression 3D de luxe",
+      "description": "Œuvres en résine sur mesure, cadeaux personnalisés et pièces imprimées en 3D dans des bleus océan profonds — faits main en petites séries et commandés sur WhatsApp. Un héritage que vous garderez pour toujours."
+    },
+    "hero": {
+      "eyebrow": "art en résine sur mesure · impression 3d · sur commande",
+      "headline": "Le luxe liquide, coulé pour l'éternité.",
+      "lead": "ResinRiva crée des œuvres en résine sur mesure, des cadeaux personnalisés et des pièces imprimées en 3D dans des bleus océan profonds — coulés à la main, conçus rien que pour vous, et commandés tout simplement sur WhatsApp. Un héritage que vous garderez pour toujours.",
+      "ctaExplore": "Explorer la collection",
+      "ctaBespoke": "Commander une pièce",
+      "badgeHand": "coulé à la main",
+      "badgeUnique": "aucune pièce identique",
+      "badgeWhatsApp": "commandé sur whatsapp",
+      "scroll": "défiler",
+      "factPlace": "Surat, Inde",
+      "factMadeToOrder": "Sur commande",
+      "factLeadTime": "7 jours–6 semaines",
+      "factCommissions": "{count} commandes documentées"
+    },
+    "collections": {
+      "heading": "Les collections",
+      "cta": "Parcourir la boutique",
+      "previous": "Collections précédentes",
+      "next": "Collections suivantes",
+      "pieceCount": "{count, plural, one {# pièce} other {# pièces}}",
+      "launchingSoon": "bientôt disponible",
+      "eyebrow": "six portes d'entrée",
+      "intro": "Six portes vers l'atelier — d'une guirlande gardée pour toujours à une forme imprimée qui n'existait pas la semaine dernière.",
+      "tiles": {
+        "preserve": {
+          "name": "Préserver",
+          "promise": "Garder ce jour pour toujours",
+          "alt": "Un varmala de mariage figé dans une résine limpide sur un socle en bois"
+        },
+        "keep": {
+          "name": "Conserver",
+          "promise": "Des photographies, tenues dans la résine",
+          "alt": "Un cadre photo en résine tenant un portrait"
+        },
+        "live": {
+          "name": "Vivre",
+          "promise": "Des objets pour le quotidien",
+          "alt": "Des objets d'intérieur en résine captant la lumière sur une table"
+        },
+        "gift": {
+          "name": "Offrir",
+          "promise": "Fait pour quelqu'un en particulier",
+          "alt": "Un coffret souvenir en résine, emballé"
+        },
+        "create": {
+          "name": "Créer",
+          "promise": "Commencer quelque chose qui n'existe qu'une fois",
+          "alt": "Des mains disposent des pétales dans un moule vide"
+        },
+        "print": {
+          "name": "Imprimer",
+          "promise": "De la forme numérique à l'objet",
+          "alt": "Une forme translucide imprimée en 3D en cours de construction"
+        }
+      }
+    },
+    "featured": {
+      "heading": "Pièces en vedette",
+      "cta": "Voir toutes les pièces",
+      "emptyEyebrow": "la première coulée est en cours",
+      "emptyHeading": "Collection bientôt disponible",
+      "emptyBody": "Les premières pièces durcissent à l'atelier. En attendant leur arrivée, commandez une création sur mesure — imaginée selon votre histoire, à votre rythme.",
+      "emptyOrderBespoke": "Commander sur mesure",
+      "emptyNewsletterLabel": "Ou laissez votre e-mail pour y accéder en avant-première dès leur arrivée.",
+      "eyebrow": "la signature"
+    },
+    "how": {
+      "heading": "Comment ça marche",
+      "step1Title": "Choisir",
+      "step1Copy": "Parcourez les collections et trouvez la pièce qui vous parle.",
+      "step2Title": "Personnaliser",
+      "step2Copy": "Choisissez les dimensions, les couleurs et la gravure ; téléversez vos photos de référence.",
+      "step3Title": "Commander sur WhatsApp",
+      "step3Copy": "Le récapitulatif complet de votre commande s'ouvre dans WhatsApp — sans paiement en ligne, sans compte à créer.",
+      "step4Title": "Nous créons et livrons",
+      "step4Copy": "Nous coulons, durcissons et finissons votre pièce, puis l'expédions en toute sécurité partout en Inde.",
+      "eyebrow": "comment ça marche",
+      "reassurance": "Aucun paiement sur ce site — le prix est convenu sur WhatsApp avant la moindre coulée."
+    },
+    "why": {
+      "heading": "Pourquoi ResinRiva",
+      "badge": "Fabriqué en Inde",
+      "pillar1Title": "Fait main",
+      "pillar1Copy": "Chaque pièce est coulée, façonnée et polie à la main en petites séries — jamais produite en série.",
+      "pillar2Title": "Sur mesure",
+      "pillar2Copy": "Vos prénoms, vos fleurs, votre histoire — personnalisés de bout en bout et finalisés en personne sur WhatsApp.",
+      "pillar3Title": "Qualité héritage",
+      "pillar3Copy": "Résine et finitions de qualité muséale, conçues pour être conservées, offertes et transmises pendant des décennies.",
+      "eyebrow": "ce à quoi nous tenons",
+      "factLayer": "24–72 h par couche",
+      "factGrit": "grain 400 → 3000",
+      "factCommissions": "{count} commandes documentées",
+      "proof": {
+        "handcrafted": {
+          "label": "Fait main",
+          "copy": "Chaque pièce passe entre des mains humaines.",
+          "alt": "Des mains gantées tracent de fines ondes dans la résine bleue au pistolet à air chaud"
+        },
+        "bespoke": {
+          "label": "Sur mesure",
+          "copy": "Construite autour de votre histoire, pas d'un catalogue.",
+          "alt": "Des fleurs préservées serties dans un bloc de résine limpide"
+        },
+        "slowMade": {
+          "label": "Fait lentement",
+          "copy": "Le temps fait partie du processus, il ne lui fait pas obstacle.",
+          "alt": "Des moules remplis durcissent toute la nuit sous une lampe d'atelier"
+        },
+        "heirloom": {
+          "label": "Héritage",
+          "copy": "Faite pour être conservée, offerte et transmise.",
+          "alt": "Une résine bleu profond capte la lumière sur une surface finie"
+        }
+      }
+    },
+    "portfolio": {
+      "eyebrow": "les dernières créations de l'atelier",
+      "heading": "Commandes récentes",
+      "cta": "Voir le portfolio",
+      "projectNumber": "Projet {number}"
+    },
+    "testimonials": {
+      "eyebrow": "de belles paroles",
+      "heading": "Ce que disent les collectionneurs",
+      "previous": "Témoignages précédents",
+      "next": "Témoignages suivants",
+      "rating": "{rating} étoiles sur 5"
+    },
+    "journal": {
+      "eyebrow": "extrait du journal",
+      "heading": "Notes de l'atelier",
+      "cta": "Lire le blog"
+    },
+    "cta": {
+      "heading": "Commandez une pièce qui n'appartient qu'à vous",
+      "body": "Partagez votre idée sur WhatsApp — dimensions, couleurs, budget et délais, le tout finalisé en une seule conversation.",
+      "headingLine1": "Commandez une pièce",
+      "headingLine2": "qui n'existe qu'une fois.",
+      "primary": "Lancer une commande",
+      "whatsapp": "Écrire sur WhatsApp"
+    },
+    "custom": {
+      "heading": "Fait selon votre histoire",
+      "body": "Vos fleurs, vos noms, vos dates — préservés dans la résine en une pièce que personne d'autre ne peut posséder. Une commande sur mesure commence et s'achève en une seule conversation WhatsApp.",
+      "cta": "Lancer une commande",
+      "imageAlt": "Des mains déposent des pétales de guirlande de mariage dans un moule en silicone",
+      "eyebrow": "commandes sur mesure",
+      "lineFlowers": "Vos fleurs.",
+      "lineNames": "Vos prénoms.",
+      "lineDates": "Vos dates."
+    },
+    "showcase": {
+      "eyebrow": "la signature",
+      "heading": "Du liquide à la lumière",
+      "stage1Title": "La coulée",
+      "stage1Copy": "Une résine saphir profond, coulée d'un seul geste ininterrompu — l'instant où chaque pièce prend vie.",
+      "stage2Title": "La dorure",
+      "stage2Copy": "La feuille d'or dérive dans la résine qui se pose, captant la lumière comme une vague capte le soleil.",
+      "stage3Title": "Le durcissement",
+      "stage3Copy": "Des jours de patience figent ce mouvement à jamais — lumière liquide, préservée pour toujours.",
+      "staticAlt": "Résine bleu profond veinée de feuille d'or, de la première coulée à la pièce durcie",
+      "stage4Title": "Le polissage",
+      "stage4Copy": "Du grain 400 au 3000, puis la pâte à polir — jusqu'à ce que la surface disparaisse et qu'il ne reste que la profondeur."
+    },
+    "printStudio": {
+      "heading": "L'atelier imprimé",
+      "body": "À côté des coulées tourne le banc d'impression — lampes lithophanes éclairées par vos photos, formes sculpturales imprimées, et les filaments et pièces qui les fabriquent.",
+      "cta": "Voir l'impression 3D",
+      "imageAlt": "Une tête d'impression FDM dépose un filament bleu translucide couche après couche",
+      "eyebrow": "l'atelier imprimé",
+      "headingLine1": "De la forme numérique",
+      "headingLine2": "à l'objet physique.",
+      "steps": {
+        "cad": "La forme est modélisée, ou votre photographie est traduite en profondeur.",
+        "print": "Elle s'imprime en filament translucide, couche après couche.",
+        "finish": "Les coutures sont retirées, poncées et finies à la main."
+      }
+    },
+    "cure": {
+      "pour": "la coulée",
+      "manifesto": "manifeste",
+      "pieces": "pièces",
+      "material": "matière",
+      "collections": "les collections",
+      "maker": "l'artisan",
+      "work": "travaux récents",
+      "bespoke": "sur mesure",
+      "print": "impression 3d",
+      "process": "processus",
+      "journal": "journal",
+      "words": "de belles paroles"
+    },
+    "manifesto": {
+      "line1": "Des objets faits lentement.",
+      "line2": "Des souvenirs rendus permanents.",
+      "body": "Rien ici n'est en stock. Chaque pièce est coulée pour une seule personne, durcie sur des jours plutôt que des heures, et finie par les mains mêmes qui l'ont commencée."
+    },
+    "maker": {
+      "eyebrow": "l'artisan",
+      "heading": "Fait par une seule paire de mains.",
+      "body": "Chaque pièce ResinRiva passe entre les mêmes mains, de la première coulée au dernier passage au grain 3000. Il n'y a pas de chaîne de production ici — seulement un établi, quelques moules, et le temps qu'une pièce demande.",
+      "cta": "Rencontrer l'artisan",
+      "imageAlt": "Des mains polissent une surface de résine durcie sur l'établi de l'atelier"
+    }
+  },
+  "Process": {
+    "meta": {
+      "title": "Notre processus",
+      "description": "Comment naît une commande ResinRiva — de la première conversation sur WhatsApp aux coulées superposées, à la finition à la main et à la livraison suivie partout en Inde."
+    },
+    "hero": {
+      "eyebrow": "notre processus",
+      "headline": "De l'idée à l'héritage.",
+      "lead": "Six étapes sans précipitation, entre votre premier message et la pièce entre vos mains. Voici exactement comment naît une commande ResinRiva — et le temps qu'elle demande vraiment."
+    },
+    "timeline": {
+      "heading": "Six étapes, aucun raccourci",
+      "step1Title": "Le brief",
+      "step1Copy": "Tout commence par une conversation sur WhatsApp. Vous partagez votre idée, des photos de référence, les dimensions que vous imaginez et le budget qui vous convient — et nous posons les questions qui façonnent le projet.",
+      "step2Title": "Conception et maquette",
+      "step2Copy": "Nous traduisons le brief en croquis et, pour les pièces imprimées en 3D, en aperçus numériques. Rien n'est coulé avant que vous n'ayez approuvé la conception — chaque détail est validé avant que la résine ne rencontre le moule.",
+      "step3Title": "Les matériaux",
+      "step3Copy": "Résine époxy de qualité artistique, pigments minéraux, fleurs préservées et bois sélectionné. Si la pièce accueille vos propres fleurs ou souvenirs, nous les préparons et les préservons d'abord, avec tout le soin qu'ils méritent.",
+      "step4Title": "La coulée",
+      "step4Copy": "La résine est coulée couche après couche, chaque coulée durcissant 24–72 heures avant la suivante. C'est la superposition qui donne à une pièce sa profondeur — et précisément pourquoi elle ne peut jamais être précipitée.",
+      "step5Title": "La finition",
+      "step5Copy": "Une fois entièrement durcie, la pièce est poncée du grain 400 jusqu'au grain 3000, puis polie jusqu'à devenir aussi limpide que du verre. Ferrures, crochets ou supports sont posés et vérifiés à la main.",
+      "step6Title": "Contrôle et expédition",
+      "step6Copy": "Vous recevez des photos de la pièce achevée pour approbation avant son expédition. Elle est ensuite emballée avec le plus grand soin, à l'épreuve des chocs, et envoyée en livraison suivie, partout en Inde.",
+      "eyebrow": "comment naît une pièce",
+      "step1Meta": "Sur WhatsApp",
+      "step2Meta": "Rien n'est coulé sans votre accord",
+      "step3Meta": "Époxy de qualité artistique",
+      "step4Meta": "24–72 heures par couche",
+      "step5Meta": "grain 400 → 3000",
+      "step6Meta": "Suivi, partout en Inde",
+      "step1Alt": "L'établi de l'atelier au début d'une commande",
+      "step2Alt": "Une tête d'impression FDM dépose un filament bleu translucide sur le plateau",
+      "step3Alt": "Des paillettes d'or en suspension dans une résine bleue qui se stabilise",
+      "step4Alt": "Une résine saphir profond en pleine coulée, s'étalant dans un moule rond",
+      "step5Alt": "Des mains gantées travaillent la résine bleue au pistolet à air chaud",
+      "step6Alt": "Des pièces en résine finies disposées dans un coffret doublé"
+    },
+    "materials": {
+      "heading": "Ce qui compose votre pièce",
+      "m1Title": "Résine époxy",
+      "m1Copy": "De qualité artistique et d'une transparence cristalline une fois entièrement durcie.",
+      "m2Title": "Teck et bois de rivière",
+      "m2Copy": "Bois dur affiné, scellé et fini à la main.",
+      "m3Title": "Pigments minéraux",
+      "m3Copy": "Une couleur résistante à la lumière qui conserve sa profondeur pendant des décennies.",
+      "m4Title": "Végétaux préservés",
+      "m4Copy": "Vos fleurs, séchées et stabilisées pour conserver leur forme.",
+      "eyebrow": "matériaux",
+      "headingEndure": "Des matériaux choisis pour durer.",
+      "intro": "Une résine de qualité muséale, stable aux UV. Des pigments et des métaux choisis pour la façon dont ils vieillissent, pas seulement pour la photo.",
+      "alt1": "Une résine époxy limpide captant la lumière en pleine coulée",
+      "alt2": "Le veinage d'un bois dur affiné, scellé sous une surface de résine",
+      "alt3": "Des gobelets de résine saphir et du pigment minéral en vrac sur l'établi",
+      "alt4": "Des pétales préservés pris entre des couches de résine durcie"
+    },
+    "timelines": {
+      "heading": "Des délais honnêtes",
+      "intro": "Chaque pièce est réalisée sur commande ; les délais varient donc selon la complexité et les temps de durcissement. À titre indicatif :",
+      "e1Title": "Petites pièces",
+      "e1Copy": "Dessous de verre, bijoux, souvenirs et créations similaires sont généralement prêts en 7–10 jours.",
+      "e2Title": "Pièces d'exception",
+      "e2Copy": "Tables, grandes œuvres murales et préservations superposées demandent 3–6 semaines, selon les temps de durcissement et la complexité.",
+      "e3Title": "Périodes de fêtes",
+      "e3Copy": "Autour des fêtes et pendant la saison des mariages, le calendrier se remplit vite — réservez tôt pour garantir votre date.",
+      "footnote": "Nous confirmons un délai réaliste avant de commencer — et vous tenons informé à chaque étape, de la première coulée à l'expédition.",
+      "eyebrow": "combien de temps cela prend",
+      "e1Value": "7–10 jours",
+      "e2Value": "3–6 semaines",
+      "quotingLabel": "Devis en cours"
+    },
+    "cta": {
+      "heading": "Entamez la conversation",
+      "body": "Partagez votre idée sur WhatsApp — références, dimensions et budget, le tout réglé au fil d'une conversation chaleureuse avant la moindre coulée.",
+      "customOrder": "Planifier une commande"
+    }
+  },
+  "About": {
+    "meta": {
+      "title": "À propos",
+      "description": "L'histoire de ResinRiva — un atelier d'art en résine sur commande qui façonne en Inde des pièces bleu océan, dignes d'un héritage, une commande à la fois."
+    },
+    "hero": {
+      "eyebrow": "l'atelier",
+      "headline": "Là où la résine rencontre le recueillement.",
+      "lead": "ResinRiva est un atelier d'art en résine sur commande, en Inde — une petite maison vouée à préserver ce qui compte le plus dans une profondeur limpide comme le verre : vos fleurs, vos photographies, vos moments marquants."
+    },
+    "story": {
+      "heading": "Notre histoire",
+      "imageAlt": "Un cadre en résine à fleurs préservées fabriqué à la main dans l'atelier ResinRiva",
+      "p1": "ResinRiva a commencé comme un atelier tenu par une seule personne — un unique établi et une fascination discrète pour ce qui se produit lorsque la lumière traverse la résine coulée. Il a grandi commande après commande, mais il travaille toujours comme à ses débuts : une pièce à la fois, chaque étape passant entre les mêmes mains attentives.",
+      "p2": "La palette est venue de la mer. Saphir, azur et bleus des grands fonds parcourent presque tout ce que nous créons — des couleurs d'une véritable profondeur, superposées comme l'eau superpose la lumière. L'or n'apparaît qu'en touche finale : un éclat le long d'une arête, une fine veine à travers le bleu.",
+      "p3": "Nous ne produisons pas en série et ne gardons aucun stock. Chaque commande commence par une conversation sur WhatsApp — votre idée, vos références, votre budget — et se termine en une pièce unique qui n'existe nulle part ailleurs au monde.",
+      "eyebrow": "notre histoire"
+    },
+    "values": {
+      "heading": "Ce à quoi nous tenons",
+      "v1Title": "La patience",
+      "v1Copy": "La résine ne se presse pas. Chaque couche durcit à son propre rythme, et nous la laissons faire — la limpidité récompense la patience.",
+      "v2Title": "La provenance",
+      "v2Copy": "Vos fleurs, vos photographies, votre histoire. Les matières qui comptent le plus viennent de votre vie, non d'un catalogue.",
+      "v3Title": "La précision",
+      "v3Copy": "L'impression 3D rencontre la finition à la main — la précision du numérique dans la forme, un œil et une main humains sur chaque surface.",
+      "v4Title": "La permanence",
+      "v4Copy": "Des matières et des finitions dignes d'un héritage, choisies pour que chaque pièce puisse être conservée, offerte et transmise."
+    },
+    "craft": {
+      "heading": "Fait lentement, fait une seule fois",
+      "panel1Eyebrow": "01 — la coulée",
+      "panel1Title": "Coulée dans le silence",
+      "panel1Copy": "Chaque couche repose 24–72 heures avant la suivante — la résine récompense la patience et punit la hâte.",
+      "panel2Eyebrow": "02 — le durcissement",
+      "panel2Title": "Le temps parachève l'œuvre",
+      "panel2Copy": "Un durcissement lent préserve la profondeur limpide de toute bulle et de toute tension. Nous ne sortons jamais une pièce de son moule à la hâte.",
+      "panel3Eyebrow": "03 — le polissage",
+      "panel3Title": "Fini à la main, limpide comme le verre",
+      "panel3Copy": "Du grain 400 au grain 3000, puis le polissage — jusqu'à ce que la surface s'efface et qu'il ne reste que l'océan à l'intérieur.",
+      "seeProcess": "Voir tout le processus"
+    },
+    "chapters": {
+      "embedTitle": "Serti d'or et de pétales",
+      "embedCopy": "Fleurs, feuilles d'or et souvenirs sont déposés à la main entre les couches — chaque élément scellé exactement là où il doit reposer, pour que la pièce garde un instant, et pas seulement une matière.",
+      "alt1": "Résine d'un saphir profond en plein coulage, s'étendant dans un moule rond",
+      "alt2": "Des paillettes de feuille d'or flottant dans une résine bleue translucide",
+      "alt3": "L'atelier de nuit — des moules coulés durcissent sous la lumière chaude d'une lampe d'atelier",
+      "alt4": "Des gouttes d'eau sur une résine polie miroir, paillettes d'or en dessous"
+    },
+    "sustain": {
+      "heading": "Des matières choisies pour durer",
+      "body": "Résine qualité musée, stable aux UV. Des pigments et des métaux choisis pour la façon dont ils vieillissent, pas seulement pour la photo. Et comme chaque pièce est faite sur commande, rien n'est produit en trop : pas de stock, pas de gaspillage, seulement les pièces qu'on nous a demandées."
+    },
+    "maker": {
+      "eyebrow": "rencontrez la personne derrière ResinRiva",
+      "heading": "ResinRiva est dirigé par Bhavya Gondaliya",
+      "body": "Chaque demande, chaque croquis et chaque coulée passe par les mains mêmes qui façonnent votre pièce. Lorsque vous écrivez à l'atelier, vous vous adressez directement à la personne qui réalisera véritablement votre pièce — aucun intermédiaire, aucune chaîne de production, seulement une conversation entre vous et la personne qui la crée.",
+      "cta": "Dire bonjour",
+      "name": "Bhavya Gondaliya",
+      "imageAlt": "Des mains polissent une pièce de résine bleu et or durcie jusqu'à un fini de verre",
+      "ctaConversation": "Entamer la conversation"
+    },
+    "cta": {
+      "heading": "Lancez votre commande",
+      "body": "Dites-nous ce que vous aimeriez garder pour toujours — nous le façonnerons dans le bleu, l'or et une résine limpide comme le verre. Un héritage que vous garderez pour toujours.",
+      "planCustom": "Planifier une commande"
+    },
+    "chapterLabels": {
+      "beginning": "le commencement",
+      "material": "la matière",
+      "philosophy": "la philosophie",
+      "maker": "l'artisan"
+    },
+    "materials": {
+      "eyebrow": "de quoi c'est fait"
+    },
+    "studio": {
+      "eyebrow": "où nous travaillons",
+      "heading": "L'établi, les moules, la lumière.",
+      "body": "Une seule pièce en Inde où chaque commande est mélangée, coulée, durcie et finie. Rien n'est confié à l'extérieur.",
+      "addressLabel": "Adresse",
+      "alt1": "L'établi de l'atelier garni de moules et de gobelets doseurs",
+      "alt2": "Des moules remplis durcissent la nuit sous une lampe d'atelier chaleureuse",
+      "alt3": "Une planche et un bol finis en résine et teck sur la table de l'atelier"
+    }
+  },
+  "Workshops": {
+    "meta": {
+      "title": "Ateliers",
+      "description": "Ateliers d'art en résine en immersion, animés par l'atelier ResinRiva — petits groupes, tous les matériaux fournis, accessibles aux débutants. Réservez votre place sur WhatsApp."
+    },
+    "hero": {
+      "eyebrow": "apprendre le savoir-faire",
+      "headline": "Coulez votre premier chef-d'œuvre.",
+      "lead": "Des séances d'art en résine en immersion à l'atelier ResinRiva — vous mélangez, teintez et coulez, puis repartez avec une pièce entièrement vôtre.",
+      "cta": "Se renseigner sur les ateliers"
+    },
+    "intro": {
+      "heading": "Un après-midi de couleur, de résine et de concentration paisible",
+      "point1Title": "Petits groupes",
+      "point1Copy": "Les séances restent volontairement restreintes, pour un véritable accompagnement individuel à chaque table — jamais une foule qui se penche autour d'une démonstration.",
+      "point2Title": "Tous les matériaux fournis",
+      "point2Copy": "Résine, pigments, moules, outils, gants et tabliers sont disposés et vous attendent. Venez simplement tel que vous êtes — et pourquoi pas avec une playlist à suggérer.",
+      "point3Title": "Accessible aux débutants",
+      "point3Copy": "Aucune expérience requise. Les débutants sont nos élèves préférés, et des séances privées peuvent être organisées, à votre rythme et pour chaque occasion.",
+      "eyebrow": "pourquoi venir",
+      "alt1": "Un petit groupe travaille à l'établi de l'atelier",
+      "alt2": "Pigments, moules et outils disposés, prêts pour une séance",
+      "alt3": "Une première coulée s'étale dans un moule"
+    },
+    "sessions": {
+      "heading": "Choisissez votre séance",
+      "eyebrow": "à venir"
+    },
+    "card": {
+      "materialsLabel": "Matériaux :",
+      "makeItYoursLabel": "Faites-en la vôtre :",
+      "book": "Réserver cet atelier",
+      "seats": "{seats} places"
+    },
+    "empty": {
+      "eyebrow": "les tables se dressent",
+      "heading": "Les ateliers sont en cours de programmation",
+      "body": "Soyez le premier informé de l'ouverture des inscriptions — écrivez-nous sur WhatsApp et nous vous communiquerons les dates, les formats et tout ce que vous coulerez.",
+      "cta": "Se renseigner sur les prochains ateliers",
+      "statement": "Les prochaines dates sont en cours de fixation."
+    },
+    "takeHome": {
+      "heading": "Ce que vous rapporterez chez vous",
+      "item1Title": "Une pièce que vous aurez coulée vous-même",
+      "item1Copy": "Votre propre pièce en résine coulée à la main — colorée, superposée et finie par vos soins, à conserver ou à offrir.",
+      "item2Title": "La technique",
+      "item2Copy": "Dosages des mélanges, association des pigments, superposition et finition — les fondamentaux dont vous avez besoin pour continuer à couler chez vous.",
+      "item3Title": "Un accompagnement de l'atelier ensuite",
+      "item3Copy": "Des questions après la séance ? WhatsApp reste ouvert — c'est avec plaisir que nous vous guiderons pour votre prochaine coulée."
+    },
+    "private": {
+      "heading": "Réservez une table privée pour vos proches",
+      "body": "Anniversaires, enterrements de vie de jeune fille, journées d'équipe — nous organisons des séances privées et d'entreprise conçues autour de votre groupe, de votre occasion et de ce que vous rêvez de créer. Dites-le-nous sur WhatsApp et nous l'organiserons ensemble.",
+      "cta": "Planifier une séance privée",
+      "eyebrow": "privé & entreprises",
+      "headingShort": "Une table pour vos proches."
+    },
+    "facts": {
+      "label": "L'atelier en bref",
+      "duration": "2,5 heures",
+      "seats": "8 places max.",
+      "materials": "Matériaux fournis",
+      "place": "Surat"
+    },
+    "experience": {
+      "eyebrow": "la séance",
+      "heading": "Comment se déroule un après-midi.",
+      "arrive": "Arriver",
+      "mix": "Mélanger",
+      "pour": "Couler",
+      "create": "Créer",
+      "takeHome": "Repartir avec"
+    },
+    "room": {
+      "eyebrow": "la salle",
+      "heading": "Là où vous coulerez.",
+      "body": "Un atelier en activité, pas une salle louée — le même établi où naît chaque commande.",
+      "alt1": "La table d'atelier dressée pour une séance",
+      "alt2": "L'établi de l'atelier garni de moules et de gobelets doseurs",
+      "alt3": "L'atelier la nuit, des moules durcissent sous une lampe chaleureuse",
+      "alt4": "Une planche et un bol finis en résine et teck sur la table de l'atelier"
+    },
+    "waitlist": {
+      "label": "Adresse e-mail",
+      "placeholder": "votre@email.com",
+      "submit": "Rejoindre la liste d'attente",
+      "submitting": "Ajout en cours",
+      "hint": "Un message quand les dates s'ouvrent. Rien d'autre.",
+      "success": "Vous êtes sur la liste — nous vous écrirons dès que les dates seront fixées."
+    }
+  },
+  "CustomOrder": {
+    "meta": {
+      "title": "Commande sur mesure",
+      "description": "Commandez une œuvre en résine sur mesure auprès de ResinRiva — partagez votre idée, votre budget et vos délais, et nous la concevrons ensemble sur WhatsApp. Faite sur commande en Inde."
+    },
+    "page": {
+      "heroEyebrow": "commandes sur mesure",
+      "heroHeadline": "Commandez une pièce sur mesure.",
+      "heroLead": "La pièce introuvable ailleurs est justement celle que nous aimons créer. Dites-nous votre idée — nous la façonnerons, la coulerons et la finirons sur commande.",
+      "formHeading": "Dites-nous votre idée",
+      "formSubcopy": "Une simple ébauche suffit — les détails prennent forme ensemble sur WhatsApp.",
+      "howTitle": "comment se déroule une commande",
+      "step1Title": "Partagez votre idée",
+      "step1Body": "Décrivez la pièce, joignez des photos de référence, choisissez une fourchette de budget — deux minutes, sans engagement.",
+      "step2Title": "Nous concevons et chiffrons",
+      "step2Body": "La personne qui façonne votre pièce vous répond sur WhatsApp avec des croquis, des conseils sur les matériaux et un prix fixe accompagné d'un délai.",
+      "step3Title": "Coulée, durcie et expédiée",
+      "step3Body": "Vous recevez des photos de l'avancement pendant le durcissement, puis un emballage soigné livré jusqu'à votre porte, partout en Inde.",
+      "proofEyebrow": "déjà commandées",
+      "proofHeading": "On nous a confié ses plus belles idées",
+      "seeCommissions": "Voir les commandes récentes",
+      "heroImageAlt": "Des fleurs de mariage préservées dans une résine limpide, éclairées d'un côté",
+      "heroCta": "Commencer votre commande",
+      "heroAnchorSmall": "Petites pièces 7–10 jours",
+      "heroAnchorStatement": "Pièces d'exception 3–6 semaines",
+      "heroAnchorLayer": "24–72 h par couche",
+      "kindsEyebrow": "ce que l'on nous commande",
+      "kindsHeading": "Quatre façons dont une commande commence, le plus souvent",
+      "kindsIntro": "La plupart des demandes entrent dans l'une d'elles. La vôtre n'y est pas obligée.",
+      "kinds": {
+        "varmala": {
+          "label": "Préserver",
+          "name": "Préservation de varmala",
+          "alt": "Une guirlande de mariage préservée dans un bloc de résine limpide"
+        },
+        "frames": {
+          "label": "Conserver",
+          "name": "Cadres photo & portraits",
+          "alt": "Un cadre photo en résine tenant le portrait d'un couple"
+        },
+        "lettering": {
+          "label": "Marquer",
+          "name": "Plaques nominatives & cadeaux d'entreprise",
+          "alt": "Un coffret cadeau emballé dans la boîte de l'atelier"
+        },
+        "surfaces": {
+          "label": "Vivre avec",
+          "name": "Tables & plateaux",
+          "alt": "Une surface de résine et de bois captant la lumière le long de sa rivière"
+        }
+      },
+      "leadTime": {
+        "small": "Généralement 7–10 jours",
+        "statement": "Généralement 3–6 semaines"
+      },
+      "formEyebrow": "le brief",
+      "cure": {
+        "commission": "Commande",
+        "kinds": "Ce que nous faisons",
+        "how": "Comment ça se passe",
+        "brief": "Votre brief",
+        "questions": "Questions",
+        "work": "Travaux récents"
+      }
+    },
+    "form": {
+      "designIdeaLabel": "Votre idée de création",
+      "designIdeaPlaceholder": "Une table rivière avec nos fleurs de mariage préservées à l'intérieur… une plaque nominative qui luit comme la mer… décrivez-nous la pièce dont vous rêvez.",
+      "materialLabel": "Matériau",
+      "materialPlaceholder": "Choisissez un matériau",
+      "occasionLabel": "Occasion",
+      "occasionPlaceholder": "Pour quelle occasion ?",
+      "budgetLabel": "Budget",
+      "budgetPlaceholder": "Une fourchette qui vous convient",
+      "timelineLabel": "Délai",
+      "timelinePlaceholder": "Pour quand la souhaitez-vous ?",
+      "referenceLabel": "Images de référence",
+      "notesLabel": "Notes complémentaires",
+      "notesPlaceholder": "Dimensions, dates, prénoms à intégrer, ou toute autre précision utile…",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Votre nom",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "E-mail",
+      "optional": "(facultatif)",
+      "summaryEyebrow": "récapitulatif de commande en direct",
+      "summaryNote": "Il se met à jour au fil de votre saisie — les liens des images s'ajoutent une fois vos photos téléversées.",
+      "disclaimer": "Aucun paiement ici — WhatsApp s'ouvre avec le récapitulatif de votre commande ; le prix et la livraison y sont confirmés.",
+      "submitUploading": "Téléversement des images…",
+      "submitUploadingProgress": "Téléversement des images {done}/{total}…",
+      "submitPreparing": "Préparation de votre commande WhatsApp…",
+      "submitSend": "Envoyer la demande de commande",
+      "validationDesignIdeaShort": "Brossez-nous un tableau — au moins 10 caractères pour décrire votre idée.",
+      "validationDesignIdeaLong": "Merci de limiter votre idée à 2000 caractères.",
+      "validationNameRequired": "Merci de nous indiquer votre nom.",
+      "validationPhoneInvalid": "Merci de saisir un numéro de téléphone valide.",
+      "validationEmailInvalid": "Merci de saisir une adresse e-mail valide.",
+      "validationNotesLong": "Merci de limiter vos notes à 1500 caractères.",
+      "errorGeneric": "Une erreur est survenue — merci de réessayer.",
+      "steps": {
+        "piece": "La pièce",
+        "details": "Matière et détails",
+        "references": "Références et notes",
+        "contact": "Vos coordonnées"
+      },
+      "rail": {
+        "idea": "Votre idée",
+        "details": "Détails",
+        "references": "Références",
+        "contact": "Vos coordonnées"
+      },
+      "progressLabel": "Étapes de la commande",
+      "stepOf": "Étape {current} sur {total}",
+      "back": "Retour",
+      "continue": "Continuer",
+      "designIdeaHint": "Dimensions, couleurs, les mots à sertir à l'intérieur — tout aide.",
+      "budgetHint": "Une fourchette suffit. Le devis revient sur WhatsApp.",
+      "timelineHint": "Les petites pièces demandent 7–10 jours ; les pièces d'exception, 3–6 semaines.",
+      "phoneHint": "C'est ici que l'atelier vous répondra.",
+      "ctaContinue": "Continuer sur WhatsApp",
+      "ctaNote": "Vos informations seront préparées automatiquement.",
+      "blockerIdea": "Décrivez d'abord votre idée",
+      "blockerName": "Ajoutez votre nom",
+      "blockerPhone": "Ajoutez votre numéro de téléphone",
+      "errorSummaryTitle": "{count, plural, one {Un détail mérite votre attention} other {# détails méritent votre attention}}",
+      "summaryTitle": "Le récapitulatif de votre commande",
+      "summaryToggle": "Aperçu de votre message",
+      "summaryMessageLabel": "Ce que WhatsApp recevra",
+      "summaryClose": "Fermer le récapitulatif",
+      "rows": {
+        "idea": "Idée",
+        "material": "Matériau",
+        "occasion": "Occasion",
+        "budget": "Budget",
+        "timeline": "Délai",
+        "references": "Références",
+        "referencesValue": "{count, plural, one {1 image} other {# images}}",
+        "name": "Nom",
+        "phone": "Téléphone",
+        "email": "E-mail"
+      }
+    }
+  },
+  "Contact": {
+    "meta": {
+      "title": "Contact",
+      "description": "Écrivez à l'atelier ResinRiva — téléphone, WhatsApp, e-mail ou formulaire de contact. C'est sur WhatsApp que nous répondons le plus vite, généralement en quelques heures."
+    },
+    "page": {
+      "heroEyebrow": "contacter l'atelier",
+      "heroHeadline": "Créons quelque chose de personnel.",
+      "heroLead": "Une commande sur mesure, une question, ou simplement une idée qui vous trotte dans la tête — écrivez-nous et la personne qui façonne votre pièce vous répondra.",
+      "heroBadge": "Nous répondons généralement en quelques heures sur WhatsApp",
+      "gridHeading": "Joignez-nous comme vous préférez",
+      "phoneLabel": "Téléphone",
+      "whatsappLabel": "WhatsApp",
+      "whatsappBody": "Le moyen le plus rapide de nous joindre — dites-nous bonjour et nous prenons le relais.",
+      "whatsappCta": "Écrire sur WhatsApp",
+      "emailLabel": "E-mail",
+      "mapsLabel": "Trouver l'atelier",
+      "mapsCta": "Ouvrir dans Google Maps",
+      "mapsNote": "Google Maps s'ouvre avec l'itinéraire.",
+      "hours": "C'est sur WhatsApp que nous répondons le plus vite, généralement en quelques heures, de 10h à 20h IST.",
+      "faqHeading": "Questions fréquentes",
+      "faqCta": "Toutes les questions",
+      "heroImageAlt": "L'établi la nuit, des moules durcissant sous une seule lampe d'atelier",
+      "channelsEyebrow": "quatre façons de nous joindre",
+      "phoneMeta": "10h–20h IST",
+      "whatsappMeta": "Généralement en quelques heures",
+      "whatsappHeadline": "Le moyen le plus rapide de joindre l'artisan.",
+      "emailMeta": "Plus lent que WhatsApp",
+      "studioLabel": "Atelier",
+      "studioMeta": "10h–20h IST",
+      "mapActivate": "Afficher la carte",
+      "mapNote": "Ne charge Google Maps que si vous le demandez",
+      "mapFrameTitle": "Carte de l'atelier ResinRiva",
+      "formEyebrow": "écrivez-nous",
+      "formHeading": "Envoyer un mot à l'atelier",
+      "formIntro": "Tout arrive directement à l'artisan — pas de file d'attente, pas de bot."
+    },
+    "form": {
+      "nameLabel": "Nom",
+      "namePlaceholder": "Votre nom",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "E-mail",
+      "optional": "(facultatif)",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Parlez-nous de la pièce que vous imaginez, posez une question, ou dites-nous simplement bonjour…",
+      "sending": "Envoi…",
+      "send": "Envoyer le message",
+      "successEyebrow": "message reçu",
+      "successHeading": "Merci — nous vous répondrons bientôt.",
+      "successBody": "Votre message est bien arrivé à l'atelier. Vous préférez l'instantané ? Écrivez-nous sur WhatsApp et nous poursuivons la conversation sans attendre.",
+      "successCta": "Écrivez-nous sur WhatsApp",
+      "validationName": "Merci de nous indiquer votre nom.",
+      "validationPhone": "Merci de saisir un numéro de téléphone valide.",
+      "validationEmail": "Merci de saisir une adresse e-mail valide.",
+      "validationMessageMin": "Quelques mots de plus, s'il vous plaît — au moins 10 caractères.",
+      "validationMessageMax": "Merci de limiter votre message à 2000 caractères.",
+      "topicLabel": "De quoi s'agit-il ?",
+      "topicPlaceholder": "Choisissez un sujet",
+      "topics": {
+        "commission": "Une commande sur mesure",
+        "order": "Une commande que j'ai passée",
+        "workshop": "Ateliers",
+        "printing": "Impression 3D",
+        "other": "Autre chose"
+      },
+      "messagePrompts": {
+        "commission": "La pièce que vous imaginez, sa taille approximative, et pour quand…",
+        "order": "Votre référence de commande et ce que vous souhaitez savoir…",
+        "workshop": "Quel atelier, combien vous êtes, et les dates qui vous conviennent…",
+        "printing": "Ce que vous voulez imprimer, la matière, et si vous avez un fichier…",
+        "other": "Dites-nous ce que vous avez en tête…"
+      },
+      "commissionNudge": "Les commandes avancent plus vite via le brief — il demande dimensions, références et fourchette de budget en une seule fois.",
+      "commissionNudgeCta": "Commencer une commande",
+      "phoneHint": "Pour que nous puissions vous répondre sur WhatsApp.",
+      "errorSummaryTitle": "{count, plural, one {Un détail mérite votre attention} other {# détails méritent votre attention}}",
+      "sendNote": "Nous répondons depuis l'atelier, généralement en quelques heures."
+    }
+  },
+  "Faq": {
+    "meta": {
+      "title": "Questions fréquentes",
+      "description": "Les réponses aux questions que l'on nous pose le plus souvent sur l'art en résine sur mesure, les commandes, les délais et l'entretien — directement de l'atelier ResinRiva."
+    },
+    "heroEyebrow": "questions fréquentes",
+    "heroHeadline": "Vos questions, nos réponses.",
+    "heroLead": "Tout ce que l'on nous demande habituellement avant de commander une pièce — et si votre question ne figure pas ici, WhatsApp reste toujours ouvert.",
+    "askOnWhatsApp": "Demander sur WhatsApp",
+    "closingHeading": "Encore des questions ?",
+    "closingBody": "Posez-nous toutes vos questions sur WhatsApp — dimensions, délais, matériaux, ou la pièce dont vous rêvez.",
+    "searchLabel": "Rechercher dans les réponses",
+    "searchPlaceholder": "Livraison, entretien, tarifs…",
+    "clearSearch": "Effacer la recherche",
+    "indexHeading": "Toutes les questions",
+    "indexLabel": "Index des questions",
+    "answersLabel": "Réponses",
+    "resultCount": "{count, plural, =0 {Aucun résultat} one {# question} other {# questions}}",
+    "noMatchStatement": "Aucune réponse ne correspond.",
+    "noMatchDirection": "Essayez un autre mot — ou posez-nous directement la question sur WhatsApp.",
+    "copyAnswerLink": "Copier le lien vers cette réponse",
+    "answerLinkCopied": "Lien copié",
+    "emptyStatement": "Nous rédigeons nos réponses.",
+    "emptyDirection": "En attendant, posez-nous vos questions directement — nous aimons parler du métier."
+  },
+  "Shop": {
+    "meta": {
+      "title": "Boutique",
+      "description": "Découvrez les collections sur commande de ResinRiva — art de la résine de luxe, cadeaux personnalisés et pièces imprimées en 3D, personnalisés de bout en bout et commandés via WhatsApp.",
+      "titlePaged": "Boutique — Page {page}"
+    },
+    "categoryMetaDescription": "{category} sur commande de l'atelier ResinRiva — personnalisés de bout en bout et commandés via WhatsApp.",
+    "heroEyebrow": "les collections",
+    "heroHeadline": "Découvrir ResinRiva",
+    "heroLead": "Chaque pièce est réalisée sur commande — choisissez-en une, personnalisez-la à votre image, et finalisez tout au fil d'une seule conversation WhatsApp.",
+    "tabsAria": "Parcourir par univers",
+    "tabAll": "Tout",
+    "tabArt": "Art résine",
+    "tabSupplies": "Fournitures",
+    "tabPrint": "Impression 3D",
+    "collectionsAria": "Filtrer par collection",
+    "allCollections": "Toutes les collections",
+    "searchPlaceholder": "Rechercher des pièces…",
+    "searchAria": "Rechercher des produits",
+    "occasionAria": "Filtrer par occasion",
+    "occasionPlaceholder": "Occasion",
+    "allOccasions": "Toutes les occasions",
+    "priceAria": "Filtrer par prix",
+    "pricePlaceholder": "Prix",
+    "allPrices": "Tous les prix",
+    "inStockOnly": "En stock uniquement",
+    "sortAria": "Trier les produits",
+    "sortPlaceholder": "Trier",
+    "sortFeatured": "En vedette",
+    "sortNewest": "Nouveautés",
+    "sortPriceAsc": "Prix : croissant",
+    "sortPriceDesc": "Prix : décroissant",
+    "allPieces": "Toutes les pièces",
+    "resultsShowing": "Affichage de {shown, number} sur {total, plural, one {# pièce} other {# pièces}}",
+    "loadMore": "Afficher plus de pièces",
+    "loadMoreProgress": "Afficher plus ({shown, number} sur {total, number})",
+    "emptyFilteredEyebrow": "rien ici pour l'instant",
+    "emptyFilteredHeading": "Aucune pièce ne correspond à cette sélection",
+    "emptyFilteredBody": "Essayez d'effacer les filtres, ou commandez une création sur mesure — imaginée selon votre histoire, à votre rythme.",
+    "emptyCatalogEyebrow": "sur commande",
+    "emptyCatalogHeading": "Les premières pièces sont en cours de coulée",
+    "emptyCatalogBody": "Chaque pièce ResinRiva est réalisée sur commande. Commandez la vôtre dès maintenant, ou écrivez-nous sur WhatsApp et nous vous aiderons à vous lancer.",
+    "clearFilters": "Effacer les filtres",
+    "commissionCta": "Commander sur mesure",
+    "quickViewAria": "Aperçu rapide : {title}",
+    "quickViewTaglineFallback": "Résine faite main, personnalisée de bout en bout et finalisée sur WhatsApp.",
+    "quickViewCustomize": "Voir et personnaliser",
+    "quickViewWhatsApp": "Demander sur WhatsApp",
+    "card": {
+      "badgeStudioOriginal": "Original d'atelier",
+      "badgeAtelierPick": "Sélection de l'atelier",
+      "badgeOutOfStock": "Épuisé",
+      "customize": "Personnaliser",
+      "viewDetails": "Voir les détails",
+      "optionsCount": "{count} options",
+      "wishlistSave": "Ajouter {title} à votre liste d'envies",
+      "wishlistRemove": "Retirer {title} de votre liste d'envies",
+      "madeToOrder": "Fabriqué sur commande",
+      "viewPiece": "Voir la pièce",
+      "shipsIn": "Expédié sous 7–10 jours"
+    },
+    "collection": {
+      "count": "{count, plural, =0 {Aucune pièce pour l'instant} one {# pièce} other {# pièces}}",
+      "featuredHeading": "En vedette dans cette collection",
+      "relatedHeading": "Collections associées",
+      "explore": "Explorer les pièces",
+      "aboutEyebrow": "à propos de cette collection",
+      "beforeAfterEyebrow": "la transformation",
+      "beforeAfterHeading": "Ce dont nous sommes partis, et ce que nous avons figé.",
+      "beforeAfterIntro": "Faites glisser le curseur pour voir la pièce avant la coulée et après le durcissement.",
+      "beforeAfterCta": "Lire la commande",
+      "beforeAlt": "{title} avant la préservation.",
+      "afterAlt": "{title} après la préservation, serti dans une résine durcie.",
+      "commissionEyebrow": "pas tout à fait ça ?",
+      "commissionHeading": "Commandez votre propre pièce {collection}.",
+      "commissionBody": "Dites-nous ce que vous imaginez — les couleurs, la taille, les prénoms à sertir — et nous la coulerons pour vous.",
+      "commissionCta": "Décrire votre pièce"
+    },
+    "collectionTitle": "La collection",
+    "collectionLead": "Objets, souvenirs et pièces réalisés sur commande.",
+    "pieceNoun": "{count, plural, one {pièce} other {pièces}}",
+    "resultsMono": "{shown, number} / {total, number}",
+    "loadError": "Impossible de charger plus de pièces.",
+    "retry": "Réessayer",
+    "emptyStatement": "Aucune pièce ne correspond encore à ces filtres.",
+    "emptyDirection": "Relâchez un filtre pour élargir la vue — ou dites-nous ce que vous imaginez et nous le coulerons.",
+    "tab": {
+      "all": "Tout",
+      "art": "Art résine",
+      "gifts": "Cadeaux",
+      "supplies": "Fournitures",
+      "print": "Impression 3D"
+    },
+    "strip": {
+      "eyebrow": "les collections",
+      "heading": "Parcourir par collection",
+      "intro": "L'art se parcourt du regard, pas en liste. Commencez par l'étagère qui vous parle.",
+      "railLabel": "Collections, défilement horizontal"
+    },
+    "toolbar": {
+      "searchLabel": "Recherche",
+      "searchSubmit": "Rechercher des pièces",
+      "clearSearch": "Effacer la recherche",
+      "sortLabel": "Trier",
+      "sortMenuLabel": "Trier les pièces par",
+      "filterLabel": "Filtrer"
+    },
+    "drawer": {
+      "title": "Filtres",
+      "sectionCollection": "Collection",
+      "sectionOccasion": "Occasion",
+      "sectionPrice": "Prix",
+      "sectionAvailability": "Disponibilité",
+      "anyAvailability": "Toute disponibilité",
+      "clearAll": "Tout effacer",
+      "apply": "Appliquer ({count, plural, one {# pièce} other {# pièces}})",
+      "unavailable": "Aucune pièce dans cette vue"
+    },
+    "activeFilters": {
+      "remove": "Retirer {filter}"
+    },
+    "editorialBreak": {
+      "eyebrow": "dans l'atelier",
+      "heading": "Coulée, durcie et finie à la main.",
+      "body": "Chaque pièce ici attend la fin de son propre durcissement avant qu'on y touche. C'est pourquoi le catalogue avance à ce rythme.",
+      "cta": "Voir comment c'est fait",
+      "imageAlt": "Une coulée de résine durcit sous la lumière de l'atelier, sa surface encore en train de se poser."
+    },
+    "sortName": "Nom"
+  },
+  "Search": {
+    "meta": {
+      "title": "Recherche",
+      "description": "Recherchez parmi les pièces sur commande, les articles du journal et les histoires du portfolio de ResinRiva."
+    },
+    "heroEyebrow": "trouvez votre pièce",
+    "heroHeadline": "Explorer l'atelier",
+    "inputPlaceholder": "Pièces, journal, portfolio…",
+    "inputAria": "Rechercher sur le site",
+    "submit": "Rechercher",
+    "resultsCount": "{total, plural, =0 {Aucun résultat pour « {query} »} one {# résultat pour « {query} »} other {# résultats pour « {query} »}}",
+    "tooShortHint": "Saisissez au moins deux caractères pour rechercher parmi les pièces, le journal et notre portfolio.",
+    "productsEyebrow": "pièces",
+    "productsHeading": "Pièces sur commande",
+    "postsEyebrow": "journal",
+    "postsHeading": "Extraits du journal",
+    "portfolioEyebrow": "portfolio",
+    "portfolioHeading": "Créations sur commande",
+    "sectionCount": "{count, plural, one {# résultat} other {# résultats}}",
+    "zeroEyebrow": "rien pour l'instant",
+    "zeroHeading": "Celle-ci, nous ne l'avons pas encore coulée.",
+    "zeroBody": "Chaque pièce ResinRiva est réalisée sur commande : le catalogue n'est qu'un point de départ. Dites-nous ce que vous imaginez — couleurs, prénoms, dimensions — et nous la créerons pour vous.",
+    "zeroWhatsappCta": "Demandez-nous sur WhatsApp",
+    "browseShop": "Parcourir la boutique",
+    "emptyEyebrow": "commencez où vous voulez",
+    "emptyHeading": "Que recherchez-vous ?",
+    "emptyBody": "Essayez une pièce (« plaque nominative », « horloge »), une occasion (« anniversaire ») ou une matière (« résine ») — ou allez directement aux collections.",
+    "productsShowMore": "Voir {total, plural, one {# pièce} other {toutes les # pièces}} dans la boutique",
+    "zeroWhatsappMessage": "Bonjour ResinRiva, j'ai cherché \"{query}\" sur votre site sans le trouver. Pourriez-vous créer quelque chose de similaire pour moi ?\n(Envoyé depuis {site})",
+    "overlay": {
+      "dialogLabel": "Recherche du site",
+      "label": "Recherche",
+      "placeholder": "Explorer l’atelier…",
+      "resultsLabel": "Résultats de recherche",
+      "groupProducts": "Pièces",
+      "groupCollections": "Collections",
+      "groupPortfolio": "Portfolio",
+      "groupJournal": "Journal",
+      "collectionCount": "{count, plural, one {# pièce} other {# pièces}}",
+      "recent": "Recherches récentes",
+      "clearRecent": "Effacer",
+      "suggestionsLabel": "Essayez",
+      "suggestionAria": "Rechercher {term}",
+      "nothingHeading": "Aucun résultat.",
+      "nothingBody": "Essayez une autre recherche — ou <commission>lancez une commande sur mesure →</commission>",
+      "errorHeading": "La recherche n’a pas abouti.",
+      "errorBody": "L’atelier est toujours là — réessayez, ou dites-nous ce que vous imaginez.",
+      "retry": "Réessayer",
+      "commission": "Lancer une commande sur mesure",
+      "seeAll": "Voir tous les résultats",
+      "hintType": "Saisissez au moins deux caractères.",
+      "hints": "↑↓ naviguer · ↵ ouvrir · esc fermer",
+      "loading": "Recherche…",
+      "countAnnounce": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}"
+    }
+  },
+  "Wishlist": {
+    "meta": {
+      "title": "Liste d'envies",
+      "description": "Les pièces que vous avez enregistrées en parcourant ResinRiva — conservées sur cet appareil, prêtes à être partagées avec l'atelier sur WhatsApp."
+    },
+    "heroEyebrow": "votre sélection",
+    "heroHeadline": "Pièces enregistrées",
+    "heroLead": "Touchez le cœur d'une pièce pour la garder ici — aucun compte requis, la liste reste sur cet appareil. Partagez-la sur WhatsApp le moment venu, et nous prenons le relais.",
+    "count": "{count, plural, =0 {Aucune pièce enregistrée} one {# pièce enregistrée} other {# pièces enregistrées}}",
+    "countLabel": "{count, plural, one {# pièce} other {# pièces}} dans votre liste d'envies",
+    "loading": "Nous rassemblons vos pièces enregistrées…",
+    "emptyEyebrow": "rien ici pour l'instant",
+    "emptyHeading": "Votre liste d'envies est vide",
+    "emptyBody": "Parcourez les collections et touchez le cœur d'une pièce pour la garder ici le temps de vous décider.",
+    "unavailableHeading": "Ces pièces ont poursuivi leur chemin",
+    "unavailableBody": "Les pièces que vous aviez enregistrées ne figurent plus au catalogue. Parcourez les collections pour découvrir celles qui leur succèdent — ou commandez une création sur mesure.",
+    "browseCta": "Parcourir les collections",
+    "shareLead": "Envoyez votre sélection à l'atelier — nous confirmons les détails, les prix et les délais en une seule conversation WhatsApp.",
+    "shareCta": "Partager sur WhatsApp",
+    "waIntro": "Bonjour ResinRiva, j'ai sélectionné ces pièces sur votre site :",
+    "waMore": "…plus {count, plural, one {# autre pièce enregistrée} other {# autres pièces enregistrées}}.",
+    "waSentFrom": "(Envoyé depuis {host})"
+  },
+  "Blog": {
+    "meta": {
+      "title": "Blog",
+      "titlePaged": "Blog — Page {page}",
+      "description": "Notes de l'atelier ResinRiva — journaux de création, études de matières et histoires derrière nos commandes d'art de la résine sur mesure."
+    },
+    "journalFallbackCategory": "le journal",
+    "minRead": "{minutes} min de lecture",
+    "readStory": "Lire l'histoire",
+    "heroEyebrow": "le journal",
+    "heroHeadline": "Notes de l'atelier.",
+    "heroLead": "Journaux de création, études de matières et histoires derrière les pièces — écrits depuis l'établi, entre deux coulées.",
+    "allPosts": "Tous les articles",
+    "viewAllPosts": "Voir tous les articles",
+    "pageOf": "Page {page} sur {totalPages}",
+    "post": {
+      "notFoundTitle": "Article introuvable",
+      "draftPreview": "Aperçu du brouillon — cette page n'est visible que par l'équipe via ce lien.",
+      "shareStory": "Partager cette histoire",
+      "moreFromJournal": "Plus du journal",
+      "contents": "Sommaire",
+      "contentsLabel": "Sur cette page",
+      "topics": "Thèmes",
+      "relatedProductsEyebrow": "dans cette histoire",
+      "relatedProductsHeading": "Les pièces mentionnées ici",
+      "inlineProductEyebrow": "mentionnée dans cette histoire",
+      "viewPiece": "Voir la pièce"
+    },
+    "featuredEyebrow": "l'histoire à la une",
+    "archiveEyebrow": "les archives",
+    "archiveHeading": "Tout ce que nous avons écrit d'autre",
+    "taggedLabel": "Mot-clé #{tag}",
+    "removeTag": "Retirer le filtre #{tag}",
+    "entryCount": "{count, plural, =0 {Aucun article} one {# article} other {# articles}}",
+    "emptyStatement": "Rien de classé sous ce thème pour l'instant.",
+    "emptyDirection": "Le journal s'écrit entre deux coulées — essayez un autre thème, ou lisez tout.",
+    "emptyStatementUnfiltered": "Le journal arrive bientôt.",
+    "emptyDirectionUnfiltered": "Nous écrivons les premiers articles entre deux coulées. Revenez bientôt."
+  },
+  "Portfolio": {
+    "meta": {
+      "title": "Portfolio",
+      "description": "Véritables commandes de l'atelier ResinRiva — transformations avant-après, fleurs préservées et pièces en résine sur mesure, racontées une histoire à la fois.",
+      "titlePaged": "Portfolio — Page {page}",
+      "notFound": "Commande introuvable"
+    },
+    "heroEyebrow": "nos commandes",
+    "heroHeadline": "Des créations dont nous sommes fiers.",
+    "heroLead": "Chaque pièce ici est née de l'idée de quelqu'un — un bouquet, un souvenir, un moment marquant — et a quitté l'atelier en exemplaire unique. Voici leurs histoires.",
+    "filterAria": "Filtrer le portfolio par catégorie",
+    "allCommissions": "Toutes les commandes",
+    "emptyEyebrow": "le premier chapitre",
+    "emptyHeading": "Les histoires de commandes s'écrivent en ce moment — la vôtre pourrait être la première.",
+    "emptyBody": "Dites-nous ce que vous aimeriez garder pour toujours, et la prochaine étude de cas sur cette page pourrait être la pièce que nous coulerons pour vous.",
+    "emptyCta": "Lancer une commande",
+    "caseCount": "{count, plural, one {# étude de cas} other {# études de cas}}",
+    "pagination": "Pagination",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {page} sur {totalPages}",
+    "case": {
+      "draftPreview": "Aperçu du brouillon — seule l'équipe disposant de ce lien peut voir cette page.",
+      "fallbackCategory": "commande",
+      "completed": "Achevée le {date}",
+      "specAria": "Spécifications de la commande",
+      "specType": "Type",
+      "specMaterial": "Matériau",
+      "specTechnique": "Technique",
+      "specComplexity": "Complexité",
+      "specSize": "Taille",
+      "specTimeline": "Délai",
+      "storyHeading": "Comment cette pièce a vu le jour",
+      "tagsLabel": "Mots-clés",
+      "beforeAfterHeading": "Avant & après",
+      "beforeAfterHint": "Faites glisser le curseur — ou utilisez les touches fléchées — pour passer de ce qui est arrivé à l'atelier à ce qui en est sorti.",
+      "videoHeading": "La pièce en vidéo",
+      "galleryHeading": "Sur l'établi",
+      "relatedHeading": "D'autres histoires de l'atelier",
+      "ctaHeading": "Commandez une pièce comme celle-ci",
+      "ctaBody": "Chaque histoire de cette page a commencé par un simple message. Racontez-nous la vôtre — les fleurs, la photographie, le moment marquant — et nous coulerons la prochaine pour vous.",
+      "ctaWhatsApp": "Discuter sur WhatsApp",
+      "ctaCustomOrder": "Passer une commande sur mesure",
+      "commissionWhatsappMessage": "Bonjour ResinRiva, j'ai vu \"{title}\" dans votre portfolio et j'aimerais commander une pièce similaire.\n(Envoyé depuis {site})",
+      "caseStudy": {
+        "briefHeading": "Le brief",
+        "processHeading": "Le processus",
+        "clientHeading": "Dans leurs mots"
+      },
+      "viewArchive": "Voir les archives",
+      "specCompleted": "Achevée",
+      "statLayers": "Couches",
+      "statCure": "Durcissement",
+      "statGrit": "Grain",
+      "statBuild": "Fabrication",
+      "frameCaption": "Image {index}",
+      "beforeAlt": "{title} — avant le début de la commande",
+      "afterAlt": "{title} — la pièce achevée",
+      "eyebrowStory": "l'histoire",
+      "eyebrowBrief": "le brief",
+      "eyebrowMaterial": "la matière",
+      "eyebrowProcess": "le processus",
+      "eyebrowFinal": "la pièce finale",
+      "eyebrowRelated": "du même établi",
+      "eyebrowCommission": "commander une pièce similaire"
+    },
+    "beforeAfter": {
+      "before": "avant",
+      "after": "après",
+      "sliderLabel": "Comparaison avant-après — faites glisser ou utilisez les flèches",
+      "sliderValue": "{percent} % de l'image « avant » révélée"
+    },
+    "projectNumber": "Projet {number}",
+    "wallHeading": "Les archives des commandes",
+    "viewProject": "Voir le projet",
+    "countLabel": "{count, plural, one {# commande} other {# commandes}}",
+    "clearAll": "Tout effacer",
+    "removeFilter": "Retirer {filter}",
+    "index": {
+      "commissions": "{count, plural, one {# commande} other {# commandes}}",
+      "collections": "{count, plural, one {# collection} other {# collections}}"
+    },
+    "filterEmpty": {
+      "statement": "Aucune commande dans cette collection pour l'instant.",
+      "direction": "L'atelier travaille sur commande : une collection se remplit à mesure que les pièces quittent l'établi. Essayez-en une autre — ou lancez la pièce qui l'ouvrira.",
+      "action": "Voir toutes les commandes"
+    }
+  },
+  "WhatsApp": {
+    "greeting": "Bonjour ResinRiva, j'aimerais en savoir plus sur votre art en résine sur mesure.",
+    "intro": "Bonjour ResinRiva,\nJe souhaite commander :",
+    "product": "Produit",
+    "budget": "Budget",
+    "timeline": "Délai",
+    "referenceImages": "Images de référence",
+    "notes": "Remarques complémentaires",
+    "customerDetails": "Coordonnées du client",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "sentFrom": "Envoyé depuis {host}",
+    "material": "Matériau",
+    "occasion": "Occasion"
+  },
+  "InstagramFeed": {
+    "fallbackLead": "Nos dernières créations vivent sur Instagram.",
+    "viewOnInstagram": "Voir sur Instagram",
+    "seeOnWhatsApp": "Voir nos dernières créations sur WhatsApp"
+  },
+  "WhatsAppOrder": {
+    "metaTitle": "Votre commande WhatsApp",
+    "eyebrowSaved": "à un geste près",
+    "eyebrowExpired": "parlons-en",
+    "headingSaved": "Le récapitulatif de votre commande est enregistré",
+    "headingExpired": "Dites bonjour sur WhatsApp",
+    "bodySaved": "Si WhatsApp ne s'est pas ouvert automatiquement, utilisez le bouton ci-dessous — les détails de votre commande sont prêts à envoyer.",
+    "bodyExpired": "Ce lien de commande a expiré ou est introuvable — pas d'inquiétude. Écrivez-nous sur WhatsApp et nous reprendrons votre commande aussitôt.",
+    "openWhatsApp": "Ouvrir WhatsApp",
+    "replyHours": "Nous répondons au plus vite entre 10 h et 20 h (IST).",
+    "changedMind": "Vous avez changé d'avis ?",
+    "keepBrowsing": "Continuer sur la boutique",
+    "copy": "Copier le message",
+    "copied": "Copié",
+    "headingCommission": "Votre brief est entre les mains de l'artisan.",
+    "bodyCommission": "WhatsApp aurait dû s'ouvrir avec tout ce que vous avez écrit. Si ce n'est pas le cas, le message est enregistré ci-dessous — envoyez-le quand vous le souhaitez.",
+    "messageLabel": "Ce que WhatsApp recevra",
+    "seeCommissions": "Voir les commandes récentes",
+    "next": {
+      "step1": "Votre message s'ouvre dans WhatsApp avec chaque détail que vous avez donné — rien à retaper.",
+      "step2": "L'artisan vous répond avec des croquis, des conseils sur les matériaux et un prix fixe accompagné d'un délai.",
+      "step3": "Rien n'est facturé ici. Le prix et la livraison sont convenus au cours de cette conversation, avant tout début de travail."
+    }
+  },
+  "OrderErrors": {
+    "generic": "Un problème est survenu — réessayez ou écrivez-nous sur WhatsApp.",
+    "rateLimited": "Vous avez passé plusieurs commandes d'affilée — patientez un instant ou contactez-nous directement sur WhatsApp.",
+    "missingFields": "Veuillez renseigner : {fields}"
+  },
+  "Product": {
+    "aboutHeading": "À propos de cette pièce",
+    "badges": {
+      "studioOriginal": "Original d'atelier",
+      "outOfStock": "Épuisé"
+    },
+    "specs": {
+      "heading": "Spécifications",
+      "materials": "Matériaux",
+      "dimensions": "Dimensions",
+      "timeline": "Délai",
+      "category": "Catégorie",
+      "ecosystem": "Collection",
+      "ecosystemArt": "Art résine",
+      "ecosystemSupplies": "Fournitures d'atelier",
+      "ecosystemPrint": "Impression 3D",
+      "availability": "Disponibilité",
+      "availableNow": "Disponible immédiatement",
+      "outOfStock": "Actuellement épuisé"
+    },
+    "production": {
+      "title": "Fabrication",
+      "body": "Façonnée à la main et réalisée sur commande dans notre atelier — chaque pièce est préparée, finie et contrôlée à la main avant l'expédition. De légères variations de couleur et de surface sont le propre du travail artisanal, et la raison pour laquelle aucune pièce n'est identique.",
+      "timeline": "Temps de fabrication habituel pour cette pièce : {timeline}."
+    },
+    "delivery": {
+      "title": "Livraison",
+      "body": "Nous livrons partout en Inde, avec un emballage soigné pensé pour les œuvres fragiles et un suivi jusqu'à votre porte. La livraison se coordonne personnellement sur WhatsApp au moment de votre commande — nous y confirmons les détails et vous tenons au courant jusqu'à son arrivée."
+    },
+    "faqs": {
+      "heading": "Questions fréquentes",
+      "viewAll": "Toutes les questions"
+    },
+    "lifestyle": {
+      "line": "L'eau profonde, retenue immobile — des pièces qui gardent la lumière du soir longtemps après que la coulée s'est figée."
+    },
+    "sameShelf": {
+      "heading": "Sur la même étagère"
+    },
+    "sameTitle": {
+      "heading": "D'autres versions de cette pièce"
+    },
+    "pourVariance": "Chaque coulée est unique — votre pièce différera subtilement de la photographie.",
+    "gallery": {
+      "viewFullScreen": "Afficher l'image en plein écran",
+      "showImage": "Afficher l'image {index} sur {count}",
+      "playVideo": "Lire la vidéo du produit",
+      "videoChip": "Vidéo",
+      "view3d": "Voir en 3D",
+      "threeDChip": "3D",
+      "modelAlt": "Modèle 3D de {title}",
+      "lightboxTitle": "{title} — image {index} sur {count}",
+      "counter": "{index} / {count}",
+      "previousImage": "Image précédente",
+      "nextImage": "Image suivante",
+      "lightboxStatus": "Image {index} sur {count} : {alt}",
+      "railLabel": "Images du produit"
+    },
+    "referenceUploader": {
+      "addImages": "Ajouter des images de référence",
+      "hint": "Glissez-déposez ou cliquez — jusqu'à {maxImages} photos, JPG/PNG/WebP, {maxMb} Mo chacune",
+      "errorTooMany": "Jusqu'à {max} images — retirez-en une pour en ajouter une autre.",
+      "errorType": "« {name} » n'est pas une image JPG, PNG ou WebP.",
+      "errorSize": "« {name} » dépasse {max} Mo — essayez une photo plus légère.",
+      "remove": "Retirer {name}"
+    },
+    "trust": {
+      "artHandmade": "Coulée, durcie et finie à la main dans notre atelier",
+      "artConfirm": "Prix et délai confirmés sur WhatsApp — aucun paiement maintenant",
+      "shipping": "Expédiée en toute sécurité, assurée, partout en Inde",
+      "functionalQuality": "Qualité contrôlée avant l'expédition",
+      "functionalConfirm": "Prix et disponibilité confirmés sur WhatsApp"
+    },
+    "oosCta": "Se renseigner sur le réassort sur WhatsApp",
+    "oosSummaryNote": "Demande de disponibilité — cette pièce est actuellement épuisée.",
+    "oosWaIntro": "Bonjour ResinRiva,\nCette pièce est actuellement épuisée — j'aimerais me renseigner sur un réassort :",
+    "notFound": "Pièce introuvable",
+    "draftPreview": "Aperçu du brouillon — seule l'équipe disposant de ce lien peut voir cette page.",
+    "careHeading": "Entretien et soin",
+    "relatedHeading": "Vous aimerez peut-être aussi",
+    "relatedEyebrow": "plus de {category}",
+    "order": {
+      "errors": {
+        "required": "Ce champ est obligatoire.",
+        "referenceRequired": "{label} : veuillez joindre au moins une image de référence.",
+        "name": "Veuillez nous indiquer votre nom.",
+        "phone": "Veuillez saisir un numéro de téléphone valide.",
+        "email": "Veuillez saisir une adresse e-mail valide.",
+        "notesLength": "Veuillez limiter vos notes à {max} caractères.",
+        "generic": "Une erreur s'est produite — veuillez réessayer."
+      },
+      "uploadProgress": "Téléversement des images {done}/{total}…",
+      "referenceImagesLabel": "Images de référence",
+      "attachAbove": "— à joindre avec vos images de référence ci-dessus.",
+      "notesLabel": "Notes supplémentaires",
+      "notesPlaceholder": "Des prénoms à incruster, vos couleurs préférées, l'histoire derrière la pièce…",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Votre nom",
+      "phoneLabel": "Téléphone",
+      "phonePlaceholder": "+91 98765 43210",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "required": "(obligatoire)",
+      "optional": "(facultatif)",
+      "summaryTitle": "aperçu de commande en direct",
+      "priceOnWhatsApp": "Prix sur WhatsApp",
+      "craftedIn": "· façonné en {timeline}",
+      "updatesHint": "Se met à jour pendant que vous écrivez — les liens des images sont ajoutés une fois vos photos téléversées.",
+      "uploading": "Téléversement des images…",
+      "preparing": "Préparation de votre commande WhatsApp…",
+      "placeOrder": "Passer commande",
+      "noPayment": "Aucun paiement ici — WhatsApp s'ouvre avec le récapitulatif de votre commande ; le prix et la livraison y sont confirmés.",
+      "choose": "Choisissez {label}",
+      "fieldRequired": "{label} (obligatoire)",
+      "yourLabel": "Votre {label}",
+      "referenceAttached": "{count, plural, one {# image de référence jointe} other {# images de référence jointes}}",
+      "eyebrow": "personnaliser & commander",
+      "intro": "Choisissez les détails, ajoutez tout ce que nous devrions voir, et envoyez. Nous confirmons le prix et le délai sur WhatsApp — rien ne se paie ici.",
+      "previewMessage": "Aperçu de votre message",
+      "whatsappMessageLabel": "Message WhatsApp",
+      "summaryPiece": "Pièce",
+      "summaryPrice": "Prix",
+      "engravingPreview": "Aperçu",
+      "engravingPreviewEmpty": "Vos mots ici"
+    },
+    "share": {
+      "hintLabel": "Glisser un indice",
+      "hintMessage": "J'ai pensé que ceci te plairait — {title}."
+    },
+    "provenanceLinks": {
+      "madeWith": "Réalisé avec",
+      "creates": "Ce qu'il permet de créer"
+    },
+    "customizationNote": "La couleur, la taille et la gravure sont fixées avec vous avant la moindre coulée — rien n'est arrêté tant que vous ne l'avez pas confirmé sur WhatsApp.",
+    "leadTimeChip": "Sur commande · {timeline}",
+    "leadTimeMadeToOrder": "Sur commande",
+    "ctaCustomize": "Personnaliser cette pièce",
+    "ctaWhatsApp": "Demander sur WhatsApp",
+    "waAsk": "Bonjour ResinRiva, j'aimerais poser une question à propos de « {title} ».",
+    "sections": {
+      "pieceEyebrow": "la pièce",
+      "detailsEyebrow": "les détails",
+      "detailsHeading": "Comment elle est faite, entretenue et livrée",
+      "viewCollection": "Voir la collection"
+    }
+  },
+  "Consent": {
+    "label": "Consentement aux cookies et à la mesure d'audience",
+    "body": "Nous souhaiterions utiliser des cookies de mesure d'audience pour comprendre comment le site est utilisé et l'améliorer. Aucun traceur n'est chargé tant que vous n'avez pas choisi.",
+    "decline": "Refuser",
+    "accept": "Accepter"
+  },
+  "Legal": {
+    "lastUpdated": "Dernière mise à jour : {date}",
+    "privacyTitle": "Politique de confidentialité",
+    "termsTitle": "Conditions générales",
+    "eyebrow": "mentions légales",
+    "contents": "Sur cette page",
+    "contentsLabel": "Sections de ce document"
+  },
+  "Errors": {
+    "generic": "Une erreur est survenue — veuillez réessayer ou nous écrire sur WhatsApp.",
+    "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
+    "contactRateLimited": "Vous avez envoyé plusieurs messages d'affilée — patientez un instant ou contactez-nous directement sur WhatsApp.",
+    "subscribeRateLimited": "Veuillez patienter un instant avant de réessayer."
+  },
+  "Upload": {
+    "add": "+ Ajouter des références",
+    "drop": "Déposez vos images ici ou parcourez",
+    "formats": "JPG · PNG · WEBP · {maxMb} Mo max.",
+    "counter": "{count} / {max}",
+    "counterLong": "{count} images de référence sur {max} ajoutées",
+    "retry": "Réessayer"
+  },
+  "Newsletter": {
+    "heading": "La lettre de l'atelier.",
+    "body": "De nouvelles pièces, des notes de fabrication et, de temps en temps, une date d'atelier. Rien d'autre.",
+    "fieldLabel": "Adresse e-mail",
+    "submit": "S'abonner",
+    "submitting": "Abonnement en cours",
+    "retry": "Réessayer",
+    "success": "Vous êtes sur la liste.",
+    "already": "Vous êtes déjà sur la liste.",
+    "helper": "Trois ou quatre lettres par an"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "Cette pièce n'est pas ici.",
+    "body": "La page que vous suiviez a été déplacée, ou n'a jamais été coulée. Explorez l'atelier, ou repartez de l'une de ces pistes.",
+    "searchLabel": "Explorer l'atelier",
+    "searchPlaceholder": "Pièces, journal, portfolio…",
+    "searchSubmit": "Rechercher",
+    "collectionsLabel": "Collections populaires",
+    "collections": {
+      "varmala": "Préservation de varmala",
+      "frames": "Cadres photo de mariage",
+      "decor": "Décoration d'intérieur en résine",
+      "gifts": "Collections cadeaux"
+    },
+    "home": "Retour à l'atelier",
+    "whatsapp": "Demander sur WhatsApp"
+  },
+  "ErrorPage": {
+    "eyebrow": "erreur",
+    "heading": "Une erreur est survenue.",
+    "body": "Merci de réessayer. Si cela persiste, écrivez à l'atelier et nous réglerons cela avec vous.",
+    "retry": "Réessayer",
+    "whatsapp": "Écrire à l'atelier",
+    "referenceLabel": "Référence"
+  },
+  "LargeFormat": {
+    "meta": {
+      "title": "Art en résine grand format",
+      "description": "Commandez des pièces en résine grand format en Inde — tables, plateaux, panneaux muraux et pièces sculpturales, conçus autour de votre pièce et coulés sur commande."
+    },
+    "cure": {
+      "scale": "échelle",
+      "scope": "grandes pièces",
+      "how": "déroulement",
+      "brief": "votre brief",
+      "gallery": "pièces"
+    },
+    "hero": {
+      "eyebrow": "commandes grand format",
+      "headline": "De la résine à grande échelle, faite pour votre pièce.",
+      "lead": "Une grande pièce se pense autour d'un lieu avant d'être dessinée : où elle se pose, comment elle sert, comment elle passe la porte. C'est pourquoi le travail à cette échelle commence par une conversation plutôt que par une commande.",
+      "startCta": "Lancer une grande commande",
+      "briefCta": "Ouvrir le formulaire"
+    },
+    "scope": {
+      "eyebrow": "ce que couvre le grand format",
+      "heading": "Quatre familles de grandes pièces",
+      "intro": "L'échelle change la fabrication, pas la méthode. Voici les formes que prend le plus souvent un grand projet — le vôtre n'a pas à en être une.",
+      "k1Title": "Tables et plateaux",
+      "k1Copy": "Tables de repas et basses, plans de travail, étagères et dessus de console — résine coulée contre un bois affiné, puis dressée et polie à la main.",
+      "k1Alt": "Une planche de service en résine et teck appuyée contre un bol bas et rond en résine, tous deux coulés en bleu profond",
+      "k2Title": "Panneaux muraux et grandes pièces",
+      "k2Copy": "Un panneau seul ou un ensemble qui s'accroche d'un tenant, coulé aux proportions du mur auquel il est destiné plutôt qu'à un format de cadre standard.",
+      "k2Alt": "Le chant biseauté d'une plaque de résine transparente durcie, réfractant une fine bande de saphir",
+      "k3Title": "Pièces sculpturales et objets",
+      "k3Copy": "Formes libres, pièces de socle et blocs qui captent la lumière, montés en couches pour que la profondeur se lise encore d'un bout à l'autre de la pièce.",
+      "k3Alt": "Des moules de résine coulée durcissant sous une unique lampe d'atelier chaude dans un atelier sombre",
+      "k4Title": "La conservation à grande échelle",
+      "k4Copy": "Fleurs, tissus et souvenirs pris dans une pièce assez grande pour vivre avec — préparés et stabilisés d'abord, puis coulés autour.",
+      "k4Alt": "Un bloc rond et plat de résine transparente à la profondeur saphir, avec des pétales de souci et de rose pressés en suspension",
+      "materials": "Résine époxy de qualité artistique, pigments minéraux, bois affiné et végétaux conservés — les mêmes matériaux que pour les petites pièces, en plus grande quantité."
+    },
+    "how": {
+      "eyebrow": "le déroulement d'une grande commande",
+      "heading": "Pensé d'abord, coulé ensuite",
+      "intro": "C'est l'ordre du travail qui empêche une grande pièce de devenir une grande erreur.",
+      "s1Title": "Le lieu et le brief",
+      "s1Copy": "Vous envoyez l'espace, l'usage et les mesures dont vous disposez déjà. Nous demandons par où elle entre, sur quoi elle reposera et qui d'autre doit valider.",
+      "s2Title": "Dessin et validation",
+      "s2Copy": "Des croquis, et un aperçu numérique lorsqu'il aide. Rien n'est coulé tant que le dessin, la finition et la taille ne sont pas convenus entre nous.",
+      "s3Title": "Coulée et durcissement",
+      "s3Copy": "La résine entre couche après couche, chacune durcissant avant la suivante. Les grandes pièces ont plus de couches, et c'est la partie du calendrier que personne ne peut comprimer.",
+      "s4Title": "Finition et remise",
+      "s4Copy": "Poncée, polie et équipée de la quincaillerie qu'il lui faut pour tenir ou s'accrocher. Vous voyez des photographies de la pièce finie, et son transport est convenu avant qu'elle ne quitte l'atelier."
+    },
+    "brief": {
+      "eyebrow": "ce qu'il faut envoyer",
+      "heading": "Ce qui accélère un devis",
+      "intro": "Rien de tout cela n'a besoin d'être exact. Des chiffres approximatifs et une photo prise au téléphone suffisent pour commencer.",
+      "b1Label": "Le lieu",
+      "b1Copy": "Une photographie du mur, de l'angle ou du sol auquel la pièce est destinée, prise d'où vous vous tenez d'habitude.",
+      "b2Label": "Les mesures dont vous disposez",
+      "b2Copy": "Longueur, largeur et hauteur si vous les connaissez — ainsi que la porte, l'escalier ou l'ascenseur le plus étroit entre la rue et la pièce.",
+      "b3Label": "L'usage prévu",
+      "b3Copy": "Repas quotidiens, pièce d'exposition, accueil de bureau — l'usage décide de l'épaisseur, de la finition et du chant bien plus que le goût.",
+      "b4Label": "Références",
+      "b4Copy": "Des couleurs, un veinage, des photographies de travaux qui vous plaisent, ou la pièce que vous imaginez sans la trouver nulle part.",
+      "disclaimer": "Aucun paiement n'est encaissé ici. Matériaux, prix et dates sont confirmés avec vous sur WhatsApp avant que quoi que ce soit ne commence."
+    },
+    "gallery": {
+      "eyebrow": "grandes pièces",
+      "heading": "Des pièces à cette échelle",
+      "intro": "Des travaux que l'atelier a réunis sous le grand format. Lorsqu'une taille ou un matériau est consigné pour une pièce, il est indiqué avec elle.",
+      "materialsLabel": "Matériaux",
+      "sizeLabel": "Taille",
+      "catalogCta": "Voir tout le catalogue",
+      "emptyHeading": "Documentées à leur sortie de l'atelier",
+      "emptyBody": "Il n'y a encore rien à parcourir à cette échelle. La conversation n'attend pas la galerie — décrivez la pièce que vous voulez et nous la dessinerons à partir du lieu.",
+      "emptyCta": "Décrivez votre pièce"
+    },
+    "cta": {
+      "heading": "Parlez-nous du lieu",
+      "body": "Envoyez l'espace, l'usage et la date qui compte. Dessin, matériaux et prix se règlent avec vous sur WhatsApp avant qu'une seule couche ne soit coulée.",
+      "formCta": "Préparer une commande sur mesure"
+    }
+  }
+}

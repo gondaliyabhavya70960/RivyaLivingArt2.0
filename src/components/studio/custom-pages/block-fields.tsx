@@ -1,0 +1,511 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { toast } from "sonner";
+
+import { saveCustomBlock } from "@/actions/custom-pages";
+import type {
+  BlockPickers,
+  BlockRow,
+} from "@/components/studio/custom-pages/block-board";
+import { ProductPicker } from "@/components/studio/custom-pages/product-picker";
+import { MediaPicker } from "@/components/studio/media/media-picker";
+import { RichTextEditor } from "@/components/studio/rich-text-editor";
+import { TranslationsSection } from "@/components/studio/translations-section";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  CUSTOM_BLOCKS,
+  describeBlockDataProblem,
+  parseBlockData,
+  type CustomBlockType,
+} from "@/lib/custom-blocks";
+import { isOptimizableImageSrc } from "@/lib/image-src";
+import { toTranslationsRecord } from "@/lib/translations-form";
+
+/**
+ * One block's fields.
+ *
+ * Written as an explicit switch rather than a generic renderer driven by field
+ * descriptors. Six blocks is small enough that the switch reads faster than
+ * the abstraction, and the fields genuinely differ: a product grid needs a
+ * mode and a slug list, a picture block needs a library picker, the FAQ block
+ * needs the questions that already exist. A descriptor language rich enough
+ * for all of that is a worse thing to maintain than six small forms.
+ */
+export function BlockFields({
+  block,
+  pickers,
+}: {
+  block: BlockRow;
+  pickers: BlockPickers;
+}) {
+  const router = useRouter();
+  const [data, setData] = useState<Record<string, unknown>>(() =>
+    parseBlockData(block.type, block.data),
+  );
+  const [translations, setTranslations] = useState(() =>
+    toTranslationsRecord(block.translations),
+  );
+  const [saving, setSaving] = useState(false);
+
+  const def = CUSTOM_BLOCKS[block.type];
+  const problem = describeBlockDataProblem(block.type, data);
+
+  function set(field: string, value: unknown) {
+    setData((prev) => ({ ...prev, [field]: value }));
+  }
+
+  async function save() {
+    if (problem) {
+      toast.error(problem);
+      return;
+    }
+    setSaving(true);
+    const res = await saveCustomBlock({ id: block.id, data, translations });
+    setSaving(false);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Block saved.");
+    router.refresh();
+  }
+
+  const id = (field: string) => `blk-${block.id}-${field}`;
+
+  return (
+    <div className="space-y-5">
+      {block.type === "hero" && (
+        <>
+          <ImageField
+            id={id("image")}
+            label="Picture"
+            value={String(data.image ?? "")}
+            alt={String(data.imageAlt ?? "")}
+            onChange={(url) => set("image", url)}
+            onAltChange={(alt) => set("imageAlt", alt)}
+          />
+          <TextField
+            id={id("eyebrow")}
+            label="Eyebrow"
+            hint="The small line above the headline."
+            value={String(data.eyebrow ?? "")}
+            onChange={(v) => set("eyebrow", v)}
+          />
+          <TextField
+            id={id("headline")}
+            label="Headline"
+            value={String(data.headline ?? "")}
+            onChange={(v) => set("headline", v)}
+          />
+          <AreaField
+            id={id("body")}
+            label="Opening words"
+            value={String(data.body ?? "")}
+            onChange={(v) => set("body", v)}
+          />
+          <CtaFields data={data} set={set} id={id} />
+        </>
+      )}
+
+      {block.type === "richText" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <div className="space-y-2">
+            <Label>Words</Label>
+            <RichTextEditor
+              value={data.body as Record<string, unknown>}
+              onChange={(next) => set("body", next)}
+            />
+          </div>
+        </>
+      )}
+
+      {block.type === "productGrid" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("intro")}
+            label="Intro"
+            value={String(data.intro ?? "")}
+            onChange={(v) => set("intro", v)}
+          />
+          <div className="space-y-2">
+            <Label htmlFor={id("mode")}>Which pieces</Label>
+            <select
+              id={id("mode")}
+              value={String(data.mode ?? "featured")}
+              onChange={(e) => set("mode", e.target.value)}
+              className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+            >
+              <option value="featured">The pieces marked featured</option>
+              <option value="category">Everything in one category</option>
+              <option value="manual">Ones I choose</option>
+            </select>
+          </div>
+
+          {data.mode === "category" && (
+            <div className="space-y-2">
+              <Label htmlFor={id("category")}>Category</Label>
+              <select
+                id={id("category")}
+                value={String(data.category ?? "")}
+                onChange={(e) => set("category", e.target.value)}
+                className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+              >
+                <option value="">Pick one…</option>
+                {pickers.categories.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {data.mode === "manual" && (
+            <ProductPicker
+              chosen={Array.isArray(data.slugs) ? (data.slugs as string[]) : []}
+              onChange={(next) => set("slugs", next)}
+            />
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor={id("limit")}>How many</Label>
+            <Input
+              id={id("limit")}
+              type="number"
+              min={2}
+              max={12}
+              value={Number(data.limit ?? 4)}
+              onChange={(e) => set("limit", Number(e.target.value))}
+              className="w-28"
+            />
+          </div>
+        </>
+      )}
+
+      {block.type === "imageCta" && (
+        <>
+          <ImageField
+            id={id("image")}
+            label="Picture"
+            value={String(data.image ?? "")}
+            alt={String(data.imageAlt ?? "")}
+            onChange={(url) => set("image", url)}
+            onAltChange={(alt) => set("imageAlt", alt)}
+          />
+          <div className="space-y-2">
+            <Label htmlFor={id("side")}>Picture side</Label>
+            <select
+              id={id("side")}
+              value={String(data.imageSide ?? "start")}
+              onChange={(e) => set("imageSide", e.target.value)}
+              className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+            >
+              <option value="start">
+                Before the words (left, or right in Arabic)
+              </option>
+              <option value="end">
+                After the words (right, or left in Arabic)
+              </option>
+            </select>
+          </div>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("body")}
+            label="Words"
+            value={String(data.body ?? "")}
+            onChange={(v) => set("body", v)}
+          />
+          <CtaFields data={data} set={set} id={id} />
+        </>
+      )}
+
+      {block.type === "faqPicker" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <fieldset className="space-y-2">
+            <legend className="text-small font-medium text-foreground">
+              Questions
+            </legend>
+            <p className="text-xs text-graphite">
+              These come from the FAQ screen — answer it there once and reuse it
+              here. Nothing is duplicated.
+            </p>
+            {pickers.faqs.length === 0 ? (
+              <p className="text-xs text-graphite">
+                No questions answered yet.
+              </p>
+            ) : (
+              <ul className="space-y-1">
+                {pickers.faqs.map((faq) => {
+                  const chosen = Array.isArray(data.faqIds)
+                    ? (data.faqIds as string[])
+                    : [];
+                  const on = chosen.includes(faq.id);
+                  return (
+                    <li key={faq.id}>
+                      <label className="flex items-start gap-2 text-small">
+                        <input
+                          type="checkbox"
+                          className="mt-1 size-4"
+                          checked={on}
+                          onChange={() =>
+                            set(
+                              "faqIds",
+                              on
+                                ? chosen.filter((c) => c !== faq.id)
+                                : [...chosen, faq.id],
+                            )
+                          }
+                        />
+                        <span>{faq.question}</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </fieldset>
+        </>
+      )}
+
+      {block.type === "finalCta" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("body")}
+            label="Words"
+            value={String(data.body ?? "")}
+            onChange={(v) => set("body", v)}
+          />
+          <label className="flex items-start gap-2 text-small">
+            <input
+              type="checkbox"
+              className="mt-1 size-4"
+              checked={Boolean(data.whatsapp)}
+              onChange={(e) => set("whatsapp", e.target.checked)}
+            />
+            <span>
+              Send the button to WhatsApp
+              <span className="block text-xs text-graphite">
+                Uses the studio&rsquo;s number, so it stays right if the number
+                ever changes.
+              </span>
+            </span>
+          </label>
+          {!data.whatsapp && <CtaFields data={data} set={set} id={id} />}
+          {data.whatsapp && (
+            <TextField
+              id={id("ctaLabel")}
+              label="Button label"
+              value={String(data.ctaLabel ?? "")}
+              onChange={(v) => set("ctaLabel", v)}
+            />
+          )}
+        </>
+      )}
+
+      {def.translatable.length > 0 && (
+        <TranslationsSection
+          idPrefix={`blk-${block.id}`}
+          value={translations}
+          onChange={setTranslations}
+          fields={def.translatable.map((field) => ({
+            ...field,
+            base:
+              typeof data[field.name] === "string"
+                ? (data[field.name] as string)
+                : undefined,
+          }))}
+        />
+      )}
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="button" onClick={save} disabled={saving}>
+          {saving ? "Saving…" : "Save block"}
+        </Button>
+        {problem && <p className="text-small text-alert">{problem}</p>}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════ small shared fields ═══════════════════════ */
+
+function TextField({
+  id,
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Input id={id} value={value} onChange={(e) => onChange(e.target.value)} />
+      {hint && <p className="text-xs text-graphite">{hint}</p>}
+    </div>
+  );
+}
+
+function AreaField({
+  id,
+  label,
+  hint,
+  rows = 3,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  rows?: number;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Textarea
+        id={id}
+        rows={rows}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {hint && <p className="text-xs text-graphite">{hint}</p>}
+    </div>
+  );
+}
+
+function ImageField({
+  id,
+  label,
+  value,
+  alt,
+  onChange,
+  onAltChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  alt: string;
+  onChange: (url: string) => void;
+  onAltChange: (alt: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          id={id}
+          value={value}
+          placeholder="Pick from the library"
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <MediaPicker onSelect={(item) => onChange(item.url)} />
+        {value && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onChange("")}
+          >
+            Clear
+          </Button>
+        )}
+      </div>
+      {value && (
+        <div className="relative h-28 w-44 overflow-hidden rounded-lg border border-border">
+          <Image
+            src={value}
+            alt=""
+            fill
+            sizes="176px"
+            unoptimized={!isOptimizableImageSrc(value)}
+            className="object-cover"
+          />
+        </div>
+      )}
+      <div className="space-y-2">
+        <Label htmlFor={`${id}-alt`}>What the picture shows</Label>
+        <Input
+          id={`${id}-alt`}
+          value={alt}
+          onChange={(e) => onAltChange(e.target.value)}
+        />
+        <p className="text-xs text-graphite">
+          Describe the picture for someone who cannot see it. Leave blank only
+          when it is purely decorative.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CtaFields({
+  data,
+  set,
+  id,
+}: {
+  data: Record<string, unknown>;
+  set: (field: string, value: unknown) => void;
+  id: (field: string) => string;
+}) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <TextField
+        id={id("ctaLabel")}
+        label="Button label"
+        value={String(data.ctaLabel ?? "")}
+        onChange={(v) => set("ctaLabel", v)}
+      />
+      <TextField
+        id={id("ctaHref")}
+        label="Button goes to"
+        hint="A page on this site, like /shop, or a full https:// address."
+        value={String(data.ctaHref ?? "")}
+        onChange={(v) => set("ctaHref", v)}
+      />
+    </div>
+  );
+}
+
+export type { CustomBlockType };

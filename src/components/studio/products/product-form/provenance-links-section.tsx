@@ -1,0 +1,146 @@
+"use client";
+
+import { useState } from "react";
+import { Plus, Search, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+
+import { searchProductsForLink } from "@/actions/products";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FormSection } from "@/components/studio/form-section";
+
+import type { FormValues } from "./schema";
+
+const TIER_LABELS: Record<number, string> = {
+  1: "Studio original",
+  2: "Resin goods",
+  3: "Supplies",
+  4: "3D print",
+};
+
+/**
+ * Cross-tier provenance links (product-ux benchmark gap 3): "Made with" on
+ * an art piece names the ACTUAL pigments/resins from the supplies tier; the
+ * reverse side renders "What this creates" on the supply's page. Links are
+ * owner-picked here — never inferred — so the provenance story stays true.
+ */
+export function ProvenanceLinksSection() {
+  const { control } = useFormContext<FormValues>();
+  const links = useFieldArray({ control, name: "madeWith" });
+  const [q, setQ] = useState("");
+  const [results, setResults] = useState<
+    { id: string; title: string; tier: number | null }[]
+  >([]);
+  const [searching, setSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function runSearch() {
+    const query = q.trim();
+    if (!query) return;
+    setSearching(true);
+    setError(null);
+    const result = await searchProductsForLink(query);
+    setSearching(false);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    setResults(result.data ?? []);
+  }
+
+  return (
+    <FormSection title="Made with (provenance links)">
+      <p className="text-sm text-muted-foreground">
+        Link the actual supplies or print products this piece is made with — the
+        linked product&apos;s page shows it back under &ldquo;What this
+        creates&rdquo;.
+      </p>
+
+      {links.fields.length > 0 && (
+        <ul className="space-y-2">
+          {links.fields.map((field, index) => (
+            <li
+              key={field.id}
+              className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2"
+            >
+              <span className="min-w-0 truncate text-sm text-foreground">
+                {field.title}
+                {field.tier != null && (
+                  <span className="ms-2 text-xs text-muted-foreground">
+                    {TIER_LABELS[field.tier] ?? `Tier ${field.tier}`}
+                  </span>
+                )}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="min-h-11 shrink-0"
+                aria-label={`Unlink ${field.title}`}
+                onClick={() => links.remove(index)}
+              >
+                <Trash2 />
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex items-center gap-2">
+        <Input
+          value={q}
+          onChange={(event) => setQ(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              void runSearch();
+            }
+          }}
+          placeholder="Search products to link…"
+          aria-label="Search products to link"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="min-h-11 shrink-0"
+          disabled={searching}
+          onClick={() => void runSearch()}
+        >
+          <Search /> {searching ? "Searching…" : "Search"}
+        </Button>
+      </div>
+      {error && <p className="text-sm text-alert">{error}</p>}
+
+      {results.length > 0 && (
+        <ul className="space-y-1">
+          {results
+            .filter((row) => !links.fields.some((f) => f.linkId === row.id))
+            .map((row) => (
+              <li key={row.id}>
+                <button
+                  type="button"
+                  onClick={() =>
+                    links.append({
+                      linkId: row.id,
+                      title: row.title,
+                      tier: row.tier,
+                    })
+                  }
+                  className="flex w-full items-center gap-2 rounded-lg border border-transparent px-3 py-2 text-start text-sm text-foreground hover:border-border"
+                >
+                  <Plus className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="min-w-0 truncate">{row.title}</span>
+                  {row.tier != null && (
+                    <span className="ms-auto shrink-0 text-xs text-muted-foreground">
+                      {TIER_LABELS[row.tier] ?? `Tier ${row.tier}`}
+                    </span>
+                  )}
+                </button>
+              </li>
+            ))}
+        </ul>
+      )}
+    </FormSection>
+  );
+}

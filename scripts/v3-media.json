@@ -1,0 +1,53 @@
+{
+  "_comment": "v3 Midnight Gallery ambient media (Higgsfield, 2026-08-12). Brand-ambient only — never product listings. Mirrored first-party by scripts/mirror-v3-media.mjs (Actions; sandbox egress blocks the CDN host). Consumed from /media/* by the redesigned pages.",
+  "images": {
+    "gallery-wall": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061125_cfaed7f6-f5ca-4ceb-9552-7b9384822535.png",
+      "width": 1920,
+      "alt": "Dark gallery wall with three framed sapphire-and-gold resin artworks under warm picture lights"
+    },
+    "studio-night": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061125_6d274490-0e06-4fbe-be54-eee23d0a32d1.png",
+      "width": 1920,
+      "alt": "Resin studio workbench at night with pigment jars, gold leaf and a warm desk lamp"
+    },
+    "texture-macro": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061159_be7cef35-0586-49a8-b899-b0a6dad3b7cb.png",
+      "width": 1920,
+      "alt": "Macro of a polished resin surface — deep sapphire layers veined with gold leaf"
+    },
+    "hands-polish": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061125_e1ef9515-3e20-458a-b7d7-e18a88520192.png",
+      "width": 1600,
+      "alt": "Hands polishing a small blue-gold resin artwork under warm lamp light"
+    },
+    "workshop-table": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061125_4e538375-530d-4f52-a0ed-1eea4fabc50e.png",
+      "width": 1920,
+      "alt": "Evening resin workshop table set with work mats, molds and pigment cups under pendant lights"
+    },
+    "pigment-still": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061125_1b9c2650-d442-4ab2-b53b-fef0705b72f6.png",
+      "width": 1200,
+      "alt": "Jars of sapphire pigment, a brush and gold leaf flakes on dark stone"
+    }
+  },
+  "videos": {
+    "hero-pour": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_060957_619de355-9fa4-4db7-a653-036033f9d8ff.mp4",
+      "alt": "Slow-motion macro of sapphire resin pouring with gold pigment swirls"
+    },
+    "process-pour": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_060957_962a0fc7-b0d6-491e-a7a3-ff9bc8036cb8.mp4",
+      "alt": "Hands pouring blue resin into a mold in a dark workshop"
+    },
+    "resin-waves": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_060957_83e9c38b-e20a-4295-8596-36c10a82977a.mp4",
+      "alt": "Macro of a curing resin surface — sapphire waves veined with glinting gold"
+    },
+    "gallery-block": {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260812_061119_f4dd8ffc-9419-4c87-93a3-52a565cd6c27.mp4",
+      "alt": "Light refracting through a translucent resin block in a dark gallery"
+    }
+  }
+}

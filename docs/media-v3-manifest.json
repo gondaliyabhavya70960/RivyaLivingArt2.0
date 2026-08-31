@@ -1,0 +1,625 @@
+{
+  "$comment": "REDESIGN.md Part 15 asset set. Generated 2026-08-23 via the Higgsfield MCP. Every prompt already carries the §15.3 mandatory palette suffix; `negativePrompt` was folded into each prompt as an exclusion clause because the chosen model exposes no negative-prompt parameter. `keeper` is null until a human culls the candidates (§15.5) — scripts/media-v3-fetch.mjs --candidates builds the contact sheet that cull is made from.",
+  "spec": "REDESIGN.md Part 15 — Image system & Higgsfield AI",
+  "generatedAt": "2026-08-23",
+  "model": {
+    "requested": "nano_banana_pro",
+    "served": "nano_banana_2",
+    "resolution": "4k",
+    "masterPixels": "3584 px on the long edge (well above §15.5's 2560 px floor, so no upscale pass is needed)"
+  },
+  "promptSuffix": "— palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+  "negativePrompt": "text, watermark, signature, logo, plastic toy sheen, teal-orange grade, HDR halo, extra fingers, glitter overload, stock-photo smile, cluttered background",
+  "sets": {
+    "collection-tiles": {
+      "spec": "§15.4 — Collection tiles ×6, 3:4, one per collection, same light same ground so they read as a set.",
+      "prefix": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: "
+    },
+    "material-story": {
+      "spec": "§15.4 — Material story 01 pour · 02 gild · 03 cure · 04 polish, 4:5.",
+      "prefix": "One frame from a four-part material story shot in a single session, same lens, same single soft key from upper left, same cool shadow falloff, so the four read as one series. Frame: "
+    },
+    "material-macros": {
+      "spec": "§15.4 — Material macros ×4, 1:1, identical neutral ground and identical light.",
+      "prefix": "One of four material macros shot on an identical matte charcoal-neutral stone ground under identical light, same magnification, same lens, same framing, so the four tile together as one set. Frame: "
+    },
+    "atmosphere": {
+      "spec": "§15.4 — Atmospheric heroes, editorial backgrounds and studio mood.",
+      "prefix": ""
+    }
+  },
+  "excluded": [
+    {
+      "item": "§15.4 — Preservation before/after 16:9 pair",
+      "reason": "§15.2 forbids Higgsfield as the factual representation of customer commissions, actual customer flowers and finished custom orders, and a before/after is exactly that claim. Part 0 wins conflicts (§1.1). Nothing renders it today either — no portfolio row carries beforeImageUrl."
+    },
+    {
+      "item": "§15.4 — Journal covers (one per post)",
+      "reason": "Owner content, keyed off real posts in the database rather than a fixed asset set. Belongs to a per-post generation pass, not this batch."
+    },
+    {
+      "item": "The maker portrait",
+      "reason": "§15.2 — real studio staff portraits are never AI. studio-hands is hands-only, cropped at the forearms, and is atmosphere, not a portrait of the maker."
+    }
+  ],
+  "assets": [
+    {
+      "id": "tile-preserve",
+      "set": "collection-tiles",
+      "placement": "Homepage §05 collection tile — PRESERVE (varmala preservation)",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "master": "public/media/v3/tile-preserve.avif",
+      "alt": "A shallow round block of clear resin with deep sapphire depth, pressed marigold and rose petals suspended inside it, on a dark teak table",
+      "prompt": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: a shallow round block of clear epoxy with deep sapphire depth, holding pressed marigold and rose petals suspended mid-block, resting on the teak tabletop — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "4267ec54-b244-4ba8-8f4f-e222b7fe8cac",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_4267ec54-b244-4ba8-8f4f-e222b7fe8cac.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "50bb868a-66e2-4eae-8d99-e3bd56d86d12",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_50bb868a-66e2-4eae-8d99-e3bd56d86d12.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "tile-keep",
+      "set": "collection-tiles",
+      "placement": "Homepage §05 collection tile — KEEP (wedding photo frames)",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "master": "public/media/v3/tile-keep.avif",
+      "alt": "An empty teakwood picture frame standing on edge, its inner border a poured band of deep sapphire resin with one fine gold vein",
+      "prompt": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: an empty rectangular teakwood picture frame standing on edge on the teak tabletop, its inner border a poured band of deep sapphire resin carrying one fine champagne gold vein — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "c158e6a9-571e-4e63-819b-039556839a9e",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_c158e6a9-571e-4e63-819b-039556839a9e.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "740f12a1-2e51-4412-886b-5d6aba2d3f9a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_740f12a1-2e51-4412-886b-5d6aba2d3f9a.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "tile-live",
+      "set": "collection-tiles",
+      "placement": "Homepage §05 collection tile — LIVE (resin home decor)",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "master": "public/media/v3/tile-live.avif",
+      "alt": "A resin-and-teak serving board leaning against a low round resin bowl, both poured in deep ocean blue with a single gold vein",
+      "prompt": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: a resin-and-teak serving board leaning against a low round resin bowl on the teak tabletop, the poured surfaces deep ocean blue with a single champagne vein — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "3b1d3cc7-f540-497d-9d0b-a1c2ffcfd8c3",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_3b1d3cc7-f540-497d-9d0b-a1c2ffcfd8c3.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "6c5429bf-a5d5-4da9-b417-000f1d3731a0",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_6c5429bf-a5d5-4da9-b417-000f1d3731a0.png"
+        }
+      ],
+      "keeper": "b"
+    },
+    {
+      "id": "tile-gift",
+      "set": "collection-tiles",
+      "placement": "Homepage §05 collection tile — GIFT (gift collections)",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "master": "public/media/v3/tile-gift.avif",
+      "alt": "A resin coaster, a domed paperweight and a pendant arranged in a shallow open box lined with dark paper",
+      "prompt": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: three small resin objects — a square coaster, a domed paperweight and a pendant on a cord — arranged in a shallow open gift box lined with dark charcoal paper on the teak tabletop — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "08b358d3-0bae-4e6a-8bf9-299aa80f235f",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_08b358d3-0bae-4e6a-8bf9-299aa80f235f.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "d6154389-1ab3-4179-8a52-eec4ee4e8386",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_d6154389-1ab3-4179-8a52-eec4ee4e8386.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "tile-create",
+      "set": "collection-tiles",
+      "placement": "Homepage §05 collection tile — CREATE (commission a piece)",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "master": "public/media/v3/tile-create.avif",
+      "alt": "An empty round silicone mould, two mixing cups and a stirring stick, one cup holding deep sapphire resin caught mid-stir",
+      "prompt": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: an empty round silicone mould, two mixing cups and a stirring stick laid out on the teak tabletop, one cup holding deep sapphire resin caught mid-stir, loose mineral pigment beside it, no hands in frame — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "32e5873d-5b63-402d-bc5c-f8a2f03dc6be",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_32e5873d-5b63-402d-bc5c-f8a2f03dc6be.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "2ea8871f-8cad-4674-8407-9edeea25a834",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_2ea8871f-8cad-4674-8407-9edeea25a834.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "tile-print",
+      "set": "collection-tiles",
+      "placement": "Homepage §05 collection tile — PRINT (3D print decor)",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "master": "public/media/v3/tile-print.avif",
+      "alt": "A translucent blue 3D-printed lattice vessel, the light raking across its fine print layers",
+      "prompt": "One frame from a six-part collection series, all shot in a single session on the same seasoned dark teak tabletop, same single soft directional key from upper left with a warm champagne rim, same camera height, same lens, same cool shadow falloff. Frame: a translucent blue 3D-printed lattice vessel with fine visible print layers standing on the teak tabletop, the key light raking across the layer lines — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "cb1ff52f-c473-4c86-98bb-6e359b89659b",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041211_cb1ff52f-c473-4c86-98bb-6e359b89659b.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "5e95cfae-84c0-4fd9-b7db-b76c095f0156",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_5e95cfae-84c0-4fd9-b7db-b76c095f0156.png"
+        }
+      ],
+      "keeper": "b"
+    },
+    {
+      "id": "story-pour",
+      "set": "material-story",
+      "placement": "Material story 01 — pour (homepage pinned scrub, process page)",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "master": "public/media/v3/story-pour.avif",
+      "alt": "Deep sapphire resin pouring in one unbroken ribbon into a shallow round mould against a matte black backdrop",
+      "prompt": "One frame from a four-part material story shot in a single session, same lens, same single soft key from upper left, same cool shadow falloff, so the four read as one series. Frame: extreme slow-motion macro of deep sapphire resin pouring in one unbroken ribbon into a shallow round mould, matte black backdrop, single soft key light from upper left, no hands — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "0f792bb3-7265-4262-9a6d-15f4fc55a7de",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041242_0f792bb3-7265-4262-9a6d-15f4fc55a7de.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "acebce49-2232-4369-92ed-a17b9ad68647",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041242_acebce49-2232-4369-92ed-a17b9ad68647.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "story-gild",
+      "set": "material-story",
+      "placement": "Material story 02 — gild",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "master": "public/media/v3/story-gild.avif",
+      "alt": "Gold leaf flakes drifting and suspended inside settling translucent blue resin, each flake catching the light at a different angle",
+      "prompt": "One frame from a four-part material story shot in a single session, same lens, same single soft key from upper left, same cool shadow falloff, so the four read as one series. Frame: gold leaf flakes drifting and suspending inside settling translucent blue resin, macro, catching directional light — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "d8788f89-3743-4b0b-a029-575cf7fcb1b9",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_d8788f89-3743-4b0b-a029-575cf7fcb1b9.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "story-cure",
+      "set": "material-story",
+      "placement": "Material story 03 — cure",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "master": "public/media/v3/story-cure.avif",
+      "alt": "Poured resin moulds curing under a single warm work lamp in a dark studio, deep shadow beyond the pool of light",
+      "prompt": "One frame from a four-part material story shot in a single session, same lens, same single soft key from upper left, same cool shadow falloff, so the four read as one series. Frame: poured resin moulds curing overnight under a single warm work lamp in a dark artisan studio, deep shadow, calm, no people — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "d0ce8006-f29a-44dd-86ad-872177c15dae",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041242_d0ce8006-f29a-44dd-86ad-872177c15dae.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "cd7addd2-4c13-48fa-b96c-697f20bb55a5",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041242_cd7addd2-4c13-48fa-b96c-697f20bb55a5.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "story-polish",
+      "set": "material-story",
+      "placement": "Material story 04 — polish",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "master": "public/media/v3/story-polish.avif",
+      "alt": "Water beading on a mirror-polished resin surface, deep sapphire depth and floating gold flakes visible beneath",
+      "prompt": "One frame from a four-part material story shot in a single session, same lens, same single soft key from upper left, same cool shadow falloff, so the four read as one series. Frame: extreme macro of water beading on a mirror-polished resin surface revealing deep three-dimensional sapphire depth and floating gold flakes, high-contrast studio lighting — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "38c4d0b7-b582-4db4-ae49-350425f5bddd",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041242_38c4d0b7-b582-4db4-ae49-350425f5bddd.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "macro-epoxy",
+      "set": "material-macros",
+      "placement": "Materials grid (about, process) — cured epoxy",
+      "ratio": "1:1",
+      "targetWidth": 900,
+      "master": "public/media/v3/macro-epoxy.avif",
+      "alt": "The bevelled edge of a slab of cured clear resin, refracting a thin band of sapphire",
+      "prompt": "One of four material macros shot on an identical matte charcoal-neutral stone ground under identical light, same magnification, same lens, same framing, so the four tile together as one set. Frame: extreme macro of the edge of a slab of cured clear epoxy, the bevel refracting a thin band of sapphire, the ground visible behind it — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "f7723d2c-f99c-4328-bef3-1a3f15e05126",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_f7723d2c-f99c-4328-bef3-1a3f15e05126.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "82c67b09-f2db-456d-b593-a5fde5bdebad",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_82c67b09-f2db-456d-b593-a5fde5bdebad.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "macro-teak",
+      "set": "material-macros",
+      "placement": "Materials grid — teak and resin",
+      "ratio": "1:1",
+      "targetWidth": 900,
+      "master": "public/media/v3/macro-teak.avif",
+      "alt": "Seasoned teak grain meeting a poured edge of deep blue resin, the join line sharp and the wood pores in focus",
+      "prompt": "One of four material macros shot on an identical matte charcoal-neutral stone ground under identical light, same magnification, same lens, same framing, so the four tile together as one set. Frame: extreme macro of seasoned teak grain meeting a poured edge of deep blue resin, the join line sharp, wood pores in focus — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "af4d8671-0a09-4416-a2ba-743d8148d631",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_af4d8671-0a09-4416-a2ba-743d8148d631.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "32cd3e8d-26c1-41b0-a76e-b4fbba181fcb",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_32cd3e8d-26c1-41b0-a76e-b4fbba181fcb.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "macro-pigment",
+      "set": "material-macros",
+      "placement": "Materials grid — mineral pigment",
+      "ratio": "1:1",
+      "targetWidth": 900,
+      "master": "public/media/v3/macro-pigment.avif",
+      "alt": "A loose heap of deep ocean blue mineral pigment, individual grains resolved along the lit edge",
+      "prompt": "One of four material macros shot on an identical matte charcoal-neutral stone ground under identical light, same magnification, same lens, same framing, so the four tile together as one set. Frame: extreme macro of a loose heap of mineral pigment powder in deep ocean blue, individual grains resolved at the lit edge, falling into soft focus behind — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "8ac79bcb-4ea3-4ac5-a995-fe5a45777994",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_8ac79bcb-4ea3-4ac5-a995-fe5a45777994.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "d03baefc-51f1-4c10-81d6-fc36271339d6",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_d03baefc-51f1-4c10-81d6-fc36271339d6.png"
+        }
+      ],
+      "keeper": "b"
+    },
+    {
+      "id": "macro-flower",
+      "set": "material-macros",
+      "placement": "Materials grid — preserved flower",
+      "ratio": "1:1",
+      "targetWidth": 900,
+      "master": "public/media/v3/macro-flower.avif",
+      "alt": "A single pressed dried flower lying flat, its petal veins and translucency raked by the light",
+      "prompt": "One of four material macros shot on an identical matte charcoal-neutral stone ground under identical light, same magnification, same lens, same framing, so the four tile together as one set. Frame: extreme macro of a single pressed and dried flower lying flat on the ground, petal veins and translucency raked by the key light — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "f0235cf8-ae56-45ed-b5ff-67fde0b1d84b",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_f0235cf8-ae56-45ed-b5ff-67fde0b1d84b.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "aacfa049-66c1-4511-aced-e1d20edcfded",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041315_aacfa049-66c1-4511-aced-e1d20edcfded.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "hero-pour",
+      "set": "atmosphere",
+      "placement": "Homepage hero poster (LCP). Reframe to 9:16 for the mobile hero from this same master.",
+      "ratio": "16:9",
+      "targetWidth": 2400,
+      "master": "public/media/v3/hero-pour.avif",
+      "alt": "Liquid deep sapphire resin flowing across raw dark teakwood, threads of gold leaf swirling through it",
+      "prompt": "Cinematic 4k macro top-down view of liquid deep sapphire blue epoxy resin flowing across raw dark teakwood, swirling with genuine gold leaf veins, crystalline water-like refraction, studio rim lighting, photorealistic — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "a1351821-f8a0-420e-aa3c-5509b7e73ae0",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_a1351821-f8a0-420e-aa3c-5509b7e73ae0.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "5114fbf0-06c7-46c8-b64f-2120e5dc9703",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_5114fbf0-06c7-46c8-b64f-2120e5dc9703.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "texture-band",
+      "set": "atmosphere",
+      "placement": "About hero band / panoramic editorial texture",
+      "ratio": "21:9",
+      "targetWidth": 2400,
+      "master": "public/media/v3/texture-band.avif",
+      "alt": "",
+      "prompt": "Extreme macro of a cured resin surface, one champagne gold vein running through deep sapphire, dense material detail concentrated in the left third of the frame and falling away into quiet darker field on the right for a headline overlay — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "17bd380a-4760-4a13-9ec1-c4bf2d6757b0",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_17bd380a-4760-4a13-9ec1-c4bf2d6757b0.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "6258d585-af6f-4488-9132-dae70dcb1209",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_6258d585-af6f-4488-9132-dae70dcb1209.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "bespoke-petals",
+      "set": "atmosphere",
+      "placement": "Commission / preservation hero (custom-order)",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/bespoke-petals.avif",
+      "alt": "Gloved hands arranging marigold and rose petals inside an empty silicone mould under warm side light",
+      "prompt": "Hands in black nitrile gloves arranging marigold and rose petals inside an empty silicone mould on a dark work surface, warm side light, intimate, cropped at the wrists, no faces in frame — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "6f5f164b-1293-46f9-af06-6ee43b78dd43",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_6f5f164b-1293-46f9-af06-6ee43b78dd43.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "48b2958c-02a7-482e-907a-78aa6291d4e4",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_48b2958c-02a7-482e-907a-78aa6291d4e4.png"
+        }
+      ],
+      "keeper": "b"
+    },
+    {
+      "id": "workshop-table",
+      "set": "atmosphere",
+      "placement": "Workshops hero and 'the room' gallery",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/workshop-table.avif",
+      "alt": "A long studio table set for eight with mixing cups, gloves, pigment jars and empty moulds, lit by morning light",
+      "prompt": "A long dark studio table set for eight places with mixing cups, folded gloves, pigment jars and empty moulds laid out in a row, soft morning light from a side window, no people in frame — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "5a120dfb-c3ae-436b-8e8e-582cf514b9ed",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041400_5a120dfb-c3ae-436b-8e8e-582cf514b9ed.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "a45c3e4b-b47e-41ee-857f-0b620b64e923",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_a45c3e4b-b47e-41ee-857f-0b620b64e923.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "workshop-private",
+      "set": "atmosphere",
+      "placement": "Private workshop band (workshops page)",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/workshop-private.avif",
+      "alt": "Four people seated along a studio table, their hands working resin and moulds in warm ambient light",
+      "prompt": "A small group of four people seated along one side of a craft studio table, warm ambient light, their hands working resin and moulds, framed from chest height downward so every face is out of frame above the top edge — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "dfde3b2a-d942-405d-9a0c-5460dca5900f",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_dfde3b2a-d942-405d-9a0c-5460dca5900f.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "023d8321-bfde-427e-a546-5f81420b9cb8",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041617_023d8321-bfde-427e-a546-5f81420b9cb8.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "print-head",
+      "set": "atmosphere",
+      "placement": "3D print studio band (homepage §09, print collection)",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/print-head.avif",
+      "alt": "An FDM print head laying translucent blue filament layer by layer, a warm work lamp raking across the fresh layer lines",
+      "prompt": "Macro of an FDM 3D print head laying translucent blue filament layer by layer onto a build plate, warm work lamp raking across the fresh layer lines, shallow focus — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "61ef28f4-1579-4e51-a462-e6d0d8769116",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_61ef28f4-1579-4e51-a462-e6d0d8769116.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "82759944-715c-43e1-a57b-63cd474d5dca",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041358_82759944-715c-43e1-a57b-63cd474d5dca.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "studio-hands",
+      "set": "atmosphere",
+      "placement": "Studio hands (process step, maker-adjacent atmosphere — NOT the maker portrait, see §15.2)",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "master": "public/media/v3/studio-hands.avif",
+      "alt": "Gloved hands drawing fine wave patterns across deep blue liquid resin with a precision heat gun",
+      "prompt": "Artisan hands in black nitrile gloves using a precision heat gun to draw fine wave patterns across deep blue liquid resin in a shallow tray, studio workshop, cinematic lighting, cropped at the forearms so no face is in frame — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "30120ee7-88f6-4d00-b5be-9b1ece5f9c24",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_30120ee7-88f6-4d00-b5be-9b1ece5f9c24.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "554628f1-cb8d-4e63-b786-bbbecabc778e",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_554628f1-cb8d-4e63-b786-bbbecabc778e.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "login-backdrop",
+      "set": "atmosphere",
+      "placement": "Studio login backdrop (src/components/studio/auth-shell.tsx)",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/login-backdrop.avif",
+      "alt": "",
+      "prompt": "Abstract dark navy and midnight blue fluid resin slowly swirling with soft golden luminescence deep inside it, entirely out of focus, no recognisable object, calm ambient field — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "c0b53929-5fdf-440a-9ade-527c6c36eff1",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_c0b53929-5fdf-440a-9ade-527c6c36eff1.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "3aa406d6-3a33-49fd-b2c0-ba6d39f5fb37",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_3aa406d6-3a33-49fd-b2c0-ba6d39f5fb37.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "not-found",
+      "set": "atmosphere",
+      "placement": "404 page",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/not-found.avif",
+      "alt": "A single empty, freshly demoulded silicone mould lying on a pale stone ground",
+      "prompt": "A single empty, freshly demoulded silicone mould lying on a pale warm stone ground, soft light, a lot of quiet empty space around it — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "9c871058-e960-4c09-9d26-33ed173fdd1d",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_9c871058-e960-4c09-9d26-33ed173fdd1d.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "a8206a3d-db8b-45ef-b759-b9709f972fb6",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_a8206a3d-db8b-45ef-b759-b9709f972fb6.png"
+        }
+      ],
+      "keeper": "a"
+    },
+    {
+      "id": "studio-interior",
+      "set": "atmosphere",
+      "placement": "Contact hero, about studio band",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "master": "public/media/v3/studio-interior.avif",
+      "alt": "A dark artisan studio at night, a single warm work lamp over a bench of curing moulds",
+      "prompt": "The interior of a dark artisan resin studio at night, a single warm work lamp over a bench of curing moulds, deep shadow beyond it, tools and pigment jars on a shelf out of focus behind, no people — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "eecb5c73-3c8c-4434-aecc-598cedf57a0b",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_eecb5c73-3c8c-4434-aecc-598cedf57a0b.png"
+        },
+        {
+          "variant": "b",
+          "jobId": "a8a01089-f737-446b-9fff-e8b2433bd289",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260823_041431_a8a01089-f737-446b-9fff-e8b2433bd289.png"
+        }
+      ],
+      "keeper": "a"
+    }
+  ],
+  "videos": [
+    {
+      "id": "process-pour",
+      "set": "material-story",
+      "slot": "process.heroVideo",
+      "posterSlot": "process.heroPoster",
+      "placement": "Process §01 hero — full-bleed behind the headline, the site's only motion surface",
+      "ratio": "16:9",
+      "spec": "REDESIGN.md §15.3 — seamless 6–16s loop, MP4 (H.264 yuv420p) + WebM (VP9), <=2.5 MB each, muted playsinline loop preload=metadata with a poster.",
+      "model": "seedance_2_5",
+      "posterAlt": "Deep sapphire resin pouring in one unbroken ribbon into a shallow round mould against a matte black backdrop",
+      "note": "The video is decorative (aria-hidden in HeroMedia) so it carries no alt. The POSTER is the LCP and the only thing reduced-motion, touch and no-JS visitors see, so it is cut from this same clip — a poster must match the video it stands in for.",
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "4a350fbf-e7ba-41f6-ac6f-8c44ba759988",
+          "durationSeconds": 5,
+          "offSpec": "Under §15.3's 6–16s floor — kept only as a cull reference.",
+          "prompt": "Extreme slow-motion macro of deep sapphire resin pouring in one unbroken continuous ribbon into a shallow round mould, matte black backdrop, single soft key light from upper left, no hands anywhere in frame, locked-off camera, the ribbon falling steadily and evenly from first frame to last so the shot loops seamlessly — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260826_104053_4a350fbf-e7ba-41f6-ac6f-8c44ba759988.mp4"
+        },
+        {
+          "variant": "b",
+          "jobId": "f86d0084-1ba8-4bb8-a791-9d870bd738f8",
+          "durationSeconds": 10,
+          "prompt": "Extreme slow-motion macro of deep sapphire epoxy resin pouring in one unbroken continuous ribbon into a shallow round mould on a matte black backdrop. Locked-off camera, no hands and no people anywhere in frame. The ribbon falls at a steady even rate from the first frame to the last and the pool level barely changes, so the clip loops seamlessly with no visible cut. Shot at high frame rate and slowed for fluid viscosity — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260826_105935_f86d0084-1ba8-4bb8-a791-9d870bd738f8.mp4"
+        }
+      ],
+      "keeper": "b",
+      "master": "public/media/v3/process-pour.mp4",
+      "masterWebm": "public/media/v3/process-pour.webm",
+      "poster": "public/media/v3/process-pour-poster.avif",
+      "cullNote": "Candidate a is disqualified three times over: 5s is under §15.3's 6–16s floor, its pool fills from empty to full so frames 1 and 6 cannot sit together in a loop, and its warm tan backdrop is outside the locked palette. Candidate b holds a near-constant pool level across all six sampled frames — which is what makes a seamless loop possible — on an obsidian ground with a champagne rim and sapphire resin. Culled from docs/media-v3-review/process-pour-video.jpg."
+    }
+  ]
+}

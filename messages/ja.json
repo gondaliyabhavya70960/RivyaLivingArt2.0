@@ -1,0 +1,1493 @@
+{
+  "Nav": {
+    "shop": "ショップ",
+    "customOrder": "オーダーメイド",
+    "workshops": "ワークショップ",
+    "portfolio": "作品集",
+    "process": "制作プロセス",
+    "blog": "ブログ",
+    "studio": "スタジオ",
+    "journal": "ジャーナル",
+    "about": "私たちについて",
+    "contact": "お問い合わせ",
+    "search": "検索",
+    "ourProcess": "私たちの制作プロセス",
+    "faq": "よくある質問",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "collections": "コレクション",
+    "groupArt": "レジンアート&ギフト",
+    "groupSupplies": "スタジオ用品",
+    "groupPrint": "3Dプリント",
+    "viewAll": "すべて見る",
+    "megaPortfolio": "ポートフォリオ",
+    "megaPortfolioLine": "受注制作の作品を、一点ずつ記録。",
+    "wishlist": "ウィッシュリスト",
+    "bespoke": "ビスポーク",
+    "home": "ホーム",
+    "menu": "メニュー",
+    "whatsapp": "WhatsApp",
+    "primaryMobile": "クイックナビ",
+    "journalStories": "ストーリー",
+    "journalGuides": "ガイド",
+    "largeFormat": "大型作品"
+  },
+  "Common": {
+    "startOnWhatsApp": "WhatsApp で相談する",
+    "enquire": "相談する",
+    "readMore": "続きを読む",
+    "viewAll": "すべて見る",
+    "loading": "読み込み中…",
+    "openInNewTab": "（新しいタブで開きます）",
+    "home": "ホーム",
+    "breadcrumb": "パンくずリスト",
+    "skipToContent": "コンテンツへスキップ",
+    "close": "閉じる",
+    "whatsappChatLabel": "WhatsApp で ResinRiva とチャット（新しいタブで開きます）",
+    "pauseMotion": "アニメーションを一時停止",
+    "playMotion": "アニメーションを再生",
+    "pagination": {
+      "label": "ページ送り",
+      "previous": "前のページ",
+      "next": "次のページ",
+      "page": "{number}ページ"
+    },
+    "pauseAnnouncements": "お知らせの切り替えを一時停止",
+    "resumeAnnouncements": "お知らせの切り替えを再開",
+    "copyLink": "リンクをコピー",
+    "linkCopied": "リンクをコピーしました",
+    "logoHome": "ResinRiva — ホーム",
+    "dismissAnnouncement": "お知らせを閉じる",
+    "announcementDefault": "現在の製作期間 · 小さな作品 7〜10日 · 大きな作品 3〜6週間"
+  },
+  "Header": {
+    "search": "検索",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "siteMenu": "サイトメニュー",
+    "primaryNav": "メインナビゲーション",
+    "mobileNav": "モバイルナビゲーション",
+    "catalogMenu": "カタログ",
+    "exploreAll": "すべての作品を見る",
+    "skipToContent": "本文へ移動"
+  },
+  "Footer": {
+    "tagline": "手作りのレジンアート、オーダーメイド。",
+    "rights": "© {year} ResinRiva. 無断転載・複製を禁じます。",
+    "explore": "探索",
+    "studio": "工房",
+    "contact": "お問い合わせ",
+    "newsletterLabel": "新作をいち早くお届けします。",
+    "newsletterPlaceholder": "you@email.com",
+    "newsletterEmailAria": "新作のお知らせを受け取るメールアドレス",
+    "newsletterSubmit": "通知を受け取る",
+    "newsletterSuccess": "ご登録ありがとうございます。新作の公開時には、いち早くメールでお知らせします。",
+    "findStudio": "工房を訪ねる",
+    "chatOnWhatsApp": "WhatsApp でチャット",
+    "blurb": "少量ずつ、手仕事で。一つひとつが受け継がれる宝物です。",
+    "socialInstagram": "ResinRiva の Instagram（新しいタブで開きます）",
+    "socialFacebook": "ResinRiva の Facebook（新しいタブで開きます）",
+    "socialYoutube": "ResinRiva の YouTube（新しいタブで開きます）",
+    "socialPinterest": "ResinRiva の Pinterest（新しいタブで開きます）",
+    "socialWhatsapp": "ResinRiva の WhatsApp（新しいタブで開きます）",
+    "madeIn": "インド製",
+    "journal": "ジャーナル",
+    "ctaEyebrow": "ビスポーク制作",
+    "ctaHeadline": "思い描くものがありますか。形にしましょう。",
+    "ctaAction": "制作を相談する",
+    "newsletterHint": "年に三、四通のお便り"
+  },
+  "Language": {
+    "label": "言語",
+    "select": "言語を選択"
+  },
+  "Home": {
+    "meta": {
+      "title": "ResinRiva — 高級オーダーメイドレジンアート & 3D プリンティング",
+      "description": "深い海の青をたたえた、オーダーメイドのレジンアート、パーソナライズギフト、3D プリント作品。少量生産で一つひとつ手作りし、WhatsApp でご注文いただけます。生涯手元に残る、受け継がれる宝物を。"
+    },
+    "hero": {
+      "eyebrow": "オーダーメイドレジンアート · 3D プリンティング · 受注生産",
+      "headline": "液体の贅沢を、永遠のかたちに。",
+      "lead": "ResinRiva は、深い海の青をたたえたオーダーメイドのレジンアート、パーソナライズギフト、3D プリント作品をお作りします。一つひとつ手で流し込み、あなただけのために仕立て、WhatsApp で手軽にご注文いただけます。生涯手元に残る、受け継がれる宝物を。",
+      "ctaExplore": "コレクションを見る",
+      "ctaBespoke": "作品を依頼する",
+      "badgeHand": "手作業で流し込み",
+      "badgeUnique": "同じものは二つとない",
+      "badgeWhatsApp": "WhatsApp で注文",
+      "scroll": "スクロール",
+      "factPlace": "インド・スーラト",
+      "factMadeToOrder": "受注制作",
+      "factLeadTime": "7日–6週間",
+      "factCommissions": "制作記録 {count} 点"
+    },
+    "collections": {
+      "heading": "コレクション",
+      "cta": "ショップを見る",
+      "previous": "前のコレクション",
+      "next": "次のコレクション",
+      "pieceCount": "{count, plural, one {# 点} other {# 点}}",
+      "launchingSoon": "まもなく公開",
+      "eyebrow": "六つの入り口",
+      "intro": "工房へ通じる六つの扉。永遠にとどめる婚礼の花輪から、先週までこの世になかったプリントのかたちまで。",
+      "tiles": {
+        "preserve": {
+          "name": "保存",
+          "promise": "あの日を、永遠に",
+          "alt": "木の台座に、透明なレジンで留めた婚礼の花輪（ヴァルマーラ）"
+        },
+        "keep": {
+          "name": "記念",
+          "promise": "写真を、レジンの中に",
+          "alt": "肖像写真を収めたレジンのフレーム"
+        },
+        "live": {
+          "name": "暮らし",
+          "promise": "日々のための道具",
+          "alt": "テーブルの上で光をとらえるレジンの生活道具"
+        },
+        "gift": {
+          "name": "贈りもの",
+          "promise": "あの人ひとりのために",
+          "alt": "包装されたレジンの記念品セット"
+        },
+        "create": {
+          "name": "創作",
+          "promise": "一度きりのものを、はじめる",
+          "alt": "空の型に花びらを並べる手"
+        },
+        "print": {
+          "name": "プリント",
+          "promise": "デジタルのかたちから、実体へ",
+          "alt": "造形の途中にある半透明の3Dプリント作品"
+        }
+      }
+    },
+    "featured": {
+      "heading": "注目の作品",
+      "cta": "すべての作品を見る",
+      "emptyEyebrow": "最初の一点を制作中",
+      "emptyHeading": "コレクション、まもなく公開",
+      "emptyBody": "最初の作品たちは、いま工房で硬化を待っています。公開までの間に、オーダーメイドをご依頼ください。あなたの物語に寄り添い、あなたのペースでお作りします。",
+      "emptyOrderBespoke": "オーダーメイドを注文する",
+      "emptyNewsletterLabel": "または、メールアドレスをご登録いただくと、公開時にいち早くご案内します。",
+      "eyebrow": "シグネチャー"
+    },
+    "how": {
+      "heading": "ご注文の流れ",
+      "step1Title": "選ぶ",
+      "step1Copy": "コレクションをご覧になり、心惹かれる一点を見つけてください。",
+      "step2Title": "カスタマイズ",
+      "step2Copy": "サイズ、色、刻印をお選びいただき、参考写真をアップロードしてください。",
+      "step3Title": "WhatsApp で注文",
+      "step3Copy": "ご注文内容の一覧がそのまま WhatsApp で開きます。決済手続きも、アカウント登録も不要です。",
+      "step4Title": "制作してお届け",
+      "step4Copy": "作品を流し込み、硬化させ、丁寧に仕上げたうえで、インド全土へ安全にお届けします。",
+      "eyebrow": "ご注文の流れ",
+      "reassurance": "このサイトでのお支払いはありません。価格は、何かを流し込む前に WhatsApp で決めます。"
+    },
+    "why": {
+      "heading": "ResinRiva が選ばれる理由",
+      "badge": "インド製",
+      "pillar1Title": "手作り",
+      "pillar1Copy": "すべての作品は、少量生産で一つひとつ手作業により流し込み、固定し、磨き上げています。大量生産は一切行いません。",
+      "pillar2Title": "オーダーメイド",
+      "pillar2Copy": "お名前、お好きな花、あなたの物語——すべてを一からカスタマイズし、WhatsApp で直接お打ち合わせのうえ仕上げます。",
+      "pillar3Title": "受け継がれる品質",
+      "pillar3Copy": "美術館品質のレジンと仕上げで、何十年にもわたって大切にされ、贈られ、受け継がれるようにお作りします。",
+      "eyebrow": "私たちが大切にすること",
+      "factLayer": "1層あたり24–72時間",
+      "factGrit": "400 → 3000 番",
+      "factCommissions": "制作記録 {count} 点",
+      "proof": {
+        "handcrafted": {
+          "label": "手仕事",
+          "copy": "どの一点も、人の手を通ります。",
+          "alt": "手袋をした手がヒートガンで青いレジンに細かな波模様を描く様子"
+        },
+        "bespoke": {
+          "label": "オーダーメイド",
+          "copy": "カタログではなく、あなたの物語を軸に。",
+          "alt": "透明なレジンの塊に閉じ込めたプリザーブドフラワー"
+        },
+        "slowMade": {
+          "label": "ゆっくりと",
+          "copy": "時間は工程の一部であって、妨げではありません。",
+          "alt": "作業灯の下、一晩かけて硬化する型"
+        },
+        "heirloom": {
+          "label": "受け継ぐもの",
+          "copy": "大切にされ、贈られ、受け継がれるために。",
+          "alt": "仕上がった面いっぱいに光をとらえる深い青のレジン"
+        }
+      }
+    },
+    "portfolio": {
+      "eyebrow": "工房の最近の作品",
+      "heading": "最近のご注文作品",
+      "cta": "作品集を見る",
+      "projectNumber": "プロジェクト {number}"
+    },
+    "testimonials": {
+      "eyebrow": "うれしいお言葉",
+      "heading": "コレクターの声",
+      "previous": "前のお客様の声",
+      "next": "次のお客様の声",
+      "rating": "5 つ星のうち {rating}"
+    },
+    "journal": {
+      "eyebrow": "ジャーナルより",
+      "heading": "工房からのノート",
+      "cta": "ブログを読む"
+    },
+    "cta": {
+      "heading": "あなただけの一点を、ご依頼ください",
+      "body": "WhatsApp でアイデアをお聞かせください。サイズ、色、ご予算、納期まで、一度のやり取りですべて決められます。",
+      "headingLine1": "一度きりのものを、",
+      "headingLine2": "ご依頼ください。",
+      "primary": "ご依頼を始める",
+      "whatsapp": "工房に WhatsApp で連絡"
+    },
+    "custom": {
+      "heading": "あなたの物語のままに",
+      "body": "あなたの花、名前、記念日 — 誰のものでもない一点として、レジンの中に永く残します。カスタムオーダーはWhatsAppの一度の会話で始まり、完結します。",
+      "cta": "オーダーを始める",
+      "imageAlt": "シリコンモールドに婚礼ガーランドの花びらを並べる手",
+      "eyebrow": "オーダーメイドのご依頼",
+      "lineFlowers": "あなたの花。",
+      "lineNames": "あなたの名前。",
+      "lineDates": "あなたの日付。"
+    },
+    "showcase": {
+      "eyebrow": "シグネチャー",
+      "heading": "液体から光へ",
+      "stage1Title": "注ぐ",
+      "stage1Copy": "深いサファイア色のレジンを、途切れることのないひと注ぎで——すべての作品が始まる瞬間。",
+      "stage2Title": "金を纏う",
+      "stage2Copy": "静まりゆくレジンの中を金箔が漂い、波が陽光をとらえるように光をとらえる。",
+      "stage3Title": "硬化",
+      "stage3Copy": "幾日もの静かな硬化が、その流れを永遠にとどめる——液体の光を、いつまでも。",
+      "staticAlt": "金箔が渦を描く深い青のレジン。最初の注ぎから硬化した作品まで",
+      "stage4Title": "磨き上げ",
+      "stage4Copy": "400番から3000番へ、そして仕上げ剤で——表面が消え去り、深みだけが残るまで。"
+    },
+    "printStudio": {
+      "heading": "プリントスタジオ",
+      "body": "注型の傍らでプリンターが稼働しています — 写真が灯すリトフェインランプ、彫刻的なプリント作品、そしてそれらを生むフィラメントとパーツ。",
+      "cta": "3Dプリントを見る",
+      "imageAlt": "FDMプリントヘッドが半透明の青いフィラメントを一層ずつ積み重ねる様子",
+      "eyebrow": "プリントの工房",
+      "headingLine1": "デジタルのかたちから",
+      "headingLine2": "手にとれる実体へ。",
+      "steps": {
+        "cad": "かたちをモデリングし、あるいはお写真を深さに置きかえます。",
+        "print": "半透明のフィラメントで、一層ずつ出力します。",
+        "finish": "継ぎ目を削り、研磨し、手作業で仕上げます。"
+      }
+    },
+    "cure": {
+      "pour": "注ぐ",
+      "manifesto": "宣言",
+      "pieces": "作品",
+      "material": "素材",
+      "collections": "コレクション",
+      "maker": "作り手",
+      "work": "最近の仕事",
+      "bespoke": "オーダーメイド",
+      "print": "3Dプリント",
+      "process": "制作プロセス",
+      "journal": "ジャーナル",
+      "words": "うれしいお言葉"
+    },
+    "manifesto": {
+      "line1": "ゆっくりと生まれる、もの。",
+      "line2": "永く残る、記憶。",
+      "body": "ここに在庫はひとつもありません。どの一点も、たったひとりのために流し込み、数時間ではなく数日をかけて硬化させ、はじめたのと同じ手で仕上げます。"
+    },
+    "maker": {
+      "eyebrow": "作り手",
+      "heading": "ひと組の手から生まれます。",
+      "body": "ResinRiva のどの作品も、最初の流し込みから3000番の最後のひと磨きまで、同じ手を通り抜けます。ここに生産ラインはありません。あるのは一台の作業台と、いくつもの型と、作品に必要なだけの時間だけです。",
+      "cta": "作り手に会う",
+      "imageAlt": "工房の作業台で、硬化したレジンの面を磨く手"
+    }
+  },
+  "Process": {
+    "meta": {
+      "title": "制作プロセス",
+      "description": "ResinRiva のご注文が形になるまで——最初の WhatsApp でのご相談から、幾重にも重ねる流し込み、手作業での仕上げ、そしてインド全土への追跡配送まで。"
+    },
+    "hero": {
+      "eyebrow": "制作プロセス",
+      "headline": "アイデアから、受け継がれる宝物へ。",
+      "lead": "最初のメッセージから、作品があなたの手に届くまで。急がない六つのステップ。ResinRiva のご注文がどのように形になり、そして実際にどれほどの時間がかかるのか、ありのままにお伝えします。"
+    },
+    "timeline": {
+      "heading": "近道のない、六つのステップ",
+      "step1Title": "ご要望を伺う",
+      "step1Copy": "すべては WhatsApp でのご相談から始まります。アイデア、参考写真、思い描いていらっしゃるサイズ、そして無理のないご予算をお聞かせください。デザインを形づくるための質問を、こちらからも丁寧にお尋ねします。",
+      "step2Title": "デザインとモックアップ",
+      "step2Copy": "いただいたご要望をスケッチに、3D プリント作品の場合はデジタルプレビューに落とし込みます。デザインをご承認いただくまで、レジンを流し込むことは一切ありません。細部のすべてに合意いただいてから、はじめてレジンが型に注がれます。",
+      "step3Title": "素材",
+      "step3Copy": "美術館品質のエポキシレジン、鉱物顔料、プリザーブドフラワー、そして厳選した木材。作品にあなたご自身のお花や思い出の品を封じ込める場合は、まずそれらにふさわしい心づかいで下ごしらえと保存を施します。",
+      "step4Title": "流し込み",
+      "step4Copy": "レジンは一層ずつ流し込み、次の層に移る前に、それぞれ 24–72 時間かけて硬化させます。この幾重にも重ねる工程こそが作品に深みを与え、だからこそ決して急ぐことができないのです。",
+      "step5Title": "仕上げ",
+      "step5Copy": "完全に硬化したら、400 番から 3000 番までの番手で丁寧に研磨し、ガラスのように澄み渡るまで磨き上げます。金具やフック、スタンドはすべて手作業で取り付け、点検します。",
+      "step6Title": "検品と発送",
+      "step6Copy": "発送の前に、完成した作品の写真をお送りし、ご確認いただきます。ご承認後は、壊れないよう厳重に梱包し、追跡付きの配送でインド全土どこへでもお届けします。",
+      "eyebrow": "作品ができるまで",
+      "step1Meta": "WhatsApp にて",
+      "step2Meta": "ご承認まで流し込みません",
+      "step3Meta": "美術品質のエポキシ",
+      "step4Meta": "1層あたり24–72時間",
+      "step5Meta": "400 → 3000 番",
+      "step6Meta": "追跡付きでインド全土へ",
+      "step1Alt": "ご依頼が始まるときの、工房の作業台",
+      "step2Alt": "FDMプリントヘッドがビルドプレートに半透明の青いフィラメントを置く様子",
+      "step3Alt": "落ち着いていく青いレジンの中に浮かぶ金箔",
+      "step4Alt": "深いサファイア色のレジンが、丸い型の中に注がれ広がっていく様子",
+      "step5Alt": "手袋をした手が精密ヒートガンで青いレジンを扱う様子",
+      "step6Alt": "内張りされたギフトボックスに並べられた完成したレジン作品"
+    },
+    "materials": {
+      "heading": "作品を形づくる素材",
+      "m1Title": "エポキシレジン",
+      "m1Copy": "美術館品質で、完全に硬化すると水晶のように透き通ります。",
+      "m2Title": "チーク材とリバーウッド",
+      "m2Copy": "しっかりと乾燥させた堅木を、手作業で目止めし仕上げます。",
+      "m3Title": "鉱物顔料",
+      "m3Copy": "何十年にもわたって深みを保つ、退色に強い色彩。",
+      "m4Title": "プリザーブドボタニカル",
+      "m4Copy": "あなたのお花を、その姿のまま留めるよう乾燥させ、安定処理を施します。",
+      "eyebrow": "素材",
+      "headingEndure": "歳月に耐える素材を。",
+      "intro": "美術館品質の、紫外線に強いレジン。顔料や金属は、写真映えだけでなく、時とともにどう変わるかで選んでいます。",
+      "alt1": "注いでいる途中、光をとらえる透明なエポキシレジン",
+      "alt2": "レジンの面の下に封じられた、乾燥した堅木の木目",
+      "alt3": "作業台に並ぶサファイア色のレジンの計量カップと鉱物顔料",
+      "alt4": "硬化したレジンの層にはさまれたプリザーブドフラワーの花びら"
+    },
+    "timelines": {
+      "heading": "ありのままの制作期間",
+      "intro": "すべての作品は受注生産のため、制作期間は複雑さと硬化時間によって変わります。おおよその目安として——",
+      "e1Title": "小さな作品",
+      "e1Copy": "コースター、ジュエリー、思い出の品などは、通常 7–10 日で仕上がります。",
+      "e2Title": "存在感のある作品",
+      "e2Copy": "テーブル、大型のウォールアート、幾重にも重ねる保存作品は、硬化時間と複雑さに応じて 3–6 週間ほどかかります。",
+      "e3Title": "祭りのシーズン",
+      "e3Copy": "祭りや結婚式の多い時期は、予定がすぐに埋まってしまいます。ご希望の日程を確実にするため、お早めにご予約ください。",
+      "footnote": "制作に取りかかる前に、現実的な納期をお約束します。そして最初の流し込みから発送まで、各段階で進捗をお知らせし続けます。",
+      "eyebrow": "どれくらいかかるか",
+      "e1Value": "7–10日",
+      "e2Value": "3–6週間",
+      "quotingLabel": "現在ご案内中の納期"
+    },
+    "cta": {
+      "heading": "まずはご相談ください",
+      "body": "WhatsApp でアイデアをお聞かせください。参考資料、サイズ、ご予算まで、何かを流し込む前に、心のこもった一度のやり取りですべて決められます。",
+      "customOrder": "オーダーメイドを計画する"
+    }
+  },
+  "About": {
+    "meta": {
+      "title": "私たちについて",
+      "description": "ResinRiva の物語——インドで、海の青をたたえた受け継がれる作品を、一点ずつ手がける受注生産のレジンアート工房。"
+    },
+    "hero": {
+      "eyebrow": "工房について",
+      "headline": "レジンに、敬意を込めて。",
+      "lead": "ResinRiva は、インドの受注生産のレジンアート工房です。あなたにとって最も大切なもの——お花、写真、人生の節目——を、ガラスのように澄んだ深みの中に留めることに心を注ぐ、小さな工房です。"
+    },
+    "story": {
+      "heading": "私たちの物語",
+      "imageAlt": "ResinRiva の工房で手作りされた、プリザーブドフラワーのレジンフレーム",
+      "p1": "ResinRiva は、たった一人の作家の工房から始まりました。一台の作業台と、注がれたレジンを光が通り抜けるさまへの静かな憧れ。ご注文を一つひとつ重ねながら成長してきましたが、その仕事のしかたは始まりのときのまま——一度に一点ずつ、すべての工程が同じ丁寧な手を通り抜けていきます。",
+      "p2": "色彩は、海から生まれました。サファイア、紺碧、そして深海の青——私たちの手がけるほとんどすべての作品に流れています。水が光を重ねるように幾重にも重ねられた、真の深みをたたえた色。金は、あしらいとしてだけ姿を見せます。縁にきらめく一筋、青を貫く繊細な脈として。",
+      "p3": "私たちは大量生産をせず、在庫も持ちません。すべてのご注文は WhatsApp でのご相談から始まり——あなたのアイデア、参考資料、ご予算——世界のどこにも存在しない、たった一つの作品として完成します。",
+      "eyebrow": "私たちの物語"
+    },
+    "values": {
+      "heading": "私たちが大切にすること",
+      "v1Title": "忍耐",
+      "v1Copy": "レジンは急ぐことができません。どの層も、それぞれの時間をかけて硬化していきます。私たちはそれに任せます——澄んだ透明感は、待つことへのご褒美なのです。",
+      "v2Title": "由来",
+      "v2Copy": "あなたのお花、あなたの写真、あなたの物語。最も大切な素材は、カタログからではなく、あなたの人生から届きます。",
+      "v3Title": "精密さ",
+      "v3Copy": "3D プリンティングと手仕上げの出会い——かたちにはデジタルの正確さを、そしてあらゆる表面には人の目と手を。",
+      "v4Title": "永続性",
+      "v4Copy": "受け継がれるにふさわしい素材と仕上げ。一つひとつの作品が、大切に保たれ、贈られ、次の世代へと受け継がれるように選び抜いています。"
+    },
+    "craft": {
+      "heading": "ゆっくりと、一度きりの手仕事",
+      "panel1Eyebrow": "01 — 流し込み",
+      "panel1Title": "静けさの中で注ぐ",
+      "panel1Copy": "どの層も、次に移る前に 24–72 時間かけて落ち着かせます——レジンは忍耐に報い、焦りを許しません。",
+      "panel2Eyebrow": "02 — 硬化",
+      "panel2Title": "時間が仕上げを担う",
+      "panel2Copy": "ゆっくりとした硬化が、ガラスのように澄んだ深みを気泡やひずみの線から守ります。私たちは決して、作品を急いで型から取り出すことはありません。",
+      "panel3Eyebrow": "03 — 磨き上げ",
+      "panel3Title": "ガラスのように、手仕上げで",
+      "panel3Copy": "400 番から 3000 番の番手へ、そして磨き上げ——表面が消え去り、内に宿る海だけが残るまで。",
+      "seeProcess": "制作プロセスをすべて見る"
+    },
+    "chapters": {
+      "embedTitle": "金と花びらに封じて",
+      "embedCopy": "花、金箔、思い出の品は、層と層のあいだに手作業で配されます。それぞれがあるべき場所に封じ込められ、作品が留めるのは素材だけでなく、ひとつの瞬間なのです。",
+      "alt1": "深いサファイア色のレジンが、丸い型の中に注がれ広がっていく様子",
+      "alt2": "落ち着いていく半透明の青いレジンの中を漂う金箔",
+      "alt3": "夜のスタジオ — 注がれた型が温かな作業灯の下で硬化していく",
+      "alt4": "鏡面に磨かれたレジンの上の水滴と、その下に浮かぶ金箔"
+    },
+    "sustain": {
+      "heading": "歳月に耐える素材選び",
+      "body": "ミュージアムグレードのUV耐性レジン。顔料や金属は、写真映えだけでなく、時とともにどう変化するかで選び抜いています。そしてすべての作品は受注制作。作りすぎることはありません — 在庫も無駄もなく、求められた作品だけを。"
+    },
+    "maker": {
+      "eyebrow": "作り手のご紹介",
+      "heading": "ResinRiva を率いるのは Bhavya Gondaliya です",
+      "body": "すべてのお問い合わせ、スケッチ、そして流し込みが、作り手の手を通り抜けていきます。工房にメッセージをお送りいただくとき、あなたが言葉を交わしているのは、実際にあなたの作品を作り上げるその人です。仲介も、生産ラインもありません。ただ、あなたとあなたの作家との対話があるだけです。",
+      "cta": "ごあいさつする",
+      "name": "バヴィヤ・ゴンダリヤ",
+      "imageAlt": "硬化した青と金のレジン作品をガラスの艶まで磨き上げる手",
+      "ctaConversation": "お話を始める"
+    },
+    "cta": {
+      "heading": "あなたのご注文を始めましょう",
+      "body": "永遠に残したいものを、お聞かせください。青と金、そしてガラスのように澄んだレジンで、そのかたちに仕上げます。生涯手元に残る、受け継がれる宝物を。",
+      "planCustom": "オーダーメイドを計画する"
+    },
+    "chapterLabels": {
+      "beginning": "はじまり",
+      "material": "素材",
+      "philosophy": "考えかた",
+      "maker": "作り手"
+    },
+    "materials": {
+      "eyebrow": "何でできているか"
+    },
+    "studio": {
+      "eyebrow": "仕事場について",
+      "heading": "作業台、型、そして光。",
+      "body": "インドのひと部屋で、すべてのご依頼を混ぜ、流し込み、硬化させ、仕上げます。よそへ出して作らせるものは、ひとつもありません。",
+      "addressLabel": "所在地",
+      "alt1": "型と計量カップが並ぶ、工房の作業台",
+      "alt2": "温かな作業灯の下、一晩かけて硬化する型",
+      "alt3": "スタジオのテーブルに置かれた完成したレジンとチークのボードとボウル"
+    }
+  },
+  "Workshops": {
+    "meta": {
+      "title": "ワークショップ",
+      "description": "ResinRiva 工房が開く、実践型のレジンアートワークショップ。少人数制、材料はすべて込み、初心者も安心。WhatsApp でお席をご予約ください。"
+    },
+    "hero": {
+      "eyebrow": "技を学ぶ",
+      "headline": "はじめての傑作を、注いでみましょう。",
+      "lead": "ResinRiva 工房で行う、実践型のレジンアート教室。ご自分で混ぜ、色をつけ、流し込み、まるごとあなただけの一点を持ち帰れます。",
+      "cta": "ワークショップを相談する"
+    },
+    "intro": {
+      "heading": "色とレジン、そして静かな集中に満ちた午後のひととき",
+      "point1Title": "少人数制",
+      "point1Copy": "各回はあえて少人数に。どの席にもしっかりとマンツーマンの手ほどきが行き届き、実演を大勢で覗き込むようなことはありません。",
+      "point2Title": "材料はすべて込み",
+      "point2Copy": "レジン、顔料、型、道具、手袋、エプロンまで、すべて準備してお待ちしています。手ぶらでお越しください——お好きな音楽のリクエストだけ、ご一緒に。",
+      "point3Title": "初心者も安心",
+      "point3Copy": "経験は一切必要ありません。はじめての方こそ、私たちの大好きな生徒さんです。どんなペースやご用途にも合わせて、プライベートレッスンもご用意できます。",
+      "eyebrow": "参加する理由",
+      "alt1": "工房の作業台で手を動かす少人数のグループ",
+      "alt2": "レッスンに向けて並べられた顔料、型、道具",
+      "alt3": "型いっぱいに広がる、はじめてのひと注ぎ"
+    },
+    "sessions": {
+      "heading": "レッスンを選ぶ",
+      "eyebrow": "今後の予定"
+    },
+    "card": {
+      "materialsLabel": "材料：",
+      "makeItYoursLabel": "あなた好みに：",
+      "book": "このワークショップを予約する",
+      "seats": "{seats} 席"
+    },
+    "empty": {
+      "eyebrow": "テーブルを整えています",
+      "heading": "ワークショップは現在、日程を調整中です",
+      "body": "お席が空きましたら、いち早くお知らせします。WhatsApp でメッセージをお送りください。日程、形式、そして当日流し込むものまで、すべてご案内します。",
+      "cta": "今後のワークショップについて問い合わせる",
+      "statement": "次の日程を調整しています。"
+    },
+    "takeHome": {
+      "heading": "お持ち帰りいただけるもの",
+      "item1Title": "ご自分で注いだ一点",
+      "item1Copy": "ご自分の手で流し込んだレジン作品——色をつけ、層を重ね、仕上げまでご自分で。手元に残すのも、贈るのも自由です。",
+      "item2Title": "技法",
+      "item2Copy": "配合の比率、顔料の調色、層の重ね方、そして仕上げ——おうちでも注ぎ続けるための基礎が身につきます。",
+      "item3Title": "レッスン後の工房サポート",
+      "item3Copy": "レッスンのあとに疑問が出てきたら？ WhatsApp はいつでも開いています。次の一作について、喜んでご相談に乗ります。"
+    },
+    "private": {
+      "heading": "大切な仲間と、貸切テーブルを",
+      "body": "お誕生日、ブライダルシャワー、チームでの一日——あなたのグループ、その機会、そして作ってみたいものに合わせて、プライベートや法人向けのレッスンを承ります。WhatsApp でお聞かせください。ご一緒に計画しましょう。",
+      "cta": "プライベートレッスンを計画する",
+      "eyebrow": "プライベート・法人向け",
+      "headingShort": "仲間だけの、ひとつのテーブル。"
+    },
+    "facts": {
+      "label": "ワークショップの概要",
+      "duration": "2.5時間",
+      "seats": "定員8席",
+      "materials": "材料込み",
+      "place": "スーラト"
+    },
+    "experience": {
+      "eyebrow": "レッスン",
+      "heading": "午後の進みかた。",
+      "arrive": "到着",
+      "mix": "調合",
+      "pour": "流し込み",
+      "create": "制作",
+      "takeHome": "持ち帰り"
+    },
+    "room": {
+      "eyebrow": "この部屋",
+      "heading": "ここで、注ぎます。",
+      "body": "借りた会場ではなく、実際に動いている工房です。すべてのご依頼を作る、その同じ作業台で。",
+      "alt1": "レッスンの支度が整ったワークショップのテーブル",
+      "alt2": "型と計量カップが並ぶ、工房の作業台",
+      "alt3": "夜の工房。温かな作業灯の下で硬化していく型",
+      "alt4": "スタジオのテーブルに置かれた完成したレジンとチークのボードとボウル"
+    },
+    "waitlist": {
+      "label": "メールアドレス",
+      "placeholder": "you@email.com",
+      "submit": "日程のお知らせを受け取る",
+      "submitting": "登録しています",
+      "hint": "日程が決まったら、一通だけお送りします。それ以外は何も。",
+      "success": "ご登録ありがとうございます。日程が決まりしだい、すぐにお知らせします。"
+    }
+  },
+  "CustomOrder": {
+    "meta": {
+      "title": "オーダーメイド",
+      "description": "ResinRiva のオーダーメイドレジンアートをご依頼ください。アイデア、ご予算、ご希望の納期をお聞かせいただければ、WhatsApp でご一緒にデザインを形にします。インドで一点ずつ受注生産でお作りします。"
+    },
+    "page": {
+      "heroEyebrow": "オーダーメイドのご依頼",
+      "heroHeadline": "あなただけの一点を、ご依頼ください。",
+      "heroLead": "どこにも見つからない一点こそ、私たちがいちばん心を込めてお作りするものです。アイデアをお聞かせください——かたちを整え、流し込み、受注生産で仕上げます。",
+      "formHeading": "アイデアをお聞かせください",
+      "formSubcopy": "ざっくりとした思いつきで十分です——細部は WhatsApp でご一緒に形にしていきます。",
+      "howTitle": "ご依頼の流れ",
+      "step1Title": "アイデアをお聞かせください",
+      "step1Body": "作品のイメージを書き、参考写真を添え、ご予算の目安をお選びください——2 分ほど、ご依頼の義務はありません。",
+      "step2Title": "デザインとお見積もり",
+      "step2Body": "作り手が WhatsApp で、スケッチ、素材のご提案、確定価格と納期をお返しします。",
+      "step3Title": "流し込み、硬化、そしてお届け",
+      "step3Body": "硬化していく様子を進捗写真でお届けし、その後は丁寧に梱包して、インド全土のご自宅までお届けします。",
+      "proofEyebrow": "これまでのご依頼作品",
+      "proofHeading": "皆さまが、アイデアを託してくださいました",
+      "seeCommissions": "最近のご依頼作品を見る",
+      "heroImageAlt": "片側から光を当てた、透明なレジンの中の婚礼のプリザーブドフラワー",
+      "heroCta": "ご依頼を始める",
+      "heroAnchorSmall": "小さな作品 7–10日",
+      "heroAnchorStatement": "存在感のある作品 3–6週間",
+      "heroAnchorLayer": "1層あたり24–72時間",
+      "kindsEyebrow": "皆さまのご依頼",
+      "kindsHeading": "ご依頼が始まる、四つのかたち",
+      "kindsIntro": "多くのご相談はこのどれかに収まります。もちろん、そうでなくてかまいません。",
+      "kinds": {
+        "varmala": {
+          "label": "保存",
+          "name": "婚礼の花輪（ヴァルマーラ）の保存",
+          "alt": "透明なレジンの塊に閉じ込めた婚礼の花輪"
+        },
+        "frames": {
+          "label": "記念",
+          "name": "写真フレームと肖像",
+          "alt": "ご夫婦の肖像写真を収めたレジンのフレーム"
+        },
+        "lettering": {
+          "label": "刻印",
+          "name": "表札と法人ギフト",
+          "alt": "工房オリジナルの箱に詰めたギフトセット"
+        },
+        "surfaces": {
+          "label": "暮らし",
+          "name": "テーブルと天板",
+          "alt": "リバーの流れに沿って光をとらえる、レジンと木の天板"
+        }
+      },
+      "leadTime": {
+        "small": "通常7–10日",
+        "statement": "通常3–6週間"
+      },
+      "formEyebrow": "ご要望",
+      "cure": {
+        "commission": "ご依頼",
+        "kinds": "つくるもの",
+        "how": "流れ",
+        "brief": "あなたのご要望",
+        "questions": "ご質問",
+        "work": "最近の仕事"
+      }
+    },
+    "form": {
+      "designIdeaLabel": "デザインのアイデア",
+      "designIdeaPlaceholder": "結婚式のお花を閉じ込めたリバーテーブル…海のように輝くネームプレート…ずっと思い描いていらっしゃる一点を、お聞かせください。",
+      "materialLabel": "素材",
+      "materialPlaceholder": "素材をお選びください",
+      "occasionLabel": "ご用途",
+      "occasionPlaceholder": "どのような場面で使われますか？",
+      "budgetLabel": "ご予算",
+      "budgetPlaceholder": "無理のない範囲で",
+      "timelineLabel": "納期",
+      "timelinePlaceholder": "いつ頃までにご入用ですか？",
+      "referenceLabel": "参考画像",
+      "notesLabel": "その他のご要望",
+      "notesPlaceholder": "サイズ、日付、封じ込めたいお名前など、お伝えいただきたいことは何でも…",
+      "nameLabel": "お名前",
+      "namePlaceholder": "お名前",
+      "phoneLabel": "電話番号",
+      "emailLabel": "メールアドレス",
+      "optional": "（任意）",
+      "summaryEyebrow": "ご注文内容のプレビュー",
+      "summaryNote": "入力に合わせてリアルタイムに更新されます——写真のアップロードが完了すると、画像リンクが追加されます。",
+      "disclaimer": "ここでのお支払いはありません——ご注文内容の一覧がそのまま WhatsApp で開き、価格と配送はそちらで確定します。",
+      "submitUploading": "画像をアップロード中…",
+      "submitUploadingProgress": "画像をアップロード中 {done}/{total}…",
+      "submitPreparing": "WhatsApp のご注文を準備中…",
+      "submitSend": "ご依頼を送信する",
+      "validationDesignIdeaShort": "イメージが伝わるように——アイデアを 10 文字以上でお聞かせください。",
+      "validationDesignIdeaLong": "アイデアは 2000 文字以内でご入力ください。",
+      "validationNameRequired": "お名前をご入力ください。",
+      "validationPhoneInvalid": "有効な電話番号をご入力ください。",
+      "validationEmailInvalid": "有効なメールアドレスをご入力ください。",
+      "validationNotesLong": "ご要望は 1500 文字以内でご入力ください。",
+      "errorGeneric": "問題が発生しました——もう一度お試しください。",
+      "steps": {
+        "piece": "作品について",
+        "details": "素材と詳細",
+        "references": "参考資料とメモ",
+        "contact": "お客様情報"
+      },
+      "rail": {
+        "idea": "アイデア",
+        "details": "詳細",
+        "references": "参考資料",
+        "contact": "お客様情報"
+      },
+      "progressLabel": "ご依頼の手順",
+      "stepOf": "ステップ {current} / {total}",
+      "back": "戻る",
+      "continue": "次へ",
+      "designIdeaHint": "サイズ、色、中に入れたい言葉——どんなことでも助けになります。",
+      "budgetHint": "おおよその範囲で十分です。お見積もりは WhatsApp でお返しします。",
+      "timelineHint": "小さな作品は7–10日、存在感のある作品は3–6週間かかります。",
+      "phoneHint": "こちらに工房からお返事します。",
+      "ctaContinue": "WhatsApp で続ける",
+      "ctaNote": "ご入力内容は自動でまとめられます。",
+      "blockerIdea": "まずアイデアをお書きください",
+      "blockerName": "お名前をご入力ください",
+      "blockerPhone": "電話番号をご入力ください",
+      "errorSummaryTitle": "{count, plural, other {# 件のご確認をお願いします}}",
+      "summaryTitle": "ご依頼内容のまとめ",
+      "summaryToggle": "メッセージを確認する",
+      "summaryMessageLabel": "WhatsApp に送られる内容",
+      "summaryClose": "まとめを閉じる",
+      "rows": {
+        "idea": "アイデア",
+        "material": "素材",
+        "occasion": "ご用途",
+        "budget": "ご予算",
+        "timeline": "納期",
+        "references": "参考画像",
+        "referencesValue": "{count, plural, other {# 枚}}",
+        "name": "お名前",
+        "phone": "電話番号",
+        "email": "メールアドレス"
+      }
+    }
+  },
+  "Contact": {
+    "meta": {
+      "title": "お問い合わせ",
+      "description": "ResinRiva のスタジオへ、お電話・WhatsApp・メール、またはお問い合わせフォームからお気軽にご連絡ください。WhatsApp が最も早く、通常は数時間以内にお返事いたします。"
+    },
+    "page": {
+      "heroEyebrow": "スタジオへのご連絡",
+      "heroHeadline": "あなただけの一点を、ご一緒に。",
+      "heroLead": "オーダーのご相談、ちょっとしたご質問、あるいは温めていらっしゃるアイデアだけでも——ご連絡いただければ、作り手が直接お返事いたします。",
+      "heroBadge": "WhatsApp では通常、数時間以内にお返事いたします",
+      "gridHeading": "ご都合のよい方法でご連絡ください",
+      "phoneLabel": "電話",
+      "whatsappLabel": "WhatsApp",
+      "whatsappBody": "最も早くつながる方法です——まずはひとことお声がけください。そこからお話を進めましょう。",
+      "whatsappCta": "WhatsApp でメッセージを送る",
+      "emailLabel": "メール",
+      "mapsLabel": "スタジオへのアクセス",
+      "mapsCta": "Google Maps で開く",
+      "mapsNote": "Google Maps が経路案内付きで開きます。",
+      "hours": "WhatsApp が最も早く、通常は数時間以内にお返事いたします（午前10時〜午後8時 IST）。",
+      "faqHeading": "よくいただくご質問",
+      "faqCta": "すべての質問を見る",
+      "heroImageAlt": "夜のスタジオの作業台、一灯のワークランプの下で硬化する型",
+      "channelsEyebrow": "四つの入り口",
+      "phoneMeta": "10時–20時（IST）",
+      "whatsappMeta": "通常は数時間以内",
+      "whatsappHeadline": "作り手にいちばん早く届く方法です。",
+      "emailMeta": "WhatsApp より時間がかかります",
+      "studioLabel": "工房",
+      "studioMeta": "10時–20時（IST）",
+      "mapActivate": "地図を表示する",
+      "mapNote": "お求めのときだけ Google Maps を読み込みます",
+      "mapFrameTitle": "ResinRiva の工房の地図",
+      "formEyebrow": "お便りを書く",
+      "formHeading": "工房にひとこと送る",
+      "formIntro": "すべて作り手に直接届きます。受付の順番待ちも、自動応答もありません。"
+    },
+    "form": {
+      "nameLabel": "お名前",
+      "namePlaceholder": "お名前",
+      "phoneLabel": "電話番号",
+      "emailLabel": "メールアドレス",
+      "optional": "（任意）",
+      "messageLabel": "メッセージ",
+      "messagePlaceholder": "思い描いていらっしゃる作品のこと、ご質問、あるいはごあいさつだけでも、お気軽にお聞かせください…",
+      "sending": "送信中…",
+      "send": "メッセージを送信する",
+      "successEyebrow": "メッセージを受け取りました",
+      "successHeading": "ありがとうございます——まもなくお返事いたします。",
+      "successBody": "メッセージはスタジオに届きました。すぐにお話ししたいときは、WhatsApp からご連絡ください。その場でお話を続けます。",
+      "successCta": "WhatsApp でご連絡",
+      "validationName": "お名前をご入力ください。",
+      "validationPhone": "有効な電話番号をご入力ください。",
+      "validationEmail": "有効なメールアドレスをご入力ください。",
+      "validationMessageMin": "もう少しだけ言葉を添えてください——10 文字以上でご入力ください。",
+      "validationMessageMax": "メッセージは 2000 文字以内でご入力ください。",
+      "topicLabel": "どのようなご用件ですか？",
+      "topicPlaceholder": "ご用件をお選びください",
+      "topics": {
+        "commission": "オーダーメイドのご依頼",
+        "order": "注文した作品について",
+        "workshop": "ワークショップ",
+        "printing": "3Dプリント",
+        "other": "その他"
+      },
+      "messagePrompts": {
+        "commission": "思い描いていらっしゃる作品、だいたいの大きさ、そしてご入用の時期…",
+        "order": "ご注文の番号と、お知りになりたいこと…",
+        "workshop": "ご希望のワークショップ、ご参加人数、ご都合のよい日程…",
+        "printing": "プリントしたいもの、素材、データをお持ちかどうか…",
+        "other": "お考えのことを、お聞かせください…"
+      },
+      "commissionNudge": "ご依頼はご要望フォームからのほうが早く進みます。サイズ、参考資料、ご予算の目安を一度でお伺いします。",
+      "commissionNudgeCta": "ご依頼を始める",
+      "phoneHint": "WhatsApp でお返事するために使います。",
+      "errorSummaryTitle": "{count, plural, other {# 件のご確認をお願いします}}",
+      "sendNote": "工房から、通常は数時間以内にお返事します。"
+    }
+  },
+  "Faq": {
+    "meta": {
+      "title": "よくあるご質問",
+      "description": "オーダーメイドのレジンアート、ご依頼、納期、お手入れについて、よくいただくご質問へのお答えを、ResinRiva のスタジオから直接お届けします。"
+    },
+    "heroEyebrow": "よくいただくご質問",
+    "heroHeadline": "ご質問に、お答えします。",
+    "heroLead": "作品をご依頼になる前に、皆さまがよくお尋ねになることをまとめました——ここにないご質問は、いつでも WhatsApp でどうぞ。",
+    "askOnWhatsApp": "WhatsApp で質問する",
+    "closingHeading": "まだ気になることがありますか？",
+    "closingBody": "サイズ、納期、素材、そして思い描いていらっしゃる作品のことまで——WhatsApp でどうぞ何でもお尋ねください。",
+    "searchLabel": "回答を検索",
+    "searchPlaceholder": "配送、お手入れ、価格…",
+    "clearSearch": "検索をクリア",
+    "indexHeading": "すべての質問",
+    "indexLabel": "質問の一覧",
+    "answersLabel": "回答",
+    "resultCount": "{count, plural, =0 {該当なし} other {# 件の質問}}",
+    "noMatchStatement": "それに合う回答はありません。",
+    "noMatchDirection": "別の言葉でお試しください。あるいは WhatsApp で直接お尋ねください。",
+    "copyAnswerLink": "この回答へのリンクをコピー",
+    "answerLinkCopied": "リンクをコピーしました",
+    "emptyStatement": "ただいま回答を準備しています。",
+    "emptyDirection": "その間も、どうぞお気軽に何でもお尋ねください。この手仕事についてお話しするのが、私たちは大好きです。"
+  },
+  "Shop": {
+    "meta": {
+      "title": "ショップ",
+      "description": "ResinRiva の受注制作コレクションをご覧ください。ラグジュアリーなレジンアート、パーソナライズされたギフト、3Dプリント作品を、細部までカスタマイズし、WhatsApp でご注文いただけます。",
+      "titlePaged": "ショップ — {page} ページ"
+    },
+    "categoryMetaDescription": "ResinRiva スタジオの受注制作 {category}。細部までカスタマイズし、WhatsApp でご注文いただけます。",
+    "heroEyebrow": "コレクション",
+    "heroHeadline": "ResinRiva ショップ",
+    "heroLead": "すべての作品は受注制作です。お好きな一点を選び、あなたの物語に合わせてカスタマイズし、WhatsApp のやり取りだけで仕上げまでお決めいただけます。",
+    "tabsAria": "ジャンルから探す",
+    "tabAll": "すべて",
+    "tabArt": "レジンアート",
+    "tabSupplies": "スタジオ用品",
+    "tabPrint": "3Dプリント",
+    "collectionsAria": "コレクションで絞り込む",
+    "allCollections": "すべてのコレクション",
+    "searchPlaceholder": "作品を検索…",
+    "searchAria": "作品を検索",
+    "occasionAria": "シーンで絞り込む",
+    "occasionPlaceholder": "シーン",
+    "allOccasions": "すべてのシーン",
+    "priceAria": "価格で絞り込む",
+    "pricePlaceholder": "価格",
+    "allPrices": "すべての価格",
+    "inStockOnly": "在庫ありのみ",
+    "sortAria": "作品を並べ替える",
+    "sortPlaceholder": "並べ替え",
+    "sortFeatured": "おすすめ順",
+    "sortNewest": "新着順",
+    "sortPriceAsc": "価格が安い順",
+    "sortPriceDesc": "価格が高い順",
+    "allPieces": "すべての作品",
+    "resultsShowing": "{total, plural, one {全 # 点} other {全 # 点}}のうち {shown, number} 点を表示",
+    "loadMore": "さらに作品を見る",
+    "loadMoreProgress": "さらに作品を見る（全 {total, number} 点中 {shown, number} 点）",
+    "emptyFilteredEyebrow": "まだありません",
+    "emptyFilteredHeading": "この条件に合う作品はありません",
+    "emptyFilteredBody": "フィルターを解除してお試しいただくか、オーダーメイドをご依頼ください。あなたの物語に寄り添い、あなたのペースでお作りします。",
+    "emptyCatalogEyebrow": "受注制作",
+    "emptyCatalogHeading": "最初の作品を、いま流し込んでいます",
+    "emptyCatalogBody": "ResinRiva の作品はすべて受注制作です。いますぐオーダーメイドをご依頼いただくか、WhatsApp でメッセージをお送りください。最初の一歩からお手伝いします。",
+    "clearFilters": "フィルターを解除",
+    "commissionCta": "オーダーメイドを依頼する",
+    "quickViewAria": "クイックビュー：{title}",
+    "quickViewTaglineFallback": "手作業で仕上げるレジン作品。細部までカスタマイズし、WhatsApp で仕上げまでお決めいただけます。",
+    "quickViewCustomize": "詳細を見てカスタマイズ",
+    "quickViewWhatsApp": "WhatsApp で相談する",
+    "card": {
+      "badgeStudioOriginal": "スタジオオリジナル",
+      "badgeAtelierPick": "アトリエ厳選",
+      "badgeOutOfStock": "在庫切れ",
+      "customize": "カスタマイズ",
+      "viewDetails": "詳細を見る",
+      "optionsCount": "{count} 種類",
+      "wishlistSave": "{title} をウィッシュリストに保存",
+      "wishlistRemove": "{title} をウィッシュリストから削除",
+      "madeToOrder": "受注制作",
+      "viewPiece": "作品を見る",
+      "shipsIn": "7〜10日で発送"
+    },
+    "collection": {
+      "count": "{count, plural, =0 {作品はまだありません} one {# 点} other {# 点}}",
+      "featuredHeading": "このコレクションの注目作品",
+      "relatedHeading": "関連コレクション",
+      "explore": "作品を見る",
+      "aboutEyebrow": "このコレクションについて",
+      "beforeAfterEyebrow": "変化のすがた",
+      "beforeAfterHeading": "はじまりの姿と、留めた姿。",
+      "beforeAfterIntro": "ハンドルをドラッグすると、流し込む前と硬化したあとを見比べられます。",
+      "beforeAfterCta": "この依頼を読む",
+      "beforeAlt": "保存前の {title}。",
+      "afterAlt": "保存後の {title}。硬化したレジンの中に。",
+      "commissionEyebrow": "少し違いますか？",
+      "commissionHeading": "あなただけの {collection} の一点を、ご依頼ください。",
+      "commissionBody": "思い描いていること——色、サイズ、中に入れるお名前——をお聞かせください。あなたのために流し込みます。",
+      "commissionCta": "作品のイメージを書く"
+    },
+    "collectionTitle": "コレクション",
+    "collectionLead": "受注制作の道具、記念品、そして作品。",
+    "pieceNoun": "{count, plural, other {点}}",
+    "resultsMono": "{shown, number} / {total, number}",
+    "loadError": "これ以上の作品を読み込めませんでした。",
+    "retry": "もう一度試す",
+    "emptyStatement": "その条件に合う作品は、まだありません。",
+    "emptyDirection": "条件をひとつ緩めて範囲を広げるか、思い描いていることをお聞かせください。そのとおりに流し込みます。",
+    "tab": {
+      "all": "すべて",
+      "art": "レジンアート",
+      "gifts": "ギフト",
+      "supplies": "スタジオ用品",
+      "print": "3Dプリント"
+    },
+    "strip": {
+      "eyebrow": "コレクション",
+      "heading": "コレクションから探す",
+      "intro": "作品はリストではなく、目で選ぶもの。心が向いた棚から、どうぞ。",
+      "railLabel": "コレクション（横スクロール）"
+    },
+    "toolbar": {
+      "searchLabel": "検索",
+      "searchSubmit": "作品を検索",
+      "clearSearch": "検索をクリア",
+      "sortLabel": "並べ替え",
+      "sortMenuLabel": "作品の並べ替え",
+      "filterLabel": "絞り込み"
+    },
+    "drawer": {
+      "title": "絞り込み",
+      "sectionCollection": "コレクション",
+      "sectionOccasion": "シーン",
+      "sectionPrice": "価格",
+      "sectionAvailability": "在庫状況",
+      "anyAvailability": "在庫状況を問わない",
+      "clearAll": "すべて解除",
+      "apply": "表示する（{count, plural, other {# 点}}）",
+      "unavailable": "この条件に作品はありません"
+    },
+    "activeFilters": {
+      "remove": "{filter} を外す"
+    },
+    "editorialBreak": {
+      "eyebrow": "工房にて",
+      "heading": "手で注ぎ、硬化させ、仕上げます。",
+      "body": "ここにあるどの作品も、誰かの手が触れる前に、自分の硬化を待ちきります。カタログがこの速さで進むのは、そのためです。",
+      "cta": "つくりかたを見る",
+      "imageAlt": "工房の光の下で硬化していくレジン。その表面は、まだ落ち着いていく途中。"
+    },
+    "sortName": "名前順"
+  },
+  "Search": {
+    "meta": {
+      "title": "検索",
+      "description": "ResinRiva の受注制作作品、ジャーナルの記事、ポートフォリオのストーリーを検索できます。"
+    },
+    "heroEyebrow": "あなたの一点を見つける",
+    "heroHeadline": "スタジオを検索",
+    "inputPlaceholder": "作品、ジャーナル、ポートフォリオ…",
+    "inputAria": "サイト内を検索",
+    "submit": "検索",
+    "resultsCount": "{total, plural, =0 {「{query}」に一致する結果はありません} one {「{query}」の検索結果 # 件} other {「{query}」の検索結果 # 件}}",
+    "tooShortHint": "作品、ジャーナル、ポートフォリオを検索するには、2文字以上入力してください。",
+    "productsEyebrow": "作品",
+    "productsHeading": "受注制作の作品",
+    "postsEyebrow": "ジャーナル",
+    "postsHeading": "ジャーナルから",
+    "portfolioEyebrow": "ポートフォリオ",
+    "portfolioHeading": "ご依頼いただいた作品",
+    "sectionCount": "{count, plural, one {# 件} other {# 件}}",
+    "zeroEyebrow": "まだありません",
+    "zeroHeading": "その一点は、まだ生まれていません。",
+    "zeroBody": "ResinRiva の作品はすべて受注制作。カタログは、ほんの始まりにすぎません。思い描いていること――色、お名前、サイズ――をお聞かせください。あなたのために、丁寧にお作りします。",
+    "zeroWhatsappCta": "WhatsApp でご相談ください",
+    "browseShop": "ショップを見る",
+    "emptyEyebrow": "どこからでもどうぞ",
+    "emptyHeading": "何をお探しですか？",
+    "emptyBody": "作品名（「表札」「時計」）、シーン（「記念日」）、素材（「レジン」）でお試しいただくか、そのままコレクションへどうぞ。",
+    "productsShowMore": "ショップにある {total, plural, one {全 # 点の作品} other {全 # 点の作品}}を見る",
+    "zeroWhatsappMessage": "ResinRiva様、サイトで「{query}」を検索しましたが見つかりませんでした。同じようなものを作っていただけますか？\n（{site} より送信）",
+    "overlay": {
+      "dialogLabel": "サイト内検索",
+      "label": "検索",
+      "placeholder": "スタジオを検索…",
+      "resultsLabel": "検索結果",
+      "groupProducts": "作品",
+      "groupCollections": "コレクション",
+      "groupPortfolio": "作品集",
+      "groupJournal": "ジャーナル",
+      "collectionCount": "{count, plural, other {# 点}}",
+      "recent": "最近の検索",
+      "clearRecent": "消去",
+      "suggestionsLabel": "おすすめ",
+      "suggestionAria": "{term} を検索",
+      "nothingHeading": "見つかりませんでした。",
+      "nothingBody": "別の言葉でお試しください。または<commission>オーダーメイドを相談する →</commission>",
+      "errorHeading": "検索が完了しませんでした。",
+      "errorBody": "スタジオはここにあります。もう一度お試しいただくか、ご希望をお聞かせください。",
+      "retry": "もう一度試す",
+      "commission": "オーダーメイドを相談する",
+      "seeAll": "すべての結果を見る",
+      "hintType": "2文字以上入力してください。",
+      "hints": "↑↓ 移動 · ↵ 開く · esc 閉じる",
+      "loading": "検索中…",
+      "countAnnounce": "{count, plural, =0 {結果なし} other {# 件}}"
+    }
+  },
+  "Blog": {
+    "meta": {
+      "title": "ブログ",
+      "titlePaged": "ブログ — {page} ページ",
+      "description": "ResinRiva スタジオからのノート。制作の記録、素材の研究、受注制作のレジンアートにまつわるストーリーをお届けします。"
+    },
+    "journalFallbackCategory": "ジャーナル",
+    "minRead": "{minutes} 分で読めます",
+    "readStory": "ストーリーを読む",
+    "heroEyebrow": "ジャーナル",
+    "heroHeadline": "スタジオからのノート。",
+    "heroLead": "制作の記録、素材の研究、そして作品の背景にあるストーリー。作業台のかたわら、注型の合間に綴っています。",
+    "allPosts": "すべての記事",
+    "viewAllPosts": "すべての記事を見る",
+    "pageOf": "{totalPages} ページ中 {page} ページ",
+    "post": {
+      "notFoundTitle": "記事が見つかりません",
+      "draftPreview": "下書きプレビュー — このページはリンクを持つスタッフのみ閲覧できます。",
+      "shareStory": "このストーリーをシェア",
+      "moreFromJournal": "ジャーナルの他の記事",
+      "contents": "目次",
+      "contentsLabel": "このページの内容",
+      "topics": "トピック",
+      "relatedProductsEyebrow": "この記事の中で",
+      "relatedProductsHeading": "ここで触れた作品",
+      "inlineProductEyebrow": "この記事で触れた作品",
+      "viewPiece": "作品を見る"
+    },
+    "featuredEyebrow": "注目の記事",
+    "archiveEyebrow": "アーカイブ",
+    "archiveHeading": "これまでに書いたすべて",
+    "taggedLabel": "#{tag} のついた記事",
+    "removeTag": "#{tag} の絞り込みを外す",
+    "entryCount": "{count, plural, =0 {記事なし} other {# 件の記事}}",
+    "emptyStatement": "そこに収められた記事は、まだありません。",
+    "emptyDirection": "ジャーナルは、注型の合間に書いています。別のトピックをお試しいただくか、すべてご覧ください。",
+    "emptyStatementUnfiltered": "ジャーナルは、まもなく公開します。",
+    "emptyDirectionUnfiltered": "注型の合間に、最初の記事を書いています。またのぞいてみてください。"
+  },
+  "Portfolio": {
+    "meta": {
+      "title": "ポートフォリオ",
+      "description": "ResinRiva スタジオが手がけた実際のご依頼。ビフォーアフターの変化、プリザーブドフラワー、カスタムレジン作品を、一つひとつのストーリーとともにご紹介します。",
+      "titlePaged": "ポートフォリオ — {page}ページ目",
+      "notFound": "ご依頼作品が見つかりません"
+    },
+    "heroEyebrow": "私たちのご依頼作品",
+    "heroHeadline": "誇りをもってお届けする作品。",
+    "heroLead": "ここにある作品は、どれもある人の想いから始まりました――花束、思い出、人生の節目。そして世界に一つだけの作品として、スタジオを旅立ちました。これは、その物語です。",
+    "filterAria": "カテゴリーでポートフォリオを絞り込む",
+    "allCommissions": "すべてのご依頼作品",
+    "emptyEyebrow": "最初の一章",
+    "emptyHeading": "ご依頼のストーリーは、いままさに綴られています――あなたが最初の一つになるかもしれません。",
+    "emptyBody": "永遠に残しておきたいものをお聞かせください。このページの次の事例は、あなたのためにお作りする作品になるかもしれません。",
+    "emptyCta": "カスタムオーダーを始める",
+    "caseCount": "{count, plural, one {事例 # 件} other {事例 # 件}}",
+    "pagination": "ページ送り",
+    "previous": "前へ",
+    "next": "次へ",
+    "pageOf": "{totalPages}ページ中 {page}ページ目",
+    "case": {
+      "draftPreview": "下書きプレビュー — このページは、リンクを知っているスタッフのみが閲覧できます。",
+      "fallbackCategory": "ご依頼作品",
+      "completed": "{date} 完成",
+      "specAria": "ご依頼作品の仕様",
+      "specType": "種類",
+      "specMaterial": "素材",
+      "specTechnique": "技法",
+      "specComplexity": "難易度",
+      "specSize": "サイズ",
+      "specTimeline": "制作期間",
+      "storyHeading": "この作品が生まれるまで",
+      "tagsLabel": "タグ",
+      "beforeAfterHeading": "ビフォーアフター",
+      "beforeAfterHint": "ハンドルをドラッグするか矢印キーを使って、スタジオに届いたときの姿と、仕上がって旅立つときの姿を見比べてください。",
+      "videoHeading": "作品を動画で見る",
+      "galleryHeading": "制作の現場から",
+      "relatedHeading": "スタジオのほかの物語",
+      "ctaHeading": "このような作品をオーダーする",
+      "ctaBody": "このページにある物語はすべて、一通のメッセージから始まりました。あなたの物語をお聞かせください――花、写真、人生の節目。次の一点を、あなたのために流し込みます。",
+      "ctaWhatsApp": "WhatsApp で相談する",
+      "ctaCustomOrder": "カスタムオーダーを始める",
+      "commissionWhatsappMessage": "ResinRiva様、ポートフォリオで「{title}」を拝見し、同じような作品をオーダーしたいと思っています。\n（{site} より送信）",
+      "caseStudy": {
+        "briefHeading": "ご依頼内容",
+        "processHeading": "制作プロセス",
+        "clientHeading": "お客様の声"
+      },
+      "viewArchive": "アーカイブを見る",
+      "specCompleted": "完成",
+      "statLayers": "層",
+      "statCure": "硬化",
+      "statGrit": "番手",
+      "statBuild": "造形",
+      "frameCaption": "コマ {index}",
+      "beforeAlt": "{title} — ご依頼が始まる前",
+      "afterAlt": "{title} — 仕上がった作品",
+      "eyebrowStory": "物語",
+      "eyebrowBrief": "ご要望",
+      "eyebrowMaterial": "素材",
+      "eyebrowProcess": "制作の流れ",
+      "eyebrowFinal": "完成した作品",
+      "eyebrowRelated": "同じ作業台から",
+      "eyebrowCommission": "似た作品を依頼する"
+    },
+    "beforeAfter": {
+      "before": "ビフォー",
+      "after": "アフター",
+      "sliderLabel": "ビフォーアフター比較 — ドラッグまたは矢印キーで表示",
+      "sliderValue": "ビフォー画像の{percent}%を表示中"
+    },
+    "projectNumber": "プロジェクト {number}",
+    "wallHeading": "ご依頼作品のアーカイブ",
+    "viewProject": "プロジェクトを見る",
+    "countLabel": "{count, plural, other {ご依頼 # 件}}",
+    "clearAll": "すべて解除",
+    "removeFilter": "{filter} を外す",
+    "index": {
+      "commissions": "{count, plural, other {ご依頼 # 件}}",
+      "collections": "{count, plural, other {# コレクション}}"
+    },
+    "filterEmpty": {
+      "statement": "このコレクションには、まだご依頼作品がありません。",
+      "direction": "工房は受注制作です。作品が作業台を離れるたびに、コレクションは満ちていきます。別のコレクションをお試しいただくか、その最初の一点をあなたが始めてください。",
+      "action": "すべてのご依頼作品を見る"
+    }
+  },
+  "WhatsApp": {
+    "greeting": "ResinRiva様、カスタムレジンアートについて詳しく知りたいです。",
+    "intro": "ResinRiva様、\n以下を注文したいです：",
+    "product": "商品",
+    "budget": "予算",
+    "timeline": "納期",
+    "referenceImages": "参考画像",
+    "notes": "追加メモ",
+    "customerDetails": "お客様情報",
+    "name": "お名前",
+    "phone": "電話番号",
+    "email": "メール",
+    "sentFrom": "{host} より送信",
+    "material": "素材",
+    "occasion": "ご用途"
+  },
+  "InstagramFeed": {
+    "fallbackLead": "最新の作品はInstagramでご覧いただけます。",
+    "viewOnInstagram": "Instagramで見る",
+    "seeOnWhatsApp": "WhatsAppで最新作品を見る"
+  },
+  "WhatsAppOrder": {
+    "metaTitle": "WhatsAppのご注文",
+    "eyebrowSaved": "あとはタップするだけ",
+    "eyebrowExpired": "お気軽にどうぞ",
+    "headingSaved": "ご注文内容を保存しました",
+    "headingExpired": "WhatsAppでご挨拶を",
+    "bodySaved": "WhatsAppが自動で開かない場合は、下のボタンをご利用ください — ご注文内容は送信できる状態です。",
+    "bodyExpired": "この注文リンクは期限切れか見つかりません — ご心配なく。WhatsAppでメッセージをいただければ、すぐにご注文を承ります。",
+    "openWhatsApp": "WhatsAppを開く",
+    "replyHours": "10時〜20時（IST）が最も早くご返信できます。",
+    "changedMind": "気が変わりましたか？",
+    "keepBrowsing": "ショップを見続ける",
+    "copy": "メッセージをコピー",
+    "copied": "コピーしました",
+    "headingCommission": "ご要望は、作り手に届いています。",
+    "bodyCommission": "ご記入いただいた内容とともに、WhatsApp が開いたはずです。開かなかった場合は、下にメッセージを保存してあります。ご都合のよいときにお送りください。",
+    "messageLabel": "WhatsApp に送られる内容",
+    "seeCommissions": "最近のご依頼作品を見る",
+    "next": {
+      "step1": "ご入力いただいたすべての内容が、そのまま WhatsApp のメッセージになります。書き直す必要はありません。",
+      "step2": "作り手が、スケッチ、素材のご提案、確定価格と納期をお返しします。",
+      "step3": "ここでのお支払いはありません。価格と配送は、作業を始める前に、そのやり取りの中で決めます。"
+    }
+  },
+  "OrderErrors": {
+    "generic": "問題が発生しました — もう一度お試しいただくか、WhatsAppでご連絡ください。",
+    "rateLimited": "続けて複数のご注文をいただいています — 少しお待ちいただくか、WhatsAppで直接ご連絡ください。",
+    "missingFields": "ご入力ください：{fields}"
+  },
+  "Wishlist": {
+    "meta": {
+      "title": "ウィッシュリスト",
+      "description": "ResinRiva をご覧になりながら保存した作品の一覧。この端末に保存され、WhatsApp でいつでもスタジオに共有できます。"
+    },
+    "heroEyebrow": "あなたの候補リスト",
+    "heroHeadline": "保存した作品",
+    "heroLead": "気になる作品のハートをタップすると、ここに保存されます。アカウント登録は不要で、リストはこの端末にのみ残ります。準備ができたら WhatsApp で共有してください。その先は私たちが承ります。",
+    "count": "{count, plural, =0 {保存した作品はありません} one {保存した作品 # 点} other {保存した作品 # 点}}",
+    "countLabel": "ウィッシュリストに {count, plural, one {# 点の作品} other {# 点の作品}}があります",
+    "loading": "保存した作品を読み込んでいます…",
+    "emptyEyebrow": "まだありません",
+    "emptyHeading": "ウィッシュリストは空です",
+    "emptyBody": "コレクションをご覧になり、気になる作品のハートをタップしてください。じっくり選ばれる間、ここに保存しておけます。",
+    "unavailableHeading": "その作品たちは、すでに旅立ちました",
+    "unavailableBody": "保存された作品は、現在カタログにございません。コレクションから後継となる一点をお探しいただくか、オーダーメイドをご依頼ください。",
+    "browseCta": "コレクションを見る",
+    "shareLead": "候補リストをスタジオにお送りください。詳細・価格・お届けまでの日程を、WhatsApp のやり取りひとつでご確認いただけます。",
+    "shareCta": "WhatsApp で共有する",
+    "waIntro": "こんにちは、ResinRiva さん。サイトでこちらの作品を候補に選びました：",
+    "waMore": "…ほかに保存した作品が {count, plural, one {# 点} other {# 点}}あります。",
+    "waSentFrom": "（{host} より送信）"
+  },
+  "Product": {
+    "aboutHeading": "この作品について",
+    "badges": {
+      "studioOriginal": "スタジオオリジナル",
+      "outOfStock": "在庫切れ"
+    },
+    "specs": {
+      "heading": "仕様",
+      "materials": "素材",
+      "dimensions": "寸法",
+      "timeline": "制作期間",
+      "category": "カテゴリー",
+      "ecosystem": "コレクション",
+      "ecosystemArt": "レジンアート",
+      "ecosystemSupplies": "スタジオ用品",
+      "ecosystemPrint": "3Dプリント",
+      "availability": "在庫状況",
+      "availableNow": "現在ご注文いただけます",
+      "outOfStock": "現在在庫切れです"
+    },
+    "production": {
+      "title": "制作について",
+      "body": "私たちのスタジオで、一つひとつ受注制作しています。すべての作品は、発送前に手作業で仕上げと品質確認を行います。色合いや表面のわずかな個体差は手仕事ならではのものであり、同じものが二つとない理由でもあります。",
+      "timeline": "この作品の標準的な制作期間：{timeline}。"
+    },
+    "delivery": {
+      "title": "配送について",
+      "body": "インド全土へ配送しています。壊れやすい作品のため丁寧に梱包し、お届けまで追跡いたします。ご注文の際は WhatsApp で配送のご相談を直接承り、詳細の確認からお届けまで随時ご連絡いたします。"
+    },
+    "faqs": {
+      "heading": "よくある質問",
+      "viewAll": "すべての質問"
+    },
+    "lifestyle": {
+      "line": "深い水を、静かにとどめて。流し込みが固まったあとも、夕暮れの光を宿し続ける作品たち。"
+    },
+    "sameShelf": {
+      "heading": "同じ棚から"
+    },
+    "sameTitle": {
+      "heading": "この作品のほかのバージョン"
+    },
+    "pourVariance": "一つひとつの流し込みは唯一のもの — お届けする作品は写真とわずかに異なります。",
+    "gallery": {
+      "viewFullScreen": "画像を全画面で表示",
+      "showImage": "{count} 枚中 {index} 枚目の画像を表示",
+      "playVideo": "作品の動画を再生",
+      "videoChip": "動画",
+      "view3d": "3D で見る",
+      "threeDChip": "3D",
+      "modelAlt": "{title} の 3D モデル",
+      "lightboxTitle": "{title} — {count} 枚中 {index} 枚目",
+      "counter": "{index} / {count}",
+      "previousImage": "前の画像",
+      "nextImage": "次の画像",
+      "lightboxStatus": "{count} 枚中 {index} 枚目：{alt}",
+      "railLabel": "商品画像"
+    },
+    "referenceUploader": {
+      "addImages": "参考画像を追加",
+      "hint": "ドラッグ&ドロップまたはクリック——写真は {maxImages} 枚まで、JPG/PNG/WebP、各 {maxMb}MB まで",
+      "errorTooMany": "画像は {max} 枚までです。別の画像を追加するには、1 枚削除してください。",
+      "errorType": "「{name}」は JPG、PNG、WebP のいずれの画像でもありません。",
+      "errorSize": "「{name}」は {max}MB を超えています。もう少し小さい写真でお試しください。",
+      "remove": "{name} を削除"
+    },
+    "trust": {
+      "artHandmade": "私たちのスタジオで、手作業により流し込み、硬化させ、仕上げています",
+      "artConfirm": "価格と納期は WhatsApp で確定——今のお支払いは不要です",
+      "shipping": "保険付きで、インド全土へ安全にお届けします",
+      "functionalQuality": "発送前に品質確認済み",
+      "functionalConfirm": "価格と在庫状況は WhatsApp で確定します"
+    },
+    "oosCta": "再入荷について WhatsApp で問い合わせる",
+    "oosSummaryNote": "在庫についてのお問い合わせ——この作品は現在在庫切れです。",
+    "oosWaIntro": "ResinRiva様、\nこちらの作品は現在在庫切れとのことですが、再入荷について伺いたいです：",
+    "notFound": "作品が見つかりません",
+    "draftPreview": "下書きプレビュー — このリンクを持つスタッフのみがこのページを閲覧できます。",
+    "careHeading": "お手入れと保管",
+    "relatedHeading": "こちらもおすすめ",
+    "relatedEyebrow": "{category}のその他の作品",
+    "order": {
+      "errors": {
+        "required": "この項目は必須です。",
+        "referenceRequired": "{label}：参考画像を1枚以上添付してください。",
+        "name": "お名前をご入力ください。",
+        "phone": "有効な電話番号をご入力ください。",
+        "email": "有効なメールアドレスをご入力ください。",
+        "notesLength": "備考は{max}文字以内でご入力ください。",
+        "generic": "問題が発生しました — もう一度お試しください。"
+      },
+      "uploadProgress": "画像をアップロード中 {done}/{total}…",
+      "referenceImagesLabel": "参考画像",
+      "attachAbove": "— 上の参考画像と一緒に添付してください。",
+      "notesLabel": "追加の備考",
+      "notesPlaceholder": "刻み込みたいお名前、お好きな色、込めたい物語…",
+      "nameLabel": "お名前",
+      "namePlaceholder": "お名前",
+      "phoneLabel": "電話番号",
+      "phonePlaceholder": "+91 98765 43210",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "you@example.com",
+      "required": "（必須）",
+      "optional": "（任意）",
+      "summaryTitle": "ライブ注文サマリー",
+      "priceOnWhatsApp": "価格はWhatsAppにて",
+      "craftedIn": "· 制作期間 {timeline}",
+      "updatesHint": "入力に合わせて更新されます — 写真のアップロード後に画像リンクが追加されます。",
+      "uploading": "画像をアップロード中…",
+      "preparing": "WhatsApp注文を準備しています…",
+      "placeOrder": "注文する",
+      "noPayment": "ここでのお支払いはありません — ご注文内容とともにWhatsAppが開き、価格と配送はそちらで確定します。",
+      "choose": "{label}を選択",
+      "fieldRequired": "{label}（必須）",
+      "yourLabel": "ご希望の{label}",
+      "referenceAttached": "{count, plural, other {参考画像 # 枚を添付}}",
+      "eyebrow": "カスタマイズとご注文",
+      "intro": "細部をお選びいただき、お見せになりたいものを添えて、そのままお送りください。価格と納期は WhatsApp で確定します。ここでのお支払いはありません。",
+      "previewMessage": "メッセージを確認する",
+      "whatsappMessageLabel": "WhatsApp のメッセージ",
+      "summaryPiece": "作品",
+      "summaryPrice": "価格",
+      "engravingPreview": "見本",
+      "engravingPreviewEmpty": "ここにお言葉が入ります"
+    },
+    "share": {
+      "hintLabel": "さりげなくおねだり",
+      "hintMessage": "これ、きっと気に入ると思って — {title}。"
+    },
+    "provenanceLinks": {
+      "madeWith": "使用素材",
+      "creates": "この素材から生まれる作品"
+    },
+    "customizationNote": "色、サイズ、刻印は、何かを流し込む前にご一緒に決めます。WhatsApp でご確認いただくまで、何ひとつ確定しません。",
+    "leadTimeChip": "受注制作 · {timeline}",
+    "leadTimeMadeToOrder": "受注制作",
+    "ctaCustomize": "この作品をカスタマイズ",
+    "ctaWhatsApp": "WhatsApp で相談する",
+    "waAsk": "ResinRiva様、「{title}」について伺いたいです。",
+    "sections": {
+      "pieceEyebrow": "この作品",
+      "detailsEyebrow": "詳細",
+      "detailsHeading": "つくりかた、お手入れ、お届けについて",
+      "viewCollection": "コレクションを見る"
+    }
+  },
+  "Consent": {
+    "label": "Cookie と分析への同意",
+    "body": "サイトの利用状況を把握し、改善につなげるため、分析用 Cookie の使用をお願いしています。お選びいただくまで、トラッキングは一切読み込まれません。",
+    "decline": "同意しない",
+    "accept": "同意する"
+  },
+  "Legal": {
+    "lastUpdated": "最終更新 {date}",
+    "privacyTitle": "プライバシーポリシー",
+    "termsTitle": "利用規約",
+    "eyebrow": "規約",
+    "contents": "このページの内容",
+    "contentsLabel": "この文書の目次"
+  },
+  "Errors": {
+    "generic": "問題が発生しました。もう一度お試しいただくか、WhatsAppでご連絡ください。",
+    "invalidEmail": "有効なメールアドレスを入力してください。",
+    "contactRateLimited": "連続して複数のメッセージが送信されました。しばらくお待ちいただくか、WhatsAppで直接ご連絡ください。",
+    "subscribeRateLimited": "しばらくしてからもう一度お試しください。"
+  },
+  "Upload": {
+    "add": "＋ 参考画像を追加",
+    "drop": "画像をここにドロップ、または選択",
+    "formats": "JPG · PNG · WEBP · 最大 {maxMb} MB",
+    "counter": "{count} / {max}",
+    "counterLong": "参考画像を {max} 枚中 {count} 枚追加しました",
+    "retry": "もう一度試す"
+  },
+  "Newsletter": {
+    "heading": "工房からのお便り。",
+    "body": "新作、制作のノート、ときどきワークショップの日程。それ以外は何も。",
+    "fieldLabel": "メールアドレス",
+    "submit": "登録する",
+    "submitting": "登録しています",
+    "retry": "もう一度試す",
+    "success": "ご登録ありがとうございます。",
+    "already": "すでにご登録いただいています。",
+    "helper": "年に三、四通のお便り"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "この一点は、ありません。",
+    "body": "たどり着いたページは移動したか、はじめから注がれていません。工房を検索するか、こちらからどうぞ。",
+    "searchLabel": "工房を検索",
+    "searchPlaceholder": "作品、ジャーナル、作品集…",
+    "searchSubmit": "検索",
+    "collectionsLabel": "人気のコレクション",
+    "collections": {
+      "varmala": "婚礼の花輪（ヴァルマーラ）の保存",
+      "frames": "婚礼の写真フレーム",
+      "decor": "レジンの住まいの飾り",
+      "gifts": "ギフトのコレクション"
+    },
+    "home": "工房に戻る",
+    "whatsapp": "WhatsApp で相談する"
+  },
+  "ErrorPage": {
+    "eyebrow": "エラー",
+    "heading": "問題が発生しました。",
+    "body": "もう一度お試しください。それでも続くようでしたら、工房にメッセージをお送りください。ご一緒に解決します。",
+    "retry": "もう一度試す",
+    "whatsapp": "工房にメッセージを送る",
+    "referenceLabel": "参照コード"
+  },
+  "LargeFormat": {
+    "meta": {
+      "title": "大型レジンアート",
+      "description": "インドで大型のレジン作品をオーダー。テーブル、天板、壁面パネル、彫刻的な作品を、置く部屋に合わせて設計し、注文を受けてから流し込みます。"
+    },
+    "cure": {
+      "scale": "スケール",
+      "scope": "大きな仕事",
+      "how": "進め方",
+      "brief": "ご要望",
+      "gallery": "作品"
+    },
+    "hero": {
+      "eyebrow": "大型のオーダー",
+      "headline": "大きなレジンアートを、あなたの部屋のために。",
+      "lead": "大きな作品は、設計する前にまず部屋から考えます。どこに置くのか、どう使うのか、扉を通るのか。だからこのスケールの仕事は、注文ではなく会話から始まります。",
+      "startCta": "大型のご相談を始める",
+      "briefCta": "オーダーフォームを開く"
+    },
+    "scope": {
+      "eyebrow": "大型が扱う範囲",
+      "heading": "大きな仕事の四つのかたち",
+      "intro": "スケールが変えるのは作り方であって、手法ではありません。大きなご要望はたいていこの四つの形をとりますが、そのどれかである必要はありません。",
+      "k1Title": "テーブルと天板",
+      "k1Copy": "ダイニングテーブル、センターテーブル、カウンター、棚板、コンソールの天板。寝かせた木に流し込み、手で平滑にして磨き上げます。",
+      "k1Alt": "レジンとチークのサービングボードが、低く丸いレジンの器に立てかけられている。どちらも深い青で流されている",
+      "k2Title": "壁面パネルと大きな作品",
+      "k2Copy": "一枚のパネル、あるいは並べて掛ける組。既製の額のサイズではなく、掛ける壁の比率に合わせて流します。",
+      "k2Alt": "硬化した透明レジンの板の面取りされた端が、細いサファイアの帯を屈折させている",
+      "k3Title": "彫刻的な作品とオブジェ",
+      "k3Copy": "自立する形、台座に載る作品、光を捉えるブロック。層を重ねて作るので、部屋の向こうからでも奥行きが読み取れます。",
+      "k3Alt": "暗い工房で、一灯の暖かい作業灯の下、流し込まれたレジンの型が硬化している",
+      "k4Title": "大きなスケールでの保存",
+      "k4Copy": "花、布、思い出の品を、暮らしの中に置ける大きさの作品に納めます。まず整えて安定させ、それから周囲に流し込みます。",
+      "k4Alt": "透明レジンの浅い丸いブロック。深いサファイアの奥行きの中に、押されたマリーゴールドと薔薇の花びらが浮かんでいる",
+      "materials": "アートグレードのエポキシレジン、鉱物顔料、寝かせた木材、保存処理した植物。小さな作品と同じ素材を、より多く使います。"
+    },
+    "how": {
+      "eyebrow": "大型オーダーの進め方",
+      "heading": "先に計画し、後から流す",
+      "intro": "大きな作品が大きな失敗にならずに済むのは、仕事の順番のおかげです。",
+      "s1Title": "部屋とご要望",
+      "s1Copy": "空間、用途、すでにお持ちの寸法をお送りください。搬入経路、何の上に置くのか、他に承認が必要な方がいるかを伺います。",
+      "s2Title": "設計と承認",
+      "s2Copy": "スケッチと、役に立つ場合はデジタルのプレビューを。設計・仕上げ・寸法が双方で決まるまで、何も流し込みません。",
+      "s3Title": "流し込みと硬化",
+      "s3Copy": "レジンは一層ずつ入れ、次の層の前に硬化させます。大きな仕事は層が多く、そこだけは誰にも短縮できません。",
+      "s4Title": "仕上げとお引き渡し",
+      "s4Copy": "研磨し、磨き上げ、立てる・掛けるために必要な金具を取り付けます。完成した作品の写真をご覧いただき、工房を出る前に運び方を決めます。"
+    },
+    "brief": {
+      "eyebrow": "お送りいただくもの",
+      "heading": "見積もりが早くなるもの",
+      "intro": "どれも正確である必要はありません。おおよその数字と、スマートフォンで撮った一枚があれば始められます。",
+      "b1Label": "部屋",
+      "b1Copy": "作品を置く壁・隅・床の写真を、普段立つ位置から撮ったもの。",
+      "b2Label": "お手元の寸法",
+      "b2Copy": "わかる範囲での長さ・幅・高さ。そして通りから部屋までで最も狭い扉、階段、エレベーター。",
+      "b3Label": "どう使うか",
+      "b3Copy": "日常の食卓か、飾る作品か、オフィスの受付か。厚み・仕上げ・エッジは好みより用途が決めます。",
+      "b4Label": "参考",
+      "b4Copy": "色、木目、気に入った作品の写真、あるいは思い描いてはいるのにどこにも見つからない作品。",
+      "disclaimer": "ここでのお支払いはありません。素材・価格・日程は、何かが始まる前にWhatsAppで確認します。"
+    },
+    "gallery": {
+      "eyebrow": "大きな作品",
+      "heading": "このスケールの作品",
+      "intro": "工房が大型としてまとめた仕事です。寸法や素材が記録されている作品には、それも一緒に表示します。",
+      "materialsLabel": "素材",
+      "sizeLabel": "寸法",
+      "catalogCta": "カタログをすべて見る",
+      "emptyHeading": "工房を出るときに記録します",
+      "emptyBody": "このスケールで見ていただけるものはまだありません。会話はギャラリーを待ちません。ご希望の作品をお聞かせいただければ、部屋のほうから設計します。",
+      "emptyCta": "作品のご希望を伝える"
+    },
+    "cta": {
+      "heading": "部屋のことを聞かせてください",
+      "body": "空間、用途、そして大切な日付をお送りください。一層目を流す前に、設計・素材・価格をWhatsAppで決めます。",
+      "formCta": "オーダーメイドを計画する"
+    }
+  }
+}
