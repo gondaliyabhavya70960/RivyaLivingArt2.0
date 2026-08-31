@@ -816,7 +816,7 @@
   "Shop": {
     "meta": {
       "title": "Tienda",
-      "description": "Explora las colecciones a pedido de Rivya Living Art: arte en resina de lujo, regalos personalizados y piezas impresas en 3D, personalizados de principio a fin y encargados por WhatsApp.",
+      "description": "Explora el arte en resina, los recuerdos y la decoración que Rivya Living Art hace a pedido: personalizados de principio a fin y encargados por WhatsApp. También materiales de estudio e impresión 3D.",
       "titlePaged": "Tienda — Página {page}"
     },
     "categoryMetaDescription": "{category} a pedido del estudio Rivya Living Art: personalizados de principio a fin y encargados por WhatsApp.",

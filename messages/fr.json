@@ -816,7 +816,7 @@
   "Shop": {
     "meta": {
       "title": "Boutique",
-      "description": "Découvrez les collections sur commande de Rivya Living Art — art de la résine de luxe, cadeaux personnalisés et pièces imprimées en 3D, personnalisés de bout en bout et commandés via WhatsApp.",
+      "description": "Découvrez l'art en résine, les souvenirs et la décoration sur commande de Rivya Living Art — personnalisés de bout en bout et commandés via WhatsApp. Également : fournitures d'atelier et impression 3D.",
       "titlePaged": "Boutique — Page {page}"
     },
     "categoryMetaDescription": "{category} sur commande de l'atelier Rivya Living Art — personnalisés de bout en bout et commandés via WhatsApp.",

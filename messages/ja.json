@@ -816,7 +816,7 @@
   "Shop": {
     "meta": {
       "title": "ショップ",
-      "description": "Rivya Living Art の受注制作コレクションをご覧ください。ラグジュアリーなレジンアート、パーソナライズされたギフト、3Dプリント作品を、細部までカスタマイズし、WhatsApp でご注文いただけます。",
+      "description": "Rivya Living Art の受注制作コレクションをご覧ください。レジンアート、記念品、住まいの飾りを、細部までカスタマイズし、WhatsApp でご注文いただけます。スタジオ用品と3Dプリントも。",
       "titlePaged": "ショップ — {page} ページ"
     },
     "categoryMetaDescription": "Rivya Living Art スタジオの受注制作 {category}。細部までカスタマイズし、WhatsApp でご注文いただけます。",
