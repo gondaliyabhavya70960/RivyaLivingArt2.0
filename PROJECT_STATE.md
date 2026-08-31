@@ -17,7 +17,10 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 1 — brand rename: COMPLETE**
 **Phase 2a — art-first storefront: COMPLETE**
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
+**Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
+
+**Phase 2 is closed.**
 
 ## CURRENT MILESTONE
 
@@ -25,77 +28,109 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 ecosystem (1,373 pieces, not the 4,373 mixed catalogue), the brand is Rivya Living Art throughout,
 and no old-brand or old-domain strings remain in the served HTML.
 
-Five PRs merged: Phase 0 (audit) · Phase 0.5 (baseline defects) · Phase 1 (rename) ·
-Phase 2a (art-first shop) · production launch fixes.
+Ten PRs merged: Phase 0 (audit) · Phase 0.5 (baseline defects) · Phase 1 (rename) ·
+Phase 2a (art-first shop) · Phase 2b (commission-led copy) · production launch fixes.
 
-**Phase 2c (imagery) is the next substantial work** and is now the largest open defect — see below.
+**The storefront has its photography.** Phase 2c closed the largest open defect: `public/` is
+committed, all 62 image slots resolve, and three new guards make its recurrence a red test rather
+than a silent 400.
 
 ---
 
 ## NEXT EXACT TASK
 
-**Phase 2c — imagery. Blocked on GitHub Actions minutes, and NOT on generation.**
+**Phase 2 is complete. Start Phase 2d, below — the highest-value item is the `/search` handoff.**
 
-The site has no photography: `git ls-files public` returns **0**, 62 slots resolve to files that do
-not exist, and every deploy logs `imported 0 site image(s)` with 25 `ENOENT`s.
+---
 
-**Do not regenerate the asset set.** Investigated 2026-08-31; everything needed already exists:
+## Phase 2d — the backlog Phase 2 surfaced but did not close
 
-| Piece | State |
+Found by a six-probe audit on 2026-08-31 and deliberately NOT bundled into the imagery commit: an
+asset commit whose design audit goes red must be attributable to the assets. Each is real and
+evidenced; none is started.
+
+**Phase 2a fallout — the shop default changed, but not everything that links into it.**
+1. **`/search` counts the whole 4,373-row catalogue, then hands the visitor to a shelf that drops
+   ~98% of those hits.** A search that reports N results and delivers a fraction is the most
+   visible of these. Highest value.
+2. **The homepage "Featured pieces" band reads `buildProductWhere({})`** (`page.tsx:132-138`) —
+   the exact unconstrained clause Phase 2a fixed in `fetchDefaultShopFirstPage`. It renders art
+   today only *by luck*: all 12 `featured` rows happen to be art. Feature one pigment set and the
+   band contradicts the hero directly above it. One-word fix (`{ type: DEFAULT_ECOSYSTEM }`), but
+   it changes what products a page shows, so it wants its own PR and a look.
+3. **Breadcrumbs on supplies/print pages point "Shop" at the art shelf** — the trail no longer
+   walks back up. Same class of one-line fix; `groupForCategorySlug` is already imported.
+4. Some CTAs still promise "all pieces" / "the full collection" while linking to the art shelf.
+
+**Spec debt.**
+5. **§15.5's 20px LQIP is committed but wired to nothing.** `src/lib/media-v3-blur.json` holds 25
+   real entries and `grep -rn "media-v3-blur" src/` returns zero hits. The join is
+   `blurEntry.src === slot.fallback`, covering 59 of 62 slots (the 3 misses are the two maker
+   photos and the hero video — all deliberate). Verified safe against §2.7's "no image fades in":
+   next/image's blur placeholder emits **no** `transition`, so it does not fade. ~15 files.
+6. **`media-usages.ts` does not scan `SiteImage.draft`** — a staged-media deletion hole, and
+   CLAUDE.md records this exact header rule being broken three times already.
+7. **`scripts/media-v3-fetch.mjs:192` overwrites rather than merges `media-v3-blur.json`**, so a
+   re-run drops the video poster's LQIP entry.
+8. **`.github/workflows/mirror-images.yml` says in its own header it is "safe to delete once the
+   images are committed."** They are now.
+
+---
+
+## Phase 2c — imagery: DONE (2026-08-31)
+
+`public/` is committed: **242 files, 22 MB**, tracked. The owner supplied the directory the
+imported ZIP had been exported without. All 62 slots now resolve to a real file, `/_next/image`
+returns 200 where it returned 400, and the homepage LCP is the hero photograph again rather than
+the `<h1>`.
+
+### It was verified, not assumed
+
+| Check | Result |
 |---|---|
-| 24 image prompts + 1 video prompt | in `docs/media-v3-manifest.json` |
-| Candidate renders | generated, URLs recorded |
-| Human cull | **done** — every asset carries a `keeper` (20 `a`, 4 `b`); video keeper `b` |
-| Contact sheets the cull was made from | committed, `docs/media-v3-review/` (5 files) |
-| LQIP blur manifest | committed, `src/lib/media-v3-blur.json`, **25 real entries** |
-| The AVIF masters themselves | **missing** — never added in this git history |
+| Slot defaults present | **25 / 25** |
+| Dimensions vs `media-v3-blur.json` | **25 / 25 exact** |
+| LQIP regenerated byte-for-byte | **24 / 25** |
+| `process-pour-poster` (ffmpeg-cut, so bytes differ) | same frame — pixel diff **9.1** vs **30.8** for the nearest *different* master, **55.4** median |
+| pour-cure scrub frames | **121 / 121** |
+| Blog + category covers | **55 / 5** — exactly what `mirror-images.yml` hard-asserts |
+| Archive safety | no traversal, no symlinks, no absolute paths, 242/242 media files |
 
-The 25-entry LQIP manifest could only have come from a completed `masters` run, so the masters were
-built in the original repo; the ZIP this repo was imported from was simply exported without
-`public/`.
+### Why nothing caught it, and what now does
 
-### The runbook — FASTEST PATH IS LOCAL, no Actions minutes needed
+Every gate was green while the site rendered no photography at all. The resolver is total by
+construction, the build never resolves these runtime strings, and the design and a11y audits check
+alt text rather than whether a picture arrived. Three guards close it:
 
-The fetch scripts take **no credentials** (`grep 'process.env' scripts/media-v3-*fetch.mjs` →
-nothing). They need only Node 22, `sharp` from `npm ci`, and open internet. So the quickest way to
-finish this is on any machine with normal internet — a laptop will do:
+- **`src/lib/site-images.test.ts`** now asserts each fallback is **on disk**. It previously
+  asserted only that the string began with `/`, directly beneath a comment promising the file was
+  checked in. That one missing assertion is the whole incident.
+- **`src/lib/bundled-media.test.ts`** (new) covers the tracks deliberately outside the slot
+  registry and therefore untested: the 121 scrub frames, `CANONICAL_CATEGORIES[].image`, the PWA
+  icon, and the LQIP manifest's `src` paths.
+- **`scripts/redesign-audit.mjs`** fails any **bundled** image that finished loading with
+  `naturalWidth === 0`. Scoped to roots derived from `public/` itself: catalog photography sits on
+  supplier hosts this repo does not control, and failing a PR for their downtime would be a gate
+  nobody could act on.
 
-```bash
-git clone https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git
-cd RivyaLivingArt2.0 && npm ci --ignore-scripts
+All three were proved to FAIL on a deliberately removed file and pass once restored — a guard that
+cannot fail is not a guard.
 
-node scripts/media-v3-preflight.mjs      # offline check; expect "PREFLIGHT CLEAN"
-node scripts/media-v3-fetch.mjs          # 24 AVIF masters + LQIP manifest
-node scripts/media-v3-video-fetch.mjs    # mp4 + webm + poster (needs ffmpeg)
+### If the masters ever need rebuilding
 
-git add public/media/v3 src/lib/media-v3-blur.json
-git commit -m "Fetch Part 15 media masters" && git push
-```
+Do not regenerate. Every keeper carries a candidate URL, and those URLs were **re-verified alive on
+2026-08-31**: a server-side fetch retrieved all four sets (17–51 MB each) eight days after
+generation. `node scripts/media-v3-fetch.mjs` on any machine with ordinary internet rebuilds them.
+It cannot run in a session — the Higgsfield CDN answers 403 to the agent proxy's egress policy,
+which is an organization policy denial to report, not to route around.
 
-`--candidates` is NOT needed: the cull is already made.
-
-**Or, if Actions minutes are restored**, the same thing runs unattended:
-`fetch-media-v3.yml` → mode `masters`, then `fetch-media-v3-video.yml` → mode `masters`. Both
-commit to the branch they run on.
-
-Either way, redeploy afterwards and confirm the build log no longer says
-`imported 0 site image(s)`.
-
-**Why it cannot run in THIS session:** the Higgsfield CDN
-(`d8j0ntlcm91z4.cloudfront.net`) answers **403 to a sandbox's egress policy** — re-verified
-2026-08-31 by generating one image successfully and then failing to download it
-(`CONNECT tunnel failed, response 403`). The agent-proxy README says to report such a denial, not
-route around it. `fetch-media-v3.yml` exists precisely because a previous session hit this same
-wall; its header documents it.
-
-**If the recorded candidate URLs have expired** by the time Actions runs, the script fails loudly
-(`if (!res.ok) throw`). Only then regenerate: the manifest holds every prompt, the model is
-`nano_banana_pro` (served as `nano_banana_2`), generation costs **2 credits per image**, and the
-account holds 679. Record fresh `jobId`/`url` per candidate and re-run mode `masters`.
-
-**Two slots are permanently excluded from this set** (§15.2): `home.maker` / `about.maker` are the
-maker, never AI — and `src/lib/site-images-import.test.ts` records that the file currently behind
-them is itself a generation, which is the owner's to replace with a real photograph.
+**Staging correction:** an earlier version of this runbook said
+`git add public/media/v3 src/lib/media-v3-blur.json`. That stages **27 of 242 files** and leaves
+`/media/hands-polish.webp` (which backs `home.maker` *and* `about.maker`), all 121 scrub frames,
+`icon-512.png`, the 60 blog/category covers and `/media/v6/` still 404ing. The command is
+`git add public/`, and it must be atomic: `prisma/reconcile-blog-covers.ts` runs on every deploy and
+flips 55 `BlogPost.coverImage` rows to local paths **one way** — once flipped, a later deploy
+missing those files 404s permanently with no automated recovery.
 
 ---
 
@@ -149,12 +184,25 @@ Under commission-led positioning those arguably swap. That is a REDESIGN.md deci
 treatment (and interacts with §3.1's max-two-champagne-per-viewport rule), not a copy fix, so it is
 the owner's call rather than something to change in a copy pass.
 
-Still open from earlier phases:Still open from earlier phases:
+Still open from earlier phases:
 - **`.env.example`** omits `DATABASE_URL_UNPOOLED` and `RESEND_FROM`; `.env*` edits are denied in
   this environment, so the owner must add them.
-- **`happy-dom` → `devDependencies`**, and decide on `three` (zero imports today).
 - **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Those are plan documents,
   not current-state docs; CLAUDE.md is the authority and has been corrected.
+
+**Two former entries are WON'T-FIX, and both were wrong as written.** They are recorded here so no
+future session "fixes" them again — acting on either breaks production.
+- **`happy-dom` must stay in `dependencies`.** It is not a test tool here: vitest runs
+  `environment: "node"` and never loads it, but `@tiptap/html/dist/server/index.js:7` does a
+  top-level `import { Window } from "happy-dom"`, reached from `src/lib/tiptap-render.ts`, and it is
+  traced into the serverless bundles for `/blog/[slug]`, `/p/[slug]` and `/terms`. Moving it to
+  `devDependencies` breaks any production install that omits dev deps. *This was attempted on
+  2026-08-31 and reverted once verified.*
+- **`three` must stay too.** It has zero direct imports, but it is a required peer dependency of
+  `@google/model-viewer@^4.3.1` (`peerDependencies: {"three": "^0.183.0"}`, matched exactly by the
+  pinned `^0.183.0`) and of `@monogrid/gainmap-js`. `@google/model-viewer` is genuinely used — the
+  PDP gallery renders it via `src/components/product/model-viewer.tsx`. "Unused" was inferred from
+  import count alone, which is the wrong test for a peer dependency.
 
 ---
 
@@ -298,7 +346,8 @@ BUILD STATUS is the only evidence available.
 15 catalogued in `docs/PROJECT-AUDIT.md` §9; 8 fixed in Phase 0.5. Most severe remaining:
 1. **CSP is report-only** with `script-src 'unsafe-inline'` and `img-src https:` (open).
 2. `.env.example` ↔ `env.ts` disagree in both directions (open — `.env*` edits denied here).
-3. `happy-dom` in `dependencies`; `three` present with zero imports (open, deferred).
+3. ~~`happy-dom` in `dependencies`; `three` present with zero imports~~ — **NOT defects.** Both are
+   genuine runtime requirements; see the WON'T-FIX note above. Closed 2026-08-31.
 4. Audit-script port drift `:3111` vs `:3000` (open).
 5. Zero tests for API routes, server actions, components or queries (open).
 6. `mirror-images.yml` asserts exactly 5 category + 55 blog webp files (open).

@@ -5,6 +5,58 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 2c: the storefront has its photography
+
+### The finding
+`public/` was never in this repository. The ZIP it was imported from had been exported without it,
+so all **62 image slots** resolved to files that did not exist, `/_next/image` answered **400** for
+every one, and the storefront rendered with no photography at all.
+
+**Every gate was green the whole time.** The slot resolver is total by construction, `next build`
+never resolves these runtime strings, and the design and a11y audits check *alt text* rather than
+whether a picture arrived. `site-images.test.ts` had a test named "lives in the repo" that asserted
+only `fallback.startsWith("/")` — directly beneath a comment promising the file was checked in.
+
+### Added
+- `public/` — **242 files, 22 MB**, supplied by the owner and committed atomically. Atomicity is
+  required: `prisma/reconcile-blog-covers.ts` runs every deploy and flips 55 `BlogPost.coverImage`
+  rows to local paths **one way**, so a partial commit would 404 them permanently.
+- `src/lib/bundled-media.test.ts` — guards the asset tracks deliberately outside the slot registry
+  and therefore never tested: the 121 pour-cure scrub frames, `CANONICAL_CATEGORIES[].image`, the
+  PWA icon, and the LQIP manifest's `src` paths.
+- A broken-image rule in `scripts/redesign-audit.mjs`: any **bundled** image that finished loading
+  with `naturalWidth === 0` fails the build. Scoped to roots derived from `public/` itself —
+  catalog photography lives on supplier hosts this repo does not control, and failing a PR for
+  their downtime would be a gate nobody could act on.
+
+### Changed
+- `src/lib/site-images.test.ts` now asserts each slot default is **on disk**. That single missing
+  assertion is the entire incident.
+
+### Verified, not assumed
+All 25 slot defaults match `media-v3-blur.json`'s recorded dimensions **exactly** (25/25), and
+regenerating each LQIP from the shipped file reproduces the committed `blurDataURL` byte-for-byte
+for **24 of 25**. The 25th, `process-pour-poster`, is ffmpeg-cut so its bytes differ; it is the same
+frame within encoder noise — pixel difference **9.1** against its own file versus **30.8** for the
+nearest *different* master and **55.4** median. The archive carried no traversal paths, no symlinks
+and no executables, and its 5 category + 55 blog covers match `mirror-images.yml`'s hard assertion
+exactly. Afterwards: `/media/v3/hero-pour.avif` **404 → 200**, its optimized variant **400 → 200**,
+and the homepage **LCP moved from the `<h1>` back to the hero photograph**. All three new guards
+were proved to fail on a deliberately removed file and pass once restored.
+
+### Corrected
+Two entries in `PROJECT_STATE.md` were wrong and are now recorded as WON'T-FIX, because acting on
+either breaks production. **`happy-dom` is not a test tool** — `@tiptap/html/dist/server` imports it
+at the top level and it is traced into three public route bundles; moving it to `devDependencies`
+was attempted here and reverted once verified. **`three` is not unused** — it is a required peer of
+`@google/model-viewer`, which the PDP gallery renders. Import count is the wrong test for a peer
+dependency.
+
+The imagery runbook also said `git add public/media/v3 …`, which stages **27 of 242 files** and
+leaves the maker photo, all 121 scrub frames, the icon and 60 covers still 404ing.
+
+---
+
 ## [Unreleased] — Phase 2b complete: one more key, and the surface was smaller than the plan said
 
 ### The finding
