@@ -15,6 +15,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 0 — ZIP import & forensic audit: COMPLETE**
 **Phase 0.5 — baseline defect fixes: COMPLETE**
 **Phase 1 — brand rename: COMPLETE**
+**Phase 2a — art-first storefront: COMPLETE**
 
 ## CURRENT MILESTONE
 Phase 0 and Phase 0.5 delivered and committed. CI now actually runs, and every gate was proven
@@ -46,32 +47,48 @@ Nothing. Phase 0 is closed.
 
 ## NEXT EXACT TASK
 
-**Phase 2 — business-domain transformation.** This is the substantial remaining work; the rename is
-done and the four decisions below are settled.
+**Phase 2b — commission-led copy (decision D5).** Phase 2a separated the catalogue; 2b makes the
+language match.
 
-Phase 2 widens the catalogue and its language from *resin art + personalized gifts + 3D printing* to
-**luxury resin furniture + resin art + 3D art + bespoke commissions**:
+The storefront still describes the old proposition — the hero eyebrow reads *"custom resin art ·
+3D printing · made to order"* and the lede *"crafts bespoke resin art, personalized gifts and
+3D-printed pieces"*. Under D5 the front door should lead with **bespoke commissions** for furniture
+and large art, with the ready-made catalogue behind it.
 
-1. **Taxonomy** — new categories (dining/river/coffee/console tables, benches, desks, wall art,
-   panels, sculptures, 3D art, limited editions) alongside the 16 existing ones. Follow
-   `CANONICAL_CATEGORIES` in `src/lib/catalog-taxonomy.ts`.
-2. **Schema** — additive migrations for `Collection`, `Artist`, `Material`, `ThreeDModel`. Keep
-   money as `Int` whole rupees. Register any new media-URL table in `media-usages.ts` in the same
-   commit (a header rule the repo has broken three times).
-3. **Studio surfaces** — new editors following the settled pattern: registry in code → overrides in
-   the database → a TOTAL resolver (decision D2).
-4. **Copy** — the storefront still describes the old catalogue ("custom resin art · 3D printing").
-   English first in `messages/en.json`, then translate the batch into all 8 locales;
-   `scripts/i18n-missing.mjs` is the gate.
-5. **Imagery** — generate new assets for the new domain (decision D3) and retire the 20 Cloudinary
-   URLs under `resinriva/`. `docs/media-v3-manifest.json` is the existing Higgsfield prompt ledger
-   to build `docs/ASSET-MANIFEST.md` from.
+Scope it by namespace rather than all at once — `messages/en.json` has 1,181 leaf keys across 30
+namespaces (Shop 311, Homepage 151, Site chrome 120, Commission 114, Portfolio 74, Contact 67,
+Workshops 65). Start with **Homepage + site metadata/SEO**, which is where the proposition is
+stated.
 
-Two small items still open from Phase 0.5:
-- **`.env.example`** needs `DATABASE_URL_UNPOOLED` and `RESEND_FROM` — this session's tooling denies
-  edits to `.env*` files, so the owner must add them.
-- **`happy-dom` → `devDependencies`, and decide on `three`** (a dependency with zero imports; the
-  brief's Phase 15 wants Three.js for the 3D-art vertical, so this depends on Phase 2's shape).
+Workflow, in this order — the registry step is a CI gate, not optional:
+1. Edit `messages/en.json` (English first).
+2. `node scripts/site-copy-registry.mjs` — regenerates `src/lib/site-copy.generated.ts`.
+   `npm run copy:check` fails the build when it is stale.
+3. Translate the batch into ar/de/es/fr/gu/hi/ja/zh; `node scripts/i18n-missing.mjs` is the gate
+   (currently 0 missing — keep it there).
+
+### Known traps for Phase 2b+ (found by the Phase 2 research, verified against the files)
+
+- **`prisma/seed.ts` never reaches an existing database.** `bootstrap.ts:30` computes
+  `alreadySeeded = category.count() > 0` and skips the seed when true. Categories that must reach
+  a live database go in **`CANONICAL_CATEGORIES`** (`src/lib/catalog-taxonomy.ts`), which
+  `import-tiers.ts:427-451` creates-if-absent on **every** deploy.
+- **Adding a site-image slot breaks two tests and a CI gate** unless done fully: the alt key must
+  go through `scripts/site-copy-registry.mjs`, and `src/lib/site-images.test.ts` hard-codes slot
+  counts (`withAlt` 42, `wide` 13).
+- **`public/` is empty** — 0 tracked files, never populated in git history. All 62 site-image slot
+  fallbacks point at files that do not exist in the repo.
+- **`src/lib/media.ts` is dead code** — zero importers, holds 8 of the Cloudinary URLs. Deleting it
+  changes nothing that renders.
+- **Categories do not nest.** `Category` has no `parentId`; grouping is presentation-only via
+  `CATALOG_GROUPS` slug lists.
+- **Doc drift:** CLAUDE.md says 57 image slots / 21 bundled files; the truth is 62 / 25. The same
+  stale numbers appear in comments in `site-images-import.ts` and `actions/site-images.ts`.
+
+Two items still open from Phase 0.5:
+- **`.env.example`** needs `DATABASE_URL_UNPOOLED` and `RESEND_FROM` — `.env*` edits are denied in
+  this environment, so the owner must add them.
+- **`happy-dom` → `devDependencies`**, and decide on `three` (zero imports today).
 
 ---
 
@@ -95,6 +112,20 @@ Phase 2 and replaced with new imagery representing luxury resin furniture, resin
 bespoke work. The existing shots (resin jewellery, keychains, wedding frames) do not represent the
 new brand regardless, so migrating them would preserve pictures that get replaced anyway.
 **Consequence for Phase 1: leave every `resinriva/` path segment untouched.**
+
+### D5 — Positioning: **commission-led luxury**
+Lead with bespoke furniture and large art as **commissions**, not stock. This is the only honest
+premium framing available: the catalogue contains **no furniture** — "Resin Furniture & Surfaces"
+holds a ₹40 night light and two ₹350 table-top pieces — and the HARD RULE forbids inventing
+products. Commission framing needs no inventory, and `/large-resin-art` and `/custom-order` already
+do it ("Tables, large wall art and layered preservation work take 3–6 weeks… nothing is
+overproduced — no inventory"). The catalogue becomes the smaller ready-made pieces.
+
+### D6 — Supplies: **separated from the art storefront**
+The 2,900 supplies and 3D-printing products (1,841 molds/tools, 648 pigments, 400 filaments,
+96 printer parts) stay **published and sellable**, but no longer lead the browse. `/shop` opens on
+the art ecosystem; supplies and print keep their own tabs, category pages and URLs.
+**Implemented in Phase 2a.**
 
 ### D4 — CI: **proceed with local verification**
 GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate

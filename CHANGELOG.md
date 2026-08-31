@@ -5,6 +5,54 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 2a: art-first storefront
+
+Implements decision **D6**: the supplies and 3D-printing catalogues stay published and sellable,
+but stop leading the browse of an art house.
+
+### Why
+`/shop` opened on all 4,373 published products, of which **2,900 are supplies and printing
+hardware** — 1,841 molds and tools, 648 pigments, 400 filaments, 96 printer parts. The first page of
+a luxury art catalogue was sanding kits and PLA. The ecosystem mechanism to fix it
+(`CATALOG_GROUPS`, `?type=art|supplies|print`, the browse tabs) already existed; only the **default**
+was wrong.
+
+### Changed
+- **`/shop` now opens on the art ecosystem** — 1,373 pieces instead of 4,373. Supplies and print keep
+  their tabs, their category pages and their URLs; nothing is unpublished and no URL 404s.
+- **`?type=all` is a new explicit sentinel** restoring the mixed view. It is deliberately NOT a
+  member of `ECOSYSTEMS`, so `isEcosystem()` rejects it and `buildProductWhere` adds no category
+  clause — "no constraint" by being unrecognised, rather than by a second code path.
+- **Unrecognised `?type=` falls back to art** rather than silently reopening the mixed catalogue, so
+  a stale v6 link or a crafted param is not a back door.
+- **The collection strip follows the active ecosystem.** It sliced the whole catalogue in curated
+  `order`, so it always showed the first twelve *art* categories — including while the grid below
+  was showing molds and filament.
+
+### Fixed
+- **`fetchDefaultShopFirstPage` ignored the filters entirely.** It built `buildProductWhere({})`, so
+  the cached bare-`/shop` bundle kept serving the mixed catalogue after `?type=` gained a default.
+  Caught by checking the rendered count against the database (1,373 expected, 4,373 served) rather
+  than trusting the unit level. Its cache key is bumped to `-v3`, because a `-v2` entry holds the
+  mixed catalogue and would serve it for up to 300s after deploy.
+
+### Notes
+- `hasFilters` still reads the **raw** `?type=` value, so a bare `/shop` remains
+  "per-visitor-identical" and keeps its shared 300s cache. Resolving the default into it would have
+  made every default request look filtered and silently dropped that cache.
+- New `src/lib/shop-filters.test.ts` (5 tests) locks the resolution, including that the `all`
+  sentinel stays outside `ECOSYSTEMS` — if it were ever added there, the mixed view would filter by
+  a group whose slug list does not exist and return nothing.
+
+### Verified
+Locally, against a real database and the built server (Actions still cannot allocate a runner):
+typecheck, lint, `copy:check` (1,181 slots), i18n (0 missing across 8 locales), **327 tests**,
+production build, 4 design audits, 3 a11y audits, 2 studio audits over 30 routes, Lighthouse
+98/97/96/100. Behaviour confirmed in the browser: `/shop` 1,373 · `?type=all` 4,373 ·
+`?type=supplies` 2,500 · `?type=print` 500 · `?type=v6` → 1,373.
+
+---
+
 ## [Unreleased] — Phase 1: brand rename (ResinRiva → Rivya Living Art)
 
 **640 substitutions across 112 files**, risk-tiered from the Phase 0 census. Full detail, including

@@ -24,6 +24,40 @@ export function isEcosystem(value: unknown): value is CatalogGroup {
   );
 }
 
+/**
+ * The explicit "every ecosystem at once" view.
+ *
+ * Deliberately NOT a member of `ECOSYSTEMS`, so `isEcosystem()` rejects it and
+ * `buildProductWhere` adds no category clause — the sentinel means "no
+ * ecosystem constraint" by being unrecognised, not by a second code path.
+ */
+export const ALL_ECOSYSTEMS = "all";
+
+/**
+ * The ecosystem a bare `/shop` leads with.
+ *
+ * Supplies and 3D printing are ~2,900 of the 4,373 published products (1,841
+ * molds and tools, 648 pigments, 400 filaments, 96 printer parts). Opening the
+ * shop of an art house on sanding kits and PLA is not what the catalogue is
+ * for, so `/shop` is the art ecosystem and the other two keep their own tabs
+ * and their own category pages. Nothing is unpublished and no URL 404s —
+ * `?type=all` restores the mixed view.
+ */
+export const DEFAULT_ECOSYSTEM: CatalogGroup = "art";
+
+/**
+ * Resolve `?type=` to the value the query and the links both use.
+ *
+ * Returns the sentinel or a real ecosystem verbatim, and falls back to the
+ * default for absent OR unrecognised input — a stale `?type=v6` lands on the
+ * art shelf rather than silently reopening the mixed catalogue.
+ */
+export function normalizeEcosystemParam(value: string | undefined): string {
+  if (value === ALL_ECOSYSTEMS) return ALL_ECOSYSTEMS;
+  if (isEcosystem(value)) return value;
+  return DEFAULT_ECOSYSTEM;
+}
+
 export type PriceBand = {
   key: string;
   label: string;
