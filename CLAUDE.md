@@ -52,28 +52,40 @@ records what shipped, and lists what genuinely remains.
 - `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
   `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
   next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
-- **NOT done in this repo — `public/` is empty.** `git ls-files public` returns
-  **0**. The uploaded ZIP this repo was imported from was exported without
-  `public/`, so every one of the 62 slots resolves to a file that does not
-  exist. Each deploy logs
-  `bootstrap: imported 0 site image(s) into Blob` with `ENOENT` for all 25
-  files, and the storefront renders with no photography at all. An earlier
-  version of this section claimed the masters were committed and marked the
-  work "Done"; that is what stopped anyone noticing.
-- **Everything needed to produce them IS here.** Do not regenerate:
-  - all 24 assets + the video carry a `keeper` (20 `a`, 4 `b`), so the cull is
-    already made — `docs/media-v3-review/` holds the five contact sheets it was
-    made from, and they are committed;
-  - `src/lib/media-v3-blur.json` holds 25 real LQIP entries, which only a
-    completed `masters` run could have produced;
-  - every keeper has a candidate URL in the manifest.
-- **To finish it: run `.github/workflows/fetch-media-v3.yml` with mode
-  `masters`** (skip `candidates` — the cull is done), then
-  `.github/workflows/fetch-media-v3-video.yml` with mode `masters` for the
-  process hero. Both commit their output to the branch they run on.
-  This needs **GitHub Actions minutes**, which the account currently lacks —
-  and it must run there rather than in a session, because the Higgsfield CDN
-  answers 403 to a sandbox's egress policy (verified again 2026-08-31).
+- **DONE — `public/` is committed** (2026-08-31, 242 files, 22 MB). The owner
+  supplied the directory that the imported ZIP had been exported without, and
+  it is now tracked. Verified rather than assumed before committing: all 25
+  files match `src/lib/media-v3-blur.json`'s recorded `width`/`height`
+  **exactly**, and regenerating each LQIP from the shipped file reproduces the
+  committed `blurDataURL` byte-for-byte for 24 of 25. The 25th is
+  `process-pour-poster`, cut from the video by ffmpeg — it is the same frame
+  within encoder noise (mean pixel difference 9.1 against its own file, versus
+  30.8 for the *nearest different* master and 55.4 median), not a different
+  picture.
+- **Before this, everything was green while the site had no photography.** The
+  resolver is total by construction, the build never resolves these runtime
+  strings, and the design and a11y audits checked alt text rather than whether a
+  picture arrived — so all 62 slots 400'd from `/_next/image` and no gate said a
+  word. Three guards close that hole and are the reason it cannot recur:
+  `site-images.test.ts` now asserts each fallback is **on disk** (it previously
+  asserted only that the string began with `/`, under a comment promising the
+  file was checked in); `bundled-media.test.ts` covers the tracks deliberately
+  outside the slot registry — the 121 scrub frames, `CANONICAL_CATEGORIES[].image`,
+  the manifest icon and the LQIP manifest; and `redesign-audit.mjs` fails on any
+  **bundled** image that finished loading with `naturalWidth === 0`. That last
+  rule is scoped to `public/`-derived roots on purpose: catalog photography sits
+  on supplier hosts this repo does not control, and failing a PR for their
+  downtime would be a gate nobody could act on.
+- **If the masters ever need rebuilding**, everything required is still here and
+  regeneration is NOT needed: all 24 assets + the video carry a `keeper`
+  (20 `a`, 4 `b`), `docs/media-v3-review/` holds the five contact sheets the
+  cull was made from, and every keeper has a candidate URL in the manifest.
+  Those CDN URLs were **re-verified alive on 2026-08-31** — a server-side fetch
+  retrieved all four sets (17–51 MB each) eight days after generation — so
+  `node scripts/media-v3-fetch.mjs` on any machine with ordinary internet still
+  works. It cannot run inside a session: the Higgsfield CDN answers 403 to the
+  agent proxy's egress policy, and that is an organization policy denial to
+  report, not to route around.
 - **Wired.** 58 of the 62 slots default to these masters. Four keep what they
   had: `home.maker` and `about.maker` (§15.2 — the maker is never AI, and
   `site-images-import.test.ts` records that the file behind them is itself a

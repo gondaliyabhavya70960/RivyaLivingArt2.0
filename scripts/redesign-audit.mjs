@@ -18,7 +18,22 @@
  * review rather than a test — the selector cannot tell a hairline from a
  * headline — so it prints as a note and a human decides.
  */
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
+
 import { launchChromium } from "./lib/browser.mjs";
+
+/**
+ * Site-root prefixes served from `public/` — the assets this repository ships
+ * and is therefore accountable for. Derived from the directory rather than
+ * hardcoded, so a new asset folder is gated the day it appears. `uploads` is
+ * excluded: it is gitignored owner-uploaded media, absent in a fresh checkout.
+ */
+const BUNDLED_ROOTS = readdirSync(join(import.meta.dirname, "..", "public"), {
+  withFileTypes: true,
+})
+  .filter((e) => e.name !== "uploads")
+  .map((e) => (e.isDirectory() ? `/${e.name}/` : `/${e.name}`));
 
 const [routesArg, ...rest] = process.argv.slice(2);
 if (!routesArg) {
@@ -84,7 +99,7 @@ for (const route of routesArg.split(",")) {
     continue;
   }
 
-  const audit = await page.evaluate(() => {
+  const audit = await page.evaluate((BUNDLED_ROOTS) => {
     const main = document.querySelector("main") ?? document.body;
 
     // Only VISIBLE headings: several components server-render two
@@ -330,7 +345,46 @@ for (const route of routesArg.split(",")) {
           return triple(cs.color) === champagne && paintsOwnText(el);
         }).length;
 
+    /* Did the pictures this repo ships actually ARRIVE?
+       Every other rule here reads markup, so the whole audit passed green over
+       12 routes at two widths while the site rendered no photography at all —
+       `public/` was missing from the imported ZIP, all 62 image slots resolved
+       to a file that was not there, and `/_next/image` answered 400 for every
+       one of them. The markup was immaculate; there were simply no pictures.
+
+       A decoded image reports naturalWidth > 0; one that finished loading and
+       failed reports 0. Images still in flight have complete === false and are
+       not counted, so this never fires on a slow network — the caller has
+       already scrolled the page end to end, which starts every lazy request.
+
+       Scoped to BUNDLED assets on purpose. Catalog photography lives on
+       supplier hosts (Shopify CDN, kanhakreation, Cloudinary) that this repo
+       does not control and `next.config.ts` deliberately renders unoptimized;
+       failing a PR because a supplier's CDN blinked would be a gate nobody can
+       act on, and it would cry wolf on any run without egress to those hosts.
+       The roots come from `public/` itself, so a new asset directory is
+       covered the day it is added. */
+    const brokenImages = [...document.images]
+      .filter((img) => img.complete && img.naturalWidth === 0 && img.currentSrc !== "")
+      .map((img) => {
+        const raw = img.currentSrc || img.src;
+        try {
+          const parsed = new URL(raw, location.href);
+          if (parsed.origin !== location.origin) return null;
+          const inner = parsed.searchParams.get("url");
+          // next/image proxies through /_next/image?url=… — an absolute inner
+          // URL is a remote host being optimized, still not ours to gate on.
+          if (inner && !inner.startsWith("/")) return null;
+          const path = decodeURIComponent(inner ?? parsed.pathname);
+          return BUNDLED_ROOTS.some((root) => path.startsWith(root)) ? path : null;
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
     return {
+      brokenImages: [...new Set(brokenImages)],
       h1Count: h1s.length,
       h1Text: h1s.map((h) => h.text),
       skipped,
@@ -348,7 +402,7 @@ for (const route of routesArg.split(",")) {
         document.documentElement.scrollWidth -
         document.documentElement.clientWidth,
     };
-  });
+  }, BUNDLED_ROOTS);
 
   if (audit.h1Count !== 1) {
     report("FAIL", `${audit.h1Count} <h1> (must be exactly 1): ${audit.h1Text.join(" | ")}`);
@@ -373,6 +427,12 @@ for (const route of routesArg.split(",")) {
   }
   if (audit.overflow > 1) {
     report("FAIL", `horizontal overflow ${audit.overflow}px`);
+  }
+  if (audit.brokenImages.length) {
+    report(
+      "FAIL",
+      `${audit.brokenImages.length} image(s) failed to load — ${audit.brokenImages.slice(0, 4).join(", ")}${audit.brokenImages.length > 4 ? ", …" : ""}`,
+    );
   }
   if (audit.missingAlt > 0) {
     report("FAIL", `${audit.missingAlt} <img> with no alt attribute`);

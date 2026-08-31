@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -24,9 +27,24 @@ describe("the slot registry", () => {
   it("gives every slot a bundled default that lives in the repo", () => {
     // The whole safety story rests on this: an unset slot, a deleted row and a
     // database outage all resolve to a file that is checked in.
+    //
+    // The filesystem assertion is the load-bearing half, and it was missing.
+    // This test asserted only that the string began with "/" while its own
+    // comment promised the file was checked in — so `public/` being absent
+    // from the imported ZIP took all 62 slots down to a 400 from the image
+    // optimizer while every gate stayed green: the resolver is total by
+    // construction, the build never resolves these runtime strings, and the
+    // design and a11y audits check alt text rather than whether a picture
+    // actually arrived.
     for (const slot of SLOTS) {
-      expect(SITE_IMAGE_FALLBACKS[slot.key as SiteImageKey]).toBe(slot.fallback);
+      expect(SITE_IMAGE_FALLBACKS[slot.key as SiteImageKey]).toBe(
+        slot.fallback,
+      );
       expect(slot.fallback.startsWith("/")).toBe(true);
+      expect(
+        existsSync(join(process.cwd(), "public", slot.fallback)),
+        `${slot.key} → public${slot.fallback} is not in the repo`,
+      ).toBe(true);
     }
   });
 
