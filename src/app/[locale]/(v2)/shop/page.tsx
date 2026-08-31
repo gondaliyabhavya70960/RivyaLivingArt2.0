@@ -27,6 +27,9 @@ import {
   parseShopPage,
   resolveAfterCursor,
   type ShopCategoryOption,
+  CATALOG_GROUPS,
+  isEcosystem,
+  normalizeEcosystemParam,
   type ShopFilters,
   type ShopPage,
   type SortKey,
@@ -134,7 +137,7 @@ function shopHref(filters: ShopFilters, sort: SortKey, page: number): string {
  * as real links so they are crawlable and keyboard-native.
  */
 const CATEGORY_TABS = [
-  { key: "all", href: "/shop", type: undefined, category: undefined },
+  { key: "all", href: "/shop?type=all", type: "all", category: undefined },
   { key: "art", href: "/shop?type=art", type: "art", category: undefined },
   {
     key: "gifts",
@@ -193,9 +196,15 @@ export default async function ShopPage({
   const params = await searchParams;
   const sortParam = first(params.sort);
   const sort: SortKey = isSortKey(sortParam) ? sortParam : DEFAULT_SORT;
+  // `/shop` leads with the art ecosystem; supplies and 3D printing keep their
+  // own tabs and category pages, and `?type=all` restores the mixed view.
+  // `requestedType` stays the raw URL value because `hasFilters` below decides
+  // whether this request can use the shared 300s cache — resolving the default
+  // into it would make every bare /shop look filtered and lose that cache.
+  const requestedType = first(params.type);
   const filters = {
     q: first(params.q),
-    type: first(params.type),
+    type: normalizeEcosystemParam(requestedType),
     category: first(params.category),
     occasion: first(params.occasion),
     band: first(params.band),
@@ -210,7 +219,7 @@ export default async function ShopPage({
   const after = requestedPage > 1 ? undefined : first(params.after);
   const hasFilters = Boolean(
     filters.q ||
-    filters.type ||
+    requestedType ||
     filters.category ||
     filters.occasion ||
     filters.band ||
@@ -262,7 +271,22 @@ export default async function ShopPage({
     print: t("tabPrint"),
   } as const;
 
-  const stripCollections = categoryOptions.slice(0, STRIP_LIMIT);
+  // The collection strip follows the active ecosystem. `categoryOptions` is
+  // the whole catalogue in curated `order`, so an unfiltered slice always
+  // showed the first twelve art categories — which read as the shop's
+  // collections even while the grid below was showing molds and filament.
+  // Hoisted to a const so the type guard still narrows inside the closure
+  // below — narrowing on `filters.type` does not survive the callback.
+  const ecosystem = isEcosystem(filters.type) ? filters.type : undefined;
+  const stripCollections = (
+    ecosystem
+      ? categoryOptions.filter((option) =>
+          (CATALOG_GROUPS[ecosystem].slugs as readonly string[]).includes(
+            option.slug,
+          ),
+        )
+      : categoryOptions
+  ).slice(0, STRIP_LIMIT);
 
   const activeTab =
     CATEGORY_TABS.find(
@@ -270,9 +294,10 @@ export default async function ShopPage({
         tab.type === filters.type &&
         (tab.category ?? undefined) === filters.category,
     )?.key ??
-    // A drawer-chosen collection is still "browsing the shop" — ALL stays lit
-    // rather than leaving the whole row unmarked.
-    (filters.type || filters.category ? undefined : "all");
+    // A drawer-chosen collection is still "browsing the shop" — light the tab
+    // for the ecosystem it belongs to rather than leaving the row unmarked.
+    // `filters.type` is always set now, so this resolves for every request.
+    CATEGORY_TABS.find((tab) => tab.type === filters.type)?.key;
 
   return (
     <>

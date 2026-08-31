@@ -6,6 +6,7 @@ import { localize } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
 import {
   CATALOG_GROUPS,
+  DEFAULT_ECOSYSTEM,
   isEcosystem,
   PRICE_BANDS,
   type ShopFilters,
@@ -16,10 +17,14 @@ import {
 // components import the filter vocabulary from "@/lib/shop-filters" and may
 // take TYPE-ONLY imports from here (erased at compile time).
 export {
+  ALL_ECOSYSTEMS,
+  CATALOG_GROUPS,
+  DEFAULT_ECOSYSTEM,
   DEFAULT_SORT,
   ECOSYSTEMS,
   isEcosystem,
   isSortKey,
+  normalizeEcosystemParam,
   OCCASIONS,
   PRICE_BANDS,
   SORTS,
@@ -596,7 +601,11 @@ export const fetchDefaultShopFirstPage = unstable_cache(
   async (locale: string, sort: SortKey): Promise<DefaultShopFirstPage> => {
     const [page, categories] = await Promise.all([
       fetchProductsPageAt({
-        where: buildProductWhere({}),
+        // The DEFAULT view, so it carries the default ecosystem. This is the
+        // one query the page reaches without passing its resolved filters —
+        // leaving it as `buildProductWhere({})` is what made `/shop` keep
+        // serving the mixed catalogue after `?type=` gained a default.
+        where: buildProductWhere({ type: DEFAULT_ECOSYSTEM }),
         sort,
         page: 1,
         locale,
@@ -608,7 +617,11 @@ export const fetchDefaultShopFirstPage = unstable_cache(
   // Key bumped to -v2 with the move to the offset path: the cached VALUE
   // gained `page`/`totalPages`, and an entry written by the previous shape
   // would leave the pager without a page count for up to the 300s TTL.
-  ["shop-default-first-page-v2"],
+  //
+  // -v3: the value now holds the ART ecosystem rather than every product. A
+  // -v2 entry would serve the mixed catalogue — molds, pigments and filament
+  // on the shop's front door — for up to 300s after deploy.
+  ["shop-default-first-page-v3"],
   { revalidate: 300, tags: [SHOP_FIRST_PAGE_TAG] },
 );
 
