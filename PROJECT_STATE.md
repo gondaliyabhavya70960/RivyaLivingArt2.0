@@ -18,9 +18,10 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2a — art-first storefront: COMPLETE**
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
+**Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
-**Phase 2 is closed.**
+**Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
 
 ## CURRENT MILESTONE
 
@@ -39,41 +40,104 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**Phase 2 is complete. Start Phase 2d, below — the highest-value item is the `/search` handoff.**
+**Nothing is queued.** Phase 2d closed the last evidenced defect. What remains is Phase 2e —
+five decisions that belong to the owner (below), plus the LQIP wiring, which is the only sizeable
+piece of engineering still on the list and is a REDESIGN.md §15.5 requirement rather than a bug.
 
 ---
 
-## Phase 2d — the backlog Phase 2 surfaced but did not close
+## Phase 2d — shop coherence and the staged-media hole: DONE (2026-08-31)
 
-Found by a six-probe audit on 2026-08-31 and deliberately NOT bundled into the imagery commit: an
-asset commit whose design audit goes red must be attributable to the assets. Each is real and
-evidenced; none is started.
+Six changes, all evidenced against the live catalogue and all verified by reproducing the defect
+first. **Corrected figure:** an earlier note here said `/search` lost "~98%" of its hits. Measured,
+it is 55–89% depending on the term — still a broken promise on every query, but the number was an
+estimate and it was wrong.
 
-**Phase 2a fallout — the shop default changed, but not everything that links into it.**
-1. **`/search` counts the whole 4,373-row catalogue, then hands the visitor to a shelf that drops
-   ~98% of those hits.** A search that reports N results and delivers a fraction is the most
-   visible of these. Highest value.
-2. **The homepage "Featured pieces" band reads `buildProductWhere({})`** (`page.tsx:132-138`) —
-   the exact unconstrained clause Phase 2a fixed in `fetchDefaultShopFirstPage`. It renders art
-   today only *by luck*: all 12 `featured` rows happen to be art. Feature one pigment set and the
-   band contradicts the hero directly above it. One-word fix (`{ type: DEFAULT_ECOSYSTEM }`), but
-   it changes what products a page shows, so it wants its own PR and a look.
-3. **Breadcrumbs on supplies/print pages point "Shop" at the art shelf** — the trail no longer
-   walks back up. Same class of one-line fix; `groupForCategorySlug` is already imported.
-4. Some CTAs still promise "all pieces" / "the full collection" while linking to the art shelf.
+### 1 · `/search` promised what `/shop` could not deliver
 
-**Spec debt.**
-5. **§15.5's 20px LQIP is committed but wired to nothing.** `src/lib/media-v3-blur.json` holds 25
-   real entries and `grep -rn "media-v3-blur" src/` returns zero hits. The join is
-   `blurEntry.src === slot.fallback`, covering 59 of 62 slots (the 3 misses are the two maker
-   photos and the hero video — all deliberate). Verified safe against §2.7's "no image fades in":
-   next/image's blur placeholder emits **no** `transition`, so it does not fade. ~15 files.
-6. **`media-usages.ts` does not scan `SiteImage.draft`** — a staged-media deletion hole, and
-   CLAUDE.md records this exact header rule being broken three times already.
-7. **`scripts/media-v3-fetch.mjs:192` overwrites rather than merges `media-v3-blur.json`**, so a
-   re-run drops the video poster's LQIP entry.
-8. **`.github/workflows/mirror-images.yml` says in its own header it is "safe to delete once the
-   images are committed."** They are now.
+`/search` searches the whole catalogue; `/shop` has opened on the art ecosystem since Phase 2a. So
+"Show all 619" for `pigment` landed on a shelf holding **one** product, and `filament` landed on
+**none**. The handoff now carries `&type=all`, restoring the destination's superset property.
+
+| term | promised | before | after |
+|---|---|---|---|
+| filament | 1,162 | **0** | full page |
+| pigment | 619 | **1** | full page |
+| keychain | 77 | 7 | full page |
+| resin | 1,668 | 23 | 23 |
+| table | 996 | 12 | 16 |
+
+`resin` and `table` barely move, because of a **second, independent defect**: `/shop?q=` matches
+title and `shortTagline` only — and `shortTagline` is empty on all 4,373 published rows — while
+`/search` also reads `description` and expands synonyms. That one changes filtering behaviour, so it
+is the owner's call; see OPEN QUESTIONS.
+
+Shipped **with** query-preserving ecosystem tabs, deliberately. `CATEGORY_TABS` hrefs were constant
+strings, so pivoting ecosystem dropped `?q=` in both directions — `&type=all` alone would have
+landed the visitor somewhere they could not leave without retyping. `q` and `sort` now travel;
+`category`/`occasion`/`band`/`stock` do not, because carrying one across composes an unsatisfiable
+AND (`?type=supplies&category=gift-collections`).
+
+### 2 · The staged half of every image slot could be deleted
+
+`media-usages.ts` scanned `SiteImage.url` but not `SiteImage.draft`. A save on that surface writes
+only the draft, so a staged picture was invisible to the delete guard: deleting it broke the staff
+preview at once and the public page at the next Publish, which copies `draft.url` into `url` without
+re-checking. **Reproduced before fixing** — `staged -> NOT FOUND (delete would be allowed)` — and
+confirmed after: `staged -> [ 'Site image · home.hero (staged)' ]`.
+
+`readStagedImage` moved to a pure `src/lib/site-image-draft.ts`. It had been trapped in a
+`server-only` module, which is *why* the guard could not reuse it; it now has six unit tests.
+
+### 3 · Three smaller ones, same bug class
+
+- **Homepage "Featured pieces"** read `buildProductWhere({})` — the identical unconstrained clause
+  Phase 2a fixed in `fetchDefaultShopFirstPage`. It rendered art only because all 12 `featured` rows
+  happen to be art; featuring one pigment set would have put sanding kits under a commission-led
+  hero. No visible change today (verified: top-4 identical).
+- **`shopHref` wrote `type` unconditionally**, so every page-1 link was `/shop?type=art` — renders
+  identically to `/shop`, disagrees with the canonical, and misses the 300s first-page bundle.
+- **`hasActiveFilters` counted the resolved default**, so "Clear all" rendered on an unfiltered
+  `/shop` and `emptyCatalogHeading` was unreachable.
+
+### 4 · `media-v3-fetch.mjs` dropped the video poster's LQIP on every re-run
+
+It started from `{}` and looped the 24 image assets, silently dropping the 25th entry written by
+`media-v3-video-fetch.mjs`. Now seeds from disk. **Proven:** before → 24 entries, poster absent;
+after → 25, byte-identical to the committed file.
+
+---
+
+## Phase 2e — OPEN QUESTIONS for the owner (do not decide these unilaterally)
+
+Each is a real product or SEO judgement call, not an oversight.
+
+1. **Should `/shop?q=` search descriptions?** It matches titles only today, which is why `resin`
+   still shows 23 of 1,668. The GIN trigram index already exists
+   (`20260820120000_search_trgm_description`), so it is cheap — but it changes what the shop returns,
+   which §1.1 puts off-limits without a human.
+2. **The "Show all N pieces" label.** Every locale uses an art word — "pieces", "कृतियाँ",
+   "કૃતિઓ", "作品" — while N counts the whole catalogue, so it now points at a mixed shelf. Keep the
+   number, or move to a non-quantified label? The latter is a nine-language rewrite.
+3. **Breadcrumbs on supplies/print pages** put "Shop" at `/shop`, the art shelf, so the trail does
+   not walk back up. Recommended: make the visible crumb group-aware but leave the `BreadcrumbList`
+   JSON-LD on `/shop`, since the filtered URL declares itself non-canonical.
+4. **Canonicals for `?type=supplies|print|all`** — self-canonical, or facets of one page? An
+   indexation strategy decision, not 2a cleanup.
+5. **Pre-2a `/shop?category=<non-art>` bookmarks** now return zero rows.
+
+### Still open, unchanged
+- **`.env.example`** omits `DATABASE_URL_UNPOOLED` and `RESEND_FROM`; `.env*` edits are denied in
+  this environment, so the owner must add them.
+- **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
+  current-state docs.
+- **LQIP wiring** (REDESIGN.md §15.5): `media-v3-blur.json` holds 25 real entries and is still
+  imported by nothing. The join must key on the **resolved** URL, not the slot fallback — an owner
+  override would otherwise paint master A's blur under photograph B. Verified safe against §2.7
+  ("no image fades in"): next/image's blur placeholder emits no CSS transition. ~11 call sites.
+- **`.github/workflows/mirror-images.yml`** says in its own header it is safe to delete now the
+  images are committed. **Naming hazard:** `src/app/api/cron/mirror-images/route.ts` and
+  `vercel.json` are a LIVE production cron with almost the same name — do not grep-delete.
 
 ---
 

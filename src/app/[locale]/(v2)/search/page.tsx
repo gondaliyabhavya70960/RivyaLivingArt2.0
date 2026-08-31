@@ -13,6 +13,7 @@ import { CatalogProductCard } from "@/components/storefront/catalog-product-card
 import { SITE } from "@/lib/constants";
 import { localize } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
+import { ALL_ECOSYSTEMS } from "@/lib/shop-filters";
 import {
   MAX_QUERY,
   MIN_QUERY,
@@ -284,9 +285,19 @@ export default async function SearchPage({
                 {products.total > productItems.length && (
                   // The full filterable set lives on the shop — hand the
                   // query over instead of paginating the utility page.
+                  //
+                  // `type=all` is load-bearing, not decoration. This page
+                  // searches the WHOLE catalogue, but `/shop` opens on the art
+                  // ecosystem (Phase 2a), so a bare handoff promised a number
+                  // it could not deliver: "show all 619" for `pigment` landed
+                  // on a shelf holding exactly one product, and `filament`
+                  // landed on none at all. The sentinel restores the
+                  // destination's superset property, and because tier maps 1:1
+                  // to ecosystem and the default sort is `featured, tier`, the
+                  // mixed shelf still opens on the studio's own work.
                   <div className="mt-8">
                     <Link
-                      href={`/shop?q=${encodeURIComponent(query)}`}
+                      href={`/shop?q=${encodeURIComponent(query)}&type=${ALL_ECOSYSTEMS}`}
                       className="inline-flex min-h-11 items-center gap-1.5 rounded-input font-body text-14 font-medium text-sapphire underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
                     >
                       {t("productsShowMore", { total: products.total })}
