@@ -16,6 +16,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 0.5 — baseline defect fixes: COMPLETE**
 **Phase 1 — brand rename: COMPLETE**
 **Phase 2a — art-first storefront: COMPLETE**
+**Phase 2b — commission-led copy (homepage + metadata): COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
 ## CURRENT MILESTONE
@@ -98,17 +99,38 @@ them is itself a generation, which is the owner's to replace with a real photogr
 
 ---
 
-## AFTER IMAGERY — Phase 2b, commission-led copy (decision D5)
+## Phase 2b — DONE for the homepage; the rest of the surface remains
 
-The storefront still describes the old proposition; the hero eyebrow reads
-*"custom resin art · 3D printing · made to order"*. English first in `messages/en.json`, then
-`node scripts/site-copy-registry.mjs` (a CI gate — `copy:check` fails when stale), then translate
-the batch into all 8 locales with `scripts/i18n-missing.mjs` as the gate (currently 0 missing).
+The homepage proposition and its metadata now lead with commissions, in all nine locales:
 
-Scope by namespace rather than all at once — 1,181 leaf keys across 30 namespaces
-(Shop 311, Homepage 151, Site chrome 120, Commission 114). Start with Homepage + site metadata.
+| Key | Was | Now |
+|---|---|---|
+| `Home.hero.eyebrow` | custom resin art · 3d printing · made to order | large-format commissions · resin art · made to order |
+| `Home.hero.lead` | "crafts bespoke resin art, personalized gifts and 3D-printed pieces" | "makes large resin work to commission — tables, wall panels and preservation pieces… alongside a collection of smaller pieces ready to order" |
+| `Home.meta.title` | Luxury Custom Resin Art & 3D Printing | Commissioned Resin Art & Large-Format Work |
+| `Home.meta.description` | rewritten to the same framing | |
 
-Still open from earlier phases:
+`Home.hero.headline` ("Liquid luxury, cast forever.") was kept — it is brand-defining and carries
+no product claim.
+
+**The voice was not invented.** The `LargeFormat` namespace already described commissioning large
+work honestly in every locale ("Commission large-format resin work in India — tables, surfaces,
+wall panels and sculptural pieces, designed around your room and poured to order"). The homepage
+was brought into line with the page the site already had, and each translator was told to reuse
+that namespace's established terminology rather than coin new terms.
+
+**Remaining Phase 2b surface**, in rough order of value: `Shop` (311 slots), `Site chrome` (120),
+`Commission` (114), `About`, `Process`. Same workflow every time — English first in
+`messages/en.json`, then `node scripts/site-copy-registry.mjs` (a CI gate: `copy:check` fails when
+stale), then translate the batch into all 8 locales with `scripts/i18n-missing.mjs` as the gate.
+
+**A design question this raised, deliberately NOT actioned:** the hero's primary CTA is still
+"Explore the collection" → `/shop`, with "Commission a piece" → `/custom-order` as the secondary.
+Under commission-led positioning those arguably swap. That is a REDESIGN.md decision about button
+treatment (and interacts with §3.1's max-two-champagne-per-viewport rule), not a copy fix, so it is
+the owner's call rather than something to change in a copy pass.
+
+Still open from earlier phases:Still open from earlier phases:
 - **`.env.example`** omits `DATABASE_URL_UNPOOLED` and `RESEND_FROM`; `.env*` edits are denied in
   this environment, so the owner must add them.
 - **`happy-dom` → `devDependencies`**, and decide on `three` (zero imports today).

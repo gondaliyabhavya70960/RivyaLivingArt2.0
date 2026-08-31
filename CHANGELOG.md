@@ -5,6 +5,63 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 2b: the homepage leads with commissions, in nine languages
+
+Implements decision **D5**. The storefront said it sold "custom resin art and 3D printing"; it now
+says it makes large resin work to commission, with a smaller catalogue behind it.
+
+### Changed — four keys × nine locales
+`Home.hero.eyebrow`, `Home.hero.lead`, `Home.meta.title`, `Home.meta.description`.
+`Home.hero.headline` ("Liquid luxury, cast forever.") was kept: brand-defining, and it makes no
+product claim.
+
+### The voice was not invented
+The `LargeFormat` namespace already described commissioning large work honestly, in every
+language — *"Commission large-format resin work in India — tables, surfaces, wall panels and
+sculptural pieces, designed around your room and poured to order."* The homepage simply did not
+lead with it. Each translator was pointed at that namespace and told to reuse its established
+terminology rather than coin new terms, so the two pages now read as one writer.
+
+This also keeps the claim honest: the studio genuinely commissions tables and wall panels, and
+holds none in stock. The catalogue is the smaller ready pieces. No product was invented.
+
+### Fixed — a pre-existing bug the Gujarati translator caught
+`gu.json`'s `Home.hero.eyebrow` was still the **English** string
+(`"custom resin art · 3d printing · made to order"`) — the only one of nine locales with an
+untranslated eyebrow. `scripts/i18n-missing.mjs` confirms the fix: gu drops from 7
+English-identical strings to 6.
+
+### How it was produced
+Eight parallel translators, one per locale, each reading its own `messages/<loc>.json` first to
+match that file's register — then eight adversarial reviewers checking for meaning drift (does it
+imply stock?), convention breaks (is the brand or WhatsApp transliterated? is the eyebrow still a
+lowercase middot triplet?), register clash and SERP truncation. Six locales were corrected by
+review; two came back clean.
+
+Representative catches: the Chinese lead opened `以定制打造`, which garden-paths as verb-verb —
+corrected to the idiomatic `定制打造`. The Hindi lead coordinated a perfective past passive with a
+habitual present; corrected to match the habitual voice every comparable statement in `hi.json`
+already uses.
+
+### Verified
+- **All nine locales confirmed serving the new copy** by fetching each rendered page and matching
+  the exact strings — not by trusting the build.
+- Conventions asserted mechanically across all eight translations: brand and WhatsApp still Latin,
+  eyebrow still a three-part middot triplet.
+- `node scripts/i18n-missing.mjs` → **0 missing** in every locale.
+- `copy:check` (1,181 slots), typecheck, lint, 342 tests, production build.
+- 4 design audits (1440/390, LTR + RTL), 3 a11y audits, 2 studio audits over 30 routes,
+  Lighthouse 97/97/96/100. The longer strings — German and Hindi especially — introduce no
+  horizontal overflow at 390px.
+
+### Raised, not actioned
+The hero's primary CTA is still "Explore the collection"; "Commission a piece" is secondary. Under
+commission-led positioning those arguably swap — but that is a REDESIGN.md decision about button
+treatment, interacting with §3.1's champagne-per-viewport rule, so it is the owner's call and not a
+copy change.
+
+---
+
 ## [Unreleased] — Phase 2c investigation: the imagery is one workflow run away, not a regeneration
 
 Investigated why the site has no photography. **Nothing needs regenerating** — and the
