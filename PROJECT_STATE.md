@@ -76,8 +76,47 @@ Workflow, in this order — the registry step is a CI gate, not optional:
 - **Adding a site-image slot breaks two tests and a CI gate** unless done fully: the alt key must
   go through `scripts/site-copy-registry.mjs`, and `src/lib/site-images.test.ts` hard-codes slot
   counts (`withAlt` 42, `wide` 13).
-- **`public/` is empty** — 0 tracked files, never populated in git history. All 62 site-image slot
-  fallbacks point at files that do not exist in the repo.
+- **`public/` is empty — CONFIRMED IN PRODUCTION, not just inferred.** `git ls-files public` returns
+  0, and the Vercel production build for `4083d4b` logs
+  `bootstrap: imported 0 site image(s) into Blob; failed: <25 files>` with
+  `ENOENT ... /vercel/path0/public/media/v3/*.avif` for every one. 60 slot references point into
+  `/media/v3/`. **Every editorial image on the storefront resolves to a file that does not exist**,
+  which is why local screenshots render blank image areas. The import is non-fatal (it logs and
+  continues), so the build still succeeds — the site just has no photography.
+  Pre-existing: the uploaded ZIP shipped with an empty `public/`. This is Phase 2c's work, and
+  under decision D3 the fix is to generate NEW imagery for the new domain rather than to recover
+  the old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals.
+
+- **NOTHING currently verifies this project except local runs.** Both CI paths are down, for two
+  unrelated reasons, and an earlier version of this file wrongly called Vercel "the working CI" —
+  it is not.
+  - **GitHub Actions**: cannot allocate a runner (minutes/spending limit). Jobs die in ~2s with
+    `runner_id: 0` and no logs. The design, a11y, studio and Lighthouse audits run ONLY here, so
+    they have never executed in CI.
+  - **Vercel**: every build — preview and production alike — fails at `next build` with
+    `Invalid environment configuration: AUTH_SECRET is required` and
+    `NEXT_PUBLIC_SITE_URL: Invalid URL` (`src/lib/env.ts:50`, reached via `src/lib/db.ts:3`).
+  - **What Vercel DOES verify, and it is not nothing:** it gets through `prisma migrate deploy`
+    and `prisma/bootstrap.ts` against a live Neon database before failing, so migrations, the
+    seed, the four-tier import (4,373 products) and the portfolio seed are genuinely exercised on
+    the production path. The build and render path is not.
+  - Read the logs with `mcp__Vercel__get_deployment_build_logs`; project
+    `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+
+- **OWNER ACTION — two env vars unblock every Vercel build** (Settings → Environment Variables,
+  all environments): `AUTH_SECRET` (unset; any strong random string, `openssl rand -base64 32`) and
+  `NEXT_PUBLIC_SITE_URL` (currently fails `z.string().url()` — needs a full absolute URL with
+  scheme, e.g. `https://store.bhavyagondaliya.co.in`; it is `.optional()`, so clearing it also
+  passes). Neither is a code problem: `git log --all -- src/lib/env.ts` returns only the baseline
+  import commit.
+  Project `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+
+- **Production env vars were missing and are now set.** The first production deploy (Phase 1 merge,
+  `2382d02`) died at `Error: Connection url is empty` because the Vercel Production environment had
+  none of `DATABASE_URL_UNPOOLED` / `POSTGRES_URL_NON_POOLING` / `DATABASE_URL`. Not a code
+  regression — `prisma.config.ts` has only ever been touched by the baseline import. The next
+  production deploy (`4083d4b`) connects and reports `database already seeded`, so the variables
+  were added in between.
 - **`src/lib/media.ts` is dead code** — zero importers, holds 8 of the Cloudinary URLs. Deleting it
   changes nothing that renders.
 - **Categories do not nest.** `Category` has no `parentId`; grouping is presentation-only via
