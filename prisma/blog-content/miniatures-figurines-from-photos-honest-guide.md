@@ -66,4 +66,4 @@ Before commissioning, decide which of these you actually want, because they are 
 
 Bring your photos and your preferred style to a [custom order conversation](/custom-order), and ask to see the design before printing. A figurine commissioned with honest expectations does something remarkable: it stops being a print and becomes the small statue of your father that everyone picks up first when they visit.
 
-*Send your photos and the story behind them to ResinRiva on WhatsApp, and we'll tell you honestly what your miniature can be — and show you before we make it.*
+*Send your photos and the story behind them to Rivya Living Art on WhatsApp, and we'll tell you honestly what your miniature can be — and show you before we make it.*

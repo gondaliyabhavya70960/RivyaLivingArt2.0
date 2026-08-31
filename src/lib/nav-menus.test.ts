@@ -66,7 +66,7 @@ describe("describeHrefProblem", () => {
   });
 
   it("accepts external and contact schemes", () => {
-    expect(describeHrefProblem("https://instagram.com/resinriva")).toBeNull();
+    expect(describeHrefProblem("https://instagram.com/rivya-living-art")).toBeNull();
     expect(describeHrefProblem("mailto:hello@example.com")).toBeNull();
     expect(describeHrefProblem("tel:+919999999999")).toBeNull();
   });

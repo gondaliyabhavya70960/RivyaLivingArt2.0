@@ -86,7 +86,7 @@ async function main() {
         title: fm.title,
         excerpt: fm.excerpt,
         content: content as object,
-        authorName: "ResinRiva Studio",
+        authorName: "Rivya Living Art Studio",
         blogCategoryId: category.id,
         status: "PUBLISHED" as const,
         publishedAt,

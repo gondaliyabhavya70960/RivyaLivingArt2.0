@@ -71,4 +71,4 @@ You do not need a design. You need five sentences:
 
 From that, a studio can propose two or three directions with rough pricing, and you pick the one that made *you* smile first — because that is usually the one that will make them pause, turn it over, and ask where on earth you found it.
 
-*Have someone and an occasion in mind? Message ResinRiva on WhatsApp with your idea and the date, and we'll design a gift nobody has ever seen before.*
+*Have someone and an occasion in mind? Message Rivya Living Art on WhatsApp with your idea and the date, and we'll design a gift nobody has ever seen before.*

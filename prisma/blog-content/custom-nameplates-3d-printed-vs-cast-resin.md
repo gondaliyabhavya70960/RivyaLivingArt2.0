@@ -68,4 +68,4 @@ The quiet secret of this comparison is that the best nameplates increasingly ref
 
 Whichever way you choose, insist on seeing the design proof before making begins, and tell your maker honestly where the plate will live. A nameplate is read every single day for years; it deserves ten minutes of honest deciding.
 
-*Ready to put your name on the door? Message ResinRiva on WhatsApp at +91 70960 36250 with your door photo and we will recommend the right route.*
+*Ready to put your name on the door? Message Rivya Living Art on WhatsApp at +91 70960 36250 with your door photo and we will recommend the right route.*

@@ -1,6 +1,6 @@
 # 09 — Spec Reconciliation
 
-The uploaded *"ResinRiva Studio — Master CMS Spec (v2, merged)"* was written
+The uploaded *"Rivya Living Art Studio — Master CMS Spec (v2, merged)"* was written
 from a **crawl of the deployed site**, not from this repository. Its Part 1
 audit is careful and, where it is right, this plan adopts it wholesale. But a
 crawl cannot see `messages/en.json`, cannot see `site-images.ts`, and cannot

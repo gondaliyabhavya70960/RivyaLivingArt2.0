@@ -26,7 +26,7 @@ export async function sendContactNotification(
   if (!apiKey) return { sent: false };
 
   const text = [
-    "New inquiry from the ResinRiva contact form.",
+    "New inquiry from the Rivya Living Art contact form.",
     "",
     `Name: ${input.name}`,
     `Phone: ${input.phone}`,
@@ -92,7 +92,7 @@ export async function sendOrderNotification(
   const label = input.source === "PRODUCT" ? "product order" : "custom commission";
   const replyWa = `https://wa.me/${input.phone.replace(/[^0-9]/g, "")}`;
   const text = [
-    `New ${label} inquiry on ResinRiva.`,
+    `New ${label} inquiry on Rivya Living Art.`,
     "",
     `Customer: ${input.customerName}`,
     `Phone: ${input.phone}`,
@@ -141,8 +141,8 @@ function studioFrom(): string {
   if (process.env.EMAIL_FROM) return process.env.EMAIL_FROM;
   if (process.env.RESEND_FROM) return process.env.RESEND_FROM;
   const domain = process.env.RESEND_EMAIL_DOMAIN?.trim();
-  if (domain) return `ResinRiva Studio <studio@${domain}>`;
-  return "ResinRiva Studio <onboarding@resend.dev>";
+  if (domain) return `Rivya Living Art Studio <studio@${domain}>`;
+  return "Rivya Living Art Studio <onboarding@resend.dev>";
 }
 
 /**
@@ -171,27 +171,27 @@ export async function sendPasswordResetEmail(input: {
   const text = [
     `Hi ${greetingName},`,
     "",
-    "We received a request to reset your ResinRiva Studio password.",
+    "We received a request to reset your Rivya Living Art Studio password.",
     "Open the link below to choose a new one. It expires in one hour.",
     "",
     input.resetUrl,
     "",
     "If you didn't request this, you can safely ignore this email.",
     "",
-    "— ResinRiva Studio",
+    "— Rivya Living Art Studio",
   ].join("\n");
 
   // Palette pulled from BRAND so a brand retune updates the token layer and this
   // transactional email together instead of drifting (DS-706).
   const html = `
   <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:${BRAND.navyMidnight}">
-    <p style="font-size:22px;font-weight:600;color:${BRAND.royal};margin:0 0 24px">ResinRiva<span style="color:${BRAND.gold}">.</span></p>
+    <p style="font-size:22px;font-weight:600;color:${BRAND.royal};margin:0 0 24px">Rivya Living Art<span style="color:${BRAND.gold}">.</span></p>
     <p style="margin:0 0 12px">Hi ${greetingName},</p>
-    <p style="margin:0 0 20px;line-height:1.6">We received a request to reset your ResinRiva Studio password. Choose a new one using the button below. This link expires in one hour.</p>
+    <p style="margin:0 0 20px;line-height:1.6">We received a request to reset your Rivya Living Art Studio password. Choose a new one using the button below. This link expires in one hour.</p>
     <p style="margin:0 0 28px"><a href="${input.resetUrl}" style="display:inline-block;background:${BRAND.royal};color:${BRAND.ivory};text-decoration:none;padding:12px 28px;border-radius:9999px;font-weight:500">Reset password</a></p>
     <p style="margin:0 0 8px;font-size:13px;color:${BRAND.mutedInk};line-height:1.6">If the button doesn't work, paste this link into your browser:<br /><a href="${input.resetUrl}" style="color:${BRAND.royal};word-break:break-all">${input.resetUrl}</a></p>
     <p style="margin:24px 0 0;font-size:13px;color:${BRAND.mutedInk};line-height:1.6">If you didn't request this, you can safely ignore this email — your password will stay the same.</p>
-    <p style="margin:24px 0 0;font-size:13px;color:${BRAND.mutedInk}">— ResinRiva Studio</p>
+    <p style="margin:24px 0 0;font-size:13px;color:${BRAND.mutedInk}">— Rivya Living Art Studio</p>
   </div>`;
 
   try {
@@ -204,7 +204,7 @@ export async function sendPasswordResetEmail(input: {
       body: JSON.stringify({
         from: studioFrom(),
         to: [input.to],
-        subject: "Reset your ResinRiva Studio password",
+        subject: "Reset your Rivya Living Art Studio password",
         html,
         text,
       }),

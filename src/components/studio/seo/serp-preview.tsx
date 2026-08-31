@@ -20,7 +20,7 @@ const DESCRIPTION_FLOOR = 70;
  * anything here.
  *
  * **The suffix is the point.** `src/app/shared-metadata.ts:14` sets the title
- * template to `%s · ResinRiva`, so a page title is never rendered alone: the
+ * template to `%s · Rivya Living Art`, so a page title is never rendered alone: the
  * separator and brand are appended at build time and count against the same
  * budget. Editing a 58-character title against a 60-character budget looks
  * fine and ships truncated. This previews the FULL rendered string and
@@ -46,7 +46,7 @@ export function SerpPreview({
   const trimmedDescription = description.trim();
 
   // The homepage default carries its own brand and gets no template applied;
-  // everything else is `%s · ResinRiva`.
+  // everything else is `%s · Rivya Living Art`.
   const full = trimmedTitle ? `${trimmedTitle} · ${SITE.name}` : "";
   const overTitle = full.length > TITLE_BUDGET;
   const noDescription = trimmedDescription.length === 0;

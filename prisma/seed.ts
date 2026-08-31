@@ -155,7 +155,7 @@ const FAQS: { question: string; answer: string }[] = [
 const PRIVACY_MD = `
 ## Who we are
 
-ResinRiva is a made-to-order resin art and 3D-printing studio, and this website — store.bhavyagondaliya.co.in — is our online showcase. This policy explains what information we collect when you use the site, why we collect it, and the choices you have. We have kept it in plain language on purpose: if anything is unclear, you are always welcome to ask us directly on WhatsApp.
+Rivya Living Art is a made-to-order resin art and 3D-printing studio, and this website — store.bhavyagondaliya.co.in — is our online showcase. This policy explains what information we collect when you use the site, why we collect it, and the choices you have. We have kept it in plain language on purpose: if anything is unclear, you are always welcome to ask us directly on WhatsApp.
 
 ## What we collect
 
@@ -181,7 +181,7 @@ We do not use your details for unsolicited marketing, and we do not add you to m
 
 ## No payments on this website
 
-This website does not process payments. All payments are arranged personally on WhatsApp after your quote is confirmed. We never collect or store card numbers, UPI PINs, banking passwords or any other payment credentials — not on this site, and never in chat. If anyone claiming to represent ResinRiva asks for such details, please do not share them and let us know.
+This website does not process payments. All payments are arranged personally on WhatsApp after your quote is confirmed. We never collect or store card numbers, UPI PINs, banking passwords or any other payment credentials — not on this site, and never in chat. If anyone claiming to represent Rivya Living Art asks for such details, please do not share them and let us know.
 
 ## Where your information is stored
 
@@ -215,7 +215,7 @@ If our practices change, we will update this page and revise the "last updated" 
 
 ## Contact us
 
-ResinRiva
+Rivya Living Art
 Email: gondaliyabhavya70960@gmail.com
 WhatsApp: +91 7096036250
 Website: store.bhavyagondaliya.co.in
@@ -224,7 +224,7 @@ Website: store.bhavyagondaliya.co.in
 const TERMS_MD = `
 ## The nature of our service
 
-ResinRiva — store.bhavyagondaliya.co.in — is a showcase website for made-to-order resin art, personalized gifts, 3D-printed pieces and workshop sessions. The site itself has no online checkout: every order is finalized personally on WhatsApp, where we confirm your customizations, quote, timeline and delivery details before any work begins. By placing an inquiry or ordering with us, you agree to these terms.
+Rivya Living Art — store.bhavyagondaliya.co.in — is a showcase website for made-to-order resin art, personalized gifts, 3D-printed pieces and workshop sessions. The site itself has no online checkout: every order is finalized personally on WhatsApp, where we confirm your customizations, quote, timeline and delivery details before any work begins. By placing an inquiry or ordering with us, you agree to these terms.
 
 ## Quotes & payment
 
@@ -248,7 +248,7 @@ Because each piece is made uniquely to your specifications, we do not accept ret
 
 ## Intellectual property
 
-Our designs, techniques, photographs and website content remain the property of ResinRiva. Buying a piece gives you the piece — not the right to reproduce the design commercially or to have it reproduced elsewhere. We may photograph commissioned work for our portfolio and social media; if you would prefer your commission stays private, just tell us on WhatsApp and we will not publish it.
+Our designs, techniques, photographs and website content remain the property of Rivya Living Art. Buying a piece gives you the piece — not the right to reproduce the design commercially or to have it reproduced elsewhere. We may photograph commissioned work for our portfolio and social media; if you would prefer your commission stays private, just tell us on WhatsApp and we will not publish it.
 
 ## Workshop bookings
 
@@ -262,7 +262,7 @@ These terms are governed by the laws of India, and any dispute arising from an o
 
 Questions about these terms, an order, or anything else:
 
-ResinRiva
+Rivya Living Art
 Email: gondaliyabhavya70960@gmail.com
 WhatsApp: +91 7096036250
 Website: store.bhavyagondaliya.co.in
@@ -323,7 +323,7 @@ async function main() {
     update: {},
     create: {
       id: "main",
-      brandName: "ResinRiva",
+      brandName: "Rivya Living Art",
       tagline: "Luxury custom resin art & 3D printing, made to order in India",
       announcement:
         "Made-to-order luxury resin art — every order finalized personally on WhatsApp",
@@ -334,7 +334,7 @@ async function main() {
       address: "",
       socials: {},
       defaultSeo: {
-        title: "ResinRiva — Luxury Custom Resin Art & 3D Printing",
+        title: "Rivya Living Art — Luxury Custom Resin Art & 3D Printing",
         description:
           "Bespoke resin art, personalized gifts, nameplates, wedding keepsakes and custom 3D printing — handcrafted to order in India.",
       },
@@ -350,7 +350,7 @@ async function main() {
     content: (await markdownToTiptap(PRIVACY_MD)) as Prisma.InputJsonValue,
     seoTitle: "Privacy Policy",
     seoDescription:
-      "How ResinRiva handles your inquiry details — what we collect, why, and your rights. No payments are ever collected on this site.",
+      "How Rivya Living Art handles your inquiry details — what we collect, why, and your rights. No payments are ever collected on this site.",
   };
   await db.page.upsert({
     where: { slug: "privacy" },
@@ -363,7 +363,7 @@ async function main() {
     content: (await markdownToTiptap(TERMS_MD)) as Prisma.InputJsonValue,
     seoTitle: "Terms & Conditions",
     seoDescription:
-      "Terms for ordering bespoke resin art, keepsakes and workshops from ResinRiva — quotes, timelines, shipping, returns and more.",
+      "Terms for ordering bespoke resin art, keepsakes and workshops from Rivya Living Art — quotes, timelines, shipping, returns and more.",
   };
   await db.page.upsert({
     where: { slug: "terms" },

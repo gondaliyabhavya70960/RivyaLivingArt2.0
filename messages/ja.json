@@ -43,7 +43,7 @@
     "breadcrumb": "パンくずリスト",
     "skipToContent": "コンテンツへスキップ",
     "close": "閉じる",
-    "whatsappChatLabel": "WhatsApp で ResinRiva とチャット（新しいタブで開きます）",
+    "whatsappChatLabel": "WhatsApp で Rivya Living Art とチャット（新しいタブで開きます）",
     "pauseMotion": "アニメーションを一時停止",
     "playMotion": "アニメーションを再生",
     "pagination": {
@@ -56,7 +56,7 @@
     "resumeAnnouncements": "お知らせの切り替えを再開",
     "copyLink": "リンクをコピー",
     "linkCopied": "リンクをコピーしました",
-    "logoHome": "ResinRiva — ホーム",
+    "logoHome": "Rivya Living Art — ホーム",
     "dismissAnnouncement": "お知らせを閉じる",
     "announcementDefault": "現在の製作期間 · 小さな作品 7〜10日 · 大きな作品 3〜6週間"
   },
@@ -73,7 +73,7 @@
   },
   "Footer": {
     "tagline": "手作りのレジンアート、オーダーメイド。",
-    "rights": "© {year} ResinRiva. 無断転載・複製を禁じます。",
+    "rights": "© {year} Rivya Living Art. 無断転載・複製を禁じます。",
     "explore": "探索",
     "studio": "工房",
     "contact": "お問い合わせ",
@@ -85,11 +85,11 @@
     "findStudio": "工房を訪ねる",
     "chatOnWhatsApp": "WhatsApp でチャット",
     "blurb": "少量ずつ、手仕事で。一つひとつが受け継がれる宝物です。",
-    "socialInstagram": "ResinRiva の Instagram（新しいタブで開きます）",
-    "socialFacebook": "ResinRiva の Facebook（新しいタブで開きます）",
-    "socialYoutube": "ResinRiva の YouTube（新しいタブで開きます）",
-    "socialPinterest": "ResinRiva の Pinterest（新しいタブで開きます）",
-    "socialWhatsapp": "ResinRiva の WhatsApp（新しいタブで開きます）",
+    "socialInstagram": "Rivya Living Art の Instagram（新しいタブで開きます）",
+    "socialFacebook": "Rivya Living Art の Facebook（新しいタブで開きます）",
+    "socialYoutube": "Rivya Living Art の YouTube（新しいタブで開きます）",
+    "socialPinterest": "Rivya Living Art の Pinterest（新しいタブで開きます）",
+    "socialWhatsapp": "Rivya Living Art の WhatsApp（新しいタブで開きます）",
     "madeIn": "インド製",
     "journal": "ジャーナル",
     "ctaEyebrow": "ビスポーク制作",
@@ -103,13 +103,13 @@
   },
   "Home": {
     "meta": {
-      "title": "ResinRiva — 高級オーダーメイドレジンアート & 3D プリンティング",
+      "title": "Rivya Living Art — 高級オーダーメイドレジンアート & 3D プリンティング",
       "description": "深い海の青をたたえた、オーダーメイドのレジンアート、パーソナライズギフト、3D プリント作品。少量生産で一つひとつ手作りし、WhatsApp でご注文いただけます。生涯手元に残る、受け継がれる宝物を。"
     },
     "hero": {
       "eyebrow": "オーダーメイドレジンアート · 3D プリンティング · 受注生産",
       "headline": "液体の贅沢を、永遠のかたちに。",
-      "lead": "ResinRiva は、深い海の青をたたえたオーダーメイドのレジンアート、パーソナライズギフト、3D プリント作品をお作りします。一つひとつ手で流し込み、あなただけのために仕立て、WhatsApp で手軽にご注文いただけます。生涯手元に残る、受け継がれる宝物を。",
+      "lead": "Rivya Living Art は、深い海の青をたたえたオーダーメイドのレジンアート、パーソナライズギフト、3D プリント作品をお作りします。一つひとつ手で流し込み、あなただけのために仕立て、WhatsApp で手軽にご注文いただけます。生涯手元に残る、受け継がれる宝物を。",
       "ctaExplore": "コレクションを見る",
       "ctaBespoke": "作品を依頼する",
       "badgeHand": "手作業で流し込み",
@@ -187,7 +187,7 @@
       "reassurance": "このサイトでのお支払いはありません。価格は、何かを流し込む前に WhatsApp で決めます。"
     },
     "why": {
-      "heading": "ResinRiva が選ばれる理由",
+      "heading": "Rivya Living Art が選ばれる理由",
       "badge": "インド製",
       "pillar1Title": "手作り",
       "pillar1Copy": "すべての作品は、少量生産で一つひとつ手作業により流し込み、固定し、磨き上げています。大量生産は一切行いません。",
@@ -307,7 +307,7 @@
     "maker": {
       "eyebrow": "作り手",
       "heading": "ひと組の手から生まれます。",
-      "body": "ResinRiva のどの作品も、最初の流し込みから3000番の最後のひと磨きまで、同じ手を通り抜けます。ここに生産ラインはありません。あるのは一台の作業台と、いくつもの型と、作品に必要なだけの時間だけです。",
+      "body": "Rivya Living Art のどの作品も、最初の流し込みから3000番の最後のひと磨きまで、同じ手を通り抜けます。ここに生産ラインはありません。あるのは一台の作業台と、いくつもの型と、作品に必要なだけの時間だけです。",
       "cta": "作り手に会う",
       "imageAlt": "工房の作業台で、硬化したレジンの面を磨く手"
     }
@@ -315,12 +315,12 @@
   "Process": {
     "meta": {
       "title": "制作プロセス",
-      "description": "ResinRiva のご注文が形になるまで——最初の WhatsApp でのご相談から、幾重にも重ねる流し込み、手作業での仕上げ、そしてインド全土への追跡配送まで。"
+      "description": "Rivya Living Art のご注文が形になるまで——最初の WhatsApp でのご相談から、幾重にも重ねる流し込み、手作業での仕上げ、そしてインド全土への追跡配送まで。"
     },
     "hero": {
       "eyebrow": "制作プロセス",
       "headline": "アイデアから、受け継がれる宝物へ。",
-      "lead": "最初のメッセージから、作品があなたの手に届くまで。急がない六つのステップ。ResinRiva のご注文がどのように形になり、そして実際にどれほどの時間がかかるのか、ありのままにお伝えします。"
+      "lead": "最初のメッセージから、作品があなたの手に届くまで。急がない六つのステップ。Rivya Living Art のご注文がどのように形になり、そして実際にどれほどの時間がかかるのか、ありのままにお伝えします。"
     },
     "timeline": {
       "heading": "近道のない、六つのステップ",
@@ -392,17 +392,17 @@
   "About": {
     "meta": {
       "title": "私たちについて",
-      "description": "ResinRiva の物語——インドで、海の青をたたえた受け継がれる作品を、一点ずつ手がける受注生産のレジンアート工房。"
+      "description": "Rivya Living Art の物語——インドで、海の青をたたえた受け継がれる作品を、一点ずつ手がける受注生産のレジンアート工房。"
     },
     "hero": {
       "eyebrow": "工房について",
       "headline": "レジンに、敬意を込めて。",
-      "lead": "ResinRiva は、インドの受注生産のレジンアート工房です。あなたにとって最も大切なもの——お花、写真、人生の節目——を、ガラスのように澄んだ深みの中に留めることに心を注ぐ、小さな工房です。"
+      "lead": "Rivya Living Art は、インドの受注生産のレジンアート工房です。あなたにとって最も大切なもの——お花、写真、人生の節目——を、ガラスのように澄んだ深みの中に留めることに心を注ぐ、小さな工房です。"
     },
     "story": {
       "heading": "私たちの物語",
-      "imageAlt": "ResinRiva の工房で手作りされた、プリザーブドフラワーのレジンフレーム",
-      "p1": "ResinRiva は、たった一人の作家の工房から始まりました。一台の作業台と、注がれたレジンを光が通り抜けるさまへの静かな憧れ。ご注文を一つひとつ重ねながら成長してきましたが、その仕事のしかたは始まりのときのまま——一度に一点ずつ、すべての工程が同じ丁寧な手を通り抜けていきます。",
+      "imageAlt": "Rivya Living Art の工房で手作りされた、プリザーブドフラワーのレジンフレーム",
+      "p1": "Rivya Living Art は、たった一人の作家の工房から始まりました。一台の作業台と、注がれたレジンを光が通り抜けるさまへの静かな憧れ。ご注文を一つひとつ重ねながら成長してきましたが、その仕事のしかたは始まりのときのまま——一度に一点ずつ、すべての工程が同じ丁寧な手を通り抜けていきます。",
       "p2": "色彩は、海から生まれました。サファイア、紺碧、そして深海の青——私たちの手がけるほとんどすべての作品に流れています。水が光を重ねるように幾重にも重ねられた、真の深みをたたえた色。金は、あしらいとしてだけ姿を見せます。縁にきらめく一筋、青を貫く繊細な脈として。",
       "p3": "私たちは大量生産をせず、在庫も持ちません。すべてのご注文は WhatsApp でのご相談から始まり——あなたのアイデア、参考資料、ご予算——世界のどこにも存在しない、たった一つの作品として完成します。",
       "eyebrow": "私たちの物語"
@@ -445,7 +445,7 @@
     },
     "maker": {
       "eyebrow": "作り手のご紹介",
-      "heading": "ResinRiva を率いるのは Bhavya Gondaliya です",
+      "heading": "Rivya Living Art を率いるのは Bhavya Gondaliya です",
       "body": "すべてのお問い合わせ、スケッチ、そして流し込みが、作り手の手を通り抜けていきます。工房にメッセージをお送りいただくとき、あなたが言葉を交わしているのは、実際にあなたの作品を作り上げるその人です。仲介も、生産ラインもありません。ただ、あなたとあなたの作家との対話があるだけです。",
       "cta": "ごあいさつする",
       "name": "バヴィヤ・ゴンダリヤ",
@@ -479,12 +479,12 @@
   "Workshops": {
     "meta": {
       "title": "ワークショップ",
-      "description": "ResinRiva 工房が開く、実践型のレジンアートワークショップ。少人数制、材料はすべて込み、初心者も安心。WhatsApp でお席をご予約ください。"
+      "description": "Rivya Living Art 工房が開く、実践型のレジンアートワークショップ。少人数制、材料はすべて込み、初心者も安心。WhatsApp でお席をご予約ください。"
     },
     "hero": {
       "eyebrow": "技を学ぶ",
       "headline": "はじめての傑作を、注いでみましょう。",
-      "lead": "ResinRiva 工房で行う、実践型のレジンアート教室。ご自分で混ぜ、色をつけ、流し込み、まるごとあなただけの一点を持ち帰れます。",
+      "lead": "Rivya Living Art 工房で行う、実践型のレジンアート教室。ご自分で混ぜ、色をつけ、流し込み、まるごとあなただけの一点を持ち帰れます。",
       "cta": "ワークショップを相談する"
     },
     "intro": {
@@ -570,7 +570,7 @@
   "CustomOrder": {
     "meta": {
       "title": "オーダーメイド",
-      "description": "ResinRiva のオーダーメイドレジンアートをご依頼ください。アイデア、ご予算、ご希望の納期をお聞かせいただければ、WhatsApp でご一緒にデザインを形にします。インドで一点ずつ受注生産でお作りします。"
+      "description": "Rivya Living Art のオーダーメイドレジンアートをご依頼ください。アイデア、ご予算、ご希望の納期をお聞かせいただければ、WhatsApp でご一緒にデザインを形にします。インドで一点ずつ受注生産でお作りします。"
     },
     "page": {
       "heroEyebrow": "オーダーメイドのご依頼",
@@ -712,7 +712,7 @@
   "Contact": {
     "meta": {
       "title": "お問い合わせ",
-      "description": "ResinRiva のスタジオへ、お電話・WhatsApp・メール、またはお問い合わせフォームからお気軽にご連絡ください。WhatsApp が最も早く、通常は数時間以内にお返事いたします。"
+      "description": "Rivya Living Art のスタジオへ、お電話・WhatsApp・メール、またはお問い合わせフォームからお気軽にご連絡ください。WhatsApp が最も早く、通常は数時間以内にお返事いたします。"
     },
     "page": {
       "heroEyebrow": "スタジオへのご連絡",
@@ -741,7 +741,7 @@
       "studioMeta": "10時–20時（IST）",
       "mapActivate": "地図を表示する",
       "mapNote": "お求めのときだけ Google Maps を読み込みます",
-      "mapFrameTitle": "ResinRiva の工房の地図",
+      "mapFrameTitle": "Rivya Living Art の工房の地図",
       "formEyebrow": "お便りを書く",
       "formHeading": "工房にひとこと送る",
       "formIntro": "すべて作り手に直接届きます。受付の順番待ちも、自動応答もありません。"
@@ -791,7 +791,7 @@
   "Faq": {
     "meta": {
       "title": "よくあるご質問",
-      "description": "オーダーメイドのレジンアート、ご依頼、納期、お手入れについて、よくいただくご質問へのお答えを、ResinRiva のスタジオから直接お届けします。"
+      "description": "オーダーメイドのレジンアート、ご依頼、納期、お手入れについて、よくいただくご質問へのお答えを、Rivya Living Art のスタジオから直接お届けします。"
     },
     "heroEyebrow": "よくいただくご質問",
     "heroHeadline": "ご質問に、お答えします。",
@@ -816,12 +816,12 @@
   "Shop": {
     "meta": {
       "title": "ショップ",
-      "description": "ResinRiva の受注制作コレクションをご覧ください。ラグジュアリーなレジンアート、パーソナライズされたギフト、3Dプリント作品を、細部までカスタマイズし、WhatsApp でご注文いただけます。",
+      "description": "Rivya Living Art の受注制作コレクションをご覧ください。ラグジュアリーなレジンアート、パーソナライズされたギフト、3Dプリント作品を、細部までカスタマイズし、WhatsApp でご注文いただけます。",
       "titlePaged": "ショップ — {page} ページ"
     },
-    "categoryMetaDescription": "ResinRiva スタジオの受注制作 {category}。細部までカスタマイズし、WhatsApp でご注文いただけます。",
+    "categoryMetaDescription": "Rivya Living Art スタジオの受注制作 {category}。細部までカスタマイズし、WhatsApp でご注文いただけます。",
     "heroEyebrow": "コレクション",
-    "heroHeadline": "ResinRiva ショップ",
+    "heroHeadline": "Rivya Living Art ショップ",
     "heroLead": "すべての作品は受注制作です。お好きな一点を選び、あなたの物語に合わせてカスタマイズし、WhatsApp のやり取りだけで仕上げまでお決めいただけます。",
     "tabsAria": "ジャンルから探す",
     "tabAll": "すべて",
@@ -854,7 +854,7 @@
     "emptyFilteredBody": "フィルターを解除してお試しいただくか、オーダーメイドをご依頼ください。あなたの物語に寄り添い、あなたのペースでお作りします。",
     "emptyCatalogEyebrow": "受注制作",
     "emptyCatalogHeading": "最初の作品を、いま流し込んでいます",
-    "emptyCatalogBody": "ResinRiva の作品はすべて受注制作です。いますぐオーダーメイドをご依頼いただくか、WhatsApp でメッセージをお送りください。最初の一歩からお手伝いします。",
+    "emptyCatalogBody": "Rivya Living Art の作品はすべて受注制作です。いますぐオーダーメイドをご依頼いただくか、WhatsApp でメッセージをお送りください。最初の一歩からお手伝いします。",
     "clearFilters": "フィルターを解除",
     "commissionCta": "オーダーメイドを依頼する",
     "quickViewAria": "クイックビュー：{title}",
@@ -946,7 +946,7 @@
   "Search": {
     "meta": {
       "title": "検索",
-      "description": "ResinRiva の受注制作作品、ジャーナルの記事、ポートフォリオのストーリーを検索できます。"
+      "description": "Rivya Living Art の受注制作作品、ジャーナルの記事、ポートフォリオのストーリーを検索できます。"
     },
     "heroEyebrow": "あなたの一点を見つける",
     "heroHeadline": "スタジオを検索",
@@ -964,14 +964,14 @@
     "sectionCount": "{count, plural, one {# 件} other {# 件}}",
     "zeroEyebrow": "まだありません",
     "zeroHeading": "その一点は、まだ生まれていません。",
-    "zeroBody": "ResinRiva の作品はすべて受注制作。カタログは、ほんの始まりにすぎません。思い描いていること――色、お名前、サイズ――をお聞かせください。あなたのために、丁寧にお作りします。",
+    "zeroBody": "Rivya Living Art の作品はすべて受注制作。カタログは、ほんの始まりにすぎません。思い描いていること――色、お名前、サイズ――をお聞かせください。あなたのために、丁寧にお作りします。",
     "zeroWhatsappCta": "WhatsApp でご相談ください",
     "browseShop": "ショップを見る",
     "emptyEyebrow": "どこからでもどうぞ",
     "emptyHeading": "何をお探しですか？",
     "emptyBody": "作品名（「表札」「時計」）、シーン（「記念日」）、素材（「レジン」）でお試しいただくか、そのままコレクションへどうぞ。",
     "productsShowMore": "ショップにある {total, plural, one {全 # 点の作品} other {全 # 点の作品}}を見る",
-    "zeroWhatsappMessage": "ResinRiva様、サイトで「{query}」を検索しましたが見つかりませんでした。同じようなものを作っていただけますか？\n（{site} より送信）",
+    "zeroWhatsappMessage": "Rivya Living Art様、サイトで「{query}」を検索しましたが見つかりませんでした。同じようなものを作っていただけますか？\n（{site} より送信）",
     "overlay": {
       "dialogLabel": "サイト内検索",
       "label": "検索",
@@ -1003,7 +1003,7 @@
     "meta": {
       "title": "ブログ",
       "titlePaged": "ブログ — {page} ページ",
-      "description": "ResinRiva スタジオからのノート。制作の記録、素材の研究、受注制作のレジンアートにまつわるストーリーをお届けします。"
+      "description": "Rivya Living Art スタジオからのノート。制作の記録、素材の研究、受注制作のレジンアートにまつわるストーリーをお届けします。"
     },
     "journalFallbackCategory": "ジャーナル",
     "minRead": "{minutes} 分で読めます",
@@ -1041,7 +1041,7 @@
   "Portfolio": {
     "meta": {
       "title": "ポートフォリオ",
-      "description": "ResinRiva スタジオが手がけた実際のご依頼。ビフォーアフターの変化、プリザーブドフラワー、カスタムレジン作品を、一つひとつのストーリーとともにご紹介します。",
+      "description": "Rivya Living Art スタジオが手がけた実際のご依頼。ビフォーアフターの変化、プリザーブドフラワー、カスタムレジン作品を、一つひとつのストーリーとともにご紹介します。",
       "titlePaged": "ポートフォリオ — {page}ページ目",
       "notFound": "ご依頼作品が見つかりません"
     },
@@ -1081,7 +1081,7 @@
       "ctaBody": "このページにある物語はすべて、一通のメッセージから始まりました。あなたの物語をお聞かせください――花、写真、人生の節目。次の一点を、あなたのために流し込みます。",
       "ctaWhatsApp": "WhatsApp で相談する",
       "ctaCustomOrder": "カスタムオーダーを始める",
-      "commissionWhatsappMessage": "ResinRiva様、ポートフォリオで「{title}」を拝見し、同じような作品をオーダーしたいと思っています。\n（{site} より送信）",
+      "commissionWhatsappMessage": "Rivya Living Art様、ポートフォリオで「{title}」を拝見し、同じような作品をオーダーしたいと思っています。\n（{site} より送信）",
       "caseStudy": {
         "briefHeading": "ご依頼内容",
         "processHeading": "制作プロセス",
@@ -1127,8 +1127,8 @@
     }
   },
   "WhatsApp": {
-    "greeting": "ResinRiva様、カスタムレジンアートについて詳しく知りたいです。",
-    "intro": "ResinRiva様、\n以下を注文したいです：",
+    "greeting": "Rivya Living Art様、カスタムレジンアートについて詳しく知りたいです。",
+    "intro": "Rivya Living Art様、\n以下を注文したいです：",
     "product": "商品",
     "budget": "予算",
     "timeline": "納期",
@@ -1179,7 +1179,7 @@
   "Wishlist": {
     "meta": {
       "title": "ウィッシュリスト",
-      "description": "ResinRiva をご覧になりながら保存した作品の一覧。この端末に保存され、WhatsApp でいつでもスタジオに共有できます。"
+      "description": "Rivya Living Art をご覧になりながら保存した作品の一覧。この端末に保存され、WhatsApp でいつでもスタジオに共有できます。"
     },
     "heroEyebrow": "あなたの候補リスト",
     "heroHeadline": "保存した作品",
@@ -1195,7 +1195,7 @@
     "browseCta": "コレクションを見る",
     "shareLead": "候補リストをスタジオにお送りください。詳細・価格・お届けまでの日程を、WhatsApp のやり取りひとつでご確認いただけます。",
     "shareCta": "WhatsApp で共有する",
-    "waIntro": "こんにちは、ResinRiva さん。サイトでこちらの作品を候補に選びました：",
+    "waIntro": "こんにちは、Rivya Living Art さん。サイトでこちらの作品を候補に選びました：",
     "waMore": "…ほかに保存した作品が {count, plural, one {# 点} other {# 点}}あります。",
     "waSentFrom": "（{host} より送信）"
   },
@@ -1274,7 +1274,7 @@
     },
     "oosCta": "再入荷について WhatsApp で問い合わせる",
     "oosSummaryNote": "在庫についてのお問い合わせ——この作品は現在在庫切れです。",
-    "oosWaIntro": "ResinRiva様、\nこちらの作品は現在在庫切れとのことですが、再入荷について伺いたいです：",
+    "oosWaIntro": "Rivya Living Art様、\nこちらの作品は現在在庫切れとのことですが、再入荷について伺いたいです：",
     "notFound": "作品が見つかりません",
     "draftPreview": "下書きプレビュー — このリンクを持つスタッフのみがこのページを閲覧できます。",
     "careHeading": "お手入れと保管",
@@ -1337,7 +1337,7 @@
     "leadTimeMadeToOrder": "受注制作",
     "ctaCustomize": "この作品をカスタマイズ",
     "ctaWhatsApp": "WhatsApp で相談する",
-    "waAsk": "ResinRiva様、「{title}」について伺いたいです。",
+    "waAsk": "Rivya Living Art様、「{title}」について伺いたいです。",
     "sections": {
       "pieceEyebrow": "この作品",
       "detailsEyebrow": "詳細",

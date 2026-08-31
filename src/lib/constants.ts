@@ -1,5 +1,5 @@
 export const SITE = {
-  name: "ResinRiva",
+  name: "Rivya Living Art",
   tagline: "Luxury custom resin art & 3D printing, made to order in India",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://store.bhavyagondaliya.co.in",
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "917096036250",

@@ -59,4 +59,4 @@ Broad, honest ranges: simple single-piece accessories such as cable keepers or a
 
 The best briefs we receive don't name a product at all. They name a frustration: "my earphones are always tangled," "my monitor is too low," "my desk looks chaotic on calls." Bring the annoyance, a photo and a measuring tape, and the [custom order conversation](/custom-order) does the rest — the object that solves it is often better than the one you would have asked for.
 
-*Send ResinRiva a photo of your desk on WhatsApp along with what annoys you most about it, and we'll propose a piece designed to fix exactly that.*
+*Send Rivya Living Art a photo of your desk on WhatsApp along with what annoys you most about it, and we'll propose a piece designed to fix exactly that.*

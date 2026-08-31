@@ -1,10 +1,10 @@
-# SEO_GUIDE.md — ResinRiva SEO System
+# SEO_GUIDE.md — Rivya Living Art SEO System
 
-How ResinRiva is found on Google — the metadata system, structured data, sitemaps, and the content strategy that compounds on top of them. Editable SEO fields have shipped since Phase 5; the site-wide plumbing (sitemap, robots, manifest, JSON-LD, OG images) lands with the Phase 10 launch work and is documented here as the launch state.
+How Rivya Living Art is found on Google — the metadata system, structured data, sitemaps, and the content strategy that compounds on top of them. Editable SEO fields have shipped since Phase 5; the site-wide plumbing (sitemap, robots, manifest, JSON-LD, OG images) lands with the Phase 10 launch work and is documented here as the launch state.
 
 ## 1. Metadata system
 
-- Every route uses the **Next.js Metadata API**. The root layout sets `metadataBase` to `https://store.bhavyagondaliya.co.in`, a default title ("ResinRiva — Luxury Custom Resin Art & 3D Printing"), a `%s · ResinRiva` title template, and the default description.
+- Every route uses the **Next.js Metadata API**. The root layout sets `metadataBase` to `https://store.bhavyagondaliya.co.in`, a default title ("Rivya Living Art — Luxury Custom Resin Art & 3D Printing"), a `%s · Rivya Living Art` title template, and the default description.
 - **Per-entity SEO fields**, editable in the Studio on each item's form:
   - **Products** — `seoTitle`, `seoDescription`, `ogImage` (custom share image)
   - **Blog posts** — `seoTitle`, `seoDescription`
@@ -32,7 +32,7 @@ Structured data rendered server-side, using **only the exact business facts**:
 
 | Schema type | Where | Notes |
 |---|---|---|
-| `Organization` | site-wide | ResinRiva, logo, `https://store.bhavyagondaliya.co.in`, social profiles |
+| `Organization` | site-wide | Rivya Living Art, logo, `https://store.bhavyagondaliya.co.in`, social profiles |
 | `LocalBusiness` | site-wide / contact | phone `+91 7096036250`, email `gondaliyabhavya70960@gmail.com`, maps `https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6` |
 | `Product` | product pages | name, images, description, INR price range (`priceCurrency: INR`) matching the visible band; omitted when the product hides its price |
 | `Article` | blog posts | headline, cover, author, publish date |
@@ -43,7 +43,7 @@ Structured data rendered server-side, using **only the exact business facts**:
 
 - **`sitemap.ts`** — dynamic: home and the static public pages, plus every **published** product, category, blog post, portfolio item, and page, with `lastModified` from the database. Drafts and needs-rewrite items never appear.
 - **`robots.ts`** — allows everything public; disallows **`/api`** only; links the sitemap. `/studio` is deliberately **not** robots-disallowed: `next.config.ts` sets an `X-Robots-Tag: noindex, nofollow` header on `/studio/:path*`, and bots must be allowed to crawl it to see that header (a robots disallow would leave URL-only indexing possible).
-- **`manifest.ts`** — app name ResinRiva, `theme_color` **#1E4FD8** (Midnight Gild royal blue), and the app icon set.
+- **`manifest.ts`** — app name Rivya Living Art, `theme_color` **#1E4FD8** (Midnight Gild royal blue), and the app icon set.
 
 ## 5. Content strategy (the blog engine)
 
@@ -51,7 +51,7 @@ The blog is the topical-authority engine. Phase 11 seeds **50+ original posts** 
 
 ## 6. Beating competitor SEO
 
-The researched competitors (e.g. Poonam Shah Art) ship brand-name-only titles, no structured data, and no content engine. ResinRiva ships full per-page metadata, JSON-LD on every entity type, dynamic OG cards, a real sitemap, and a growing blog — each one a gap the competition leaves open.
+The researched competitors (e.g. Poonam Shah Art) ship brand-name-only titles, no structured data, and no content engine. Rivya Living Art ships full per-page metadata, JSON-LD on every entity type, dynamic OG cards, a real sitemap, and a growing blog — each one a gap the competition leaves open.
 
 ## 7. Performance = SEO
 
@@ -67,4 +67,4 @@ Core Web Vitals are a ranking input, and the budgets are hard: **LCP < 2.5s, INP
 
 - **/studio/seo** — the site-wide default title + description (used by search results and link previews whenever an item has no override), plus a checklist linking to where per-item SEO lives.
 - **Per item** — the SEO section at the bottom of every product, blog post, and page form.
-- Practical guidance: titles ≤ 60 characters with the key phrase first ("Ocean Wave Resin Serving Tray | ResinRiva"); descriptions 140–160 characters that read like an invitation, not a keyword list; one target phrase per page.
+- Practical guidance: titles ≤ 60 characters with the key phrase first ("Ocean Wave Resin Serving Tray | Rivya Living Art"); descriptions 140–160 characters that read like an invitation, not a keyword list; one target phrase per page.

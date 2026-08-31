@@ -77,7 +77,7 @@ export async function GET(request: Request): Promise<Response> {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="resinriva-scrape-${dateStamp()}.csv"`,
+      "Content-Disposition": `attachment; filename="rivya-living-art-scrape-${dateStamp()}.csv"`,
     },
   });
 }

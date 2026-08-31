@@ -364,7 +364,7 @@ Search  [ liquid                        ]   ☐ Only changed   ☐ Show interfac
     │ Liquid luxury, cast forever.                         │  28 / 80
     └──────────────────────────────────────────────────────┘
     Was: “Liquid luxury, cast forever.”            [Cancel] [Save]
-  Hero lead               ResinRiva crafts bespoke resin…     Default   [Edit]
+  Hero lead               Rivya Living Art crafts bespoke resin…     Default   [Edit]
 ▸ The signature (3)
 ▸ The collections (26)
 ```

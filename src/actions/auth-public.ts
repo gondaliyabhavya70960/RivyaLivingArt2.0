@@ -27,7 +27,7 @@ import { SITE } from "@/lib/constants";
  *
  *  • signUpFirstAdmin — creates the FIRST admin, and ONLY while the studio has
  *    zero users. This is a one-time owner bootstrap, NOT public/customer signup
- *    (ResinRiva has no customer accounts by design). Once any account exists it
+ *    (Rivya Living Art has no customer accounts by design). Once any account exists it
  *    is permanently closed and further staff are invited from Studio → Users.
  *  • requestPasswordReset / resetPassword — self-service reset with a hashed,
  *    single-use, one-hour token. Responses never reveal whether an email exists.

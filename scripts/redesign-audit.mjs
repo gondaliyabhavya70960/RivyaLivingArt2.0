@@ -222,18 +222,26 @@ for (const route of routesArg.split(",")) {
     }
 
     /* Part 15.5: "Alt text describes the picture, not the brand." The tell is
-       a brand name standing in for a description — `alt="ResinRiva luxury
+       a brand name standing in for a description — `alt="Rivya Living Art luxury
        resin art"` — not a brand name inside a real sentence, which is often
-       the most accurate thing to write. Four words or fewer with the brand in
-       them is the former; longer is the latter. Decorative images correctly
-       carry alt="". */
+       the most accurate thing to write. A short alt that is mostly the brand
+       is the former; longer is the latter. Decorative images correctly
+       carry alt="".
+
+       The threshold is brand-length-relative, not a bare 4. The old brand was
+       one word, so "four words or fewer" allowed the brand plus three of
+       description. "Rivya Living Art" is three words, so the same intent is
+       six. Hard-coding 4 against a three-word brand would flag every honest
+       alt that merely mentions it. The pattern matches on "rivya" alone so a
+       future short-form wordmark still trips the rule. */
+    const BRAND_WORDS = 3; // "Rivya Living Art"
     const brandAlts = [...main.querySelectorAll("img")]
       .map((i) => i.getAttribute("alt") ?? "")
       .filter(
         (a) =>
           a.length > 0 &&
-          /resinriva/i.test(a) &&
-          a.trim().split(/\s+/).length <= 4,
+          /rivya/i.test(a) &&
+          a.trim().split(/\s+/).length <= BRAND_WORDS + 3,
       );
 
     /* Champagne elements in the first viewport (§3.1: max two).

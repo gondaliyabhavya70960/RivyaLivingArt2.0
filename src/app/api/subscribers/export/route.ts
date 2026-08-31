@@ -37,7 +37,7 @@ export async function GET(): Promise<Response> {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="resinriva-subscribers-${stamp}.csv"`,
+      "Content-Disposition": `attachment; filename="rivya-living-art-subscribers-${stamp}.csv"`,
     },
   });
 }

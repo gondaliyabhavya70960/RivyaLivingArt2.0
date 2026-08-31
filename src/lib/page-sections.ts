@@ -203,7 +203,7 @@ const HOME: readonly SectionDef[] = [
   },
   {
     key: "why",
-    label: "Why ResinRiva",
+    label: "Why Rivya Living Art",
     description: "Four reasons, each with a picture.",
     hideable: true,
     movable: true,

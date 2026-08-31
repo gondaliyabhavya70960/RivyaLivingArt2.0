@@ -43,7 +43,7 @@
     "breadcrumb": "Navigationspfad",
     "skipToContent": "Zum Inhalt springen",
     "close": "Schließen",
-    "whatsappChatLabel": "Mit ResinRiva auf WhatsApp chatten (öffnet in neuem Tab)",
+    "whatsappChatLabel": "Mit Rivya Living Art auf WhatsApp chatten (öffnet in neuem Tab)",
     "pauseMotion": "Animationen pausieren",
     "playMotion": "Animationen abspielen",
     "pagination": {
@@ -56,7 +56,7 @@
     "resumeAnnouncements": "Ankündigungen fortsetzen",
     "copyLink": "Link kopieren",
     "linkCopied": "Link kopiert",
-    "logoHome": "ResinRiva — Startseite",
+    "logoHome": "Rivya Living Art — Startseite",
     "dismissAnnouncement": "Hinweis ausblenden",
     "announcementDefault": "Aktuelle Lieferzeit · Kleine Stücke 7–10 Tage · Große Stücke 3–6 Wochen"
   },
@@ -73,7 +73,7 @@
   },
   "Footer": {
     "tagline": "Handgefertigte Resin-Kunst, auf Bestellung gefertigt.",
-    "rights": "© {year} ResinRiva. Alle Rechte vorbehalten.",
+    "rights": "© {year} Rivya Living Art. Alle Rechte vorbehalten.",
     "explore": "entdecken",
     "studio": "Atelier",
     "contact": "Kontakt",
@@ -85,11 +85,11 @@
     "findStudio": "Unser Atelier finden",
     "chatOnWhatsApp": "Per WhatsApp chatten",
     "blurb": "Handgefertigt in kleinen Serien. Jedes Stück ein Erbstück.",
-    "socialInstagram": "ResinRiva auf Instagram (öffnet in neuem Tab)",
-    "socialFacebook": "ResinRiva auf Facebook (öffnet in neuem Tab)",
-    "socialYoutube": "ResinRiva auf YouTube (öffnet in neuem Tab)",
-    "socialPinterest": "ResinRiva auf Pinterest (öffnet in neuem Tab)",
-    "socialWhatsapp": "ResinRiva auf WhatsApp (öffnet in neuem Tab)",
+    "socialInstagram": "Rivya Living Art auf Instagram (öffnet in neuem Tab)",
+    "socialFacebook": "Rivya Living Art auf Facebook (öffnet in neuem Tab)",
+    "socialYoutube": "Rivya Living Art auf YouTube (öffnet in neuem Tab)",
+    "socialPinterest": "Rivya Living Art auf Pinterest (öffnet in neuem Tab)",
+    "socialWhatsapp": "Rivya Living Art auf WhatsApp (öffnet in neuem Tab)",
     "madeIn": "Hergestellt in Indien",
     "journal": "Journal",
     "ctaEyebrow": "maßanfertigungen",
@@ -103,13 +103,13 @@
   },
   "Home": {
     "meta": {
-      "title": "ResinRiva — Luxuriöse Resin-Kunst nach Maß & 3D-Druck",
+      "title": "Rivya Living Art — Luxuriöse Resin-Kunst nach Maß & 3D-Druck",
       "description": "Maßgefertigte Resin-Kunst, personalisierte Geschenke und 3D-gedruckte Stücke in tiefen Ozeanblautönen — handgefertigt in kleinen Serien und ganz einfach per WhatsApp bestellt. Ein Erbstück, das Sie für immer begleitet."
     },
     "hero": {
       "eyebrow": "individuelle resin-kunst · 3D-druck · auf bestellung gefertigt",
       "headline": "Flüssiger Luxus, für die Ewigkeit gegossen.",
-      "lead": "ResinRiva fertigt maßgeschneiderte Resin-Kunst, personalisierte Geschenke und 3D-gedruckte Stücke in tiefen Ozeanblautönen — von Hand gegossen, nur für Sie gefertigt und ganz einfach per WhatsApp bestellt. Ein Erbstück, das Sie für immer begleitet.",
+      "lead": "Rivya Living Art fertigt maßgeschneiderte Resin-Kunst, personalisierte Geschenke und 3D-gedruckte Stücke in tiefen Ozeanblautönen — von Hand gegossen, nur für Sie gefertigt und ganz einfach per WhatsApp bestellt. Ein Erbstück, das Sie für immer begleitet.",
       "ctaExplore": "Die Kollektion entdecken",
       "ctaBespoke": "Stück beauftragen",
       "badgeHand": "von hand gegossen",
@@ -187,7 +187,7 @@
       "reassurance": "Keine Zahlung auf dieser Website — der Preis wird auf WhatsApp vereinbart, bevor der erste Guss beginnt."
     },
     "why": {
-      "heading": "Warum ResinRiva",
+      "heading": "Warum Rivya Living Art",
       "badge": "Hergestellt in Indien",
       "pillar1Title": "Handgefertigt",
       "pillar1Copy": "Jedes Stück wird in kleinen Serien von Hand gegossen, gesetzt und poliert — niemals in Massenproduktion.",
@@ -307,7 +307,7 @@
     "maker": {
       "eyebrow": "der mensch dahinter",
       "heading": "Von einem einzigen Paar Hände gemacht.",
-      "body": "Jedes ResinRiva-Stück geht durch dieselben Hände, vom ersten Guss bis zum letzten Zug mit Körnung 3000. Es gibt hier keine Fertigungsstraße — nur eine Werkbank, ein paar Gussformen und die Zeit, die ein Stück braucht.",
+      "body": "Jedes Rivya Living Art-Stück geht durch dieselben Hände, vom ersten Guss bis zum letzten Zug mit Körnung 3000. Es gibt hier keine Fertigungsstraße — nur eine Werkbank, ein paar Gussformen und die Zeit, die ein Stück braucht.",
       "cta": "Zur Person dahinter",
       "imageAlt": "Hände polieren eine ausgehärtete Resin-Oberfläche an der Werkbank"
     }
@@ -315,12 +315,12 @@
   "Process": {
     "meta": {
       "title": "Unser Prozess",
-      "description": "Wie eine ResinRiva-Auftragsarbeit entsteht — vom ersten WhatsApp-Gespräch über geschichtete Güsse und die Veredelung von Hand bis zur nachverfolgbaren Lieferung innerhalb Indiens."
+      "description": "Wie eine Rivya Living Art-Auftragsarbeit entsteht — vom ersten WhatsApp-Gespräch über geschichtete Güsse und die Veredelung von Hand bis zur nachverfolgbaren Lieferung innerhalb Indiens."
     },
     "hero": {
       "eyebrow": "unser prozess",
       "headline": "Von der Idee zum Erbstück.",
-      "lead": "Sechs unaufgeregte Schritte zwischen Ihrer ersten Nachricht und dem Stück in Ihren Händen. So genau entsteht eine ResinRiva-Auftragsarbeit — und so lange dauert es, ehrlich gesagt."
+      "lead": "Sechs unaufgeregte Schritte zwischen Ihrer ersten Nachricht und dem Stück in Ihren Händen. So genau entsteht eine Rivya Living Art-Auftragsarbeit — und so lange dauert es, ehrlich gesagt."
     },
     "timeline": {
       "heading": "Sechs Schritte, keine Abkürzungen",
@@ -392,17 +392,17 @@
   "About": {
     "meta": {
       "title": "Über uns",
-      "description": "Die Geschichte von ResinRiva — ein Atelier für Resin-Kunst auf Bestellung, das in Indien ozeanblaue Stücke in Erbstück-Qualität fertigt, eine Auftragsarbeit nach der anderen."
+      "description": "Die Geschichte von Rivya Living Art — ein Atelier für Resin-Kunst auf Bestellung, das in Indien ozeanblaue Stücke in Erbstück-Qualität fertigt, eine Auftragsarbeit nach der anderen."
     },
     "hero": {
       "eyebrow": "das atelier",
       "headline": "Wo Resin auf Ehrfurcht trifft.",
-      "lead": "ResinRiva ist ein Atelier für Resin-Kunst auf Bestellung in Indien — eine kleine Werkstatt, die sich ganz dem widmet, das Wichtigste in glasklarer Tiefe zu bewahren: Ihre Blumen, Ihre Fotografien, Ihre besonderen Momente."
+      "lead": "Rivya Living Art ist ein Atelier für Resin-Kunst auf Bestellung in Indien — eine kleine Werkstatt, die sich ganz dem widmet, das Wichtigste in glasklarer Tiefe zu bewahren: Ihre Blumen, Ihre Fotografien, Ihre besonderen Momente."
     },
     "story": {
       "heading": "Unsere Geschichte",
-      "imageAlt": "Ein Resin-Rahmen mit konservierten Blumen, handgefertigt im ResinRiva-Atelier",
-      "p1": "ResinRiva begann als Ein-Personen-Atelier — eine einzige Werkbank und eine stille Faszination dafür, was geschieht, wenn Licht durch gegossenes Resin fällt. Es ist Auftrag für Auftrag gewachsen, arbeitet aber noch immer so wie am Anfang: ein Stück nach dem anderen, jede Phase durch dieselben sorgsamen Hände.",
+      "imageAlt": "Ein Resin-Rahmen mit konservierten Blumen, handgefertigt im Rivya Living Art-Atelier",
+      "p1": "Rivya Living Art begann als Ein-Personen-Atelier — eine einzige Werkbank und eine stille Faszination dafür, was geschieht, wenn Licht durch gegossenes Resin fällt. Es ist Auftrag für Auftrag gewachsen, arbeitet aber noch immer so wie am Anfang: ein Stück nach dem anderen, jede Phase durch dieselben sorgsamen Hände.",
       "p2": "Die Farbpalette stammt aus dem Meer. Saphir-, Azur- und tiefe Ozeanblautöne durchziehen nahezu alles, was wir schaffen — Farben mit echter Tiefe, geschichtet, wie Wasser das Licht schichtet. Gold erscheint nur als feiner Akzent: ein Schimmer entlang einer Kante, eine zarte Ader durch das Blau.",
       "p3": "Wir produzieren nicht in Masse und halten keinen Lagerbestand. Jede Auftragsarbeit beginnt als Gespräch auf WhatsApp — Ihre Idee, Ihre Referenzen, Ihr Budget — und endet als ein einzigartiges Stück, das es nirgendwo sonst auf der Welt gibt.",
       "eyebrow": "unsere geschichte"
@@ -444,8 +444,8 @@
       "body": "Resin in Museumsqualität, UV-stabil. Pigmente und Metalle, ausgewählt danach, wie sie altern — nicht nur danach, wie sie auf Fotos wirken. Und weil jedes Stück auf Bestellung entsteht, wird nichts überproduziert: kein Lager, kein Abfall, nur die Stücke, die man sich von uns gewünscht hat."
     },
     "maker": {
-      "eyebrow": "der kopf hinter resinriva",
-      "heading": "ResinRiva wird von Bhavya Gondaliya geführt",
+      "eyebrow": "der kopf hinter Rivya Living Art",
+      "heading": "Rivya Living Art wird von Bhavya Gondaliya geführt",
       "body": "Jede Anfrage, jede Skizze und jeder Guss geht durch die Hände der Person hinter dem Atelier. Wenn Sie dem Atelier schreiben, sprechen Sie mit genau der Person, die Ihr Stück tatsächlich anfertigt — keine Zwischeninstanz, keine Fließbandfertigung, nur ein Gespräch zwischen Ihnen und der Person, die Ihre Kunst erschafft.",
       "cta": "Sagen Sie Hallo",
       "name": "Bhavya Gondaliya",
@@ -479,12 +479,12 @@
   "Workshops": {
     "meta": {
       "title": "Workshops",
-      "description": "Praxisnahe Resin-Kunst-Workshops aus dem ResinRiva-Atelier — kleine Gruppen, alle Materialien inklusive, ideal für Einsteiger. Sichern Sie sich Ihren Platz per WhatsApp."
+      "description": "Praxisnahe Resin-Kunst-Workshops aus dem Rivya Living Art-Atelier — kleine Gruppen, alle Materialien inklusive, ideal für Einsteiger. Sichern Sie sich Ihren Platz per WhatsApp."
     },
     "hero": {
       "eyebrow": "das handwerk lernen",
       "headline": "Gießen Sie Ihr erstes Meisterwerk.",
-      "lead": "Praxisnahe Resin-Kunst-Sessions im ResinRiva-Atelier — Sie mischen, färben und gießen und gehen mit einem Stück nach Hause, das ganz allein Ihnen gehört.",
+      "lead": "Praxisnahe Resin-Kunst-Sessions im Rivya Living Art-Atelier — Sie mischen, färben und gießen und gehen mit einem Stück nach Hause, das ganz allein Ihnen gehört.",
       "cta": "Nach Workshops fragen"
     },
     "intro": {
@@ -570,7 +570,7 @@
   "CustomOrder": {
     "meta": {
       "title": "Sonderanfertigung",
-      "description": "Lassen Sie maßgefertigte Resin-Kunst von ResinRiva anfertigen — teilen Sie uns Ihre Idee, Ihr Budget und Ihren Zeitrahmen mit, und wir gestalten sie gemeinsam per WhatsApp. Auf Bestellung gefertigt in Indien."
+      "description": "Lassen Sie maßgefertigte Resin-Kunst von Rivya Living Art anfertigen — teilen Sie uns Ihre Idee, Ihr Budget und Ihren Zeitrahmen mit, und wir gestalten sie gemeinsam per WhatsApp. Auf Bestellung gefertigt in Indien."
     },
     "page": {
       "heroEyebrow": "maßgefertigte auftragsarbeiten",
@@ -712,7 +712,7 @@
   "Contact": {
     "meta": {
       "title": "Kontakt",
-      "description": "Schreiben Sie dem ResinRiva-Atelier — Telefon, WhatsApp, E-Mail oder das Kontaktformular. Am schnellsten antworten wir über WhatsApp, meist innerhalb weniger Stunden."
+      "description": "Schreiben Sie dem Rivya Living Art-Atelier — Telefon, WhatsApp, E-Mail oder das Kontaktformular. Am schnellsten antworten wir über WhatsApp, meist innerhalb weniger Stunden."
     },
     "page": {
       "heroEyebrow": "kontakt zum atelier",
@@ -741,7 +741,7 @@
       "studioMeta": "10–20 Uhr IST",
       "mapActivate": "Karte anzeigen",
       "mapNote": "Lädt Google Maps erst auf Ihren Wunsch",
-      "mapFrameTitle": "Karte des ResinRiva-Ateliers",
+      "mapFrameTitle": "Karte des Rivya Living Art-Ateliers",
       "formEyebrow": "schreiben Sie uns",
       "formHeading": "Dem Atelier eine Nachricht schicken",
       "formIntro": "Alles landet direkt beim Menschen dahinter — keine Ticket-Warteschlange, kein Bot."
@@ -791,7 +791,7 @@
   "Faq": {
     "meta": {
       "title": "Häufige Fragen",
-      "description": "Antworten auf die häufigsten Fragen zu individueller Resin-Kunst, Auftragsarbeiten, Zeitrahmen und Pflege — direkt aus dem ResinRiva-Atelier."
+      "description": "Antworten auf die häufigsten Fragen zu individueller Resin-Kunst, Auftragsarbeiten, Zeitrahmen und Pflege — direkt aus dem Rivya Living Art-Atelier."
     },
     "heroEyebrow": "häufig gefragt",
     "heroHeadline": "Fragen, beantwortet.",
@@ -816,12 +816,12 @@
   "Shop": {
     "meta": {
       "title": "Shop",
-      "description": "Entdecken Sie die auf Bestellung gefertigten Kollektionen von ResinRiva – luxuriöse Resin-Kunst, personalisierte Geschenke und 3D-gedruckte Stücke, von Anfang bis Ende individuell gestaltet und bequem über WhatsApp bestellt.",
+      "description": "Entdecken Sie die auf Bestellung gefertigten Kollektionen von Rivya Living Art – luxuriöse Resin-Kunst, personalisierte Geschenke und 3D-gedruckte Stücke, von Anfang bis Ende individuell gestaltet und bequem über WhatsApp bestellt.",
       "titlePaged": "Shop – Seite {page}"
     },
-    "categoryMetaDescription": "Auf Bestellung gefertigte {category} aus dem ResinRiva-Studio – von Anfang bis Ende individuell gestaltet und über WhatsApp bestellt.",
+    "categoryMetaDescription": "Auf Bestellung gefertigte {category} aus dem Rivya Living Art-Studio – von Anfang bis Ende individuell gestaltet und über WhatsApp bestellt.",
     "heroEyebrow": "die kollektionen",
-    "heroHeadline": "ResinRiva Shop",
+    "heroHeadline": "Rivya Living Art Shop",
     "heroLead": "Jedes Stück wird auf Bestellung gefertigt – wählen Sie eines aus, gestalten Sie es nach Ihrer Geschichte und klären Sie alles Weitere in einem einzigen WhatsApp-Gespräch.",
     "tabsAria": "Nach Bereich stöbern",
     "tabAll": "Alle",
@@ -854,7 +854,7 @@
     "emptyFilteredBody": "Setzen Sie die Filter zurück oder geben Sie eine Sonderanfertigung in Auftrag – gefertigt nach Ihrer Geschichte, in Ihrem Zeitrahmen.",
     "emptyCatalogEyebrow": "auf bestellung gefertigt",
     "emptyCatalogHeading": "Die ersten Stücke werden gerade gegossen",
-    "emptyCatalogBody": "Jedes ResinRiva-Stück wird auf Bestellung gefertigt. Geben Sie Ihres jetzt in Auftrag oder schreiben Sie uns auf WhatsApp – wir helfen Ihnen beim Start.",
+    "emptyCatalogBody": "Jedes Rivya Living Art-Stück wird auf Bestellung gefertigt. Geben Sie Ihres jetzt in Auftrag oder schreiben Sie uns auf WhatsApp – wir helfen Ihnen beim Start.",
     "clearFilters": "Filter zurücksetzen",
     "commissionCta": "Sonderanfertigung anfragen",
     "quickViewAria": "Schnellansicht: {title}",
@@ -946,7 +946,7 @@
   "Search": {
     "meta": {
       "title": "Suche",
-      "description": "Durchsuchen Sie die auf Bestellung gefertigten Stücke, Journal-Beiträge und Portfolio-Geschichten von ResinRiva."
+      "description": "Durchsuchen Sie die auf Bestellung gefertigten Stücke, Journal-Beiträge und Portfolio-Geschichten von Rivya Living Art."
     },
     "heroEyebrow": "finden Sie Ihr stück",
     "heroHeadline": "Das Studio durchsuchen",
@@ -964,14 +964,14 @@
     "sectionCount": "{count, plural, one {# Ergebnis} other {# Ergebnisse}}",
     "zeroEyebrow": "noch nichts",
     "zeroHeading": "Dieses Stück haben wir noch nicht gegossen – noch nicht.",
-    "zeroBody": "Jedes ResinRiva-Stück wird auf Bestellung gefertigt, der Katalog ist also nur der Anfang. Sagen Sie uns, was Ihnen vorschwebt – Farben, Namen, Größen – und wir fertigen es für Sie.",
+    "zeroBody": "Jedes Rivya Living Art-Stück wird auf Bestellung gefertigt, der Katalog ist also nur der Anfang. Sagen Sie uns, was Ihnen vorschwebt – Farben, Namen, Größen – und wir fertigen es für Sie.",
     "zeroWhatsappCta": "Fragen Sie uns auf WhatsApp",
     "browseShop": "Zum Shop",
     "emptyEyebrow": "fangen Sie irgendwo an",
     "emptyHeading": "Wonach suchen Sie?",
     "emptyBody": "Versuchen Sie es mit einem Stück („Namensschild“, „Uhr“), einem Anlass („Jubiläum“) oder einem Material („Resin“) – oder gehen Sie direkt zu den Kollektionen.",
     "productsShowMore": "{total, plural, one {# Stück} other {Alle # Stücke}} im Shop ansehen",
-    "zeroWhatsappMessage": "Hallo ResinRiva, ich habe auf Ihrer Seite nach \"{query}\" gesucht, es aber nicht gefunden. Könnten Sie so etwas für mich anfertigen?\n(Gesendet von {site})",
+    "zeroWhatsappMessage": "Hallo Rivya Living Art, ich habe auf Ihrer Seite nach \"{query}\" gesucht, es aber nicht gefunden. Könnten Sie so etwas für mich anfertigen?\n(Gesendet von {site})",
     "overlay": {
       "dialogLabel": "Website-Suche",
       "label": "Suche",
@@ -1002,7 +1002,7 @@
   "Wishlist": {
     "meta": {
       "title": "Wunschliste",
-      "description": "Stücke, die Sie beim Stöbern auf ResinRiva gespeichert haben – sie bleiben auf diesem Gerät und lassen sich über WhatsApp mit dem Studio teilen."
+      "description": "Stücke, die Sie beim Stöbern auf Rivya Living Art gespeichert haben – sie bleiben auf diesem Gerät und lassen sich über WhatsApp mit dem Studio teilen."
     },
     "heroEyebrow": "Ihre auswahl",
     "heroHeadline": "Gespeicherte Stücke",
@@ -1018,7 +1018,7 @@
     "browseCta": "Kollektionen entdecken",
     "shareLead": "Senden Sie Ihre Auswahl an das Studio – Details, Preise und Zeitrahmen klären wir in einem einzigen WhatsApp-Gespräch.",
     "shareCta": "Über WhatsApp teilen",
-    "waIntro": "Hallo ResinRiva, ich habe diese Stücke auf Ihrer Website ausgewählt:",
+    "waIntro": "Hallo Rivya Living Art, ich habe diese Stücke auf Ihrer Website ausgewählt:",
     "waMore": "…und {count, plural, one {# weiteres gespeichertes Stück} other {# weitere gespeicherte Stücke}}.",
     "waSentFrom": "(Gesendet von {host})"
   },
@@ -1026,7 +1026,7 @@
     "meta": {
       "title": "Blog",
       "titlePaged": "Blog – Seite {page}",
-      "description": "Notizen aus dem ResinRiva-Studio – Prozess-Journale, Materialstudien und die Geschichten hinter unseren auf Bestellung gefertigten Resin-Kunstwerken."
+      "description": "Notizen aus dem Rivya Living Art-Studio – Prozess-Journale, Materialstudien und die Geschichten hinter unseren auf Bestellung gefertigten Resin-Kunstwerken."
     },
     "journalFallbackCategory": "das Journal",
     "minRead": "{minutes} Min. Lesezeit",
@@ -1065,7 +1065,7 @@
     "meta": {
       "title": "Portfolio",
       "titlePaged": "Portfolio – Seite {page}",
-      "description": "Echte Auftragsarbeiten aus dem ResinRiva-Studio – Vorher-Nachher-Verwandlungen, konservierte Blüten und individuelle Resin-Stücke, erzählt Geschichte für Geschichte.",
+      "description": "Echte Auftragsarbeiten aus dem Rivya Living Art-Studio – Vorher-Nachher-Verwandlungen, konservierte Blüten und individuelle Resin-Stücke, erzählt Geschichte für Geschichte.",
       "notFound": "Auftragsarbeit nicht gefunden"
     },
     "heroEyebrow": "unsere auftragsarbeiten",
@@ -1104,7 +1104,7 @@
       "ctaBody": "Jede Geschichte auf dieser Seite begann mit einer einzigen Nachricht. Erzählen Sie uns Ihre – die Blumen, das Foto, den besonderen Moment – und wir gießen die nächste für Sie.",
       "ctaWhatsApp": "Per WhatsApp chatten",
       "ctaCustomOrder": "Individuelle Bestellung starten",
-      "commissionWhatsappMessage": "Hallo ResinRiva, ich habe \"{title}\" in Ihrem Portfolio gesehen und würde gern ein ähnliches Stück in Auftrag geben.\n(Gesendet von {site})",
+      "commissionWhatsappMessage": "Hallo Rivya Living Art, ich habe \"{title}\" in Ihrem Portfolio gesehen und würde gern ein ähnliches Stück in Auftrag geben.\n(Gesendet von {site})",
       "caseStudy": {
         "briefHeading": "Der Auftrag",
         "processHeading": "Der Prozess",
@@ -1150,8 +1150,8 @@
     }
   },
   "WhatsApp": {
-    "greeting": "Hallo ResinRiva, ich möchte mehr über Ihre individuelle Resin-Kunst erfahren.",
-    "intro": "Hallo ResinRiva,\nich möchte Folgendes bestellen:",
+    "greeting": "Hallo Rivya Living Art, ich möchte mehr über Ihre individuelle Resin-Kunst erfahren.",
+    "intro": "Hallo Rivya Living Art,\nich möchte Folgendes bestellen:",
     "product": "Produkt",
     "budget": "Budget",
     "timeline": "Zeitrahmen",
@@ -1274,7 +1274,7 @@
     },
     "oosCta": "Auf WhatsApp fragen, wann es wieder verfügbar ist",
     "oosSummaryNote": "Verfügbarkeitsanfrage – dieses Stück ist derzeit ausverkauft.",
-    "oosWaIntro": "Hallo ResinRiva,\ndieses Stück ist derzeit ausverkauft – ich würde gern fragen, wann es wieder verfügbar ist:",
+    "oosWaIntro": "Hallo Rivya Living Art,\ndieses Stück ist derzeit ausverkauft – ich würde gern fragen, wann es wieder verfügbar ist:",
     "notFound": "Stück nicht gefunden",
     "draftPreview": "Entwurfsvorschau – nur Teammitglieder mit diesem Link sehen diese Seite.",
     "careHeading": "Pflege & Aufbewahrung",
@@ -1337,7 +1337,7 @@
     "leadTimeMadeToOrder": "Auf Bestellung",
     "ctaCustomize": "Dieses Stück anpassen",
     "ctaWhatsApp": "Auf WhatsApp fragen",
-    "waAsk": "Hallo ResinRiva, ich würde gern etwas zu „{title}“ fragen.",
+    "waAsk": "Hallo Rivya Living Art, ich würde gern etwas zu „{title}“ fragen.",
     "sections": {
       "pieceEyebrow": "das stück",
       "detailsEyebrow": "die details",

@@ -1,4 +1,4 @@
-# ResinRiva 2.0 — Scraper · Studio · Google Sheets
+# Rivya Living Art 2.0 — Scraper · Studio · Google Sheets
 ## Master build prompt (v2, grounded against the live repo)
 
 > **How to use this.** Paste §0–§3 into a fresh session and let the agent produce

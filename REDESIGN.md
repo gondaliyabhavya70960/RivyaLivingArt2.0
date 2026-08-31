@@ -1,4 +1,4 @@
-# RESINRIVA — Master UI/UX Redesign Specification
+# RIVYA LIVING ART — Master UI/UX Redesign Specification
 
 **v1.0 · Consolidated**
 **Storefront:** store.bhavyagondaliya.co.in · **Studio:** /studio
@@ -23,8 +23,8 @@ These are resolved. Build to the right-hand column.
 | 1 | Palette: A `#080A0E / #08283A / #164E6B / #F4F1E9 / #E7E0D5 / #B89B63` vs B `#040813 / #0A1128 / #1E6F9F / #D4AF37` | **Source A's palette is canonical.** | A's champagne `#B89B63` is muted and reads as real gold leaf; B's `#D4AF37` is saturated costume gold. A's Deep Ocean matches the existing brand. |
 | 2 | Glassmorphism (B: `.glass-luxury-dark`, gold glows, `rounded-3xl`) | **Rejected**, with one exception: the header may use a light backdrop-blur on scroll (A §16 already calls for this). | Frosted panels + gold glow + 24px radius is the single most common AI-luxury template look. A §13 explicitly calls for an architectural, low-radius language. The two cannot both be true. |
 | 3 | Typeface | **Display: Instrument Serif. Body: Inter. Numerals: JetBrains Mono.** | A's first display choice, A's body choice, B's numeric face. All three sources land here once merged. |
-| 4 | Cart / Bag / Wishlist / Razorpay Instant Buy / currency switcher (B §2, §3.1) | **Rejected.** | A §01 and §177 forbid changing order logic. ResinRiva has no checkout — everything finalises on WhatsApp. Adding a Bag would be a business change wearing a design costume. |
-| 5 | "14-day curing", walnut/teak species selector, river dining tables, epoxy volume calculator (B) | **Rejected as written; the *patterns* are kept.** | The live site states 24–72 h per layer, 7–10 days for small pieces, 3–6 weeks for statement pieces. Kanban stage timers and spec selectors are good ideas — they must carry ResinRiva's real numbers, not invented ones. |
+| 4 | Cart / Bag / Wishlist / Razorpay Instant Buy / currency switcher (B §2, §3.1) | **Rejected.** | A §01 and §177 forbid changing order logic. Rivya Living Art has no checkout — everything finalises on WhatsApp. Adding a Bag would be a business change wearing a design costume. |
+| 5 | "14-day curing", walnut/teak species selector, river dining tables, epoxy volume calculator (B) | **Rejected as written; the *patterns* are kept.** | The live site states 24–72 h per layer, 7–10 days for small pieces, 3–6 weeks for statement pieces. Kanban stage timers and spec selectors are good ideas — they must carry Rivya Living Art's real numbers, not invented ones. |
 | 6 | Client order-lookup tab on the login screen (B §4.1) | **Deferred.** Documented in §12.6 as an optional future feature, not part of this redesign. | It is new functionality, outside the stated scope. |
 | 7 | A separate `/preservation` route (B §5) | **Rejected as a new route.** Delivered instead as the Varmala Preservation **collection landing page**, which A §59 already specifies. | Keeps existing URLs. Same outcome, no route churn. |
 | 8 | Mobile WhatsApp FAB (C) vs mobile bottom bar (A §110) | **Bottom bar wins on mobile.** The floating WhatsApp button exists on desktop only. | Two persistent WhatsApp affordances on a 375px screen is one too many. |
@@ -217,7 +217,7 @@ Keep WhatsApp recognisable but integrated. It is the order channel, not the bran
 
 ## 3.7 Icons
 
-One family: **Lucide**, stroke `1.5px`, 24px box. Never mix icon sets. Icons support text; never use an icon alone where the user must understand an action without context. **Never** an icon per benefit — the "Why ResinRiva" and "What we hold to" blocks use mono numerals and photography instead.
+One family: **Lucide**, stroke `1.5px`, 24px box. Never mix icon sets. Icons support text; never use an icon alone where the user must understand an action without context. **Never** an icon per benefit — the "Why Rivya Living Art" and "What we hold to" blocks use mono numerals and photography instead.
 
 ## 3.8 Motion tokens
 
@@ -350,12 +350,12 @@ The current header exposes Shop, Resin Art & Gifting, Studio Supplies, 3D Printi
 
 ```
 ┌ cure ┬──────────────────────────────────────────────────────────┐
-│      │ RESINRIVA      Shop  Bespoke  Studio  Journal    ⌕  ◉ WA │
+│      │ RIVYA LIVING ART      Shop  Bespoke  Studio  Journal    ⌕  ◉ WA │
 └──────┴──────────────────────────────────────────────────────────┘
    72–80px · transparent at top · opaque + blurred + compact on scroll
 ```
 
-- **Left:** RESINRIVA wordmark. Give the home link a real accessible name — it currently renders as a literal `/`.
+- **Left:** RIVYA LIVING ART wordmark. Give the home link a real accessible name — it currently renders as a literal `/`.
 - **Centre:** four items only — **Shop · Bespoke · Studio · Journal**.
 - **Right:** Search · WhatsApp · Menu.
 - Active route marked by a 1px sapphire underline offset 6px below the baseline; hover draws that underline left→right over 180ms.
@@ -421,7 +421,7 @@ Large dark obsidian footer. Do not repeat every navigation item.
 |---|---|---|---|
 | Shop · Collections · Bespoke | About · Process · Workshops | Stories · Guides | WhatsApp · Email · Studio address |
 
-Plus: wordmark, one-line brand statement, newsletter, social, language control, and a single legal rail (`© 2026 ResinRiva · Privacy · Terms · Made in India ✦`).
+Plus: wordmark, one-line brand statement, newsletter, social, language control, and a single legal rail (`© 2026 Rivya Living Art · Privacy · Terms · Made in India ✦`).
 
 **Delete the raw `wa.me` URL currently rendered as visible link text in the footer.** Include the studio address as real text, not just a Maps link.
 
@@ -513,7 +513,7 @@ Show CAD → print → finished piece. `Explore 3D printing`.
 ### 10 · How it works — `standard`
 Keep Choose → Customize → WhatsApp → Craft & Deliver. Change the presentation to a horizontal timeline with a connecting hairline that draws on scroll, one visual per step, numerals in mono. Add the missing reassurance line: `No payment on this website — price is agreed on WhatsApp before anything is poured.`
 
-### 11 · Why ResinRiva — `standard`
+### 11 · Why Rivya Living Art — `standard`
 Turn the existing three claims into four proof points with photography, no icons:
 **HANDCRAFTED** every piece passes through human hands · **BESPOKE** built around your story · **SLOW MADE** time is part of the process · **HEIRLOOM** made to be kept.
 
@@ -790,11 +790,11 @@ Split screen. Left: dark cinematic studio image or ambient loop. Right: login pa
 
 ```
 ┌───────────────────────┬─────────────────────────────┐
-│  RESINRIVA            │                             │
+│  RIVYA LIVING ART            │                             │
 │  OWNER & STAFF ACCESS │      cinematic studio       │
 │                       │      image / loop           │
 │  Email                │                             │
-│  Password        👁    │      RESINRIVA · STUDIO     │
+│  Password        👁    │      RIVYA LIVING ART · STUDIO     │
 │  Forgot password?     │      (mono, bottom-left)    │
 │  [ Sign in ]          │                             │
 │  ← Back to the store  │                             │
@@ -824,7 +824,7 @@ Columns mapped to the real workflow:
 `Inquiry → Quoted → Approved → Design → Production → Curing → Finishing → Ready → Delivered`
 
 Card shows: customer · project · thumbnail · deadline · status · priority.
-**Stage timer badge** — a circular progress ring using ResinRiva's actual cure times (`Layer 2 · 48 of 72 h`), not an invented 14-day schedule.
+**Stage timer badge** — a circular progress ring using Rivya Living Art's actual cure times (`Layer 2 · 48 of 72 h`), not an invented 14-day schedule.
 
 ## 12.5 Data screens
 - **Products table:** image · product · collection · price · status · updated · actions. Sticky header, sortable columns, saved views as chips, checkbox selection with a floating bulk-action bar, server-side pagination.
@@ -920,7 +920,7 @@ Motion should communicate **craftsmanship**, not a technology demo.
 | Real product · real customer · real maker | **Authentic photography** |
 | Atmosphere · campaign · material macro · cinematic background | **Higgsfield AI** |
 | Final product presentation | Prefer authentic photography |
-| AI campaign asset | Must match the ResinRiva photography system exactly |
+| AI campaign asset | Must match the Rivya Living Art photography system exactly |
 
 **Use Higgsfield for:** hero campaigns · editorial backgrounds · material close-ups · studio atmosphere · lifestyle concepts · abstract resin visuals · campaign transitions · 3D-printing atmosphere · motion backgrounds · private-workshop mood imagery.
 
@@ -968,7 +968,7 @@ Negative prompt: `text, watermark, signature, logo, plastic toy sheen, teal-oran
 
 `models_explore` → `generate_image_batch` (≤12 per set) → `jobs_wait` → cull to one keeper per ID → `upscale_image` to ≥2560px → `reframe` / `outpaint_image` for the 9:16 and 21:9 crops from the same master → `remove_background` where an object must sit on a colour band → `generate_video` from the approved still → `upscale_video` → `reframe`. Export AVIF + WebP at 640/960/1440/1920/2560 with a 20px LQIP.
 
-**Alt text** describes the picture, not the brand: `alt="Deep sapphire resin pouring into a round mould, a thread of gold leaf drifting through it"` — never `alt="ResinRiva luxury resin art"`. Decorative textures get `alt=""`.
+**Alt text** describes the picture, not the brand: `alt="Deep sapphire resin pouring into a round mould, a thread of gold leaf drifting through it"` — never `alt="Rivya Living Art luxury resin art"`. Decorative textures get `alt=""`.
 
 ---
 
@@ -1070,7 +1070,7 @@ alignment · spacing · typography · image ratio · hierarchy · CTA visibility
 Plus: one `h1`; no repeated heading text; **max two `major` sections**; **max two champagne elements per viewport**; no two dark bands adjacent; every number in JetBrains Mono tabular; every image reveals via meniscus, once; nothing centred except the manifesto and the marquee.
 
 ## 19.2 Homepage
-Does the hero immediately communicate ResinRiva? · Does it feel premium within 3 seconds? · Is the primary CTA obvious? · Are the products visually desirable? · Does the maker story appear? · Is bespoke clearly visible? · Does 3D printing feel integrated but separate? · Is there too much information? *If yes, remove visual noise.*
+Does the hero immediately communicate Rivya Living Art? · Does it feel premium within 3 seconds? · Is the primary CTA obvious? · Are the products visually desirable? · Does the maker story appear? · Is bespoke clearly visible? · Does 3D printing feel integrated but separate? · Is there too much information? *If yes, remove visual noise.*
 
 ## 19.3 Shop
 Can I understand the catalogue quickly? · Can I filter without feeling overwhelmed? · Can I compare products visually? · Can I understand customization? · Can I reach WhatsApp easily?

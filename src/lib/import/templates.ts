@@ -98,7 +98,7 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
       featured: "TRUE",
       video_url: "https://example.com/videos/ocean-tray.mp4",
       model3d_url: "",
-      seo_title: "Ocean Wave Resin Serving Tray | ResinRiva",
+      seo_title: "Ocean Wave Resin Serving Tray | Rivya Living Art",
       seo_description:
         "Hand-poured ocean wave resin serving tray with gold flakes, made to order.",
       images:
@@ -152,12 +152,12 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
       content:
         "## The layered pour\n\nEvery ocean piece starts with **three shades of blue**...",
       cover_image: "https://example.com/img/blog-ocean-pour.jpg",
-      author_name: "ResinRiva Studio",
+      author_name: "Rivya Living Art Studio",
       category: "Behind the Scenes",
       tags: "resin art, tutorials",
       status: "PUBLISHED",
       published_at: "2026-01-15T10:00:00Z",
-      seo_title: "How Ocean Wave Resin Art Is Made | ResinRiva",
+      seo_title: "How Ocean Wave Resin Art Is Made | Rivya Living Art",
       seo_description: "Step-by-step look at layered ocean resin pours.",
     },
     docs: "content is Markdown and is converted to the rich-text editor format on import. category and tags are created automatically when they do not exist yet; published_at is an ISO date.",
@@ -239,8 +239,8 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
       title: "Shipping Policy",
       content:
         "## Shipping\n\nAll pieces ship insured across India within **2-4 business days** of curing.",
-      seo_title: "Shipping Policy | ResinRiva",
-      seo_description: "Shipping timelines and packaging for ResinRiva orders.",
+      seo_title: "Shipping Policy | Rivya Living Art",
+      seo_description: "Shipping timelines and packaging for Rivya Living Art orders.",
     },
     docs: "Static site pages. content is Markdown and is converted to the rich-text editor format; re-importing an existing slug updates that page.",
   },

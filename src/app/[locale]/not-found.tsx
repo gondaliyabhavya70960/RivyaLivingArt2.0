@@ -8,7 +8,7 @@ import { SITE } from "@/lib/constants";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
-  title: "Page not found — ResinRiva",
+  title: "Page not found — Rivya Living Art",
   description:
     "The page you followed has moved, or was never poured. Search the studio, or start from one of our collections.",
   // Belt-and-braces beside the ENG-813 status fix: even if some render path

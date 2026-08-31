@@ -63,4 +63,4 @@ On budget: small personalised keepsakes generally begin in the high hundreds to 
 
 The anniversary list has survived for over a century because it understands something true: love deserves to be marked in materials, not just words. Choose the material for the year, add the details only the two of them would recognise, and you have a gift that will still be on their shelf at the next milestone — and the one after that.
 
-*Tell us the year you're celebrating and we'll design around it — message ResinRiva on WhatsApp at +91 70960 36250 to begin your commission.*
+*Tell us the year you're celebrating and we'll design around it — message Rivya Living Art on WhatsApp at +91 70960 36250 to begin your commission.*

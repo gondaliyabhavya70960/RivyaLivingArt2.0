@@ -57,4 +57,4 @@ The deeper reason to move beyond the hamper is not novelty — it is meaning. Di
 
 This year, when the procurement email goes around, propose something different. Your clients' shelves — and their memories of your company — will thank you.
 
-*Planning corporate Diwali gifts this season? Message ResinRiva on WhatsApp at +91 70960 36250 to discuss quantities, palettes and timelines for your order.*
+*Planning corporate Diwali gifts this season? Message Rivya Living Art on WhatsApp at +91 70960 36250 to discuss quantities, palettes and timelines for your order.*

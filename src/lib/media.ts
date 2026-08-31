@@ -1,5 +1,5 @@
 /**
- * Branded ResinRiva imagery hosted on Cloudinary (the `resinriva/` folder of
+ * Branded Rivya Living Art imagery hosted on Cloudinary (the `resinriva/` folder of
  * the studio's Cloudinary account). Centralised so the hero, About page,
  * homepage feature and gallery strip all reference one canonical URL each.
  *

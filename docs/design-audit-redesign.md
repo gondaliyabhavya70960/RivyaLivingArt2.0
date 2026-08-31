@@ -4,7 +4,7 @@
 > master document /DESIGN.md, which is the only live design authority. §E's
 > known follow-ups have all since been closed or retired. Reference only.
 
-# ResinRiva — Two-Skill Design Audit & Redesign Program (2026-08-09)
+# Rivya Living Art — Two-Skill Design Audit & Redesign Program (2026-08-09)
 
 Skills applied, in order, per the owner's instruction: **hallmark v1.1.0**
 (`.agents/skills/hallmark`) and **ui-ux-pro-max v2.13.0** (plugin). Audit ran
@@ -16,7 +16,7 @@ component ownership, copy intent, brand, information architecture").
 
 ## A. hallmark audit — ranked punch list (before any edit)
 
-| # | Severity | Anti-pattern (hallmark name) | Where it shows in ResinRiva |
+| # | Severity | Anti-pattern (hallmark name) | Where it shows in Rivya Living Art |
 |---|---|---|---|
 | 1 | Critical | **Default-attractor sameness** | Every public page shares ONE structural fingerprint: dark hero band (eyebrow → KineticHeading → sub-copy → pill CTAs) → content bands → gradient CTA band → footer. 15 pages, one shape — the AI fingerprint the skill exists to break. |
 | 2 | Critical | **Inter-everywhere** | Body face is Inter — first entry on the banned-defaults list. (Fraunces display is allow-listed and stays: it is the brand.) |

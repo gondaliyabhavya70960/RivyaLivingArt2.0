@@ -1,8 +1,8 @@
-# ResinRiva — Luxury Resin Art & 3D Printing Platform
+# Rivya Living Art — Luxury Resin Art & 3D Printing Platform
 
 **Live site:** [store.bhavyagondaliya.co.in](https://store.bhavyagondaliya.co.in) · **Admin studio:** [store.bhavyagondaliya.co.in/studio](https://store.bhavyagondaliya.co.in/studio)
 
-ResinRiva is a production-ready, luxury e-commerce **showcase** platform for custom resin art, custom 3D printing, personalized resin gifts, nameplates, wedding resin art, corporate gifting, and home decor — built on Next.js and Vercel-native services, with every order finalized on **WhatsApp** (no payment gateway, no checkout, no customer accounts).
+Rivya Living Art is a production-ready, luxury e-commerce **showcase** platform for custom resin art, custom 3D printing, personalized resin gifts, nameplates, wedding resin art, corporate gifting, and home decor — built on Next.js and Vercel-native services, with every order finalized on **WhatsApp** (no payment gateway, no checkout, no customer accounts).
 
 ---
 
@@ -10,14 +10,14 @@ ResinRiva is a production-ready, luxury e-commerce **showcase** platform for cus
 
 | | |
 |---|---|
-| Brand | **ResinRiva** |
+| Brand | **Rivya Living Art** |
 | Website | https://store.bhavyagondaliya.co.in |
 | Admin Panel | https://store.bhavyagondaliya.co.in/studio |
 | Phone | +91 7096036250 |
 | WhatsApp | +91 7096036250 (`wa.me/917096036250`) |
 | Email | gondaliyabhavya70960@gmail.com |
 | Location | https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6 |
-| Repository | https://github.com/gondaliyabhavya70960/ResinRiva2.0.git |
+| Repository | https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git |
 
 ## Business Model — Hard Rules (never violate)
 
@@ -129,7 +129,7 @@ See [.env.example](./.env.example). `DATABASE_URL` and `BLOB_READ_WRITE_TOKEN` a
 - `wa.me` links cannot attach files → reference images are uploaded to Vercel Blob and their public URLs are embedded in the message; the total message is kept under ~1,500 characters.
 - The hero is a settings-driven video (≤6MB) with a poster image; reduced-motion users get the static poster automatically (the fallback is built in, not optional).
 - The Product Scraper natively supports Shopify + WooCommerce JSON APIs, plus a generic JSON-LD Product-schema fallback for other sites (slower — one page per product, capped and resumable). Sites exposing none of these need a custom adapter. Marketplaces (Amazon/Etsy/Flipkart/IndiaMART…) are blocked by design — use their official APIs. Poonam Shah Art has no scrapeable catalog (enquiry-only) and is covered by the Phase 11 original category seed instead.
-- Scraped text and images are competitor copyright — the scraper imports DRAFTS ONLY with a publish-blocking `needsRewrite` flag; rewrite descriptions and replace images with real ResinRiva photos before publishing.
+- Scraped text and images are competitor copyright — the scraper imports DRAFTS ONLY with a publish-blocking `needsRewrite` flag; rewrite descriptions and replace images with real Rivya Living Art photos before publishing.
 - Direct Google Sheet sync is optional and needs a free Google service account (`GOOGLE_SERVICE_ACCOUNT_JSON` + `SCRAPE_SHEET_ID`); without it, staging + Sheet-ready CSV export covers the full workflow with zero Google keys.
 - Long scrapes run as chunked, resumable jobs to respect Vercel serverless time limits.
 - ~100 sources × hundreds of products = tens of thousands of staging/Sheet rows — per-run caps, per-tier Sheet tabs, and change-hash upserts keep it manageable; scrape tiers in batches, not all in one day.
@@ -137,4 +137,4 @@ See [.env.example](./.env.example). `DATABASE_URL` and `BLOB_READ_WRITE_TOKEN` a
 
 ---
 
-© ResinRiva. All product content is owner-fed and 100% original — competitor material is research reference only.
+© Rivya Living Art. All product content is owner-fed and 100% original — competitor material is research reference only.

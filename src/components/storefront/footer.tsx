@@ -46,19 +46,19 @@ const SOCIAL_META: Record<
 > = {
   instagram: {
     Icon: InstagramIcon,
-    fallbackLabel: "ResinRiva on Instagram (opens in new tab)",
+    fallbackLabel: "Rivya Living Art on Instagram (opens in new tab)",
   },
   facebook: {
     Icon: FacebookIcon,
-    fallbackLabel: "ResinRiva on Facebook (opens in new tab)",
+    fallbackLabel: "Rivya Living Art on Facebook (opens in new tab)",
   },
   youtube: {
     Icon: YoutubeIcon,
-    fallbackLabel: "ResinRiva on YouTube (opens in new tab)",
+    fallbackLabel: "Rivya Living Art on YouTube (opens in new tab)",
   },
   pinterest: {
     Icon: PinterestIcon,
-    fallbackLabel: "ResinRiva on Pinterest (opens in new tab)",
+    fallbackLabel: "Rivya Living Art on Pinterest (opens in new tab)",
   },
 };
 
@@ -109,9 +109,9 @@ export function Footer({
   newsletterHint = "Three or four letters a year",
   findStudioLabel = "Open in Maps",
   chatOnWhatsAppLabel = "WhatsApp",
-  socialWhatsappLabel = "ResinRiva on WhatsApp (opens in new tab)",
+  socialWhatsappLabel = "Rivya Living Art on WhatsApp (opens in new tab)",
   openInNewTabLabel = "(opens in new tab)",
-  rightsLine = `© ${new Date().getFullYear()} ResinRiva`,
+  rightsLine = `© ${new Date().getFullYear()} Rivya Living Art`,
   madeInLabel = "Made in India",
   localeControl,
   className,

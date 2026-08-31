@@ -92,7 +92,7 @@ export default async function InquiryDetailPage({
   // still copies the customer's original inbound message.
   const firstName =
     inquiry.customerName.trim().split(/\s+/)[0] || inquiry.customerName;
-  const replyGreeting = `Hi ${firstName}, thanks for reaching out to ResinRiva about your ${SOURCE_LABELS[
+  const replyGreeting = `Hi ${firstName}, thanks for reaching out to Rivya Living Art about your ${SOURCE_LABELS[
     inquiry.source
   ].toLowerCase()}.`;
   const customerWaLink = buildWaLink(

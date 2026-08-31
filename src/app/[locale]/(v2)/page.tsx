@@ -775,7 +775,7 @@ export default async function Home({
         </div>
       </section>
     ),
-    /* ════════ 11 · Why ResinRiva — standard ════════
+    /* ════════ 11 · Why Rivya Living Art — standard ════════
     Four proof points with photography and mono numerals — no icons
     (§3.7). The old page's stat row (100% handcrafted / 500+ hours /
     1 of 1) is gone: none of the three was checkable. */

@@ -61,7 +61,7 @@ import {
  * route is middleware-excluded from locale routing and noindexed.
  */
 
-const WA_HREF = buildWaLink("Hello ResinRiva! (design-lab placeholder)");
+const WA_HREF = buildWaLink("Hello Rivya Living Art! (design-lab placeholder)");
 
 function SectionLabel({ n, title }: { n: string; title: string }) {
   return (

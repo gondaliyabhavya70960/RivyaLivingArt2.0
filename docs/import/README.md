@@ -32,6 +32,6 @@ Every row imports as **DRAFT** (per the sheet's `status` column) — review in
 the studio before publishing:
 
 - Descriptions still carry the source store's copy (third-party business
-  names, US-centric wording, contact emails). Rewrite as ResinRiva copy.
+  names, US-centric wording, contact emails). Rewrite as Rivya Living Art copy.
 - `price_min`/`price_max` values look like US-dollar amounts; the site
   renders prices in ₹. Re-price before showing prices publicly.

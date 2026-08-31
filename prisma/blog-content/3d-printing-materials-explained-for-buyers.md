@@ -69,4 +69,4 @@ None of these materials is "best." A silk PLA nameplate indoors will look flawle
 
 When in doubt, describe the object and its home, and let the maker propose the material. The right answer is usually obvious once the question is framed properly.
 
-*Not sure which material suits your idea? Message ResinRiva on WhatsApp at +91 70960 36250 and we will recommend honestly.*
+*Not sure which material suits your idea? Message Rivya Living Art on WhatsApp at +91 70960 36250 and we will recommend honestly.*

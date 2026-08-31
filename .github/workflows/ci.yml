@@ -68,7 +68,7 @@ jobs:
         env:
           POSTGRES_USER: ci
           POSTGRES_PASSWORD: ci
-          POSTGRES_DB: resinriva_ci
+          POSTGRES_DB: rivya_ci
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U ci"
@@ -77,7 +77,7 @@ jobs:
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/resinriva_ci
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/rivya_ci
       # Was build-time only; the Studio audit below now signs in against the
       # throwaway server, so CI does issue a session. AUTH_TRUST_HOST is what
       # makes that work off Vercel — without it Auth.js answers every login

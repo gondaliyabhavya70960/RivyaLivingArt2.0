@@ -88,7 +88,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Vercel Blob public store (production media).
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
-      // Cloudinary — branded ResinRiva imagery (hero, About, categories).
+      // Cloudinary — branded Rivya Living Art imagery (hero, About, categories).
       { protocol: "https", hostname: "res.cloudinary.com" },
       // The owner's Tier-1 catalog imagery (four-tier sheet import). Only
       // this host is optimizer-eligible — the long-tail scraped hosts

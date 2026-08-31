@@ -1,6 +1,6 @@
 # COMPETITOR.md — Top-20 Competitor Research
 
-Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://store.bhavyagondaliya.co.in) — luxury made-to-order resin art & custom 3D printing, India, every order finalized on WhatsApp `wa.me/917096036250`). Researched **July 2026 via web search**. Competitor sites are research reference **ONLY** — for product TYPES, category ideas, pricing signals, and blog TOPICS. **Never copy their text, product names, descriptions, images, or photos.**
+Competitor landscape for **Rivya Living Art** ([store.bhavyagondaliya.co.in](https://store.bhavyagondaliya.co.in) — luxury made-to-order resin art & custom 3D printing, India, every order finalized on WhatsApp `wa.me/917096036250`). Researched **July 2026 via web search**. Competitor sites are research reference **ONLY** — for product TYPES, category ideas, pricing signals, and blog TOPICS. **Never copy their text, product names, descriptions, images, or photos.**
 
 > **Method note:** This research is **search-snippet-based**. This environment could not fetch competitor pages directly (direct fetches blocked by network policy), so every claim below is derived from search-result titles, snippets, and third-party pages surfaced in web search. Unknowns are explicitly marked — hedges such as "not visible in search results" and "(inferred)" are deliberate and must be preserved; treat them as items to verify live before acting on them.
 
@@ -24,7 +24,7 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - No structured e-commerce catalog visible in search results — pricing lives in blog prose and chat quotes rather than product pages
   - Moderate third-party trust score (61/100 on Scamadviser); no 3D printing, workshops, or big-ticket items (tables, wall panels) visible in search results
 - **Content & SEO strategy:** Best content-SEO operator of the India core set: ranks via city landing pages ("resin art in Chennai/Delhi/Kerala/Bangalore"), keyword-dated listicles ("Top 10 Personalized Resin Art Gift Ideas for 2026", "Why Resin Wall Clocks Are the Most Trending in India 2025"), occasion posts ("Happy Anniversary Bhaiya and Bhabhi"), bulk-keychain B2B pages, FAQ page, and Web Stories. Blog is active and price-transparent.
-- **What ResinRiva will do better:**
+- **What Rivya Living Art will do better:**
   - Structured catalog with price bands and per-product customization forms feeding WhatsApp gives buyers a self-serve configure-then-chat flow, versus Sumaiya's chat-only quoting where pricing is buried in blog prose
   - Luxury positioning plus the 3D printing product line addresses the premium and geometric-decor segments Sumaiya's Rs 40–799 craft-gift range does not touch
   - Full schema markup, OG cards and sitemap plus portfolio case studies and a workshops page give richer SERP presence and service depth than Sumaiya's blog-only footprint (inferred from search-visible page types)
@@ -45,10 +45,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Pages read as local-business service pages rather than a structured product catalog (inferred from search-visible URL/title patterns)
   - Brand-confusion exposure: near-identical competitor domains resinartjaipur.com and resinartsjaipur.in appear alongside it in search results
 - **Content & SEO strategy:** Ranks for Jaipur-intent commercial keywords across many service pages (classes, wall decor, ring platters, mantra frames, material shop); has a blog ("Resin Home Decor and Interior Guide from Experts") and a dedicated reviews page; sister site varmalapreservation.com carries its own shop (54+ paginated shop pages) and reviews page. Content is service-page-led rather than editorial-led.
-- **What ResinRiva will do better:**
+- **What Rivya Living Art will do better:**
   - Transparent price bands in a structured catalog remove the quote-gate friction that Resin Arts Jaipur imposes on every purchase — high-intent buyers can self-qualify before the WhatsApp conversation
-  - Full schema markup, OG cards and sitemap plus a fast luxury UI position ResinRiva for national SERPs, versus their Jaipur-saturated local-dealer keyword strategy
-  - ResinRiva also runs a workshops page and a 50+ post blog engine, matching their classes offer while adding the editorial content layer their service-page-heavy sites lack
+  - Full schema markup, OG cards and sitemap plus a fast luxury UI position Rivya Living Art for national SERPs, versus their Jaipur-saturated local-dealer keyword strategy
+  - Rivya Living Art also runs a workshops page and a 50+ post blog engine, matching their classes offer while adding the editorial content layer their service-page-heavy sites lack
 
 ### Kanha Kreation
 - **URL · Country:** https://kanhakreation.com/ · India (exact base not visible in search results; a related-business address in Jaipur appears in snippets — unconfirmed)
@@ -65,8 +65,8 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - No customer reviews, trust badges, founder story, or press visible in search results
   - No workshops, preservation services, or about/location transparency visible in search results
 - **Content & SEO strategy:** Minimal: a few keyword landing articles ("resin art websites in India", "find exceptional resin art gift online") plus product-category archives. No dated blog cadence, web stories, or city pages visible in search results; branded SERP is polluted by similarly named businesses.
-- **What ResinRiva will do better:**
-  - ResinRiva's 50+ post blog engine and portfolio case studies dwarf Kanha Kreation's handful of indexed landing pages, compounding organic reach over time
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's 50+ post blog engine and portfolio case studies dwarf Kanha Kreation's handful of indexed landing pages, compounding organic reach over time
   - Per-product customization forms that feed directly into WhatsApp give a concierge made-to-order experience versus their generic add-to-cart with limited personalization fields
   - Full schema markup, OG cards and sitemap plus a distinctive luxury brand identity avoid the crawl-thinness and name-collision problems visible in Kanha Kreation's search presence
 
@@ -85,8 +85,8 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - No workshops, memory/varmala preservation, or occasion storytelling visible in search results, missing the highest-emotion (and highest-margin) segment
   - Identity is Pune-anchored in titles and positioning, limiting other-city local-intent capture
 - **Content & SEO strategy:** Ranks through commercial category landing pages ("Best Resin Art, Resin Geode Art Shop in Pune", "Buy Resin Home Decor Products Online", "Resin Ocean Art", "Epoxy Resin Wall Art") and product pages; multiple homepage variants ("Homepage 2") suggest an unpolished WordPress build (inferred). No blog posts, web stories, or city-series pages visible in search results.
-- **What ResinRiva will do better:**
-  - ResinRiva holds luxury positioning with clean price bands instead of SAASHI's discount-stacked pricing, protecting margin and brand perception in the same made-to-order categories
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art holds luxury positioning with clean price bands instead of SAASHI's discount-stacked pricing, protecting margin and brand perception in the same made-to-order categories
   - The 50+ post blog engine, portfolio case studies and workshops page build top-of-funnel and trust layers SAASHI entirely lacks in search
   - Per-product customization forms feeding WhatsApp deliver a guided bespoke flow, versus SAASHI's plain cart plus a single generic custom-order page
 
@@ -95,7 +95,7 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
 - **Niche / Focus · Product Types · Price Positioning:** Customized gifting generalist spanning resin and 3D printing: customised resin photo frames (4in–10in, some with lights), resin coasters and trinket trays, flower/varmala preservation, 3D printed gifts, birthday/bridesmaid/wedding-return gifts, corporate gifting and employee welcome kits. Price positioning: budget-to-mid, evidence-based — coasters Rs 270–410 (Heavenly Ocean Rs 270, Yellow Hexagon Rs 290, Luxe Rs 350, Glittery Flower Rs 410, Real Rose set of 2 Rs 365); Customised Resin Frame from Rs 420; Wooden Resin Frame Rs 3,899 discounted to Rs 3,199; blog pitches wedding return gifts at Rs 500–2,000.
 - **Ordering Model:** Cart (WooCommerce-style product pages and product-category URLs with fixed prices) + WhatsApp widget for customization and bulk (snippets mention "WhatsApp for discounts on 5+ units"); email (leoberrygifts@gmail.com) for order follow-ups.
 - **Strengths:**
-  - Only researched India competitor covering both resin AND 3D printed gifts — direct category overlap with ResinRiva
+  - Only researched India competitor covering both resin AND 3D printed gifts — direct category overlap with Rivya Living Art
   - Structured catalog with visible per-product prices, plus occasion/audience landing pages (bridesmaid, gifts-for-her, gifts-for-parents, office specials)
   - Chennai local SEO: ranks for "wedding return gifts Chennai", "corporate gifts Chennai", "birthday gifts Chennai" style queries with dedicated blog posts
   - Third-party trust surfaces: WedMeGood vendor profile with positive review (100-hamper order), Justdial listing, active Facebook page
@@ -106,10 +106,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Gifting-generalist branding rather than art/design-led luxury; no workshops or portfolio storytelling visible in search results
   - Review volume/aggregate rating not visible in search results
 - **Content & SEO strategy:** Occasion- and city-keyword strategy: blog posts like "Get Beautiful Wedding Return Gifts Chennai for every BUDGET", "Exclusive Corporate Gifts in Chennai", "All About Customised Resin Frames", plus many category landing pages. Ranks for Chennai gifting queries and its own brand terms; blog depth appears modest (a handful of posts visible in search results).
-- **What ResinRiva will do better:**
+- **What Rivya Living Art will do better:**
   - Luxury positioning with price bands avoids Leoberry's low fixed-price anchoring (Rs 270–420) while still giving buyers pricing confidence
   - Per-product customization forms that feed WhatsApp beat Leoberry's generic floating WhatsApp widget — the enquiry arrives pre-structured
-  - Clean single-domain architecture with full schema markup, OG cards and sitemap vs Leoberry's mixed www/pages URL mess and bot-verification indexing artifacts; ResinRiva's 50+ post blog engine and workshops page also cover surfaces Leoberry lacks
+  - Clean single-domain architecture with full schema markup, OG cards and sitemap vs Leoberry's mixed www/pages URL mess and bot-verification indexing artifacts; Rivya Living Art's 50+ post blog engine and workshops page also cover surfaces Leoberry lacks
 
 ### Resinart.in (Resin Art Shop)
 - **URL · Country:** https://resinart.in · India (Lucknow association per its own city blog post)
@@ -126,10 +126,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Blog is minimal (2 posts visible: a resin gifts guide and a Lucknow city post) — no sustained content engine
   - No structured product pages surfacing for individual SKUs despite the claimed range (inferred: catalog is largely non-indexed or non-existent)
 - **Content & SEO strategy:** Head-keyword title tags plus one city page ("Resin art store Lucknow") and one evergreen guide ("The art and craft of resin"); essentially no ranking depth beyond brand and a couple of generic terms. No schema/rich results visible in search results. Ranks #1 for "resin art store India" per discovery-sweep observation.
-- **What ResinRiva will do better:**
-  - ResinRiva's structured catalog with price bands + per-product customization forms converts search traffic Resinart.in can only funnel to a contact page
-  - 50+ post blog engine vs their ~2 posts — ResinRiva can out-publish them on every keyword they touch (varmala, coasters, clocks, preservation)
-  - Full schema markup, OG cards and sitemap give ResinRiva rich-result and social-share advantages over a thin site-builder deployment
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's structured catalog with price bands + per-product customization forms converts search traffic Resinart.in can only funnel to a contact page
+  - 50+ post blog engine vs their ~2 posts — Rivya Living Art can out-publish them on every keyword they touch (varmala, coasters, clocks, preservation)
+  - Full schema markup, OG cards and sitemap give Rivya Living Art rich-result and social-share advantages over a thin site-builder deployment
 
 ### Woodensure
 - **URL · Country:** https://www.woodensure.com · India
@@ -147,10 +147,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Crawl hygiene issues visible: a 404 page is indexed in search results
   - No small-format gifting, keepsake/preservation products, or workshops visible in search results — furniture-only funnel with 30-working-day lead times
 - **Content & SEO strategy:** Commercial category/item pages ranking for epoxy furniture terms + listicle blog targeting gifting and wall-decor keywords; buyer-guide content ("What makes a premium epoxy resin table different"). Discount-percentage title tags are the signature pattern. Part of content sits on an Odoo subdomain, diluting authority.
-- **What ResinRiva will do better:**
-  - ResinRiva's fast luxury UI with price bands preserves premium perception where Woodensure's 70%-off title tags erode it
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's fast luxury UI with price bands preserves premium perception where Woodensure's 70%-off title tags erode it
   - Per-product customization forms feeding WhatsApp formalize what Woodensure handles ad hoc over calls/WhatsApp after cart friction
-  - Single-domain 50+ post blog engine plus schema/OG/sitemap vs Woodensure's split Odoo blog and indexed 404s; ResinRiva also monetizes the small-format gifting and workshops demand Woodensure ignores
+  - Single-domain 50+ post blog engine plus schema/OG/sitemap vs Woodensure's split Odoo blog and indexed 404s; Rivya Living Art also monetizes the small-format gifting and workshops demand Woodensure ignores
 
 ### Poonam Shah Art
 - **URL · Country:** https://www.poonamshahart.com · India (Andheri West, Mumbai; clients across Mumbai, Delhi, Bengaluru, Pune, Hyderabad, Assam)
@@ -168,8 +168,8 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Brand discovery is dependent on Instagram algorithm and third-party press rather than owned search rankings
   - No visible customer review infrastructure (ratings, testimonials pages) in search results
 - **Content & SEO strategy:** Effectively none on-site; she ranks through press articles (The Better India, LBB workshop roundups) and Instagram rather than her own content. Her gallery pages carry the only descriptive copy (tabletops, wardrobe panels).
-- **What ResinRiva will do better:**
-  - ResinRiva's structured catalog with price bands + per-product customization forms feeding WhatsApp delivers the same bespoke feel with 10x less enquiry friction than pure gallery-and-DM
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's structured catalog with price bands + per-product customization forms feeding WhatsApp delivers the same bespoke feel with 10x less enquiry friction than pure gallery-and-DM
   - Full schema markup, OG cards, sitemap and a 50+ post blog engine capture the organic search demand (varmala preservation, resin nameplates, resin clocks, workshop searches) that Poonam Shah cedes entirely to press and Instagram
   - Portfolio case studies + a dedicated workshops page replicate her storytelling and workshop channels in an indexable, always-on format
 
@@ -178,7 +178,7 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
 - **Niche / Focus · Product Types · Price Positioning:** Handcrafted resin decor: epoxy wall clocks, tables, resin wall art, coasters/trays, name plates, varmala (wedding garland) preservation, custom orders. Price positioning: mid-range — wall clocks from Rs 1,999; personalized/varmala pieces from Rs 2,499; catalog items up to ~Rs 11,999 (from search snippets).
 - **Ordering Model:** Shopify cart (/collections/, /products/ URLs) plus WhatsApp numbers (+917737969944 / +919660665565) and email for custom orders.
 - **Strengths:**
-  - Broad finished-goods catalog spanning clocks, tables, wall art and varmala preservation — closest overlap with ResinRiva's category
+  - Broad finished-goods catalog spanning clocks, tables, wall art and varmala preservation — closest overlap with Rivya Living Art's category
   - Accepts custom orders with customer-supplied reference images, colors and sizes; team-guided process
   - Pan-India delivery with stated 3–6 business day handcrafting/processing window
   - Visible price laddering across collections (Rs 1,999 to Rs 11,999) helps conversion
@@ -189,9 +189,9 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Two domains (pacificresinart.in and pacificresinart.com) appear in results, splitting brand equity (inferred)
   - No workshops or community offering visible in search results
 - **Content & SEO strategy:** Ranks via optimized Shopify collection pages for "resin wall clocks India", "resin coasters and trays", "resin wall art"; deep pagination indexed (page 4, page 6); Pinterest profile present; no blog posts visible in search results.
-- **What ResinRiva will do better:**
-  - ResinRiva's structured catalog with price bands + per-product customization forms that feed pre-filled WhatsApp messages beats Pacific's generic "share your idea over WhatsApp" flow
-  - ResinRiva's 50+ post blog engine, full schema markup, OG cards and sitemap give it a content/SEO moat Pacific visibly lacks
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's structured catalog with price bands + per-product customization forms that feed pre-filled WhatsApp messages beats Pacific's generic "share your idea over WhatsApp" flow
+  - Rivya Living Art's 50+ post blog engine, full schema markup, OG cards and sitemap give it a content/SEO moat Pacific visibly lacks
   - Workshops page and portfolio case studies add authority and revenue streams Pacific does not show in search results
 
 ### Tulsi Resin Store (supplies reference — audience overlap, not a finished-goods rival)
@@ -209,10 +209,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - No blog or educational editorial visible in search results despite a huge hobbyist audience
   - Utilitarian volume-store presentation, no luxury positioning (inferred from snippets)
 - **Content & SEO strategy:** Ranks on collection and policy pages ("silicone moulds online at best prices", international shipping, delivery/return); Linktree and Instagram presence; content strategy is catalog-SEO only — no articles visible in search results.
-- **What ResinRiva will do better:**
-  - ResinRiva sells the finished luxury product, so it is not a direct rival — but Tulsi's 1-lakh hobbyist audience is exactly who ResinRiva's workshops page can convert
-  - ResinRiva's blog engine can capture Tulsi's top-of-funnel DIY searchers ("how to" resin queries) and route them to workshops or made-to-order pieces
-  - Fast luxury UI and portfolio case studies position ResinRiva as the premium outcome of the craft Tulsi merely supplies
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art sells the finished luxury product, so it is not a direct rival — but Tulsi's 1-lakh hobbyist audience is exactly who Rivya Living Art's workshops page can convert
+  - Rivya Living Art's blog engine can capture Tulsi's top-of-funnel DIY searchers ("how to" resin queries) and route them to workshops or made-to-order pieces
+  - Fast luxury UI and portfolio case studies position Rivya Living Art as the premium outcome of the craft Tulsi merely supplies
 
 ### The 3D Printing Store India
 - **URL · Country:** https://the3dprintingstore.in/ · India (Bangalore; Swamy Technosystems Pvt Ltd)
@@ -229,10 +229,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - No blog or editorial content visible in search results
   - Personalization limited to standard cart text fields rather than rich per-product customization (inferred)
 - **Content & SEO strategy:** Ranks for "3D printed gifts India" via homepage and collection pages; judge.me review pages and about-us page indexed; social proof is the visible strategy — no content marketing found in search results.
-- **What ResinRiva will do better:**
-  - ResinRiva uniquely combines resin art and 3D printing under one luxury brand — no competitor in this sweep spans both
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art uniquely combines resin art and 3D printing under one luxury brand — no competitor in this sweep spans both
   - Per-product customization forms feeding structured WhatsApp orders give a concierge feel versus T3DPS's standard Shopify personalization fields
-  - Schema markup + OG cards + 50-post blog + portfolio case studies let ResinRiva contest hybrid queries ("custom 3D printed decor", "resin vs 3D printed nameplate") that T3DPS's catalog-only SEO cannot
+  - Schema markup + OG cards + 50-post blog + portfolio case studies let Rivya Living Art contest hybrid queries ("custom 3D printed decor", "resin vs 3D printed nameplate") that T3DPS's catalog-only SEO cannot
 
 ---
 
@@ -254,8 +254,8 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Templated, keyword-stuffed product titles suggest volume-listing strategy over brand curation — weak luxury signal
   - No visible portfolio/case studies or workshops; brand story not visible in search results
 - **Content & SEO strategy:** Ranks almost entirely on product and collection pages ("3D Printed Decor in EU & USA", per-product long-tail titles). Collections paginate 12+ pages deep, indicating scale-based SEO. A blog with "creative guides and how-tos" is mentioned in snippets but no individual posts surfaced in search — content marketing is a visible gap.
-- **What ResinRiva will do better:**
-  - ResinRiva's 50+ post blog engine plus full schema markup/OG cards/sitemap out-executes Decords' near-invisible blog on non-product search intent
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's 50+ post blog engine plus full schema markup/OG cards/sitemap out-executes Decords' near-invisible blog on non-product search intent
   - Per-product customization forms feeding directly into WhatsApp give a concierge custom-order flow, versus Decords' generic upload-an-STL service product
   - Portfolio case studies and a workshops page build luxury brand depth and trust that Decords' templated catalog-only presence lacks
 
@@ -275,9 +275,9 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Lookalike domain (eastsidestudiolondonstyle.shop) and ScamAdviser checks surfacing in search suggest brand-impersonation/trust noise around the brand
   - 3D/CGI is just one collection among many — not a deep specialization; product is flat prints only, no tactile/dimensional goods
 - **Content & SEO strategy:** Ranks via well-structured collection and landing pages (shop by size, shop by style, all artists, best sellers, limited editions, wholesale). Clean commercial-intent SEO but no visible top-of-funnel content; discovery appears driven by collections, Instagram and Facebook.
-- **What ResinRiva will do better:**
-  - ResinRiva sells dimensional, tactile made-to-order resin and 3D-printed pieces with per-product customization forms — a materially richer product than flat prints of 3D renders
-  - ResinRiva's 50+ post blog engine and schema-marked-up catalog capture informational search traffic East Side Studio completely ignores
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art sells dimensional, tactile made-to-order resin and 3D-printed pieces with per-product customization forms — a materially richer product than flat prints of 3D renders
+  - Rivya Living Art's 50+ post blog engine and schema-marked-up catalog capture informational search traffic East Side Studio completely ignores
   - WhatsApp-first concierge ordering plus workshops page fit India's gifting and experience market better than a pure UK cart flow
 
 ### ArtResin (reference brand — supplies, not a direct competitor)
@@ -293,11 +293,11 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Supplies-only: does not compete for finished-piece buyers, and its content sends demand to DIY rather than commissions
   - Price premium is contested — reviewers point to near-equivalent products at roughly half the price
   - No local India presence — available only via import resellers (Ubuy), leaving Indian resin-art demand to local brands
-- **Content & SEO strategy:** The category's SEO leader: ranks for "resin art for beginners", how-to guides, video tutorials hub, project roundups, and resin-business advice. Content strategy = educate beginners into customers; blog + video library are the model ResinRiva's blog engine should localize.
-- **What ResinRiva will do better:**
-  - ResinRiva monetizes the finished-goods side of the same interest graph — buyers who want luxury resin pieces, not chemistry — with a structured catalog, price bands and WhatsApp customization ArtResin has no equivalent for
-  - ResinRiva's workshops page can capture the Indian DIY/learning demand that ArtResin's content creates but cannot fulfill locally (no India distribution)
-  - ResinRiva can win India-specific informational SEO (care guides, festive gifting, resin in Indian climate) where ArtResin's content is US-centric
+- **Content & SEO strategy:** The category's SEO leader: ranks for "resin art for beginners", how-to guides, video tutorials hub, project roundups, and resin-business advice. Content strategy = educate beginners into customers; blog + video library are the model Rivya Living Art's blog engine should localize.
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art monetizes the finished-goods side of the same interest graph — buyers who want luxury resin pieces, not chemistry — with a structured catalog, price bands and WhatsApp customization ArtResin has no equivalent for
+  - Rivya Living Art's workshops page can capture the Indian DIY/learning demand that ArtResin's content creates but cannot fulfill locally (no India distribution)
+  - Rivya Living Art can win India-specific informational SEO (care guides, festive gifting, resin in Indian climate) where ArtResin's content is US-centric
 
 ### Printables (trends reference only — not a competitor)
 - **URL · Country:** https://www.printables.com · Czech Republic (operated by Prusa Research); global community
@@ -313,10 +313,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Discovery is model-centric and utilitarian, not curated or luxury-oriented
   - Commercial use of models requires license diligence (CC BY-NC pitfalls), a barrier for casual sellers
 - **Content & SEO strategy:** Dominates "3D models" and category queries (Home Decor, Household, Bedroom); the Prusa blog drives platform news (Store launch, Awards, brand profiles). Useful as a trend-mining source: what tops its home-decor category tends to become the next wave of sellable printed decor.
-- **What ResinRiva will do better:**
-  - ResinRiva delivers finished, quality-checked printed pieces to customers with no printer — a completely different buyer than Printables' makers
-  - ResinRiva can trend-mine Printables' Home Decor category and contests to seed new catalog items and blog posts before Indian competitors notice them
-  - ResinRiva's structured catalog with price bands, schema markup and customization forms turns raw model trends into a shoppable luxury experience
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art delivers finished, quality-checked printed pieces to customers with no printer — a completely different buyer than Printables' makers
+  - Rivya Living Art can trend-mine Printables' Home Decor category and contests to seed new catalog items and blog posts before Indian competitors notice them
+  - Rivya Living Art's structured catalog with price bands, schema markup and customization forms turns raw model trends into a shoppable luxury experience
 
 ---
 
@@ -324,7 +324,7 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
 
 ### Etsy resin & epoxy sellers (market)
 - **URL · Country:** https://www.etsy.com/market/resin_wall_art · Global (US platform; localized Etsy India storefront at etsy.com/in-en with INR pricing)
-- **Niche / Focus · Product Types · Price Positioning:** Aggregated marketplace channel, not a single competitor: millions of handmade/vintage sellers listing resin wall art, ocean/geode paintings, resin lamps and dioramas, epoxy river tables, coaster/tray sets, charcuterie boards, and Indian-wedding varmala/jaimala preservation frames. Heavy overlap with ResinRiva's made-to-order categories. Price positioning: very wide bands visible in search snippets — resin coasters/trays $4.40–$70; epoxy river tables $186–$7,500 on Etsy (industry sources cite up to $25,000+ depending on size/wood); Etsy India resin art listings from ~₹782, mid-range ₹5,079–₹18,997, premium pieces ₹50,074+ with outliers at ₹1,81,038. Effectively spans commodity to luxury with no positioning control for any one seller.
+- **Niche / Focus · Product Types · Price Positioning:** Aggregated marketplace channel, not a single competitor: millions of handmade/vintage sellers listing resin wall art, ocean/geode paintings, resin lamps and dioramas, epoxy river tables, coaster/tray sets, charcuterie boards, and Indian-wedding varmala/jaimala preservation frames. Heavy overlap with Rivya Living Art's made-to-order categories. Price positioning: very wide bands visible in search snippets — resin coasters/trays $4.40–$70; epoxy river tables $186–$7,500 on Etsy (industry sources cite up to $25,000+ depending on size/wood); Etsy India resin art listings from ~₹782, mid-range ₹5,079–₹18,997, premium pieces ₹50,074+ with outliers at ₹1,81,038. Effectively spans commodity to luxury with no positioning control for any one seller.
 - **Ordering Model:** Cart checkout with structured personalization: sellers define up to 5 custom text fields per listing ("Add your personalization" box); beyond that, buyers must use Etsy Messages to negotiate a private custom-request listing. No WhatsApp; all communication is inside Etsy's messaging system.
 - **Strengths:**
   - Dominant SEO: programmatic market/category pages (e.g. "Buy Resin Art Online In India – Etsy India") rank for virtually every resin long-tail keyword, including varmala preservation
@@ -338,10 +338,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Sellers own no customer relationship or brand surface — communication, branding and repeat business are locked inside Etsy; no WhatsApp or direct contact allowed
   - Personalization is capped at 5 text fields, so complex made-to-order resin specs (size, colour palette, embedded objects, photos) spill into slow back-and-forth messaging
 - **Content & SEO strategy:** Etsy itself ranks via thousands of auto-generated market pages ("Resin Wall Art - Etsy", "Buy Resin Art Online In India - Etsy India"); individual sellers get no independent SEO footprint, no blog, no schema of their own — their visibility is rented from Etsy search and ads.
-- **What ResinRiva will do better:**
-  - ResinRiva keeps 100% margin and the full customer relationship: per-product customization forms feed directly into WhatsApp — richer than Etsy's 5-field personalization cap and with none of the ~10–28% fee stack Indian Etsy sellers face
-  - ResinRiva owns its SEO surface (full schema markup, OG cards, sitemap, 50+ post blog engine, portfolio case studies) instead of renting visibility inside a saturated marketplace algorithm
-  - Structured catalog with price bands plus a workshops page lets ResinRiva control luxury positioning end-to-end, whereas Etsy juxtaposes ₹782 commodity listings next to premium pieces and erodes price integrity
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art keeps 100% margin and the full customer relationship: per-product customization forms feed directly into WhatsApp — richer than Etsy's 5-field personalization cap and with none of the ~10–28% fee stack Indian Etsy sellers face
+  - Rivya Living Art owns its SEO surface (full schema markup, OG cards, sitemap, 50+ post blog engine, portfolio case studies) instead of renting visibility inside a saturated marketplace algorithm
+  - Structured catalog with price bands plus a workshops page lets Rivya Living Art control luxury positioning end-to-end, whereas Etsy juxtaposes ₹782 commodity listings next to premium pieces and erodes price integrity
 
 ### Artsty
 - **URL · Country:** https://www.artsty.com/ · India
@@ -359,10 +359,10 @@ Competitor landscape for **ResinRiva** ([store.bhavyagondaliya.co.in](https://st
   - Customization is unstructured — buyers must email or WhatsApp requirements manually rather than through per-product forms
   - Thin content engine: only one blog post surfaced in search results; customer reviews not visible in search results
 - **Content & SEO strategy:** Ranks for varmala-preservation and resin-gift queries mainly via individual Shopify product pages; blog presence is minimal (a single "Learn Resin Art & Build an Income" post surfaced); content strategy appears Instagram-first rather than SEO-first.
-- **What ResinRiva will do better:**
-  - ResinRiva's structured catalog with price bands and per-product customization forms feeding WhatsApp beats Artsty's "email us your requirements" flow — lower friction and fewer lost specs
-  - Full schema markup, OG cards and sitemap versus Artsty's duplicated "copy-of" slugs and mistitled homepage gives ResinRiva a durable technical-SEO advantage on the same varmala/resin-gift keywords
-  - ResinRiva's luxury positioning (fast UI, portfolio case studies, no strikethrough discount clutter) targets the premium band Artsty dilutes with perpetual sale pricing; its 50+ post blog engine and workshops page out-publish Artsty's near-empty blog
+- **What Rivya Living Art will do better:**
+  - Rivya Living Art's structured catalog with price bands and per-product customization forms feeding WhatsApp beats Artsty's "email us your requirements" flow — lower friction and fewer lost specs
+  - Full schema markup, OG cards and sitemap versus Artsty's duplicated "copy-of" slugs and mistitled homepage gives Rivya Living Art a durable technical-SEO advantage on the same varmala/resin-gift keywords
+  - Rivya Living Art's luxury positioning (fast UI, portfolio case studies, no strikethrough discount clutter) targets the premium band Artsty dilutes with perpetual sale pricing; its 50+ post blog engine and workshops page out-publish Artsty's near-empty blog
 
 ---
 
@@ -380,7 +380,7 @@ New scrape-source candidates surfaced during this research, **deduped by domain 
 | MT Resin Arts India | https://mtresinartsindia.com/ | RESIN_GOODS | India (Jaipur) | Claims 15 years in epoxy resin; sells products AND runs an academy (offline workshops, online courses, YouTube tutorials) — hybrid goods-plus-training model — *(now in registry)* |
 | Resin Art Jaipur | https://www.resinartjaipur.com/ | RESIN_GOODS | India | Separate site nearly identical in name to seeded resinartsjaipur.com — epoxy tables, resin gifts and preservation in Jaipur; evidence of name-collision competition in that market |
 | Akanksha Arts Studio | https://www.akankshaartsstudio.com/ | RESIN_GOODS | India (Nagpur) | Resin art products plus workshops/classes in Pune and Nagpur — workshop-led lead generation model |
-| Resineera | https://resineera.com/ | RESIN_GOODS | India (Delhi NCR) | "Premium Resin Art, Decor & Workshops"; varmala preservation ₹2,799–₹8,499 (frames with photo ₹2,999–₹7,999); city workshop SEO landing pages (Delhi, Noida, Gurgaon) plus online workshops with material kits — closest positioning match to ResinRiva — *(now in registry)* |
+| Resineera | https://resineera.com/ | RESIN_GOODS | India (Delhi NCR) | "Premium Resin Art, Decor & Workshops"; varmala preservation ₹2,799–₹8,499 (frames with photo ₹2,999–₹7,999); city workshop SEO landing pages (Delhi, Noida, Gurgaon) plus online workshops with material kits — closest positioning match to Rivya Living Art — *(now in registry)* |
 | Resin Artology | https://resinartology.in/ | RESIN_GOODS | India | Shopify store with a varmala preservation resin art collection |
 | Shaahi Decor | https://shaahidecor.com/ | RESIN_GOODS | India | Shopify /collections/varmala-preservation plus resin home decor accessories; "directly from resin artist" positioning |
 | Artsty | https://www.artsty.com/ | RESIN_GOODS | India | Shopify /products/; customized resin epoxy varmala preservation incl. LED wooden stand variants (profiled above under Marketplace lens) |
@@ -389,11 +389,11 @@ New scrape-source candidates surfaced during this research, **deduped by domain 
 | Resinhastkala Store | https://resinhastkalastore.com/ | RESIN_GOODS | India | Surfaced for resin keychain/coaster ordering queries; details not visible in search results |
 | Viva Gifts | https://vivagifts.in/ | RESIN_GOODS | India | WooCommerce /product-category/ with a varmala preservation category under resin products — from Rs 800 with doorstep pickup & delivery, aggressive entry-price signal |
 | ResinClocks.in | https://resinclocks.in/ | RESIN_GOODS | India | Single-niche "luxury resin wall clock" domain — exact-match-domain SEO play, all sizes/colors — *(now in registry)* |
-| Resin By Ren | https://resinbyren.com/ | RESIN_GOODS | UK | Handmade luxury resin trays and coaster sets by artist Rengin; dedicated custom-orders collection, heat-resistant serving trays — direct stylistic peer for ResinRiva |
+| Resin By Ren | https://resinbyren.com/ | RESIN_GOODS | UK | Handmade luxury resin trays and coaster sets by artist Rengin; dedicated custom-orders collection, heat-resistant serving trays — direct stylistic peer for Rivya Living Art |
 | Coastal Coasters | https://www.coastalcoastersli.com/ | RESIN_GOODS | USA (New York) | Hand-painted resin coaster sets and serving trays positioned as "affordable luxury" handmade home gifts |
 | The Resin Society | https://resinsociety.net/ | RESIN_GOODS | not visible in search results | Resin home decor and epoxy tables plus materials/tools — hybrid goods+supplies model — *(now in registry)* |
 | Merchlist | https://themerchlist.com/ | RESIN_GOODS | not visible in search results | Custom resin coasters with name/logo for corporate gifting and promo — validates a B2B corporate-gifting angle for resin goods |
-| Pourfect | https://pourfect.in/ | SUPPLIES | India | ASTM-certified, non-toxic, food-safe made-in-India resin kits; claims 10,000+ artist community; serves the DIY segment ResinRiva's workshops touch |
+| Pourfect | https://pourfect.in/ | SUPPLIES | India | ASTM-certified, non-toxic, food-safe made-in-India resin kits; claims 10,000+ artist community; serves the DIY segment Rivya Living Art's workshops touch |
 | Epoxy Art India | https://epoxyartindia.com/ | SUPPLIES | India | WooCommerce /product-category/; premium epoxy resin, pigment sets, glitters, dried flowers for resin at Rs 80–220/pack — *(now in registry)* |
 | ResinCult | https://resincult.com/ | SUPPLIES | India | Resin brand using "Best Resin Brand in India (2025)" self-ranking blog SEO |
 | MB Epoxy | https://mbepoxy.in/ | SUPPLIES | India | Indian epoxy/art-resin supplier ranking for "art resin" queries in India — local supplies competitor context — *(now in registry)* |
@@ -411,7 +411,7 @@ New scrape-source candidates surfaced during this research, **deduped by domain 
 | Drag And Drop | https://draganddrop.design/ | PRINT3D | not visible in search results (EU-style design studio, en-us storefront) | Nature-inspired large-scale 3D printed "ceramic" vases and lampshades using bio-based and recycled materials; sustainable design positioning |
 | Sonogo | https://www.sonogodesign.com/ | PRINT3D | not visible in search results | Designer Jovi Lim's curated collection of plant-based 3D-printed lamps; boutique sustainable-design angle |
 | Terra Labs | https://terralabs.design/ | PRINT3D | not visible in search results | Sustainable 3D-printed lamps and furniture ("3D Printing Lamps of the Future"); table lamps blending form and function |
-| SLIMPRINT | https://slimprintshop.com/ | PRINT3D | not visible in search results (EU inferred) | Studio turning bio-plastic waste into design pieces; every vase made to order and hand-packaged — closest to ResinRiva's made-to-order model |
+| SLIMPRINT | https://slimprintshop.com/ | PRINT3D | not visible in search results (EU inferred) | Studio turning bio-plastic waste into design pieces; every vase made to order and hand-packaged — closest to Rivya Living Art's made-to-order model |
 | JONATHAN Y | https://www.jonathany.com/collections/3d-printed-lamps | PRINT3D | USA | Mainstream home-decor brand with a dedicated 3D printed lamps collection — signals the category going mass-market |
 
 ---
@@ -420,21 +420,21 @@ New scrape-source candidates surfaced during this research, **deduped by domain 
 
 ### Market gaps
 
-- **No competitor combines luxury positioning with transparent price bands.** The Indian market splits into discount-strikethrough carts (SAASHI, Woodensure, Artsty, ResinVilla) and quote-only premium studios (Resin Arts Jaipur, Poonam Shah Art) — ResinRiva's structured price-band + WhatsApp concierge model is uncontested.
-- **Nobody spans resin art AND 3D printing under one premium brand.** Only Leoberry Gifts does both, and at budget positioning; across the full discovery sweep no other brand combines the two — ResinRiva's dual-category luxury position is nearly unique.
-- **Structured customization is absent everywhere.** WhatsApp appears widely as a support/custom-quote channel (Pacific, Artsty, Woodensure, T3DPS), but no competitor surfaced has per-product customization forms feeding a pre-structured WhatsApp order — ResinRiva's form-to-WhatsApp flow is a genuine differentiator.
+- **No competitor combines luxury positioning with transparent price bands.** The Indian market splits into discount-strikethrough carts (SAASHI, Woodensure, Artsty, ResinVilla) and quote-only premium studios (Resin Arts Jaipur, Poonam Shah Art) — Rivya Living Art's structured price-band + WhatsApp concierge model is uncontested.
+- **Nobody spans resin art AND 3D printing under one premium brand.** Only Leoberry Gifts does both, and at budget positioning; across the full discovery sweep no other brand combines the two — Rivya Living Art's dual-category luxury position is nearly unique.
+- **Structured customization is absent everywhere.** WhatsApp appears widely as a support/custom-quote channel (Pacific, Artsty, Woodensure, T3DPS), but no competitor surfaced has per-product customization forms feeding a pre-structured WhatsApp order — Rivya Living Art's form-to-WhatsApp flow is a genuine differentiator.
 - **The luxury-resin search demand is up for grabs.** The one true luxury player (Poonam Shah Art) has ~5 indexed pages, no catalog, no pricing, no blog; "luxury" is claimed in title tags (ResinClocks.in, Pacific) but the stores are template Shopify catalogs — the true luxury-UI + SEO position is open.
 - **Finished-goods brands barely blog.** Almost no finished-resin-goods competitor shows editorial content; the only visible content players are supplies stores (BohriAli, Artsshala, ResinCult) and global supplies brand ArtResin (750+ YouTube videos, deep blog). Informational resin queries in India are nearly uncontested by product brands.
-- **Varmala/flower preservation is the hottest — and least price-transparent — commercial cluster.** 6+ dedicated sites including exact-match domains (varmalapreservation.com, varmalapreservationindia.com), LED-stand variants, and pickup-and-drop logistics as the differentiator; premium studios quote-gate pricing, so high-intent "varmala preservation cost" queries are underserved. Worth a dedicated ResinRiva landing page + case study, not just a blog post.
+- **Varmala/flower preservation is the hottest — and least price-transparent — commercial cluster.** 6+ dedicated sites including exact-match domains (varmalapreservation.com, varmalapreservationindia.com), LED-stand variants, and pickup-and-drop logistics as the differentiator; premium studios quote-gate pricing, so high-intent "varmala preservation cost" queries are underserved. Worth a dedicated Rivya Living Art landing page + case study, not just a blog post.
 - **Technical SEO hygiene is weak across the field:** duplicated "copy-of" Shopify slugs and a mistitled homepage (Artsty), split domains (Pacific .in/.com, Woodensure's Odoo blog subdomain), indexed 404s (Woodensure), bot-verification pages in the index (Leoberry), thin crawl footprints (Kanha Kreation, Resinart.in) — schema/OG/sitemap discipline is a durable edge.
 - **Etsy's India fee stack (~10–28% effective take, USD payout via Payoneer) makes direct-to-WhatsApp selling economically attractive** — a strong "why buy/sell direct" narrative for both content and positioning.
-- **Proven playbooks worth adopting:** city landing pages rank (Sumaiya's "resin art in [city]", ResinVilla's city collections, Resineera's Delhi/Noida/Gurgaon workshop pages); Web Stories are used only by Sumaiya; workshops are a validated revenue + lead-gen channel (Resin Arts Jaipur, MT Resin Arts, Resineera, Artsty, BohriAli) — supports giving ResinRiva's workshops page city-keyword treatment.
-- **India's resin e-commerce skews to supplies/DIY, not finished luxury goods**; the professionalization of 3D-printed decor visible in EU/US (Decords, SLIMPRINT, Terra Labs, JONATHAN Y) has no visible Indian equivalent — an early-mover window for ResinRiva's 3D-printed decor line.
-- **Buyers accept long made-to-order lead times when the process is explained** (SEAWAVETABLE 45–55 working days, Woodensure 30 working days) — supports ResinRiva's made-to-order WhatsApp + customization-form flow with clearly stated timelines.
+- **Proven playbooks worth adopting:** city landing pages rank (Sumaiya's "resin art in [city]", ResinVilla's city collections, Resineera's Delhi/Noida/Gurgaon workshop pages); Web Stories are used only by Sumaiya; workshops are a validated revenue + lead-gen channel (Resin Arts Jaipur, MT Resin Arts, Resineera, Artsty, BohriAli) — supports giving Rivya Living Art's workshops page city-keyword treatment.
+- **India's resin e-commerce skews to supplies/DIY, not finished luxury goods**; the professionalization of 3D-printed decor visible in EU/US (Decords, SLIMPRINT, Terra Labs, JONATHAN Y) has no visible Indian equivalent — an early-mover window for Rivya Living Art's 3D-printed decor line.
+- **Buyers accept long made-to-order lead times when the process is explained** (SEAWAVETABLE 45–55 working days, Woodensure 30 working days) — supports Rivya Living Art's made-to-order WhatsApp + customization-form flow with clearly stated timelines.
 
 ### Pricing insights for India
 
-All figures from search-result snippets (July 2026); verify live before setting ResinRiva price bands.
+All figures from search-result snippets (July 2026); verify live before setting Rivya Living Art price bands.
 
 - **Keychains:** Rs 40–250 (Sumaiya Rs 40–150 budget floor; SAASHI Rs 245–249 discounted from Rs 299–399)
 - **Resin jewellery:** Rs 199–399 (SAASHI)
@@ -457,7 +457,7 @@ All figures from search-result snippets (July 2026); verify live before setting 
 
 ### Product & blog opportunity list
 
-Opportunities ResinRiva's Phase 11 blog engine, category structure, workshops page, and portfolio case studies already target — plus new ideas surfaced by this research.
+Opportunities Rivya Living Art's Phase 11 blog engine, category structure, workshops page, and portfolio case studies already target — plus new ideas surfaced by this research.
 
 **Product / page opportunities:**
 
@@ -481,7 +481,7 @@ Opportunities ResinRiva's Phase 11 blog engine, category structure, workshops pa
 - "Wedding return gifts by budget" and city gift guides ("resin gifts in [city]")
 - Anniversary/wedding occasion posts with Hindi-relational keywords (e.g. bhaiya-bhabhi — Sumaiya's pattern)
 - Dated trend listicles ("Top resin gift ideas 2026") and "Best resin art websites in India" style listicles (Kanha Kreation, ResinCult use self-ranking listicles)
-- "Resin vs 3D printed home decor" and "3D printed vs resin nameplates" (hybrid queries only ResinRiva can own)
+- "Resin vs 3D printed home decor" and "3D printed vs resin nameplates" (hybrid queries only Rivya Living Art can own)
 - "Resin vs Jesmonite: which to choose" (contest BohriAli's ranking article; Poonam Shah uses Jesmonite, nobody explains it)
 - "Non-yellowing resin: why it matters for keepsakes" (Viva Gifts leads with this claim) and resin care/heat-resistance/durability explainers for serveware
 - "Resin art for beginners" India-localized (ArtResin proves education converts; its content is US-centric with no India distribution)

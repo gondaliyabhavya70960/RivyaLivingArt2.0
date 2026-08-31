@@ -1,4 +1,4 @@
-# ADMIN_GUIDE.md — ResinRiva Studio Guide (for the owner)
+# ADMIN_GUIDE.md — Rivya Living Art Studio Guide (for the owner)
 
 Welcome! This is the plain-language manual for **your** admin panel — the Studio — at
 **https://store.bhavyagondaliya.co.in/studio**. Everything you can do on the website, you do from here. No coding needed.
@@ -126,9 +126,9 @@ The scraper collects competitor products **for research and cataloging speed** �
 - **Scrape a website:** paste a store URL, pick its tier, go.
 - **Tier runs:** queue every enabled source in a tier (or "Scrape ALL" in tier order). Jobs run one at a time in small chunks, show live progress, and are **resumable** — if one stops, press Resume. Each finished job has its own **Export CSV** button.
 
-**Review** — every scraped product lands here as a card (title, photos, price, source). Filter by source or status, open a card for full detail, then **Approve** or **Reject** (in bulk if you like). Approving opens the import dialog: pick which **ResinRiva category** they belong to, and keep **"Mirror images"** on (it copies the photos into your own storage so review works even if the source site changes).
+**Review** — every scraped product lands here as a card (title, photos, price, source). Filter by source or status, open a card for full detail, then **Approve** or **Reject** (in bulk if you like). Approving opens the import dialog: pick which **Rivya Living Art category** they belong to, and keep **"Mirror images"** on (it copies the photos into your own storage so review works even if the source site changes).
 
-> ⚠️ **The rewrite rule (copyright — not optional).** Approved items are imported as **Drafts** flagged **"needs rewrite"**. Scraped titles, text and photos are the competitor's copyrighted material — reference only. Before publishing you must **rewrite every description in your own words and replace all images with real ResinRiva photos**, then tick the confirm-rewrite box on the product form. Until then, publishing is blocked — even bulk publish skips flagged products and tells you how many it skipped.
+> ⚠️ **The rewrite rule (copyright — not optional).** Approved items are imported as **Drafts** flagged **"needs rewrite"**. Scraped titles, text and photos are the competitor's copyrighted material — reference only. Before publishing you must **rewrite every description in your own words and replace all images with real Rivya Living Art photos**, then tick the confirm-rewrite box on the product form. Until then, publishing is blocked — even bulk publish skips flagged products and tells you how many it skipped.
 
 **Exports & the Google Sheet** — any set of scraped rows can be exported as a **ScrapeDeck CSV** (26 fixed columns — see CONTENT_GUIDE.md). If the Google keys are configured, a **Sync to Sheet** button pushes rows into your designated Google Sheet, one tab per tier (Tier1_Owner, Tier2_ResinGoods, Tier3_Supplies, Tier4_3DPrint), updating changed rows and appending new ones. And remember: those CSVs are for the review workflow only — Bulk Import will reject them.
 

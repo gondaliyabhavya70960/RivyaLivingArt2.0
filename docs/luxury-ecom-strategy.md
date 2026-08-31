@@ -1,4 +1,4 @@
-# ResinRiva — Luxury E-commerce Strategy (v5 layer, 2026-08-13)
+# Rivya Living Art — Luxury E-commerce Strategy (v5 layer, 2026-08-13)
 
 Owner brief: *"analyse top 10 luxury product selling e-commerce websites and
 implement that type design strategy in my website."* Research base: current
@@ -29,7 +29,7 @@ signals; WhatsApp/SMS concierge outperforms email engagement by ~45% for
 luxury clients with sub-30-minute response expectations; scarcity only works
 when it is TRUE (made-to-order, one-of-one) — fake urgency is brand poison.
 
-## B. Where ResinRiva already matches the playbook
+## B. Where Rivya Living Art already matches the playbook
 
 - **WhatsApp-first ordering IS luxury clienteling** — the concierge model the
   research recommends is this site's native flow (no cart, a conversation).

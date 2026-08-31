@@ -88,4 +88,4 @@ Care becomes effortless when it is a habit rather than a rescue mission. Once a 
 
 That is the entire discipline. Resin rewards this small attention with something few materials offer: a finish that can look exactly as luminous in year ten as it did on the day it left the studio. If you are ever unsure whether a cleaning product or placement is safe for your specific piece, ask before experimenting — a two-minute question is cheaper than a repair.
 
-*Have a care question about your ResinRiva piece, or ready to commission one built for your home's light and life? Message us on WhatsApp at +91 70960 36250 and we'll guide you personally.*
+*Have a care question about your Rivya Living Art piece, or ready to commission one built for your home's light and life? Message us on WhatsApp at +91 70960 36250 and we'll guide you personally.*

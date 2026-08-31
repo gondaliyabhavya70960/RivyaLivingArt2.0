@@ -17,7 +17,7 @@ export function RewriteWarning() {
         <div className="space-y-3">
           <p className="text-sm text-foreground/90">
             Scraped reference content — rewrite the description in original
-            ResinRiva words and replace all images with ResinRiva photos before
+            Rivya Living Art words and replace all images with Rivya Living Art photos before
             publishing.
           </p>
           <Controller

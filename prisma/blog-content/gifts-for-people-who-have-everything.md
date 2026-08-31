@@ -50,4 +50,4 @@ Some gifters go further and ask the artisan for a small signed note on the piece
 
 The person who has everything has spent years watching people try to impress them with purchasing power they already possess. The gift that finally lands is the one that opts out of that contest altogether — made once, made for them, and impossible to have seen before because it did not exist until you imagined it.
 
-*Tell ResinRiva about the person who has everything — message us on WhatsApp at +91 70960 36250 and we'll design the one thing they don't.*
+*Tell Rivya Living Art about the person who has everything — message us on WhatsApp at +91 70960 36250 and we'll design the one thing they don't.*

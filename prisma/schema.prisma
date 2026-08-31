@@ -1,4 +1,4 @@
-// ResinRiva — full data model (CONTEXT.md §3, verbatim structure)
+// Rivya Living Art — full data model (CONTEXT.md §3, verbatim structure)
 
 generator client {
   provider = "prisma-client"
@@ -318,7 +318,7 @@ model BlogPost {
   excerpt        String        @default("")
   content        Json          @default("{}") // Tiptap JSON
   coverImage     String?
-  authorName     String        @default("ResinRiva Studio")
+  authorName     String        @default("Rivya Living Art Studio")
   blogCategoryId String?
   blogCategory   BlogCategory? @relation(fields: [blogCategoryId], references: [id], onDelete: SetNull)
   tags           Tag[]
@@ -439,7 +439,7 @@ model Page {
 /// Singleton — always id "main".
 model SiteSettings {
   id                   String    @id @default("main")
-  brandName            String    @default("ResinRiva")
+  brandName            String    @default("Rivya Living Art")
   tagline              String    @default("")
   logoUrl              String?
   heroVideoUrl         String?

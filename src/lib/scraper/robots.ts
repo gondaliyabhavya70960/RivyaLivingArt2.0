@@ -9,7 +9,7 @@ import { SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
 
 /** Our product token, for matching `User-agent:` groups. */
-const BOT_TOKEN = "resinrivaresearchbot";
+const BOT_TOKEN = "rivyalivingartresearchbot";
 
 type Rule = { pattern: string; allow: boolean };
 

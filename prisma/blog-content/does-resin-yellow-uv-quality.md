@@ -32,7 +32,7 @@ Yellowing worries people equally across every product, but the real risk is very
 - **Clear and white pieces** show yellowing most — a crystal-look [resin vase](/shop/resin-vases) or a white river table reveals even a slight warm shift.
 - **Deep blue, geode and heavily pigmented pieces** hide it almost entirely. A sapphire ocean [wall clock](/shop/resin-wall-clocks) or a pigment-rich art panel can shift slightly and no one would ever notice, because the colour is already doing the work.
 
-This is one quiet reason the ResinRiva palette leans into deep ocean blues and layered pigments — they are not only beautiful, they are forgiving over time.
+This is one quiet reason the Rivya Living Art palette leans into deep ocean blues and layered pigments — they are not only beautiful, they are forgiving over time.
 
 ## The care that actually prevents it
 

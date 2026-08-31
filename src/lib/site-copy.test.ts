@@ -27,7 +27,7 @@ describe("applyCopyOverrides", () => {
       hero: { headline: "Liquid luxury, cast forever.", lead: "A lead." },
       cta: { heading: "Begin." },
     },
-    Footer: { rights: "© {year} ResinRiva." },
+    Footer: { rights: "© {year} Rivya Living Art." },
   };
 
   it("returns the base catalogue by reference when there is nothing to apply", () => {

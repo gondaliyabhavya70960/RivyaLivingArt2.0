@@ -63,7 +63,7 @@ const ROOT = path.join(__dirname, "..");
 const NORMALIZER_VERSION = "n8";
 
 /**
- * Scraped descriptions that must not read verbatim on a ResinRiva PDP
+ * Scraped descriptions that must not read verbatim on a Rivya Living Art PDP
  * (audit L-S3): source-store self-branding, live URLs, or emoji-studded
  * listing copy. Deliberately conservative — ~250 of 4,373 current rows
  * match — and deterministic, so the flag reaches production through the

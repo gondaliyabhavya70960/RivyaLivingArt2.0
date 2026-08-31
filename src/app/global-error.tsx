@@ -86,7 +86,7 @@ export default function GlobalError({
     <html lang="en">
       <body style={styles.body}>
         <div>
-          <p style={styles.eyebrow}>resinriva</p>
+          <p style={styles.eyebrow}>Rivya Living Art</p>
           <h1 style={styles.heading}>Something cracked in the cure.</h1>
           <p style={styles.copy}>
             Our apologies — an unexpected error interrupted the site. Trying

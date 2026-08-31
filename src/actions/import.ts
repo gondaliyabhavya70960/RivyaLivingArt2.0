@@ -600,7 +600,7 @@ async function importBlogPostRow(
     excerpt: row.excerpt?.trim() ?? "",
     content,
     coverImage: nullIfEmpty(row.cover_image),
-    authorName: row.author_name?.trim() || "ResinRiva Studio",
+    authorName: row.author_name?.trim() || "Rivya Living Art Studio",
     blogCategoryId,
     status,
     publishedAt,

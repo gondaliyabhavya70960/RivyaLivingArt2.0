@@ -1,6 +1,6 @@
 # BACKUP_GUIDE.md — Backup & Recovery
 
-Three things hold ResinRiva's data: the **Neon database** (all content, orders, settings), the **Vercel Blob store** (all media files), and the **git repository** (code, schema, seed). This guide covers protecting and restoring each.
+Three things hold Rivya Living Art's data: the **Neon database** (all content, orders, settings), the **Vercel Blob store** (all media files), and the **git repository** (code, schema, seed). This guide covers protecting and restoring each.
 
 ## 1. Database — Neon Postgres
 
@@ -22,10 +22,10 @@ vercel env pull .env --environment=production
 
 # dump (custom format — compressed, restorable table-by-table)
 pg_dump "$DATABASE_URL" --format=custom --no-owner \
-  --file="resinriva-$(date +%Y%m%d-%H%M).dump"
+  --file="rivya-living-art-$(date +%Y%m%d-%H%M).dump"
 
 # restore into an empty database when needed
-pg_restore --no-owner --dbname="$TARGET_DATABASE_URL" resinriva-YYYYMMDD-HHMM.dump
+pg_restore --no-owner --dbname="$TARGET_DATABASE_URL" rivya-living-art-YYYYMMDD-HHMM.dump
 ```
 
 (If `$DATABASE_URL` isn't exported in your shell, paste the string from `.env` directly in quotes.)
@@ -44,7 +44,7 @@ pg_restore --no-owner --dbname="$TARGET_DATABASE_URL" resinriva-YYYYMMDD-HHMM.du
 
 ## 3. Code & content structure — git
 
-- The GitHub repo (https://github.com/gondaliyabhavya70960/ResinRiva2.0.git) is the source of truth for code, the Prisma schema, migrations, and the seed structure (categories, FAQs, legal pages). Losing a server loses nothing that's committed.
+- The GitHub repo (https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git) is the source of truth for code, the Prisma schema, migrations, and the seed structure (categories, FAQs, legal pages). Losing a server loses nothing that's committed.
 - **Never commit `.env*` files** (`.gitignore` already excludes them) — secrets live in Vercel's environment variables, which are themselves recoverable from the dashboard.
 
 ## 4. Restore drill (verify before you need it)
