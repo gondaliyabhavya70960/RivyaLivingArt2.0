@@ -6,10 +6,10 @@
  * best-practices are valid. Run against a production server.
  * Usage: BASE=http://localhost:3111 node scripts/audit-lighthouse.mjs
  */
-import { execSync } from "node:child_process";
 import { writeFileSync, mkdirSync } from "node:fs";
 import lighthouse from "lighthouse";
 import { launch } from "chrome-launcher";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3111";
 const ROUTES = [
@@ -22,11 +22,7 @@ const ROUTES = [
   ["contact", "/contact"],
 ];
 
-const chromePath = execSync(
-  "find /opt/pw-browsers/chromium-1194 -name chrome | head -1",
-)
-  .toString()
-  .trim();
+const chromePath = resolveChromiumPath();
 const chrome = await launch({
   chromePath,
   chromeFlags: ["--headless=new", "--no-sandbox", "--disable-dev-shm-usage"],

@@ -2,19 +2,20 @@
  * Phase 4 verification: staff login → dashboard / inquiries screenshots →
  * pricing e2e (set quoted price + staff note on an inquiry, save, verify).
  * Dev-only; expects `next dev` on :3111, local Postgres, and the local
- * admin (admin@local.test / local-dev-password-1 — never a real account).
+ * admin (STUDIO_EMAIL / STUDIO_PASSWORD — never a real account).
  */
-import { execSync } from "node:child_process";
 import { chromium } from "playwright-core";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = "http://localhost:3111";
 const OUT = "screenshots";
 
-const bin = execSync(
-  "find /opt/pw-browsers/chromium-1194 -name chrome | head -1",
-)
-  .toString()
-  .trim();
+// Credentials come from the environment so none is committed. scripts/ci-staff-user.ts
+// creates the matching row and refuses any non-local DATABASE_URL.
+const STUDIO_EMAIL = process.env.STUDIO_EMAIL ?? "studio-audit@example.com";
+const STUDIO_PASSWORD = process.env.STUDIO_PASSWORD ?? "ci-studio-audit-only";
+
+const bin = resolveChromiumPath();
 const browser = await chromium.launch({
   executablePath: bin,
   args: ["--no-sandbox"],
@@ -25,8 +26,8 @@ const p = await ctx.newPage();
 // Login
 await p.goto(`${BASE}/studio/login`, { waitUntil: "networkidle", timeout: 180000 });
 await p.screenshot({ path: `${OUT}/p4-login-1280.png`, fullPage: true });
-await p.locator('input[name="email"]').fill("admin@local.test");
-await p.locator('input[name="password"]').fill("local-dev-password-1");
+await p.locator('input[name="email"]').fill(STUDIO_EMAIL);
+await p.locator('input[name="password"]').fill(STUDIO_PASSWORD);
 await p.locator('button[type="submit"]').click();
 await p.waitForURL(/\/studio(?!\/login)/, { timeout: 60000 });
 console.log("[e2e] logged in ✓");

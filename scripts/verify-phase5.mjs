@@ -9,15 +9,13 @@
  * - reduced-motion + 375px touch → static composition (animated display:none)
  * Screenshots land in screenshots/p5-*.png.
  */
-import { execSync } from "node:child_process";
 import { chromium } from "playwright-core";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = process.env.P5_BASE ?? "http://localhost:3111";
 const OUT = "screenshots";
 
-const bin = execSync("find /opt/pw-browsers/chromium-1194 -name chrome | head -1")
-  .toString()
-  .trim();
+const bin = resolveChromiumPath();
 const browser = await chromium.launch({
   executablePath: bin,
   args: ["--no-sandbox"],

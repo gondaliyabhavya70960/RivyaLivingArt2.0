@@ -6,15 +6,13 @@
  * plus behavior probes (scroll lock, focus trap presence, aria wiring).
  * Screenshots land in screenshots/chrome-*.png.
  */
-import { execSync } from "node:child_process";
 import { chromium } from "playwright-core";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3111";
 const OUT = "screenshots";
 
-const bin = execSync("find /opt/pw-browsers/chromium-1194 -name chrome | head -1")
-  .toString()
-  .trim();
+const bin = resolveChromiumPath();
 const browser = await chromium.launch({
   executablePath: bin,
   args: ["--no-sandbox"],

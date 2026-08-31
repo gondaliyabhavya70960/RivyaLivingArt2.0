@@ -5,11 +5,12 @@
 # once the assets are committed.
 name: Mirror v3 media
 
+# NOTE: this workflow's `push` trigger was pinned to a feature branch that no longer
+# exists, so it has never fired. Removed rather than re-pointed at `main`: these jobs
+# mirror remote assets and push commits back, and enabling that is an owner decision,
+# not a side effect of fixing a stale ref. Run it with workflow_dispatch.
 on:
   workflow_dispatch:
-  push:
-    branches: [claude/resinriva-audit-tasks-tfz6cs]
-    paths: [".github/workflows/mirror-v3-media.yml", "scripts/v3-media.json"]
 
 permissions:
   contents: write
@@ -24,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: claude/resinriva-audit-tasks-tfz6cs
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -67,6 +68,6 @@ jobs:
             git commit \
               -m "Mirror v3 ambient media first-party (via Actions)" \
               -m "public/media/<name>.webp|.mp4|-poster.jpg downloaded from the public Higgsfield CDN by scripts/mirror-v3-media.mjs (sharp WebP q82; ffmpeg h264 CRF28 silent faststart + first-frame posters). Consumed by the v3 redesign as /media/* paths."
-            git pull --rebase origin claude/resinriva-audit-tasks-tfz6cs
-            git push origin HEAD:claude/resinriva-audit-tasks-tfz6cs
+            git pull --rebase origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
           fi

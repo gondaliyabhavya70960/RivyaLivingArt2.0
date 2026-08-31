@@ -3,13 +3,8 @@ import { chromium } from "playwright-core";
 const OUT = process.env.OUT_DIR || "screenshots";
 const URL = "http://localhost:3111/design-lab";
 
-// Find the real chromium binary inside the versioned dir.
-import { execSync } from "node:child_process";
-const bin = execSync(
-  "find /opt/pw-browsers/chromium-1194 -name chrome -o -name headless_shell 2>/dev/null | head -1",
-)
-  .toString()
-  .trim();
+import { resolveChromiumPath } from "./lib/browser.mjs";
+const bin = resolveChromiumPath();
 
 const browser = await chromium.launch({
   executablePath: bin || "/opt/pw-browsers/chromium",

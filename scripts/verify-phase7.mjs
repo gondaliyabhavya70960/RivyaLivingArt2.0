@@ -4,8 +4,8 @@
  * screenshot at 1280 (screenshots/p7-<name>-1280.png); key pages also at 375.
  * Run against :3111 (dev for visuals, prod for timing).
  */
-import { execSync } from "node:child_process";
 import { chromium } from "playwright-core";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = process.env.P7_BASE ?? "http://localhost:3111";
 const OUT = "screenshots";
@@ -24,9 +24,7 @@ const ROUTES = [
   ["404", "/definitely-not-a-page", false],
 ];
 
-const bin = execSync("find /opt/pw-browsers/chromium-1194 -name chrome | head -1")
-  .toString()
-  .trim();
+const bin = resolveChromiumPath();
 const browser = await chromium.launch({
   executablePath: bin,
   args: ["--no-sandbox"],

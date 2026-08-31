@@ -39,8 +39,8 @@ ResinRiva is a production-ready, luxury e-commerce **showcase** platform for cus
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15+ (App Router, TypeScript) |
-| Styling | TailwindCSS + shadcn/ui — blue-led luxury design system |
+| Framework | Next.js 16 (App Router, TypeScript; middleware is `src/proxy.ts`) |
+| Styling | Tailwind v4 (CSS-first, no config file) + shadcn/ui — "Liquid Luxury" v3 design system |
 | Motion | GSAP (ScrollTrigger + SplitText), Lenis smooth scroll, next-view-transitions (shop-card → PDP morph) |
 | 3D | `@google/model-viewer` (GLB/USDZ product 3D viewer) |
 | Forms | React Hook Form + Zod (server-side validation always) |
@@ -52,9 +52,18 @@ ResinRiva is a production-ready, luxury e-commerce **showcase** platform for cus
 | Analytics | Vercel Web Analytics + Speed Insights |
 | Hosting | Vercel (one dashboard, one bill; Hobby → Pro upgrade path, zero re-architecture) |
 
-## Design System — Midnight Gild (v2.0)
+## Design System — Liquid Luxury (v3)
 
-The public site is the light v2.0 "Midnight Gild" system: a **porcelain `#FAF9F5`** canvas, **royal blue `#1E4FD8`** for interaction, **gold** reserved for accents, and **midnight navy `#0A1A2F`** bands applied via `data-theme="navy"` sections. Tokens live in `src/styles/tokens.css` per [DESIGN.md](./DESIGN.md) Appendix A. Typography: **Fraunces** (display serif) + **Inter** (body sans) + **Manrope** + **IBM Plex Mono** via `next/font`.
+The authoritative spec is **[REDESIGN.md](./REDESIGN.md)** ("Liquid Luxury" v3). Its 15-token palette
+is obsidian · deep-ocean · sapphire · mineral · sand · champagne · ink · graphite · mist · hairline,
+with champagne reserved for accents (never a fill, max two per viewport) and dark bands never
+adjacent (max three per page). Typography: **Instrument Serif** (display) + **Inter** (body) +
+**JetBrains Mono** (every price, count, date and dimension) via `next/font`, plus five Noto Sans
+script faces for the non-Latin locales. Tokens live in `src/styles/tokens.css`, bridged into
+Tailwind v4 by `@theme inline` in `src/app/globals.css` — **there is no `tailwind.config.*` file**.
+
+> [DESIGN.md](./DESIGN.md) (v2.0 "Midnight Gild") and [CONTEXT.md](./CONTEXT.md) (v1 "Midnight
+> Sapphire") are **superseded** and kept for history only, per [CLAUDE.md](./CLAUDE.md).
 
 Award-level presentation layer: settings-driven hero video (with poster fallback), pinned 121-frame pour→cure canvas scrub, kinetic oversized typography, scroll-triggered storytelling, magnetic CTAs — all gated behind `prefers-reduced-motion` and performance budgets (LCP < 2.5s, INP < 200ms, CLS < 0.1).
 
@@ -71,8 +80,9 @@ The storefront is localized: a 9-locale next-intl tree (English, Hindi, Gujarati
 | File | Purpose |
 |---|---|
 | [CLAUDE.md](./CLAUDE.md) | **Project instructions** — current repo reality, hard rules, conventions. Read this first in every session. |
-| [DESIGN.md](./DESIGN.md) | **Master design spec** (v2.0 Midnight Gild) — tokens, motion, sections, studio |
-| [CONTEXT.md](./CONTEXT.md) | Historical v1 build memory (phase log) — superseded by CLAUDE.md + DESIGN.md |
+| [REDESIGN.md](./REDESIGN.md) | **Master design spec** (v3 Liquid Luxury) — tokens, motion, sections, studio |
+| [DESIGN.md](./DESIGN.md) | Superseded v2.0 Midnight Gild spec — history only |
+| [CONTEXT.md](./CONTEXT.md) | Historical v1 build memory (phase log) — superseded by CLAUDE.md + REDESIGN.md |
 | [INSTALL.md](./INSTALL.md) | Local development setup |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Vercel deployment, Neon + Blob integration, custom domain |
 | [ADMIN_GUIDE.md](./ADMIN_GUIDE.md) | Plain-language guide for the owner: studio, products, imports, scraper |

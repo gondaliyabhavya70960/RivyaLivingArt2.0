@@ -11,6 +11,7 @@
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright-core";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const [outDir, ...rest] = process.argv.slice(2);
 if (!outDir) {
@@ -33,9 +34,7 @@ const ROUTES = (flagValue("--routes", "/studio,/studio/inquiries,/studio/product
 mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch({
-  executablePath:
-    process.env.CHROMIUM_PATH ??
-    "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+  executablePath: resolveChromiumPath(),
   args: ["--no-sandbox", "--disable-dev-shm-usage"],
 });
 const context = await browser.newContext({

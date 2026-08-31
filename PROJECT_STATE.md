@@ -13,9 +13,11 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 
 ## CURRENT PHASE
 **Phase 0 — ZIP import & forensic audit: COMPLETE**
+**Phase 0.5 — baseline defect fixes: COMPLETE**
 
 ## CURRENT MILESTONE
-Phase 0 delivered and committed. **Phase 1 (rename) is blocked pending two owner decisions —
+Phase 0 and Phase 0.5 delivered and committed. CI now actually runs, and every gate was proven
+green locally before it was enabled. **Phase 1 (rename) is blocked pending two owner decisions —
 see BLOCKING DECISIONS below.**
 
 ---
@@ -45,21 +47,19 @@ Nothing. Phase 0 is closed.
 
 **Get answers to the two BLOCKING DECISIONS below.** They change what Phase 1 and Phase 2 build.
 
-While waiting, the safe unblocked work is **Phase 0.5 — fix the baseline defects** in
-`docs/PROJECT-AUDIT.md` §9, in this order:
+Phase 0.5 (baseline defect fixes) is done — CI is live and green, the 11 browser-launching scripts
+work again, dev credentials are out of tracked source, the dead-branch workflow pins are gone, and
+`README.md` no longer advertises a retired design system.
 
-1. **Fix `ci.yml` branch trigger `Main` → `main`** — until this lands, no CI gate in this project
-   has ever run. Highest value single change in the repo.
-2. Re-point the 7 scripts hardcoding `/opt/pw-browsers/chromium-1194` at `scripts/lib/browser.mjs`.
-3. Reconcile audit-script ports (`:3111` vs `:3000`).
-4. Reconcile `.env.example` ↔ `src/lib/env.ts` (add `DATABASE_URL_UNPOOLED`, `RESEND_FROM`;
-   decide on `AUTH_URL`/`ADMIN_EMAIL`/`ADMIN_PASSWORD`).
-5. Move `happy-dom` to `devDependencies`; remove unused `three` (or wire it — `@google/model-viewer`
-   is the only 3D in use).
-6. Remove hardcoded dev credentials from `verify-phase4.mjs:28-29`.
-7. Un-pin the 4 asset workflows from deleted feature branches.
+Two Phase 0.5 items remain, both deliberately left:
 
-Each of these is independently verifiable and cannot conflict with either pending decision.
+1. **`.env.example` needs `DATABASE_URL_UNPOOLED` and `RESEND_FROM`** — this session's tooling
+   denies edits to `.env*` files, so the owner (or a session without that restriction) must add
+   them. Both are load-bearing: `prisma.config.ts:15` prefers the unpooled URL for `migrate
+   deploy`, and `src/lib/email.ts:142` reads `RESEND_FROM` (validated in `src/lib/env.ts:35`).
+2. **`happy-dom` → `devDependencies`, and decide on `three`** (a dependency with zero imports).
+   Both touch `package.json` + the lockfile, and `three` interacts with the pending domain
+   decision — the brief's Phase 15 wants Three.js for the 3D-art vertical.
 
 ---
 
@@ -158,8 +158,15 @@ Optional: `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN`, `EMA
 | `npm run db:seed` | **PASS** |
 | `next build` | **PASS** |
 | `next start` + route smoke | **PASS** (12/12 routes 200) |
+| `npm run copy:check` | **PASS** (1,181 slots) |
+| `node scripts/i18n-missing.mjs` | **PASS** (0 missing in all 8 locales) |
+| `redesign-audit` ×4 (1440/390, LTR/RTL) | **PASS** (0 failing rules) |
+| `a11y-audit` ×3 (1440/390, RTL 390) | **PASS** (0 critical/serious) |
+| `studio-audit` ×2 (1440/390) | **PASS** (30 studio routes) |
+| `lighthouse-audit` | **PASS** (home 99/97/96/100 · plp 97/100/96/100) |
 
-**The baseline is green.** Any future red is something the transformation introduced.
+**The baseline is green across every CI gate.** Any future red is something the transformation
+introduced.
 
 ## KNOWN ISSUES
 
@@ -205,17 +212,19 @@ Optional: `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN`, `EMA
 ## LAST COMMIT
 
 `32f21a6` — *Import ResinRiva2.0 source as transformation baseline* (920 files, unmodified)
-(this Phase 0 documentation commit follows)
+`54974ff` — *Phase 0: forensic audit of the imported baseline* (documentation only)
+(this Phase 0.5 defect-fix commit follows)
 
 ## SAFE CONTINUATION POINT
 
-**Phase 0 is complete and committed. No source file has been modified.**
+**Phases 0 and 0.5 are complete and committed.** No application code has been modified — the
+changes so far are workflows, previously-broken unwired scripts, and stale documentation.
 The baseline is verified green and fully reproducible from `32f21a6`.
 
-Resume by either:
-- answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename); or
-- starting **Phase 0.5** (baseline defect fixes, listed under NEXT EXACT TASK) — safe and
-  independent of both decisions.
+**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it, so
+a red CI from here is a real regression, not a pre-existing failure surfacing.
+
+Resume by answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename).
 
 ### Reproducing the verified environment
 ```bash

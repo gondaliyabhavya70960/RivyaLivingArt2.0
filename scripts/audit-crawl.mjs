@@ -7,10 +7,10 @@
  * blocks are tagged sandboxBlocked so they don't read as site defects.
  * Run against a production server: BASE=http://localhost:3111 node scripts/audit-crawl.mjs
  */
-import { execSync } from "node:child_process";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { chromium } from "playwright-core";
 import { AxeBuilder } from "@axe-core/playwright";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3111";
 const SANDBOX_BLOCKED =
@@ -38,9 +38,7 @@ const ROUTES = [
   "/hi", // second-locale spot check
 ];
 
-const bin = execSync("find /opt/pw-browsers/chromium-1194 -name chrome | head -1")
-  .toString()
-  .trim();
+const bin = resolveChromiumPath();
 const browser = await chromium.launch({ executablePath: bin, args: ["--no-sandbox"] });
 const ctx = await browser.newContext({
   viewport: { width: 393, height: 851 },

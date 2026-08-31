@@ -6,11 +6,12 @@
 # committed and production has flipped to the local paths.
 name: Mirror generated images
 
+# NOTE: this workflow's `push` trigger was pinned to a feature branch that no longer
+# exists, so it has never fired. Removed rather than re-pointed at `main`: these jobs
+# mirror remote assets and push commits back, and enabling that is an owner decision,
+# not a side effect of fixing a stale ref. Run it with workflow_dispatch.
 on:
   workflow_dispatch:
-  push:
-    branches: [claude/resinriva-audit-tasks-tfz6cs]
-    paths: [".github/workflows/mirror-images.yml"]
 
 permissions:
   contents: write
@@ -25,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: claude/resinriva-audit-tasks-tfz6cs
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -57,6 +58,6 @@ jobs:
             git commit \
               -m "Mirror the 60 generated covers first-party (backlog #2, via Actions)" \
               -m "public/images/{categories,blog}/<slug>.webp downloaded from the public Higgsfield CDN by scripts/mirror-generated-images.mjs (sharp -> WebP, 1200w/1600w). prisma/generated-cover.ts prefers these local paths, so the category seed and the reconcile-blog-covers step flip the DB rows off the third-party CDN on the next deploy."
-            git pull --rebase origin claude/resinriva-audit-tasks-tfz6cs
-            git push origin HEAD:claude/resinriva-audit-tasks-tfz6cs
+            git pull --rebase origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
           fi

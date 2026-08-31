@@ -5,8 +5,8 @@
  * order fallback. Dev-only tooling; expects `next dev` on :3111 against the
  * local Postgres. Usage: node scripts/verify-phase2.mjs [product-slug]
  */
-import { execSync } from "node:child_process";
 import { chromium } from "playwright-core";
+import { resolveChromiumPath } from "./lib/browser.mjs";
 
 const BASE = "http://localhost:3111";
 const SLUG =
@@ -14,11 +14,7 @@ const SLUG =
   "varmala-preservation-resin-clock-custom-anniversary-keepsake";
 const OUT = "screenshots";
 
-const bin = execSync(
-  "find /opt/pw-browsers/chromium-1194 -name chrome | head -1",
-)
-  .toString()
-  .trim();
+const bin = resolveChromiumPath();
 const browser = await chromium.launch({
   executablePath: bin,
   args: ["--no-sandbox"],

@@ -389,6 +389,11 @@ a smaller step; this is handled.
 
 These are pre-existing problems, not transformation risks. Ranked by severity.
 
+> **Status:** items 1, 3, 4, 5, 6, 12, 13 and the stale `README.md` palette were fixed in
+> **Phase 0.5** (see `CHANGELOG.md`). Item 9 (`.env.example`) is blocked — this session's tooling
+> denies edits to `.env*` files. Items 2, 7, 8, 10, 11, 14 and 15 remain open and are tracked in
+> `PROJECT_STATE.md`.
+
 1. **CI is completely inert.** `.github/workflows/ci.yml:15-19` triggers on branch **`Main`**
    (capital M). The repository's default branch is `main`. Git refs are case-sensitive, so neither
    the `push` nor the `pull_request` filter can ever match. **Every gate the project believes it

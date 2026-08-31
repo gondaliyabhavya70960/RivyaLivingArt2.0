@@ -3,13 +3,12 @@
 # don't. Safe to delete once the assets are committed.
 name: Mirror v6 media
 
+# NOTE: this workflow's `push` trigger was pinned to a feature branch that no longer
+# exists, so it has never fired. Removed rather than re-pointed at `main`: these jobs
+# mirror remote assets and push commits back, and enabling that is an owner decision,
+# not a side effect of fixing a stale ref. Run it with workflow_dispatch.
 on:
   workflow_dispatch:
-  push:
-    branches: [claude/revert-vercel-deployment-rxpd4p]
-    paths:
-      - ".github/workflows/mirror-v6-media.yml"
-      - "scripts/v6-media.json"
 
 permissions:
   contents: write
