@@ -5,6 +5,67 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Fix: a trailing slash in the site URL shipped 14 malformed URLs
+
+Production went live on `www.rivyalivingart.com`, and the homepage carried **14 double-slash URLs**.
+
+`NEXT_PUBLIC_SITE_URL` was set as `https://www.rivyalivingart.com/` — with the trailing slash a
+browser shows and a paste preserves. Roughly 30 call sites build on it as `${SITE.url}/path`, so
+every one doubled up.
+
+### Fixed
+- **`SITE.url` is normalised to an origin with no trailing slash.** Done once at the source rather
+  than at the call sites, because the next call site added would not know to do it.
+
+What was live and is now correct:
+
+| Live | Correct |
+|---|---|
+| `…com//#organization` | `…com/#organization` |
+| `…com//#website` | `…com/#website` |
+| `…com//#localbusiness` | `…com/#localbusiness` |
+| `…com//icon.svg` | `…com/icon.svg` |
+| `…com//search?q={search_term_string}` | `…com/search?q={search_term_string}` |
+| `wa.me/+917096036250` | `wa.me/917096036250` |
+
+The JSON-LD `@id`s matter most: their whole purpose is to be a stable identifier other nodes in the
+graph reference, and a malformed one does not resolve. The same concatenation builds product, blog
+and portfolio canonicals, OG image URLs, sitemap entries, wishlist share links and password-reset
+links.
+
+### Fixed — a second live defect, on the conversion path
+- **`buildWaLink` now enforces the number format its own docstring promises.** The docstring says
+  *"international format with no '+', spaces, or dashes"*, but the function passed the caller's
+  value straight through — and that value is normally the **studio-configured** number an owner
+  types into Site Settings, which holds `+917096036250`. The live site was serving
+  `wa.me/+917096036250` on all commission CTAs.
+
+  A `+` is merely non-canonical, but the same field would accept `+91 70960 36250`, and a space
+  breaks the URL outright. This is the Place Order path (`order.ts:342`, `:493`), so a broken link
+  loses the order with nothing to show for it. `email.ts:93` already sanitised the *customer's*
+  number this way; the house number did not get the same treatment.
+
+  Fixed in the builder rather than in Site Settings, so the owner does not have to retype anything
+  and no future stored value can reintroduce it. 4 new tests.
+
+### Verified
+- **Found by reading the live production HTML**, not by trusting the deployment's `READY` state:
+  14 occurrences of `rivyalivingart.com//` on the served homepage.
+- Rendered output after the fix: **0** double slashes; `@id`s well-formed.
+- `next build` run with the exact production value (`https://www.rivyalivingart.com/`) — passes.
+- 6 new tests (suite now **342**): trailing slashes (one, two, three) plus a correctly-formed
+  origin left alone, and the wa.me sanitisation across `+`, spaces, dashes, brackets and
+  digitless junk.
+- typecheck, lint, `copy:check`, i18n (0 missing across 8 locales) all clean.
+
+### Confirmed working in production
+Deployment `dpl_AYQ25ZfgHYkMJEwauDBYnks4NvzP` reached `READY` on `www.rivyalivingart.com` with
+`aliasError: null`. The live `/shop` serves **1,373 pieces** — the art ecosystem from Phase 2a, not
+the 4,373 mixed catalogue — with no supplies or 3D-printing categories leaking in, no `ResinRiva`
+strings, and no old-domain references.
+
+---
+
 ## [Unreleased] — Fix: a blank environment variable could not break the build
 
 Production failed on `NEXT_PUBLIC_SITE_URL: Invalid URL`. The variable was **declared with no

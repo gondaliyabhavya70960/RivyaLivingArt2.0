@@ -101,6 +101,27 @@ describe("SITE public-value fallbacks", () => {
     expect(site.whatsappNumber).toBe("911234567890");
   });
 
+  it("strips trailing slashes, because ~30 call sites append their own", async () => {
+    // A URL entered as it appears in a browser address bar. This shipped: the
+    // live homepage carried 14 double slashes, including the JSON-LD @ids for
+    // #organization, #website and #localbusiness — identifiers whose whole
+    // job is to be referenced by other nodes in the graph.
+    for (const given of [
+      "https://example.com/",
+      "https://example.com//",
+      "https://example.com///",
+    ]) {
+      const site = await load({ NEXT_PUBLIC_SITE_URL: given });
+      expect(site.url).toBe("https://example.com");
+      expect(`${site.url}/#organization`).toBe("https://example.com/#organization");
+    }
+  });
+
+  it("leaves a correctly-formed origin alone", async () => {
+    const site = await load({ NEXT_PUBLIC_SITE_URL: "https://example.com" });
+    expect(site.url).toBe("https://example.com");
+  });
+
   it("never yields an empty url or number, whatever the input", async () => {
     for (const blank of ["", " ", "\t"]) {
       const site = await load({

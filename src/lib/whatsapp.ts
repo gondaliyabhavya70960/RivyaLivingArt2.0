@@ -7,7 +7,15 @@ import { SITE } from "@/lib/constants";
  * WhatsApp number (ENG-001) instead of the SITE constant.
  */
 export function buildWaLink(message?: string, number?: string): string {
-  const num = number?.trim() || SITE.whatsappNumber;
+  // Enforce the format the docstring promises rather than trusting the caller.
+  // `number` is usually the studio-configured value, which an owner types by
+  // hand — the live site was serving `wa.me/+917096036250` because Site
+  // Settings holds the number with its leading `+`. wa.me documents a bare
+  // international number, and a stored space or dash would break the URL
+  // outright rather than merely being non-canonical. `email.ts` already
+  // sanitises the customer's number this way for the studio's reply link.
+  const configured = (number ?? "").replace(/\D/g, "");
+  const num = configured || SITE.whatsappNumber;
   const base = `https://wa.me/${num}`;
   if (!message) return base;
   return `${base}?text=${encodeURIComponent(message)}`;
