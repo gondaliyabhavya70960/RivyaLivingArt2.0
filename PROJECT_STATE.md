@@ -33,39 +33,72 @@ Phase 2a (art-first shop) · production launch fixes.
 
 ## NEXT EXACT TASK
 
-**Phase 2c — imagery.** The site has **no photography at all**. Every deploy logs
-`bootstrap: imported 0 site image(s) into Blob` with `ENOENT` for all 25 bundled files, and
-`git ls-files public` returns **0**. 60 slot references point into `/media/v3/`, a directory git
-tracks nothing in. This is why every screenshot of the storefront shows blank image areas.
+**Phase 2c — imagery. Blocked on GitHub Actions minutes, and NOT on generation.**
 
-Under decision **D3** the fix is to **generate new imagery for the new domain**, not to recover the
-old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals and is the
-ledger to extend. `scripts/media-v3-fetch.mjs` is the existing pipeline
-(`.github/workflows/fetch-media-v3.yml`, `workflow_dispatch`, mode `candidates` then `masters`) —
-but **GitHub Actions cannot allocate a runner**, so that workflow cannot be used until billing is
-resolved. Generating in-session and committing the masters is the available path.
+The site has no photography: `git ls-files public` returns **0**, 62 slots resolve to files that do
+not exist, and every deploy logs `imported 0 site image(s)` with 25 `ENOENT`s.
 
-Traps, verified against the files:
-- Adding a site-image slot breaks two tests and a CI gate unless done fully: the alt key must go
-  through `node scripts/site-copy-registry.mjs`, and `src/lib/site-images.test.ts` hard-codes slot
-  counts (`withAlt` 42, `wide` 13).
-- `bundledProvenance` is a **path-prefix** test (`/media/v3/`), so moving masters elsewhere silently
-  reclassifies them as photography in the media library.
-- §15.2: the maker is never AI. `home.maker` / `about.maker` are protected — and note
-  `src/lib/site-images-import.test.ts` already records that the file behind them is itself a
-  generation, which is the owner's to replace with a real photograph.
-- The site-image import is gated on `BLOB_READ_WRITE_TOKEN` and on the table being empty
-  (`prisma/bootstrap.ts`).
+**Do not regenerate the asset set.** Investigated 2026-08-31; everything needed already exists:
 
-**Phase 2b (commission-led copy, decision D5) follows.** The storefront still describes the old
-proposition — the hero eyebrow reads *"custom resin art · 3D printing · made to order"*. English
-first in `messages/en.json`, then `node scripts/site-copy-registry.mjs` (a CI gate), then translate
-the batch into all 8 locales with `scripts/i18n-missing.mjs` as the gate.
+| Piece | State |
+|---|---|
+| 24 image prompts + 1 video prompt | in `docs/media-v3-manifest.json` |
+| Candidate renders | generated, URLs recorded |
+| Human cull | **done** — every asset carries a `keeper` (20 `a`, 4 `b`); video keeper `b` |
+| Contact sheets the cull was made from | committed, `docs/media-v3-review/` (5 files) |
+| LQIP blur manifest | committed, `src/lib/media-v3-blur.json`, **25 real entries** |
+| The AVIF masters themselves | **missing** — never added in this git history |
+
+The 25-entry LQIP manifest could only have come from a completed `masters` run, so the masters were
+built in the original repo; the ZIP this repo was imported from was simply exported without
+`public/`.
+
+### The runbook — two workflow_dispatch runs, once Actions has minutes
+
+1. `.github/workflows/fetch-media-v3.yml` → mode **`masters`**
+   (skip `candidates`: the cull is already made). Writes the AVIFs into
+   `public/media/v3/` and refreshes `src/lib/media-v3-blur.json`, then commits to the branch it
+   runs on.
+2. `.github/workflows/fetch-media-v3-video.yml` → mode **`masters`**.
+   Writes `process-pour.mp4` + `.webm` and cuts the AVIF poster from frame 0 of that same clip —
+   which is what keeps the poster matching the video.
+
+Then redeploy and confirm the build logs no longer say `imported 0 site image(s)`.
+
+**Why it must run on Actions and not in a session:** the Higgsfield CDN
+(`d8j0ntlcm91z4.cloudfront.net`) answers **403 to a sandbox's egress policy** — re-verified
+2026-08-31 by generating one image successfully and then failing to download it
+(`CONNECT tunnel failed, response 403`). The agent-proxy README says to report such a denial, not
+route around it. `fetch-media-v3.yml` exists precisely because a previous session hit this same
+wall; its header documents it.
+
+**If the recorded candidate URLs have expired** by the time Actions runs, the script fails loudly
+(`if (!res.ok) throw`). Only then regenerate: the manifest holds every prompt, the model is
+`nano_banana_pro` (served as `nano_banana_2`), generation costs **2 credits per image**, and the
+account holds 679. Record fresh `jobId`/`url` per candidate and re-run mode `masters`.
+
+**Two slots are permanently excluded from this set** (§15.2): `home.maker` / `about.maker` are the
+maker, never AI — and `src/lib/site-images-import.test.ts` records that the file currently behind
+them is itself a generation, which is the owner's to replace with a real photograph.
+
+---
+
+## AFTER IMAGERY — Phase 2b, commission-led copy (decision D5)
+
+The storefront still describes the old proposition; the hero eyebrow reads
+*"custom resin art · 3D printing · made to order"*. English first in `messages/en.json`, then
+`node scripts/site-copy-registry.mjs` (a CI gate — `copy:check` fails when stale), then translate
+the batch into all 8 locales with `scripts/i18n-missing.mjs` as the gate (currently 0 missing).
+
+Scope by namespace rather than all at once — 1,181 leaf keys across 30 namespaces
+(Shop 311, Homepage 151, Site chrome 120, Commission 114). Start with Homepage + site metadata.
 
 Still open from earlier phases:
 - **`.env.example`** omits `DATABASE_URL_UNPOOLED` and `RESEND_FROM`; `.env*` edits are denied in
   this environment, so the owner must add them.
 - **`happy-dom` → `devDependencies`**, and decide on `three` (zero imports today).
+- **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Those are plan documents,
+  not current-state docs; CLAUDE.md is the authority and has been corrected.
 
 ---
 

@@ -52,16 +52,36 @@ records what shipped, and lists what genuinely remains.
 - `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
   `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
   next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
-- **Done.** Both steps ran on an Actions runner —
-  `.github/workflows/fetch-media-v3.yml` (`workflow_dispatch`, mode `candidates`
-  then `masters`) — because the CDN is blocked from the build sandboxes.
-  `public/media/v3/` holds 24 AVIF masters (1.0 MB for the set) and
-  `src/lib/media-v3-blur.json` the 20px LQIPs. `docs/media-v3-review/` keeps the
-  four contact sheets the cull was made from.
-- **Wired.** 53 of the 57 slots default to these masters. Four keep what they
-  had: `home.maker` and `about.maker` (§15.2 — the maker is never AI) and the
-  process hero video with its poster (no video was generated; a poster must
-  match the video it stands in for). Twelve alt keys described the frame being
+- **NOT done in this repo — `public/` is empty.** `git ls-files public` returns
+  **0**. The uploaded ZIP this repo was imported from was exported without
+  `public/`, so every one of the 62 slots resolves to a file that does not
+  exist. Each deploy logs
+  `bootstrap: imported 0 site image(s) into Blob` with `ENOENT` for all 25
+  files, and the storefront renders with no photography at all. An earlier
+  version of this section claimed the masters were committed and marked the
+  work "Done"; that is what stopped anyone noticing.
+- **Everything needed to produce them IS here.** Do not regenerate:
+  - all 24 assets + the video carry a `keeper` (20 `a`, 4 `b`), so the cull is
+    already made — `docs/media-v3-review/` holds the five contact sheets it was
+    made from, and they are committed;
+  - `src/lib/media-v3-blur.json` holds 25 real LQIP entries, which only a
+    completed `masters` run could have produced;
+  - every keeper has a candidate URL in the manifest.
+- **To finish it: run `.github/workflows/fetch-media-v3.yml` with mode
+  `masters`** (skip `candidates` — the cull is done), then
+  `.github/workflows/fetch-media-v3-video.yml` with mode `masters` for the
+  process hero. Both commit their output to the branch they run on.
+  This needs **GitHub Actions minutes**, which the account currently lacks —
+  and it must run there rather than in a session, because the Higgsfield CDN
+  answers 403 to a sandbox's egress policy (verified again 2026-08-31).
+- **Wired.** 58 of the 62 slots default to these masters. Four keep what they
+  had: `home.maker` and `about.maker` (§15.2 — the maker is never AI, and
+  `site-images-import.test.ts` records that the file behind them is itself a
+  generation, which is the owner's to replace with a real photograph) and the
+  process hero video with its poster. A 10-second video **was** generated
+  (2026-08-26) and culled to keeper `b`; the poster is cut from frame 0 of that
+  same clip by `scripts/media-v3-video-fetch.mjs`, which is what keeps a poster
+  matching the video it stands in for. Twelve alt keys described the frame being
   replaced and were rewritten across all nine locales — the rest were left
   alone because the slot→master mapping was chosen to keep them true.
 - Two masters are deliberately unused: `not-found` (the design puts no image on
@@ -84,7 +104,7 @@ blank one. Adding a surface means following this, not inventing a ninth shape.
 | Surface | Registry | Table | Resolver |
 |---|---|---|---|
 | `/studio/site-copy` | `site-copy.ts` (1,115 slots) | `SiteCopy` | `getSiteCopy()` |
-| `/studio/site-images` | `site-images.ts` (57 slots) | `SiteImage` | `getSiteImages()` |
+| `/studio/site-images` | `site-images.ts` (62 slots) | `SiteImage` | `getSiteImages()` |
 | `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
 | `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
 | `/studio/sections` | `page-sections.ts` (6 pages) | `PageSection` | `getPageSections()` |
@@ -113,7 +133,7 @@ Four rules that hold across all of them:
 
 ### Site Images (`/studio/site-images`)
 - The storefront's editorial photography is no longer hardcoded. Every call
-  site is a **named slot** in `src/lib/site-images.ts` (57 slots, 21 bundled
+  site is a **named slot** in `src/lib/site-images.ts` (62 slots, 25 bundled
   files) carrying its surface, the ratio the layout crops to and the
   `public/media` file used when the owner has not replaced it.
 - Pages read `getSiteImages()` (`src/lib/site-images-server.ts`) — a total map,
