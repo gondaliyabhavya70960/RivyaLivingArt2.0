@@ -5,6 +5,54 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 2c investigation: the imagery is one workflow run away, not a regeneration
+
+Investigated why the site has no photography. **Nothing needs regenerating** — and the
+documentation that said the work was finished is what stopped anyone noticing it wasn't.
+
+### Found
+`public/` is empty: `git ls-files public` returns **0**, so all 62 slots resolve to files that do
+not exist and every deploy logs `imported 0 site image(s)` with 25 `ENOENT`s.
+
+But every input already exists in the repo:
+
+| Piece | State |
+|---|---|
+| 24 image prompts + 1 video prompt | in `docs/media-v3-manifest.json` |
+| Human cull | **done** — every asset carries a `keeper` (20 `a`, 4 `b`) |
+| Contact sheets it was made from | committed (`docs/media-v3-review/`, 5 files) |
+| LQIP blur manifest | committed, **25 real entries** |
+| The AVIF masters | **missing — never added in this git history** |
+
+A 25-entry LQIP manifest could only come from a completed `masters` run, so the masters were built
+in the original repo; the ZIP this one was imported from was exported without `public/`.
+
+### Fixed — documentation that asserted the opposite
+`CLAUDE.md` claimed **"Done."**, that `public/media/v3/` *holds* 24 AVIF masters totalling 1.0 MB,
+and that **"no video was generated"**. All three were false: the masters are absent, and a
+10-second video *was* generated on 2026-08-26 and culled to keeper `b`, with the poster cut from
+frame 0 of that same clip. It is the file every session reads first, so it was actively steering
+work away from the largest open defect.
+
+Also corrected there and in two code comments: the slot count is **62**, not 57, and there are
+**25** bundled files, not 21 (`src/actions/site-images.ts`, `src/lib/site-images-import.ts`).
+
+### Added
+A runbook in `PROJECT_STATE.md`: two `workflow_dispatch` runs — `fetch-media-v3.yml` mode
+`masters` (skip `candidates`, the cull is done) and `fetch-media-v3-video.yml` mode `masters` —
+plus what to do if the recorded candidate URLs have expired by then.
+
+### Verified, and why it needs Actions
+Generating works: one image was produced from the manifest's stored hero prompt (2 credits,
+`nano_banana_2`). **Downloading it does not** — the Higgsfield CDN answers
+`CONNECT tunnel failed, response 403` to this session's egress policy. The agent-proxy README says
+to report such a denial rather than route around it, so no workaround was attempted.
+`fetch-media-v3.yml` exists precisely because a previous session hit the same wall; its own header
+documents it. Actions currently has no runner minutes, which is the single thing blocking both
+this and the design/a11y/studio/Lighthouse gates.
+
+---
+
 ## [Unreleased] — Fix: a trailing slash in the site URL shipped 14 malformed URLs
 
 Production went live on `www.rivyalivingart.com`, and the homepage carried **14 double-slash URLs**.

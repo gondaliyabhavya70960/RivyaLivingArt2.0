@@ -69,7 +69,7 @@ export async function importBundledSiteImages(
   );
 
   // One upload per distinct FILE, not per slot: twenty-one files back
-  // fifty-seven slots, and uploading the same bytes eleven times would be
+  // sixty-two slots, and uploading the same bytes repeatedly would be
   // eleven blobs the owner then has to recognise as the same picture.
   const byFile = new Map<string, string[]>();
   for (const slot of SITE_IMAGE_SLOTS) {

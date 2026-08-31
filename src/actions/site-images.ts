@@ -246,7 +246,7 @@ export async function importBundledDefaults(): Promise<
   // on a serverless function writes into a filesystem discarded when the
   // invocation ends: the upload would appear to succeed and every slot it
   // touched would then point at a URL serving nothing. Refuse, and say what
-  // is missing rather than corrupting fifty-seven slots.
+  // is missing rather than corrupting sixty-two slots.
   if (!blobStorageConfigured()) {
     return {
       ok: false,
