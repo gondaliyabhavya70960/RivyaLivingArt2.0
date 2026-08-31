@@ -76,8 +76,30 @@ Workflow, in this order — the registry step is a CI gate, not optional:
 - **Adding a site-image slot breaks two tests and a CI gate** unless done fully: the alt key must
   go through `scripts/site-copy-registry.mjs`, and `src/lib/site-images.test.ts` hard-codes slot
   counts (`withAlt` 42, `wide` 13).
-- **`public/` is empty** — 0 tracked files, never populated in git history. All 62 site-image slot
-  fallbacks point at files that do not exist in the repo.
+- **`public/` is empty — CONFIRMED IN PRODUCTION, not just inferred.** `git ls-files public` returns
+  0, and the Vercel production build for `4083d4b` logs
+  `bootstrap: imported 0 site image(s) into Blob; failed: <25 files>` with
+  `ENOENT ... /vercel/path0/public/media/v3/*.avif` for every one. 60 slot references point into
+  `/media/v3/`. **Every editorial image on the storefront resolves to a file that does not exist**,
+  which is why local screenshots render blank image areas. The import is non-fatal (it logs and
+  continues), so the build still succeeds — the site just has no photography.
+  Pre-existing: the uploaded ZIP shipped with an empty `public/`. This is Phase 2c's work, and
+  under decision D3 the fix is to generate NEW imagery for the new domain rather than to recover
+  the old files. `docs/media-v3-manifest.json` holds the 24 prompts that produced the originals.
+
+- **Vercel is the working CI.** GitHub Actions cannot allocate a runner (billing), but Vercel runs
+  the real production path on every push: `prisma migrate deploy` → `prisma/bootstrap.ts` →
+  `next build` against a live Neon database, with per-branch preview databases. Treat a Vercel
+  build as the independent verification Actions cannot give, and read its logs
+  (`mcp__Vercel__get_deployment_build_logs`) after every merge.
+  Project `prj_rKg6aVuZNp7tTLpMwk8oQzseIArp`, team `team_y3P3E4bDmgC3FwXkpuWMzjft`.
+
+- **Production env vars were missing and are now set.** The first production deploy (Phase 1 merge,
+  `2382d02`) died at `Error: Connection url is empty` because the Vercel Production environment had
+  none of `DATABASE_URL_UNPOOLED` / `POSTGRES_URL_NON_POOLING` / `DATABASE_URL`. Not a code
+  regression — `prisma.config.ts` has only ever been touched by the baseline import. The next
+  production deploy (`4083d4b`) connects and reports `database already seeded`, so the variables
+  were added in between.
 - **`src/lib/media.ts` is dead code** — zero importers, holds 8 of the Cloudinary URLs. Deleting it
   changes nothing that renders.
 - **Categories do not nest.** `Category` has no `parentId`; grouping is presentation-only via
