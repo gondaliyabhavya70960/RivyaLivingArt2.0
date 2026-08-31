@@ -25,7 +25,7 @@ https://wa.me/917096036250?text=<encodeURIComponent(message)>
 ## 3. Message template (exact — from `buildOrderMessage`)
 
 ```
-Hello ResinRiva,
+Hello Rivya Living Art,
 I would like to order:
 *Product:* Custom Resin Nameplate
 *Size:* 24 Inches

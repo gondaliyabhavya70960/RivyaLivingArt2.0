@@ -80,4 +80,4 @@ If you are considering commissioning something, a few habits make the whole jour
 
 Custom 3D printing is one of the rare crafts where the distance between "I wish this existed" and "it is sitting on my shelf" is measured in days, not dreams. The technology does the patient labour; the human judgement at every step is what makes the result worth keeping.
 
-*Have an idea you would like turned into a real object? Message ResinRiva on WhatsApp at +91 70960 36250 and we will talk it through together.*
+*Have an idea you would like turned into a real object? Message Rivya Living Art on WhatsApp at +91 70960 36250 and we will talk it through together.*

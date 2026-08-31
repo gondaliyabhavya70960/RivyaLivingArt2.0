@@ -51,13 +51,13 @@ const PRIORITY_TONE = {
 /**
  * Commission board — REDESIGN.md §12.4.
  *
- * **The columns are ResinRiva's real pipeline, not the spec's.** §12.4 lists
+ * **The columns are Rivya Living Art's real pipeline, not the spec's.** §12.4 lists
  * `Inquiry → Quoted → Approved → Design → Production → Curing → Finishing →
  * Ready → Delivered`. Six of those nine stages do not exist anywhere in this
  * product: `InquiryStatus` (prisma/schema.prisma) is `NEW · CONTACTED ·
  * DISCUSSION · QUOTED · CONFIRMED · IN_PRODUCTION · DELIVERED` plus the
  * terminal pair `CLOSED · LOST`. §1.1 forbids schema changes, and decision #5
- * settles the principle: keep the pattern, carry ResinRiva's real values.
+ * settles the principle: keep the pattern, carry Rivya Living Art's real values.
  * So the board is seven columns — `STATUS_ORDER`, the same active pipeline the
  * stats row and the status filter already use — and the terminal pair stays
  * off the board, where a lost lead cannot occupy a lane.

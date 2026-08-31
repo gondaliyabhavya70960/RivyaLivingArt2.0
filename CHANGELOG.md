@@ -5,6 +5,59 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 1: brand rename (ResinRiva → Rivya Living Art)
+
+**640 substitutions across 112 files**, risk-tiered from the Phase 0 census. Full detail, including
+every identifier deliberately left alone, is in `docs/RENAME-MIGRATION.md`.
+
+### Added
+- `docs/RENAME-MIGRATION.md` — what was renamed, what was migrated, what was left and why.
+- Migration `20260831080000_brand_rivya_living_art` — moves the two rows whose values were shipped
+  as column defaults. Guarded on the old value, so a custom brand name set by the owner survives.
+  Adds/drops/retypes nothing; the history stays purely additive (44 migrations, still zero
+  destructive statements).
+
+### Changed
+- Brand name across storefront copy (373 strings × 9 locales — the brand is untransliterated Latin
+  in every one), the 1,181-slot copy registry, email, WhatsApp templates, legal-page prose, the
+  Studio, `package.json`, and all active documentation.
+- `SiteSettings.brandName` default → `Rivya Living Art`; `BlogPost.authorName` default →
+  `Rivya Living Art Studio`.
+- **Logo replaced, not renamed.** The wordmark was hand-drawn vector artwork spelling *Resin Riva*
+  in path data; rewriting only its `aria-label` would have left the accessible name describing a
+  different picture. It is now typeset in the brand display face (Instrument Serif), with a
+  `viewBox` measured against the rendered glyphs (ink is 626.5 units wide) rather than guessed, so
+  it neither clips nor leaves dead space at any of the six call-site heights. The `RR` monogram
+  became `R`.
+- `README.md` design section rewritten to the authoritative "Liquid Luxury" v3 spec.
+
+### Fixed — defects the mechanical pass introduced, caught before commit
+- `robots.ts` bot token had hyphens spliced into a robots.txt product token
+  (`rivya-living-artresearchbot` → `rivyalivingartresearchbot`).
+- **CI database name desynced**: `.yml` was outside the pass's file types, so `ci.yml` kept
+  `resinriva_ci` while the `ci-staff-user.ts` safety guard was rewritten — the guard would have
+  refused the CI database. Both are now `rivya_ci`.
+- `global-error.tsx` rendered the literal `rivya-living-art` in a `text-transform: lowercase`
+  element; it now carries the proper noun.
+- German About eyebrow became `der kopf hinter rivya-living-art`; fixed to match fr/es.
+- **`redesign-audit.mjs`'s lazy-alt rule had silently stopped firing** — it tested `/resinriva/i`,
+  which matches nothing now. Pattern updated, and its word threshold made brand-length-relative
+  (the brand went from one word to three, so a hard-coded 4 would flag every honest alt mentioning
+  it). Verified against six cases.
+
+### Deliberately unchanged
+The 20 Cloudinary URLs under `resinriva/` (retired in Phase 2, not migrated — decision D3), the
+`#RR-<n>` inquiry reference customers already hold, scraper `sourceKey` values and the
+`importSource` identity contract, `FormOption.value`, the owner's real Google Sheet name, historical
+git branch names, and the immutable `init` migration.
+
+### Verified
+Full gate set run locally (Actions cannot allocate a runner — decision D4): typecheck, lint,
+`copy:check` (1,181 slots), i18n (0 missing across 8 locales), 322 tests, 44 migrations, production
+build, 4 design audits, 3 a11y audits, 2 studio audits over 30 routes, Lighthouse 98/97/96/100.
+
+---
+
 ## [Unreleased] — Phase 0.5: baseline defect fixes
 
 Safe, decision-independent repairs to defects catalogued in `docs/PROJECT-AUDIT.md` §9.

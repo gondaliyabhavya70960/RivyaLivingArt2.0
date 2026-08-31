@@ -69,4 +69,4 @@ The best outcomes are collaborations, and buyers hold half the craft. The habits
 
 Bulk handcrafted gifting is not the fast option, and it is not the cheapest option. It is the option that gets remembered — and with a few weeks of foresight and a clear brief, it is every bit as reliable as the catalogue. Start the conversation early with a [custom order enquiry](/custom-order), and the rest is craft.
 
-*Planning a bulk order for your team or clients? Message ResinRiva on WhatsApp at +91 70960 36250 with your quantity, occasion and deadline for an honest quote and timeline.*
+*Planning a bulk order for your team or clients? Message Rivya Living Art on WhatsApp at +91 70960 36250 with your quantity, occasion and deadline for an honest quote and timeline.*

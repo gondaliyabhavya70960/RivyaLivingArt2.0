@@ -68,4 +68,4 @@ One planning tip from experience: businesses almost always commission models one
 
 A printed model keeps working after the meeting ends. It sits in the sales office, on the reception desk, at the counter — a permanent, three-dimensional argument for your business that never needs a screen, a password or a pitch. Few marketing purchases can claim the same.
 
-*Planning a launch, a sales office or a smarter counter? Message ResinRiva on WhatsApp with your drawings or photos, and we'll scope your model with honest timelines and pricing.*
+*Planning a launch, a sales office or a smarter counter? Message Rivya Living Art on WhatsApp with your drawings or photos, and we'll scope your model with honest timelines and pricing.*

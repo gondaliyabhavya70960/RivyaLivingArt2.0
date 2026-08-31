@@ -1,8 +1,8 @@
 /**
- * ResinRiva's published lead times, and the stage-timer maths built on them.
+ * Rivya Living Art's published lead times, and the stage-timer maths built on them.
  *
  * REDESIGN.md §12.4 asks the Kanban card for a "stage timer badge — a circular
- * progress ring using ResinRiva's ACTUAL cure times (`Layer 2 · 48 of 72 h`),
+ * progress ring using Rivya Living Art's ACTUAL cure times (`Layer 2 · 48 of 72 h`),
  * not an invented 14-day schedule", and decision #5 in the spec's own log
  * settles the numbers: **24–72 h per layer, 7–10 days for small pieces, 3–6
  * weeks for statement pieces.**

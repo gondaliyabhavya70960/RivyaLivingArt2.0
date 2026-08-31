@@ -67,7 +67,7 @@ export function toSiteSettingsValues(
   const seo = (row?.defaultSeo ?? {}) as Record<string, unknown>;
 
   return {
-    brandName: row?.brandName ?? "ResinRiva",
+    brandName: row?.brandName ?? "Rivya Living Art",
     tagline: row?.tagline ?? "",
     logoUrl: row?.logoUrl ?? "",
     faviconUrl: row?.faviconUrl ?? "",

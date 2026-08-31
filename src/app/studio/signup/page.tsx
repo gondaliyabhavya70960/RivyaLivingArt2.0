@@ -17,7 +17,7 @@ export default async function StudioSignupPage({
 }) {
   const params = await searchParams;
   // Signup is a ONE-TIME owner bootstrap. Once any account exists it is closed
-  // for good — ResinRiva has no public/customer accounts, and further staff are
+  // for good — Rivya Living Art has no public/customer accounts, and further staff are
   // invited from Studio → Users.
   const closed = params.closed === "1" || (await db.user.count()) > 0;
 
@@ -39,7 +39,7 @@ export default async function StudioSignupPage({
         }
       >
         <AuthBanner tone="info">
-          Public sign-up isn&rsquo;t available — ResinRiva orders happen over
+          Public sign-up isn&rsquo;t available — Rivya Living Art orders happen over
           WhatsApp, and the studio is staff-only.
         </AuthBanner>
       </AuthShell>

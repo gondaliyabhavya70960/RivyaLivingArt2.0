@@ -142,7 +142,7 @@ export function BlogPostForm({
       excerpt: post?.excerpt ?? "",
       content: toContentRecord(post?.content),
       coverImage: post?.coverImage ?? "",
-      authorName: post?.authorName ?? "ResinRiva Studio",
+      authorName: post?.authorName ?? "Rivya Living Art Studio",
       blogCategoryId: post?.blogCategoryId ?? "",
       tagIds: post?.tagIds ?? [],
       status: post?.status ?? "DRAFT",

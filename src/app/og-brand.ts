@@ -6,7 +6,7 @@ import { getSiteSettings } from "@/lib/site-settings";
  * domain under it.
  *
  * Both used to be literals in each of the four `opengraph-image.tsx` files —
- * `ResinRiva` and `store.bhavyagondaliya.co.in`, written out four times. The
+ * `Rivya Living Art` and `store.bhavyagondaliya.co.in`, written out four times. The
  * name is owner-editable in Settings and the domain follows
  * `NEXT_PUBLIC_SITE_URL`, so a rebrand or a domain move left four sharing
  * cards quietly wrong, in the one place nobody looks: other people's chats.
@@ -40,7 +40,7 @@ export async function ogBrand(): Promise<OgBrand> {
 /**
  * The wordmark size for a name of a given length.
  *
- * The card was drawn around "ResinRiva" at 148px. The moment the name became
+ * The card was drawn around "Rivya Living Art" at 148px. The moment the name became
  * the owner's to choose, a longer one wrapped and ran straight through the
  * tagline underneath — a broken share card is worse than a stale one, and it
  * is invisible from inside the studio. Stepping the size down keeps a long

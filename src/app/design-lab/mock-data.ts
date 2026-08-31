@@ -83,7 +83,7 @@ export const MOCK_CUSTOMER = {
 
 /** Mirrors the Part 0 order-summary shape the Server Action will build. */
 export const MOCK_WA_MESSAGE = [
-  "Hello ResinRiva! I'd like to place an order.",
+  "Hello Rivya Living Art! I'd like to place an order.",
   "",
   "Product: Ocean Wave Coaster Set",
   ...MOCK_SELECTIONS.map((s) => `${s.label}: ${s.value}`),

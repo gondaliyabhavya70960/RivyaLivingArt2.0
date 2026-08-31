@@ -58,7 +58,7 @@ function downloadTemplate(template: ImportTemplate) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `resinriva-${template.key}-template.csv`;
+  anchor.download = `rivya-living-art-${template.key}-template.csv`;
   anchor.click();
   URL.revokeObjectURL(url);
 }

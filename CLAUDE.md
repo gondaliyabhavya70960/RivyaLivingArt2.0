@@ -1,4 +1,4 @@
-# ResinRiva 2.0
+# Rivya Living Art 2.0
 
 Premium resin-art brand site. **The design spec is REDESIGN.md** (Master UI/UX
 Redesign Specification v1.0) — read the relevant Part BEFORE building any UI,
@@ -10,7 +10,7 @@ are all defined in REDESIGN.md Part 3.
 `DESIGN.md` (v2.0 "Midnight Gild") and `docs/design-v7-sapphire-atelier.md` are
 superseded and kept for history only.
 
-**`RESINRIVA_2.0_UI_MASTER_PLAN.md` is not a plan for this repo.** It was
+**`RIVYA LIVING ART_2.0_UI_MASTER_PLAN.md` is not a plan for this repo.** It was
 written against an older tree in the superseded v2/v6/v7 vocabulary, assumes a
 `motion` dependency that is not installed, and 90% of it is already built,
 factually wrong here, or forbidden by the contract above. Do not act on it —

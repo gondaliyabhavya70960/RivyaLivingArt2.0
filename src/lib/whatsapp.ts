@@ -15,7 +15,7 @@ export function buildWaLink(message?: string, number?: string): string {
 
 /** The English greeting — the operator's lingua franca and the en catalog value. */
 const EN_GREETING =
-  "Hello ResinRiva, I'd like to know more about your custom resin art.";
+  "Hello Rivya Living Art, I'd like to know more about your custom resin art.";
 
 /**
  * Default greeting used by the floating WhatsApp button and page CTAs.
@@ -50,7 +50,7 @@ export type OrderMessageLabels = {
 
 /** English labels — the operator-readable baseline and the en-locale set. */
 export const ENGLISH_ORDER_LABELS: OrderMessageLabels = {
-  intro: "Hello ResinRiva,\nI would like to order:",
+  intro: "Hello Rivya Living Art,\nI would like to order:",
   product: "Product",
   budget: "Budget",
   timeline: "Timeline",

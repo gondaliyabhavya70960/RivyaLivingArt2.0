@@ -162,7 +162,7 @@ function InviteUserBody({
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="aarti@resinriva.com"
+            placeholder="aarti@rivya-living-art.com"
             autoComplete="off"
             required
           />

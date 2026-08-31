@@ -84,7 +84,7 @@ see the orphan note below.
 | 08 bespoke *(dark)* | `Home.custom` | 8 | slot `home.bespoke` | — |
 | 09 print studio | `Home.printStudio` | 8 | slot `home.print` | — |
 | 10 how it works | `Home.how` | 11 | — | — |
-| 11 why ResinRiva | `Home.why` | 13 | slots `home.why.*` ×4 | — |
+| 11 why Rivya Living Art | `Home.why` | 13 | slots `home.why.*` ×4 | — |
 | 12 journal | `Home.journal` | 3 | `BlogPost.coverUrl` | BlogPost |
 | 13 closing CTA *(dark)* | `Home.cta` | 6 | — | — |
 

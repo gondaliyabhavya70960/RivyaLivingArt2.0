@@ -96,7 +96,7 @@ export default async function CommissionCardPage({
           Commission card
         </p>
         <h1 className="mt-3 font-display text-4xl text-foreground">
-          ResinRiva
+          Rivya Living Art
         </h1>
         <p className="mt-1 font-mono text-sm text-muted-foreground">
           {formatInquiryNumber(inquiry.number)}

@@ -1,6 +1,6 @@
 # CONTENT_GUIDE.md — Content Standards + Import Templates
 
-The single reference for how ResinRiva content is written, shot, and bulk-imported. The template tables below match the in-app **Download Template** buttons (Studio → Bulk Import) exactly — the templates are generated from the same definitions (`src/lib/import/templates.ts`).
+The single reference for how Rivya Living Art content is written, shot, and bulk-imported. The template tables below match the in-app **Download Template** buttons (Studio → Bulk Import) exactly — the templates are generated from the same definitions (`src/lib/import/templates.ts`).
 
 ## 1. Brand voice & tone
 
@@ -8,7 +8,7 @@ Elegant, warm, handcrafted-luxury, immersive ("An heirloom you'll keep forever")
 
 ## 2. Originality rule (mandatory)
 
-Every word, title, and image published on the site must be **100% original ResinRiva content**. Competitor material — including everything collected by the Product Scraper — is research reference only. Scraper imports arrive as Drafts with a publish-blocking "needs rewrite" flag for exactly this reason.
+Every word, title, and image published on the site must be **100% original Rivya Living Art content**. Competitor material — including everything collected by the Product Scraper — is research reference only. Scraper imports arrive as Drafts with a publish-blocking "needs rewrite" flag for exactly this reason.
 
 ## 3. Image standards
 
@@ -35,7 +35,7 @@ Every word, title, and image published on the site must be **100% original Resin
 - **Upsert by slug**: a row whose slug already exists **updates** that item; a new slug **creates** one. (FAQs match on the question text; testimonials on name + quote — neither has a slug.)
 - **Validation preview before anything is written** — every row is classified Create / Update / Error with per-row messages; error rows are skipped, never the whole file.
 - Up to **500 data rows** per file.
-- Image columns accept public URLs; images are **downloaded and re-uploaded to ResinRiva's own storage** (if a download fails, the original URL is kept so the row still imports).
+- Image columns accept public URLs; images are **downloaded and re-uploaded to Rivya Living Art's own storage** (if a download fails, the original URL is kept so the row still imports).
 - Blog and page `content` columns are **Markdown**, converted to the rich-editor (Tiptap) format on import.
 
 ### Cell conventions (all templates)

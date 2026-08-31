@@ -78,4 +78,4 @@ Caring for a finished hybrid is the same as caring for any resin piece — soft 
 
 The best argument for hybrid pieces is not technical; it is emotional. A purely printed object can feel efficient. A purely poured one can feel arbitrary. Together, they produce something that feels *intended* — precise where precision reads as care, and organic where the human hand should show. If you have an idea that seems to sit between categories — too structural for resin, too soulful for plastic — it is probably a hybrid, and probably possible. Tell us the idea through a [custom order](/custom-order), and let the two crafts argue it out on your behalf.
 
-*Curious whether your idea suits a hybrid piece? Message ResinRiva on WhatsApp at +91 70960 36250 and we will map it out with you.*
+*Curious whether your idea suits a hybrid piece? Message Rivya Living Art on WhatsApp at +91 70960 36250 and we will map it out with you.*

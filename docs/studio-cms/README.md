@@ -41,7 +41,7 @@ editable from `/studio`, with no deploy.
 >   the weak point in relying on them. That entry is resolved.
 
 This guide is written against **the repository**, not a crawl of the deployed
-site. Where it disagrees with the uploaded *"ResinRiva Studio — Master CMS Spec
+site. Where it disagrees with the uploaded *"Rivya Living Art Studio — Master CMS Spec
 v2"*, the disagreement is deliberate and evidenced — see
 [`09-spec-reconciliation.md`](09-spec-reconciliation.md).
 

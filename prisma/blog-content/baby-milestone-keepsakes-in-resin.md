@@ -65,4 +65,4 @@ On practicalities: allow two to four weeks for a made-to-order piece once the pr
 
 Children grow; that is the whole point of them. The privilege of this craft is making sure that one small, perfect measurement of who they were — ten toes, one date, a name newly given — never grows another millimetre.
 
-*Send us a photo of your little one's print on WhatsApp at +91 70960 36250, and ResinRiva will design a keepsake worthy of it.*
+*Send us a photo of your little one's print on WhatsApp at +91 70960 36250, and Rivya Living Art will design a keepsake worthy of it.*

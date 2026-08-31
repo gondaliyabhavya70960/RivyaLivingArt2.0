@@ -75,7 +75,7 @@ export async function submitContactInquiry(
 
     const siteHost = SITE.url.replace(/^https?:\/\//, "");
     const whatsappMessage = [
-      "Hello ResinRiva, I sent a message via your contact page.",
+      "Hello Rivya Living Art, I sent a message via your contact page.",
       "",
       `Name: ${name}`,
       `Phone: ${phone}`,

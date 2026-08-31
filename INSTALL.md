@@ -1,6 +1,6 @@
 # INSTALL.md — Local Development Setup
 
-Everything you need to run ResinRiva on your own machine: the Next.js app, a Postgres database, the admin studio, and file uploads — no Vercel credentials required for day-to-day development.
+Everything you need to run Rivya Living Art on your own machine: the Next.js app, a Postgres database, the admin studio, and file uploads — no Vercel credentials required for day-to-day development.
 
 ## 1. Prerequisites
 
@@ -12,8 +12,8 @@ Everything you need to run ResinRiva on your own machine: the Next.js app, a Pos
 ## 2. Clone and install
 
 ```bash
-git clone https://github.com/gondaliyabhavya70960/ResinRiva2.0.git
-cd ResinRiva2.0
+git clone https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git
+cd RivyaLivingArt2.0
 npm install
 ```
 
@@ -31,7 +31,7 @@ cp .env.example .env
 
 | Variable | How to set it |
 |---|---|
-| `DATABASE_URL` | **Option A — local Postgres:** create a database and use e.g. `postgresql://resinriva:resinriva_dev@localhost:5432/resinriva`. **Option B — Neon via Vercel:** `vercel link`, then `vercel env pull .env` (auto-injected by the Neon native integration). |
+| `DATABASE_URL` | **Option A — local Postgres:** create a database and use e.g. `postgresql://rivya:rivya_dev@localhost:5432/rivya`. **Option B — Neon via Vercel:** `vercel link`, then `vercel env pull .env` (auto-injected by the Neon native integration). |
 | `AUTH_SECRET` | Generate with `npx auth secret` (it appends the value to `.env.local` — move it into `.env`). |
 | `AUTH_URL` | Leave unset (or `http://localhost:3000`) for local dev; Auth.js detects localhost. Production uses `https://store.bhavyagondaliya.co.in`. |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Your studio login. **Used only by the seed script** to create the admin user. |

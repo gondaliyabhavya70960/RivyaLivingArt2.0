@@ -146,11 +146,11 @@ export default async function WorkshopsPage({
 
   const { whatsappNumber } = await getSiteSettings();
   const askWaHref = buildWaLink(
-    "Hello ResinRiva, I'd like to know about your upcoming resin art workshops.",
+    "Hello Rivya Living Art, I'd like to know about your upcoming resin art workshops.",
     whatsappNumber,
   );
   const privateWaHref = buildWaLink(
-    "Hello ResinRiva, I'd like to plan a private or corporate workshop session. Could you share how it works?",
+    "Hello Rivya Living Art, I'd like to plan a private or corporate workshop session. Could you share how it works?",
     whatsappNumber,
   );
 
@@ -353,7 +353,7 @@ export default async function WorkshopsPage({
                   "shortTagline",
                 ]);
                 const bookHref = buildWaLink(
-                  `Hello ResinRiva, I'd like to book the workshop: ${workshop.title}. Please share upcoming dates.`,
+                  `Hello Rivya Living Art, I'd like to book the workshop: ${workshop.title}. Please share upcoming dates.`,
                   whatsappNumber,
                 );
                 const seats = seatsValue(workshop.lexical);

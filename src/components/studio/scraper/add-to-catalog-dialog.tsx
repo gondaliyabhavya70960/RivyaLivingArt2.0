@@ -185,7 +185,7 @@ function AddToCatalogBody({
           Everything imports as DRAFT with the rewrite guard — scraped titles,
           text and photos are competitors&apos; copyrighted reference material.
           Publish stays blocked until each product is rewritten as original
-          ResinRiva content.
+          Rivya Living Art content.
         </div>
       </div>
 

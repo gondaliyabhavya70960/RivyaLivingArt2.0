@@ -66,4 +66,4 @@ Handcrafted mementos are entirely achievable at event scale, but they obey the p
 
 Your team will spend months on the venue, the agenda, the speakers, the food — all of it experienced for two days and then entrusted entirely to memory. The memento is the only part of the event that goes home. Choose it the way you chose the keynote: as the thing people will judge the whole event by, long after the banners come down.
 
-*Planning mementos for an upcoming conference or event? Message ResinRiva on WhatsApp at +91 70960 36250 with your dates and headcount, and we'll shape a proposal together.*
+*Planning mementos for an upcoming conference or event? Message Rivya Living Art on WhatsApp at +91 70960 36250 with your dates and headcount, and we'll shape a proposal together.*

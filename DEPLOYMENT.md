@@ -5,7 +5,7 @@ Everything runs Vercel-native: hosting, Neon Postgres (Marketplace), Blob storag
 ## 1. Import the repository
 
 1. Go to https://vercel.com/new (signed in as the project owner, gondaliyabhavya70960@gmail.com).
-2. Import the GitHub repo **`gondaliyabhavya70960/ResinRiva2.0`**.
+2. Import the GitHub repo **`gondaliyabhavya70960/RivyaLivingArt2.0`**.
 3. Framework preset: **Next.js**. Keep the default build settings (the repo's `npm run build` runs `prisma migrate deploy && tsx prisma/bootstrap.ts && next build` — migrations and catalog bootstrap happen inside the build). No overrides are required.
 4. **Connect storage and set env vars BEFORE the first deploy** — the build requires `DATABASE_URL` and fails at `prisma migrate deploy` without it.
 
@@ -91,7 +91,7 @@ The components (`@vercel/analytics`, `@vercel/speed-insights`) already ship in t
 ## 10. Pre-launch checklist
 
 - [ ] **DEMO purge** — the seed no longer creates any DEMO products, so a fresh database ships clean. If this database ever held build-time DEMO items, confirm none remain: Studio → Products, search "DEMO" → delete all hits (public pages filter them out, but they must not exist at launch).
-- [ ] Replace every placeholder image with real ResinRiva photography (see CONTENT_GUIDE.md standards).
+- [ ] Replace every placeholder image with real Rivya Living Art photography (see CONTENT_GUIDE.md standards).
 - [ ] Set the real **Instagram handle** in Studio → Site Settings → Socials (the footer icon links from there).
 - [ ] Review Site Settings: announcement bar text, hero video, logo, default SEO, default care notes.
 - [ ] Test the WhatsApp order flow on **iPhone, Android, and desktop WhatsApp Web** (see WHATSAPP_ORDER_GUIDE.md testing checklist).

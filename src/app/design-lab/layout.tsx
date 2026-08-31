@@ -6,7 +6,7 @@ import "../globals.css";
 import { instrumentSerif, inter, jetbrainsMono } from "@/app/fonts";
 
 export const metadata: Metadata = {
-  title: "ResinRiva Design Lab",
+  title: "Rivya Living Art Design Lab",
   robots: { index: false, follow: false },
 };
 

@@ -55,7 +55,7 @@ export const revalidate = 300;
  *
  * **On the numbers.** The spec's tiles carry a *from* price and a typical
  * timeline, and decisions log #5 is explicit that the patterns are kept only
- * if they carry ResinRiva's real figures. The timelines are real and
+ * if they carry Rivya Living Art's real figures. The timelines are real and
  * published: the studio's own two bands are "small pieces 7–10 days" and
  * "statement pieces — tables, large wall art and layered preservation work —
  * 3–6 weeks" (`About.timelines`), which is where each tile's band below comes

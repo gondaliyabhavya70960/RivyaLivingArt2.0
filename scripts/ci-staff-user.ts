@@ -27,7 +27,7 @@ async function main() {
   }
   // A guard, not a formality: this script sets a known password on an ADMIN
   // account. It must never be pointed at a real deployment by a stray env.
-  if (!/localhost|127\.0\.0\.1|resinriva_ci/.test(url)) {
+  if (!/localhost|127\.0\.0\.1|rivya_ci/.test(url)) {
     console.error(
       "refusing to run: DATABASE_URL is not a local/CI database.\n" +
         "This creates an ADMIN with a known password and is for throwaway databases only.",

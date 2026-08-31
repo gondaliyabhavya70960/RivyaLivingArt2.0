@@ -49,4 +49,4 @@ Is a handcrafted award more expensive than a catalogue trophy? Usually, yes — 
 
 The ceremony ends. The team photo gets taken. The speeches are forgotten faster than anyone admits. What remains is the object — and the object either keeps the moment alive or lets it fade. An award made by hand, made once, and made for one specific person does something no plastic trophy can: it goes home, takes a place on a shelf the family actually sees, and quietly insists, for years, that those years of work were seen and valued. That is what a milestone deserves.
 
-*Marking work anniversaries or farewells this year? Message ResinRiva on WhatsApp at +91 70960 36250 to plan milestone awards your people will actually keep.*
+*Marking work anniversaries or farewells this year? Message Rivya Living Art on WhatsApp at +91 70960 36250 to plan milestone awards your people will actually keep.*

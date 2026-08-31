@@ -14,6 +14,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 ## CURRENT PHASE
 **Phase 0 — ZIP import & forensic audit: COMPLETE**
 **Phase 0.5 — baseline defect fixes: COMPLETE**
+**Phase 1 — brand rename: COMPLETE**
 
 ## CURRENT MILESTONE
 Phase 0 and Phase 0.5 delivered and committed. CI now actually runs, and every gate was proven
@@ -45,48 +46,60 @@ Nothing. Phase 0 is closed.
 
 ## NEXT EXACT TASK
 
-**Get answers to the two BLOCKING DECISIONS below.** They change what Phase 1 and Phase 2 build.
+**Phase 2 — business-domain transformation.** This is the substantial remaining work; the rename is
+done and the four decisions below are settled.
 
-Phase 0.5 (baseline defect fixes) is done — CI is live and green, the 11 browser-launching scripts
-work again, dev credentials are out of tracked source, the dead-branch workflow pins are gone, and
-`README.md` no longer advertises a retired design system.
+Phase 2 widens the catalogue and its language from *resin art + personalized gifts + 3D printing* to
+**luxury resin furniture + resin art + 3D art + bespoke commissions**:
 
-Two Phase 0.5 items remain, both deliberately left:
+1. **Taxonomy** — new categories (dining/river/coffee/console tables, benches, desks, wall art,
+   panels, sculptures, 3D art, limited editions) alongside the 16 existing ones. Follow
+   `CANONICAL_CATEGORIES` in `src/lib/catalog-taxonomy.ts`.
+2. **Schema** — additive migrations for `Collection`, `Artist`, `Material`, `ThreeDModel`. Keep
+   money as `Int` whole rupees. Register any new media-URL table in `media-usages.ts` in the same
+   commit (a header rule the repo has broken three times).
+3. **Studio surfaces** — new editors following the settled pattern: registry in code → overrides in
+   the database → a TOTAL resolver (decision D2).
+4. **Copy** — the storefront still describes the old catalogue ("custom resin art · 3D printing").
+   English first in `messages/en.json`, then translate the batch into all 8 locales;
+   `scripts/i18n-missing.mjs` is the gate.
+5. **Imagery** — generate new assets for the new domain (decision D3) and retire the 20 Cloudinary
+   URLs under `resinriva/`. `docs/media-v3-manifest.json` is the existing Higgsfield prompt ledger
+   to build `docs/ASSET-MANIFEST.md` from.
 
-1. **`.env.example` needs `DATABASE_URL_UNPOOLED` and `RESEND_FROM`** — this session's tooling
-   denies edits to `.env*` files, so the owner (or a session without that restriction) must add
-   them. Both are load-bearing: `prisma.config.ts:15` prefers the unpooled URL for `migrate
-   deploy`, and `src/lib/email.ts:142` reads `RESEND_FROM` (validated in `src/lib/env.ts:35`).
-2. **`happy-dom` → `devDependencies`, and decide on `three`** (a dependency with zero imports).
-   Both touch `package.json` + the lockfile, and `three` interacts with the pending domain
-   decision — the brief's Phase 15 wants Three.js for the 3D-art vertical.
+Two small items still open from Phase 0.5:
+- **`.env.example`** needs `DATABASE_URL_UNPOOLED` and `RESEND_FROM` — this session's tooling denies
+  edits to `.env*` files, so the owner must add them.
+- **`happy-dom` → `devDependencies`, and decide on `three`** (a dependency with zero imports; the
+  brief's Phase 15 wants Three.js for the 3D-art vertical, so this depends on Phase 2's shape).
 
 ---
 
-## BLOCKING DECISIONS (owner input required)
+## DECISIONS (answered 2026-08-31 — these are settled; do not re-litigate)
 
-### D1 — Commerce model
-The brief's Phase 29 asks for cart / checkout / payments and lists `/cart` `/checkout` `/account`
-routes. The business has a documented **"never violate"** rule against all three, and the entire
-conversion mechanism is WhatsApp-based (see `docs/PROJECT-AUDIT.md` §7.1).
+### D1 — Commerce model: **WhatsApp only**
+Cart, checkout, payments, `/cart`, `/checkout`, `/account` and customer accounts are **out of scope**.
+The conversion path stays: form → `Inquiry` row → `wa.me/917096036250` deep link. The 9-status
+inquiry pipeline, the `#RR-<n>` reference format, the claim-token control and the 27 `data-wa-source`
+tracking attributes all stay exactly as they are.
 
-- **Option A (recommended):** keep WhatsApp/inquiry as the conversion path; drop cart/checkout from
-  scope. Matches the business and the brief's own conditional wording.
-- **Option B:** add real ecommerce. Substantial new work (orders, payments, customers, shipping,
-  webhooks) and a reversal of a stated business rule.
+### D2 — CMS: **keep and extend the bespoke Studio**
+No Payload migration. New domain surfaces (collections, artists, materials, 3D assets) follow the
+existing pattern: **registry in code → overrides in the database → a TOTAL resolver**. The 1,181-slot
+copy registry, 62 image slots, section arrangement system, scraper review queue, sheet-import wizard
+and inquiry board are all preserved.
 
-**Status: UNANSWERED.** Phase 2 route planning depends on it.
+### D3 — Brand imagery: **generate new imagery for the new domain**
+The 20 Cloudinary URLs under `resinriva/` are **not renamed and not migrated**. They are retired in
+Phase 2 and replaced with new imagery representing luxury resin furniture, resin art, 3D art and
+bespoke work. The existing shots (resin jewellery, keychains, wedding frames) do not represent the
+new brand regardless, so migrating them would preserve pictures that get replaced anyway.
+**Consequence for Phase 1: leave every `resinriva/` path segment untouched.**
 
-### D2 — CMS
-The brief prefers Payload. A mature bespoke Studio CMS already exists: 40 admin pages, 124 server
-actions, 1,181 copy slots, 62 image slots, draft/preview/publish, 105 audit-log call sites
-(see §7.2).
-
-- **Option A (recommended):** keep the Studio CMS and extend it for the new domain.
-- **Option B:** migrate to Payload. Would require re-implementing all of the above and re-coupling
-  to 43 migrations and 4,373 live rows — the failure mode the brief was written to prevent.
-
-**Status: UNANSWERED.** Phase 5–7 schema work depends on it.
+### D4 — CI: **proceed with local verification**
+GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate
+set is run locally before every push and the results reported explicitly. The owner fixes billing
+when convenient; no work is blocked on it.
 
 ---
 

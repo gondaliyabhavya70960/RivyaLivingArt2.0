@@ -7,9 +7,9 @@ import { getSiteImage } from "@/lib/site-images-server";
 /**
  * Shared frame for every /studio auth page — REDESIGN.md §12.1.
  *
- *   Split screen. Left: the panel on a solid surface with RESINRIVA /
+ *   Split screen. Left: the panel on a solid surface with RIVYA LIVING ART /
  *   OWNER & STAFF ACCESS. Right: a dark cinematic studio image with
- *   `RESINRIVA · STUDIO` in mono, bottom-left.
+ *   `RIVYA LIVING ART · STUDIO` in mono, bottom-left.
  *   Mobile: the image becomes a 28vh top band.
  *
  * Three decisions the markup does not explain:
@@ -65,7 +65,7 @@ export async function AuthShell({
           data-theme="navy"
           className="u-micro absolute bottom-5 start-5 text-mist lg:bottom-8 lg:start-8"
         >
-          RESINRIVA · STUDIO
+          RIVYA LIVING ART · STUDIO
         </p>
       </div>
 

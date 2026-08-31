@@ -79,4 +79,4 @@ Real people straddle categories — the sentimental minimalist, the organised ma
 
 Whatever the type, allow two to four weeks for a made-to-order piece, and remember the universal rule that outranks every personality on this list: the gifts that land are the ones that prove you were paying attention.
 
-*Describe the birthday person to ResinRiva on WhatsApp at +91 70960 36250 — three sentences about who they are, and we'll design the piece that's "so them".*
+*Describe the birthday person to Rivya Living Art on WhatsApp at +91 70960 36250 — three sentences about who they are, and we'll design the piece that's "so them".*

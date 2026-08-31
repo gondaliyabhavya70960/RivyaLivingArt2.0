@@ -137,9 +137,9 @@ Homepage                                  [ Preview ] [ English ▾ ]
 ⠿ ● From liquid to light        the pinned pour scrub  11 words
 ⠿ ● The collections                     26 words · 6 category tiles
 ⠿ ○ Occasions                   hidden                  8 words
-⠿ ● Why ResinRiva                       24 words · 4 pictures   ▾
+⠿ ● Why Rivya Living Art                       24 words · 4 pictures   ▾
         ┌────────────────────────────────────────────────────┐
-        │ Eyebrow      why resinriva                         │
+        │ Eyebrow      why Rivya Living Art                         │
         │ Heading      Four reasons a piece stays            │
         │ Handcrafted  [🖼 4:5]  Poured by hand, never cast   │
         │ Bespoke      [🖼 4:5]  …                            │

@@ -66,4 +66,4 @@ The process is simple from your side: you share the photograph (the highest-reso
 
 The result is a photograph turned into an heirloom: an object that sits quietly by day and glows with a memory by night, made of nothing but light, shadow and patience.
 
-*Have a photograph that deserves to glow? Send it to ResinRiva on WhatsApp at +91 70960 36250 and we will tell you honestly how it will look.*
+*Have a photograph that deserves to glow? Send it to Rivya Living Art on WhatsApp at +91 70960 36250 and we will tell you honestly how it will look.*

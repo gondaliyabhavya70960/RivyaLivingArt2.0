@@ -58,4 +58,4 @@ A strong branded-gift commission usually needs only four things from your side:
 
 It can feel counterintuitive to pay for branding and then ask for it to be small. But the arithmetic of corporate gifting favours the understated: a gift that gets displayed delivers impressions for years, while a gift that gets hidden delivers none. The most effective logo tray is the one the client actually uses; the most effective nameplate is the one that stays on the desk. Restraint is not the absence of branding. It is branding that respects the recipient enough to be welcomed in.
 
-*Ready to design branded client gifts for your company? Message ResinRiva on WhatsApp at +91 70960 36250 with your logo and quantity, and we'll take it from there.*
+*Ready to design branded client gifts for your company? Message Rivya Living Art on WhatsApp at +91 70960 36250 with your logo and quantity, and we'll take it from there.*

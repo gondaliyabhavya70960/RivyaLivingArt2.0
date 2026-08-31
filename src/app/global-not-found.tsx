@@ -22,7 +22,7 @@ import "./globals.css";
  */
 
 export const metadata: Metadata = {
-  title: "Page not found — ResinRiva",
+  title: "Page not found — Rivya Living Art",
   robots: { index: false },
 };
 

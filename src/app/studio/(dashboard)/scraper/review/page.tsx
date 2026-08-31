@@ -130,7 +130,7 @@ export default async function ScrapeReviewPage({
     <>
       <PageHeader
         title="Review queue"
-        description="Approve scraped reference products, then import them as locked drafts — nothing publishes until it is rewritten as original ResinRiva content."
+        description="Approve scraped reference products, then import them as locked drafts — nothing publishes until it is rewritten as original Rivya Living Art content."
         actions={
           <Button asChild variant="outline" size="sm">
             <Link href="/studio/scraper">Back to scraper</Link>

@@ -43,7 +43,7 @@
     "breadcrumb": "面包屑导航",
     "skipToContent": "跳转到内容",
     "close": "关闭",
-    "whatsappChatLabel": "通过 WhatsApp 与 ResinRiva 聊天（在新标签页中打开）",
+    "whatsappChatLabel": "通过 WhatsApp 与 Rivya Living Art 聊天（在新标签页中打开）",
     "pauseMotion": "暂停动画",
     "playMotion": "播放动画",
     "pagination": {
@@ -56,7 +56,7 @@
     "resumeAnnouncements": "继续公告轮播",
     "copyLink": "复制链接",
     "linkCopied": "链接已复制",
-    "logoHome": "ResinRiva — 首页",
+    "logoHome": "Rivya Living Art — 首页",
     "dismissAnnouncement": "关闭公告",
     "announcementDefault": "当前制作周期 · 小件 7–10 天 · 大件 3–6 周"
   },
@@ -73,7 +73,7 @@
   },
   "Footer": {
     "tagline": "手工树脂艺术，按需定制。",
-    "rights": "© {year} ResinRiva. 版权所有。",
+    "rights": "© {year} Rivya Living Art. 版权所有。",
     "explore": "探索",
     "studio": "工作室",
     "contact": "联系",
@@ -85,11 +85,11 @@
     "findStudio": "查找我们的工作室",
     "chatOnWhatsApp": "通过 WhatsApp 聊天",
     "blurb": "小批量手工制作，每一件都是传世珍藏。",
-    "socialInstagram": "ResinRiva 的 Instagram（在新标签页中打开）",
-    "socialFacebook": "ResinRiva 的 Facebook（在新标签页中打开）",
-    "socialYoutube": "ResinRiva 的 YouTube（在新标签页中打开）",
-    "socialPinterest": "ResinRiva 的 Pinterest（在新标签页中打开）",
-    "socialWhatsapp": "ResinRiva 的 WhatsApp（在新标签页中打开）",
+    "socialInstagram": "Rivya Living Art 的 Instagram（在新标签页中打开）",
+    "socialFacebook": "Rivya Living Art 的 Facebook（在新标签页中打开）",
+    "socialYoutube": "Rivya Living Art 的 YouTube（在新标签页中打开）",
+    "socialPinterest": "Rivya Living Art 的 Pinterest（在新标签页中打开）",
+    "socialWhatsapp": "Rivya Living Art 的 WhatsApp（在新标签页中打开）",
     "madeIn": "印度制造",
     "journal": "日志",
     "ctaEyebrow": "定制委托",
@@ -103,13 +103,13 @@
   },
   "Home": {
     "meta": {
-      "title": "ResinRiva — 奢华定制树脂艺术与 3D 打印",
+      "title": "Rivya Living Art — 奢华定制树脂艺术与 3D 打印",
       "description": "以深邃海洋蓝呈现的定制树脂艺术、个性化礼品与 3D 打印作品——小批量手工打造，通过 WhatsApp 下单。一件值得珍藏一生的传家之作。"
     },
     "hero": {
       "eyebrow": "定制树脂艺术 · 3D 打印 · 按需定制",
       "headline": "流动的奢华，永恒的凝铸。",
-      "lead": "ResinRiva 以深邃海洋蓝，打造定制树脂艺术、个性化礼品与 3D 打印作品——纯手工浇铸，专属为你而作，只需通过 WhatsApp 轻松下单。一件值得珍藏一生的传家之作。",
+      "lead": "Rivya Living Art 以深邃海洋蓝，打造定制树脂艺术、个性化礼品与 3D 打印作品——纯手工浇铸，专属为你而作，只需通过 WhatsApp 轻松下单。一件值得珍藏一生的传家之作。",
       "ctaExplore": "探索系列",
       "ctaBespoke": "定制一件作品",
       "badgeHand": "纯手工浇铸",
@@ -187,7 +187,7 @@
       "reassurance": "本网站无需付款——价格在浇铸开始之前于 WhatsApp 上敲定。"
     },
     "why": {
-      "heading": "为何选择 ResinRiva",
+      "heading": "为何选择 Rivya Living Art",
       "badge": "印度制造",
       "pillar1Title": "纯手工打造",
       "pillar1Copy": "每一件作品均以小批量手工浇铸、镶嵌与抛光——绝非量产之物。",
@@ -307,7 +307,7 @@
     "maker": {
       "eyebrow": "匠人",
       "heading": "出自同一双手。",
-      "body": "每一件 ResinRiva 作品都经由同一双手，从第一次浇铸，到 3000 目砂纸的最后一遍。这里没有流水线——只有一张工作台、一套模具，以及一件作品所需的时间。",
+      "body": "每一件 Rivya Living Art 作品都经由同一双手，从第一次浇铸，到 3000 目砂纸的最后一遍。这里没有流水线——只有一张工作台、一套模具，以及一件作品所需的时间。",
       "cta": "认识这位匠人",
       "imageAlt": "工作台前，双手正在抛光已固化的树脂表面"
     }
@@ -315,12 +315,12 @@
   "Process": {
     "meta": {
       "title": "我们的工艺",
-      "description": "一件 ResinRiva 定制之作如何诞生——从第一次 WhatsApp 对话，到层层浇铸、手工打磨，再到可追踪配送至印度各地。"
+      "description": "一件 Rivya Living Art 定制之作如何诞生——从第一次 WhatsApp 对话，到层层浇铸、手工打磨，再到可追踪配送至印度各地。"
     },
     "hero": {
       "eyebrow": "我们的工艺",
       "headline": "从灵感到传家之作。",
-      "lead": "从你的第一条讯息，到作品交到你手中，其间是六个从容不迫的步骤。这里将如实呈现一件 ResinRiva 定制之作如何诞生——以及它真正需要多久。"
+      "lead": "从你的第一条讯息，到作品交到你手中，其间是六个从容不迫的步骤。这里将如实呈现一件 Rivya Living Art 定制之作如何诞生——以及它真正需要多久。"
     },
     "timeline": {
       "heading": "六个步骤，绝不走捷径",
@@ -392,17 +392,17 @@
   "About": {
     "meta": {
       "title": "关于我们",
-      "description": "ResinRiva 的故事——一间按需定制的树脂艺术工作室，于印度以海洋蓝匠心打造传家品质之作，每次只专注于一件定制。"
+      "description": "Rivya Living Art 的故事——一间按需定制的树脂艺术工作室，于印度以海洋蓝匠心打造传家品质之作，每次只专注于一件定制。"
     },
     "hero": {
       "eyebrow": "工作室",
       "headline": "当树脂邂逅敬意。",
-      "lead": "ResinRiva 是一间位于印度的按需定制树脂艺术工作室——一方小小的天地，专注于将你生命中最珍视之物封存于晶莹剔透的深邃之中：你的花卉、你的照片、你的重要时刻。"
+      "lead": "Rivya Living Art 是一间位于印度的按需定制树脂艺术工作室——一方小小的天地，专注于将你生命中最珍视之物封存于晶莹剔透的深邃之中：你的花卉、你的照片、你的重要时刻。"
     },
     "story": {
       "heading": "我们的故事",
-      "imageAlt": "在 ResinRiva 工作室手工打造的永生花树脂相框",
-      "p1": "ResinRiva 始于一位艺术家的独立工作室——一张工作台，以及对光穿过浇铸树脂时那份变化的静默痴迷。它随着一件件定制而成长，却始终如初：每次只做一件，每一个阶段都出自同一双悉心的手。",
+      "imageAlt": "在 Rivya Living Art 工作室手工打造的永生花树脂相框",
+      "p1": "Rivya Living Art 始于一位艺术家的独立工作室——一张工作台，以及对光穿过浇铸树脂时那份变化的静默痴迷。它随着一件件定制而成长，却始终如初：每次只做一件，每一个阶段都出自同一双悉心的手。",
       "p2": "调色的灵感源自大海。蓝宝石蓝、蔚蓝与深海蓝几乎贯穿于我们的每一件作品——这些色彩自有真正的深邃，如同海水层叠光影般层层铺陈。金色仅作点缀：边缘的一抹微光，蓝色之中一缕细致的纹理。",
       "p3": "我们不做量产，也不备存货。每一件定制都始于一次 WhatsApp 对话——你的想法、你的参考、你的预算——最终成就一件世上独一无二的作品。",
       "eyebrow": "我们的故事"
@@ -445,7 +445,7 @@
     },
     "maker": {
       "eyebrow": "认识匠人",
-      "heading": "ResinRiva 由 Bhavya Gondaliya 主理",
+      "heading": "Rivya Living Art 由 Bhavya Gondaliya 主理",
       "body": "每一次咨询、每一张草图、每一次浇铸，都经由匠人之手。当你向工作室发来讯息，与你交谈的，正是那位将亲手打造你作品的人——没有中间环节，没有生产线，只有你与你的艺术家之间的一次对话。",
       "cta": "打声招呼",
       "name": "Bhavya Gondaliya",
@@ -479,12 +479,12 @@
   "Workshops": {
     "meta": {
       "title": "工作坊",
-      "description": "来自 ResinRiva 工作室的沉浸式树脂艺术工作坊——小班授课，材料全备，新手友好。通过 WhatsApp 预订你的席位。"
+      "description": "来自 Rivya Living Art 工作室的沉浸式树脂艺术工作坊——小班授课，材料全备，新手友好。通过 WhatsApp 预订你的席位。"
     },
     "hero": {
       "eyebrow": "研习这门手艺",
       "headline": "浇铸你的第一件杰作。",
-      "lead": "在 ResinRiva 工作室，亲手体验树脂艺术——你亲自调和、着色、浇铸，带走一件完全属于你的作品。",
+      "lead": "在 Rivya Living Art 工作室，亲手体验树脂艺术——你亲自调和、着色、浇铸，带走一件完全属于你的作品。",
       "cta": "咨询工作坊"
     },
     "intro": {
@@ -570,7 +570,7 @@
   "CustomOrder": {
     "meta": {
       "title": "定制订单",
-      "description": "向 ResinRiva 定制专属树脂艺术——分享你的想法、预算与时间，我们将在 WhatsApp 上与你一同设计。于印度按需定制。"
+      "description": "向 Rivya Living Art 定制专属树脂艺术——分享你的想法、预算与时间，我们将在 WhatsApp 上与你一同设计。于印度按需定制。"
     },
     "page": {
       "heroEyebrow": "专属定制",
@@ -712,7 +712,7 @@
   "Contact": {
     "meta": {
       "title": "联系我们",
-      "description": "写信给 ResinRiva 工作室——电话、WhatsApp、邮箱或联系表单皆可。我们在 WhatsApp 上回复最快，通常几小时内便会答复。"
+      "description": "写信给 Rivya Living Art 工作室——电话、WhatsApp、邮箱或联系表单皆可。我们在 WhatsApp 上回复最快，通常几小时内便会答复。"
     },
     "page": {
       "heroEyebrow": "联系工作室",
@@ -741,7 +741,7 @@
       "studioMeta": "上午10点–晚上8点 IST",
       "mapActivate": "显示地图",
       "mapNote": "仅在你点击时才加载 Google Maps",
-      "mapFrameTitle": "ResinRiva 工作室地图",
+      "mapFrameTitle": "Rivya Living Art 工作室地图",
       "formEyebrow": "写信给我们",
       "formHeading": "给工作室留言",
       "formIntro": "所有留言都直达匠人本人——没有工单排队，也没有机器人。"
@@ -791,7 +791,7 @@
   "Faq": {
     "meta": {
       "title": "常见问题",
-      "description": "关于定制树脂艺术、委托创作、制作周期与保养，我们汇集了人们问得最多的问题与解答——皆来自 ResinRiva 工作室。"
+      "description": "关于定制树脂艺术、委托创作、制作周期与保养，我们汇集了人们问得最多的问题与解答——皆来自 Rivya Living Art 工作室。"
     },
     "heroEyebrow": "常见提问",
     "heroHeadline": "疑问，皆有回应。",
@@ -816,12 +816,12 @@
   "Shop": {
     "meta": {
       "title": "商店",
-      "description": "浏览 ResinRiva 的定制系列——奢华树脂艺术、个性化礼品与 3D 打印作品，从头到尾专属定制，通过 WhatsApp 下单。",
+      "description": "浏览 Rivya Living Art 的定制系列——奢华树脂艺术、个性化礼品与 3D 打印作品，从头到尾专属定制，通过 WhatsApp 下单。",
       "titlePaged": "商店——第 {page} 页"
     },
-    "categoryMetaDescription": "来自 ResinRiva 工作室的定制 {category}——从头到尾专属定制，通过 WhatsApp 下单。",
+    "categoryMetaDescription": "来自 Rivya Living Art 工作室的定制 {category}——从头到尾专属定制，通过 WhatsApp 下单。",
     "heroEyebrow": "臻选系列",
-    "heroHeadline": "选购 ResinRiva",
+    "heroHeadline": "选购 Rivya Living Art",
     "heroLead": "每一件都为您量身定制——挑选心仪之作，融入您的故事，只需一段 WhatsApp 对话即可敲定所有细节。",
     "tabsAria": "按类别浏览",
     "tabAll": "全部",
@@ -854,7 +854,7 @@
     "emptyFilteredBody": "试试清除筛选，或定制一件专属之作——为你的故事而作，按你的节奏呈现。",
     "emptyCatalogEyebrow": "按需定制",
     "emptyCatalogHeading": "首批作品正在浇铸",
-    "emptyCatalogBody": "每一件 ResinRiva 作品都为您定制。现在就开启您的专属定制，或通过 WhatsApp 联系我们，我们将帮您迈出第一步。",
+    "emptyCatalogBody": "每一件 Rivya Living Art 作品都为您定制。现在就开启您的专属定制，或通过 WhatsApp 联系我们，我们将帮您迈出第一步。",
     "clearFilters": "清除筛选",
     "commissionCta": "定制专属之作",
     "quickViewAria": "快速查看：{title}",
@@ -946,7 +946,7 @@
   "Search": {
     "meta": {
       "title": "搜索",
-      "description": "搜索 ResinRiva 的定制作品、手记文章与作品集故事。"
+      "description": "搜索 Rivya Living Art 的定制作品、手记文章与作品集故事。"
     },
     "heroEyebrow": "找到属于你的那件",
     "heroHeadline": "探索工作室",
@@ -964,14 +964,14 @@
     "sectionCount": "{count, plural, one {# 个结果} other {# 个结果}}",
     "zeroEyebrow": "尚未开始",
     "zeroHeading": "这一件我们还未浇铸——目前如此。",
-    "zeroBody": "每一件 ResinRiva 作品都为您定制，因此目录只是起点。告诉我们您心中的构想——色彩、名字、尺寸——我们便为您悉心打造。",
+    "zeroBody": "每一件 Rivya Living Art 作品都为您定制，因此目录只是起点。告诉我们您心中的构想——色彩、名字、尺寸——我们便为您悉心打造。",
     "zeroWhatsappCta": "通过 WhatsApp 咨询我们",
     "browseShop": "浏览商店",
     "emptyEyebrow": "从任何地方开始",
     "emptyHeading": "您在寻找什么？",
     "emptyBody": "试试某件作品（“名牌”、“时钟”）、某个场合（“纪念日”）或某种材质（“树脂”）——也可以直接前往臻选系列。",
     "productsShowMore": "前往商店查看{total, plural, one {全部 # 件作品} other {全部 # 件作品}}",
-    "zeroWhatsappMessage": "您好 ResinRiva，我在你们网站上搜索了\"{query}\"，但没有找到。你们能为我定制类似的作品吗？\n（发自 {site}）",
+    "zeroWhatsappMessage": "您好 Rivya Living Art，我在你们网站上搜索了\"{query}\"，但没有找到。你们能为我定制类似的作品吗？\n（发自 {site}）",
     "overlay": {
       "dialogLabel": "站内搜索",
       "label": "搜索",
@@ -1003,7 +1003,7 @@
     "meta": {
       "title": "手记",
       "titlePaged": "手记——第 {page} 页",
-      "description": "来自 ResinRiva 工作室的手记——创作历程、材质探究，以及每一件定制树脂艺术委托背后的故事。"
+      "description": "来自 Rivya Living Art 工作室的手记——创作历程、材质探究，以及每一件定制树脂艺术委托背后的故事。"
     },
     "journalFallbackCategory": "手记",
     "minRead": "阅读约需 {minutes} 分钟",
@@ -1041,7 +1041,7 @@
   "Portfolio": {
     "meta": {
       "title": "作品集",
-      "description": "来自 ResinRiva 工作室的真实委托——蜕变前后的对比、永生花与定制树脂作品，一次讲述一个故事。",
+      "description": "来自 Rivya Living Art 工作室的真实委托——蜕变前后的对比、永生花与定制树脂作品，一次讲述一个故事。",
       "titlePaged": "作品集 — 第 {page} 页",
       "notFound": "未找到该委托作品"
     },
@@ -1081,7 +1081,7 @@
       "ctaBody": "本页的每个故事，都始于一条简单的消息。告诉我们您的故事——那束花、那张照片、那个里程碑——下一件，我们为您浇铸。",
       "ctaWhatsApp": "通过 WhatsApp 联系我们",
       "ctaCustomOrder": "开启定制订单",
-      "commissionWhatsappMessage": "您好 ResinRiva，我在你们的作品集中看到了\"{title}\"，希望定制一件类似的作品。\n（发自 {site}）",
+      "commissionWhatsappMessage": "您好 Rivya Living Art，我在你们的作品集中看到了\"{title}\"，希望定制一件类似的作品。\n（发自 {site}）",
       "caseStudy": {
         "briefHeading": "委托背景",
         "processHeading": "制作过程",
@@ -1127,8 +1127,8 @@
     }
   },
   "WhatsApp": {
-    "greeting": "您好 ResinRiva，我想进一步了解你们的定制树脂艺术。",
-    "intro": "您好 ResinRiva，\n我想订购：",
+    "greeting": "您好 Rivya Living Art，我想进一步了解你们的定制树脂艺术。",
+    "intro": "您好 Rivya Living Art，\n我想订购：",
     "product": "产品",
     "budget": "预算",
     "timeline": "时间安排",
@@ -1179,7 +1179,7 @@
   "Wishlist": {
     "meta": {
       "title": "心愿单",
-      "description": "您在浏览 ResinRiva 时收藏的作品——保存在此设备上，随时可通过 WhatsApp 分享给工作室。"
+      "description": "您在浏览 Rivya Living Art 时收藏的作品——保存在此设备上，随时可通过 WhatsApp 分享给工作室。"
     },
     "heroEyebrow": "您的心选清单",
     "heroHeadline": "收藏的作品",
@@ -1195,7 +1195,7 @@
     "browseCta": "浏览臻选系列",
     "shareLead": "将您的心选清单发送给工作室——细节、价格与工期，一段 WhatsApp 对话即可确认。",
     "shareCta": "通过 WhatsApp 分享",
-    "waIntro": "你好 ResinRiva，我在你们网站上心选了这些作品：",
+    "waIntro": "你好 Rivya Living Art，我在你们网站上心选了这些作品：",
     "waMore": "……另有 {count, plural, one {# 件收藏的作品} other {# 件收藏的作品}}。",
     "waSentFrom": "（发送自 {host}）"
   },
@@ -1274,7 +1274,7 @@
     },
     "oosCta": "通过 WhatsApp 咨询补货",
     "oosSummaryNote": "库存咨询——这件作品目前暂时售罄。",
-    "oosWaIntro": "您好 ResinRiva，\n这件作品目前暂时售罄——我想咨询一下补货事宜：",
+    "oosWaIntro": "您好 Rivya Living Art，\n这件作品目前暂时售罄——我想咨询一下补货事宜：",
     "notFound": "未找到该作品",
     "draftPreview": "草稿预览 — 只有持有此链接的工作人员才能查看此页面。",
     "careHeading": "养护与收藏",
@@ -1337,7 +1337,7 @@
     "leadTimeMadeToOrder": "按需定制",
     "ctaCustomize": "定制这件作品",
     "ctaWhatsApp": "通过 WhatsApp 咨询",
-    "waAsk": "您好 ResinRiva，我想咨询一下“{title}”。",
+    "waAsk": "您好 Rivya Living Art，我想咨询一下“{title}”。",
     "sections": {
       "pieceEyebrow": "这件作品",
       "detailsEyebrow": "细节",

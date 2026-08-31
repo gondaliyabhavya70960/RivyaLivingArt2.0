@@ -66,4 +66,4 @@ Group gifting is worth mentioning too: four friends pooling for one significant 
 
 A new home is a blank page, and most gifts arrive as full stops — complete, closed, interchangeable. A bespoke piece arrives as a sentence written just for them, in their name, in their colours. That is the gift that gets pointed out to guests for years: "Oh, that? A friend had it made for us when we moved in."
 
-*Share the family's name and their home's colours with ResinRiva on WhatsApp at +91 70960 36250, and we'll design a housewarming piece that could belong nowhere else.*
+*Share the family's name and their home's colours with Rivya Living Art on WhatsApp at +91 70960 36250, and we'll design a housewarming piece that could belong nowhere else.*

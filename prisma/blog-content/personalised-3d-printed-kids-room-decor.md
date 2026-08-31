@@ -67,4 +67,4 @@ A studio that answers these plainly is a studio designing for real children rath
 
 The loveliest commissions begin with a child's drawing. A five-year-old's crayon monster, redrawn respectfully into a 3D model and printed in the very colours they scribbled, becomes a piece of decor they will defend for a decade — and a keepsake you will quietly refuse to throw away long after they've grown. Send the drawing, the name, and the room's colours through a [custom order](/custom-order), and expect a preview to approve — with the young designer's sign-off, naturally, being the one that counts.
 
-*Message ResinRiva on WhatsApp with your child's name, their current obsession and a photo of the room, and we'll design a piece that makes the room entirely theirs.*
+*Message Rivya Living Art on WhatsApp with your child's name, their current obsession and a photo of the room, and we'll design a piece that makes the room entirely theirs.*

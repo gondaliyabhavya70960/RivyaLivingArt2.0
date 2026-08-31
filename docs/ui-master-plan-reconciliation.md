@@ -1,4 +1,4 @@
-# `RESINRIVA_2.0_UI_MASTER_PLAN.md` — reconciliation
+# `RIVYA LIVING ART_2.0_UI_MASTER_PLAN.md` — reconciliation
 
 **Verdict: 9.4% of the plan is work. The rest is already built, factually wrong
 about this repo, or forbidden by the spec it claims to serve.**
