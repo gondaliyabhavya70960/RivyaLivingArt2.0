@@ -130,7 +130,7 @@ export default async function CommissionCardPage({
         )}
 
         <p className="mt-10 border-t border-border pt-6 font-mono text-xs tracking-[0.14em] text-muted-foreground uppercase">
-          Hand poured · Made to order · store.bhavyagondaliya.co.in
+          Hand poured · Made to order · www.rivyalivingart.com
         </p>
       </section>
     </main>

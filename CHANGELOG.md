@@ -5,6 +5,52 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Fix: a blank environment variable could not break the build
+
+Production failed on `NEXT_PUBLIC_SITE_URL: Invalid URL`. The variable was **declared with no
+value** — adding a key in a hosting dashboard without filling it in, which is what pasting the names
+from `.env.example` produces.
+
+### Fixed
+- **`src/lib/env.ts` now treats a blank variable as absent.** `NEXT_PUBLIC_SITE_URL` is declared
+  `z.string().url().optional()`, and `.optional()` admits only `undefined`. A blank arrives as `""`
+  — a *string* — so the refinement ran against it and rejected it as a malformed URL. Blanks are now
+  stripped before parsing, so an optional variable left empty is simply off. Sibling blanks passed
+  only because they carry no `.url()`; the same trap was waiting for any future one that did.
+- **Required variables now report their intended message when absent.** Stripping blanks turned a
+  blank `DATABASE_URL` into a missing one, which Zod reported as
+  `expected string, received undefined`. `DATABASE_URL` and `AUTH_SECRET` now carry an `error` so
+  both the blank and absent cases say `…is required`.
+- **`src/lib/constants.ts` had the same bug, where a green build hid it.** It used
+  `process.env.X ?? fallback`, and `??` keeps `""`. A blank `NEXT_PUBLIC_SITE_URL` therefore made
+  `SITE.url === ""` — breaking every canonical link, OG card, sitemap entry and `metadataBase` —
+  and a blank `NEXT_PUBLIC_WHATSAPP_NUMBER` made every `wa.me` link empty, which on a WhatsApp-only
+  business is the entire conversion path. Both now fall back on blank as well as absent.
+  It cannot import the server-only env module, so it repeats the rule locally.
+
+### Changed
+- **Live domain is now `https://www.rivyalivingart.com`**, replacing `store.bhavyagondaliya.co.in`
+  in `SITE.url`, the OG card, the inquiry card, the catalog-mirror user agent, the seeded legal
+  pages, and the documentation. The transformation records (`PROJECT_STATE.md`, `CHANGELOG.md`,
+  `docs/PROJECT-AUDIT.md`, `docs/RENAME-MIGRATION.md`) keep the old host, because they quote it as
+  it was at audit time.
+
+### Verified
+- **Reproduced the production failure first**, then showed the same input passing: on the previous
+  code a blank `NEXT_PUBLIC_SITE_URL` threw `Invalid URL`; on this code `next build` completes.
+- 9 new tests in `src/lib/env.test.ts` (suite now **336**) covering blank, whitespace-only, absent
+  and real values for both the env loader and the two public `SITE` values.
+- Full gate set green locally: typecheck, lint, `copy:check`, i18n (0 missing across 8 locales),
+  336 tests, production build **with a blank `NEXT_PUBLIC_SITE_URL`**, 3 design audits, 2 a11y
+  audits, 2 studio audits over 30 routes, Lighthouse 99/97/96/100.
+
+### Still the owner's to set
+Setting `NEXT_PUBLIC_SITE_URL=https://www.rivyalivingart.com` in Vercel remains worthwhile — the
+fallback keeps the build alive and resolves to the right domain, but an explicit value is what makes
+preview deployments self-describe correctly.
+
+---
+
 ## [Unreleased] — Phase 2a: art-first storefront
 
 Implements decision **D6**: the supplies and 3D-printing catalogues stay published and sellable,

@@ -1,6 +1,6 @@
 # COMPETITOR.md — Top-20 Competitor Research
 
-Competitor landscape for **Rivya Living Art** ([store.bhavyagondaliya.co.in](https://store.bhavyagondaliya.co.in) — luxury made-to-order resin art & custom 3D printing, India, every order finalized on WhatsApp `wa.me/917096036250`). Researched **July 2026 via web search**. Competitor sites are research reference **ONLY** — for product TYPES, category ideas, pricing signals, and blog TOPICS. **Never copy their text, product names, descriptions, images, or photos.**
+Competitor landscape for **Rivya Living Art** ([www.rivyalivingart.com](https://www.rivyalivingart.com) — luxury made-to-order resin art & custom 3D printing, India, every order finalized on WhatsApp `wa.me/917096036250`). Researched **July 2026 via web search**. Competitor sites are research reference **ONLY** — for product TYPES, category ideas, pricing signals, and blog TOPICS. **Never copy their text, product names, descriptions, images, or photos.**
 
 > **Method note:** This research is **search-snippet-based**. This environment could not fetch competitor pages directly (direct fetches blocked by network policy), so every claim below is derived from search-result titles, snippets, and third-party pages surfaced in web search. Unknowns are explicitly marked — hedges such as "not visible in search results" and "(inferred)" are deliberate and must be preserved; treat them as items to verify live before acting on them.
 

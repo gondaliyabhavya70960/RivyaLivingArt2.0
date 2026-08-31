@@ -28,11 +28,11 @@ Project → **Settings → Environment Variables** (all environments unless note
 | Variable | Value |
 |---|---|
 | `AUTH_SECRET` | Output of `npx auth secret` (any strong random string) |
-| `AUTH_URL` | `https://store.bhavyagondaliya.co.in` (Production) |
+| `AUTH_URL` | `https://www.rivyalivingart.com` (Production) |
 | `ADMIN_EMAIL` | `gondaliyabhavya70960@gmail.com` — seed-only: creates the admin login |
 | `ADMIN_PASSWORD` | A strong password — seed-only |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `917096036250` |
-| `NEXT_PUBLIC_SITE_URL` | `https://store.bhavyagondaliya.co.in` |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.rivyalivingart.com` |
 | `RESEND_API_KEY` | *(optional)* — email delivery via Resend: contact-form + order notifications and password-reset emails (install from the Vercel Marketplace; WhatsApp remains the primary channel) |
 | `RESEND_EMAIL_DOMAIN` / `RESEND_FROM` / `EMAIL_FROM` | *(optional)* — sender address for Resend emails (domain shorthand, or a full from address) |
 | `NEXT_PUBLIC_META_PIXEL_ID` | *(optional)* — Meta Pixel id; the pixel stays off unless set |
@@ -70,16 +70,16 @@ Notes:
 - After seeding, restore your local `.env` if you develop against a local database (the pull overwrote it).
 - **Blog + category covers (Step-4 generated imagery):** also run `npm run db:seed:blogs` once (55 posts, each with a cover) — the category covers reconcile automatically on deploy. Covers initially point at the public Higgsfield CDN (`d8j0ntlcm91z4.cloudfront.net`, allow-listed in `next.config.ts`). To move them first-party, run `node scripts/mirror-generated-images.mjs` on any machine with open internet, commit the resulting `public/images/` files, re-run both seeds (they prefer local files and never overwrite covers you've set in Studio), then drop the cloudfront entries from `next.config.ts`.
 
-## 7. Custom domain — store.bhavyagondaliya.co.in
+## 7. Custom domain — www.rivyalivingart.com
 
-1. Project → **Domains** → Add → `store.bhavyagondaliya.co.in`.
+1. Project → **Domains** → Add → `www.rivyalivingart.com`.
 2. At the DNS provider for `bhavyagondaliya.co.in`, add the **CNAME** record Vercel shows: host `store` → `cname.vercel-dns.com` (Vercel displays the exact target — use what the dashboard says).
 3. Wait for DNS + automatic HTTPS to go green in the dashboard.
-4. Confirm `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` both say `https://store.bhavyagondaliya.co.in` — login and wa.me messages depend on them.
+4. Confirm `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` both say `https://www.rivyalivingart.com` — login and wa.me messages depend on them.
 
 ## 8. Verify the deployment
 
-1. Open `https://store.bhavyagondaliya.co.in/studio` → log in with `ADMIN_EMAIL` / `ADMIN_PASSWORD` → dashboard loads, 16 categories listed.
+1. Open `https://www.rivyalivingart.com/studio` → log in with `ADMIN_EMAIL` / `ADMIN_PASSWORD` → dashboard loads, 16 categories listed.
 2. Create a quick test product (Draft → use the draft preview link → Publish).
 3. On the public product page, fill the order form and press **Place Order**: WhatsApp must open with the pre-filled message to `wa.me/917096036250`, and the order must appear under **Studio → WhatsApp Orders**.
 4. Delete the test product (and its inquiry) afterwards.

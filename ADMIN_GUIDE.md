@@ -1,7 +1,7 @@
 # ADMIN_GUIDE.md — Rivya Living Art Studio Guide (for the owner)
 
 Welcome! This is the plain-language manual for **your** admin panel — the Studio — at
-**https://store.bhavyagondaliya.co.in/studio**. Everything you can do on the website, you do from here. No coding needed.
+**https://www.rivyalivingart.com/studio**. Everything you can do on the website, you do from here. No coding needed.
 
 A few things to know up front:
 
@@ -71,7 +71,7 @@ Simple question + answer + order. Six honest FAQs are pre-loaded (delivery, pack
 
 ## 11. Pages (Privacy, Terms & more)
 
-**Pages** holds the site's standalone pages, edited with the same rich editor as the blog. Your **Privacy Policy** and **Terms & Conditions** come pre-written (full, India-appropriate originals) — you can edit them but the Studio **refuses to delete them**, because the site legally needs both. New pages you create appear at `store.bhavyagondaliya.co.in/their-slug`.
+**Pages** holds the site's standalone pages, edited with the same rich editor as the blog. Your **Privacy Policy** and **Terms & Conditions** come pre-written (full, India-appropriate originals) — you can edit them but the Studio **refuses to delete them**, because the site legally needs both. New pages you create appear at `www.rivyalivingart.com/their-slug`.
 
 ## 12. Site Settings
 
