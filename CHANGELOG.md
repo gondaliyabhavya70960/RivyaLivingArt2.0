@@ -26,19 +26,36 @@ What was live and is now correct:
 | `…com//#localbusiness` | `…com/#localbusiness` |
 | `…com//icon.svg` | `…com/icon.svg` |
 | `…com//search?q={search_term_string}` | `…com/search?q={search_term_string}` |
+| `wa.me/+917096036250` | `wa.me/917096036250` |
 
 The JSON-LD `@id`s matter most: their whole purpose is to be a stable identifier other nodes in the
 graph reference, and a malformed one does not resolve. The same concatenation builds product, blog
 and portfolio canonicals, OG image URLs, sitemap entries, wishlist share links and password-reset
 links.
 
+### Fixed — a second live defect, on the conversion path
+- **`buildWaLink` now enforces the number format its own docstring promises.** The docstring says
+  *"international format with no '+', spaces, or dashes"*, but the function passed the caller's
+  value straight through — and that value is normally the **studio-configured** number an owner
+  types into Site Settings, which holds `+917096036250`. The live site was serving
+  `wa.me/+917096036250` on all commission CTAs.
+
+  A `+` is merely non-canonical, but the same field would accept `+91 70960 36250`, and a space
+  breaks the URL outright. This is the Place Order path (`order.ts:342`, `:493`), so a broken link
+  loses the order with nothing to show for it. `email.ts:93` already sanitised the *customer's*
+  number this way; the house number did not get the same treatment.
+
+  Fixed in the builder rather than in Site Settings, so the owner does not have to retype anything
+  and no future stored value can reintroduce it. 4 new tests.
+
 ### Verified
 - **Found by reading the live production HTML**, not by trusting the deployment's `READY` state:
   14 occurrences of `rivyalivingart.com//` on the served homepage.
 - Rendered output after the fix: **0** double slashes; `@id`s well-formed.
 - `next build` run with the exact production value (`https://www.rivyalivingart.com/`) — passes.
-- 2 new tests (suite now **338**) covering one, two and three trailing slashes, and a
-  correctly-formed origin left alone.
+- 6 new tests (suite now **342**): trailing slashes (one, two, three) plus a correctly-formed
+  origin left alone, and the wa.me sanitisation across `+`, spaces, dashes, brackets and
+  digitless junk.
 - typecheck, lint, `copy:check`, i18n (0 missing across 8 locales) all clean.
 
 ### Confirmed working in production
