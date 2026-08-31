@@ -16,7 +16,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 0.5 — baseline defect fixes: COMPLETE**
 **Phase 1 — brand rename: COMPLETE**
 **Phase 2a — art-first storefront: COMPLETE**
-**Phase 2b — commission-led copy (homepage + metadata): COMPLETE**
+**Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
 ## CURRENT MILESTONE
@@ -119,10 +119,29 @@ wall panels and sculptural pieces, designed around your room and poured to order
 was brought into line with the page the site already had, and each translator was told to reuse
 that namespace's established terminology rather than coin new terms.
 
-**Remaining Phase 2b surface**, in rough order of value: `Shop` (311 slots), `Site chrome` (120),
-`Commission` (114), `About`, `Process`. Same workflow every time — English first in
-`messages/en.json`, then `node scripts/site-copy-registry.mjs` (a CI gate: `copy:check` fails when
-stale), then translate the batch into all 8 locales with `scripts/i18n-missing.mjs` as the gate.
+**Phase 2b is DONE, and the remaining surface was far smaller than the plan assumed.** A sweep of
+every namespace for the old proposition markers ("3D printing", "personalized gifts", "gifting")
+returned ~21 hits, of which almost all are **accurate, not stale** — the studio genuinely sells 3D
+printing (400 filaments, 96 printer parts, 4 printed decor) and `gift-collections` is a real
+category. `Nav.groupPrint`, the homepage print tile and `Process`'s mention of digital previews all
+describe real things and were left alone.
+
+Only **one** key still carried the superseded proposition: `Shop.meta.description`
+("luxury resin art, personalized gifts and 3D-printed pieces"). It was doubly wrong after Phase 2a,
+because it promised 3D-printed pieces on a page that now opens on the art ecosystem. Rewritten in
+all nine locales to describe what `/shop` actually shows, with supplies and printing named as the
+further shelves they are.
+
+Also checked and found consistent, needing no change: `Footer` ("Handcrafted resin art, made to
+order"), `Nav.megaPortfolioLine` ("Commissioned works, documented piece by piece"),
+`Common.announcementDefault` (lead times matching `CustomOrder`'s anchors exactly), and the Site
+Settings announcement bar. `CustomOrder` itself was **already** fully commission-led
+("Commission something bespoke", "what people commission", small vs statement lead times) — so the
+homepage's new promise lands on a page that already delivers it.
+
+**The rest of the namespaces are UI chrome, not proposition.** `Shop`'s other 109 keys are filters,
+sorts and labels; `Site chrome` is nav and footer mechanics. Translating them is not pending work —
+they are already translated and already accurate. Do not treat the slot counts as a backlog.
 
 **A design question this raised, deliberately NOT actioned:** the hero's primary CTA is still
 "Explore the collection" → `/shop`, with "Commission a piece" → `/custom-order` as the secondary.

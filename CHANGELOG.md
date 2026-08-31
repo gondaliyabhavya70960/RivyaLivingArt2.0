@@ -5,6 +5,51 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 2b complete: one more key, and the surface was smaller than the plan said
+
+### The finding
+`PROJECT_STATE.md` framed the rest of Phase 2b as ~500 slots across Shop, Site chrome and
+Commission. A sweep of every namespace for the superseded proposition returned **~21 hits, almost
+all of them accurate rather than stale** — the studio really does sell 3D printing (400 filaments,
+96 printer parts, 4 printed decor) and `gift-collections` is a real category with real products. So
+`Nav.groupPrint`, the homepage print tile and `Process`'s digital-preview line were left alone.
+
+Exactly **one** key still carried the old proposition: `Shop.meta.description`.
+
+### Changed
+`Shop.meta.description`, nine locales. It read *"luxury resin art, personalized gifts and 3D-printed
+pieces"* — off-brand after the repositioning, and doubly wrong after Phase 2a, because it promised
+3D-printed pieces on a page that now **opens on the art ecosystem**. It now describes what `/shop`
+actually shows, naming supplies and printing as the further shelves they are rather than as the
+default view.
+
+### Checked and deliberately not changed
+`CustomOrder` was **already** fully commission-led — "Commission something bespoke", "what people
+commission", small (7–10 days) vs statement (3–6 weeks) lead times. The homepage's new promise lands
+on a page that already delivers it. `Footer`, `Nav.megaPortfolioLine`, `Common.announcementDefault`
+and the Site Settings announcement bar were all checked for contradiction and found consistent.
+
+The remaining Shop and chrome keys are filters, sorts and labels — already translated, already
+accurate. They are not a backlog, and `PROJECT_STATE.md` now says so.
+
+### Two grammar defects caught in review
+Both Hindi and Gujarati placed a trailing feminine participle after a mixed-gender list ending in a
+masculine loanword (होम डेकोर / ડેકોર). Both languages resolve conjoined-list agreement by the
+nearest conjunct, so each read as machine translation. Both reviewers fixed it the same way —
+reordering the list to end on the feminine plural — preserving all three nouns and the length.
+Spanish and French were also corrected: `pedidos por WhatsApp` garden-paths as the noun "orders", and
+a trailing `également` on a verbless fragment is an English calque.
+
+Six of eight locales were corrected by review; three came back clean.
+
+### Verified
+All nine locales confirmed serving the corrected description by fetching each rendered `/shop` and
+matching the exact string. Conventions asserted mechanically: brand and WhatsApp still Latin, 3D
+printing retained everywhere. `i18n-missing` 0 missing, `copy:check` 1,181 slots, typecheck, lint,
+342 tests, production build, 3 design audits, 2 a11y audits, Lighthouse 97/97/96/100.
+
+---
+
 ## [Unreleased] — Phase 2b: the homepage leads with commissions, in nine languages
 
 Implements decision **D5**. The storefront said it sold "custom resin art and 3D printing"; it now

@@ -816,7 +816,7 @@
   "Shop": {
     "meta": {
       "title": "商店",
-      "description": "浏览 Rivya Living Art 的定制系列——奢华树脂艺术、个性化礼品与 3D 打印作品，从头到尾专属定制，通过 WhatsApp 下单。",
+      "description": "浏览 Rivya Living Art 接单制作的树脂艺术、纪念之作与家居装饰——从头到尾专属定制，通过 WhatsApp 下单。另有工作室材料与 3D 打印。",
       "titlePaged": "商店——第 {page} 页"
     },
     "categoryMetaDescription": "来自 Rivya Living Art 工作室的定制 {category}——从头到尾专属定制，通过 WhatsApp 下单。",
