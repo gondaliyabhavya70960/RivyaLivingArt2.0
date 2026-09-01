@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import sharp from "sharp";
 
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { slugify } from "@/lib/slug";
@@ -21,6 +22,28 @@ const ALLOWED_TYPES: Record<string, string> = {
 };
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 5;
+
+/**
+ * Verify actual magic bytes and image metadata via sharp (Prompt 06 #2).
+ * Guards against client MIME-spoofing and storage pollution.
+ */
+export async function validateImageBuffer(
+  buffer: Buffer,
+): Promise<{ format: "jpeg" | "png" | "webp" } | null> {
+  try {
+    const meta = await sharp(buffer).metadata();
+    if (
+      meta.format === "jpeg" ||
+      meta.format === "png" ||
+      meta.format === "webp"
+    ) {
+      return { format: meta.format };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: Request): Promise<NextResponse> {
   // Per-IP throttle on the whole public endpoint — covers BOTH the Blob
@@ -112,6 +135,8 @@ async function handleMultipartFallback(request: Request): Promise<NextResponse> 
     );
   }
 
+  const validatedFiles: { buffer: Buffer; type: string; name: string }[] = [];
+
   for (const file of files) {
     if (!ALLOWED_TYPES[file.type]) {
       return NextResponse.json(
@@ -125,16 +150,25 @@ async function handleMultipartFallback(request: Request): Promise<NextResponse> 
         { status: 400 },
       );
     }
+    const buf = Buffer.from(await file.arrayBuffer());
+    const valid = await validateImageBuffer(buf);
+    if (!valid) {
+      return NextResponse.json(
+        { error: `"${file.name}" is not a valid image file.` },
+        { status: 400 },
+      );
+    }
+    validatedFiles.push({ buffer: buf, type: file.type, name: file.name });
   }
 
   try {
     const stored = await Promise.all(
-      files.map(async (file) => {
-        const ext = ALLOWED_TYPES[file.type];
-        const base = slugify(file.name.replace(/\.[^.]+$/, "")) || "reference";
-        return putFile(Buffer.from(await file.arrayBuffer()), {
+      validatedFiles.map(async ({ buffer, type, name }) => {
+        const ext = ALLOWED_TYPES[type];
+        const base = slugify(name.replace(/\.[^.]+$/, "")) || "reference";
+        return putFile(buffer, {
           pathname: `refs/${base}${ext}`,
-          contentType: file.type,
+          contentType: type,
         });
       }),
     );

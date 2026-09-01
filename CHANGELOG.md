@@ -5,16 +5,15 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Prompt Deck Task 08: enforce Content-Security-Policy with complete directives
+## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
 
-### Changed
-- **`next.config.ts`**: Added missing directives before enforcement:
-  - `media-src 'self' blob: data: https://*.public.blob.vercel-storage.com https://res.cloudinary.com` (protects hero video and Blob media).
-  - `connect-src` expanded with `https://*.public.blob.vercel-storage.com https://blob.vercel-storage.com` (permits direct client Blob uploads).
-  - `worker-src 'self' blob:` (allows `browser-image-compression` Web Workers).
-  - Renamed header from `Content-Security-Policy-Report-Only` to enforced `Content-Security-Policy`.
-  - Preserved `img-src https:` (draining catalog hosts) and `'unsafe-inline'` for hydration and JSON-LD.
-- **`src/lib/csp.test.ts`**: Added regression test asserting `Content-Security-Policy` header presence, absence of Report-Only, and presence of all required directives.
+### Added
+- **`src/lib/shop.test.ts`**: Pure unit test suite covering `buildProductWhere` filter composition (status constraint, title/shortTagline search, ecosystem groups, catalog categories, occasions jsonb containment, inStock availability, and price band overlapping).
+- **`tests/db/product-where.test.ts`**: Database integration test verifying `buildProductWhere` queries against Postgres via Prisma without SQL/syntax errors.
+- **`tests/db/media-usages.test.ts`**: Database integration test verifying `findMediaUsages` and `findMediaUsageDetails` across all schema media-bearing tables against Postgres.
+- **`vitest.db.config.mts`**: Dedicated test runner configuration for database-backed tests (`tests/db/**/*.test.ts`), isolating them from the fast pure-function suite (`npm test`).
+- **`package.json`**: Added `"test:db": "vitest run --config vitest.db.config.mts"`.
+- **`.github/workflows/ci.yml`**: Added `npm run test:db` step in the `build` job against the disposable Postgres service container.
 
 ## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
