@@ -70,7 +70,7 @@ function portfolioHref({
   if (category) query.set("category", category);
   if (page && page > 1) query.set("page", String(page));
   const qs = query.toString();
-  return qs ? `/portfolio?${qs}` : "/portfolio";
+  return qs ? `/projects?${qs}` : "/projects";
 }
 
 /**
@@ -89,10 +89,10 @@ function teaser(story: string, max = 130): string | null {
 }
 
 /**
- * Paged views carry a self-referential canonical (`/portfolio?page=N`) so
- * crawlable pagination links don't fold every page onto `/portfolio` as a
+ * Paged views carry a self-referential canonical (`/projects?page=N`) so
+ * crawlable pagination links don't fold every page onto `/projects` as a
  * duplicate — same recipe as the journal (SEO-503). Filter-only views still
- * canonicalise to `/portfolio`.
+ * canonicalise to `/projects`.
  */
 export async function generateMetadata({
   params,
@@ -106,14 +106,14 @@ export async function generateMetadata({
     return {
       title: t("titlePaged", { page }),
       description: t("description"),
-      alternates: localeAlternates(`/portfolio?page=${page}`, locale),
+      alternates: localeAlternates(`/projects?page=${page}`, locale),
     };
   }
 
   return {
     title: t("title"),
     description: t("description"),
-    alternates: localeAlternates("/portfolio", locale),
+    alternates: localeAlternates("/projects", locale),
   };
 }
 
@@ -243,7 +243,7 @@ function CaseTile({
             className={cn("font-display leading-[1.12] text-mineral", display)}
           >
             <Link
-              href={`/portfolio/${tile.slug}`}
+              href={`/projects/${tile.slug}`}
               className="outline-none after:absolute after:inset-0 after:z-10 after:rounded-image focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
             >
               {tile.title}
@@ -444,7 +444,7 @@ export default async function PortfolioPage({
   return (
     <>
       {/* ════════ 01 · Hero — dark band, the index line in mono ════════
-          `/portfolio` is a transparent-navbar route, so the band pulls up
+          `/projects` is a transparent-navbar route, so the band pulls up
           under the 80px header slot. The banner is the LCP: `priority`,
           never revealed, never animated (Part 14). */}
       <section

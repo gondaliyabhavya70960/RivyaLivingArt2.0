@@ -49,20 +49,20 @@ describe("describeHrefProblem", () => {
   it("accepts the site's own pages", () => {
     expect(describeHrefProblem("/shop")).toBeNull();
     expect(describeHrefProblem("/")).toBeNull();
-    expect(describeHrefProblem("/custom-order")).toBeNull();
+    expect(describeHrefProblem("/bespoke")).toBeNull();
   });
 
   it("accepts a fragment or a query onto a known page", () => {
     // Both ship in the footer today.
     expect(describeHrefProblem("/shop#collections")).toBeNull();
-    expect(describeHrefProblem("/blog?category=gift-guides")).toBeNull();
+    expect(describeHrefProblem("/journal?category=gift-guides")).toBeNull();
   });
 
   it("accepts a dynamic content route", () => {
     // Whether the slug exists is a content question, not a routing one.
     expect(describeHrefProblem("/product/varmala-frame")).toBeNull();
     expect(describeHrefProblem("/shop/wedding-photo-frames")).toBeNull();
-    expect(describeHrefProblem("/blog/reference-photos")).toBeNull();
+    expect(describeHrefProblem("/journal/reference-photos")).toBeNull();
   });
 
   it("accepts external and contact schemes", () => {

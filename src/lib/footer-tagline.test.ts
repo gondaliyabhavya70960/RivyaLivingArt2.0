@@ -26,7 +26,7 @@ describe("Phase 2f #1: Footer tagline and proposition alignment", () => {
 
   it("OG image fallbacks do not hardcode 3D printing", () => {
     const productOg = readFileSync("src/app/[locale]/(v2)/product/[slug]/opengraph-image.tsx", "utf8");
-    const blogOg = readFileSync("src/app/[locale]/(v2)/blog/[slug]/opengraph-image.tsx", "utf8");
+    const blogOg = readFileSync("src/app/[locale]/(v2)/journal/[slug]/opengraph-image.tsx", "utf8");
     expect(productOg).not.toMatch(/3d printing/i);
     expect(blogOg).not.toMatch(/3d printing/i);
   });

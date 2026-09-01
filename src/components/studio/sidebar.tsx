@@ -44,9 +44,9 @@ type NavItem = {
  * Exported for the ⌘K palette and the breadcrumb topbar.
  *
  * §12.2 lists the nav as `Overview · Products · Collections · Commissions ·
- * Portfolio · Journal · Workshops · Media · Customers · Users · Settings`.
+ * Projects · Journal · Workshops · Media · Customers · Users · Settings`.
  * Four of those are not surfaces this Studio has — Collections is Categories,
- * Journal is Blog, Workshops are products in the `workshops` category, and
+ * Journal is Journal, Workshops are products in the `workshops` category, and
  * there are no Customers because there are no customer accounts (HARD RULES).
  * So the spec's VOCABULARY is applied to the routes that exist — Dashboard →
  * Overview, WhatsApp Orders → Commissions — and nothing is invented to fill
@@ -98,7 +98,7 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       { label: "Analytics", href: "/studio/analytics", icon: BarChart3 },
       { label: "Subscribers", href: "/studio/subscribers", icon: Mail },
       { label: "Journal", href: "/studio/blog", icon: FileText },
-      { label: "Portfolio", href: "/studio/portfolio", icon: ImageIcon },
+      { label: "Projects", href: "/studio/portfolio", icon: ImageIcon },
       {
         label: "Testimonials",
         href: "/studio/testimonials",
@@ -118,7 +118,7 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
     items: [
       { label: "Sheet Import", href: "/studio/sheet-import", icon: Import },
       { label: "Bulk Import", href: "/studio/import", icon: Import },
-      { label: "Product Scraper", href: "/studio/scraper", icon: Radar },
+      { label: "Product Market Intelligence", href: "/studio/scraper", icon: Radar },
       // SEO edits SiteSettings (site-wide fallback metadata) — a settings
       // surface, so it follows the settings rule: admins only.
       { label: "SEO", href: "/studio/seo", icon: Search, adminOnly: true },

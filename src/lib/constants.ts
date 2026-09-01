@@ -64,19 +64,19 @@ export const SITE = {
  * footer's operational map.
  *
  * "Studio" fronts the brand story (/about); "Bespoke" is the commission
- * flow's public name (/custom-order); "Journal" is the blog's.
+ * flow's public name (/bespoke); "Journal" is the blog's.
  */
 export const NAV_LINKS = [
   { key: "shop", label: "Shop", href: "/shop" },
-  { key: "bespoke", label: "Bespoke", href: "/custom-order" },
+  { key: "bespoke", label: "Bespoke", href: "/bespoke" },
   { key: "studio", label: "Studio", href: "/about" },
-  { key: "journal", label: "Journal", href: "/blog" },
+  { key: "journal", label: "Journal", href: "/journal" },
 ] as const;
 
 /** Demoted destinations — the mobile drawer's second group, below a divider
  *  at small size (§5.4), and the footer's four columns. */
 export const SECONDARY_NAV_LINKS = [
-  { key: "portfolio", label: "Portfolio", href: "/portfolio" },
+  { key: "portfolio", label: "Portfolio", href: "/projects" },
   { key: "ourProcess", label: "Our Process", href: "/process" },
   { key: "workshops", label: "Workshops", href: "/workshops" },
   { key: "faq", label: "FAQ", href: "/faq" },
@@ -101,7 +101,7 @@ export const FOOTER_LINKS = {
     // The shop page's collection strip — collections are browsed by
     // photograph (§7.3), so the doorway is the strip, not a list page.
     { key: "collections", label: "Collections", href: "/shop#collections" },
-    { key: "bespoke", label: "Bespoke", href: "/custom-order" },
+    { key: "bespoke", label: "Bespoke", href: "/bespoke" },
     // Appended, never inserted: prisma/bootstrap.ts writes `order` from the
     // array index, so a mid-array insert would give a fresh database one
     // order and every existing one another.
@@ -111,16 +111,16 @@ export const FOOTER_LINKS = {
     { key: "about", label: "About", href: "/about" },
     { key: "ourProcess", label: "Our Process", href: "/process" },
     { key: "workshops", label: "Workshops", href: "/workshops" },
-    { key: "portfolio", label: "Portfolio", href: "/portfolio" },
+    { key: "portfolio", label: "Portfolio", href: "/projects" },
   ],
   journal: [
-    { key: "journal", label: "Journal", href: "/blog" },
+    { key: "journal", label: "Journal", href: "/journal" },
     {
       key: "journalStories",
       label: "Stories",
-      href: "/blog?category=behind-the-studio",
+      href: "/journal?category=behind-the-studio",
     },
-    { key: "journalGuides", label: "Guides", href: "/blog?category=gift-guides" },
+    { key: "journalGuides", label: "Guides", href: "/journal?category=gift-guides" },
   ],
   legal: [
     { key: "privacy", label: "Privacy Policy", href: "/privacy" },

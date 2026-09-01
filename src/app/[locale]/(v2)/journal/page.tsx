@@ -28,10 +28,10 @@ import { cn } from "@/lib/utils";
 export const revalidate = 300;
 
 /**
- * Page 2+ carries a self-referential canonical (`/blog?page=N`) so crawlable
- * pagination links don't fold every page onto `/blog` as a duplicate (SEO-503).
+ * Page 2+ carries a self-referential canonical (`/journal?page=N`) so crawlable
+ * pagination links don't fold every page onto `/journal` as a duplicate (SEO-503).
  * Filter-only views (?category=/?tag= with no page) still canonicalise to
- * `/blog` — only the `page` param changes the canonical.
+ * `/journal` — only the `page` param changes the canonical.
  */
 export async function generateMetadata({
   params: localeParams,
@@ -47,14 +47,14 @@ export async function generateMetadata({
     return {
       title: t("titlePaged", { page }),
       description: t("description"),
-      alternates: localeAlternates(`/blog?page=${page}`, locale),
+      alternates: localeAlternates(`/journal?page=${page}`, locale),
     };
   }
 
   return {
     title: t("title"),
     description: t("description"),
-    alternates: localeAlternates("/blog", locale),
+    alternates: localeAlternates("/journal", locale),
   };
 }
 
@@ -121,7 +121,7 @@ function readMinutes(content: unknown): number {
   return Math.max(1, Math.round(words / 220));
 }
 
-/** /blog href preserving the active filters; page 1 stays clean. */
+/** /journal href preserving the active filters; page 1 stays clean. */
 function blogHref(params: {
   category?: string;
   tag?: string;
@@ -132,14 +132,14 @@ function blogHref(params: {
   if (params.tag) query.set("tag", params.tag);
   if (params.page && params.page > 1) query.set("page", String(params.page));
   const qs = query.toString();
-  return qs ? `/blog?${qs}` : "/blog";
+  return qs ? `/journal?${qs}` : "/journal";
 }
 
 /* ————————————————— presentational pieces ————————————————— */
 
 /* The pill grammar of `FilterChip` (§4.6 · §7.5), rendered as a link.
    The journal's filters are bookmarkable GET views — the footer ships
-   `/blog?category=behind-the-studio` and `/blog?category=gift-guides` as real
+   `/journal?category=behind-the-studio` and `/journal?category=gift-guides` as real
    destinations — so these cannot be the client toggle button the shop's
    drawer uses. The classes are the chip's, deliberately: two visual
    grammars for one control would be worse than one shared string. */
@@ -248,7 +248,7 @@ function JournalCard({
         {featured ? (
           <h2 className="font-display text-h2 leading-[1.06] tracking-display text-ink">
             <Link
-              href={`/blog/${post.slug}`}
+              href={`/journal/${post.slug}`}
               className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
             >
               {post.title}
@@ -257,7 +257,7 @@ function JournalCard({
         ) : (
           <h3 className="font-display text-h3 leading-[1.14] tracking-display text-ink">
             <Link
-              href={`/blog/${post.slug}`}
+              href={`/journal/${post.slug}`}
               className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
             >
               {post.title}
@@ -512,7 +512,7 @@ export default async function BlogPage({
               action={
                 filtered ? (
                   <Button asChild variant="primary" size="lg">
-                    <Link href="/blog">{t("viewAllPosts")}</Link>
+                    <Link href="/journal">{t("viewAllPosts")}</Link>
                   </Button>
                 ) : undefined
               }

@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { deriveHealth } from "@/lib/scraper/health";
 
-export const metadata: Metadata = { title: "Product Scraper" };
+export const metadata: Metadata = { title: "Market Intelligence Studio" };
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium",
@@ -142,7 +142,7 @@ export default async function ScraperPage() {
   return (
     <>
       <PageHeader
-        title="Product Scraper"
+        title="Market Intelligence Studio"
         description="Your scraping command center — every website's status at a glance, plus the review queue and registry. Research reference only; imports stay locked behind the needs-rewrite guard until rewritten."
         actions={
           <>

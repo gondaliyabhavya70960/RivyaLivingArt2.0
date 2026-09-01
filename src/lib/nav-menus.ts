@@ -111,13 +111,13 @@ export function isNavMenuKey(value: string): value is NavMenuKey {
 export const KNOWN_ROUTES = [
   "/",
   "/shop",
-  "/custom-order",
+  "/bespoke",
   "/about",
   "/process",
   "/large-resin-art",
   "/workshops",
-  "/portfolio",
-  "/blog",
+  "/projects",
+  "/journal",
   "/faq",
   "/contact",
   "/search",
@@ -133,8 +133,8 @@ export const KNOWN_ROUTES = [
  * Deliberately permissive in three places, each for a reason the storefront
  * actually relies on:
  *  - `/shop#collections` — a fragment onto a known route; the footer ships one.
- *  - `/blog?category=…`  — a query onto a known route; the footer ships two.
- *  - `/shop/<slug>`, `/product/<slug>`, `/portfolio/<slug>`, `/blog/<slug>` —
+ *  - `/journal?category=…`  — a query onto a known route; the footer ships two.
+ *  - `/shop/<slug>`, `/product/<slug>`, `/projects/<slug>`, `/journal/<slug>` —
  *    dynamic segments whose validity is a content question, not a routing one.
  */
 export function describeHrefProblem(href: string): string | null {
@@ -153,7 +153,7 @@ export function describeHrefProblem(href: string): string | null {
 
   if ((KNOWN_ROUTES as readonly string[]).includes(path)) return null;
 
-  const dynamic = /^\/(shop|product|portfolio|blog|p)\/[^/]+$/;
+  const dynamic = /^\/(shop|product|projects|journal|p)\/[^/]+$/;
   if (dynamic.test(path)) return null;
 
   return `There is no page at ${path}. Pick one of the site's pages, or paste a full https:// address.`;
