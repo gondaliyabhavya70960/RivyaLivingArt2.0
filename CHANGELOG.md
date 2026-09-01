@@ -5,7 +5,24 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2d: the shop kept promises it could not deliver
+## [Unreleased] — Phase 2f #2: walk Tiptap Json in media-usages to protect body images
+
+### The finding
+`media-usages.ts` did not walk Tiptap Json documents (`BlogPost.content`, `Page.content`, and
+`CustomBlock` `richText` bodies, including their localized translation overlays). Because the
+studio rich-text editor inserts arbitrary image URLs, `/studio/media` offered those files in bulk
+"unused" sweeps. Deleting them through Vercel Blob irrecoverably broke body images across blog posts
+and pages.
+
+### Changed
+- **`src/lib/tiptap-media.ts`**: Pure helper function `extractTiptapImageUrls` that recursively traverses arbitrary Tiptap JSON trees (including nested lists, blockquotes, translation overlays, and custom block payloads) and extracts all image URLs.
+- **`src/lib/media-usages.ts`**: Added `blogPostsContent`, `pagesContent`, and expanded `customBlocks` to include `richText`. Uses `extractTiptapImageUrls` to label and guard embedded images against deletions and library sweeps.
+- **`src/lib/tiptap-media.test.ts`**: Added comprehensive pure unit tests and integration tests demonstrating that blog post body images, translation images, legal page images, and landing page richText images are fully guarded.
+
+### Verified by reproducing the defect first
+`npx vitest run src/lib/tiptap-media.test.ts` failed on all 4 integration tests against unpatched code (`expected false to be true`), and passed all 8 tests once patched.
+
+## Phase 2d: the shop kept promises it could not deliver
 
 ### The finding
 `/search` searches the whole 4,373-product catalogue and then handed the visitor to `/shop`, which
