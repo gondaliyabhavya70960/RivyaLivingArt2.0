@@ -21,7 +21,12 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
-**Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
+**Phase 2 is closed** and merged to `main`. Phase 2e is five OPEN QUESTIONS for the owner; Phase 2f
+is two defects found on 2026-09-01 and not yet fixed. **CI runs green as of 2026-09-01** — see
+KNOWN ISSUES.
+
+**The handover to Google Antigravity is `AGENTS.md` (read on open by Antigravity, Cursor and
+Copilot) plus `docs/antigravity-prompts.md` (nine ready-to-run task prompts).**
 
 ## CURRENT MILESTONE
 
@@ -40,10 +45,7 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**PR #12 (Phase 2d) is OPEN and unmerged — `main` does not have it yet.** Merge it first, or you
-will re-derive its fixes.
-
-Then **Phase 2f #1: the footer tagline.** The superseded "3D printing" proposition is live on every
+**Phase 2f #1: the footer tagline.** The superseded "3D printing" proposition is live on every
 page in all nine locales; it needs one sentence from the owner, then six edits. That is the highest-
 value open item and it outranks the LQIP work.
 
@@ -373,10 +375,11 @@ The 2,900 supplies and 3D-printing products (1,841 molds/tools, 648 pigments, 40
 the art ecosystem; supplies and print keep their own tabs, category pages and URLs.
 **Implemented in Phase 2a.**
 
-### D4 — CI: **proceed with local verification**
-GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate
-set is run locally before every push and the results reported explicitly. The owner fixes billing
-when convenient; no work is blocked on it.
+### D4 — CI: **proceed with local verification** — SUPERSEDED 2026-09-01
+Actions could not allocate a runner (billing/minutes), so the full gate set was run locally before
+every push and reported explicitly. **Billing is now restored and CI runs green** — see KNOWN
+ISSUES. Local runs are still worth doing before a push (they are faster than a CI round trip), but
+they are no longer the only evidence.
 
 ---
 
@@ -460,19 +463,30 @@ introduced.
 
 ## KNOWN ISSUES
 
-### BLOCKER — GitHub Actions cannot run on this repository
-`ci.yml` now triggers correctly (fixed in Phase 0.5) and fired [run #1](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33363959495),
-the first in the project's history. **Both attempts failed in ~2–6s with `runner_id: 0`, no runner
-name, and HTTP 404 on log download** — no step ever executed. The repository is **private** with
-Actions enabled, so this is an Actions minutes / spending-limit condition, not a code failure.
+### RESOLVED 2026-09-01 — GitHub Actions now runs
 
-Two independent attempts on commit `f3d1ab9` produced the identical signature, ruling out a
-transient glitch. The single sanctioned re-run has been spent.
+For the whole transformation, Actions could not allocate a runner on this private repository:
+every job died in ~2–6s with `runner_id: 0`, no runner name, and HTTP 404 on log download — no
+step ever executed. It was an account-level minutes/spending condition, not a code failure, and it
+was verified across twelve pull requests with an identical signature every time.
 
-**Owner action required:** Settings → Billing and licensing → Plans and usage → Actions — raise the
-spending limit, wait for the monthly reset, or make the repository public (Actions minutes are free
-for public repos). Until then CI cannot verify anything, and the local gate run recorded under
-BUILD STATUS is the only evidence available.
+**The owner restored billing, and run [#30](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33470108966)
+on `f6203eb` is the first fully green CI run in the project's history.** Real runners
+(`runner_id: 1000000852` / `1000000853`), every step executed:
+
+| Job | Result |
+|---|---|
+| Typecheck · lint · copy:check · i18n · 352 tests | **success**, 1m56s |
+| `npm run build` against a throwaway Postgres | **success**, 2m26s |
+| Design audit + RTL | **success** |
+| Accessibility audit | **success** |
+| Studio audit (30 staff routes) | **success**, 2m28s |
+| Lighthouse budget | **success** |
+
+Two things worth carrying forward. **CI checks more than the local runs did** — the Studio audit
+and the Lighthouse budget were not part of the routine local sweep, and both passed. And
+**everything merged before 2026-09-01 was self-verified**: twelve PRs went in on gates run by the
+same agent that wrote the code. CI agreeing now is good evidence, but it is retrospective.
 
 ### Pre-existing defects
 15 catalogued in `docs/PROJECT-AUDIT.md` §9; 8 fixed in Phase 0.5. Most severe remaining:

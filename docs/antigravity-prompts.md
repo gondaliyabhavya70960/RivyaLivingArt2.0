@@ -54,7 +54,7 @@ Read AGENTS.md and PROJECT_STATE.md in full before doing anything else. Follow A
 
 Three things about how I want you to work here:
 
-1. This repository's CI has NEVER run. GitHub Actions fails in about two seconds with runner_id: 0 — an account-level billing condition, not a code fault. So every check that has ever passed on this project was run on someone's laptop. Never report a gate as passing unless you ran it yourself and saw the output. A green PR page means nothing here.
+1. CI only started working on 1 September 2026. Before that, GitHub Actions could not allocate a runner on this repository — an account billing condition — so every check that passed across twelve merged pull requests was run on someone's laptop. Billing is fixed and CI now runs green. Trust it going forward, but treat anything merged before that date as self-verified. And still never report a gate as passing unless you saw the output yourself.
 
 2. Prove a defect before you fix it. Reproduce the failure, show me the failing output, then fix it and show the same check passing. This project has a history of "fixes" that never addressed the actual fault, and of confident false reports of completion.
 
@@ -275,7 +275,11 @@ the answers into one conversation and ask for them together.
    BreadcrumbList structured data on `/shop`, since the filtered URL declares itself
    non-canonical.*
 
-## And one thing only the owner can do
+## CI works now
 
-**Restore GitHub Actions billing.** Until then there is no independent gate, and every task
-above ends with an agent grading its own work. Twelve pull requests have merged that way.
+GitHub Actions billing was restored on 1 September 2026 and run #30 went fully green — the first
+in the project's history. It checks more than the local sweep did: the Studio audit over 30 staff
+routes and the Lighthouse budget were not part of the routine local run, and both pass.
+
+So every task above now gets an independent check. Worth knowing anyway: the twelve pull requests
+merged before that date were verified only by the agent that wrote them.
