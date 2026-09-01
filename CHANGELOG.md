@@ -5,7 +5,14 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
+## [Unreleased] — Prompt Deck Task 05: make reference documents true
+
+### Changed
+- **`PROJECT_STATE.md`**: Updated frozen Phase 0 metrics to match HEAD: replaced "no source files modified" with 13 merged PRs across Phase 1 & 2; updated migration count to 44; documented 242 tracked files in `public/` (22 MB); updated test count to 358 tests across 34 files; updated HEAD commit to `1e12553` (Merge PR #13); resolved Phase 0 D1 & D2 questions.
+- **`CLAUDE.md`**: Corrected public audit routes from 12 to 13 (covering `/` through `/terms`); updated copy slots from 1,115 to 1,181.
+- **`docs/studio-cms/README.md`**: Added banner marking plan documents as frozen historical records and designating `CLAUDE.md` and `PROJECT_STATE.md` as current-state authorities.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
 ### The finding
 The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.

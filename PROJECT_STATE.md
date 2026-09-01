@@ -365,16 +365,13 @@ when convenient; no work is blocked on it.
 
 ## FILES CHANGED
 
-Baseline commit `32f21a6` — 920 files imported unmodified, 1 file modified (`README.md` replaced by
-the ZIP's own).
-This commit — added `docs/PROJECT-AUDIT.md`, `PROJECT_STATE.md`, `CHANGELOG.md`. **No source file
-has been modified yet.**
+Transformation from ResinRiva baseline `32f21a6` to Rivya Living Art 2.0:
+13 pull requests merged to `main` across Phase 1, Phase 2a–2d, and Phase 2f #1 (plus open draft PRs #14, #16, and #17).
 
 ## DATABASE MIGRATIONS
 
-43 existing migrations, **all applied successfully** to local Postgres 16.13.
-History is **purely additive** — zero `DROP TABLE` / `DROP COLUMN` / `ALTER COLUMN` across all 43.
-**No new migration written yet.**
+44 existing migrations in `prisma/migrations`, **all applied successfully** to local Postgres 16.
+History is **purely additive** — zero `DROP TABLE` / `DROP COLUMN` / `ALTER COLUMN` across all 44.
 
 ## DATA IMPORTS
 
@@ -392,7 +389,8 @@ All 64,496 rows are preserved in the repo. Nothing has been discarded.
 
 ## ASSETS
 
-- `public/` is **empty** in the ZIP — storefront media lives remotely.
+- `public/` is **committed**: 242 tracked files (22 MB), including all 25 master editorial images,
+  121 animation frames, and category covers.
 - **20 hard-coded Cloudinary URLs** under cloud `dhaqpl1kz`, folder segment `resinriva/`
   (`src/lib/media.ts:27-56` ×9, `prisma/seed-category-images.ts:27-37` ×11). These are live
   third-party asset addresses — **do not rename the string before migrating the assets.**
@@ -500,22 +498,16 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 - 9 locales, 1,181 keys each, `localePrefix: "as-needed"`.
 - Scraper writes only to `ScrapedProduct`, never `Product`. Import creates `DRAFT` + `needsRewrite`.
 
-## LAST COMMIT
+## LAST COMMIT ON MAIN
 
-`32f21a6` — *Import ResinRiva2.0 source as transformation baseline* (920 files, unmodified)
-`54974ff` — *Phase 0: forensic audit of the imported baseline* (documentation only)
-(this Phase 0.5 defect-fix commit follows)
+`1e12553` — *Merge pull request #13 from gondaliyabhavya70960/fix/footer-tagline-proposition*
 
 ## SAFE CONTINUATION POINT
 
-**Phases 0 and 0.5 are complete and committed.** No application code has been modified — the
-changes so far are workflows, previously-broken unwired scripts, and stale documentation.
-The baseline is verified green and fully reproducible from `32f21a6`.
-
-**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it, so
-a red CI from here is a real regression, not a pre-existing failure surfacing.
-
-Resume by answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename).
+**Phase 1, Phase 2a, 2b, 2c, 2d, and 2f #1 are merged on `main`.**
+Draft PRs #14 (Phase 2f #2: Tiptap media delete guard), #16 (LQIP blur wiring), and #17 (.env.example cleanup) are open for review.
+D1 (rename scope) and D2 (catalogue preservation) were answered and implemented in Phase 1 & 2.
+Current state: 34 unit test files / 358 tests passing, 44 migrations applied, 62 image slots, 1,181 copy slots.
 
 ### Reproducing the verified environment
 ```bash
