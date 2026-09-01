@@ -19,7 +19,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
-**Phase 2f #1 — footer tagline & superseded proposition cleanup: COMPLETE**
+**Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
 **Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
@@ -44,8 +44,7 @@ than a silent 400.
 **Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
 `media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
 
-Also open: Phase 2e's five owner decisions, and the LQIP wiring (REDESIGN.md §15.5) — the only
-sizeable engineering left, and smaller than previously recorded (two chokepoints, not eleven).
+Also open: Phase 2e's five owner decisions.
 
 ---
 
@@ -172,13 +171,12 @@ The superseded "3D printing" proposition has been purged from code fallbacks and
 - `src/components/studio/settings/seo-form.tsx:100` and `settings-form.tsx:189` placeholders updated
 - Automated regression test added in `src/lib/footer-tagline.test.ts` (6 assertions, proven red before fix, now green)
 
-### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably
+### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably: DONE (2026-09-01)
 
-`media-usages.ts` still does not walk Tiptap Json — `BlogPost.content` (55 rows), `Page.content`
-(the /privacy and /terms bodies) and the `richText` custom block. The rich-text editor inserts
-arbitrary image URLs, and `/studio/media` offers those files in a bulk unused sweep. Vercel Blob
-deletion is not recoverable and the page then renders a broken image with nothing surfacing it.
-This is the fourth instance of the `media-usages.ts` header rule being broken. Size: M.
+`media-usages.ts` now walks Tiptap Json trees across `BlogPost.content` (and translations),
+`Page.content` (and translations), and `CustomBlock`'s `richText` body (and translations).
+Extracted pure recursion helper `src/lib/tiptap-media.ts` with comprehensive unit tests
+(`src/lib/tiptap-media.test.ts`). Proved failure before fix (all 4 integration tests red), now all green.
 
 
 ---
