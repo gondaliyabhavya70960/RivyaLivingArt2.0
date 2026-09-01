@@ -188,9 +188,11 @@ reproducing the failure first, then showing it gone.
 - **CI only started working on 2026-09-01.** For the whole transformation GitHub Actions was
   blocked by an account-level billing condition (jobs died in ~2s with `runner_id: 0`), so
   every gate that passed across twelve merged PRs was run on a developer's machine. Billing
-  is now restored and run #30 went fully green — including a Studio audit over 30 staff
-  routes and a Lighthouse budget that local runs had been skipping. Trust CI from here, but
-  remember that everything merged BEFORE that point was self-verified.
+  is now restored: run #26 on `bc23f4d` (03:44 UTC) was the first fully green run, and #30
+  confirmed it. Both include a Studio audit over 30 staff routes and a Lighthouse budget
+  that the routine local sweep had been skipping — so CI is stricter than the
+  self-verification it replaces. Trust CI from here, but remember that everything merged
+  BEFORE that point was self-verified.
 
 ---
 

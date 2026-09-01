@@ -277,9 +277,10 @@ the answers into one conversation and ask for them together.
 
 ## CI works now
 
-GitHub Actions billing was restored on 1 September 2026 and run #30 went fully green — the first
-in the project's history. It checks more than the local sweep did: the Studio audit over 30 staff
-routes and the Lighthouse budget were not part of the routine local run, and both pass.
+GitHub Actions billing was restored on 1 September 2026. Run #26 on `bc23f4d` was the first fully
+green run in the project's history, and #30 confirmed it. CI checks more than the local sweep did:
+the Studio audit over 30 staff routes and the Lighthouse budget were not part of the routine local
+run, and both pass.
 
 So every task above now gets an independent check. Worth knowing anyway: the twelve pull requests
 merged before that date were verified only by the agent that wrote them.

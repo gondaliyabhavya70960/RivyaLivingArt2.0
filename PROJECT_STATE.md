@@ -470,9 +470,12 @@ every job died in ~2–6s with `runner_id: 0`, no runner name, and HTTP 404 on l
 step ever executed. It was an account-level minutes/spending condition, not a code failure, and it
 was verified across twelve pull requests with an identical signature every time.
 
-**The owner restored billing, and run [#30](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33470108966)
-on `f6203eb` is the first fully green CI run in the project's history.** Real runners
-(`runner_id: 1000000852` / `1000000853`), every step executed:
+**The owner restored billing between 16:52 on 2026-08-31 and 03:44 on 2026-09-01.** Run
+[#26](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33467319172) on
+`bc23f4d` is **the first fully green CI run in the project's history** (03:44–03:54 UTC, runners
+`1000000844`/`1000000845`); run
+[#30](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33470108966) on
+`f6203eb` repeated it ten minutes later. Every step executed:
 
 | Job | Result |
 |---|---|
@@ -482,6 +485,12 @@ on `f6203eb` is the first fully green CI run in the project's history.** Real ru
 | Accessibility audit | **success** |
 | Studio audit (30 staff routes) | **success**, 2m28s |
 | Lighthouse budget | **success** |
+
+A note on how the change was missed. Run #26 finished at 03:54 and nobody noticed for forty
+minutes: this session received the Vercel notifications for that same commit, checked Vercel,
+and did not look at Actions — because Actions had failed in two seconds for twelve consecutive
+PRs and had stopped being worth checking. A signal you have written off is a signal you stop
+reading, which is the same failure mode as a stale document.
 
 Two things worth carrying forward. **CI checks more than the local runs did** — the Studio audit
 and the Lighthouse budget were not part of the routine local sweep, and both passed. And
