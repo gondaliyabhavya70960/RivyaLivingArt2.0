@@ -25,37 +25,29 @@ still ships it on two lines and is the one place it is actively harmful — see 
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
-**Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
+**Prompt Deck Tasks 01–08 (Finishing Rivya Living Art): COMPLETE & MERGED**
+- Task 01: Fix `.env.example` (PR #17)
+- Task 02: Retire superseded tagline (PR #13)
+- Task 03: Close media-delete hole / walk Tiptap JSON (PR #14)
+- Task 04: Wire LQIP blur placeholders (PR #16)
+- Task 05: Make reference documents true (PR #18)
+- Task 06: Three security hardening items (PR #19)
+- Task 07: The first database-backed tests (PR #21)
+- Task 08: Enforce Content-Security-Policy (PR #20)
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
-**Phase 2 is closed** and merged to `main`. Phase 2e is five OPEN QUESTIONS for the owner; Phase 2f
-is two defects found on 2026-09-01 and not yet fixed. **CI runs green as of 2026-09-01** — see
-KNOWN ISSUES.
-
-**The handover to Google Antigravity is `AGENTS.md` (read on open by Antigravity, Cursor and
-Copilot) plus `docs/antigravity-prompts.md` (nine ready-to-run task prompts).**
-
-## CURRENT MILESTONE
-
-**The site is LIVE at https://www.rivyalivingart.com** and correct: `/shop` serves the art
-ecosystem (1,373 pieces, not the 4,373 mixed catalogue), the brand is Rivya Living Art throughout,
-and no old-brand or old-domain strings remain in the served HTML.
-
-Ten PRs merged: Phase 0 (audit) · Phase 0.5 (baseline defects) · Phase 1 (rename) ·
-Phase 2a (art-first shop) · Phase 2b (commission-led copy) · production launch fixes.
-
-**The storefront has its photography.** Phase 2c closed the largest open defect: `public/` is
-committed, all 62 image slots resolve, and three new guards make its recurrence a red test rather
-than a silent 400.
+**Phase 2 and the Antigravity prompt deck are complete and merged to `main`.**
 
 ---
 
 ## NEXT EXACT TASK
 
-**Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
-`media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
+**The 3 Owner Decisions from `docs/antigravity-prompts.md`:**
+1. **Should `/shop?q=` search descriptions?** (Add description search to `buildProductWhere` OR clause).
+2. **The "Show all N pieces" label:** (Move to non-quantified label since N counts supplies and filaments too).
+3. **Breadcrumbs on supplies and print pages:** (Make visible crumb group-aware while keeping structured data on `/shop`).
 
-Also open: Phase 2e's five owner decisions.
+Also open: Phase 2e's owner decisions (editorial copy, brand policy, review approvals).
 
 ---
 

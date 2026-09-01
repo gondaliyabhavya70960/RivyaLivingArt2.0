@@ -5,9 +5,18 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
+## [Unreleased] — Finishing Rivya Living Art (Prompt Deck Tasks 01–08)
 
-### Added
+### Task 08 — Enforce Content-Security-Policy with complete directives (PR #20)
+- **`next.config.ts`**: Added missing directives before enforcement:
+  - `media-src 'self' blob: data: https://*.public.blob.vercel-storage.com https://res.cloudinary.com` (protects hero video and Blob media).
+  - `connect-src` expanded with `https://*.public.blob.vercel-storage.com https://blob.vercel-storage.com` (permits direct client Blob uploads).
+  - `worker-src 'self' blob:` (allows `browser-image-compression` Web Workers).
+  - Renamed header from `Content-Security-Policy-Report-Only` to enforced `Content-Security-Policy`.
+  - Preserved `img-src https:` (draining catalog hosts) and `'unsafe-inline'` for hydration and JSON-LD.
+- **`src/lib/csp.test.ts`**: Added regression test asserting `Content-Security-Policy` header presence, absence of Report-Only, and presence of all required directives.
+
+### Task 07 — The first database-backed test slice (PR #21)
 - **`src/lib/shop.test.ts`**: Pure unit test suite covering `buildProductWhere` filter composition (status constraint, title/shortTagline search, ecosystem groups, catalog categories, occasions jsonb containment, inStock availability, and price band overlapping).
 - **`tests/db/product-where.test.ts`**: Database integration test verifying `buildProductWhere` queries against Postgres via Prisma without SQL/syntax errors.
 - **`tests/db/media-usages.test.ts`**: Database integration test verifying `findMediaUsages` and `findMediaUsageDetails` across all schema media-bearing tables against Postgres.
@@ -15,7 +24,33 @@ Newest first. Every entry names the phase it belongs to.
 - **`package.json`**: Added `"test:db": "vitest run --config vitest.db.config.mts"`.
 - **`.github/workflows/ci.yml`**: Added `npm run test:db` step in the `build` job against the disposable Postgres service container.
 
-## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
+### Task 06 — Three security hardening items (PR #19)
+- **`src/app/uploads/[...path]/route.ts`**: Hardened against path traversal using `path.resolve` containment assertion (`resolved.startsWith(ROOT + path.sep)`). Tested in `src/app/uploads/uploads-route.test.ts`.
+- **`src/app/api/upload/route.ts`**: Replaced client MIME trust with magic byte verification using `sharp(buffer).metadata()`. Validates JPEG, PNG, and WebP formats before persistence. Tested in `src/app/api/upload/upload-validation.test.ts`.
+- **`src/lib/rate-limit.ts`**: Documented the Vercel-only edge proxy contract on `clientIp` and added support for configurable `trustedProxyDepth` for multi-hop or self-hosted deployments. Tested in `src/lib/rate-limit.test.ts`.
+
+### Task 05 — Make reference documents true (PR #18)
+- **`PROJECT_STATE.md`**: Updated frozen Phase 0 metrics to match HEAD: replaced "no source files modified" with 13 merged PRs across Phase 1 & 2; updated migration count to 44; documented 242 tracked files in `public/` (22 MB); updated test count to 358 tests across 34 files; updated HEAD commit to `1e12553` (Merge PR #13); resolved Phase 0 D1 & D2 questions.
+- **`CLAUDE.md`**: Corrected public audit routes from 12 to 13 (covering `/` through `/terms`); updated copy slots from 1,115 to 1,181.
+- **`docs/studio-cms/README.md`**: Added banner marking plan documents as frozen historical records and designating `CLAUDE.md` and `PROJECT_STATE.md` as current-state authorities.
+
+### Task 04 — Wire LQIP blur placeholders across SlotImage and MeniscusImage (PR #16)
+- **`src/lib/lqip.ts`**: Pure LQIP lookup helper `getLqipBlur` keying strictly on the resolved pathname/URL of bundled master images. Custom uploads and unknown images safely evaluate to `undefined`, preventing painting master A's blur under photograph B.
+- **`src/components/storefront/slot-image.tsx`**: Wired `getLqipBlur` for both desktop and mobile crops into `<Image>` and `<source>` responsive descriptors.
+- **`src/components/storefront/meniscus-image.tsx`**: Wired `getLqipBlur` for both desktop and mobile crops into `<Image>` and `<source>` across all 28 meniscus call sites.
+- **`src/lib/lqip.test.ts`**: Added regression unit tests covering resolution, URL normalization, and negative matches for custom/user uploads.
+
+### Task 03 — Walk Tiptap Json in media-usages to protect body images (PR #14)
+- **`src/lib/tiptap-media.ts`**: Pure helper function `extractTiptapImageUrls` that recursively traverses arbitrary Tiptap JSON trees (including nested lists, blockquotes, translation overlays, and custom block payloads) and extracts all image URLs.
+- **`src/lib/media-usages.ts`**: Added `blogPostsContent`, `pagesContent`, and expanded `customBlocks` to include `richText`. Uses `extractTiptapImageUrls` to label and guard embedded images against deletions and library sweeps.
+- **`src/lib/tiptap-media.test.ts`**: Added comprehensive pure unit tests and integration tests demonstrating that blog post body images, translation images, legal page images, and landing page richText images are fully guarded.
+
+### Task 01 — Remove retired domain from .env.example and document missing variables (PR #17)
+- **`.env.example`**: Updated `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` to `https://www.rivyalivingart.com`. Added `DATABASE_URL_UNPOOLED`, `CRON_SECRET`, and `RESEND_FROM`.
+- **`src/lib/env.ts`**: Added `DATABASE_URL_UNPOOLED` and `CRON_SECRET` to the environment validation schema.
+- **`src/lib/env.test.ts`**: Added regression tests verifying that `.env.example` is free of the retired domain and contains all required migration and cron variables.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition (PR #13)
 
 ### The finding
 The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.
