@@ -34,20 +34,20 @@ still ships it on two lines and is the one place it is actively harmful — see 
 - Task 06: Three security hardening items (PR #19)
 - Task 07: The first database-backed tests (PR #21)
 - Task 08: Enforce Content-Security-Policy (PR #20)
+**Prompt Deck Owner Decisions: COMPLETE & MERGED**
+- Decision 1: Search product descriptions in `/shop?q=` (PR #22)
+- Decision 2: Non-quantified `Search.productsShowMore` label across all 9 locales (PR #23)
+- Decision 3: Group-aware breadcrumbs on supplies and 3D print pages (PR #24)
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
-**Phase 2 and the Antigravity prompt deck are complete and merged to `main`.**
+**Phase 2, the complete Antigravity prompt deck (01–08), and all 3 Owner Decisions are complete and merged to `main`.**
 
 ---
 
 ## NEXT EXACT TASK
 
-**The 3 Owner Decisions from `docs/antigravity-prompts.md`:**
-1. **Should `/shop?q=` search descriptions?** (Add description search to `buildProductWhere` OR clause).
-2. **The "Show all N pieces" label:** (Move to non-quantified label since N counts supplies and filaments too).
-3. **Breadcrumbs on supplies and print pages:** (Make visible crumb group-aware while keeping structured data on `/shop`).
-
-Also open: Phase 2e's owner decisions (editorial copy, brand policy, review approvals).
+All transformation engineering from the Antigravity prompt deck and roadmap is COMPLETE.
+Remaining open: Phase 2e's owner business decisions (editorial copy, brand policy, review approvals).
 
 ---
 
