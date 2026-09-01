@@ -97,7 +97,7 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
           <Label htmlFor="seo-title">Default title</Label>
           <Input
             id="seo-title"
-            placeholder="Rivya Living Art — Luxury Custom Resin Art & 3D Printing"
+            placeholder="Rivya Living Art — Handcrafted Resin Art & Commissions"
             {...register("title")}
           />
         </div>
