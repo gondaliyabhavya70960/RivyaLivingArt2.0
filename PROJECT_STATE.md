@@ -9,7 +9,13 @@
 RivyaLivingArt2.0 — *Rivya Living Art*
 
 ## ORIGINAL PROJECT
-ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
+ResinRiva2.0 — *ResinRiva* (was live at `store.bhavyagondaliya.co.in`)
+
+## LIVE DOMAIN
+**`https://www.rivyalivingart.com`** — the current production origin. `SITE.url` normalises a
+trailing slash, so `NEXT_PUBLIC_SITE_URL` may be set with or without one. The retired
+`store.bhavyagondaliya.co.in` survives only in dated history notes and in `.env.example`, which
+still ships it on two lines and is the one place it is actively harmful — see Phase 2e.
 
 ## CURRENT PHASE
 **Phase 0 — ZIP import & forensic audit: COMPLETE**

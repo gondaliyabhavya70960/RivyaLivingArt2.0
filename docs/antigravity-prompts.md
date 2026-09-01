@@ -85,7 +85,7 @@ And three variables that ARE in the file — AUTH_URL, ADMIN_EMAIL, ADMIN_PASSWO
 
 Use placeholder values only. Never put a real credential in an example file.
 
-Verify: grep the whole repository for store.bhavyagondaliya.co.in and show me the results — the only remaining hits should be historical notes in CHANGELOG.md and PROJECT_STATE.md. Then run npm run typecheck.
+Verify: grep the whole repository for store.bhavyagondaliya.co.in and show me the results. After your fix the ONLY remaining hits should be dated history — CHANGELOG.md, PROJECT_STATE.md, docs/PROJECT-AUDIT.md, docs/RENAME-MIGRATION.md — plus this prompt file itself. Nothing under src/, prisma/, scripts/, .github/ or .env.example should mention that host. Then run npm run typecheck.
 ```
 
 ---
