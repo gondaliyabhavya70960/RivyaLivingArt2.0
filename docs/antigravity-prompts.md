@@ -54,7 +54,7 @@ Read AGENTS.md and PROJECT_STATE.md in full before doing anything else. Follow A
 
 Three things about how I want you to work here:
 
-1. CI only started working on 1 September 2026. Before that, GitHub Actions could not allocate a runner on this repository — an account billing condition — so every check that passed across twelve merged pull requests was run on someone's laptop. Billing is fixed and CI now runs green. Trust it going forward, but treat anything merged before that date as self-verified. And still never report a gate as passing unless you saw the output yourself.
+1. Do not trust this repository's CI without checking what it actually ran. For twelve merged pull requests GitHub Actions could not allocate a runner at all — an account billing condition — so every check that passed was run on someone's laptop. On 1 September 2026 billing was restored and two runs went fully green. Then it stopped creating runs entirely: four consecutive commits produced no Actions run at all, while the pull request kept displaying the earlier green tick. So before you rely on a green check, confirm the run's head_sha matches the pull request head, and never report a gate as passing unless you saw the output yourself.
 
 2. Prove a defect before you fix it. Reproduce the failure, show me the failing output, then fix it and show the same check passing. This project has a history of "fixes" that never addressed the actual fault, and of confident false reports of completion.
 
@@ -275,12 +275,22 @@ the answers into one conversation and ask for them together.
    BreadcrumbList structured data on `/shop`, since the filtered URL declares itself
    non-canonical.*
 
-## CI works now
+## CI: read this before trusting a green tick
 
-GitHub Actions billing was restored on 1 September 2026. Run #26 on `bc23f4d` was the first fully
-green run in the project's history, and #30 confirmed it. CI checks more than the local sweep did:
-the Studio audit over 30 staff routes and the Lighthouse budget were not part of the routine local
-run, and both pass.
+GitHub Actions billing was restored on 1 September 2026 and CI ran green twice — run #26 on
+`bc23f4d`, the first in the project's history, and #30 on `f6203eb`. Both checked **more** than the
+routine local sweep: the Studio audit over 30 staff routes and the Lighthouse budget were not part
+of it, and both passed.
 
-So every task above now gets an independent check. Worth knowing anyway: the twelve pull requests
-merged before that date were verified only by the agent that wrote them.
+**Then it stopped.** Four consecutive commits after that produced **no Actions run at all** — not
+queued, not cancelled, not failed — while the pull request went on showing run #30's green tick
+from an older commit. That is consistent with the allowance being consumed by those two runs
+(~24 job-minutes), and it is worth an owner check at Settings → Billing → Actions.
+
+Two rules follow, and they outlast this particular outage:
+
+- **Confirm a run's `head_sha` matches the PR head before trusting its result.** `ci.yml` also sets
+  `concurrency` with `cancel-in-progress`, so a second push within a few minutes kills the first
+  run — another way a green tick can belong to a commit that is no longer head.
+- **Run the gates locally anyway.** They are the same commands, they are faster than a CI round
+  trip, and for most of this project's history they were the only evidence that existed.
