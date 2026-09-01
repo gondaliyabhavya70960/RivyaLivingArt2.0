@@ -18,6 +18,7 @@ describe("Content-Security-Policy enforcement (Prompt 08)", () => {
     expect(val).toContain("media-src 'self' blob: data: https://*.public.blob.vercel-storage.com https://res.cloudinary.com");
     expect(val).toContain("https://*.public.blob.vercel-storage.com");
     expect(val).toContain("https://blob.vercel-storage.com");
+    expect(val).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'");
     expect(val).toContain("worker-src 'self' blob:");
     expect(val).toContain("frame-ancestors 'self'");
     expect(val).toContain("object-src 'none'");

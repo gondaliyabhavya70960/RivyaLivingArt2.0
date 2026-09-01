@@ -5,7 +5,16 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Shop: infer ecosystem from category parameter (Pre-2a Bookmarks Fix)
+## [Unreleased] — Security: allow unsafe-eval and vercel.live in Content-Security-Policy
+
+### The finding
+Enforcing Content-Security-Policy in production without `'unsafe-eval'` in `script-src` caused Next.js dynamic client evaluations (used by studio admin components including TipTap/ProseMirror and ExcelJS) to fail with `Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script`. This threw an uncaught error in the client runtime during hydration, causing all Studio sections to trip the Studio error boundary ("This page didn't load").
+
+### Changed
+- **`next.config.ts`**: Added `'unsafe-eval'` and `https://vercel.live` to `script-src`, added `https://vercel.live` to `connect-src` and `frame-src`.
+- **`src/lib/csp.test.ts`**: Added test assertion ensuring `script-src` includes `'unsafe-eval'`.
+
+## Shop: infer ecosystem from category parameter (Pre-2a Bookmarks Fix)
 
 ### The finding
 Pre-2a bookmarks and external links such as `/shop?category=supplies-molds-tools` or
