@@ -5,7 +5,19 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Finishing Rivya Living Art (Prompt Deck Tasks 01–08)
+## [Unreleased] — Shop: search product descriptions in /shop?q= (Prompt Deck Decision 1)
+
+### The finding
+`/search` searched `description` in addition to `title` and `shortTagline`, but `/shop?q=` in
+`buildProductWhere` only searched `title` and `shortTagline`. Searching for `"resin"` returned
+only 23 of 1,668 items on `/shop`, omitting products that only mention resin in their descriptions.
+
+### Changed
+- **`src/lib/shop.ts`**: Added `{ description: { contains: q, mode: "insensitive" } }` to the `OR` clause in `buildProductWhere`.
+- **`src/lib/shop.test.ts`**: Added regression test proving search clause matches `description`.
+- **`tests/db/product-where.test.ts`**: Verified `description` inclusion in database-backed search queries.
+
+## Finishing Rivya Living Art (Prompt Deck Tasks 01–08)
 
 ### Task 08 — Enforce Content-Security-Policy with complete directives (PR #20)
 - **`next.config.ts`**: Added missing directives before enforcement:

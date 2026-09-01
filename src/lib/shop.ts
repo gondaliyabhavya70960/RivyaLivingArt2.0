@@ -51,6 +51,7 @@ export function buildProductWhere(
       OR: [
         { title: { contains: q, mode: "insensitive" } },
         { shortTagline: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
       ],
     });
   }

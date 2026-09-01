@@ -46,7 +46,7 @@ describe("Database-backed: buildProductWhere Prisma execution (Prompt 07)", () =
     const products = await db.product.findMany({
       where,
       take: 5,
-      select: { id: true, title: true, shortTagline: true },
+      select: { id: true, title: true, shortTagline: true, description: true },
     });
 
     expect(Array.isArray(products)).toBe(true);

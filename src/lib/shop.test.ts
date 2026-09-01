@@ -10,7 +10,7 @@ describe("buildProductWhere (Prompt 07)", () => {
     expect(where.AND).toBeUndefined();
   });
 
-  it("builds case-insensitive search clause on title and shortTagline", () => {
+  it("builds case-insensitive search clause on title, shortTagline, and description", () => {
     const where = buildProductWhere({ q: "geode coaster" });
     expect(where.AND).toBeDefined();
     const and = where.AND as Array<Record<string, unknown>>;
@@ -19,6 +19,7 @@ describe("buildProductWhere (Prompt 07)", () => {
       OR: [
         { title: { contains: "geode coaster", mode: "insensitive" } },
         { shortTagline: { contains: "geode coaster", mode: "insensitive" } },
+        { description: { contains: "geode coaster", mode: "insensitive" } },
       ],
     });
   });
