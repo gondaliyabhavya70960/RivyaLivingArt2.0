@@ -1,6 +1,7 @@
 import Image, { getImageProps, type ImageProps } from "next/image";
 
 import { isOptimizableImageSrc } from "@/lib/image-src";
+import { getLqipBlur } from "@/lib/lqip";
 import type { SiteImageRef } from "@/lib/site-images";
 
 /**
@@ -38,10 +39,21 @@ export function SlotImage({
   /** Empty string for a decorative frame — most full-bleed heroes are. */
   alt: string;
 }) {
+  // REDESIGN.md §15.5 / prompt deck:
+  // 1. Keyed on resolved URL (slot.url).
+  // 2. Skip when priority is set (LCP must never be delayed).
+  // 3. Skip when mobile crop is present (avoiding desktop blur under mobile image).
+  // 4. Merge objectFit: "cover" into style so Next derives full-frame background-size.
+  const canBlur = !props.priority && !slot.mobileUrl;
+  const blurDataURL = canBlur ? (props.blurDataURL ?? getLqipBlur(slot.url)) : undefined;
+
   const shared = {
     ...props,
     alt,
     unoptimized: !isOptimizableImageSrc(slot.url),
+    ...(blurDataURL && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL }
+      : {}),
   };
 
   const mobile = slot.mobileUrl
@@ -56,12 +68,11 @@ export function SlotImage({
   // Centred is CSS's own default, so an untouched slot emits no inline style
   // and whatever `className` sets still applies.
   const moved = slot.focalX !== 0.5 || slot.focalY !== 0.5;
-  const style = moved
-    ? {
-        ...props.style,
-        objectPosition: `${slot.focalX * 100}% ${slot.focalY * 100}%`,
-      }
-    : props.style;
+  const style = {
+    ...(blurDataURL ? { objectFit: "cover" as const } : {}),
+    ...props.style,
+    ...(moved ? { objectPosition: `${slot.focalX * 100}% ${slot.focalY * 100}%` } : {}),
+  };
 
   if (!mobile?.srcSet) {
     // `alt` is in `shared`; the rule cannot see through the spread.

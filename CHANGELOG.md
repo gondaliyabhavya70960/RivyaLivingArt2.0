@@ -5,19 +5,15 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Remove retired domain from .env.example and document missing variables
+## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
 
-### The finding
-`.env.example` still referenced the retired domain `store.bhavyagondaliya.co.in` on `AUTH_URL` and
-`NEXT_PUBLIC_SITE_URL`. Because `src/lib/constants.ts` prefers `NEXT_PUBLIC_SITE_URL` when defined,
-any deploy that copied `.env.example` inlined the retired origin into canonical URLs, sitemaps, and
-JSON-LD structures. Additionally, `DATABASE_URL_UNPOOLED` (required by `prisma.config.ts`), `RESEND_FROM`,
-and `CRON_SECRET` were missing from the example configuration.
-
-### Changed
-- **`.env.example`**: Updated `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` to `https://www.rivyalivingart.com`. Added `DATABASE_URL_UNPOOLED`, `CRON_SECRET`, and `RESEND_FROM`.
-- **`src/lib/env.ts`**: Added `DATABASE_URL_UNPOOLED` and `CRON_SECRET` to the environment validation schema.
-- **`src/lib/env.test.ts`**: Added regression tests verifying that `.env.example` is free of the retired domain and contains all required migration and cron variables.
+### Added
+- **`src/lib/shop.test.ts`**: Pure unit test suite covering `buildProductWhere` filter composition (status constraint, title/shortTagline search, ecosystem groups, catalog categories, occasions jsonb containment, inStock availability, and price band overlapping).
+- **`tests/db/product-where.test.ts`**: Database integration test verifying `buildProductWhere` queries against Postgres via Prisma without SQL/syntax errors.
+- **`tests/db/media-usages.test.ts`**: Database integration test verifying `findMediaUsages` and `findMediaUsageDetails` across all schema media-bearing tables against Postgres.
+- **`vitest.db.config.mts`**: Dedicated test runner configuration for database-backed tests (`tests/db/**/*.test.ts`), isolating them from the fast pure-function suite (`npm test`).
+- **`package.json`**: Added `"test:db": "vitest run --config vitest.db.config.mts"`.
+- **`.github/workflows/ci.yml`**: Added `npm run test:db` step in the `build` job against the disposable Postgres service container.
 
 ## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
