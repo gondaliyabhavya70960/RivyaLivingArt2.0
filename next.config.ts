@@ -4,20 +4,11 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /**
- * Content-Security-Policy for the app. Shipped in REPORT-ONLY first (SEC-001,
- * per the audit's rollback note) so a mis-scoped directive can't break
- * Cloudinary images, the Behold Instagram widget, or Vercel analytics in
- * production — violations are reported (browser console) without blocking.
- * Once the report stream is clean, rename the header key to
- * `Content-Security-Policy` to enforce.
- *
- * Allowed sources reflect what the site actually loads:
- *  - images: self, data/blob, Cloudinary, Vercel Blob, Instagram + Behold CDNs
- *  - scripts/connect: self + Behold widget + Vercel analytics/insights
- *  ('unsafe-inline' remains for Next's hydration + JSON-LD; tighten to nonces
- *   as a follow-up).
+ * Content-Security-Policy for the app (SEC-001 / Prompt 08).
+ * Enforced with strict directives for frame-ancestors, object-src,
+ * media-src, worker-src, connect-src, and form-action.
  */
-const CSP_REPORT_ONLY = [
+const CSP = [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
@@ -29,11 +20,12 @@ const CSP_REPORT_ONLY = [
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://connect.facebook.net https://www.googletagmanager.com",
-  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com",
+  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com https://*.public.blob.vercel-storage.com https://blob.vercel-storage.com",
+  "media-src 'self' blob: data: https://*.public.blob.vercel-storage.com https://res.cloudinary.com",
+  "worker-src 'self' blob:",
   "frame-src 'self'",
   "form-action 'self'",
-  // Stream violations to /api/csp-report so the report-only period can be
-  // observed before enforcing (SEC-103). report-uri is legacy-but-widely-
+  // Stream violations to /api/csp-report (SEC-103). report-uri is legacy-but-widely-
   // supported; report-to pairs with the Reporting-Endpoints header below.
   "report-uri /api/csp-report",
   "report-to csp",
@@ -54,7 +46,7 @@ const SECURITY_HEADERS = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   // Names the reporting group used by the CSP `report-to csp` directive.
   { key: "Reporting-Endpoints", value: 'csp="/api/csp-report"' },
-  { key: "Content-Security-Policy-Report-Only", value: CSP_REPORT_ONLY },
+  { key: "Content-Security-Policy", value: CSP },
 ];
 
 const nextConfig: NextConfig = {
