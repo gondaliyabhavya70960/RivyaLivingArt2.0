@@ -2,7 +2,15 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 
-const ROOT = path.join(process.cwd(), "public", "uploads");
+export const ROOT = path.resolve(process.cwd(), "public", "uploads");
+
+export function resolveSafeUploadPath(root: string, segments: string[]): string | null {
+  const filePath = path.resolve(root, ...segments);
+  if (!filePath.startsWith(root + path.sep)) {
+    return null;
+  }
+  return filePath;
+}
 
 const MIME: Record<string, string> = {
   ".jpg": "image/jpeg",
@@ -28,11 +36,10 @@ export async function GET(
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path: segments } = await params;
-  if (segments.some((s) => s === ".." || s === "." || s.includes("\\"))) {
+  const filePath = resolveSafeUploadPath(ROOT, segments);
+  if (!filePath) {
     return new NextResponse("Not found", { status: 404 });
   }
-
-  const filePath = path.join(ROOT, ...segments);
   try {
     const data = await readFile(filePath);
     const ext = path.extname(filePath).toLowerCase();
