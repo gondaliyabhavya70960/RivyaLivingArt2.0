@@ -5,7 +5,18 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
+## [Unreleased] — Prompt Deck Task 08: enforce Content-Security-Policy with complete directives
+
+### Changed
+- **`next.config.ts`**: Added missing directives before enforcement:
+  - `media-src 'self' blob: data: https://*.public.blob.vercel-storage.com https://res.cloudinary.com` (protects hero video and Blob media).
+  - `connect-src` expanded with `https://*.public.blob.vercel-storage.com https://blob.vercel-storage.com` (permits direct client Blob uploads).
+  - `worker-src 'self' blob:` (allows `browser-image-compression` Web Workers).
+  - Renamed header from `Content-Security-Policy-Report-Only` to enforced `Content-Security-Policy`.
+  - Preserved `img-src https:` (draining catalog hosts) and `'unsafe-inline'` for hydration and JSON-LD.
+- **`src/lib/csp.test.ts`**: Added regression test asserting `Content-Security-Policy` header presence, absence of Report-Only, and presence of all required directives.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
 ### The finding
 The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.
