@@ -5,7 +5,14 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
+## [Unreleased] — Prompt Deck Task 06: three security hardening items
+
+### Changed
+- **`src/app/uploads/[...path]/route.ts`**: Hardened against path traversal using `path.resolve` containment assertion (`resolved.startsWith(ROOT + path.sep)`). Tested in `src/app/uploads/uploads-route.test.ts`.
+- **`src/app/api/upload/route.ts`**: Replaced client MIME trust with magic byte verification using `sharp(buffer).metadata()`. Validates JPEG, PNG, and WebP formats before persistence. Tested in `src/app/api/upload/upload-validation.test.ts`.
+- **`src/lib/rate-limit.ts`**: Documented the Vercel-only edge proxy contract on `clientIp` and added support for configurable `trustedProxyDepth` for multi-hop or self-hosted deployments. Tested in `src/lib/rate-limit.test.ts`.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
 ### The finding
 The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.
