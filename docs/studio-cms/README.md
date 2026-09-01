@@ -17,7 +17,7 @@ editable from `/studio`, with no deploy.
 > |---|---|---|
 > | 0 | groundwork | `revalidatePath("/", "layout")` removed; the champagne check fixed so it can fire at all; 34 orphaned strings per locale deleted |
 > | A | `/studio/site-copy` | 1,115 slots, generated + `npm run copy:check` in CI |
-> | B | `/studio/site-images` | 57 slots, mobile crops, focal points |
+> | B | `/studio/site-images` | 62 slots, mobile crops, focal points |
 > | C | `/studio/forms` | `FormOption`, plus business hours and announcement scheduling |
 > | D | `/studio/navigation` | header · drawer · footer |
 > | E | draft → preview → publish | staged per SURFACE, with `ContentRevision` history |
@@ -57,7 +57,7 @@ v2"*, the disagreement is deliberate and evidenced — see
 |---|---|---|
 | 01 | [Content Inventory](01-content-inventory.md) | Every page, everything on it, where it lives today |
 | 02 | [The Copy Layer](02-copy-layer.md) | **Start here to build.** All 1,149 strings, editable in a week |
-| 03 | [The Image Layer](03-image-layer.md) | 57 slots that already work, and the six gaps that remain |
+| 03 | [The Image Layer](03-image-layer.md) | 62 slots that already work, and the six gaps that remain |
 | 04 | [The Structure Layer](04-structure-layer.md) | Order, visibility, switches, one editor per page |
 | 05 | [Globals & Business Config](05-globals-and-business-config.md) | Nav, footer, commission dropdowns, hours, SEO |
 | 06 | [Governance](06-governance.md) | Draft, preview, publish, revisions, roles, audit |
@@ -80,7 +80,7 @@ The uploaded spec's central premise is that the content is trapped in code:
 |---|---|
 | Every user-facing string goes through next-intl | 1,149 English strings across 29 namespaces in `messages/en.json`; all nine locales carry the same key tree |
 | Even alt text is keyed | `About.materials.alt1…4`, `CustomOrder.page.heroImageAlt` |
-| Every editorial photograph is a named slot | 57 slots in `src/lib/site-images.ts`, 25 bundled files, already replaceable at `/studio/site-images` |
+| Every editorial photograph is a named slot | 62 slots in `src/lib/site-images.ts`, 25 bundled files, already replaceable at `/studio/site-images` |
 | No hardcoded image path survives in any component | `grep -rn '"/media/\|src="/' src/app src/components` → no matches outside the slot registry |
 | No component authors a raw `<img>` for content | Third-party catalogue URLs are mirrored to Blob by `src/lib/catalog-mirror.ts`; an unmirrored host renders through `next/image` with `unoptimized`, which still emits an `<img>` — that is almost certainly what the crawl read as hotlinking (`src/lib/image-src.ts:24`) |
 | Every storefront route is already ISR | `export const revalidate = 300` on fourteen routes |
@@ -100,7 +100,7 @@ This plan instead **extends the pattern the repo already uses for pictures**:
 
 ```
                 registry in code            overrides in DB           resolver
-pictures   site-images.ts (57 slots)   →   SiteImage rows      →   getSiteImages()   ✅ shipped
+pictures   site-images.ts (62 slots)   →   SiteImage rows      →   getSiteImages()   ✅ shipped
 words      site-copy.ts   (1,149 keys) →   SiteCopy rows       →   getSiteCopy()     ← Phase A
 structure  page-sections.ts (~50)      →   PageSection rows    →   getPageSections() ← Phase F
 ```

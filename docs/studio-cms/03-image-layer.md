@@ -39,7 +39,7 @@ channels. The work in this phase is **depth**, not rescue.
 
 ### The slot registry, measured
 
-`src/lib/site-images.ts` — **57 slots, 25 distinct bundled files:**
+`src/lib/site-images.ts` — **62 slots, 25 distinct bundled files:**
 
 | Group | Slots | Notable members |
 |---|--:|---|
@@ -47,6 +47,7 @@ channels. The work in this phase is **depth**, not rescue.
 | About | 17 | `about.hero`, `about.maker`, `about.material{1-4}.image` + `.macro`, `about.chapter{1-4}`, `about.studio{1-3}` |
 | Process | 12 | `process.heroVideo`, `process.heroPoster`, `process.step{1-6}`, `process.material{1-4}` |
 | Workshops | 9 | `workshops.hero`, `workshops.benefit{1-3}`, `workshops.private`, `workshops.room{1-4}` |
+| Large format | 5 | `largeFormat.hero`, `largeFormat.consultation`, `largeFormat.step{1-3}` |
 | Shop | 4 | `shop.editorialBreak`, `shop.group.{art,supplies,print}` |
 | Navigation | 3 | `nav.art`, `nav.print`, `nav.supplies` (mega-menu tiles) |
 | Commission · Contact · Portfolio | 1 each | the page heroes |

@@ -137,17 +137,19 @@ Each is a real product or SEO judgement call, not an oversight.
   `DATABASE_URL_UNPOOLED` (used by `prisma.config.ts`), `RESEND_FROM`, and `CRON_SECRET`. Validated in
   `src/lib/env.ts` and tested in `src/lib/env.test.ts`. The repository is now 100% free of active
   references to the retired domain.
-- **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
-  current-state docs.
+- **Stale counts in `docs/studio-cms/`: FIXED (2026-09-01)**. Synchronized slot counts
+  from 57 to 62 across `docs/studio-cms/` to match the true count in `src/lib/site-images.ts`
+  (including the 5 `largeFormat.*` slots).
 - **LQIP wiring** (REDESIGN.md §15.5): **DONE (2026-09-01)**. `media-v3-blur.json` (25 entries) is
   wired through pure helper `src/lib/lqip.ts` into the two storefront chokepoints (`SlotImage` and
   `MeniscusImage`), covering all 34 render sites. Keying is strictly on resolved URLs/pathnames
   so overrides never paint incorrect blurs. Fully tested in `src/lib/lqip.test.ts`. Caveat documented:
   `prisma/bootstrap.ts` repoints slots to random-suffixed Blob URLs on a fresh production deploy,
   so lookups hit in local dev/bundled fallback environments.
-- **`.github/workflows/mirror-images.yml`** says in its own header it is safe to delete now the
-  images are committed. **Naming hazard:** `src/app/api/cron/mirror-images/route.ts` and
-  `vercel.json` are a LIVE production cron with almost the same name — do not grep-delete.
+- **`.github/workflows/mirror-images.yml`: RETIRED (2026-09-01)**. Safely removed the temporary workflow
+  now that `public/` is fully committed (242 files, 22 MB) and verified by `site-images.test.ts` and
+  `bundled-media.test.ts`. The live production cron `src/app/api/cron/mirror-images/route.ts` and
+  `vercel.json` remain untouched.
 
 ---
 

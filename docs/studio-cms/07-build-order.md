@@ -95,7 +95,7 @@ owner edits Hindi and sees nothing change.
 
 | Day | Work |
 |--:|---|
-| 1 | `altKey` on `SiteImageSlot` for all 57 slots; inline alt field on the Site Images board writing to `SiteCopy` |
+| 1 | `altKey` on `SiteImageSlot` for all 62 slots; inline alt field on the Site Images board writing to `SiteCopy` |
 | 2 | Migration: `mobileUrl`, `mobileMediaId`, `focalX`, `focalY` on `SiteImage`; resolver returns refs not strings |
 | 2.5 | `<picture>` + focal rendering inside `MeniscusImage` (never a second image component — the meniscus reveal replaces every fade-up) |
 | 3 | Focal-point click overlay and mobile-crop slot in the picker; `minWidth` guidance |

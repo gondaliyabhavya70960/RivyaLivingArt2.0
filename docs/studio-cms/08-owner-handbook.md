@@ -41,7 +41,7 @@ board searches the text, not just the labels.
 
 | What | Where | Status |
 |---|---|---|
-| Any hero, process step, material macro, workshop room, mega-menu tile — 57 slots | Site Images → pick the surface | ✅ |
+| Any hero, process step, material macro, workshop room, mega-menu tile — 62 slots | Site Images → pick the surface | ✅ |
 | Put it back the way it was | Site Images → Reset | ✅ |
 | The alt text describing that picture | Site Images, right under the picture | ✅ |
 | A different crop for phones | Site Images → Mobile crop | ✅ |

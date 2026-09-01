@@ -112,7 +112,7 @@ this area is open.
 `src/lib/media-usages.ts` computes where an asset is used, and the delete guard
 depends on it. It does **not** query `SiteImage.url`.
 
-So a library file that 57 slots may be pointing at passes the guard and is
+So a library file that 62 slots may be pointing at passes the guard and is
 deleted, and the storefront serves a dead URL — with no error anywhere, because
 `getSiteImages()` only checks that the row's key is known
 (`site-images-server.ts:51`), not that its URL still resolves.
