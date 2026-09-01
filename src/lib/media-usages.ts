@@ -7,14 +7,16 @@
  */
 import { db } from "@/lib/db";
 import { readStagedImage } from "@/lib/site-image-draft";
+import { extractTiptapImageUrls } from "@/lib/tiptap-media";
 
 /**
  * Returns the subset of `urls` that are still referenced by live content —
  * product/portfolio galleries, category covers, blog covers, product/portfolio
  * media, testimonial avatars, the site logo/hero, the named editorial slots
  * behind /studio/site-images (the desktop and mobile crop of both the live and
- * the STAGED value), and landing-page social images and block pictures — so a
- * delete never silently 404s the live site (ENG-806 / UIUX-605).
+ * the STAGED value), landing-page social images and block pictures, and Tiptap
+ * rich-text body images (blog posts, legal pages, richText landing blocks) — so
+ * a delete never silently 404s the live site (ENG-806 / UIUX-605).
  *
  * "Live content" includes what is staged. On the draft surfaces a save writes
  * only the draft column, so scanning the live column alone let a staged picture
@@ -22,10 +24,9 @@ import { readStagedImage } from "@/lib/site-image-draft";
  * next Publish — the fourth time this header rule was broken, and the fourth
  * time the breakage was silent.
  *
- * Tiptap body images (Json) are still not scanned: they appear in blog posts,
- * legal pages and the landing pages' `richText` blocks, and matching a URL
- * inside a rich-text document means walking every node of every document on
- * every delete. The visible gallery/cover cases are all covered.
+ * Tiptap body images (Json) in BlogPost.content, Page.content and the landing
+ * pages' `richText` blocks (and their translation overlays) are walked and
+ * guarded so bulk sweeps cannot delete body pictures.
  *
  * Every new table that stores a media URL must be added here in the same
  * commit that introduces it, or the guard silently stops guarding.
@@ -137,12 +138,23 @@ export async function findMediaUsageDetails(
       where: { ogImage: { in: urls } },
       select: { ogImage: true, title: true },
     }),
-    // Landing-page block pictures live inside a Json blob, so they cannot be
-    // filtered in SQL. The blocks that can hold one are few and a landing page
-    // is a handful of rows, so the whole set is read and matched here.
+    // Landing-page block pictures and richText bodies live inside Json blobs.
+    // hero/imageCta hold single images; richText holds Tiptap trees.
     customBlocks: db.customBlock.findMany({
-      where: { type: { in: ["hero", "imageCta"] } },
-      select: { data: true, page: { select: { title: true } } },
+      where: { type: { in: ["hero", "imageCta", "richText"] } },
+      select: {
+        type: true,
+        data: true,
+        translations: true,
+        page: { select: { title: true } },
+      },
+    }),
+    // Tiptap body images in blog posts and legal/custom pages (ENG-806 / UIUX-605).
+    blogPostsContent: db.blogPost.findMany({
+      select: { title: true, content: true, translations: true },
+    }),
+    pagesContent: db.page.findMany({
+      select: { title: true, content: true, translations: true },
     }),
   };
 
@@ -158,6 +170,8 @@ export async function findMediaUsageDetails(
   const siteImages = await pending.siteImages;
   const customPages = await pending.customPages;
   const customBlocks = await pending.customBlocks;
+  const blogPostsContent = await pending.blogPostsContent;
+  const pagesContent = await pending.pagesContent;
 
   // Only URLs the caller asked about. A value pulled out of a Json blob can be
   // anything, and letting it into the map would report usage for files the
@@ -215,9 +229,28 @@ export async function findMediaUsageDetails(
   });
   customPages.forEach((r) => add(r.ogImage, `Landing page · ${r.title}`));
   customBlocks.forEach((block) => {
-    const data = block.data as { image?: unknown } | null;
-    if (typeof data?.image === "string") {
-      add(data.image, `Landing page · ${block.page.title}`);
+    if (block.type === "richText") {
+      const urls = extractTiptapImageUrls([block.data, block.translations]);
+      for (const u of urls) {
+        add(u, `Landing page · ${block.page.title}`);
+      }
+    } else {
+      const data = block.data as { image?: unknown } | null;
+      if (typeof data?.image === "string") {
+        add(data.image, `Landing page · ${block.page.title}`);
+      }
+    }
+  });
+  blogPostsContent.forEach((post) => {
+    const urls = extractTiptapImageUrls([post.content, post.translations]);
+    for (const u of urls) {
+      add(u, `Blog post · ${post.title}`);
+    }
+  });
+  pagesContent.forEach((page) => {
+    const urls = extractTiptapImageUrls([page.content, page.translations]);
+    for (const u of urls) {
+      add(u, `Page · ${page.title}`);
     }
   });
 

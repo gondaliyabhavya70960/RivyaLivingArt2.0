@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image, { getImageProps, type ImageProps } from "next/image";
 
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { getLqipBlur } from "@/lib/lqip";
 import { cn } from "@/lib/utils";
 
 /**
@@ -176,8 +177,27 @@ export function MeniscusImage({
    * optimizer pipeline as `<Image>`, so the mobile file gets its own srcSet
    * rather than a single unresponsive URL.
    */
+  // REDESIGN.md §15.5 / prompt deck:
+  // 1. Keyed on resolved URL (srcString).
+  // 2. Skip when priority is set (LCP must never be delayed).
+  // 3. Skip when mobile crop is present (avoiding desktop blur under mobile image).
+  // 4. Merge objectFit: "cover" into style so Next derives full-frame background-size.
+  const canBlur = !props.priority && !mobileSrc;
+  const srcString = typeof props.src === "string" ? props.src : undefined;
+  const blurDataURL = canBlur ? (props.blurDataURL ?? getLqipBlur(srcString)) : undefined;
+
+  const imageProps = {
+    ...props,
+    ...(blurDataURL && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL }
+      : {}),
+  };
+
   const mobile = mobileSrc
-    ? getImageProps({ ...props, src: mobileSrc }).props
+    ? getImageProps({
+        ...imageProps,
+        src: mobileSrc,
+      }).props
     : null;
 
   /* `alt` is required by ImageProps, so it always arrives in the spread — the
@@ -185,19 +205,16 @@ export function MeniscusImage({
   const image = (
     // eslint-disable-next-line jsx-a11y/alt-text
     <Image
-      {...props}
+      {...imageProps}
       className={cn("h-full w-full", imageClassName)}
-      style={
+      style={{
+        ...(blurDataURL ? { objectFit: "cover" as const } : {}),
+        ...props.style,
         // Only written when a focal point was actually chosen, so an untouched
         // slot emits no inline style at all and whatever object-position
         // `imageClassName` sets still wins.
-        focal
-          ? {
-              ...props.style,
-              objectPosition: `${focal.x * 100}% ${focal.y * 100}%`,
-            }
-          : props.style
-      }
+        ...(focal ? { objectPosition: `${focal.x * 100}% ${focal.y * 100}%` } : {}),
+      }}
     />
   );
 

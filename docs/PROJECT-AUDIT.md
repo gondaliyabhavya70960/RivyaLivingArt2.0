@@ -53,9 +53,9 @@ already satisfied. The correct action is patch-level bumps, not migration.
 
 | | |
 |---|---|
-| Brand | **ResinRiva** |
-| Live site | `store.bhavyagondaliya.co.in` |
-| Admin | `store.bhavyagondaliya.co.in/studio` |
+| Brand | **ResinRiva** — renamed to **Rivya Living Art** in Phase 1 |
+| Live site | `store.bhavyagondaliya.co.in` — **now `https://www.rivyalivingart.com`** |
+| Admin | `store.bhavyagondaliya.co.in/studio` — **now `https://www.rivyalivingart.com/studio`** |
 | Market | India (Surat, Gujarat) — ships pan-India |
 | Currency | **INR only**, whole rupees, `en-IN` grouping |
 | Locales | **9** — en (default, unprefixed), hi, gu, ar (RTL), es, de, fr, zh, ja |
@@ -368,7 +368,9 @@ imagery. **This is where the effort belongs.**
   `resinriva/` — 9 in `src/lib/media.ts:27-56`, 11 in `prisma/seed-category-images.ts:27-37`.
   These are remote asset addresses in a third-party account. Renaming the string 404s every
   category and hero image unless the assets are re-uploaded under a new folder first.
-- `store.bhavyagondaliya.co.in` — the live domain (unchanged unless the owner moves it)
+- ~~`store.bhavyagondaliya.co.in` — the live domain (unchanged unless the owner moves it)~~
+  **The owner moved it.** The site is live at `https://www.rivyalivingart.com`. This entry is
+  kept because it explains why Phase 1 deliberately left the string alone at the time.
 - `wa.me/917096036250` — the live WhatsApp number
 - `#RR-<n>` inquiry reference prefix — customers hold these in sent WhatsApp threads; the sequence
   and format must survive
