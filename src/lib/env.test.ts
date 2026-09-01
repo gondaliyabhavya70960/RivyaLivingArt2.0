@@ -132,4 +132,16 @@ describe("SITE public-value fallbacks", () => {
       expect(site.whatsappNumber).not.toBe("");
     }
   });
+
+  it(".env.example does not ship retired domain and carries unpooled DB & cron secrets", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const envExample = fs.readFileSync(path.resolve(process.cwd(), ".env.example"), "utf8");
+
+    expect(envExample).not.toContain("store.bhavyagondaliya.co.in");
+    expect(envExample).toContain("https://www.rivyalivingart.com");
+    expect(envExample).toMatch(/^DATABASE_URL_UNPOOLED=/m);
+    expect(envExample).toMatch(/^CRON_SECRET=/m);
+    expect(envExample).toMatch(/^RESEND_FROM=/m);
+  });
 });

@@ -140,14 +140,11 @@ Each is a real product or SEO judgement call, not an oversight.
 5. **Pre-2a `/shop?category=<non-art>` bookmarks** now return zero rows.
 
 ### Still open, unchanged
-- **`.env.example` is worse than previously recorded.** Besides omitting `DATABASE_URL_UNPOOLED`
-  (used by `prisma.config.ts` for migrations), `RESEND_FROM` and `CRON_SECRET`, it still carries the
-  RETIRED domain on two lines — `AUTH_URL=` and `NEXT_PUBLIC_SITE_URL=https://store.bhavyagondaliya.co.in`.
-  `SITE.url` prefers the env var over its correct fallback, so anyone who copies this file into a
-  real deploy inlines the wrong origin into every canonical, sitemap URL, JSON-LD `@id` and OG image
-  URL. `src/`, `prisma/`, `scripts/` and `.github/` are otherwise clean of that host — this file is
-  the last carrier. `.env*` edits are denied in this environment, so the owner (or a different IDE)
-  must do it.
+- **`.env.example`: FIXED (2026-09-01)**. Replaced retired domain `store.bhavyagondaliya.co.in` on
+  `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` with `https://www.rivyalivingart.com`. Added missing variables
+  `DATABASE_URL_UNPOOLED` (used by `prisma.config.ts`), `RESEND_FROM`, and `CRON_SECRET`. Validated in
+  `src/lib/env.ts` and tested in `src/lib/env.test.ts`. The repository is now 100% free of active
+  references to the retired domain.
 - **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
   current-state docs.
 - **LQIP wiring** (REDESIGN.md §15.5): **DONE (2026-09-01)**. `media-v3-blur.json` (25 entries) is
