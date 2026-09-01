@@ -19,11 +19,11 @@ const CSP = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://connect.facebook.net https://www.googletagmanager.com",
-  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com https://*.public.blob.vercel-storage.com https://blob.vercel-storage.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://connect.facebook.net https://www.googletagmanager.com https://vercel.live",
+  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com https://*.public.blob.vercel-storage.com https://blob.vercel-storage.com https://vercel.live",
   "media-src 'self' blob: data: https://*.public.blob.vercel-storage.com https://res.cloudinary.com",
   "worker-src 'self' blob:",
-  "frame-src 'self'",
+  "frame-src 'self' https://vercel.live",
   "form-action 'self'",
   // Stream violations to /api/csp-report (SEC-103). report-uri is legacy-but-widely-
   // supported; report-to pairs with the Reporting-Endpoints header below.
