@@ -970,7 +970,7 @@
     "emptyEyebrow": "どこからでもどうぞ",
     "emptyHeading": "何をお探しですか？",
     "emptyBody": "作品名（「表札」「時計」）、シーン（「記念日」）、素材（「レジン」）でお試しいただくか、そのままコレクションへどうぞ。",
-    "productsShowMore": "ショップにある {total, plural, one {全 # 点の作品} other {全 # 点の作品}}を見る",
+    "productsShowMore": "ショップで一致するすべての商品を見る",
     "zeroWhatsappMessage": "Rivya Living Art様、サイトで「{query}」を検索しましたが見つかりませんでした。同じようなものを作っていただけますか？\n（{site} より送信）",
     "overlay": {
       "dialogLabel": "サイト内検索",

@@ -970,7 +970,7 @@
     "emptyEyebrow": "ابدأ من أي مكان",
     "emptyHeading": "عمّا تبحث؟",
     "emptyBody": "جرّب قطعة («لوحة اسم»، «ساعة») أو مناسبة («ذكرى سنوية») أو خامة («ريزن») — أو انتقل مباشرة إلى المجموعات.",
-    "productsShowMore": "عرض {total, plural, one {# قطعة} two {كلتا القطعتين} few {كل القطع الـ#} many {كل الـ# قطعة} other {كل الـ# قطعة}} في المتجر",
+    "productsShowMore": "عرض جميع المنتجات المطابقة في المتجر",
     "zeroWhatsappMessage": "مرحبًا Rivya Living Art، بحثت عن \"{query}\" في موقعكم ولم أجده. هل يمكنكم صنع شيء مشابه لي؟\n(أُرسلت من {site})",
     "overlay": {
       "dialogLabel": "البحث في الموقع",

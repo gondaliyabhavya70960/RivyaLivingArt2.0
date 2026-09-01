@@ -970,7 +970,7 @@
     "emptyEyebrow": "start anywhere",
     "emptyHeading": "What are you looking for?",
     "emptyBody": "Try a piece (“nameplate”, “clock”), an occasion (“anniversary”) or a material (“resin”) — or skip straight to the collections.",
-    "productsShowMore": "Show all {total, plural, one {# piece} other {# pieces}} in the shop",
+    "productsShowMore": "Show all matching items in the shop",
     "zeroWhatsappMessage": "Hello Rivya Living Art, I searched for \"{query}\" on your site but couldn't find it. Could you make something like that for me?\n(Sent from {site})",
     "overlay": {
       "dialogLabel": "Site search",

@@ -970,7 +970,7 @@
     "emptyEyebrow": "从任何地方开始",
     "emptyHeading": "您在寻找什么？",
     "emptyBody": "试试某件作品（“名牌”、“时钟”）、某个场合（“纪念日”）或某种材质（“树脂”）——也可以直接前往臻选系列。",
-    "productsShowMore": "前往商店查看{total, plural, one {全部 # 件作品} other {全部 # 件作品}}",
+    "productsShowMore": "在商店查看全部匹配商品",
     "zeroWhatsappMessage": "您好 Rivya Living Art，我在你们网站上搜索了\"{query}\"，但没有找到。你们能为我定制类似的作品吗？\n（发自 {site}）",
     "overlay": {
       "dialogLabel": "站内搜索",

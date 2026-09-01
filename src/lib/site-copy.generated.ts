@@ -776,7 +776,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Search.emptyEyebrow","group":"Shop","section":"general","label":"Empty eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Search.emptyHeading","group":"Shop","section":"general","label":"Empty heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Search.emptyBody","group":"Shop","section":"general","label":"Empty body","kind":"body","tier":"editorial","max":400},
-  {"key":"Search.productsShowMore","group":"Shop","section":"general","label":"Products show more","kind":"body","tier":"editorial","max":400,"vars":["total"]},
+  {"key":"Search.productsShowMore","group":"Shop","section":"general","label":"Products show more","kind":"body","tier":"editorial","max":400},
   {"key":"Search.zeroWhatsappMessage","group":"Shop","section":"general","label":"Zero whatsapp message","kind":"body","tier":"editorial","max":400,"vars":["query","site"]},
   {"key":"Search.overlay.dialogLabel","group":"Shop","section":"overlay","label":"Dialog label","kind":"label","tier":"editorial","max":60},
   {"key":"Search.overlay.label","group":"Shop","section":"overlay","label":"Label","kind":"label","tier":"editorial","max":60},

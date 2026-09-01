@@ -300,7 +300,7 @@ export default async function SearchPage({
                       href={`/shop?q=${encodeURIComponent(query)}&type=${ALL_ECOSYSTEMS}`}
                       className="inline-flex min-h-11 items-center gap-1.5 rounded-input font-body text-14 font-medium text-sapphire underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
                     >
-                      {t("productsShowMore", { total: products.total })}
+                      {t("productsShowMore")}
                       <ArrowRight
                         aria-hidden
                         strokeWidth={1.5}

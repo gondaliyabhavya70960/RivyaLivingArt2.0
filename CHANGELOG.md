@@ -5,7 +5,21 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Shop: search product descriptions in /shop?q= (Prompt Deck Decision 1)
+## [Unreleased] — Search: non-quantified productsShowMore label across all 9 locales (Prompt Deck Decision 2)
+
+### The finding
+`Search.productsShowMore` previously used `{total}` interpolation with art-specific nouns
+(`"Show all {total} pieces"`, `कृतियाँ`, `કૃતિઓ`, `作品`). Because the search handoff
+carries `&type=all` and counts raw pigment supplies and 3D printing filaments in addition to art,
+referencing them as art pieces was inaccurate.
+
+### Changed
+- **`messages/*.json`**: Updated `Search.productsShowMore` to non-quantified, inclusive phrasing across all 9 locales (`en`, `hi`, `gu`, `ar`, `de`, `es`, `fr`, `ja`, `zh`).
+- **`src/app/[locale]/(v2)/search/page.tsx`**: Updated call site to pass zero parameters to `t("productsShowMore")`.
+- **`src/lib/site-copy.generated.ts`**: Regenerated via `npm run copy:registry` (`vars` emptied, `copy:check` passes).
+- **`src/lib/search-non-quantified.test.ts`**: Regression test asserting absence of `{total}` and art piece nouns across all 9 locales.
+
+## Shop: search product descriptions in /shop?q= (Prompt Deck Decision 1)
 
 ### The finding
 `/search` searched `description` in addition to `title` and `shortTagline`, but `/shop?q=` in

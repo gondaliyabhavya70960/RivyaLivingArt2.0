@@ -970,7 +970,7 @@
     "emptyEyebrow": "empieza por donde quieras",
     "emptyHeading": "¿Qué estás buscando?",
     "emptyBody": "Prueba con una pieza (“placa”, “reloj”), una ocasión (“aniversario”) o un material (“resina”) — o ve directo a las colecciones.",
-    "productsShowMore": "Ver {total, plural, one {# pieza} other {todas las # piezas}} en la tienda",
+    "productsShowMore": "Ver todos los productos coincidentes en la tienda",
     "zeroWhatsappMessage": "Hola Rivya Living Art, busqué \"{query}\" en su sitio pero no lo encontré. ¿Podrían hacer algo así para mí?\n(Enviado desde {site})",
     "overlay": {
       "dialogLabel": "Búsqueda del sitio",

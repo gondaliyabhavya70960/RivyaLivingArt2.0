@@ -970,7 +970,7 @@
     "emptyEyebrow": "fangen Sie irgendwo an",
     "emptyHeading": "Wonach suchen Sie?",
     "emptyBody": "Versuchen Sie es mit einem Stück („Namensschild“, „Uhr“), einem Anlass („Jubiläum“) oder einem Material („Resin“) – oder gehen Sie direkt zu den Kollektionen.",
-    "productsShowMore": "{total, plural, one {# Stück} other {Alle # Stücke}} im Shop ansehen",
+    "productsShowMore": "Alle passenden Artikel im Shop ansehen",
     "zeroWhatsappMessage": "Hallo Rivya Living Art, ich habe auf Ihrer Seite nach \"{query}\" gesucht, es aber nicht gefunden. Könnten Sie so etwas für mich anfertigen?\n(Gesendet von {site})",
     "overlay": {
       "dialogLabel": "Website-Suche",

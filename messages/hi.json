@@ -970,7 +970,7 @@
     "emptyEyebrow": "कहीं से भी शुरू करें",
     "emptyHeading": "आप क्या खोज रहे हैं?",
     "emptyBody": "कोई कृति (“nameplate”, “clock”), कोई अवसर (“anniversary”) या कोई सामग्री (“resin”) आज़माएँ — या सीधे संग्रहों पर जाएँ।",
-    "productsShowMore": "शॉप की सभी {total, plural, one {# कृति} other {# कृतियाँ}} देखें",
+    "productsShowMore": "शॉप में सभी मिलते-जुलते उत्पाद देखें",
     "zeroWhatsappMessage": "नमस्ते Rivya Living Art, मैंने आपकी साइट पर \"{query}\" खोजा लेकिन वह नहीं मिला। क्या आप मेरे लिए वैसा कुछ बना सकते हैं?\n({site} से भेजा गया)",
     "overlay": {
       "dialogLabel": "साइट खोज",
