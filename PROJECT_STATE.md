@@ -33,7 +33,7 @@ still ships it on two lines and is the one place it is actively harmful — see 
 - Task 05: Make reference documents true (PR #18)
 - Task 06: Three security hardening items (PR #19)
 - Task 07: The first database-backed tests (PR #21)
-- Task 08: Enforce Content-Security-Policy (PR #20)
+- Task 08: Enforce Content-Security-Policy (PR #20, hotfix PR #27: allow unsafe-eval and vercel.live for Studio)
 **Prompt Deck Owner Decisions: COMPLETE & MERGED**
 - Decision 1: Search product descriptions in `/shop?q=` (PR #22)
 - Decision 2: Non-quantified `Search.productsShowMore` label across all 9 locales (PR #23)
@@ -519,12 +519,12 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 
 ## LAST COMMIT ON MAIN
 
-`e4151f9` — *docs: mark all prompt deck tasks and owner decisions as complete in antigravity-prompts.md*
+`6c4b03f` — *fix(security): allow unsafe-eval and vercel.live in Content-Security-Policy (#27)*
 
 ## SAFE CONTINUATION POINT
 
-**Phase 1, Phase 2 (all parts 2a–2f), all 8 Antigravity prompt deck tasks, all 3 owner prompt deck decisions, pre-2a category bookmarks inference, and docs sync are merged on `main`.**
-All PRs (#13 through #26) are merged into `main` and pushed to `origin/main`.
+**Phase 1, Phase 2 (all parts 2a–2f), all 8 Antigravity prompt deck tasks, all 3 owner prompt deck decisions, pre-2a category bookmarks inference, docs sync, and CSP Studio unblock hotfix are merged on `main`.**
+All PRs (#13 through #27) are merged into `main` and pushed to `origin/main`.
 Current state: 43 unit test files / 405 tests passing, 44 migrations applied, 62 image slots, 1,181 copy slots (0 missing translations across all 9 locales).
 
 ### Reproducing the verified environment
