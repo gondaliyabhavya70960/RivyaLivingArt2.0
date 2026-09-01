@@ -42,7 +42,7 @@ export default async function OpengraphImage({ params }: ImageProps) {
   const title = post ? clampTitle(post.title) : brand.name;
   const dateLabel = post
     ? dateFormatter.format(post.publishedAt ?? post.createdAt)
-    : "Luxury custom resin art & 3D printing";
+    : brand.tagline;
 
   return new ImageResponse(
     <div

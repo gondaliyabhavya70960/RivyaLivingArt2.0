@@ -5,22 +5,38 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — REDESIGN.md §15.5: LQIP wiring across SlotImage and MeniscusImage
+## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
+
+### Added
+- **`src/lib/shop.test.ts`**: Pure unit test suite covering `buildProductWhere` filter composition (status constraint, title/shortTagline search, ecosystem groups, catalog categories, occasions jsonb containment, inStock availability, and price band overlapping).
+- **`tests/db/product-where.test.ts`**: Database integration test verifying `buildProductWhere` queries against Postgres via Prisma without SQL/syntax errors.
+- **`tests/db/media-usages.test.ts`**: Database integration test verifying `findMediaUsages` and `findMediaUsageDetails` across all schema media-bearing tables against Postgres.
+- **`vitest.db.config.mts`**: Dedicated test runner configuration for database-backed tests (`tests/db/**/*.test.ts`), isolating them from the fast pure-function suite (`npm test`).
+- **`package.json`**: Added `"test:db": "vitest run --config vitest.db.config.mts"`.
+- **`.github/workflows/ci.yml`**: Added `npm run test:db` step in the `build` job against the disposable Postgres service container.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
 ### The finding
-`media-v3-blur.json` held 25 real blur hashes generated during Part 15 asset production, but was
-imported by nothing in the codebase. Editorial imagery mounted without blur placeholders.
+The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.
+As a result, the superseded proposition *"Luxury custom resin art & 3D printing, made to order in India"*
+rendered in English on every page in all nine locales. Meanwhile, the registered and translated
+`Footer.tagline` slot in `messages/*.json` ("Handcrafted resin art, made to order.") was completely unread.
+Additionally, five code fallbacks and database seed values still carried references to "3D printing".
 
 ### Changed
-- **`src/lib/lqip.ts`**: Pure LQIP lookup helper `getLqipBlur` keying strictly on the resolved
-  pathname/URL of bundled master images. Custom uploads and unknown images safely evaluate to
-  `undefined`, preventing painting master A's blur under photograph B.
-- **`src/components/storefront/slot-image.tsx`**: Wired `getLqipBlur` for both desktop and mobile
-  crops into `<Image>` and `<source>` responsive descriptors.
-- **`src/components/storefront/meniscus-image.tsx`**: Wired `getLqipBlur` for both desktop and mobile
-  crops into `<Image>` and `<source>` across all 28 meniscus call sites.
-- **`src/lib/lqip.test.ts`**: Added regression unit tests covering resolution, URL normalization,
-  and negative matches for custom/user uploads.
+- **`src/app/[locale]/(v2)/layout.tsx` passes `tFooter("tagline")` into `<Footer />`**: Wires the existing translated slot across all nine locales (`ar`, `de`, `es`, `fr`, `gu`, `hi`, `ja`, `zh`, `en`) and makes it editable via `/studio/site-copy`.
+- **`src/lib/constants.ts`**: Updated `SITE.tagline` fallback to `"Handcrafted resin art, made to order."`.
+- **`src/app/manifest.ts`**: Updated PWA description fallback to `"Handcrafted resin art, made to order in India — every order finalized on WhatsApp."`.
+- **`src/app/[locale]/(v2)/product/[slug]/opengraph-image.tsx` & `blog/[slug]/opengraph-image.tsx`**: Dynamic fallback uses `brand.tagline` instead of hardcoded string.
+- **`src/app/shared-metadata.ts`**: Updated default title and description to remove superseded 3D printing claim.
+- **`prisma/seed.ts`**: Updated `SiteSettings.tagline` and `defaultSeo` to match the new proposition.
+- **`src/components/studio/settings/seo-form.tsx` & `settings-form.tsx`**: Updated placeholders.
+- **`src/lib/site-copy.generated.ts`**: Regenerated via `npm run copy:registry` (`copy:check` passes).
+- **`src/lib/footer-tagline.test.ts`**: Automated regression test proving the failure before the fix and verifying all six sites.
+
+### Verified by reproducing the defect first
+`npx vitest run src/lib/footer-tagline.test.ts` produced 5 failing tests against the unpatched codebase (confirming hardcoded 3D printing claims and bypassing of `next-intl`), and all 6 tests passed once patched.
 
 ## Phase 2d: the shop kept promises it could not deliver
 

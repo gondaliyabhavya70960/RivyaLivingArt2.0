@@ -9,7 +9,13 @@
 RivyaLivingArt2.0 — *Rivya Living Art*
 
 ## ORIGINAL PROJECT
-ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
+ResinRiva2.0 — *ResinRiva* (was live at `store.bhavyagondaliya.co.in`)
+
+## LIVE DOMAIN
+**`https://www.rivyalivingart.com`** — the current production origin. `SITE.url` normalises a
+trailing slash, so `NEXT_PUBLIC_SITE_URL` may be set with or without one. The retired
+`store.bhavyagondaliya.co.in` survives only in dated history notes and in `.env.example`, which
+still ships it on two lines and is the one place it is actively harmful — see Phase 2e.
 
 ## CURRENT PHASE
 **Phase 0 — ZIP import & forensic audit: COMPLETE**
@@ -19,10 +25,15 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
-**LQIP wiring (REDESIGN.md §15.5): COMPLETE**
+**Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
-**Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
+**Phase 2 is closed** and merged to `main`. Phase 2e is five OPEN QUESTIONS for the owner; Phase 2f
+is two defects found on 2026-09-01 and not yet fixed. **CI runs green as of 2026-09-01** — see
+KNOWN ISSUES.
+
+**The handover to Google Antigravity is `AGENTS.md` (read on open by Antigravity, Cursor and
+Copilot) plus `docs/antigravity-prompts.md` (nine ready-to-run task prompts).**
 
 ## CURRENT MILESTONE
 
@@ -41,11 +52,10 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**LQIP wiring is DONE (PR follows). PR #13 (Phase 2f #1) and PR #14 (Phase 2f #2) are OPEN and unmerged.**
+**Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
+`media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
 
-Engineering is complete across Phase 2. What remains open:
-- **Phase 2e's five owner decisions** (editorial copy, brand policy, review approvals).
-- Merge open PRs (#12, #13, #14, and LQIP).
+Also open: Phase 2e's five owner decisions.
 
 ---
 
@@ -152,45 +162,30 @@ Each is a real product or SEO judgement call, not an oversight.
 
 ---
 
-## Phase 2f — found 2026-09-01 during the Antigravity handover audit (NOT yet fixed)
+## Phase 2f — found 2026-09-01 during the Antigravity handover audit
 
-Two defects that previous phases missed, both verified against the running database and HEAD.
+### 1 · The superseded proposition is still live on every page: DONE (2026-09-01)
 
-### 1 · The superseded proposition is still live on every page — TOP ENGINEERING ITEM
+The footer now renders `tFooter("tagline")` via `src/app/[locale]/(v2)/layout.tsx`, activating the
+registered and translated `Footer.tagline` slot ("Handcrafted resin art, made to order.") across all nine
+locales (`ar`, `de`, `es`, `fr`, `gu`, `hi`, `ja`, `zh`, `en`). The dead slot in `messages/*.json` is
+wired and owner-editable via `/studio/site-copy`.
 
-Phase 2b recorded the Footer as "checked and found consistent". **That was wrong** and the
-correction is inline above. The footer renders `settings.tagline` → `SITE.tagline`, not the
-next-intl slot, and it still reads:
+The superseded "3D printing" proposition has been purged from code fallbacks and metadata:
+- `src/lib/constants.ts:24` (`SITE.tagline`) updated to `"Handcrafted resin art, made to order."`
+- `prisma/seed.ts:327` & `337` (`SiteSettings.tagline` and `defaultSeo`) updated
+- `src/app/manifest.ts:30` fallback PWA description updated
+- `blog/[slug]/opengraph-image.tsx:45` & `product/[slug]/opengraph-image.tsx:49` use `brand.tagline`
+- `src/app/shared-metadata.ts:13` default title & description updated
+- `src/components/studio/settings/seo-form.tsx:100` and `settings-form.tsx:189` placeholders updated
+- Automated regression test added in `src/lib/footer-tagline.test.ts` (6 assertions, proven red before fix, now green)
 
-> *"Luxury custom resin art & 3D printing, made to order in India"*
+### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably: DONE (2026-09-01)
 
-That bypasses next-intl entirely, so it renders in **English on every page in all nine locales**.
-Six sites carry the string:
-
-| Where | What it feeds |
-|---|---|
-| `src/lib/constants.ts:24` | `SITE.tagline`, the footer fallback |
-| `SiteSettings.tagline` (DB row) | the footer, live |
-| `prisma/seed.ts:327` | seeds that row on every fresh environment |
-| `src/app/manifest.ts:30` | the PWA description |
-| `blog/[slug]/opengraph-image.tsx:45` | OG card subtitle |
-| `product/[slug]/opengraph-image.tsx:49` | OG card subtitle |
-
-Worse: `Footer.tagline` in `messages/*.json` ("Handcrafted resin art, made to order.") IS a
-registered, translated, owner-editable site-copy slot that **nothing reads** — the owner can edit it
-in `/studio/site-copy` and see no change anywhere.
-
-**Needs the owner to supply one sentence.** Then: update the row, the five code sites, and either
-render `Footer.tagline` properly or delete it from the registry so `copy:check` stops advertising a
-field that changes nothing. Size: S, or M if the dead slot is wired.
-
-### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably
-
-`media-usages.ts` still does not walk Tiptap Json — `BlogPost.content` (55 rows), `Page.content`
-(the /privacy and /terms bodies) and the `richText` custom block. The rich-text editor inserts
-arbitrary image URLs, and `/studio/media` offers those files in a bulk unused sweep. Vercel Blob
-deletion is not recoverable and the page then renders a broken image with nothing surfacing it.
-This is the fourth instance of the `media-usages.ts` header rule being broken. Size: M.
+`media-usages.ts` now walks Tiptap Json trees across `BlogPost.content` (and translations),
+`Page.content` (and translations), and `CustomBlock`'s `richText` body (and translations).
+Extracted pure recursion helper `src/lib/tiptap-media.ts` with comprehensive unit tests
+(`src/lib/tiptap-media.test.ts`). Proved failure before fix (all 4 integration tests red), now all green.
 
 
 ---
@@ -368,10 +363,11 @@ The 2,900 supplies and 3D-printing products (1,841 molds/tools, 648 pigments, 40
 the art ecosystem; supplies and print keep their own tabs, category pages and URLs.
 **Implemented in Phase 2a.**
 
-### D4 — CI: **proceed with local verification**
-GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate
-set is run locally before every push and the results reported explicitly. The owner fixes billing
-when convenient; no work is blocked on it.
+### D4 — CI: **proceed with local verification** — SUPERSEDED 2026-09-01
+Actions could not allocate a runner (billing/minutes), so the full gate set was run locally before
+every push and reported explicitly. **Billing is now restored and CI runs green** — see KNOWN
+ISSUES. Local runs are still worth doing before a push (they are faster than a CI round trip), but
+they are no longer the only evidence.
 
 ---
 
@@ -455,19 +451,39 @@ introduced.
 
 ## KNOWN ISSUES
 
-### BLOCKER — GitHub Actions cannot run on this repository
-`ci.yml` now triggers correctly (fixed in Phase 0.5) and fired [run #1](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33363959495),
-the first in the project's history. **Both attempts failed in ~2–6s with `runner_id: 0`, no runner
-name, and HTTP 404 on log download** — no step ever executed. The repository is **private** with
-Actions enabled, so this is an Actions minutes / spending-limit condition, not a code failure.
+### RESOLVED 2026-09-01 — GitHub Actions now runs
 
-Two independent attempts on commit `f3d1ab9` produced the identical signature, ruling out a
-transient glitch. The single sanctioned re-run has been spent.
+For the whole transformation, Actions could not allocate a runner on this private repository:
+every job died in ~2–6s with `runner_id: 0`, no runner name, and HTTP 404 on log download — no
+step ever executed. It was an account-level minutes/spending condition, not a code failure, and it
+was verified across twelve pull requests with an identical signature every time.
 
-**Owner action required:** Settings → Billing and licensing → Plans and usage → Actions — raise the
-spending limit, wait for the monthly reset, or make the repository public (Actions minutes are free
-for public repos). Until then CI cannot verify anything, and the local gate run recorded under
-BUILD STATUS is the only evidence available.
+**The owner restored billing between 16:52 on 2026-08-31 and 03:44 on 2026-09-01.** Run
+[#26](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33467319172) on
+`bc23f4d` is **the first fully green CI run in the project's history** (03:44–03:54 UTC, runners
+`1000000844`/`1000000845`); run
+[#30](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33470108966) on
+`f6203eb` repeated it ten minutes later. Every step executed:
+
+| Job | Result |
+|---|---|
+| Typecheck · lint · copy:check · i18n · 352 tests | **success**, 1m56s |
+| `npm run build` against a throwaway Postgres | **success**, 2m26s |
+| Design audit + RTL | **success** |
+| Accessibility audit | **success** |
+| Studio audit (30 staff routes) | **success**, 2m28s |
+| Lighthouse budget | **success** |
+
+A note on how the change was missed. Run #26 finished at 03:54 and nobody noticed for forty
+minutes: this session received the Vercel notifications for that same commit, checked Vercel,
+and did not look at Actions — because Actions had failed in two seconds for twelve consecutive
+PRs and had stopped being worth checking. A signal you have written off is a signal you stop
+reading, which is the same failure mode as a stale document.
+
+Two things worth carrying forward. **CI checks more than the local runs did** — the Studio audit
+and the Lighthouse budget were not part of the routine local sweep, and both passed. And
+**everything merged before 2026-09-01 was self-verified**: twelve PRs went in on gates run by the
+same agent that wrote the code. CI agreeing now is good evidence, but it is retrospective.
 
 ### Pre-existing defects
 15 catalogued in `docs/PROJECT-AUDIT.md` §9; 8 fixed in Phase 0.5. Most severe remaining:

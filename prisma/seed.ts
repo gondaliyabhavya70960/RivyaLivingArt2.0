@@ -324,7 +324,7 @@ async function main() {
     create: {
       id: "main",
       brandName: "Rivya Living Art",
-      tagline: "Luxury custom resin art & 3D printing, made to order in India",
+      tagline: "Handcrafted resin art, made to order.",
       announcement:
         "Made-to-order luxury resin art — every order finalized personally on WhatsApp",
       phone: "+91 7096036250",
@@ -334,9 +334,9 @@ async function main() {
       address: "",
       socials: {},
       defaultSeo: {
-        title: "Rivya Living Art — Luxury Custom Resin Art & 3D Printing",
+        title: "Rivya Living Art — Handcrafted Resin Art & Commissions",
         description:
-          "Bespoke resin art, personalized gifts, nameplates, wedding keepsakes and custom 3D printing — handcrafted to order in India.",
+          "Bespoke resin art, large-format commissions, nameplates and heirloom pieces — handcrafted to order in India.",
       },
       defaultCareNotes:
         "Dust with a soft microfibre cloth. Keep out of prolonged direct sunlight and away from sustained heat. Wipe clean — never soak. Avoid alcohol or acetone-based cleaners.",

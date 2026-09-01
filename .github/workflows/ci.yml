@@ -119,6 +119,11 @@ jobs:
       # next build — the same sequence Vercel runs.
       - run: npm run build
 
+      # The first database-backed tests (Prompt 07): executes queries against
+      # the throwaway Postgres container stood up in this job.
+      - name: Database-backed tests
+        run: npm run test:db
+
       # The audits drive a real browser. The version is read from
       # `playwright-core` rather than pinned here, so bumping the dependency
       # cannot leave CI installing a revision its own library refuses to use.
