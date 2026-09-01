@@ -28,6 +28,7 @@ import {
   AccordionTrigger,
 } from "@/components/storefront/accordion";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
+import { buildProductBreadcrumbs } from "@/lib/breadcrumbs";
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
@@ -260,14 +261,16 @@ export default async function ProductPage({ params }: PageProps) {
     TRANSLATABLE_FIELDS.category,
   );
 
-  const [messages, tCommon, tNav, tWaOrder, tHome, tBlog] = await Promise.all([
-    getMessages(),
-    getTranslations("Common"),
-    getTranslations("Nav"),
-    getTranslations("WhatsAppOrder"),
-    getTranslations("Home"),
-    getTranslations("Blog"),
-  ]);
+  const [messages, tCommon, tNav, tWaOrder, tHome, tBlog, tShop] =
+    await Promise.all([
+      getMessages(),
+      getTranslations("Common"),
+      getTranslations("Nav"),
+      getTranslations("WhatsAppOrder"),
+      getTranslations("Home"),
+      getTranslations("Blog"),
+      getTranslations("Shop"),
+    ]);
   // The PDP's own namespace ships English-first: catalogs that don't carry
   // "Product" yet resolve against the default-locale catalog instead of
   // rendering raw key paths; real translations win the moment they land.
@@ -287,6 +290,11 @@ export default async function ProductPage({ params }: PageProps) {
   // Ecosystem group feeds the honest "Collection" spec row (audit H1 —
   // supplies and 3D print present as their own ecosystems).
   const group = groupForCategorySlug(product.category.slug);
+  const groupLabels = {
+    art: tShop("tabArt"),
+    supplies: tShop("tabSupplies"),
+    print: tShop("tabPrint"),
+  } as const;
 
   const [
     settings,
@@ -523,10 +531,15 @@ export default async function ProductPage({ params }: PageProps) {
     { label: tNav("shop"), href: "/shop" },
     { label: category.name, href: `/shop/${product.category.slug}` },
   ];
-  const breadcrumbItems = [
-    ...breadcrumbs.map((crumb) => ({ label: crumb.label, href: crumb.href })),
-    { label: p.title },
-  ];
+  const breadcrumbItems = buildProductBreadcrumbs({
+    homeLabel: tCommon("home"),
+    shopLabel: tNav("shop"),
+    categoryName: category.name,
+    categorySlug: product.category.slug,
+    productTitle: p.title,
+    group,
+    groupLabel: groupLabels[group],
+  });
 
   const priceLabel = product.showPrice
     ? formatPriceBand(product.priceMin, product.priceMax)

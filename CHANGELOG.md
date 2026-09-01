@@ -5,7 +5,21 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Search: non-quantified productsShowMore label across all 9 locales (Prompt Deck Decision 2)
+## [Unreleased] — Navigation: group-aware breadcrumbs on supplies and 3D print pages (Prompt Deck Decision 3)
+
+### The finding
+On category collection pages (`/shop/[category]`) and product detail pages (`/product/[slug]`), the
+"Shop" breadcrumb pointed to `/shop` (which defaults to the art shelf). For supplies and 3D print
+categories/products, walking back up the breadcrumb trail lost the visitor's ecosystem context
+and unexpectedly dropped them into art pieces.
+
+### Changed
+- **`src/lib/breadcrumbs.ts`**: Authored pure helpers `buildCategoryBreadcrumbs` and `buildProductBreadcrumbs` that insert the ecosystem group crumb (`/shop?type=supplies` or `/shop?type=print`) for non-art categories and products, while leaving the art hierarchy clean.
+- **`src/app/[locale]/(v2)/shop/[category]/page.tsx`**: Wired `buildCategoryBreadcrumbs` into the visible `<Breadcrumb />`. Left `breadcrumbJsonLd` on canonical `/shop` to adhere to SEO and non-canonical URL constraints.
+- **`src/app/[locale]/(v2)/product/[slug]/page.tsx`**: Wired `buildProductBreadcrumbs` into the visible `<Breadcrumb />`. Left `breadcrumbJsonLd` on canonical `/shop`.
+- **`src/lib/breadcrumbs.test.ts`**: Added pure unit test suite covering art, supplies, and print breadcrumb hierarchies for both categories and products.
+
+## Search: non-quantified productsShowMore label across all 9 locales (Prompt Deck Decision 2)
 
 ### The finding
 `Search.productsShowMore` previously used `{total}` interpolation with art-specific nouns

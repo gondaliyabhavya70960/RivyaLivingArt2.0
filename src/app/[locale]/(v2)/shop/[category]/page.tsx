@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { BeforeAfter } from "@/components/portfolio/before-after";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
+import { buildCategoryBreadcrumbs } from "@/lib/breadcrumbs";
 import { Button } from "@/components/storefront/button";
 import { CollectionCard } from "@/components/storefront/collection-card";
 import { Pagination } from "@/components/storefront/pagination";
@@ -362,11 +363,13 @@ export default async function ShopCategoryPage({
         <div className="u-shell relative flex flex-col gap-6 pt-16 pb-16 md:pt-20 md:pb-20">
           <Breadcrumb
             ariaLabel={tCommon("breadcrumb")}
-            items={[
-              { label: tCommon("home"), href: "/" },
-              { label: tNav("shop"), href: "/shop" },
-              { label: category.name },
-            ]}
+            items={buildCategoryBreadcrumbs({
+              homeLabel: tCommon("home"),
+              shopLabel: tNav("shop"),
+              categoryName: category.name,
+              group,
+              groupLabel: groupLabels[group],
+            })}
           />
           <p className="u-micro text-champagne">{groupLabels[group]}</p>
           <h1
