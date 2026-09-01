@@ -177,16 +177,19 @@ export function MeniscusImage({
    * optimizer pipeline as `<Image>`, so the mobile file gets its own srcSet
    * rather than a single unresponsive URL.
    */
+  // REDESIGN.md §15.5 / prompt deck:
+  // 1. Keyed on resolved URL (srcString).
+  // 2. Skip when priority is set (LCP must never be delayed).
+  // 3. Skip when mobile crop is present (avoiding desktop blur under mobile image).
+  // 4. Merge objectFit: "cover" into style so Next derives full-frame background-size.
+  const canBlur = !props.priority && !mobileSrc;
   const srcString = typeof props.src === "string" ? props.src : undefined;
-  const desktopBlur = props.blurDataURL ?? getLqipBlur(srcString);
-  const mobileBlur = mobileSrc
-    ? (props.blurDataURL ?? getLqipBlur(mobileSrc))
-    : undefined;
+  const blurDataURL = canBlur ? (props.blurDataURL ?? getLqipBlur(srcString)) : undefined;
 
   const imageProps = {
     ...props,
-    ...(desktopBlur && !props.placeholder
-      ? { placeholder: "blur" as const, blurDataURL: desktopBlur }
+    ...(blurDataURL && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL }
       : {}),
   };
 
@@ -194,9 +197,6 @@ export function MeniscusImage({
     ? getImageProps({
         ...imageProps,
         src: mobileSrc,
-        ...(mobileBlur && !props.placeholder
-          ? { placeholder: "blur" as const, blurDataURL: mobileBlur }
-          : {}),
       }).props
     : null;
 
@@ -207,17 +207,14 @@ export function MeniscusImage({
     <Image
       {...imageProps}
       className={cn("h-full w-full", imageClassName)}
-      style={
+      style={{
+        ...(blurDataURL ? { objectFit: "cover" as const } : {}),
+        ...props.style,
         // Only written when a focal point was actually chosen, so an untouched
         // slot emits no inline style at all and whatever object-position
         // `imageClassName` sets still wins.
-        focal
-          ? {
-              ...props.style,
-              objectPosition: `${focal.x * 100}% ${focal.y * 100}%`,
-            }
-          : props.style
-      }
+        ...(focal ? { objectPosition: `${focal.x * 100}% ${focal.y * 100}%` } : {}),
+      }}
     />
   );
 

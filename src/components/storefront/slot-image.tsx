@@ -39,17 +39,20 @@ export function SlotImage({
   /** Empty string for a decorative frame — most full-bleed heroes are. */
   alt: string;
 }) {
-  const desktopBlur = props.blurDataURL ?? getLqipBlur(slot.url);
-  const mobileBlur = slot.mobileUrl
-    ? (props.blurDataURL ?? getLqipBlur(slot.mobileUrl))
-    : undefined;
+  // REDESIGN.md §15.5 / prompt deck:
+  // 1. Keyed on resolved URL (slot.url).
+  // 2. Skip when priority is set (LCP must never be delayed).
+  // 3. Skip when mobile crop is present (avoiding desktop blur under mobile image).
+  // 4. Merge objectFit: "cover" into style so Next derives full-frame background-size.
+  const canBlur = !props.priority && !slot.mobileUrl;
+  const blurDataURL = canBlur ? (props.blurDataURL ?? getLqipBlur(slot.url)) : undefined;
 
   const shared = {
     ...props,
     alt,
     unoptimized: !isOptimizableImageSrc(slot.url),
-    ...(desktopBlur && !props.placeholder
-      ? { placeholder: "blur" as const, blurDataURL: desktopBlur }
+    ...(blurDataURL && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL }
       : {}),
   };
 
@@ -59,21 +62,17 @@ export function SlotImage({
         alt,
         src: slot.mobileUrl,
         unoptimized: !isOptimizableImageSrc(slot.mobileUrl),
-        ...(mobileBlur && !props.placeholder
-          ? { placeholder: "blur" as const, blurDataURL: mobileBlur }
-          : {}),
       }).props
     : null;
 
   // Centred is CSS's own default, so an untouched slot emits no inline style
   // and whatever `className` sets still applies.
   const moved = slot.focalX !== 0.5 || slot.focalY !== 0.5;
-  const style = moved
-    ? {
-        ...props.style,
-        objectPosition: `${slot.focalX * 100}% ${slot.focalY * 100}%`,
-      }
-    : props.style;
+  const style = {
+    ...(blurDataURL ? { objectFit: "cover" as const } : {}),
+    ...props.style,
+    ...(moved ? { objectPosition: `${slot.focalX * 100}% ${slot.focalY * 100}%` } : {}),
+  };
 
   if (!mobile?.srcSet) {
     // `alt` is in `shared`; the rule cannot see through the spread.
