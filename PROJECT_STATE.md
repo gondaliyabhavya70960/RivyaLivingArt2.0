@@ -25,6 +25,7 @@ still ships it on two lines and is the one place it is actively harmful — see 
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
+**Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
 **Phase 2 is closed** and merged to `main`. Phase 2e is five OPEN QUESTIONS for the owner; Phase 2f
@@ -51,12 +52,10 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**Phase 2f #1: the footer tagline.** The superseded "3D printing" proposition is live on every
-page in all nine locales; it needs one sentence from the owner, then six edits. That is the highest-
-value open item and it outranks the LQIP work.
+**Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
+`media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
 
-Also open: Phase 2e's five owner decisions, and the LQIP wiring (REDESIGN.md §15.5) — the only
-sizeable engineering left, and smaller than previously recorded (two chokepoints, not eleven).
+Also open: Phase 2e's five owner decisions.
 
 ---
 
@@ -165,45 +164,30 @@ Each is a real product or SEO judgement call, not an oversight.
 
 ---
 
-## Phase 2f — found 2026-09-01 during the Antigravity handover audit (NOT yet fixed)
+## Phase 2f — found 2026-09-01 during the Antigravity handover audit
 
-Two defects that previous phases missed, both verified against the running database and HEAD.
+### 1 · The superseded proposition is still live on every page: DONE (2026-09-01)
 
-### 1 · The superseded proposition is still live on every page — TOP ENGINEERING ITEM
+The footer now renders `tFooter("tagline")` via `src/app/[locale]/(v2)/layout.tsx`, activating the
+registered and translated `Footer.tagline` slot ("Handcrafted resin art, made to order.") across all nine
+locales (`ar`, `de`, `es`, `fr`, `gu`, `hi`, `ja`, `zh`, `en`). The dead slot in `messages/*.json` is
+wired and owner-editable via `/studio/site-copy`.
 
-Phase 2b recorded the Footer as "checked and found consistent". **That was wrong** and the
-correction is inline above. The footer renders `settings.tagline` → `SITE.tagline`, not the
-next-intl slot, and it still reads:
+The superseded "3D printing" proposition has been purged from code fallbacks and metadata:
+- `src/lib/constants.ts:24` (`SITE.tagline`) updated to `"Handcrafted resin art, made to order."`
+- `prisma/seed.ts:327` & `337` (`SiteSettings.tagline` and `defaultSeo`) updated
+- `src/app/manifest.ts:30` fallback PWA description updated
+- `blog/[slug]/opengraph-image.tsx:45` & `product/[slug]/opengraph-image.tsx:49` use `brand.tagline`
+- `src/app/shared-metadata.ts:13` default title & description updated
+- `src/components/studio/settings/seo-form.tsx:100` and `settings-form.tsx:189` placeholders updated
+- Automated regression test added in `src/lib/footer-tagline.test.ts` (6 assertions, proven red before fix, now green)
 
-> *"Luxury custom resin art & 3D printing, made to order in India"*
+### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably: DONE (2026-09-01)
 
-That bypasses next-intl entirely, so it renders in **English on every page in all nine locales**.
-Six sites carry the string:
-
-| Where | What it feeds |
-|---|---|
-| `src/lib/constants.ts:24` | `SITE.tagline`, the footer fallback |
-| `SiteSettings.tagline` (DB row) | the footer, live |
-| `prisma/seed.ts:327` | seeds that row on every fresh environment |
-| `src/app/manifest.ts:30` | the PWA description |
-| `blog/[slug]/opengraph-image.tsx:45` | OG card subtitle |
-| `product/[slug]/opengraph-image.tsx:49` | OG card subtitle |
-
-Worse: `Footer.tagline` in `messages/*.json` ("Handcrafted resin art, made to order.") IS a
-registered, translated, owner-editable site-copy slot that **nothing reads** — the owner can edit it
-in `/studio/site-copy` and see no change anywhere.
-
-**Needs the owner to supply one sentence.** Then: update the row, the five code sites, and either
-render `Footer.tagline` properly or delete it from the registry so `copy:check` stops advertising a
-field that changes nothing. Size: S, or M if the dead slot is wired.
-
-### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably
-
-`media-usages.ts` still does not walk Tiptap Json — `BlogPost.content` (55 rows), `Page.content`
-(the /privacy and /terms bodies) and the `richText` custom block. The rich-text editor inserts
-arbitrary image URLs, and `/studio/media` offers those files in a bulk unused sweep. Vercel Blob
-deletion is not recoverable and the page then renders a broken image with nothing surfacing it.
-This is the fourth instance of the `media-usages.ts` header rule being broken. Size: M.
+`media-usages.ts` now walks Tiptap Json trees across `BlogPost.content` (and translations),
+`Page.content` (and translations), and `CustomBlock`'s `richText` body (and translations).
+Extracted pure recursion helper `src/lib/tiptap-media.ts` with comprehensive unit tests
+(`src/lib/tiptap-media.test.ts`). Proved failure before fix (all 4 integration tests red), now all green.
 
 
 ---

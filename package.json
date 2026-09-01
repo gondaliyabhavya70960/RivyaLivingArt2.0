@@ -13,6 +13,7 @@
     "postinstall": "prisma generate",
     "db:bootstrap": "tsx prisma/bootstrap.ts",
     "test": "vitest run",
+    "test:db": "vitest run --config vitest.db.config.mts",
     "test:e2e": "node scripts/e2e-smoke.mjs",
     "copy:registry": "node scripts/site-copy-registry.mjs",
     "copy:check": "node scripts/site-copy-registry.mjs --check"

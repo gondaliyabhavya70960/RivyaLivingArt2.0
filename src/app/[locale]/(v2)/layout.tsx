@@ -139,7 +139,7 @@ export default async function V2Layout({
         studioLinks={toFooterLinks(nav["footer-studio"])}
         journalLinks={toFooterLinks(nav["footer-journal"])}
         legalLinks={toFooterLinks(nav["footer-legal"])}
-        tagline={settings.tagline}
+        tagline={tFooter("tagline")}
         phoneDisplay={settings.phoneDisplay}
         phoneTel={settings.phoneTel}
         email={settings.email}

@@ -10,11 +10,11 @@ import { SITE } from "@/lib/constants";
 export const SHARED_METADATA: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Luxury Custom Resin Art & 3D Printing`,
+    default: `${SITE.name} — Handcrafted Resin Art & Commissions`,
     template: `%s · ${SITE.name}`,
   },
   description:
-    "Bespoke resin art, personalized gifts, nameplates, wedding keepsakes and custom 3D printing — handcrafted to order in India. Every piece an heirloom you'll keep forever.",
+    "Bespoke resin art, large-format commissions, nameplates and heirloom pieces — handcrafted to order in India. Every piece an heirloom you'll keep forever.",
   // OG/Twitter defaults inherit to every route via the Metadata API, so shares
   // of the home/shop/about pages carry a proper title, type and card (SEO-006).
   // The image must be EXPLICIT here: a config-level `openGraph` replaces the
