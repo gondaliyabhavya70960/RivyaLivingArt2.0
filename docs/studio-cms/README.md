@@ -1,5 +1,9 @@
 # Studio CMS — Making Every Word and Every Picture Editable
 
+> [!IMPORTANT]
+> **Plan documents frozen at their writing date.**
+> The files in this directory (`docs/studio-cms/`) are original design and planning documents preserved for historical rationale. Numbers reflect the initial spec (such as 57 image slots, whereas the shipped total is 62 slots). **`CLAUDE.md` and `PROJECT_STATE.md` are the current-state authorities.**
+
 **Goal:** every word, image, link and section on `www.rivyalivingart.com`
 editable from `/studio`, with no deploy.
 
