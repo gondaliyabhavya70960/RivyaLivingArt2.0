@@ -519,14 +519,13 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 
 ## LAST COMMIT ON MAIN
 
-`1e12553` — *Merge pull request #13 from gondaliyabhavya70960/fix/footer-tagline-proposition*
+`c3a8567` — *docs: sync studio-cms slot counts to 62 and retire mirror-images workflow*
 
 ## SAFE CONTINUATION POINT
 
-**Phase 1, Phase 2a, 2b, 2c, 2d, and 2f #1 are merged on `main`.**
-Draft PRs #14 (Phase 2f #2: Tiptap media delete guard), #16 (LQIP blur wiring), and #17 (.env.example cleanup) are open for review.
-D1 (rename scope) and D2 (catalogue preservation) were answered and implemented in Phase 1 & 2.
-Current state: 34 unit test files / 358 tests passing, 44 migrations applied, 62 image slots, 1,181 copy slots.
+**Phase 1, Phase 2 (all parts 2a–2f), all 8 Antigravity prompt deck tasks, all 3 owner prompt deck decisions, pre-2a category bookmarks inference, and docs sync are merged on `main`.**
+All PRs (#13 through #26) are merged into `main` and pushed to `origin/main`.
+Current state: 43 unit test files / 405 tests passing, 44 migrations applied, 62 image slots, 1,181 copy slots (0 missing translations across all 9 locales).
 
 ### Reproducing the verified environment
 ```bash
