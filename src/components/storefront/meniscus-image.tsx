@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image, { getImageProps, type ImageProps } from "next/image";
 
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { getLqipBlur } from "@/lib/lqip";
 import { cn } from "@/lib/utils";
 
 /**
@@ -176,8 +177,27 @@ export function MeniscusImage({
    * optimizer pipeline as `<Image>`, so the mobile file gets its own srcSet
    * rather than a single unresponsive URL.
    */
+  const srcString = typeof props.src === "string" ? props.src : undefined;
+  const desktopBlur = props.blurDataURL ?? getLqipBlur(srcString);
+  const mobileBlur = mobileSrc
+    ? (props.blurDataURL ?? getLqipBlur(mobileSrc))
+    : undefined;
+
+  const imageProps = {
+    ...props,
+    ...(desktopBlur && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL: desktopBlur }
+      : {}),
+  };
+
   const mobile = mobileSrc
-    ? getImageProps({ ...props, src: mobileSrc }).props
+    ? getImageProps({
+        ...imageProps,
+        src: mobileSrc,
+        ...(mobileBlur && !props.placeholder
+          ? { placeholder: "blur" as const, blurDataURL: mobileBlur }
+          : {}),
+      }).props
     : null;
 
   /* `alt` is required by ImageProps, so it always arrives in the spread — the
@@ -185,7 +205,7 @@ export function MeniscusImage({
   const image = (
     // eslint-disable-next-line jsx-a11y/alt-text
     <Image
-      {...props}
+      {...imageProps}
       className={cn("h-full w-full", imageClassName)}
       style={
         // Only written when a focal point was actually chosen, so an untouched

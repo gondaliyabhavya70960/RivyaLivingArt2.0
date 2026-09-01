@@ -1,6 +1,7 @@
 import Image, { getImageProps, type ImageProps } from "next/image";
 
 import { isOptimizableImageSrc } from "@/lib/image-src";
+import { getLqipBlur } from "@/lib/lqip";
 import type { SiteImageRef } from "@/lib/site-images";
 
 /**
@@ -38,10 +39,18 @@ export function SlotImage({
   /** Empty string for a decorative frame — most full-bleed heroes are. */
   alt: string;
 }) {
+  const desktopBlur = props.blurDataURL ?? getLqipBlur(slot.url);
+  const mobileBlur = slot.mobileUrl
+    ? (props.blurDataURL ?? getLqipBlur(slot.mobileUrl))
+    : undefined;
+
   const shared = {
     ...props,
     alt,
     unoptimized: !isOptimizableImageSrc(slot.url),
+    ...(desktopBlur && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL: desktopBlur }
+      : {}),
   };
 
   const mobile = slot.mobileUrl
@@ -50,6 +59,9 @@ export function SlotImage({
         alt,
         src: slot.mobileUrl,
         unoptimized: !isOptimizableImageSrc(slot.mobileUrl),
+        ...(mobileBlur && !props.placeholder
+          ? { placeholder: "blur" as const, blurDataURL: mobileBlur }
+          : {}),
       }).props
     : null;
 

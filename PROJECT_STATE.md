@@ -19,6 +19,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
+**LQIP wiring (REDESIGN.md §15.5): COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
 **Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
@@ -40,15 +41,11 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**PR #12 (Phase 2d) is OPEN and unmerged — `main` does not have it yet.** Merge it first, or you
-will re-derive its fixes.
+**LQIP wiring is DONE (PR follows). PR #13 (Phase 2f #1) and PR #14 (Phase 2f #2) are OPEN and unmerged.**
 
-Then **Phase 2f #1: the footer tagline.** The superseded "3D printing" proposition is live on every
-page in all nine locales; it needs one sentence from the owner, then six edits. That is the highest-
-value open item and it outranks the LQIP work.
-
-Also open: Phase 2e's five owner decisions, and the LQIP wiring (REDESIGN.md §15.5) — the only
-sizeable engineering left, and smaller than previously recorded (two chokepoints, not eleven).
+Engineering is complete across Phase 2. What remains open:
+- **Phase 2e's five owner decisions** (editorial copy, brand policy, review approvals).
+- Merge open PRs (#12, #13, #14, and LQIP).
 
 ---
 
@@ -143,14 +140,12 @@ Each is a real product or SEO judgement call, not an oversight.
   must do it.
 - **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
   current-state docs.
-- **LQIP wiring** (REDESIGN.md §15.5): `media-v3-blur.json` holds 25 real entries and is still
-  imported by nothing. The join must key on the **resolved** URL, not the slot fallback — an owner
-  override would otherwise paint master A's blur under photograph B. Verified safe against §2.7
-  ("no image fades in"): next/image's blur placeholder emits no CSS transition. **Not ~11 call
-  sites — there are exactly TWO chokepoints**, `SlotImage` (6 render sites) and `MeniscusImage` (28),
-  so one helper covers all 34. Caveat to document in the file header: `prisma/bootstrap.ts` repoints
-  every slot at a random-suffixed Blob URL on a fresh production deploy, after which every lookup
-  misses and the feature is silently inert in production while local dev still shows blurs.
+- **LQIP wiring** (REDESIGN.md §15.5): **DONE (2026-09-01)**. `media-v3-blur.json` (25 entries) is
+  wired through pure helper `src/lib/lqip.ts` into the two storefront chokepoints (`SlotImage` and
+  `MeniscusImage`), covering all 34 render sites. Keying is strictly on resolved URLs/pathnames
+  so overrides never paint incorrect blurs. Fully tested in `src/lib/lqip.test.ts`. Caveat documented:
+  `prisma/bootstrap.ts` repoints slots to random-suffixed Blob URLs on a fresh production deploy,
+  so lookups hit in local dev/bundled fallback environments.
 - **`.github/workflows/mirror-images.yml`** says in its own header it is safe to delete now the
   images are committed. **Naming hazard:** `src/app/api/cron/mirror-images/route.ts` and
   `vercel.json` are a LIVE production cron with almost the same name — do not grep-delete.

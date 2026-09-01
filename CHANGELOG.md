@@ -5,7 +5,24 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2d: the shop kept promises it could not deliver
+## [Unreleased] — REDESIGN.md §15.5: LQIP wiring across SlotImage and MeniscusImage
+
+### The finding
+`media-v3-blur.json` held 25 real blur hashes generated during Part 15 asset production, but was
+imported by nothing in the codebase. Editorial imagery mounted without blur placeholders.
+
+### Changed
+- **`src/lib/lqip.ts`**: Pure LQIP lookup helper `getLqipBlur` keying strictly on the resolved
+  pathname/URL of bundled master images. Custom uploads and unknown images safely evaluate to
+  `undefined`, preventing painting master A's blur under photograph B.
+- **`src/components/storefront/slot-image.tsx`**: Wired `getLqipBlur` for both desktop and mobile
+  crops into `<Image>` and `<source>` responsive descriptors.
+- **`src/components/storefront/meniscus-image.tsx`**: Wired `getLqipBlur` for both desktop and mobile
+  crops into `<Image>` and `<source>` across all 28 meniscus call sites.
+- **`src/lib/lqip.test.ts`**: Added regression unit tests covering resolution, URL normalization,
+  and negative matches for custom/user uploads.
+
+## Phase 2d: the shop kept promises it could not deliver
 
 ### The finding
 `/search` searches the whole 4,373-product catalogue and then handed the visitor to `/shop`, which
