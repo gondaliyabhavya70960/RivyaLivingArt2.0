@@ -29,17 +29,19 @@ The prompts below deliberately do not repeat them.
 | # | Task | Status |
 |---|---|---|
 | 00 | Working agreement | run once, first |
-| 01 | Fix `.env.example` — it ships the retired domain | ready |
-| 02 | Retire the superseded tagline | **needs your sentence** |
-| 03 | Close the media-delete hole | ready · data loss |
-| 04 | Wire the LQIP placeholders | ready |
-| 05 | Make the reference documents true | ready · parallel-safe |
-| 06 | Three security hardening items | ready · parallel-safe |
-| 07 | The first database-backed tests | ready · do with or before 03 |
-| 08 | Enforce the CSP, in the right order | ready · parallel-safe |
+| 01 | Fix `.env.example` — it ships the retired domain | **COMPLETE (PR #17)** |
+| 02 | Retire the superseded tagline | **COMPLETE (PR #13)** |
+| 03 | Close the media-delete hole | **COMPLETE (PR #14)** |
+| 04 | Wire the LQIP placeholders | **COMPLETE (PR #16)** |
+| 05 | Make the reference documents true | **COMPLETE (PR #18)** |
+| 06 | Three security hardening items | **COMPLETE (PR #19)** |
+| 07 | The first database-backed tests | **COMPLETE (PR #21)** |
+| 08 | Enforce the CSP, in the right order | **COMPLETE (PR #20)** |
+| D1 | Shop: search descriptions in `/shop?q=` | **COMPLETE (PR #22)** |
+| D2 | Search: non-quantified label (9 locales) | **COMPLETE (PR #23)** |
+| D3 | Navigation: group-aware breadcrumbs | **COMPLETE (PR #24)** |
 
-Tasks 05–08 touch no shared files, so Antigravity's Agent Manager can run them
-concurrently with the sequential ones.
+All nine prompt deck tasks and all three owner enhancement decisions are complete and merged to `main`.
 
 ---
 
@@ -258,22 +260,14 @@ Never describe the CSP as enforced until the header key has actually changed.
 
 ---
 
-## Still the owner's to answer
+## Owner Decisions — All Answered & Shipped (2026-09-01)
 
-Three questions no agent should decide alone. Once answered, each is a few lines — paste
-the answers into one conversation and ask for them together.
-
-1. **Should `/shop?q=` search descriptions?** It matches titles only, so "resin" returns
-   23 of 1,668 matches. The GIN trigram index already exists, so it is one OR clause — but
-   it changes what the shop returns, which REDESIGN.md §1.1 puts off-limits without a
-   human. *Recommendation: yes.*
-2. **The "Show all N pieces" label.** Every locale uses an art word (`कृतियाँ`, `કૃતિઓ`,
-   `作品`) while N counts pigments and filament too. Keep the number, or move to a
-   non-quantified label? *Recommendation: non-quantified.*
-3. **Breadcrumbs on supplies and print pages** point "Shop" at the art shelf, so the trail
-   does not walk back up. *Recommendation: make the visible crumb group-aware and leave the
-   BreadcrumbList structured data on `/shop`, since the filtered URL declares itself
-   non-canonical.*
+1. **Should `/shop?q=` search descriptions?**
+   - **Answered & Shipped (PR #22)**: Added `{ description: { contains: q, mode: "insensitive" } }` to the `OR` clause in `src/lib/shop.ts` `buildProductWhere`.
+2. **The "Show all N pieces" label.**
+   - **Answered & Shipped (PR #23)**: Moved `Search.productsShowMore` to an inclusive, non-quantified label across all 9 locales.
+3. **Breadcrumbs on supplies and print pages.**
+   - **Answered & Shipped (PR #24)**: Visible crumbs are now group-aware (`Home > Shop > Supplies > Category`) while preserving canonical `BreadcrumbList` JSON-LD on `/shop`.
 
 ## CI: read this before trusting a green tick
 
