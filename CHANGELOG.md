@@ -5,12 +5,15 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Prompt Deck Task 06: three security hardening items
+## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
 
-### Changed
-- **`src/app/uploads/[...path]/route.ts`**: Hardened against path traversal using `path.resolve` containment assertion (`resolved.startsWith(ROOT + path.sep)`). Tested in `src/app/uploads/uploads-route.test.ts`.
-- **`src/app/api/upload/route.ts`**: Replaced client MIME trust with magic byte verification using `sharp(buffer).metadata()`. Validates JPEG, PNG, and WebP formats before persistence. Tested in `src/app/api/upload/upload-validation.test.ts`.
-- **`src/lib/rate-limit.ts`**: Documented the Vercel-only edge proxy contract on `clientIp` and added support for configurable `trustedProxyDepth` for multi-hop or self-hosted deployments. Tested in `src/lib/rate-limit.test.ts`.
+### Added
+- **`src/lib/shop.test.ts`**: Pure unit test suite covering `buildProductWhere` filter composition (status constraint, title/shortTagline search, ecosystem groups, catalog categories, occasions jsonb containment, inStock availability, and price band overlapping).
+- **`tests/db/product-where.test.ts`**: Database integration test verifying `buildProductWhere` queries against Postgres via Prisma without SQL/syntax errors.
+- **`tests/db/media-usages.test.ts`**: Database integration test verifying `findMediaUsages` and `findMediaUsageDetails` across all schema media-bearing tables against Postgres.
+- **`vitest.db.config.mts`**: Dedicated test runner configuration for database-backed tests (`tests/db/**/*.test.ts`), isolating them from the fast pure-function suite (`npm test`).
+- **`package.json`**: Added `"test:db": "vitest run --config vitest.db.config.mts"`.
+- **`.github/workflows/ci.yml`**: Added `npm run test:db` step in the `build` job against the disposable Postgres service container.
 
 ## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 

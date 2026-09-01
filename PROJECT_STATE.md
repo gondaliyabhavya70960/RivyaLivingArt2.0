@@ -9,7 +9,13 @@
 RivyaLivingArt2.0 — *Rivya Living Art*
 
 ## ORIGINAL PROJECT
-ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
+ResinRiva2.0 — *ResinRiva* (was live at `store.bhavyagondaliya.co.in`)
+
+## LIVE DOMAIN
+**`https://www.rivyalivingart.com`** — the current production origin. `SITE.url` normalises a
+trailing slash, so `NEXT_PUBLIC_SITE_URL` may be set with or without one. The retired
+`store.bhavyagondaliya.co.in` survives only in dated history notes and in `.env.example`, which
+still ships it on two lines and is the one place it is actively harmful — see Phase 2e.
 
 ## CURRENT PHASE
 **Phase 0 — ZIP import & forensic audit: COMPLETE**
@@ -19,10 +25,15 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2b — commission-led copy: COMPLETE** (the proposition surface was one key wider than the homepage)
 **Phase 2c — imagery: COMPLETE** (the owner supplied `public/`; verified, committed, and guarded)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
-**Phase 2f #1 — footer tagline & superseded proposition cleanup: COMPLETE**
+**Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
 
-**Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
+**Phase 2 is closed** and merged to `main`. Phase 2e is five OPEN QUESTIONS for the owner; Phase 2f
+is two defects found on 2026-09-01 and not yet fixed. **CI runs green as of 2026-09-01** — see
+KNOWN ISSUES.
+
+**The handover to Google Antigravity is `AGENTS.md` (read on open by Antigravity, Cursor and
+Copilot) plus `docs/antigravity-prompts.md` (nine ready-to-run task prompts).**
 
 ## CURRENT MILESTONE
 
@@ -44,8 +55,7 @@ than a silent 400.
 **Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
 `media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
 
-Also open: Phase 2e's five owner decisions, and the LQIP wiring (REDESIGN.md §15.5) — the only
-sizeable engineering left, and smaller than previously recorded (two chokepoints, not eleven).
+Also open: Phase 2e's five owner decisions.
 
 ---
 
@@ -130,24 +140,19 @@ Each is a real product or SEO judgement call, not an oversight.
 5. **Pre-2a `/shop?category=<non-art>` bookmarks** now return zero rows.
 
 ### Still open, unchanged
-- **`.env.example` is worse than previously recorded.** Besides omitting `DATABASE_URL_UNPOOLED`
-  (used by `prisma.config.ts` for migrations), `RESEND_FROM` and `CRON_SECRET`, it still carries the
-  RETIRED domain on two lines — `AUTH_URL=` and `NEXT_PUBLIC_SITE_URL=https://store.bhavyagondaliya.co.in`.
-  `SITE.url` prefers the env var over its correct fallback, so anyone who copies this file into a
-  real deploy inlines the wrong origin into every canonical, sitemap URL, JSON-LD `@id` and OG image
-  URL. `src/`, `prisma/`, `scripts/` and `.github/` are otherwise clean of that host — this file is
-  the last carrier. `.env*` edits are denied in this environment, so the owner (or a different IDE)
-  must do it.
+- **`.env.example`: FIXED (2026-09-01)**. Replaced retired domain `store.bhavyagondaliya.co.in` on
+  `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` with `https://www.rivyalivingart.com`. Added missing variables
+  `DATABASE_URL_UNPOOLED` (used by `prisma.config.ts`), `RESEND_FROM`, and `CRON_SECRET`. Validated in
+  `src/lib/env.ts` and tested in `src/lib/env.test.ts`. The repository is now 100% free of active
+  references to the retired domain.
 - **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
   current-state docs.
-- **LQIP wiring** (REDESIGN.md §15.5): `media-v3-blur.json` holds 25 real entries and is still
-  imported by nothing. The join must key on the **resolved** URL, not the slot fallback — an owner
-  override would otherwise paint master A's blur under photograph B. Verified safe against §2.7
-  ("no image fades in"): next/image's blur placeholder emits no CSS transition. **Not ~11 call
-  sites — there are exactly TWO chokepoints**, `SlotImage` (6 render sites) and `MeniscusImage` (28),
-  so one helper covers all 34. Caveat to document in the file header: `prisma/bootstrap.ts` repoints
-  every slot at a random-suffixed Blob URL on a fresh production deploy, after which every lookup
-  misses and the feature is silently inert in production while local dev still shows blurs.
+- **LQIP wiring** (REDESIGN.md §15.5): **DONE (2026-09-01)**. `media-v3-blur.json` (25 entries) is
+  wired through pure helper `src/lib/lqip.ts` into the two storefront chokepoints (`SlotImage` and
+  `MeniscusImage`), covering all 34 render sites. Keying is strictly on resolved URLs/pathnames
+  so overrides never paint incorrect blurs. Fully tested in `src/lib/lqip.test.ts`. Caveat documented:
+  `prisma/bootstrap.ts` repoints slots to random-suffixed Blob URLs on a fresh production deploy,
+  so lookups hit in local dev/bundled fallback environments.
 - **`.github/workflows/mirror-images.yml`** says in its own header it is safe to delete now the
   images are committed. **Naming hazard:** `src/app/api/cron/mirror-images/route.ts` and
   `vercel.json` are a LIVE production cron with almost the same name — do not grep-delete.
@@ -172,13 +177,12 @@ The superseded "3D printing" proposition has been purged from code fallbacks and
 - `src/components/studio/settings/seo-form.tsx:100` and `settings-form.tsx:189` placeholders updated
 - Automated regression test added in `src/lib/footer-tagline.test.ts` (6 assertions, proven red before fix, now green)
 
-### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably
+### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably: DONE (2026-09-01)
 
-`media-usages.ts` still does not walk Tiptap Json — `BlogPost.content` (55 rows), `Page.content`
-(the /privacy and /terms bodies) and the `richText` custom block. The rich-text editor inserts
-arbitrary image URLs, and `/studio/media` offers those files in a bulk unused sweep. Vercel Blob
-deletion is not recoverable and the page then renders a broken image with nothing surfacing it.
-This is the fourth instance of the `media-usages.ts` header rule being broken. Size: M.
+`media-usages.ts` now walks Tiptap Json trees across `BlogPost.content` (and translations),
+`Page.content` (and translations), and `CustomBlock`'s `richText` body (and translations).
+Extracted pure recursion helper `src/lib/tiptap-media.ts` with comprehensive unit tests
+(`src/lib/tiptap-media.test.ts`). Proved failure before fix (all 4 integration tests red), now all green.
 
 
 ---
@@ -356,25 +360,23 @@ The 2,900 supplies and 3D-printing products (1,841 molds/tools, 648 pigments, 40
 the art ecosystem; supplies and print keep their own tabs, category pages and URLs.
 **Implemented in Phase 2a.**
 
-### D4 — CI: **proceed with local verification**
-GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate
-set is run locally before every push and the results reported explicitly. The owner fixes billing
-when convenient; no work is blocked on it.
+### D4 — CI: **proceed with local verification** — SUPERSEDED 2026-09-01
+Actions could not allocate a runner (billing/minutes), so the full gate set was run locally before
+every push and reported explicitly. **Billing is now restored and CI runs green** — see KNOWN
+ISSUES. Local runs are still worth doing before a push (they are faster than a CI round trip), but
+they are no longer the only evidence.
 
 ---
 
 ## FILES CHANGED
 
-Baseline commit `32f21a6` — 920 files imported unmodified, 1 file modified (`README.md` replaced by
-the ZIP's own).
-This commit — added `docs/PROJECT-AUDIT.md`, `PROJECT_STATE.md`, `CHANGELOG.md`. **No source file
-has been modified yet.**
+Transformation from ResinRiva baseline `32f21a6` to Rivya Living Art 2.0:
+13 pull requests merged to `main` across Phase 1, Phase 2a–2d, and Phase 2f #1 (plus open draft PRs #14, #16, and #17).
 
 ## DATABASE MIGRATIONS
 
-43 existing migrations, **all applied successfully** to local Postgres 16.13.
-History is **purely additive** — zero `DROP TABLE` / `DROP COLUMN` / `ALTER COLUMN` across all 43.
-**No new migration written yet.**
+44 existing migrations in `prisma/migrations`, **all applied successfully** to local Postgres 16.
+History is **purely additive** — zero `DROP TABLE` / `DROP COLUMN` / `ALTER COLUMN` across all 44.
 
 ## DATA IMPORTS
 
@@ -392,7 +394,8 @@ All 64,496 rows are preserved in the repo. Nothing has been discarded.
 
 ## ASSETS
 
-- `public/` is **empty** in the ZIP — storefront media lives remotely.
+- `public/` is **committed**: 242 tracked files (22 MB), including all 25 master editorial images,
+  121 animation frames, and category covers.
 - **20 hard-coded Cloudinary URLs** under cloud `dhaqpl1kz`, folder segment `resinriva/`
   (`src/lib/media.ts:27-56` ×9, `prisma/seed-category-images.ts:27-37` ×11). These are live
   third-party asset addresses — **do not rename the string before migrating the assets.**
@@ -443,19 +446,39 @@ introduced.
 
 ## KNOWN ISSUES
 
-### BLOCKER — GitHub Actions cannot run on this repository
-`ci.yml` now triggers correctly (fixed in Phase 0.5) and fired [run #1](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33363959495),
-the first in the project's history. **Both attempts failed in ~2–6s with `runner_id: 0`, no runner
-name, and HTTP 404 on log download** — no step ever executed. The repository is **private** with
-Actions enabled, so this is an Actions minutes / spending-limit condition, not a code failure.
+### RESOLVED 2026-09-01 — GitHub Actions now runs
 
-Two independent attempts on commit `f3d1ab9` produced the identical signature, ruling out a
-transient glitch. The single sanctioned re-run has been spent.
+For the whole transformation, Actions could not allocate a runner on this private repository:
+every job died in ~2–6s with `runner_id: 0`, no runner name, and HTTP 404 on log download — no
+step ever executed. It was an account-level minutes/spending condition, not a code failure, and it
+was verified across twelve pull requests with an identical signature every time.
 
-**Owner action required:** Settings → Billing and licensing → Plans and usage → Actions — raise the
-spending limit, wait for the monthly reset, or make the repository public (Actions minutes are free
-for public repos). Until then CI cannot verify anything, and the local gate run recorded under
-BUILD STATUS is the only evidence available.
+**The owner restored billing between 16:52 on 2026-08-31 and 03:44 on 2026-09-01.** Run
+[#26](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33467319172) on
+`bc23f4d` is **the first fully green CI run in the project's history** (03:44–03:54 UTC, runners
+`1000000844`/`1000000845`); run
+[#30](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33470108966) on
+`f6203eb` repeated it ten minutes later. Every step executed:
+
+| Job | Result |
+|---|---|
+| Typecheck · lint · copy:check · i18n · 352 tests | **success**, 1m56s |
+| `npm run build` against a throwaway Postgres | **success**, 2m26s |
+| Design audit + RTL | **success** |
+| Accessibility audit | **success** |
+| Studio audit (30 staff routes) | **success**, 2m28s |
+| Lighthouse budget | **success** |
+
+A note on how the change was missed. Run #26 finished at 03:54 and nobody noticed for forty
+minutes: this session received the Vercel notifications for that same commit, checked Vercel,
+and did not look at Actions — because Actions had failed in two seconds for twelve consecutive
+PRs and had stopped being worth checking. A signal you have written off is a signal you stop
+reading, which is the same failure mode as a stale document.
+
+Two things worth carrying forward. **CI checks more than the local runs did** — the Studio audit
+and the Lighthouse budget were not part of the routine local sweep, and both passed. And
+**everything merged before 2026-09-01 was self-verified**: twelve PRs went in on gates run by the
+same agent that wrote the code. CI agreeing now is good evidence, but it is retrospective.
 
 ### Pre-existing defects
 15 catalogued in `docs/PROJECT-AUDIT.md` §9; 8 fixed in Phase 0.5. Most severe remaining:
@@ -500,22 +523,16 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 - 9 locales, 1,181 keys each, `localePrefix: "as-needed"`.
 - Scraper writes only to `ScrapedProduct`, never `Product`. Import creates `DRAFT` + `needsRewrite`.
 
-## LAST COMMIT
+## LAST COMMIT ON MAIN
 
-`32f21a6` — *Import ResinRiva2.0 source as transformation baseline* (920 files, unmodified)
-`54974ff` — *Phase 0: forensic audit of the imported baseline* (documentation only)
-(this Phase 0.5 defect-fix commit follows)
+`1e12553` — *Merge pull request #13 from gondaliyabhavya70960/fix/footer-tagline-proposition*
 
 ## SAFE CONTINUATION POINT
 
-**Phases 0 and 0.5 are complete and committed.** No application code has been modified — the
-changes so far are workflows, previously-broken unwired scripts, and stale documentation.
-The baseline is verified green and fully reproducible from `32f21a6`.
-
-**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it, so
-a red CI from here is a real regression, not a pre-existing failure surfacing.
-
-Resume by answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename).
+**Phase 1, Phase 2a, 2b, 2c, 2d, and 2f #1 are merged on `main`.**
+Draft PRs #14 (Phase 2f #2: Tiptap media delete guard), #16 (LQIP blur wiring), and #17 (.env.example cleanup) are open for review.
+D1 (rename scope) and D2 (catalogue preservation) were answered and implemented in Phase 1 & 2.
+Current state: 34 unit test files / 358 tests passing, 44 migrations applied, 62 image slots, 1,181 copy slots.
 
 ### Reproducing the verified environment
 ```bash
