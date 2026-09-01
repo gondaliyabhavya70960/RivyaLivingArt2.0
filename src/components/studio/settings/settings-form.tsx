@@ -186,7 +186,7 @@ export function SettingsForm({ settings }: { settings: SiteSettingsValues }) {
             <Label htmlFor="settings-tagline">Tagline</Label>
             <Input
               id="settings-tagline"
-              placeholder="Luxury custom resin art, made to order"
+              placeholder="Handcrafted resin art, made to order."
               {...register("tagline")}
             />
           </div>

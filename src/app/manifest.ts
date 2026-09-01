@@ -27,7 +27,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     short_name: brandName,
     description:
       tagline ||
-      "Luxury custom resin art & 3D printing — made to order in India, every order finalized on WhatsApp.",
+      "Handcrafted resin art, made to order in India — every order finalized on WhatsApp.",
     start_url: "/",
     display: "standalone",
     theme_color: BRAND.royal,

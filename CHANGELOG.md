@@ -5,22 +5,38 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2f #2: walk Tiptap Json in media-usages to protect body images
+## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
+
+### Added
+- **`src/lib/shop.test.ts`**: Pure unit test suite covering `buildProductWhere` filter composition (status constraint, title/shortTagline search, ecosystem groups, catalog categories, occasions jsonb containment, inStock availability, and price band overlapping).
+- **`tests/db/product-where.test.ts`**: Database integration test verifying `buildProductWhere` queries against Postgres via Prisma without SQL/syntax errors.
+- **`tests/db/media-usages.test.ts`**: Database integration test verifying `findMediaUsages` and `findMediaUsageDetails` across all schema media-bearing tables against Postgres.
+- **`vitest.db.config.mts`**: Dedicated test runner configuration for database-backed tests (`tests/db/**/*.test.ts`), isolating them from the fast pure-function suite (`npm test`).
+- **`package.json`**: Added `"test:db": "vitest run --config vitest.db.config.mts"`.
+- **`.github/workflows/ci.yml`**: Added `npm run test:db` step in the `build` job against the disposable Postgres service container.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
 ### The finding
-`media-usages.ts` did not walk Tiptap Json documents (`BlogPost.content`, `Page.content`, and
-`CustomBlock` `richText` bodies, including their localized translation overlays). Because the
-studio rich-text editor inserts arbitrary image URLs, `/studio/media` offered those files in bulk
-"unused" sweeps. Deleting them through Vercel Blob irrecoverably broke body images across blog posts
-and pages.
+The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.
+As a result, the superseded proposition *"Luxury custom resin art & 3D printing, made to order in India"*
+rendered in English on every page in all nine locales. Meanwhile, the registered and translated
+`Footer.tagline` slot in `messages/*.json` ("Handcrafted resin art, made to order.") was completely unread.
+Additionally, five code fallbacks and database seed values still carried references to "3D printing".
 
 ### Changed
-- **`src/lib/tiptap-media.ts`**: Pure helper function `extractTiptapImageUrls` that recursively traverses arbitrary Tiptap JSON trees (including nested lists, blockquotes, translation overlays, and custom block payloads) and extracts all image URLs.
-- **`src/lib/media-usages.ts`**: Added `blogPostsContent`, `pagesContent`, and expanded `customBlocks` to include `richText`. Uses `extractTiptapImageUrls` to label and guard embedded images against deletions and library sweeps.
-- **`src/lib/tiptap-media.test.ts`**: Added comprehensive pure unit tests and integration tests demonstrating that blog post body images, translation images, legal page images, and landing page richText images are fully guarded.
+- **`src/app/[locale]/(v2)/layout.tsx` passes `tFooter("tagline")` into `<Footer />`**: Wires the existing translated slot across all nine locales (`ar`, `de`, `es`, `fr`, `gu`, `hi`, `ja`, `zh`, `en`) and makes it editable via `/studio/site-copy`.
+- **`src/lib/constants.ts`**: Updated `SITE.tagline` fallback to `"Handcrafted resin art, made to order."`.
+- **`src/app/manifest.ts`**: Updated PWA description fallback to `"Handcrafted resin art, made to order in India — every order finalized on WhatsApp."`.
+- **`src/app/[locale]/(v2)/product/[slug]/opengraph-image.tsx` & `blog/[slug]/opengraph-image.tsx`**: Dynamic fallback uses `brand.tagline` instead of hardcoded string.
+- **`src/app/shared-metadata.ts`**: Updated default title and description to remove superseded 3D printing claim.
+- **`prisma/seed.ts`**: Updated `SiteSettings.tagline` and `defaultSeo` to match the new proposition.
+- **`src/components/studio/settings/seo-form.tsx` & `settings-form.tsx`**: Updated placeholders.
+- **`src/lib/site-copy.generated.ts`**: Regenerated via `npm run copy:registry` (`copy:check` passes).
+- **`src/lib/footer-tagline.test.ts`**: Automated regression test proving the failure before the fix and verifying all six sites.
 
 ### Verified by reproducing the defect first
-`npx vitest run src/lib/tiptap-media.test.ts` failed on all 4 integration tests against unpatched code (`expected false to be true`), and passed all 8 tests once patched.
+`npx vitest run src/lib/footer-tagline.test.ts` produced 5 failing tests against the unpatched codebase (confirming hardcoded 3D printing claims and bypassing of `next-intl`), and all 6 tests passed once patched.
 
 ## Phase 2d: the shop kept promises it could not deliver
 
