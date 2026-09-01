@@ -18,16 +18,40 @@ const MAX_BUCKETS = 10_000;
 export type RateLimitResult = { ok: true } | { ok: false; retryAfterSeconds: number };
 
 /**
- * Best-effort client IP from a request's headers, for rate-limit keying. Reads
- * the first `x-forwarded-for` hop (Vercel sets this) and falls back to "anon"
- * so keying never crashes. Pass `(await headers())` in a Server Action or
- * `request.headers` in a route handler — one source for what was redeclared in
- * 6 places with drifting shapes (ENG-810). Callers that run outside a request
- * scope (e.g. Auth.js authorize) should wrap their `headers()` call in try/catch
- * and pass "anon" on failure.
+ * Best-effort client IP from a request's headers, for rate-limit keying.
+ *
+ * **DEPLOYMENT CONTRACT — VERCEL ONLY:**
+ * Reads the first `x-forwarded-for` hop (Vercel sets/overwrites this header at
+ * the edge) and falls back to `x-real-ip` or "anon" so keying never crashes.
+ *
+ * SECURITY WARNING:
+ * On Vercel, the edge proxy guarantees that the incoming client cannot forge
+ * the first `x-forwarded-for` address because Vercel either overwrites the
+ * header or prepends the connecting IP.
+ * If this application is ever deployed outside Vercel (e.g. self-hosted Node,
+ * AWS ECS, Docker) behind an untrusted reverse proxy or directly to the web,
+ * an attacker can send arbitrary `x-forwarded-for: <random-ip>` headers to
+ * mint a fresh rate-limit bucket on every request, defeating IP throttles
+ * including the studio login protection (SEC-004 / SEC-102). In non-Vercel
+ * deployments, set up trusted proxy hop counting via `trustedProxyDepth` or
+ * bind to a trusted edge header (such as `x-real-ip` or `cf-connecting-ip`).
  */
-export function clientIp(headers: Headers): string {
-  return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anon";
+export function clientIp(headers: Headers, trustedProxyDepth = 1): string {
+  const forwarded = headers.get("x-forwarded-for");
+  if (!forwarded) {
+    const realIp = headers.get("x-real-ip");
+    return realIp?.trim() || "anon";
+  }
+
+  const hops = forwarded.split(",").map((s) => s.trim()).filter(Boolean);
+  if (hops.length === 0) return "anon";
+
+  // Vercel edge contract: index 0 is the verified client IP.
+  // For multi-proxy setups, trustedProxyDepth allows indexing from the right:
+  if (trustedProxyDepth > 1 && hops.length >= trustedProxyDepth) {
+    return hops[hops.length - trustedProxyDepth];
+  }
+  return hops[0] || "anon";
 }
 
 export function rateLimit(
