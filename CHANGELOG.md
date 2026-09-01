@@ -5,7 +5,21 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
+## [Unreleased] — Remove retired domain from .env.example and document missing variables
+
+### The finding
+`.env.example` still referenced the retired domain `store.bhavyagondaliya.co.in` on `AUTH_URL` and
+`NEXT_PUBLIC_SITE_URL`. Because `src/lib/constants.ts` prefers `NEXT_PUBLIC_SITE_URL` when defined,
+any deploy that copied `.env.example` inlined the retired origin into canonical URLs, sitemaps, and
+JSON-LD structures. Additionally, `DATABASE_URL_UNPOOLED` (required by `prisma.config.ts`), `RESEND_FROM`,
+and `CRON_SECRET` were missing from the example configuration.
+
+### Changed
+- **`.env.example`**: Updated `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` to `https://www.rivyalivingart.com`. Added `DATABASE_URL_UNPOOLED`, `CRON_SECRET`, and `RESEND_FROM`.
+- **`src/lib/env.ts`**: Added `DATABASE_URL_UNPOOLED` and `CRON_SECRET` to the environment validation schema.
+- **`src/lib/env.test.ts`**: Added regression tests verifying that `.env.example` is free of the retired domain and contains all required migration and cron variables.
+
+## Phase 2f #1: wire localized footer tagline and eliminate superseded 3D printing proposition
 
 ### The finding
 The storefront footer rendered `settings.tagline` → `SITE.tagline`, bypassing `next-intl` entirely.

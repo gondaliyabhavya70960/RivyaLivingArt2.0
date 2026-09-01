@@ -19,6 +19,7 @@ const schema = z.object({
   DATABASE_URL: z
     .string({ error: "DATABASE_URL is required (Postgres connection string)" })
     .min(1, "DATABASE_URL is required (Postgres connection string)"),
+  DATABASE_URL_UNPOOLED: z.string().optional(),
   AUTH_SECRET: z
     .string({ error: "AUTH_SECRET is required (Auth.js session signing)" })
     .min(1, "AUTH_SECRET is required (Auth.js session signing)"),
@@ -38,6 +39,7 @@ const schema = z.object({
 
   // Optional integrations — a missing one disables that feature by design.
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  CRON_SECRET: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   RESEND_EMAIL_DOMAIN: z.string().optional(),
   RESEND_FROM: z.string().optional(),
