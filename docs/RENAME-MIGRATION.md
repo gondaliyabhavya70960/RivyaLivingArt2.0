@@ -65,7 +65,7 @@ on it is named so a future session does not "finish the job" and regress it.
 | **Owner's Google Sheet name `resinriva2.0`** | `data/tiers/README.md`, `docs/import/README.md` | The real name of a sheet in the owner's Drive. My first pass renamed it; **reverted** — renaming the doc does not rename the sheet, it just makes the doc wrong. |
 | **Historical git branch names** | `docs/image-inventory.md` | `claude/resinriva-audit-tasks-tfz6cs` is a real (deleted) branch in this history. |
 | **`init` migration defaults** | `prisma/migrations/20260705183035_init/` | Applied migrations are immutable history. The new migration moves the data forward instead. |
-| **Live domain / WhatsApp number** | throughout | `store.bhavyagondaliya.co.in`, `wa.me/917096036250` — unchanged unless the owner moves them. |
+| **Live domain / WhatsApp number** | throughout | `store.bhavyagondaliya.co.in`, `wa.me/917096036250` — left alone during the rename. **The domain has since moved to `https://www.rivyalivingart.com`;** the WhatsApp number is unchanged. |
 
 ---
 
