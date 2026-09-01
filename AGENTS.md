@@ -185,6 +185,13 @@ reproducing the failure first, then showing it gone.
 - **Sheet row deletion is not upsert-in-reverse.** It needs the tab's numeric id and rows
   must be removed in *descending* index order; an ascending pass deletes the wrong rows and
   succeeds while doing it.
+- **A green check on a PR may belong to an OLDER commit.** Two things cause it here.
+  `ci.yml` sets `concurrency: ci-${{ github.ref }}` with `cancel-in-progress: true`, so a
+  second push within a few minutes kills the first run. And when the Actions allowance is
+  exhausted, GitHub creates **no run at all** — silently, with no failed check to notice.
+  Observed on 2026-09-01: commits `dbb392e` and `ebb60fa` landed on PR #15 with zero CI runs
+  while the PR still showed run #30's green tick from `f6203eb`. **Before trusting a green
+  check, confirm the run's `head_sha` matches the PR head.**
 - **CI only started working on 2026-09-01.** For the whole transformation GitHub Actions was
   blocked by an account-level billing condition (jobs died in ~2s with `runner_id: 0`), so
   every gate that passed across twelve merged PRs was run on a developer's machine. Billing
