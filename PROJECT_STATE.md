@@ -40,9 +40,15 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**Nothing is queued.** Phase 2d closed the last evidenced defect. What remains is Phase 2e —
-five decisions that belong to the owner (below), plus the LQIP wiring, which is the only sizeable
-piece of engineering still on the list and is a REDESIGN.md §15.5 requirement rather than a bug.
+**PR #12 (Phase 2d) is OPEN and unmerged — `main` does not have it yet.** Merge it first, or you
+will re-derive its fixes.
+
+Then **Phase 2f #1: the footer tagline.** The superseded "3D printing" proposition is live on every
+page in all nine locales; it needs one sentence from the owner, then six edits. That is the highest-
+value open item and it outranks the LQIP work.
+
+Also open: Phase 2e's five owner decisions, and the LQIP wiring (REDESIGN.md §15.5) — the only
+sizeable engineering left, and smaller than previously recorded (two chokepoints, not eleven).
 
 ---
 
@@ -127,17 +133,70 @@ Each is a real product or SEO judgement call, not an oversight.
 5. **Pre-2a `/shop?category=<non-art>` bookmarks** now return zero rows.
 
 ### Still open, unchanged
-- **`.env.example`** omits `DATABASE_URL_UNPOOLED` and `RESEND_FROM`; `.env*` edits are denied in
-  this environment, so the owner must add them.
+- **`.env.example` is worse than previously recorded.** Besides omitting `DATABASE_URL_UNPOOLED`
+  (used by `prisma.config.ts` for migrations), `RESEND_FROM` and `CRON_SECRET`, it still carries the
+  RETIRED domain on two lines — `AUTH_URL=` and `NEXT_PUBLIC_SITE_URL=https://store.bhavyagondaliya.co.in`.
+  `SITE.url` prefers the env var over its correct fallback, so anyone who copies this file into a
+  real deploy inlines the wrong origin into every canonical, sitemap URL, JSON-LD `@id` and OG image
+  URL. `src/`, `prisma/`, `scripts/` and `.github/` are otherwise clean of that host — this file is
+  the last carrier. `.env*` edits are denied in this environment, so the owner (or a different IDE)
+  must do it.
 - **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
   current-state docs.
 - **LQIP wiring** (REDESIGN.md §15.5): `media-v3-blur.json` holds 25 real entries and is still
   imported by nothing. The join must key on the **resolved** URL, not the slot fallback — an owner
   override would otherwise paint master A's blur under photograph B. Verified safe against §2.7
-  ("no image fades in"): next/image's blur placeholder emits no CSS transition. ~11 call sites.
+  ("no image fades in"): next/image's blur placeholder emits no CSS transition. **Not ~11 call
+  sites — there are exactly TWO chokepoints**, `SlotImage` (6 render sites) and `MeniscusImage` (28),
+  so one helper covers all 34. Caveat to document in the file header: `prisma/bootstrap.ts` repoints
+  every slot at a random-suffixed Blob URL on a fresh production deploy, after which every lookup
+  misses and the feature is silently inert in production while local dev still shows blurs.
 - **`.github/workflows/mirror-images.yml`** says in its own header it is safe to delete now the
   images are committed. **Naming hazard:** `src/app/api/cron/mirror-images/route.ts` and
   `vercel.json` are a LIVE production cron with almost the same name — do not grep-delete.
+
+---
+
+## Phase 2f — found 2026-09-01 during the Antigravity handover audit (NOT yet fixed)
+
+Two defects that previous phases missed, both verified against the running database and HEAD.
+
+### 1 · The superseded proposition is still live on every page — TOP ENGINEERING ITEM
+
+Phase 2b recorded the Footer as "checked and found consistent". **That was wrong** and the
+correction is inline above. The footer renders `settings.tagline` → `SITE.tagline`, not the
+next-intl slot, and it still reads:
+
+> *"Luxury custom resin art & 3D printing, made to order in India"*
+
+That bypasses next-intl entirely, so it renders in **English on every page in all nine locales**.
+Six sites carry the string:
+
+| Where | What it feeds |
+|---|---|
+| `src/lib/constants.ts:24` | `SITE.tagline`, the footer fallback |
+| `SiteSettings.tagline` (DB row) | the footer, live |
+| `prisma/seed.ts:327` | seeds that row on every fresh environment |
+| `src/app/manifest.ts:30` | the PWA description |
+| `blog/[slug]/opengraph-image.tsx:45` | OG card subtitle |
+| `product/[slug]/opengraph-image.tsx:49` | OG card subtitle |
+
+Worse: `Footer.tagline` in `messages/*.json` ("Handcrafted resin art, made to order.") IS a
+registered, translated, owner-editable site-copy slot that **nothing reads** — the owner can edit it
+in `/studio/site-copy` and see no change anywhere.
+
+**Needs the owner to supply one sentence.** Then: update the row, the five code sites, and either
+render `Footer.tagline` properly or delete it from the registry so `copy:check` stops advertising a
+field that changes nothing. Size: S, or M if the dead slot is wired.
+
+### 2 · `/studio/media`'s bulk "unused" sweep can delete blog-body images irrecoverably
+
+`media-usages.ts` still does not walk Tiptap Json — `BlogPost.content` (55 rows), `Page.content`
+(the /privacy and /terms bodies) and the `richText` custom block. The rich-text editor inserts
+arbitrary image URLs, and `/studio/media` offers those files in a bulk unused sweep. Vercel Blob
+deletion is not recoverable and the page then renders a broken image with nothing surfacing it.
+This is the fourth instance of the `media-usages.ts` header rule being broken. Size: M.
+
 
 ---
 
@@ -231,12 +290,21 @@ because it promised 3D-printed pieces on a page that now opens on the art ecosys
 all nine locales to describe what `/shop` actually shows, with supplies and printing named as the
 further shelves they are.
 
-Also checked and found consistent, needing no change: `Footer` ("Handcrafted resin art, made to
-order"), `Nav.megaPortfolioLine` ("Commissioned works, documented piece by piece"),
-`Common.announcementDefault` (lead times matching `CustomOrder`'s anchors exactly), and the Site
-Settings announcement bar. `CustomOrder` itself was **already** fully commission-led
-("Commission something bespoke", "what people commission", small vs statement lead times) — so the
-homepage's new promise lands on a page that already delivers it.
+**CORRECTION (2026-09-01) — the Footer check in this section was WRONG.** It read
+`messages/*.json` → `Footer.tagline` ("Handcrafted resin art, made to order.") and called the footer
+consistent. That i18n slot is **read by nothing**. What the footer actually renders is
+`settings.tagline`, which falls back to `SITE.tagline` — and that still says *"Luxury custom resin
+art & 3D printing, made to order in India"*, the superseded proposition, on **every page, in all nine
+locales** (it bypasses next-intl entirely). The same string is in five places plus the database:
+`src/lib/constants.ts:24`, `prisma/seed.ts:327`, `src/app/manifest.ts:30`,
+`blog/[slug]/opengraph-image.tsx:45`, `product/[slug]/opengraph-image.tsx:49`, and the live
+`SiteSettings.tagline` row. See Phase 2f below — this is the top open engineering item.
+
+The rest of that check stands: `Nav.megaPortfolioLine`, `Common.announcementDefault` (lead times
+matching `CustomOrder`'s anchors exactly) and the Site Settings announcement bar were verified
+consistent. `CustomOrder` itself was **already** fully commission-led ("Commission something
+bespoke", "what people commission", small vs statement lead times) — so the homepage's new promise
+lands on a page that already delivers it.
 
 **The rest of the namespaces are UI chrome, not proposition.** `Shop`'s other 109 keys are filters,
 sorts and labels; `Site chrome` is nav and footer mechanics. Translating them is not pending work —
