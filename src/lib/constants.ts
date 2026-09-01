@@ -21,7 +21,7 @@ function envOr(value: string | undefined, fallback: string): string {
 
 export const SITE = {
   name: "Rivya Living Art",
-  tagline: "Luxury custom resin art & 3D printing, made to order in India",
+  tagline: "Handcrafted resin art, made to order.",
   /**
    * Canonical origin, never with a trailing slash.
    *

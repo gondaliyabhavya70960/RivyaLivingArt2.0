@@ -46,7 +46,7 @@ export default async function OpengraphImage({ params }: ImageProps) {
     ? product.showPrice
       ? formatPriceBand(product.priceMin, product.priceMax)
       : "Enquire on WhatsApp"
-    : "Luxury custom resin art & 3D printing";
+    : brand.tagline;
 
   return new ImageResponse(
     <div
