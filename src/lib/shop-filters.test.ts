@@ -49,4 +49,13 @@ describe("ecosystem resolution", () => {
       expect(normalizeEcosystemParam(junk)).toBe(DEFAULT_ECOSYSTEM);
     }
   });
+
+  it("infers the ecosystem from a category slug when type is unspecified", () => {
+    // Pre-2a bookmarks: `/shop?category=supplies-molds-tools` has no `?type=`, but
+    // supplies-molds-tools belongs to supplies. If it defaulted to art, the composite
+    // query would AND art slugs with supplies-molds-tools and return zero rows.
+    expect(normalizeEcosystemParam(undefined, "supplies-molds-tools")).toBe("supplies");
+    expect(normalizeEcosystemParam(undefined, "print-filaments")).toBe("print");
+    expect(normalizeEcosystemParam(undefined, "resin-wall-clocks")).toBe("art");
+  });
 });

@@ -1,5 +1,9 @@
 import { OCCASIONS } from "@/components/studio/products/occasions";
-import { CATALOG_GROUPS, type CatalogGroup } from "@/lib/catalog-taxonomy";
+import {
+  CATALOG_GROUPS,
+  type CatalogGroup,
+  groupForCategorySlug,
+} from "@/lib/catalog-taxonomy";
 
 /**
  * Client-safe shop filter vocabulary. `@/lib/shop` re-exports everything
@@ -52,9 +56,13 @@ export const DEFAULT_ECOSYSTEM: CatalogGroup = "art";
  * default for absent OR unrecognised input — a stale `?type=v6` lands on the
  * art shelf rather than silently reopening the mixed catalogue.
  */
-export function normalizeEcosystemParam(value: string | undefined): string {
+export function normalizeEcosystemParam(
+  value: string | undefined,
+  categorySlug?: string,
+): string {
   if (value === ALL_ECOSYSTEMS) return ALL_ECOSYSTEMS;
   if (isEcosystem(value)) return value;
+  if (categorySlug) return groupForCategorySlug(categorySlug);
   return DEFAULT_ECOSYSTEM;
 }
 

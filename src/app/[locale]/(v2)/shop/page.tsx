@@ -239,10 +239,11 @@ export default async function ShopPage({
   // whether this request can use the shared 300s cache — resolving the default
   // into it would make every bare /shop look filtered and lose that cache.
   const requestedType = first(params.type);
+  const requestedCategory = first(params.category);
   const filters = {
     q: first(params.q),
-    type: normalizeEcosystemParam(requestedType),
-    category: first(params.category),
+    type: normalizeEcosystemParam(requestedType, requestedCategory),
+    category: requestedCategory,
     occasion: first(params.occasion),
     band: first(params.band),
     stock: first(params.stock),

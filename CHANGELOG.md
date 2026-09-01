@@ -5,7 +5,20 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
-## [Unreleased] — Navigation: group-aware breadcrumbs on supplies and 3D print pages (Prompt Deck Decision 3)
+## [Unreleased] — Shop: infer ecosystem from category parameter (Pre-2a Bookmarks Fix)
+
+### The finding
+Pre-2a bookmarks and external links such as `/shop?category=supplies-molds-tools` or
+`/shop?category=print-filaments` returned zero products because `type` defaulted to `"art"`.
+The Prisma `buildProductWhere` query constructed an unsatisfiable composite clause AND-ing
+all `art` group category slugs with the non-art category slug.
+
+### Changed
+- **`src/lib/shop-filters.ts`**: Updated `normalizeEcosystemParam(value, categorySlug)` to infer the ecosystem group from the category slug when `value` is unspecified.
+- **`src/app/[locale]/(v2)/shop/page.tsx`**: Passed `requestedCategory` into `normalizeEcosystemParam`, activating the correct ecosystem tab and category shelf without requiring an explicit `?type=`.
+- **`src/lib/shop-filters.test.ts`**: Added regression tests proving ecosystem inference across art, supplies, and 3D print categories.
+
+## Navigation: group-aware breadcrumbs on supplies and 3D print pages (Prompt Deck Decision 3)
 
 ### The finding
 On category collection pages (`/shop/[category]`) and product detail pages (`/product/[slug]`), the
