@@ -5,6 +5,7 @@ import { draftMode } from "next/headers";
 import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
+import { readStagedImage } from "@/lib/site-image-draft";
 import {
   SITE_IMAGE_DEFAULT_REFS,
   SITE_IMAGE_FALLBACKS,
@@ -28,6 +29,10 @@ import {
  * catalog-nav's reasoning — this is read on nearly every route, and route ISR
  * is min(segment, cached reads), so a short TTL here would cap the PDP's.
  */
+
+/** Re-exported so existing call sites keep one import path. The reader
+ *  itself is pure and lives in `site-image-draft.ts`. */
+export { readStagedImage } from "@/lib/site-image-draft";
 
 export const SITE_IMAGES_TAG = "site-images";
 
@@ -107,38 +112,6 @@ async function inPreview(): Promise<boolean> {
   }
 }
 
-/**
- * A staged slot change, defensively.
- *
- * The column is written only by a validated action, so this guards a
- * hand-edited row rather than a code path — but a malformed blob must degrade
- * to "nothing staged" rather than throw on every route in the app.
- *
- * Exported because the Site Images board has to read the same blob to show
- * the owner what they just staged. One reader, so preview and the editing
- * screen can never disagree about what a staged row means.
- */
-export function readStagedImage(value: unknown): {
-  url?: string;
-  mobileUrl?: string | null;
-  focalX?: number;
-  focalY?: number;
-} | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const rec = value as Record<string, unknown>;
-  const out: {
-    url?: string;
-    mobileUrl?: string | null;
-    focalX?: number;
-    focalY?: number;
-  } = {};
-  if (typeof rec.url === "string") out.url = rec.url;
-  if (typeof rec.mobileUrl === "string") out.mobileUrl = rec.mobileUrl;
-  else if (rec.mobileUrl === null) out.mobileUrl = null;
-  if (typeof rec.focalX === "number") out.focalX = rec.focalX;
-  if (typeof rec.focalY === "number") out.focalY = rec.focalY;
-  return Object.keys(out).length ? out : null;
-}
 
 /**
  * Out-of-range focal values would produce an object-position off the frame,

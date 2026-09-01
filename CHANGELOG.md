@@ -5,6 +5,56 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## [Unreleased] — Phase 2d: the shop kept promises it could not deliver
+
+### The finding
+`/search` searches the whole 4,373-product catalogue and then handed the visitor to `/shop`, which
+has opened on the art ecosystem since Phase 2a. **"Show all 619" for `pigment` delivered one
+product. `filament` promised 1,162 and delivered none.**
+
+A second, unrelated defect let the *staged* half of every image slot be deleted: the studio writes a
+save into `SiteImage.draft` and leaves `url` alone, but the delete guard only ever read `url`.
+
+### Changed
+- **`/search` → `/shop` now carries `&type=all`.** Rejected the alternative of scoping `/search` to
+  art: `searchProducts` is shared with the header overlay, so it would make ~2,900 published,
+  sellable products unfindable and contradict decision D6.
+- **Ecosystem tabs preserve `q` and `sort`.** They were constant strings, so pivoting dropped the
+  search term in both directions — `&type=all` alone would have been a one-way door.
+  `category`/`occasion`/`band`/`stock` deliberately do NOT travel: carrying one composes an
+  unsatisfiable AND (`?type=supplies&category=gift-collections`).
+- **`media-usages.ts` scans `SiteImage.draft`.** `readStagedImage` extracted to a pure
+  `src/lib/site-image-draft.ts` — it had been trapped in a `server-only` module, which is exactly
+  why the guard could not reuse it.
+- **Homepage "Featured pieces"** constrained to the art ecosystem — the same one-word fix Phase 2a
+  applied to `fetchDefaultShopFirstPage`.
+- **`shopHref` omits `type` when it is the default**, so page-1 links stop being `/shop?type=art`,
+  agree with the canonical again, and hit the 300s first-page bundle.
+- **`hasActiveFilters` ignores the resolved default**, so "Clear all" no longer renders over nothing.
+- **`scripts/media-v3-fetch.mjs` merges rather than overwrites** the LQIP manifest.
+
+### Verified by reproducing the defect first
+Every fix was demonstrated broken before it was fixed. The delete guard: `staged -> NOT FOUND
+(delete would be allowed)` before, `staged -> [ 'Site image · home.hero (staged)' ]` after. The LQIP
+manifest: 24 entries with the poster missing before, 25 and byte-identical after. The handoff,
+measured live — `filament` 0 → a full page, `pigment` 1 → a full page.
+
+**`resin` (23 of 1,668) and `table` (12 of 996) barely moved**, and the PR says so: `/shop?q=`
+matches titles only, while `/search` also reads descriptions and expands synonyms. That is a
+filtering change and belongs to the owner.
+
+### Gates
+typecheck · lint · **352 tests** (33 files, +6) · `copy:check` 1,181 slots · 0 missing translations ·
+`next build` · `redesign-audit` × 3 and `a11y-audit` × 2 over CI's 13 routes at both widths, 0
+failures · the same audits over 5 routes CI cannot reach (`/search`, `?type=all`, supplies and print
+categories) · `test:e2e` 10/10 including the WhatsApp hard rule.
+
+### Corrected
+An earlier note claimed `/search` lost "~98%" of its hits. Measured, it is 55–89% by term. Still a
+broken promise on every query, but the figure was an estimate and it was wrong.
+
+---
+
 ## [Unreleased] — Phase 2c: the storefront has its photography
 
 ### The finding

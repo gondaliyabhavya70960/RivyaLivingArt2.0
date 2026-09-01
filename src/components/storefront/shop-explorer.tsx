@@ -31,6 +31,7 @@ import { ProductCardSkeleton } from "@/components/storefront/skeletons";
 import type { ShopProductItem } from "@/lib/shop";
 import {
   CATALOG_GROUPS,
+  DEFAULT_ECOSYSTEM,
   DEFAULT_SORT,
   isEcosystem,
   OCCASIONS,
@@ -292,8 +293,19 @@ export function ShopExplorer({
   const activeType = isEcosystem(type) ? type : undefined;
   const stockIn = stock === "in";
 
+  /* An ecosystem equal to the DEFAULT is not something the visitor applied.
+     The server resolves `?type=` through `normalizeEcosystemParam` before it
+     reaches here, so `type` is always set — which made this true on a bare
+     `/shop`, rendering "Clear all" over nothing to clear and making the
+     `emptyCatalogHeading` branch below unreachable, since an empty shelf was
+     always attributed to a filter. */
   const hasActiveFilters = Boolean(
-    q || occasion || band || stock || (!lockedCategory && (category || type)),
+    q ||
+      occasion ||
+      band ||
+      stock ||
+      (!lockedCategory &&
+        (category || (type && type !== DEFAULT_ECOSYSTEM))),
   );
 
   const sortLabels: Record<SortKey, string> = {

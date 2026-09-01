@@ -23,7 +23,11 @@ import {
   sizedExternalSrc,
 } from "@/lib/image-src";
 import { localize, localizeName } from "@/lib/localize";
-import { buildProductWhere, fetchProductsPage } from "@/lib/shop";
+import {
+  buildProductWhere,
+  DEFAULT_ECOSYSTEM,
+  fetchProductsPage,
+} from "@/lib/shop";
 import { getSiteImageRefs, getSiteImages } from "@/lib/site-images-server";
 import { getPageSections } from "@/lib/page-sections-server";
 import { SlotImage } from "@/components/storefront/slot-image";
@@ -129,8 +133,17 @@ export default async function Home({
   ] = await Promise.all([
     // §03 takes four pieces — one hero and three supporting. "featured"
     // sort puts the owner's curated picks first.
+    //
+    // Constrained to the art ecosystem for the same reason Phase 2a
+    // constrained `fetchDefaultShopFirstPage`: an unconstrained clause here
+    // draws from all 4,373 published products, and the band renders art today
+    // only because all 12 `featured` rows happen to be art. Feature one pigment
+    // set — an ordinary thing for the owner to do, since supplies are published
+    // and sellable — and "featured pieces" would show sanding kits directly
+    // below a hero that says the studio makes large resin work to commission,
+    // linking to a shop that would not contain them.
     fetchProductsPage({
-      where: buildProductWhere({}),
+      where: buildProductWhere({ type: DEFAULT_ECOSYSTEM }),
       sort: "featured",
       take: 4,
       locale,

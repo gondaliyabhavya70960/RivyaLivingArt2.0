@@ -6,14 +6,21 @@
  * (Part 0 audit A5-001). Import it server-side only.
  */
 import { db } from "@/lib/db";
+import { readStagedImage } from "@/lib/site-image-draft";
 
 /**
  * Returns the subset of `urls` that are still referenced by live content —
  * product/portfolio galleries, category covers, blog covers, product/portfolio
  * media, testimonial avatars, the site logo/hero, the named editorial slots
- * behind /studio/site-images (both the desktop and the mobile crop), and
- * landing-page social images and block pictures — so a delete never silently
- * 404s the live site (ENG-806 / UIUX-605).
+ * behind /studio/site-images (the desktop and mobile crop of both the live and
+ * the STAGED value), and landing-page social images and block pictures — so a
+ * delete never silently 404s the live site (ENG-806 / UIUX-605).
+ *
+ * "Live content" includes what is staged. On the draft surfaces a save writes
+ * only the draft column, so scanning the live column alone let a staged picture
+ * be deleted, which broke the staff preview at once and the public page at the
+ * next Publish — the fourth time this header rule was broken, and the fourth
+ * time the breakage was silent.
  *
  * Tiptap body images (Json) are still not scanned: they appear in blog posts,
  * legal pages and the landing pages' `richText` blocks, and matching a URL
@@ -104,13 +111,26 @@ export async function findMediaUsageDetails(
       where: { avatarUrl: { in: urls } },
       select: { avatarUrl: true },
     }),
-    // Named editorial slots (/studio/site-images). Omitting these let a
-    // library file that a hero points at pass the delete guard and 404 the
-    // storefront silently: an unset slot falls back to its bundled default,
-    // but a slot pointing at a DELETED upload keeps pointing at it.
+    // Named editorial slots (/studio/site-images), BOTH halves — live and
+    // staged. Omitting these let a library file that a hero points at pass the
+    // delete guard and 404 the storefront silently: an unset slot falls back to
+    // its bundled default, but a slot pointing at a DELETED upload keeps
+    // pointing at it.
+    //
+    // A save on this surface is a DRAFT: the studio writes the new url into
+    // `draft` and leaves the live `url` alone. A staged picture was therefore
+    // invisible to this scan, so deleting it passed the guard, broke the staff
+    // preview at once, and then broke the live page for every visitor the
+    // moment someone pressed Publish — publishing copies `draft.url` into
+    // `url` without re-checking that the file still exists.
+    //
+    // `draft` is Json and cannot be filtered in SQL, and the table holds one
+    // row per CHANGED slot (62 at the absolute most), so the whole set is read
+    // unfiltered and matched in JS — the shape `customBlocks` below already
+    // uses. `add()` drops anything the caller did not ask about, so reading
+    // every row costs a tiny query and changes no result.
     siteImages: db.siteImage.findMany({
-      where: { OR: [{ url: { in: urls } }, { mobileUrl: { in: urls } }] },
-      select: { url: true, mobileUrl: true, key: true },
+      select: { url: true, mobileUrl: true, key: true, draft: true },
     }),
     // Landing-page social images (Phase G).
     customPages: db.customPage.findMany({
@@ -184,6 +204,14 @@ export async function findMediaUsageDetails(
     // out let a delete pass the guard and 404 the phone layout only, which is
     // the hardest kind of breakage to notice.
     add(r.mobileUrl, `Site image · ${r.key} (mobile)`);
+    // The staged half, read through the SAME reader the preview and the board
+    // use, so the guard and the screen can never disagree about what a staged
+    // row means.
+    const staged = readStagedImage(r.draft);
+    if (staged) {
+      add(staged.url, `Site image · ${r.key} (staged)`);
+      add(staged.mobileUrl, `Site image · ${r.key} (staged, mobile)`);
+    }
   });
   customPages.forEach((r) => add(r.ogImage, `Landing page · ${r.title}`));
   customBlocks.forEach((block) => {

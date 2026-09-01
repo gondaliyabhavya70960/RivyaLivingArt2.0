@@ -18,6 +18,7 @@ import { db } from "@/lib/db";
 import { getSiteImages } from "@/lib/site-images-server";
 import {
   buildProductWhere,
+  DEFAULT_ECOSYSTEM,
   DEFAULT_SORT,
   fetchDefaultShopFirstPage,
   fetchProductsPage,
@@ -116,7 +117,17 @@ function first(value: string | string[] | undefined): string | undefined {
 function shopHref(filters: ShopFilters, sort: SortKey, page: number): string {
   const params = new URLSearchParams();
   if (filters.q) params.set("q", filters.q);
-  if (filters.type) params.set("type", filters.type);
+  // `type` is omitted when it is the default, for the same reason `sort` is
+  // below: one canonical URL for the entry view. `filters.type` is ALWAYS set
+  // (the page resolves it through `normalizeEcosystemParam` before we get
+  // here), so writing it unconditionally turned every page-1 link into
+  // `/shop?type=art` — a URL that renders identically to `/shop`, disagrees
+  // with the canonical `generateMetadata` emits, and misses the 300s
+  // first-page bundle that `fetchDefaultShopFirstPage` only serves for the
+  // bare entry view. Strictly fewer distinct URLs, same pages behind them.
+  if (filters.type && filters.type !== DEFAULT_ECOSYSTEM) {
+    params.set("type", filters.type);
+  }
   if (filters.category) params.set("category", filters.category);
   if (filters.occasion) params.set("occasion", filters.occasion);
   if (filters.band) params.set("band", filters.band);
@@ -137,27 +148,53 @@ function shopHref(filters: ShopFilters, sort: SortKey, page: number): string {
  * as real links so they are crawlable and keyboard-native.
  */
 const CATEGORY_TABS = [
-  { key: "all", href: "/shop?type=all", type: "all", category: undefined },
-  { key: "art", href: "/shop?type=art", type: "art", category: undefined },
+  { key: "all", type: "all", category: undefined },
+  { key: "art", type: "art", category: undefined },
   {
     key: "gifts",
-    href: "/shop?category=gift-collections",
     type: undefined,
     category: "gift-collections",
   },
   {
     key: "supplies",
-    href: "/shop?type=supplies",
     type: "supplies",
     category: undefined,
   },
   {
     key: "print",
-    href: "/shop?type=print",
     type: "print",
     category: undefined,
   },
 ] as const;
+
+/**
+ * A tab's link, carrying the search term across the pivot.
+ *
+ * These used to be constant strings, so switching ecosystem silently dropped
+ * `?q=`. That made the row a one-way door in both directions: a visitor who
+ * arrived from `/search` with a term could not narrow to RESIN ART without
+ * retyping it, and one browsing supplies could not widen without losing it.
+ *
+ * `q` and `sort` travel; `category`, `occasion`, `band` and `stock` do NOT.
+ * Those are ecosystem-bound, and carrying one across would compose an
+ * unsatisfiable AND — `?type=supplies&category=gift-collections` is a shelf
+ * that cannot contain anything, which reads to the visitor as a broken tab
+ * rather than an empty filter. The GIFTS tab sets its own category for the
+ * same reason: it is a saved view, not a modifier.
+ */
+function tabHref(
+  tab: (typeof CATEGORY_TABS)[number],
+  q: string | undefined,
+  sort: SortKey,
+): string {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (tab.type) params.set("type", tab.type);
+  if (tab.category) params.set("category", tab.category);
+  if (sort !== DEFAULT_SORT) params.set("sort", sort);
+  const qs = params.toString();
+  return qs ? `/shop?${qs}` : "/shop";
+}
 
 /** How many collection tiles the §7.3 strip carries before it stops. */
 const STRIP_LIMIT = 12;
@@ -336,7 +373,7 @@ export default async function ShopPage({
               return (
                 <li key={tab.key} className="shrink-0">
                   <Link
-                    href={tab.href}
+                    href={tabHref(tab, filters.q, sort)}
                     aria-current={current ? "page" : undefined}
                     className={cnTab(current)}
                   >

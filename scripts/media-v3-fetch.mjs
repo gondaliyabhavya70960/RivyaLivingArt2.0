@@ -189,7 +189,17 @@ async function buildMasters() {
     return;
   }
 
-  const blur = {};
+  /* Seed from what is already on disk rather than starting empty — the same
+     thing `media-v3-video-fetch.mjs` does before it writes.
+     This file is written by TWO scripts: the 24 image masters here, and the
+     video poster there. Starting from `{}` meant re-running this one silently
+     dropped `process-pour-poster`, so the poster kept its master on disk but
+     lost the placeholder that stands in while the video loads — and nothing
+     would have reported it, because the manifest would still look complete at
+     24 entries. */
+  const blur = existsSync(BLUR_FILE)
+    ? JSON.parse(readFileSync(BLUR_FILE, "utf8"))
+    : {};
   for (const asset of manifest.assets) {
     const cand = asset.candidates.find((c) => c.variant === asset.keeper);
     if (!cand) throw new Error(`${asset.id}: no candidate "${asset.keeper}"`);
