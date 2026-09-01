@@ -150,14 +150,12 @@ Each is a real product or SEO judgement call, not an oversight.
   must do it.
 - **Stale counts in `docs/studio-cms/`** still say 57 slots (actual 62). Plan documents, not
   current-state docs.
-- **LQIP wiring** (REDESIGN.md §15.5): `media-v3-blur.json` holds 25 real entries and is still
-  imported by nothing. The join must key on the **resolved** URL, not the slot fallback — an owner
-  override would otherwise paint master A's blur under photograph B. Verified safe against §2.7
-  ("no image fades in"): next/image's blur placeholder emits no CSS transition. **Not ~11 call
-  sites — there are exactly TWO chokepoints**, `SlotImage` (6 render sites) and `MeniscusImage` (28),
-  so one helper covers all 34. Caveat to document in the file header: `prisma/bootstrap.ts` repoints
-  every slot at a random-suffixed Blob URL on a fresh production deploy, after which every lookup
-  misses and the feature is silently inert in production while local dev still shows blurs.
+- **LQIP wiring** (REDESIGN.md §15.5): **DONE (2026-09-01)**. `media-v3-blur.json` (25 entries) is
+  wired through pure helper `src/lib/lqip.ts` into the two storefront chokepoints (`SlotImage` and
+  `MeniscusImage`), covering all 34 render sites. Keying is strictly on resolved URLs/pathnames
+  so overrides never paint incorrect blurs. Fully tested in `src/lib/lqip.test.ts`. Caveat documented:
+  `prisma/bootstrap.ts` repoints slots to random-suffixed Blob URLs on a fresh production deploy,
+  so lookups hit in local dev/bundled fallback environments.
 - **`.github/workflows/mirror-images.yml`** says in its own header it is safe to delete now the
   images are committed. **Naming hazard:** `src/app/api/cron/mirror-images/route.ts` and
   `vercel.json` are a LIVE production cron with almost the same name — do not grep-delete.
