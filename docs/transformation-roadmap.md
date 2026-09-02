@@ -248,7 +248,7 @@ Effort: M. Gates: CSP only.
 ### Phase 17 — Final QA
 
 - Full local gate run against a real Postgres: typecheck · lint · copy:check · i18n-missing (+ stale mode) · test · test:db · build · redesign-audit ×4 · a11y-audit ×3 · studio-audit ×2 · lighthouse · E2E; results pasted in the PR body.
-- E2E expansion toward §78's 16 asks (search, filters, customisation submit, Studio product/content/testimonial CRUD, media upload, scraper run, sheet import preview, page builder, draft/publish, language switching) on the seeded CI catalogue; never remove an existing check.
+- Run `scripts/e2e-smoke.mjs` in CI's build job: the CI database already holds the tier catalogue and the portfolio cases because `bootstrap.ts` imports the tracked `data/tiers/*.csv.gz` there (the "no catalogue" comments in `ci.yml:88-91` and `CLAUDE.md:217` are stale), so the smoke and the detail routes (`/product`, `/blog`, `/portfolio`, `/p`) can join `AUDIT_ROUTES` with deterministic slugs. Then expand E2E toward §78's 16 asks (search, filters, customisation submit, Studio product/content/testimonial CRUD, media upload, scraper run, sheet import preview, page builder, draft/publish, language switching); never remove an existing check.
 - Screenshot sweep at 1440 / 1280 / 1024 / 390 / 360 on every major route, LTR and RTL; owner sign-off.
 - Documentation refresh: `PROJECT_STATE.md` checkpoint, `CHANGELOG.md`, `CLAUDE.md`, `AGENTS.md`, `ADMIN_GUIDE.md`, `docs/studio-cms/08-owner-handbook.md`.
 
@@ -276,7 +276,7 @@ Hard orderings: 1a's stale-translation gate before any of 3, 4, 8; Phase 9's sch
 
 The repository's definition (`AGENTS.md` "Definition of done") applies to every phase, unchanged:
 
-typecheck ✓ · lint ✓ · tests ✓ · build ✓ (against a real Postgres) · `copy:check` ✓ · 0 missing translations (and, from 1a, 0 stale) · works at 360 px and 1280 px · keyboard reachable · reduced-motion checked · `redesign-audit` and `a11y-audit` clean at 1440 and 390 (and RTL for layout changes) · `studio-audit` clean for Studio phases · HARD RULES respected · the order flow still opens `wa.me/917096036250` with the correct pre-filled message · **if you say it works, you have run it** · CI green on the PR head, plus local results pasted in the PR body for what CI cannot reach (detail routes, E2E, widths beyond 1440/390).
+typecheck ✓ · lint ✓ · tests ✓ · build ✓ (against a real Postgres) · `copy:check` ✓ · 0 missing translations (and, from 1a, 0 stale) · works at 360 px and 1280 px · keyboard reachable · reduced-motion checked · `redesign-audit` and `a11y-audit` clean at 1440 and 390 (and RTL for layout changes) · `studio-audit` clean for Studio phases · HARD RULES respected · the order flow still opens `wa.me/917096036250` with the correct pre-filled message · **if you say it works, you have run it** · CI green on the PR head, plus local results pasted in the PR body for what CI does not sweep yet (detail routes, E2E, widths beyond 1440/390 — until Phases 16–17 add them).
 
 Phase-specific additions: every new section declares `dark`, `cureLabelKey`, copy prefix and joins `KNOWN_ROUTES` if it is a route; every new media-URL column joins `media-usages.ts` and its DB test in the same commit; every copy change is a nine-file edit plus `copy:registry`; every new pattern from §14 has a reduced-motion branch and is measured against the motion budget; every schema change is additive and reuses a migration precedent; `PROJECT_STATE.md`'s checkpoint block and `CHANGELOG.md` are updated in the same PR.
 
