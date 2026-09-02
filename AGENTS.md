@@ -58,7 +58,7 @@ verified. This project has been damaged before by a confident false "done".
 | File | Lines | Why |
 |---|---|---|
 | `AGENTS.md` (this) | ~200 | The rules and the shape of the place |
-| `PROJECT_STATE.md` | ~490 | **Start every session here.** Current phase, what is done, what is open, and the decisions that are settled |
+| `PROJECT_STATE.md` | ~600 | **Start every session here.** The SESSION CHECKPOINT block at the top is the resume point; below it: current phase, what is done, what is open, and the decisions that are settled |
 | `CLAUDE.md` | ~370 | The operating manual: subsystem-by-subsystem rules that are expensive to rediscover |
 | `docs/redesign-contract.md` | ~200 | The short form of the design system: tokens, review rules, hard constraints |
 | `REDESIGN.md` | ~1,400 | The full design spec. Read the relevant Part before building any UI — do not read it end to end |

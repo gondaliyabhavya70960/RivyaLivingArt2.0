@@ -1,6 +1,6 @@
 # Transformation roadmap
 
-Companion to `docs/transformation-audit.md` (Phase 0). This is the plan for the master prompt's Phases 1–17, re-sequenced to what the repository actually has at `HEAD f1cfd95`. Read the audit first; this document assumes its vocabulary, its decision numbers (D7–D27) and its risk register.
+Companion to `docs/transformation-audit.md` (Phase 0). This is the plan for the master prompt's Phases 1–17, re-sequenced to what the repository actually has at `HEAD f1cfd95`. Read the audit first; this document assumes its vocabulary, its decision numbers (D7–D28) and its risk register.
 
 **Status: Phase 0 complete. Nothing below has started. Phase 1 does not begin until the owner has answered the gate decisions in §2.**
 
@@ -32,6 +32,7 @@ The owner answers these before the phase that depends on them starts. Recorded a
 
 | Decision | Question (short form; full text in audit §15) | Blocks |
 |---|---|---|
+| D28 | Does the rewind of `main` to `f1cfd95` stand? Twelve merged PRs (#15–#20, #22–#27: LQIP wiring, `.env.example`, doc corrections, uploads hardening, CSP enforcement, the four Phase 2e answers, slot counts, `mirror-images.yml` retirement) are reachable only at `refs/pull/<n>/head`; PR #28 was closed unmerged. If it stands, Phase 1a re-opens them one at a time with review; if not, `main` is restored to `950d9ac` and this branch rebased | 1a, and everything after |
 | D7 | May schema changes proceed as their own additive PRs under this transformation? | 9, 11, 12, 13, 14 |
 | D8 | Demo data: guarded non-production fixtures + additive `isDemo` marker, never in the production database? Is a Neon branch acceptable as the Content Lab environment? | 15, the "Demo products" tile in 10 |
 | D9 | Furniture: commission-capability framing with bench/formwork concept imagery only? Are chairs and benches in scope at all? | 3 (§9 band), 4 (§21.3–8), SET A/F imagery |
@@ -56,19 +57,20 @@ The owner answers these before the phase that depends on them starts. Recorded a
 | 2e-1…5 | `/shop?q=` descriptions; "Show all N pieces"; breadcrumbs; canonicals; old bookmarks | 5 |
 | 2b | Swap hero primary/secondary CTA under commission-led positioning? | 3 |
 
-Phases with no open gate can start as soon as Phase 0 is merged: **1 (hygiene half), 2 (all but D12/D19 items), 10, 16 (all but CSP).**
+Phases with no open gate can start as soon as Phase 0 is merged and D28 is answered: **1 (hygiene half), 2 (all but D12/D19 items), 10, 16 (all but CSP).** D28 is answered first because five of Phase 1a's items already exist as reviewed code in the discarded PRs.
 
 ---
 
 ## 3. Phase plan
 
-Each phase is one branch and one draft PR (the repository's convention, `AGENTS.md:194-197`; this session's assigned branch is `claude/session-6h1a70`, and subsequent phases use the same feature-branch → draft PR → owner-merges flow rather than the prompt's `redesign/*` names). Effort is engineering time on this codebase, not calendar time. "Touches" is the file set a reviewer should expect.
+Each phase is one branch off `origin/main` (the local `main` in a fresh session can be the stale "Initial commit"; always branch from `origin/main`) and one draft PR (the repository's convention, `AGENTS.md:194-197`; this session's assigned branch is `claude/session-6h1a70`, and subsequent phases use the same feature-branch → draft PR → owner-merges flow rather than the prompt's `redesign/*` names). Effort is engineering time on this codebase, not calendar time. "Touches" is the file set a reviewer should expect.
 
 ### Phase 1 — Design system: hygiene and motion primitives (REFINE, not rebuild)
 
 The v3 system is implemented; Phase 1 cannot re-derive it (`CLAUDE.md:7-8`). It is two half-phases.
 
-**1a · Gates and hygiene (no design change, start immediately)**
+**1a · Gates and hygiene (no design change, start immediately after D28)**
+- Under D28, re-open from `refs/pull/<n>/head` with fresh review rather than rewriting: #16 (LQIP wiring, keyed on the resolved URL — check that caveat before merging), #17 (`.env.example`), #18 and #26 (doc corrections and `mirror-images.yml` retirement), #19 (uploads hardening + test), #20/#27 (CSP enforcement), #22–#25 (the Phase 2e answers, if the owner's answers are unchanged). Each is one PR; none is cherry-picked as a block.
 - Add a stale-translation mode to `scripts/i18n-missing.mjs` (diff `en.json` against `git HEAD`, or a stored English hash per key) and mount it in `ci.yml`. This is the prerequisite for every copy-bearing phase.
 - Unify the audit scripts on one `BASE_URL` default (`:3000`); rewire or delete `verify-phase4..7.mjs`, `verify-chrome.mjs`, `screenshot-lab.mjs`; salvage the order-submit path from `verify-phase2/3.mjs` into `scripts/e2e-smoke.mjs`.
 - D23: delete `syncSourceToSheet` and its call in `src/actions/scraper-jobs.ts`; add a vitest asserting MANUAL + DONE → zero sheet writes; correct `docs/google-sheets.md`.
@@ -94,7 +96,8 @@ Touches: `src/styles/tokens.css`, `src/app/globals.css`, `src/lib/gsap.ts`, `src
 ### Phase 2 — Global chrome
 
 - Header adaptive contrast: either a contrast rule in `redesign-audit.mjs` that samples the hero region under the bar on transparent routes, or an IntersectionObserver-driven ink that watches `[data-theme]` sections (M). Keep the seven-route allowlist either way.
-- RTL drawer: `slide-in-from-right rtl:slide-in-from-left` on the panel and items; `ease-(--ease-settle)`; 40 ms stagger on the mega-menu category links (S).
+- RTL residue: `slide-in-from-right rtl:slide-in-from-left` on the header drawer (`site-header.tsx:610`) and the shop filter drawer (`shop-explorer.tsx:561`, which has no `rtl:` variant at all); `origin-left rtl:origin-right` at `site-header.tsx:352` and `cure-line.tsx:237`; logical padding in `ui/select.tsx:111,116`; `ease-(--ease-settle)`; 40 ms stagger on the mega-menu category links (S).
+- Hardcoded English in mounted chrome: `cure-line.tsx:160` and `rating-stars.tsx:27` `aria-label`s through next-intl (S).
 - D12: language selector stays where REDESIGN §5.1 put it unless the owner says otherwise.
 - Preserve the E2E DOM contracts (`sf-announcement-bar`, `sf-bottom-bar` × 5, `sf-wa-fab`, nav count 4) or update the smoke in the same PR.
 - Page transitions already exist (`template.tsx` + `MorphLink`); retoken only. No cursor system (D10).
@@ -198,7 +201,8 @@ Touches: `src/components/studio/{pages,products,blog,portfolio,custom-pages,publ
 - D7 columns: `tags String[]`, `caption`, `favourite`, `duration`; every one a migration; none stores a URL.
 - Wire `media-v3-blur.json` and `Media.blurDataUrl` into `SlotImage` and `MeniscusImage` keyed on the resolved URL; test a repointed slot.
 - `Media` rows for cron-mirrored catalog images (`catalog-mirror.ts`) so they are visible to the library and the unused sweep.
-- Execute the generation plan (audit §10.3) in value order on the owner's machine: SET D, A1/A2/B7, E22 (needs a `mobileFallback` registry field), F34, B8/B9; C and F35–38 only after D9/D26. Manifest entries recorded from the session; fetch outside.
+- Give `HeroMedia` and the `getSiteImage()` call sites a `SiteImageRef` path so `home.hero`, `process.heroPoster`, the three `shop.group.*` banners and `studio.login` can carry `mobileUrl` and a focal point (today only six slots render them through `SlotImage`); wire `MeniscusImage`'s unused `focal` prop where product and portfolio imagery gains one.
+- Execute the generation plan (audit §10.3) in value order on the owner's machine: SET D, A1/A2/B7, E22 (needs a `mobileFallback` registry field and the `HeroMedia` change above), F34, B8/B9; C and F35–38 only after D9/D26. Append REDESIGN's "no faces" clause to the manifest's `promptSuffix` first. Manifest entries recorded from the session; fetch outside.
 - D24 cleanup of legacy media and scripts.
 
 Touches: `src/app/studio/(dashboard)/media/*`, `src/components/studio/media/*`, `src/actions/media.ts`, `src/lib/media-ingest.ts`, `slot-image.tsx`, `meniscus-image.tsx`, `site-images.ts`, `docs/media-v3-manifest.json`, `public/media/v3/`. Effort: L. Gates: D7, D9, D26, D24.

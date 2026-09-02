@@ -15,11 +15,11 @@ Current Phase:            Transformation Phase 0 — forensic audit and roadmap
 Phase Status:             COMPLETE (2026-09-02, HEAD f1cfd95, branch claude/session-6h1a70)
 Completed:                docs/transformation-audit.md (89-section reconciliation, subsystem verdicts,
                           testimonial and demo-data gap analysis, inspiration-library research,
-                          27 owner decisions D7–D27), docs/transformation-roadmap.md (Phases 1–17
+                          28 owner decisions D7–D28), docs/transformation-roadmap.md (Phases 1–17
                           re-sequenced, decision gates, migration plan, definition of done)
 In Progress:              nothing — Phase 0 stops here by instruction (master prompt §89)
 Next Exact Task:          Owner answers the decision gates in docs/transformation-roadmap.md §2
-                          (D7–D27 plus Phase 2e). Then Phase 1a (hygiene and gates): stale-translation
+                          (D7–D28 plus Phase 2e). Then Phase 1a (hygiene and gates): stale-translation
                           mode for scripts/i18n-missing.mjs; one BASE_URL default across scripts;
                           remove the legacy un-gated syncSourceToSheet (D23); wire requestDelayMs;
                           test the descending-index sheet deletion; delete dormant v2 files (D18);
@@ -36,20 +36,27 @@ Assets Added:             none. A 40-item Higgsfield generation plan is recorded
                           nothing generated.
 Tests Run:                npm run typecheck · npm run lint · npm test · npm run copy:check ·
                           node scripts/i18n-missing.mjs
-Tests Passing:            typecheck ✓ · lint ✓ · test ✓ 36 files / 375 tests · copy:check ✓ 1,181 slots ·
-                          i18n-missing ✓ 0 missing in 8 locales. NOT RUN (no database, no server in the
-                          session): build, test:db, test:e2e, redesign-audit, a11y-audit, studio-audit,
-                          lighthouse.
-Known Issues:             GitHub Actions EXECUTES (run #71 on PR #29, 2026-09-02) — AGENTS.md:188-190 and the
-                          KNOWN ISSUES "BLOCKER" below are stale and D4's premise is gone; legacy un-gated sheet push
+Tests Passing:            Locally: typecheck ✓ · lint ✓ · test ✓ 36 files / 375 tests · copy:check ✓ 1,181 slots ·
+                          i18n-missing ✓ 0 missing in 8 locales. Not run locally (no database, no server
+                          in the session): build, test:db, test:e2e, the three audits, lighthouse.
+                          On GitHub Actions, CI run #76 on PR #29 (head 6c536e7) passed BOTH jobs: build
+                          against Postgres, test:db, design audit 1440/390, RTL sweep, a11y audit, Studio
+                          audit, Lighthouse budget. test:e2e is still not in CI.
+Known Issues:             A DISCARDED HISTORY LAYER: PRs #15–#20 and #22–#27 were merged on 2026-09-01 and
+                          dropped when main was rewound to f1cfd95 by 2026-09-02 12:13 UTC (38 commits, 50 files,
+                          reachable at refs/pull/<n>/head; audit §1.2, decision D28); PR #28 closed unmerged.
+                          GitHub Actions EXECUTES (runs #71 and #76 on PR #29, 2026-09-02) — AGENTS.md:188-190 and
+                          the KNOWN ISSUES "BLOCKER" below are stale and D4's premise is gone; legacy un-gated sheet push
                           (scraper-jobs.ts:379-404, :749); stale-translation gap in i18n-missing.mjs;
                           seven storefront blur sites against "exactly one"; OG cards on the v2 palette;
                           port drift :3111/:3000; 6 obsolete workflows; .env.example carries the retired
                           domain; count drift in CLAUDE.md (1,181 slots, 7 manifest pages, 13 CI routes).
-Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Do NOT start Phase 1b,
-                          3, 4, 9 or 15 without the gate decisions recorded under DECISIONS below. Phase 1a
-                          and Phase 10 may start without any decision. Run every gate locally; do not
-                          trust a green PR.
+Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Get D28 (the rewind
+                          of main) answered before anything else — five Phase 1a items already exist as
+                          reviewed code in the discarded PRs. Do NOT start Phase 1b, 3, 4, 9 or 15 without
+                          the gate decisions recorded under DECISIONS below. Phase 10 may start without any
+                          decision. Branch from origin/main, never local main. CI runs; still run locally
+                          what ci.yml does not sweep (detail routes, E2E, extra widths) and say so.
 ```
 
 ---
@@ -95,7 +102,7 @@ than a silent 400.
 `docs/transformation-roadmap.md` §2–§3. Phase 2f #2 (Tiptap walk in `media-usages.ts`) is DONE — see
 Phase 2f below; the earlier text of this section was stale.
 
-Also open: Phase 2e's five owner decisions, and D7–D27 from the transformation audit.
+Also open: Phase 2e's five owner decisions, and D7–D28 from the transformation audit.
 
 ---
 
@@ -544,7 +551,8 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 - Typography: Instrument Serif / Inter / JetBrains Mono + 5 Noto Sans script faces.
 - Motion: GSAP + ScrollTrigger + SplitText (lazy barrel), Lenis (fine-pointer + no-reduced-motion
   only), `next-view-transitions` MorphLink.
-- 3D: `@google/model-viewer` only. `three` is unused.
+- 3D: `@google/model-viewer` only. ~~`three` is unused.~~ *(Wrong — see the WON'T-FIX note above: `three` is
+  `@google/model-viewer`'s required peer and must stay. Corrected 2026-09-02.)*
 
 ## ARCHITECTURE DECISIONS
 
@@ -562,11 +570,16 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 
 ## LAST COMMIT
 
+*(Historical — the ZIP-import Phase 0. The current position is the SESSION CHECKPOINT at the top of this
+file; `origin/main` is `f1cfd95` and the transformation branch is `claude/session-6h1a70`, PR #29.)*
+
 `32f21a6` — *Import ResinRiva2.0 source as transformation baseline* (920 files, unmodified)
 `54974ff` — *Phase 0: forensic audit of the imported baseline* (documentation only)
 (this Phase 0.5 defect-fix commit follows)
 
 ## SAFE CONTINUATION POINT
+
+*(Historical. Resume from the SESSION CHECKPOINT block at the top of this file, not from here.)*
 
 **Phases 0 and 0.5 are complete and committed.** No application code has been modified — the
 changes so far are workflows, previously-broken unwired scripts, and stale documentation.
