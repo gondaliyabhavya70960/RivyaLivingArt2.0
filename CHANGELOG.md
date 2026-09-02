@@ -43,6 +43,11 @@ Documentation only. No application code, schema, content or asset changed.
   ≥ 15 champagne-filled star glyphs in one viewport against the max-two rule, with an untranslated
   `aria-label`.
 - The four OG share cards and the manifest still paint the superseded v2 palette.
+- Found on this PR's own Vercel preview (`04cbd9a`, `P2037 TooManyConnections` for role
+  `prisma_migration` during prerender): `privacy/page.tsx:55`, `terms/page.tsx:55` and
+  `sitemap.ts:60-82` read the database with no fallback, so a transient database error at build
+  time fails the deploy; the Vercel runtime `DATABASE_URL` carries the migration role instead of
+  the pooled endpoint `src/lib/db.ts` expects.
 
 ### Verified this session
 `npm run typecheck` ✓ · `npm run lint` ✓ · `npm test` ✓ (36 files / 375 tests) · `npm run copy:check` ✓

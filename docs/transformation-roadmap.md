@@ -78,6 +78,7 @@ The v3 system is implemented; Phase 1 cannot re-derive it (`CLAUDE.md:7-8`). It 
 - D18/D24: delete the dormant files and workflows by exact path; move superseded docs under `docs/archive/`; fix `README.md` title and build-phase narrative; fix counts in `CLAUDE.md`, `AGENTS.md`, `docs/studio-cms/*`; ARCHIVED banner on `docs/audit-uiux.md`; fix `media-grid.tsx:94-100` comment.
 - Add computed-style rules to `scripts/redesign-audit.mjs`: `backdrop-filter` outside `[data-slot=sf-site-header]`, `box-shadow` outside the two exceptions, hover transforms on buttons, non-token durations; make the champagne count a failing rule.
 - Add a motion-bundle size check (gzipped bytes of the GSAP/Lenis chunks) with the 45 KB budget.
+- Make the three build-time reads total: `privacy/page.tsx:55`, `terms/page.tsx:55` (fall back to the seeded legal stub) and `sitemap.ts:60-82` (fall back to the static routes), following `readCopyRows` in `site-copy-server.ts:57`; ask the owner to point the Vercel runtime `DATABASE_URL` at the pooled endpoint and keep the direct URL in `DATABASE_URL_UNPOOLED` (seen failing on this PR's preview with `P2037` for role `prisma_migration`).
 
 **1b · Tokens and primitives**
 - `--z-*` ladder (rail · header · scrim · drawer · overlay · toast · skip) and `--breakpoint-*` tokens in `tokens.css`, bridged in `globals.css`; migrate the 15 z values and two raw media queries.
