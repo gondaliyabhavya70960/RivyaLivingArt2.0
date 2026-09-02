@@ -106,6 +106,7 @@ Part 6 stays the structure; the manifest grows by at most two sections and the b
 - New `large-format` `SectionDef` (§10): light band, three or four `MeniscusImage` tiles from `largeFormat.k1–k4` plus a mono index line and a link to `/large-resin-art`; copy prefix `Home.largeFormat.*` in nine locales via `i18n-merge.mjs`; `cureLabelKey` + `Home.cure.*`; registry regenerated. Position after "featured pieces" so no two dark bands touch.
 - Collections band re-laid as a bento (shortlist 6) using `CollectionCard`'s `ratio` prop; the six slugs stay a code constant.
 - Manifesto scroll-brightening (shortlist 10); `Reveal` on band text; bespoke band parallax capped at 30 px (shortlist 9); testimonial rail below `md` (shortlist 12); hero rise/drift from Phase 1.
+- §15's brief attributes (dimensions, resin colour, wood, finish, shape, edge treatment, artwork direction, installation) do not exist as fields on `/custom-order`; adding them changes a form under HARD RULE 5, so they are proposed to the owner alongside D21 rather than built in this phase.
 - Headline, lead and CTA labels are owner slots (`Home.hero.*`); the prompt's "Art, Cast Into Living Spaces." is entered by the owner in `/studio/site-copy` in nine locales, not hardcoded. The CTA swap (2b) is the owner's call.
 - §9 furniture band and §14 room-context band only after D9/D26, framed as commission capability with concept-captioned imagery from SET A/C.
 

@@ -11,7 +11,7 @@ Documentation only. No application code, schema, content or asset changed.
 
 ### Added
 - **`docs/transformation-audit.md`**: the master prompt's 89 sections reconciled against `HEAD` —
-  19 EXISTS · 52 PARTIAL · 4 DATA_GAP · 9 DECISION · 1 MISSING · 4 PROCESS, with 18 forbidden
+  18 EXISTS · 53 PARTIAL · 4 DATA_GAP · 9 DECISION · 1 MISSING · 4 PROCESS, with 18 forbidden
   asks named against the rule that blocks each and 20 library pattern families screened out. KEEP/REFINE/REBUILD/REMOVE verdicts for every
   storefront, motion and Studio surface; the testimonial gap field by field with a proposed additive
   migration; three demo-data isolation designs with a recommendation; an eleven-library inspiration
