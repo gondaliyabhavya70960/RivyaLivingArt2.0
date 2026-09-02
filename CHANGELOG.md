@@ -46,8 +46,14 @@ Documentation only. No application code, schema, content or asset changed.
 
 ### Verified this session
 `npm run typecheck` ✓ · `npm run lint` ✓ · `npm test` ✓ (36 files / 375 tests) · `npm run copy:check` ✓
-(1,181 slots) · `node scripts/i18n-missing.mjs` ✓ (0 missing). Not run (no database or server in the
-session): build, test:db, e2e, the three audits, Lighthouse.
+(1,181 slots) · `node scripts/i18n-missing.mjs` ✓ (0 missing). Not run locally (no database or server
+in the session): build, test:db, e2e, the three audits, Lighthouse.
+
+**GitHub Actions executes.** Pushing this branch triggered CI run #71 (`33664201599`) on PR #29, which
+ran on a real runner: the checks job passed on the runner (job log read), and the build job ran
+`npm run build` against the Postgres service. `AGENTS.md`'s "CI has never run" trap and
+`PROJECT_STATE.md`'s BLOCKER entry described 2026-08-31 and are corrected in this PR; retiring D4's
+premise is owner decision D27.
 
 ## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
 

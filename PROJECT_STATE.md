@@ -40,7 +40,8 @@ Tests Passing:            typecheck ✓ · lint ✓ · test ✓ 36 files / 375 t
                           i18n-missing ✓ 0 missing in 8 locales. NOT RUN (no database, no server in the
                           session): build, test:db, test:e2e, redesign-audit, a11y-audit, studio-audit,
                           lighthouse.
-Known Issues:             CI execution on GitHub unverifiable (D4/D27); legacy un-gated sheet push
+Known Issues:             GitHub Actions EXECUTES (run #71 on PR #29, 2026-09-02) — AGENTS.md:188-190 and the
+                          KNOWN ISSUES "BLOCKER" below are stale and D4's premise is gone; legacy un-gated sheet push
                           (scraper-jobs.ts:379-404, :749); stale-translation gap in i18n-missing.mjs;
                           seven storefront blur sites against "exactly one"; OG cards on the v2 palette;
                           port drift :3111/:3000; 6 obsolete workflows; .env.example carries the retired
@@ -408,6 +409,9 @@ the art ecosystem; supplies and print keep their own tabs, category pages and UR
 GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate
 set is run locally before every push and the results reported explicitly. The owner fixes billing
 when convenient; no work is blocked on it.
+*(2026-09-02: the premise is gone — Actions executes, run #71 on PR #29. The evidence habit stays for
+what `ci.yml` deliberately cannot reach: detail routes, the E2E smoke, widths other than 1440/390.
+Formal retirement is owner decision D27 in `docs/transformation-audit.md`.)*
 
 ---
 
@@ -468,7 +472,8 @@ Optional: `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN`, `EMA
 - **Zero** coverage of API routes, server actions, React components. Database queries: two files
   under `tests/db/` since 2026-09-01.
 - E2E: `scripts/e2e-smoke.mjs` exists (not run this session — needs a running server + browser).
-- **CI has never executed any of it** — see the `ci.yml` `Main` defect.
+- **CI has never executed any of it** — see the `ci.yml` `Main` defect. *(Superseded 2026-09-02: run #71
+  on PR #29 executed both jobs on a real runner; see BUILD STATUS and D27.)*
 
 ## BUILD STATUS
 
@@ -494,7 +499,11 @@ introduced.
 
 ## KNOWN ISSUES
 
-### BLOCKER — GitHub Actions cannot run on this repository
+### ~~BLOCKER — GitHub Actions cannot run on this repository~~ — SUPERSEDED 2026-09-02
+
+*Actions executes now: run #71 (`33664201599`) on PR #29 ran both jobs on a real runner. The text below
+records the 2026-08-31 state and is kept as history. D4's premise no longer holds; see the SESSION
+CHECKPOINT and decision D27 in `docs/transformation-audit.md`.*
 `ci.yml` now triggers correctly (fixed in Phase 0.5) and fired [run #1](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33363959495),
 the first in the project's history. **Both attempts failed in ~2–6s with `runner_id: 0`, no runner
 name, and HTTP 404 on log download** — no step ever executed. The repository is **private** with
@@ -563,10 +572,11 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 changes so far are workflows, previously-broken unwired scripts, and stale documentation.
 The baseline is verified green and fully reproducible from `32f21a6`.
 
-**CI is now enabled on `main`** — but see KNOWN ISSUES above and decision D4: GitHub Actions has never
-allocated a runner for this repository, so no gate has ever executed remotely. Every gate was run
-locally on the same commit before enabling it. *(Corrected 2026-09-02; the earlier wording "live"
-contradicted the KNOWN ISSUES entry.)*
+**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it.
+*(Verified 2026-09-02: GitHub Actions does execute. Run #71, `33664201599`, on PR #29 ran on runner
+`1000000932`; the checks job passed typecheck · lint · copy:check · i18n-missing · vitest 36/375 on the
+runner, and the build job ran `npm run build` against the Postgres service. The KNOWN ISSUES "BLOCKER"
+entry above and `AGENTS.md:188-190` describe 2026-08-31 and are superseded.)*
 
 Resume by answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename).
 

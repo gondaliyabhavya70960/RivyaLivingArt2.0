@@ -16,7 +16,7 @@ From `AGENTS.md` HARD RULES 1–5 and `CLAUDE.md`:
 4. Every order finalises through WhatsApp: Place Order → order summary → `Inquiry` via Server Action → `wa.me/917096036250` with the complete pre-filled message. Covered by `npm run test:e2e`.
 5. The redesign changes the visual layer only. Product data, filtering, search, customization fields, uploads, Server Actions, auth, Studio/CMS behaviour, URLs and routes are off-limits to design work. A data change is its own change with its own justification.
 
-From `PROJECT_STATE.md` DECISIONS (settled; do not re-litigate): **D1** WhatsApp only · **D2** keep and extend the bespoke Studio; new surfaces follow registry → overrides → total resolver · **D3** new imagery for the new domain; `resinriva/` paths untouched · **D4** CI: local verification, results reported explicitly · **D5** commission-led positioning because the catalogue contains no furniture · **D6** supplies separated from the art storefront.
+From `PROJECT_STATE.md` DECISIONS (settled; do not re-litigate): **D1** WhatsApp only · **D2** keep and extend the bespoke Studio; new surfaces follow registry → overrides → total resolver · **D3** new imagery for the new domain; `resinriva/` paths untouched · **D4** CI: local verification, results reported explicitly (its premise, that Actions cannot allocate a runner, was disproved on 2026-09-02 by run #71 on PR #29; the evidence habit stays for what CI cannot reach, see D27) · **D5** commission-led positioning because the catalogue contains no furniture · **D6** supplies separated from the art storefront.
 
 Culture: never fabricate (assets, rows, competitor data, scraper results, test results); reproduce the failure before fixing it; if you say it works, you have run it; every claim opened in the file it names; do not trust a green PR.
 
@@ -52,7 +52,7 @@ The owner answers these before the phase that depends on them starts. Recorded a
 | D24 | Housekeeping: delete six workflows, tracked `.playwright-mcp/`, `audit/crawl-report.json`; archive superseded docs; owner edits `.env.example`? | 1 (hygiene) |
 | D25 | Which of the ten process steps does the studio actually perform? | 8 |
 | D26 | Room context: real delivered-piece photography, captioned concept rooms, or not at all? | 3, 12 |
-| D27 | GitHub Actions billing / repo visibility; correct `PROJECT_STATE.md:513`? | every phase's evidence |
+| D27 | Retire D4's "CI cannot run" premise: Actions executes (run #71 on PR #29); make CI the gate of record and keep local runs for detail routes, E2E and extra widths; correct `AGENTS.md:188-190` and `PROJECT_STATE.md` | every phase's evidence |
 | 2e-1…5 | `/shop?q=` descriptions; "Show all N pieces"; breadcrumbs; canonicals; old bookmarks | 5 |
 | 2b | Swap hero primary/secondary CTA under commission-led positioning? | 3 |
 
@@ -274,7 +274,7 @@ Hard orderings: 1a's stale-translation gate before any of 3, 4, 8; Phase 9's sch
 
 The repository's definition (`AGENTS.md` "Definition of done") applies to every phase, unchanged:
 
-typecheck ✓ · lint ✓ · tests ✓ · build ✓ (against a real Postgres) · `copy:check` ✓ · 0 missing translations (and, from 1a, 0 stale) · works at 360 px and 1280 px · keyboard reachable · reduced-motion checked · `redesign-audit` and `a11y-audit` clean at 1440 and 390 (and RTL for layout changes) · `studio-audit` clean for Studio phases · HARD RULES respected · the order flow still opens `wa.me/917096036250` with the correct pre-filled message · **if you say it works, you have run it** · results pasted in the PR body because CI cannot be trusted (D4).
+typecheck ✓ · lint ✓ · tests ✓ · build ✓ (against a real Postgres) · `copy:check` ✓ · 0 missing translations (and, from 1a, 0 stale) · works at 360 px and 1280 px · keyboard reachable · reduced-motion checked · `redesign-audit` and `a11y-audit` clean at 1440 and 390 (and RTL for layout changes) · `studio-audit` clean for Studio phases · HARD RULES respected · the order flow still opens `wa.me/917096036250` with the correct pre-filled message · **if you say it works, you have run it** · CI green on the PR head, plus local results pasted in the PR body for what CI cannot reach (detail routes, E2E, widths beyond 1440/390).
 
 Phase-specific additions: every new section declares `dark`, `cureLabelKey`, copy prefix and joins `KNOWN_ROUTES` if it is a route; every new media-URL column joins `media-usages.ts` and its DB test in the same commit; every copy change is a nine-file edit plus `copy:registry`; every new pattern from §14 has a reduced-motion branch and is measured against the motion budget; every schema change is additive and reuses a migration precedent; `PROJECT_STATE.md`'s checkpoint block and `CHANGELOG.md` are updated in the same PR.
 
