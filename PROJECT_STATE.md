@@ -5,6 +5,54 @@
 
 ---
 
+## SESSION CHECKPOINT
+
+The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/transformation-roadmap.md`).
+Updated at the end of every transformation phase. The narrative sections below it are history.
+
+```text
+Current Phase:            Transformation Phase 0 — forensic audit and roadmap
+Phase Status:             COMPLETE (2026-09-02, HEAD f1cfd95, branch claude/session-6h1a70)
+Completed:                docs/transformation-audit.md (89-section reconciliation, subsystem verdicts,
+                          testimonial and demo-data gap analysis, inspiration-library research,
+                          27 owner decisions D7–D27), docs/transformation-roadmap.md (Phases 1–17
+                          re-sequenced, decision gates, migration plan, definition of done)
+In Progress:              nothing — Phase 0 stops here by instruction (master prompt §89)
+Next Exact Task:          Owner answers the decision gates in docs/transformation-roadmap.md §2
+                          (D7–D27 plus Phase 2e). Then Phase 1a (hygiene and gates): stale-translation
+                          mode for scripts/i18n-missing.mjs; one BASE_URL default across scripts;
+                          remove the legacy un-gated syncSourceToSheet (D23); wire requestDelayMs;
+                          test the descending-index sheet deletion; delete dormant v2 files (D18);
+                          redesign-audit rules for blur/shadow/hover-transform.
+Files Created:            docs/transformation-audit.md · docs/transformation-roadmap.md
+Files Modified:           PROJECT_STATE.md (this block + corrections) · CHANGELOG.md
+Database Changes:         none. 44 migrations at HEAD, purely additive, last
+                          20260831080000_brand_rivya_living_art. Proposed (not applied): M1–M10 in the
+                          roadmap §6.
+Content Changes:          none
+Demo Data:                none — HARD RULE 3. Demo/Content Lab content is an owner decision (D8);
+                          if approved it lives only in non-production databases.
+Assets Added:             none. A 40-item Higgsfield generation plan is recorded in the audit §10.3;
+                          nothing generated.
+Tests Run:                npm run typecheck · npm run lint · npm test · npm run copy:check ·
+                          node scripts/i18n-missing.mjs
+Tests Passing:            typecheck ✓ · lint ✓ · test ✓ 36 files / 375 tests · copy:check ✓ 1,181 slots ·
+                          i18n-missing ✓ 0 missing in 8 locales. NOT RUN (no database, no server in the
+                          session): build, test:db, test:e2e, redesign-audit, a11y-audit, studio-audit,
+                          lighthouse.
+Known Issues:             CI execution on GitHub unverifiable (D4/D27); legacy un-gated sheet push
+                          (scraper-jobs.ts:379-404, :749); stale-translation gap in i18n-missing.mjs;
+                          seven storefront blur sites against "exactly one"; OG cards on the v2 palette;
+                          port drift :3111/:3000; 6 obsolete workflows; .env.example carries the retired
+                          domain; count drift in CLAUDE.md (1,181 slots, 7 manifest pages, 13 CI routes).
+Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Do NOT start Phase 1b,
+                          3, 4, 9 or 15 without the gate decisions recorded under DECISIONS below. Phase 1a
+                          and Phase 10 may start without any decision. Run every gate locally; do not
+                          trust a green PR.
+```
+
+---
+
 ## PROJECT
 RivyaLivingArt2.0 — *Rivya Living Art*
 
@@ -21,6 +69,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
 **Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
+**Transformation Phase 0 — forensic audit and roadmap: COMPLETE** (2026-09-02; see SESSION CHECKPOINT)
 
 **Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
 
@@ -41,10 +90,11 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
-`media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
+**Owner decision gates, then Transformation Phase 1a.** See the SESSION CHECKPOINT block above and
+`docs/transformation-roadmap.md` §2–§3. Phase 2f #2 (Tiptap walk in `media-usages.ts`) is DONE — see
+Phase 2f below; the earlier text of this section was stale.
 
-Also open: Phase 2e's five owner decisions.
+Also open: Phase 2e's five owner decisions, and D7–D27 from the transformation audit.
 
 ---
 
@@ -370,9 +420,10 @@ has been modified yet.**
 
 ## DATABASE MIGRATIONS
 
-43 existing migrations, **all applied successfully** to local Postgres 16.13.
+43 existing migrations at import, **all applied successfully** to local Postgres 16.13.
 History is **purely additive** — zero `DROP TABLE` / `DROP COLUMN` / `ALTER COLUMN` across all 43.
-**No new migration written yet.**
+*(Correction 2026-09-02: the 44th, `20260831080000_brand_rivya_living_art`, landed in Phase 1; the
+history is still purely additive across all 44.)*
 
 ## DATA IMPORTS
 
@@ -413,7 +464,9 @@ Optional: `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN`, `EMA
 ## TESTS
 
 - Unit: **29 files / 322 tests — all passing** (~2.5s), `src/**/*.test.ts`, node environment.
-- **Zero** coverage of API routes, server actions, React components, or database queries.
+  *(2026-09-02: now 36 files / 375 tests, plus 2 database-backed files under `tests/db/`.)*
+- **Zero** coverage of API routes, server actions, React components. Database queries: two files
+  under `tests/db/` since 2026-09-01.
 - E2E: `scripts/e2e-smoke.mjs` exists (not run this session — needs a running server + browser).
 - **CI has never executed any of it** — see the `ci.yml` `Main` defect.
 
@@ -510,8 +563,10 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 changes so far are workflows, previously-broken unwired scripts, and stale documentation.
 The baseline is verified green and fully reproducible from `32f21a6`.
 
-**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it, so
-a red CI from here is a real regression, not a pre-existing failure surfacing.
+**CI is now enabled on `main`** — but see KNOWN ISSUES above and decision D4: GitHub Actions has never
+allocated a runner for this repository, so no gate has ever executed remotely. Every gate was run
+locally on the same commit before enabling it. *(Corrected 2026-09-02; the earlier wording "live"
+contradicted the KNOWN ISSUES entry.)*
 
 Resume by answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename).
 

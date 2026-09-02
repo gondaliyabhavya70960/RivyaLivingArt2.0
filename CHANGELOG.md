@@ -5,6 +5,50 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 0 — forensic audit and roadmap (2026-09-02)
+
+Documentation only. No application code, schema, content or asset changed.
+
+### Added
+- **`docs/transformation-audit.md`**: the master prompt's 89 sections reconciled against `HEAD` —
+  19 EXISTS · 52 PARTIAL · 4 DATA_GAP · 9 DECISION · 1 MISSING · 4 PROCESS, with 18 forbidden
+  asks named against the rule that blocks each and 20 library pattern families screened out. KEEP/REFINE/REBUILD/REMOVE verdicts for every
+  storefront, motion and Studio surface; the testimonial gap field by field with a proposed additive
+  migration; three demo-data isolation designs with a recommendation; an eleven-library inspiration
+  research pass (all reached) with an 18-pattern shortlist and an install-nothing policy; a 40-item
+  Higgsfield generation plan (nothing generated); 27 owner decisions D7–D27; a risk register; a stale
+  documentation register.
+- **`docs/transformation-roadmap.md`**: Phases 1–17 re-sequenced to what exists, decision gates per
+  phase, an additive migration plan M1–M10, the per-phase definition of done, and the §81 checkpoint
+  protocol.
+
+### Changed
+- **`PROJECT_STATE.md`**: a `SESSION CHECKPOINT` block (the master prompt's fifteen §81 keys) now
+  opens the file; the stale NEXT EXACT TASK (already DONE in Phase 2f) is replaced; the migration
+  count (44), test counts (36 files / 375) and the contradictory "CI is now live" line are corrected
+  in place with dated notes.
+
+### Found, not fixed (each is its own PR — see the roadmap Phase 1a)
+- `src/actions/scraper-jobs.ts:379-404` and `:749`: a legacy `syncSourceToSheet` push runs after the
+  policy-gated `pushJobToSheet`, bypassing `SheetSyncPolicy`, so the MANUAL default is not the
+  effective default.
+- `scripts/i18n-missing.mjs` cannot detect a changed English value with stale translations
+  (`AGENTS.md:166-169`); this gate must exist before any copy-bearing phase.
+- `ScrapeSource.requestDelayMs` is never read; `studioEditedAt` is written and never read; the Bulk
+  Import wizard's product path upserts by slug without `decideMerge`.
+- Seven `backdrop-blur` sites on the storefront against the contract's "exactly one"; `consent-gate.tsx:74`
+  adds a third storefront shadow and a 16 px radius on a site-wide banner.
+- `revalidatePublic("testimonial")` purges only `/` (`src/actions/helpers.ts:137-139`) while product
+  pages cache for a day; `getTestimonials()` is not total (no `try/catch`); the testimonial band puts
+  ≥ 15 champagne-filled star glyphs in one viewport against the max-two rule, with an untranslated
+  `aria-label`.
+- The four OG share cards and the manifest still paint the superseded v2 palette.
+
+### Verified this session
+`npm run typecheck` ✓ · `npm run lint` ✓ · `npm test` ✓ (36 files / 375 tests) · `npm run copy:check` ✓
+(1,181 slots) · `node scripts/i18n-missing.mjs` ✓ (0 missing). Not run (no database or server in the
+session): build, test:db, e2e, the three audits, Lighthouse.
+
 ## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
 
 ### Added
