@@ -150,7 +150,7 @@ Each category page is already an editorial mini-landing (Part 8). Work is a visu
 - Process: D25 first; then four `Process.timeline` keys ×9, four `process.step` slots, SET D imagery; optional pinned stack (shortlist 18, L) inside the sanctioned second pin.
 - Materials: accordion gallery (shortlist 7) on `/process` and `/about`.
 - Journal: related collections needs `BlogPost↔Category` (D7); category set to ten is a content task in `/studio/blog` (footer slugs in `constants.ts:110-115` must survive).
-- Portfolio: "installation context" field (D7) or reuse `resultsMeta`; `BeforeAfter` renders the moment the owner fills `beforeImageUrl`.
+- Portfolio: "installation context" needs no column — the owner fills `location`, `process` and `resultsMeta`, which the case page already renders; `BeforeAfter` renders the moment the owner fills `beforeImageUrl`.
 - About: owner uploads the maker photograph (§15.2); copy is editable in nine locales already.
 
 Touches: `process/page.tsx`, `about/page.tsx`, `blog/*`, `portfolio/*`, `page-sections.ts`, `messages/*.json`. Effort: M. Gates: D7, D16, D25.
@@ -293,7 +293,7 @@ In dependency order; each is its own migration file and its own justification. N
 | M5 | `Media.tags String[]`, `caption`, `favourite`, `duration` | 12 | additive | No URL stored; no `media-usages` change |
 | M6 | `ScrapedProduct.notes` | 13 | additive | |
 | M7 | `SheetConflict` / `SheetSyncRun` tables; `SiteSettings.sheetId/sheetTabIds` | 14 | new tables, no URLs | |
-| M8 | `Portfolio.productId`, `BlogPost` ↔ `Category` join, `Portfolio.installationContext` | 8, 11 | `SetNull` relations | Only if D7 approves each |
+| M8 | `Portfolio.productId`, `BlogPost` ↔ `Category` join | 8, 11 | `SetNull` relations | Only if D7 approves each |
 | M9 | `ProductImage.role`, numeric `Product.widthMm/depthMm/heightMm` | 6 | additive nullable | Only if D7 approves; free-text `dimensions` stays canonical |
 | M10 | `Material`, `ProcessStep`, `Collection` tables | 8, 11 | registry-pattern surfaces (D2) | Only under D16; a `Collection` table starts empty (D5) |
 
