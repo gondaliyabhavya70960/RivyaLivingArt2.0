@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useSelection } from "@/hooks/use-selection";
+import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 
 export type TestimonialRow = {
   id: string;
@@ -162,11 +163,15 @@ function TestimonialFormBody({
     }
   }
 
+  // Blocks Escape and outside-clicks while the dialog holds unsaved
+  // input, and unconditionally while a save is in flight.
+  const [dismissRef, dismissProps] = useDismissGuard(busy);
+
   return (
     <DialogContent
       className="max-h-[85vh] max-w-md overflow-y-auto"
-      onInteractOutside={(e) => busy && e.preventDefault()}
-      onEscapeKeyDown={(e) => busy && e.preventDefault()}
+      ref={dismissRef}
+      {...dismissProps}
     >
       <DialogHeader>
         <DialogTitle>

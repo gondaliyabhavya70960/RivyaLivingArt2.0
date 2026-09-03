@@ -49,6 +49,45 @@ only place the change can be confirmed.
 
 ---
 
+## Transformation Phase 11 — the dialog dismissal guard (2026-09-03, second batch)
+
+### Fixed: a stray Escape threw away what you had just typed
+The Studio's CRUD dialogs — testimonials, categories, FAQs, users — already blocked Escape and
+outside-clicks, but **only `while busy`**, i.e. during the save round trip. That is the safest
+moment. The dangerous one is the minute before: a half-transcribed customer quote, and a stray
+Escape or a click beside the dialog discarded it with no warning and no undo. Radix closes on both
+by default, and each dialog unmounts its body on close, so the text was simply gone.
+
+`useDismissGuard` blocks the two accidental gestures while the dialog holds unsaved input, and still
+blocks unconditionally during a save. It **blocks rather than asks**: a confirmation inside a dialog
+means a dialog on top of a dialog. Cancel and the ✕ are one click away and still discard
+immediately — those are the person saying "throw this away".
+
+Dirtiness is read off the DOM rather than tracked in state. These dialogs hold a dozen `useState`
+fields each with no form library, so per-field predicates would be four bespoke comparisons to write
+and to keep in step with every field added later — the kind that quietly stops covering the new one.
+Snapshotting the dialog's own inputs and diffing at the moment of dismissal covers fields nobody has
+added yet, costs nothing per keystroke, and forces no re-render.
+
+### Two bugs in the first draft, both found by measuring
+1. **The guard did nothing at all.** It read the dialog element from `event.currentTarget`, but Radix
+   hands `onEscapeKeyDown` the native `KeyboardEvent`, whose `currentTarget` is not the dialog. The
+   lookup returned `null`, so the dirty check never ran — the guard was present, wired, and inert.
+2. **Then it became a trap.** With the element found, the baseline was captured synchronously in the
+   ref callback, *before* the dialog's fields existed. The snapshot was "no fields", every later read
+   differed, and a CLEAN dialog refused to close. Deferring the snapshot one frame fixes it.
+
+The test that caught both is the one that discriminates: a clean dialog must still close on Escape,
+and a dirty one must not. Either bug alone passes half of it.
+
+Measured on a production build: clean + Escape closes; dirty + Escape refused with the text intact;
+dirty + outside-click refused; dirty + explicit Cancel still closes.
+
+The three scraper dialogs keep their `busy`-only guard — they confirm an action rather than hold
+typed prose.
+
+---
+
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
 ### Added: the draft in a device frame, without leaving the editor

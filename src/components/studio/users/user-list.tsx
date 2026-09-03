@@ -57,6 +57,7 @@ import {
 } from "@/components/ui/select";
 import { Role } from "@/generated/prisma/enums";
 import { useSelection } from "@/hooks/use-selection";
+import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 
 export type UserRow = {
   id: string;
@@ -128,11 +129,15 @@ function InviteUserBody({
     }
   }
 
+  // Blocks Escape and outside-clicks while the dialog holds unsaved
+  // input, and unconditionally while a save is in flight.
+  const [dismissRef, dismissProps] = useDismissGuard(busy);
+
   return (
     <DialogContent
       className="max-w-md"
-      onInteractOutside={(e) => busy && e.preventDefault()}
-      onEscapeKeyDown={(e) => busy && e.preventDefault()}
+      ref={dismissRef}
+      {...dismissProps}
     >
       <DialogHeader>
         <DialogTitle>Invite user</DialogTitle>
@@ -245,11 +250,15 @@ function ResetPasswordBody({
     }
   }
 
+  // Blocks Escape and outside-clicks while the dialog holds unsaved
+  // input, and unconditionally while a save is in flight.
+  const [dismissRef, dismissProps] = useDismissGuard(busy);
+
   return (
     <DialogContent
       className="max-w-md"
-      onInteractOutside={(e) => busy && e.preventDefault()}
-      onEscapeKeyDown={(e) => busy && e.preventDefault()}
+      ref={dismissRef}
+      {...dismissProps}
     >
       <DialogHeader>
         <DialogTitle>Reset password</DialogTitle>
