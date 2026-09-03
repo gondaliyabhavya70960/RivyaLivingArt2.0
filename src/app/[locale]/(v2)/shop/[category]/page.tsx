@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { BeforeAfter } from "@/components/portfolio/before-after";
+import { Reveal } from "@/components/motion/reveal";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
 import { Button } from "@/components/storefront/button";
@@ -14,6 +15,7 @@ import {
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import { ShopExplorer } from "@/components/storefront/shop-explorer";
+import { SnapRail } from "@/components/storefront/snap-rail";
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { CATALOG_GROUPS, groupForCategorySlug } from "@/lib/catalog-taxonomy";
@@ -169,6 +171,7 @@ export default async function ShopCategoryPage({
   const t = await getTranslations("Shop");
   const tNav = await getTranslations("Nav");
   const tCommon = await getTranslations("Common");
+  const tLightbox = await getTranslations("Lightbox");
 
   const categoryRow = await db.category.findUnique({ where: { slug } });
   if (!categoryRow) notFound();
@@ -205,66 +208,66 @@ export default async function ShopCategoryPage({
     allInCategoryRows,
     images,
   ] = await Promise.all([
-      (async (): Promise<ShopPage | ShopOffsetPage> => {
-        // ?after resumes a shared/reloaded URL at its mirrored browse depth
-        // (resolveAfterCursor degrades a bad/stale id to page 1); ?page asks
-        // §7.7's numbered pager for one exact window. Exactly one of the two
-        // drives a request — the explicit page wins.
-        if (requestedPage > 1 || !after) {
-          return fetchProductsPageAt({
-            where: gridWhere,
-            sort,
-            page: requestedPage,
-            locale,
-          });
-        }
-        const cursor = await resolveAfterCursor(after, gridWhere);
-        return fetchProductsPage({ where: gridWhere, sort, cursor, locale });
-      })(),
-      db.product.count({ where: categoryOnlyWhere }),
-      // Sibling shelves of the same ecosystem — only ones that actually
-      // hold published pieces.
-      siblingSlugs.length > 0
-        ? db.category.findMany({
-            where: {
-              slug: { in: siblingSlugs },
-              visible: true,
-              products: { some: { status: "PUBLISHED", ...demo } },
-            },
-            orderBy: { order: "asc" },
-            take: 6,
-            select: { slug: true, name: true, image: true, translations: true },
-          })
-        : Promise.resolve([]),
-      // §8.3 — the transformation, only where one is documented: a published
-      // commission in this collection carrying both frames.
-      db.portfolio.findFirst({
-        where: {
-          status: "PUBLISHED",
-          ...demo,
-          categoryId: categoryRow.id,
-          beforeImageUrl: { not: null },
-          afterImageUrl: { not: null },
-        },
-        orderBy: { createdAt: "desc" },
-        select: {
-          slug: true,
-          title: true,
-          translations: true,
-          beforeImageUrl: true,
-          afterImageUrl: true,
-        },
-      }),
-      // Every published product URL in this category for the CollectionPage
-      // ItemList, so crawlers discover pieces beyond the first SSR'd page.
-      db.product.findMany({
-        where: categoryOnlyWhere,
-        select: { slug: true, title: true, translations: true },
-        orderBy: { createdAt: "desc" },
-        take: 500,
-      }),
-      getSiteImages(),
-    ]);
+    (async (): Promise<ShopPage | ShopOffsetPage> => {
+      // ?after resumes a shared/reloaded URL at its mirrored browse depth
+      // (resolveAfterCursor degrades a bad/stale id to page 1); ?page asks
+      // §7.7's numbered pager for one exact window. Exactly one of the two
+      // drives a request — the explicit page wins.
+      if (requestedPage > 1 || !after) {
+        return fetchProductsPageAt({
+          where: gridWhere,
+          sort,
+          page: requestedPage,
+          locale,
+        });
+      }
+      const cursor = await resolveAfterCursor(after, gridWhere);
+      return fetchProductsPage({ where: gridWhere, sort, cursor, locale });
+    })(),
+    db.product.count({ where: categoryOnlyWhere }),
+    // Sibling shelves of the same ecosystem — only ones that actually
+    // hold published pieces.
+    siblingSlugs.length > 0
+      ? db.category.findMany({
+          where: {
+            slug: { in: siblingSlugs },
+            visible: true,
+            products: { some: { status: "PUBLISHED", ...demo } },
+          },
+          orderBy: { order: "asc" },
+          take: 6,
+          select: { slug: true, name: true, image: true, translations: true },
+        })
+      : Promise.resolve([]),
+    // §8.3 — the transformation, only where one is documented: a published
+    // commission in this collection carrying both frames.
+    db.portfolio.findFirst({
+      where: {
+        status: "PUBLISHED",
+        ...demo,
+        categoryId: categoryRow.id,
+        beforeImageUrl: { not: null },
+        afterImageUrl: { not: null },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        slug: true,
+        title: true,
+        translations: true,
+        beforeImageUrl: true,
+        afterImageUrl: true,
+      },
+    }),
+    // Every published product URL in this category for the CollectionPage
+    // ItemList, so crawlers discover pieces beyond the first SSR'd page.
+    db.product.findMany({
+      where: categoryOnlyWhere,
+      select: { slug: true, title: true, translations: true },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    }),
+    getSiteImages(),
+  ]);
 
   /** Numbered-pager position — null while `Load more` is driving the view. */
   const pager =
@@ -308,13 +311,17 @@ export default async function ShopCategoryPage({
     print: t("tabPrint"),
   } as const;
 
-  /* ——— schema.org: breadcrumbs + the category collection ——— */
+  /* ——— schema.org: breadcrumbs + the category collection ———
+     Localised, not the hardcoded English "Home"/"Shop" this replaced — a
+     JSON-LD breadcrumb read by a crawler visiting the /ar or /hi build of
+     this page said "Home" and "Shop" regardless of which language the page
+     itself rendered in. */
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { label: "Home", href: "" },
-      { label: "Shop", href: "/shop" },
+      { label: tCommon("home"), href: "" },
+      { label: tNav("shop"), href: "/shop" },
       { label: category.name, href: `/shop/${slug}` },
     ].map((crumb, index) => ({
       "@type": "ListItem",
@@ -402,12 +409,12 @@ export default async function ShopCategoryPage({
       {category.description ? (
         <section className="section-standard bg-mineral">
           <div className="u-shell grid gap-8 lg:grid-cols-12">
-            <div className="flex flex-col gap-5 lg:col-span-7">
+            <Reveal className="flex flex-col gap-5 lg:col-span-7">
               <Eyebrow>{t("collection.aboutEyebrow")}</Eyebrow>
               <p className="u-prose font-body text-h3 leading-[1.35] text-ink">
                 {category.description}
               </p>
-            </div>
+            </Reveal>
           </div>
         </section>
       ) : null}
@@ -488,19 +495,23 @@ export default async function ShopCategoryPage({
         />
       </div>
 
-      {/* ═══ 8.5 · Related collections ═══ */}
+      {/* ═══ 8.5 · Related collections — a grid from `sm`, a `SnapRail`
+          below it (three 4:5 tiles crushed into one phone-width column read
+          worse than a horizontal browse). ═══ */}
       {relatedCollections.length > 0 ? (
         <section
           aria-labelledby="related-collections-heading"
           className="section-standard bg-sand"
         >
           <div className="u-shell flex flex-col gap-10">
-            <SectionHeading
-              id="related-collections-heading"
-              eyebrow={t("strip.eyebrow")}
-              title={t("collection.relatedHeading")}
-            />
-            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <Reveal>
+              <SectionHeading
+                id="related-collections-heading"
+                eyebrow={t("strip.eyebrow")}
+                title={t("collection.relatedHeading")}
+              />
+            </Reveal>
+            <ul className="hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-3">
               {relatedCollections.slice(0, 3).map((sibling) => (
                 <li key={sibling.slug}>
                   <CollectionCard
@@ -514,6 +525,28 @@ export default async function ShopCategoryPage({
                 </li>
               ))}
             </ul>
+            <div className="sm:hidden">
+              <SnapRail
+                ariaLabel={t("collection.relatedHeading")}
+                labels={{
+                  prev: tLightbox("prev"),
+                  next: tLightbox("next"),
+                  of: tLightbox("of"),
+                }}
+                itemClassName="w-[70vw] max-w-[19rem]"
+                items={relatedCollections.slice(0, 3).map((sibling) => (
+                  <CollectionCard
+                    key={sibling.slug}
+                    href={`/shop/${sibling.slug}`}
+                    name={groupLabels[group]}
+                    promise={sibling.name}
+                    image={sibling.image}
+                    imageAlt=""
+                    ratio="4/5"
+                  />
+                ))}
+              />
+            </div>
           </div>
         </section>
       ) : null}
@@ -529,7 +562,7 @@ export default async function ShopCategoryPage({
         className="bg-mineral"
       >
         <div className="u-shell section-compact flex flex-col gap-6 border-t border-hairline lg:flex-row lg:items-end lg:justify-between lg:gap-16">
-          <div className="flex flex-col gap-4">
+          <Reveal className="flex flex-col gap-4">
             <Eyebrow>{t("collection.commissionEyebrow")}</Eyebrow>
             <h2
               id="collection-commission-heading"
@@ -540,7 +573,7 @@ export default async function ShopCategoryPage({
             <p className="u-lede font-body text-small text-graphite">
               {t("collection.commissionBody")}
             </p>
-          </div>
+          </Reveal>
           <Button asChild variant="primary" size="md" className="shrink-0">
             <Link href="/custom-order">{t("collection.commissionCta")}</Link>
           </Button>
