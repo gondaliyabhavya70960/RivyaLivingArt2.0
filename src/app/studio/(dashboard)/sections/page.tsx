@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 
 import { requireStaffPage } from "@/actions/helpers";
 import { PageHeader } from "@/components/studio/page-header";
-import {
-  SectionsBoard,
-  type SectionRow,
-} from "@/components/studio/sections/sections-board";
+import { SectionsBoard } from "@/components/studio/sections/sections-board";
 import { Role } from "@/generated/prisma/enums";
 import {
   PAGE_SECTION_LABELS,
@@ -13,10 +10,8 @@ import {
   isSectionPageKey,
   type SectionPageKey,
 } from "@/lib/page-sections";
-import {
-  countPendingSections,
-  readSectionsForStudio,
-} from "@/lib/page-sections-server";
+import { countPendingSections } from "@/lib/page-sections-server";
+import { buildSectionRows } from "@/lib/page-sections-studio";
 
 export const metadata: Metadata = { title: "Page Sections" };
 
@@ -46,26 +41,10 @@ export default async function SectionsPage({
       ? params.page
       : SECTION_PAGES[0];
 
-  const [sections, pending] = await Promise.all([
-    readSectionsForStudio(pageKey),
+  const [rows, pending] = await Promise.all([
+    buildSectionRows(pageKey),
     countPendingSections(pageKey),
   ]);
-
-  const rows: SectionRow[] = sections.map((section) => ({
-    key: section.key,
-    label: section.label,
-    description: section.description,
-    dark: Boolean(section.dark),
-    hideable: section.hideable,
-    movable: section.movable,
-    conditional: Boolean(section.conditional),
-    ownsH1: Boolean(section.ownsH1),
-    visible: section.visible,
-    unpublished: section.unpublished,
-    notes: section.notes ?? "",
-    copyCount: section.copyPrefixes.length,
-    imageCount: section.imageKeys.length,
-  }));
 
   return (
     <div>

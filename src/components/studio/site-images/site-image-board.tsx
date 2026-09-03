@@ -83,8 +83,17 @@ export function SiteImageBoard({
   canImport,
   blobReady,
   pendingImport,
+  embedded = false,
 }: {
   groups: SiteImageGroupRows[];
+  /**
+   * Rendered inside the per-page composer's Pictures tab. The surface is
+   * already named by the picker above the tabs, so the group heading would
+   * repeat it; and the composer's publish bar publishes copy and images for
+   * the surface together, so the per-group publish control here would be a
+   * second button for the same action.
+   */
+  embedded?: boolean;
   /** Import writes to storage and is ADMIN-only, matching the action's guard. */
   canImport: boolean;
   /** False when no Blob store is connected — importing would save files that
@@ -165,18 +174,20 @@ export function SiteImageBoard({
 
       {groups.map((group) => (
         <section key={group.group} aria-labelledby={`grp-${group.group}`}>
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-2">
-            <h2
-              id={`grp-${group.group}`}
-              className="font-display text-25 text-foreground"
-            >
-              {group.group}
-            </h2>
-            <GroupPublish
-              group={group.group}
-              pending={group.slots.filter((s) => s.unpublished).length}
-            />
-          </div>
+          {!embedded && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-2">
+              <h2
+                id={`grp-${group.group}`}
+                className="font-display text-25 text-foreground"
+              >
+                {group.group}
+              </h2>
+              <GroupPublish
+                group={group.group}
+                pending={group.slots.filter((s) => s.unpublished).length}
+              />
+            </div>
+          )}
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {group.slots.map((slot) => (
               <SlotCard key={slot.key} slot={slot} />

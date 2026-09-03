@@ -49,6 +49,54 @@ only place the change can be confirmed.
 
 ---
 
+## Transformation Phase 11 — the per-page composer (2026-09-03, third batch)
+
+### Added: one page's words, pictures and order on one screen
+The roadmap's headline Phase 11 item — "a unified per-page editor composing words, pictures and
+order from the registries; UI composition, no data change". Until now they were three screens, each
+scoped by its own surface picker that could be set to a different page than the other two. Editing
+one page's hero meant the headline in one place, the photograph in a second, its position in a
+third.
+
+**Not at the route the roadmap named.** It specified `/studio/pages/<key>`, but that route is
+already the `Page` model editor (About, the policies), keyed by cuid under `[id]` — a `<key>` route
+beside it is a collision. `/studio/site-copy` was already scoped to one surface, already carried the
+surface's publish bar and revision history, and the copy and image registries already share its
+surface names. So the three boards compose THERE, under one surface picker, as **Words · Pictures ·
+Order**. The two standalone screens remain in the sidebar and render the same rows from the same
+builders — `buildSiteImageGroupRows` and `buildSectionRows` were lifted out of their pages so there
+is one implementation, not two that drift.
+
+**The surface↔page join is derived, not hand-written.** Copy and images say "Large format";
+sections say `large-format`. Neither vocabulary knows the other. Both carry the page's public path,
+so `pageKeyForPath` joins them by that — a table that cannot go stale when either side gains an
+entry. Five surfaces have no manifest by design and simply get no Order tab.
+
+The active tab lives in the URL (`?tab=`), like the surface and locale already do; a surface switch
+preserves it; every panel is `forceMount`ed so a half-typed copy edit survives a tab change.
+
+### Two bugs in the first draft, one of which the audit could not see
+1. **The whole screen fell to the error boundary — and passed the Studio audit.** `isSurfaceTab`
+   was exported from the `"use client"` tabs module; a function exported from a client module is a
+   client *reference* on the server, and the page's call threw "Attempted to call isSurfaceTab()
+   from the server". An error page is a perfectly accessible page, so `studio-audit.mjs` reported
+   clean across all 30 routes. The browser probe is what caught it: "tabs: (none), surface pickers: 0".
+   The vocabulary now lives in a plain module both sides import.
+2. **"Site chrome" and "System" would have offered the Homepage's sections to reorder.** They are
+   copy groups with no page of their own, and the preview-path fallback of `"/"` joined them to
+   `home`. Predicted from the code while reading the screenshot, then measured: with `?tab=order`
+   forced, they render Words · Pictures only and land on Words. Only an explicit path may join.
+
+### Measured on a production build
+Homepage: three tabs, exactly **one** surface picker on the page; 3 panels mounted, 0 inactive
+visible. Clicking Pictures writes `?tab=pictures`; the panel carries **0** group headings, no
+per-group publish control and no import block, 8 slot cards. Switching to About **keeps**
+`tab=pictures`. Order on About: no page switcher inside the panel, 7 sections. Portfolio with
+`?tab=order`: Words · Pictures only, lands on Words. Both standalone screens still 200. Studio audit
+clean at 1440 and 390; 0 server errors.
+
+---
+
 ## Transformation Phase 11 — the dialog dismissal guard (2026-09-03, second batch)
 
 ### Fixed: a stray Escape threw away what you had just typed
