@@ -1,0 +1,326 @@
+[
+  {
+    "id": "demo-portfolio-image-001-01",
+    "portfolioId": "demo-case-001",
+    "url": "/media/v3/print-head.avif",
+    "alt": "A Coastal River Table for a Surat Penthouse — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-001-02",
+    "portfolioId": "demo-case-001",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "A Coastal River Table for a Surat Penthouse — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-001-03",
+    "portfolioId": "demo-case-001",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "A Coastal River Table for a Surat Penthouse — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-002-01",
+    "portfolioId": "demo-case-002",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Ocean Wave Panel for a Mumbai Design Studio — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-002-02",
+    "portfolioId": "demo-case-002",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Ocean Wave Panel for a Mumbai Design Studio — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-002-03",
+    "portfolioId": "demo-case-002",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Ocean Wave Panel for a Mumbai Design Studio — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-002-04",
+    "portfolioId": "demo-case-002",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Ocean Wave Panel for a Mumbai Design Studio — plate 4 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 3
+  },
+  {
+    "id": "demo-portfolio-image-003-01",
+    "portfolioId": "demo-case-003",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "A Varmala Preserved for a Silver Anniversary — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-003-02",
+    "portfolioId": "demo-case-003",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "A Varmala Preserved for a Silver Anniversary — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-004-01",
+    "portfolioId": "demo-case-004",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Suspended Bloom Sculpture, Commissioned for a Gallery Opening — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-004-02",
+    "portfolioId": "demo-case-004",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Suspended Bloom Sculpture, Commissioned for a Gallery Opening — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-004-03",
+    "portfolioId": "demo-case-004",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Suspended Bloom Sculpture, Commissioned for a Gallery Opening — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-005-01",
+    "portfolioId": "demo-case-005",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Monogram Wall Set for a New Ahmedabad Home — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-005-02",
+    "portfolioId": "demo-case-005",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Monogram Wall Set for a New Ahmedabad Home — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-005-03",
+    "portfolioId": "demo-case-005",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Monogram Wall Set for a New Ahmedabad Home — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-005-04",
+    "portfolioId": "demo-case-005",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Monogram Wall Set for a New Ahmedabad Home — plate 4 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 3
+  },
+  {
+    "id": "demo-portfolio-image-006-01",
+    "portfolioId": "demo-case-006",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "A Wedding Frame with Twin Garlands and LED Edge Light — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-006-02",
+    "portfolioId": "demo-case-006",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "A Wedding Frame with Twin Garlands and LED Edge Light — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-007-01",
+    "portfolioId": "demo-case-007",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Corporate Gifting Set for a Fifty-Person Launch — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-007-02",
+    "portfolioId": "demo-case-007",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Corporate Gifting Set for a Fifty-Person Launch — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-007-03",
+    "portfolioId": "demo-case-007",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Corporate Gifting Set for a Fifty-Person Launch — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-008-01",
+    "portfolioId": "demo-case-008",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "A Statement Vase Pair for a Hotel Lobby — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-008-02",
+    "portfolioId": "demo-case-008",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "A Statement Vase Pair for a Hotel Lobby — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-008-03",
+    "portfolioId": "demo-case-008",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "A Statement Vase Pair for a Hotel Lobby — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-008-04",
+    "portfolioId": "demo-case-008",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "A Statement Vase Pair for a Hotel Lobby — plate 4 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 3
+  },
+  {
+    "id": "demo-portfolio-image-009-01",
+    "portfolioId": "demo-case-009",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Geode Wall Clock for a Baroda Studio Apartment — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-009-02",
+    "portfolioId": "demo-case-009",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Geode Wall Clock for a Baroda Studio Apartment — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-010-01",
+    "portfolioId": "demo-case-010",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Diwali Diya Set, Custom Palette for a Family Order — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-010-02",
+    "portfolioId": "demo-case-010",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Diwali Diya Set, Custom Palette for a Family Order — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-010-03",
+    "portfolioId": "demo-case-010",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Diwali Diya Set, Custom Palette for a Family Order — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-011-01",
+    "portfolioId": "demo-case-011",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Botanical Earring Capsule for a Bridal Party — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-011-02",
+    "portfolioId": "demo-case-011",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Botanical Earring Capsule for a Bridal Party — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  },
+  {
+    "id": "demo-portfolio-image-011-03",
+    "portfolioId": "demo-case-011",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Botanical Earring Capsule for a Bridal Party — plate 3 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 2
+  },
+  {
+    "id": "demo-portfolio-image-011-04",
+    "portfolioId": "demo-case-011",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Botanical Earring Capsule for a Bridal Party — plate 4 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 3
+  },
+  {
+    "id": "demo-portfolio-image-012-01",
+    "portfolioId": "demo-case-012",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Gold-Leaf Serving Trays for an Engagement Ceremony — plate 1 (Content Lab demo photograph)",
+    "caption": "Studio floor, before delivery.",
+    "translations": null,
+    "order": 0
+  },
+  {
+    "id": "demo-portfolio-image-012-02",
+    "portfolioId": "demo-case-012",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Gold-Leaf Serving Trays for an Engagement Ceremony — plate 2 (Content Lab demo photograph)",
+    "caption": null,
+    "translations": null,
+    "order": 1
+  }
+]

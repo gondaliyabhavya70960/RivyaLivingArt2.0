@@ -1,0 +1,10 @@
+[
+  {
+    "fromId": "demo-product-001",
+    "toId": "demo-product-010"
+  },
+  {
+    "fromId": "demo-product-030",
+    "toId": "demo-product-031"
+  }
+]

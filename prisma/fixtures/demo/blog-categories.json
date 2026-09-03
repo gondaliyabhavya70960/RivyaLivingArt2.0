@@ -1,0 +1,72 @@
+[
+  {
+    "id": "demo-blog-category-01",
+    "name": "Care & Maintenance",
+    "slug": "demo-care-maintenance",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-02",
+    "name": "Commissioning Guide",
+    "slug": "demo-commissioning-guide",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-03",
+    "name": "Gifting Ideas",
+    "slug": "demo-gifting-ideas",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-04",
+    "name": "Wedding & Preservation",
+    "slug": "demo-wedding-preservation",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-05",
+    "name": "Materials & Process",
+    "slug": "demo-materials-process",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-06",
+    "name": "3D Printing",
+    "slug": "demo-3d-printing",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-07",
+    "name": "Behind the Studio",
+    "slug": "demo-behind-the-studio",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-08",
+    "name": "Styling Ideas",
+    "slug": "demo-styling-ideas",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-09",
+    "name": "Seasonal Gifting",
+    "slug": "demo-seasonal-gifting",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-blog-category-10",
+    "name": "Corporate Gifting",
+    "slug": "demo-corporate-gifting",
+    "translations": null,
+    "isDemo": true
+  }
+]

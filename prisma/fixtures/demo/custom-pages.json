@@ -1,0 +1,67 @@
+[
+  {
+    "id": "demo-lander",
+    "slug": "demo-lander",
+    "title": "Concept Pieces — Content Lab Demo",
+    "status": "PUBLISHED",
+    "publishAt": null,
+    "noindex": false,
+    "seoTitle": null,
+    "seoDescription": null,
+    "ogImage": null,
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-page-002",
+    "slug": "demo-page-scheduled",
+    "title": "Scheduled Seasonal Drop — Content Lab Demo",
+    "status": "PUBLISHED",
+    "publishAt": "2027-01-01T00:00:00.000Z",
+    "noindex": false,
+    "seoTitle": null,
+    "seoDescription": null,
+    "ogImage": null,
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-page-003",
+    "slug": "demo-page-noindex",
+    "title": "Private Preview Page — Content Lab Demo",
+    "status": "PUBLISHED",
+    "publishAt": null,
+    "noindex": true,
+    "seoTitle": null,
+    "seoDescription": null,
+    "ogImage": null,
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-page-004",
+    "slug": "demo-page-draft",
+    "title": "Draft Landing Page — Content Lab Demo",
+    "status": "DRAFT",
+    "publishAt": null,
+    "noindex": false,
+    "seoTitle": null,
+    "seoDescription": null,
+    "ogImage": null,
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-page-005",
+    "slug": "demo-page-archived",
+    "title": "Archived Campaign Page — Content Lab Demo",
+    "status": "ARCHIVED",
+    "publishAt": null,
+    "noindex": false,
+    "seoTitle": null,
+    "seoDescription": null,
+    "ogImage": null,
+    "translations": null,
+    "isDemo": true
+  }
+]

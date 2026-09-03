@@ -1,0 +1,297 @@
+[
+  {
+    "id": "demo-product-field-001-1",
+    "productId": "demo-product-001",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "12 inch",
+      "16 inch",
+      "20 inch"
+    ],
+    "required": true,
+    "helpText": "Diameter of the finished piece.",
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-001-2",
+    "productId": "demo-product-001",
+    "label": "Frame colour",
+    "type": "SWATCH",
+    "options": [
+      "Ivory",
+      "Champagne",
+      "Charcoal"
+    ],
+    "required": true,
+    "helpText": "Frame and backing finish.",
+    "order": 1
+  },
+  {
+    "id": "demo-product-field-001-3",
+    "productId": "demo-product-001",
+    "label": "Engraving text",
+    "type": "TEXT",
+    "options": [],
+    "required": false,
+    "helpText": "Names or a date, up to 40 characters.",
+    "order": 2
+  },
+  {
+    "id": "demo-product-field-001-4",
+    "productId": "demo-product-001",
+    "label": "Finish",
+    "type": "SELECT",
+    "options": [
+      "Gloss",
+      "Satin"
+    ],
+    "required": true,
+    "helpText": "Topcoat finish.",
+    "order": 3
+  },
+  {
+    "id": "demo-product-field-001-5",
+    "productId": "demo-product-001",
+    "label": "Quantity",
+    "type": "NUMBER",
+    "options": [],
+    "required": false,
+    "helpText": "1–10 pieces.",
+    "order": 4
+  },
+  {
+    "id": "demo-product-field-001-6",
+    "productId": "demo-product-001",
+    "label": "Reference photo",
+    "type": "FILE",
+    "options": [],
+    "required": false,
+    "helpText": "Upload a photo to match the piece against.",
+    "order": 5
+  },
+  {
+    "id": "demo-product-field-006-1",
+    "productId": "demo-product-006",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-012-1",
+    "productId": "demo-product-012",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-018-1",
+    "productId": "demo-product-018",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-024-1",
+    "productId": "demo-product-024",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-030-1",
+    "productId": "demo-product-030",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-036-1",
+    "productId": "demo-product-036",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-042-1",
+    "productId": "demo-product-042",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-048-1",
+    "productId": "demo-product-048",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-054-1",
+    "productId": "demo-product-054",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-060-1",
+    "productId": "demo-product-060",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-066-1",
+    "productId": "demo-product-066",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-072-1",
+    "productId": "demo-product-072",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-078-1",
+    "productId": "demo-product-078",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-084-1",
+    "productId": "demo-product-084",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-090-1",
+    "productId": "demo-product-090",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  },
+  {
+    "id": "demo-product-field-096-1",
+    "productId": "demo-product-096",
+    "label": "Size",
+    "type": "SIZE",
+    "options": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
+    "required": false,
+    "helpText": null,
+    "order": 0
+  }
+]

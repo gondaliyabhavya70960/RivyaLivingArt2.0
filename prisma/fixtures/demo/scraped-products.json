@@ -1,0 +1,1922 @@
+[
+  {
+    "id": "demo-scraped-001",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-1",
+    "url": "https://example-demo-source.test/products/1",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 1",
+    "slug": "demo-staged-product-1",
+    "category": "art-craft-pieces",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 540,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "46cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/hero-pour.avif",
+      "/images/blog/3d-printed-gifts-that-surprise-people.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "63ca417d63ca417d63ca417d63ca417d63ca417d63ca417d63ca417d63ca417d",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-002",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-2",
+    "url": "https://example-demo-source.test/products/2",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 2",
+    "slug": "demo-staged-product-2",
+    "category": "sculptures-objets",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 580,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/login-backdrop.avif",
+      "/images/blog/3d-printing-materials-explained-for-buyers.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "60ca3cc460ca3cc460ca3cc460ca3cc460ca3cc460ca3cc460ca3cc460ca3cc4",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-003",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-3",
+    "url": "https://example-demo-source.test/products/3",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 3",
+    "slug": "demo-staged-product-3",
+    "category": "resin-home-decor",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 620,
+    "priceMax": 2620,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 4 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-epoxy.avif",
+      "/images/blog/anniversary-gifts-by-year-resin-ideas.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "61ca3e5761ca3e5761ca3e5761ca3e5761ca3e5761ca3e5761ca3e5761ca3e57",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-004",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-4",
+    "url": "https://example-demo-source.test/products/4",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 4",
+    "slug": "demo-staged-product-4",
+    "category": "tablespace-sets",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 660,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "28 x 22 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-flower.avif",
+      "/images/blog/baby-milestone-keepsakes-in-resin.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5eca399e5eca399e5eca399e5eca399e5eca399e5eca399e5eca399e5eca399e",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-005",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-5",
+    "url": "https://example-demo-source.test/products/5",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 5",
+    "slug": "demo-staged-product-5",
+    "category": "resin-jewelry-keychains",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 700,
+    "priceMax": null,
+    "showPrice": false,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "50cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-pigment.avif",
+      "/images/blog/birthday-gifts-by-personality-type.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5fca3b315fca3b315fca3b315fca3b315fca3b315fca3b315fca3b315fca3b31",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-006",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-6",
+    "url": "https://example-demo-source.test/products/6",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 6",
+    "slug": "demo-staged-product-6",
+    "category": "varmala-preservation",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 740,
+    "priceMax": 2740,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "14\" x 14\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-teak.avif",
+      "/images/blog/bulk-ordering-handcrafted-gifts-guide.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5cca36785cca36785cca36785cca36785cca36785cca36785cca36785cca3678",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-007",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-7",
+    "url": "https://example-demo-source.test/products/7",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 7",
+    "slug": "demo-staged-product-7",
+    "category": "wedding-photo-frames",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 780,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 3 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/print-head.avif",
+      "/images/blog/caring-for-resin-trays-coasters-drinkware.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5dca380b5dca380b5dca380b5dca380b5dca380b5dca380b5dca380b5dca380b",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-008",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-8",
+    "url": "https://example-demo-source.test/products/8",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 8",
+    "slug": "demo-staged-product-8",
+    "category": "resin-trays-serving-platters",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 820,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "32 x 26 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/story-cure.avif",
+      "/images/blog/christmas-new-year-resin-gift-ideas.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5aca33525aca33525aca33525aca33525aca33525aca33525aca33525aca3352",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-009",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-9",
+    "url": "https://example-demo-source.test/products/9",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 9",
+    "slug": "demo-staged-product-9",
+    "category": "candle-tea-light-holders",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 860,
+    "priceMax": 2860,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "54cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/story-gild.avif",
+      "/images/blog/client-gifts-brand-engraving-logo-trays-desk-pieces.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5bca34e55bca34e55bca34e55bca34e55bca34e55bca34e55bca34e55bca34e5",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": "Demo fixture — reviewer note on a staged row."
+  },
+  {
+    "id": "demo-scraped-010",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-10",
+    "url": "https://example-demo-source.test/products/10",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 10",
+    "slug": "demo-staged-product-10",
+    "category": "resin-wall-clocks",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 900,
+    "priceMax": null,
+    "showPrice": false,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "18\" x 18\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/story-polish.avif",
+      "/images/blog/combining-3d-printing-with-resin-art.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6464cc376464cc376464cc376464cc376464cc376464cc376464cc376464cc37",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-011",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-11",
+    "url": "https://example-demo-source.test/products/11",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 11",
+    "slug": "demo-staged-product-11",
+    "category": "resin-vases",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 940,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 2 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/story-pour.avif",
+      "/images/blog/commission-journey-brief-to-dispatch.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6364caa46364caa46364caa46364caa46364caa46364caa46364caa46364caa4",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-012",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-12",
+    "url": "https://example-demo-source.test/products/12",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 12",
+    "slug": "demo-staged-product-12",
+    "category": "drinkware-barware",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 980,
+    "priceMax": 2980,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "36 x 30 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/studio-hands.avif",
+      "/images/blog/complete-resin-care-guide.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6664cf5d6664cf5d6664cf5d6664cf5d6664cf5d6664cf5d6664cf5d6664cf5d",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-013",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-13",
+    "url": "https://example-demo-source.test/products/13",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 13",
+    "slug": "demo-staged-product-13",
+    "category": "vanity-mirrors",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1020,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "58cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/studio-interior.avif",
+      "/images/blog/complete-varmala-preservation-guide.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6564cdca6564cdca6564cdca6564cdca6564cdca6564cdca6564cdca6564cdca",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-014",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-14",
+    "url": "https://example-demo-source.test/products/14",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 14",
+    "slug": "demo-staged-product-14",
+    "category": "resin-furniture-surfaces",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1060,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/texture-band.avif",
+      "/images/blog/conference-event-mementos-guests-keep.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6064c5eb6064c5eb6064c5eb6064c5eb6064c5eb6064c5eb6064c5eb6064c5eb",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-015",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-15",
+    "url": "https://example-demo-source.test/products/15",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 15",
+    "slug": "demo-staged-product-15",
+    "category": "art-craft-pieces",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1100,
+    "priceMax": 3100,
+    "showPrice": false,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 1 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-create.avif",
+      "/images/blog/corporate-diwali-gifting-beyond-dry-fruit-box.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5f64c4585f64c4585f64c4585f64c4585f64c4585f64c4585f64c4585f64c458",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-016",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-16",
+    "url": "https://example-demo-source.test/products/16",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 16",
+    "slug": "demo-staged-product-16",
+    "category": "sculptures-objets",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1140,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "40 x 34 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-gift.avif",
+      "/images/blog/custom-3d-printed-desk-accessories-home-office.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6264c9116264c9116264c9116264c9116264c9116264c9116264c9116264c911",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-017",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-17",
+    "url": "https://example-demo-source.test/products/17",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 17",
+    "slug": "demo-staged-product-17",
+    "category": "resin-home-decor",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1180,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "62cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-live.avif",
+      "/images/blog/custom-nameplates-3d-printed-vs-cast-resin.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "6164c77e6164c77e6164c77e6164c77e6164c77e6164c77e6164c77e6164c77e",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-018",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-18",
+    "url": "https://example-demo-source.test/products/18",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 18",
+    "slug": "demo-staged-product-18",
+    "category": "tablespace-sets",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1220,
+    "priceMax": 3220,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "14\" x 14\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-preserve.avif",
+      "/images/blog/diwali-gifting-guide-diyas-tea-light-holders-trays.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5c64bf9f5c64bf9f5c64bf9f5c64bf9f5c64bf9f5c64bf9f5c64bf9f5c64bf9f",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": "Demo fixture — reviewer note on a staged row."
+  },
+  {
+    "id": "demo-scraped-019",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-19",
+    "url": "https://example-demo-source.test/products/19",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 19",
+    "slug": "demo-staged-product-19",
+    "category": "resin-jewelry-keychains",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1260,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 5 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-print.avif",
+      "/images/blog/does-resin-yellow-uv-quality.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5b64be0c5b64be0c5b64be0c5b64be0c5b64be0c5b64be0c5b64be0c5b64be0c",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-020",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-20",
+    "url": "https://example-demo-source.test/products/20",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 20",
+    "slug": "demo-staged-product-20",
+    "category": "varmala-preservation",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1300,
+    "priceMax": null,
+    "showPrice": false,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "44 x 18 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/workshop-private.avif",
+      "/images/blog/employee-milestone-awards-in-resin.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "525df41c525df41c525df41c525df41c525df41c525df41c525df41c525df41c",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-021",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-21",
+    "url": "https://example-demo-source.test/products/21",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 21",
+    "slug": "demo-staged-product-21",
+    "category": "wedding-photo-frames",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1340,
+    "priceMax": 3340,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "66cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/workshop-table.avif",
+      "/images/blog/engagement-tray-traditions-modern-resin.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "535df5af535df5af535df5af535df5af535df5af535df5af535df5af535df5af",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-022",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-22",
+    "url": "https://example-demo-source.test/products/22",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 22",
+    "slug": "demo-staged-product-22",
+    "category": "resin-trays-serving-platters",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1380,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "18\" x 18\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/bespoke-petals.avif",
+      "/images/blog/first-anniversary-preservation-too-late.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "545df742545df742545df742545df742545df742545df742545df742545df742",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-023",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-23",
+    "url": "https://example-demo-source.test/products/23",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 23",
+    "slug": "demo-staged-product-23",
+    "category": "candle-tea-light-holders",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1420,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 4 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/hero-pour.avif",
+      "/images/blog/gifting-varmala-preservation-surprise.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "555df8d5555df8d5555df8d5555df8d5555df8d5555df8d5555df8d5555df8d5",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-024",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-24",
+    "url": "https://example-demo-source.test/products/24",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 24",
+    "slug": "demo-staged-product-24",
+    "category": "resin-wall-clocks",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1460,
+    "priceMax": 3460,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "48 x 22 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/login-backdrop.avif",
+      "/images/blog/gifts-for-people-who-have-everything.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "4e5dedd04e5dedd04e5dedd04e5dedd04e5dedd04e5dedd04e5dedd04e5dedd0",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-025",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-25",
+    "url": "https://example-demo-source.test/products/25",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 25",
+    "slug": "demo-staged-product-25",
+    "category": "resin-vases",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1500,
+    "priceMax": null,
+    "showPrice": false,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "70cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-epoxy.avif",
+      "/images/blog/housewarming-gifts-that-feel-bespoke.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "4f5def634f5def634f5def634f5def634f5def634f5def634f5def634f5def63",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-026",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-26",
+    "url": "https://example-demo-source.test/products/26",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 26",
+    "slug": "demo-staged-product-26",
+    "category": "drinkware-barware",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1540,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-flower.avif",
+      "/images/blog/how-custom-3d-printing-works-home-decor.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "505df0f6505df0f6505df0f6505df0f6505df0f6505df0f6505df0f6505df0f6",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-027",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-27",
+    "url": "https://example-demo-source.test/products/27",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 27",
+    "slug": "demo-staged-product-27",
+    "category": "vanity-mirrors",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1580,
+    "priceMax": 3580,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 3 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-pigment.avif",
+      "/images/blog/how-to-commission-custom-art-no-design-ideas.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "515df289515df289515df289515df289515df289515df289515df289515df289",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": "Demo fixture — reviewer note on a staged row."
+  },
+  {
+    "id": "demo-scraped-028",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-28",
+    "url": "https://example-demo-source.test/products/28",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 28",
+    "slug": "demo-staged-product-28",
+    "category": "resin-furniture-surfaces",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1620,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "52 x 26 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/macro-teak.avif",
+      "/images/blog/how-to-store-varmala-before-preservation.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5a5e00b45a5e00b45a5e00b45a5e00b45a5e00b45a5e00b45a5e00b45a5e00b4",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-029",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-29",
+    "url": "https://example-demo-source.test/products/29",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 29",
+    "slug": "demo-staged-product-29",
+    "category": "art-craft-pieces",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1660,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "74cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/print-head.avif",
+      "/images/blog/how-we-colour-resin-pigments-inks-ocean-palette.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5b5e02475b5e02475b5e02475b5e02475b5e02475b5e02475b5e02475b5e0247",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-030",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-30",
+    "url": "https://example-demo-source.test/products/30",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 30",
+    "slug": "demo-staged-product-30",
+    "category": "sculptures-objets",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1700,
+    "priceMax": 3700,
+    "showPrice": false,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "14\" x 14\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/story-cure.avif",
+      "/images/blog/is-resin-art-worth-the-price.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "58603c2558603c2558603c2558603c2558603c2558603c2558603c2558603c25",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-031",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-31",
+    "url": "https://example-demo-source.test/products/31",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 31",
+    "slug": "demo-staged-product-31",
+    "category": "resin-home-decor",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1740,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 2 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/story-gild.avif",
+      "/images/blog/lithophanes-photos-you-can-light-up.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "57603a9257603a9257603a9257603a9257603a9257603a9257603a9257603a92",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-032",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-32",
+    "url": "https://example-demo-source.test/products/32",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 32",
+    "slug": "demo-staged-product-32",
+    "category": "tablespace-sets",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1780,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "26 x 30 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/story-polish.avif",
+      "/images/blog/made-to-order-vs-mass-production.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "566038ff566038ff566038ff566038ff566038ff566038ff566038ff566038ff",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-033",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-33",
+    "url": "https://example-demo-source.test/products/33",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 33",
+    "slug": "demo-staged-product-33",
+    "category": "resin-jewelry-keychains",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1820,
+    "priceMax": 3820,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "78cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/story-pour.avif",
+      "/images/blog/miniatures-figurines-from-photos-honest-guide.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5560376c5560376c5560376c5560376c5560376c5560376c5560376c5560376c",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-034",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-34",
+    "url": "https://example-demo-source.test/products/34",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 34",
+    "slug": "demo-staged-product-34",
+    "category": "varmala-preservation",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1860,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "18\" x 18\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/studio-hands.avif",
+      "/images/blog/minimalist-vs-statement-resin-pieces.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "546035d9546035d9546035d9546035d9546035d9546035d9546035d9546035d9",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-035",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-35",
+    "url": "https://example-demo-source.test/products/35",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 35",
+    "slug": "demo-staged-product-35",
+    "category": "wedding-photo-frames",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1900,
+    "priceMax": null,
+    "showPrice": false,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 1 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/studio-interior.avif",
+      "/images/blog/monsoon-humidity-care-resin-art-indian-homes.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5360344653603446536034465360344653603446536034465360344653603446",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-036",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-36",
+    "url": "https://example-demo-source.test/products/36",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 36",
+    "slug": "demo-staged-product-36",
+    "category": "resin-trays-serving-platters",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1940,
+    "priceMax": 3940,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "30 x 34 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/texture-band.avif",
+      "/images/blog/navratri-festive-home-styling-resin-accents.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "526032b3526032b3526032b3526032b3526032b3526032b3526032b3526032b3",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": "Demo fixture — reviewer note on a staged row."
+  },
+  {
+    "id": "demo-scraped-037",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-37",
+    "url": "https://example-demo-source.test/products/37",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 37",
+    "slug": "demo-staged-product-37",
+    "category": "candle-tea-light-holders",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 1980,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "82cm diameter",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-create.avif",
+      "/images/blog/packing-resin-art-safely-travel-moving.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5160312051603120516031205160312051603120516031205160312051603120",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "APPROVED",
+    "sheetSyncStatus": "SYNC_PENDING",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-038",
+    "jobId": "demo-job-002",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-38",
+    "url": "https://example-demo-source.test/products/38",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 38",
+    "slug": "demo-staged-product-38",
+    "category": "resin-wall-clocks",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 2020,
+    "priceMax": null,
+    "showPrice": true,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-gift.avif",
+      "/images/blog/personalised-3d-printed-kids-room-decor.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "606048bd606048bd606048bd606048bd606048bd606048bd606048bd606048bd",
+    "firstSeen": "2026-09-01T16:58:04.750Z",
+    "lastSeen": "2026-09-01T17:00:04.750Z",
+    "reviewStatus": "REJECTED",
+    "sheetSyncStatus": "SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-039",
+    "jobId": "demo-job-003",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-39",
+    "url": "https://example-demo-source.test/products/39",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 39",
+    "slug": "demo-staged-product-39",
+    "category": "resin-vases",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 2060,
+    "priceMax": 4060,
+    "showPrice": true,
+    "timeline": "2-3 weeks",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 5 ft length",
+    "status": "active",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-live.avif",
+      "/images/blog/preserving-wedding-elements-beyond-varmala.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "5f60472a5f60472a5f60472a5f60472a5f60472a5f60472a5f60472a5f60472a",
+    "firstSeen": "2026-09-03T16:13:04.750Z",
+    "lastSeen": "2026-09-03T16:13:04.750Z",
+    "reviewStatus": "IMPORTED",
+    "sheetSyncStatus": "SYNC_FAILED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  },
+  {
+    "id": "demo-scraped-040",
+    "jobId": "demo-job-001",
+    "sourceKey": "demo",
+    "externalId": "demo-ext-40",
+    "url": "https://example-demo-source.test/products/40",
+    "vertical": "resin",
+    "currency": "INR",
+    "title": "Demo Staged Product 40",
+    "slug": "demo-staged-product-40",
+    "category": "drinkware-barware",
+    "shortTagline": "Staged by the demo scraper fixture — never promoted automatically.",
+    "description": "Content Lab demo staged row — placeholder scraped content used to exercise the review grid.",
+    "priceMin": 2100,
+    "priceMax": null,
+    "showPrice": false,
+    "timeline": "7-10 days",
+    "materials": "Epoxy resin",
+    "dimensions": "34 x 18 x 2 in",
+    "status": "out_of_stock",
+    "featured": false,
+    "images": [
+      "/media/v3/tile-preserve.avif",
+      "/images/blog/3d-printed-architectural-models-business-displays.webp"
+    ],
+    "imageAlts": [
+      "Demo staged photograph 1",
+      "Demo staged photograph 2"
+    ],
+    "fields": {
+      "vendor": "Demo Source",
+      "tags": [
+        "demo",
+        "fixture"
+      ]
+    },
+    "seoTitle": null,
+    "seoDescription": null,
+    "contentHash": "e658cceae658cceae658cceae658cceae658cceae658cceae658cceae658ccea",
+    "firstSeen": "2026-08-31T16:58:04.750Z",
+    "lastSeen": "2026-08-31T17:03:04.750Z",
+    "reviewStatus": "PENDING",
+    "sheetSyncStatus": "NOT_SYNCED",
+    "sheetSyncedAt": null,
+    "sheetSyncError": null,
+    "importedProductId": null,
+    "notes": null
+  }
+]

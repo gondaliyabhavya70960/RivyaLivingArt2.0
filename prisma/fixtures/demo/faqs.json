@@ -1,0 +1,272 @@
+[
+  {
+    "id": "demo-faq-001",
+    "question": "How long does a custom commission take?",
+    "answer": "Small pieces usually take 7–10 days; statement furniture pieces run 3–6 weeks depending on size and palette.",
+    "order": 1,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-002",
+    "question": "Do you ship pieces outside your city?",
+    "answer": "Yes — every piece is packed for freight and shipped across India; large furniture pieces ship via a specialist carrier.",
+    "order": 2,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-003",
+    "question": "Can I request a specific colour palette?",
+    "answer": "Yes, every commission starts with a sample pour in your requested palette before the full piece is made.",
+    "order": 3,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-004",
+    "question": "What happens if I don't like the sample pour?",
+    "answer": "We'll adjust the palette and send a second sample — production only begins once you approve the colour.",
+    "order": 4,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-005",
+    "question": "Is resin food-safe for trays and coasters?",
+    "answer": "Yes, the studio uses a food-safe topcoat on drinkware and serving pieces.",
+    "order": 5,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-006",
+    "question": "How do I care for a resin piece?",
+    "answer": "Wipe with a soft, dry cloth and avoid prolonged direct sunlight; avoid abrasive cleaners.",
+    "order": 6,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-007",
+    "question": "Can you preserve a varmala from a wedding that already happened?",
+    "answer": "Yes, as long as the garland has been dried and stored carefully — we recommend starting within a few weeks of the wedding.",
+    "order": 7,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-008",
+    "question": "Do you offer bulk pricing for corporate gifting?",
+    "answer": "Yes, batches of ten or more pieces are priced per unit with a lead time quoted at brief stage.",
+    "order": 8,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-009",
+    "question": "Will my piece look exactly like the reference photo?",
+    "answer": "Close, but resin is hand-poured, so colour and veining vary slightly piece to piece — that variation is the material.",
+    "order": 9,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-010",
+    "question": "Do you accept payments online?",
+    "answer": "No — every order is finalised over WhatsApp, where pricing and payment are agreed directly with the studio.",
+    "order": 10,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-011",
+    "question": "How do I place an order?",
+    "answer": "Tap Place order on any piece, or start a custom commission — both open a pre-filled WhatsApp message to the studio.",
+    "order": 11,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-012",
+    "question": "Can I visit the studio?",
+    "answer": "Yes, by appointment — message the studio on WhatsApp to arrange a visit.",
+    "order": 12,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-013",
+    "question": "Do you 3D print as well as cast resin?",
+    "answer": "Yes, for pieces suited to it — nameplates, brackets and batch runs of identical accessories.",
+    "order": 13,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-014",
+    "question": "What materials do you use?",
+    "answer": "Epoxy resin, kiln-dried teak and, for jewellery, dried florals sealed in resin.",
+    "order": 14,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-015",
+    "question": "Do larger pieces need special care after delivery?",
+    "answer": "Keep large pieces out of direct sun and avoid resting heavy or hot items directly on an unprotected surface.",
+    "order": 15,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-016",
+    "question": "Can I customise the size of a piece?",
+    "answer": "Most pieces can be resized within a reasonable range — ask on WhatsApp with your dimensions.",
+    "order": 16,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-017",
+    "question": "How is a resin piece packed for delivery?",
+    "answer": "Corner protection and a rigid outer box, with a soft wrap on every flat face.",
+    "order": 17,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-018",
+    "question": "Do you offer engraving?",
+    "answer": "Yes, on trays, frames and select furniture pieces — engraving happens after the piece has fully cured.",
+    "order": 18,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-019",
+    "question": "What if my piece arrives damaged?",
+    "answer": "Message the studio immediately on WhatsApp with photographs — every piece ships insured.",
+    "order": 19,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-020",
+    "question": "Can I track my order?",
+    "answer": "The studio updates you directly on WhatsApp at each stage, from pour to dispatch.",
+    "order": 20,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-021",
+    "question": "Do you make one-off sculptural pieces?",
+    "answer": "Yes — the bespoke concepts category is built for exactly this kind of commission.",
+    "order": 21,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-022",
+    "question": "Is there a minimum order for gifting sets?",
+    "answer": "Corporate sets typically start at ten pieces; smaller personal gifting orders have no minimum.",
+    "order": 22,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-023",
+    "question": "How do you colour-match a corporate brand palette?",
+    "answer": "Send your brand's colour codes and we'll mix a sample pour to match before the full run.",
+    "order": 23,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-024",
+    "question": "Do you offer workshops?",
+    "answer": "Yes, beginner and advanced resin-art workshops are bookable through the same WhatsApp flow as an order.",
+    "order": 24,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-025",
+    "question": "What is the difference between showPrice off and a hidden price?",
+    "answer": "Some bespoke categories carry no published price because the floor price would misrepresent a commissioned piece — ask on WhatsApp for a quote.",
+    "order": 25,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-026",
+    "question": "Can I combine 3D printing with a resin pour?",
+    "answer": "Yes, for select pieces — the studio treats each of these as a small custom project rather than a standard offering.",
+    "order": 26,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-027",
+    "question": "Do you ship internationally?",
+    "answer": "Not currently — deliveries are within India only.",
+    "order": 27,
+    "status": "ARCHIVED",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-028",
+    "question": "How long will the resin stay clear and not yellow?",
+    "answer": "Every piece is mixed with a UV inhibitor; kept out of prolonged direct sun, colour and clarity hold for years.",
+    "order": 28,
+    "status": "DRAFT",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-029",
+    "question": "Can I return a custom piece?",
+    "answer": "Because every piece is made to order, custom commissions are not returnable — sample approval exists to prevent surprises.",
+    "order": 29,
+    "status": "REVIEW",
+    "translations": null,
+    "isDemo": true
+  },
+  {
+    "id": "demo-faq-030",
+    "question": "What if I'm not sure what I want yet?",
+    "answer": "Message the studio on WhatsApp with a rough idea or a Pinterest board — the brief takes shape from there.",
+    "order": 30,
+    "status": "PUBLISHED",
+    "translations": null,
+    "isDemo": true
+  }
+]

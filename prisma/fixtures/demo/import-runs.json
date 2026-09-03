@@ -1,0 +1,87 @@
+[
+  {
+    "id": "demo-run-001",
+    "trigger": "DEPLOY",
+    "dryRun": false,
+    "rowsRead": 100,
+    "created": 5,
+    "updated": 10,
+    "unchanged": 80,
+    "failed": 1,
+    "abortedReason": null,
+    "detail": {
+      "source": "demo-fixture"
+    },
+    "startedAt": "2026-08-25T16:58:04.750Z",
+    "finishedAt": "2026-08-25T17:02:04.750Z",
+    "isDemo": true
+  },
+  {
+    "id": "demo-run-002",
+    "trigger": "MANUAL",
+    "dryRun": false,
+    "rowsRead": 200,
+    "created": 10,
+    "updated": 20,
+    "unchanged": 160,
+    "failed": 0,
+    "abortedReason": null,
+    "detail": {
+      "source": "demo-fixture"
+    },
+    "startedAt": "2026-08-26T16:58:04.750Z",
+    "finishedAt": "2026-08-26T17:02:04.750Z",
+    "isDemo": true
+  },
+  {
+    "id": "demo-run-003",
+    "trigger": "PREVIEW",
+    "dryRun": true,
+    "rowsRead": 300,
+    "created": 15,
+    "updated": 30,
+    "unchanged": 240,
+    "failed": 1,
+    "abortedReason": null,
+    "detail": {
+      "source": "demo-fixture"
+    },
+    "startedAt": "2026-08-27T16:58:04.750Z",
+    "finishedAt": "2026-08-27T17:02:04.750Z",
+    "isDemo": true
+  },
+  {
+    "id": "demo-run-004",
+    "trigger": "DEPLOY",
+    "dryRun": false,
+    "rowsRead": 400,
+    "created": 20,
+    "updated": 40,
+    "unchanged": 320,
+    "failed": 0,
+    "abortedReason": null,
+    "detail": {
+      "source": "demo-fixture"
+    },
+    "startedAt": "2026-08-28T16:58:04.750Z",
+    "finishedAt": "2026-08-28T17:02:04.750Z",
+    "isDemo": true
+  },
+  {
+    "id": "demo-run-005",
+    "trigger": "MANUAL",
+    "dryRun": false,
+    "rowsRead": 500,
+    "created": 0,
+    "updated": 0,
+    "unchanged": 0,
+    "failed": 1,
+    "abortedReason": "Demo fixture — simulated blast-radius cap trip.",
+    "detail": {
+      "source": "demo-fixture"
+    },
+    "startedAt": "2026-08-29T16:58:04.750Z",
+    "finishedAt": "2026-08-29T17:02:04.750Z",
+    "isDemo": true
+  }
+]
