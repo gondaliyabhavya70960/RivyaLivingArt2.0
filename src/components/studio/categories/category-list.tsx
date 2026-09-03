@@ -37,6 +37,7 @@ import { TranslationsSection } from "@/components/studio/translations-section";
 import { useSelection } from "@/hooks/use-selection";
 import { slugify } from "@/lib/slug";
 import { toTranslationsRecord } from "@/lib/translations-form";
+import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 
 export type CategoryRow = {
   id: string;
@@ -115,11 +116,15 @@ function CategoryFormBody({
     }
   }
 
+  // Blocks Escape and outside-clicks while the dialog holds unsaved
+  // input, and unconditionally while a save is in flight.
+  const [dismissRef, dismissProps] = useDismissGuard(busy);
+
   return (
     <DialogContent
       className="max-w-md"
-      onInteractOutside={(e) => busy && e.preventDefault()}
-      onEscapeKeyDown={(e) => busy && e.preventDefault()}
+      ref={dismissRef}
+      {...dismissProps}
     >
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit category" : "New category"}</DialogTitle>

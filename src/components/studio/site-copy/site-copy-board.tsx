@@ -17,6 +17,7 @@ import { CharCounter } from "@/components/ui/char-counter";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SurfaceSwitcher } from "@/components/studio/site-copy/surface-switcher";
 import type { CopyGroup, CopyKind, CopyTier } from "@/lib/site-copy";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +69,7 @@ export function SiteCopyBoard({
   locales,
   sections,
   canResetGroup,
+  hideSurfaceSwitcher = false,
 }: {
   group: CopyGroup;
   groups: readonly CopyGroup[];
@@ -76,6 +78,12 @@ export function SiteCopyBoard({
   sections: readonly CopySectionRows[];
   /** Resetting a whole surface is ADMIN-only, matching the action's guard. */
   canResetGroup: boolean;
+  /**
+   * The per-page composer renders the surface strip ABOVE its tabs, because
+   * the surface applies to pictures and order as well as words. Rendering it
+   * here too would put two pickers on one screen that could disagree.
+   */
+  hideSurfaceSwitcher?: boolean;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -130,23 +138,15 @@ export function SiteCopyBoard({
     <div className="space-y-8">
       {/* ————— surface + language ————— */}
       <div className="space-y-4">
-        <nav aria-label="Surface" className="flex flex-wrap gap-1.5">
-          {groups.map((g) => (
-            <Link
-              key={g}
-              href={`/studio/site-copy?group=${encodeURIComponent(g)}&locale=${locale}`}
-              className={cn(
-                "rounded-md border px-3 py-1.5 text-small transition-colors",
-                g === group
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border text-graphite hover:border-foreground hover:text-foreground",
-              )}
-              aria-current={g === group ? "page" : undefined}
-            >
-              {g}
-            </Link>
-          ))}
-        </nav>
+        {!hideSurfaceSwitcher && (
+          <SurfaceSwitcher
+            groups={groups}
+            group={group}
+            hrefFor={(g) =>
+              `/studio/site-copy?group=${encodeURIComponent(g)}&locale=${locale}`
+            }
+          />
+        )}
 
         <nav aria-label="Language" className="flex flex-wrap gap-1.5">
           {locales.map((l) => (

@@ -49,6 +49,93 @@ only place the change can be confirmed.
 
 ---
 
+## Transformation Phase 11 — the per-page composer (2026-09-03, third batch)
+
+### Added: one page's words, pictures and order on one screen
+The roadmap's headline Phase 11 item — "a unified per-page editor composing words, pictures and
+order from the registries; UI composition, no data change". Until now they were three screens, each
+scoped by its own surface picker that could be set to a different page than the other two. Editing
+one page's hero meant the headline in one place, the photograph in a second, its position in a
+third.
+
+**Not at the route the roadmap named.** It specified `/studio/pages/<key>`, but that route is
+already the `Page` model editor (About, the policies), keyed by cuid under `[id]` — a `<key>` route
+beside it is a collision. `/studio/site-copy` was already scoped to one surface, already carried the
+surface's publish bar and revision history, and the copy and image registries already share its
+surface names. So the three boards compose THERE, under one surface picker, as **Words · Pictures ·
+Order**. The two standalone screens remain in the sidebar and render the same rows from the same
+builders — `buildSiteImageGroupRows` and `buildSectionRows` were lifted out of their pages so there
+is one implementation, not two that drift.
+
+**The surface↔page join is derived, not hand-written.** Copy and images say "Large format";
+sections say `large-format`. Neither vocabulary knows the other. Both carry the page's public path,
+so `pageKeyForPath` joins them by that — a table that cannot go stale when either side gains an
+entry. Five surfaces have no manifest by design and simply get no Order tab.
+
+The active tab lives in the URL (`?tab=`), like the surface and locale already do; a surface switch
+preserves it; every panel is `forceMount`ed so a half-typed copy edit survives a tab change.
+
+### Two bugs in the first draft, one of which the audit could not see
+1. **The whole screen fell to the error boundary — and passed the Studio audit.** `isSurfaceTab`
+   was exported from the `"use client"` tabs module; a function exported from a client module is a
+   client *reference* on the server, and the page's call threw "Attempted to call isSurfaceTab()
+   from the server". An error page is a perfectly accessible page, so `studio-audit.mjs` reported
+   clean across all 30 routes. The browser probe is what caught it: "tabs: (none), surface pickers: 0".
+   The vocabulary now lives in a plain module both sides import.
+2. **"Site chrome" and "System" would have offered the Homepage's sections to reorder.** They are
+   copy groups with no page of their own, and the preview-path fallback of `"/"` joined them to
+   `home`. Predicted from the code while reading the screenshot, then measured: with `?tab=order`
+   forced, they render Words · Pictures only and land on Words. Only an explicit path may join.
+
+### Measured on a production build
+Homepage: three tabs, exactly **one** surface picker on the page; 3 panels mounted, 0 inactive
+visible. Clicking Pictures writes `?tab=pictures`; the panel carries **0** group headings, no
+per-group publish control and no import block, 8 slot cards. Switching to About **keeps**
+`tab=pictures`. Order on About: no page switcher inside the panel, 7 sections. Portfolio with
+`?tab=order`: Words · Pictures only, lands on Words. Both standalone screens still 200. Studio audit
+clean at 1440 and 390; 0 server errors.
+
+---
+
+## Transformation Phase 11 — the dialog dismissal guard (2026-09-03, second batch)
+
+### Fixed: a stray Escape threw away what you had just typed
+The Studio's CRUD dialogs — testimonials, categories, FAQs, users — already blocked Escape and
+outside-clicks, but **only `while busy`**, i.e. during the save round trip. That is the safest
+moment. The dangerous one is the minute before: a half-transcribed customer quote, and a stray
+Escape or a click beside the dialog discarded it with no warning and no undo. Radix closes on both
+by default, and each dialog unmounts its body on close, so the text was simply gone.
+
+`useDismissGuard` blocks the two accidental gestures while the dialog holds unsaved input, and still
+blocks unconditionally during a save. It **blocks rather than asks**: a confirmation inside a dialog
+means a dialog on top of a dialog. Cancel and the ✕ are one click away and still discard
+immediately — those are the person saying "throw this away".
+
+Dirtiness is read off the DOM rather than tracked in state. These dialogs hold a dozen `useState`
+fields each with no form library, so per-field predicates would be four bespoke comparisons to write
+and to keep in step with every field added later — the kind that quietly stops covering the new one.
+Snapshotting the dialog's own inputs and diffing at the moment of dismissal covers fields nobody has
+added yet, costs nothing per keystroke, and forces no re-render.
+
+### Two bugs in the first draft, both found by measuring
+1. **The guard did nothing at all.** It read the dialog element from `event.currentTarget`, but Radix
+   hands `onEscapeKeyDown` the native `KeyboardEvent`, whose `currentTarget` is not the dialog. The
+   lookup returned `null`, so the dirty check never ran — the guard was present, wired, and inert.
+2. **Then it became a trap.** With the element found, the baseline was captured synchronously in the
+   ref callback, *before* the dialog's fields existed. The snapshot was "no fields", every later read
+   differed, and a CLEAN dialog refused to close. Deferring the snapshot one frame fixes it.
+
+The test that caught both is the one that discriminates: a clean dialog must still close on Escape,
+and a dirty one must not. Either bug alone passes half of it.
+
+Measured on a production build: clean + Escape closes; dirty + Escape refused with the text intact;
+dirty + outside-click refused; dirty + explicit Cancel still closes.
+
+The three scraper dialogs keep their `busy`-only guard — they confirm an action rather than hold
+typed prose.
+
+---
+
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
 ### Added: the draft in a device frame, without leaving the editor
