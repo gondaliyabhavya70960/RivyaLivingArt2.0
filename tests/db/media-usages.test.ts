@@ -90,4 +90,33 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       await db.testimonial.delete({ where: { id } });
     }
   });
+
+  // B0 · media metadata: a film's poster frame is a URL on the Media row
+  // itself, so the guard walks it under its own label.
+  it("guards a video's poster frame", async (ctx) => {
+    if (!db) {
+      ctx.skip();
+      return;
+    }
+    const id = `test-media-usages-poster-${Date.now()}`;
+    const posterUrl = `/uploads/test/${id}-poster.jpg`;
+    await db.media.create({
+      data: {
+        id,
+        url: `/uploads/test/${id}.mp4`,
+        pathname: `test/${id}.mp4`,
+        type: "VIDEO",
+        folder: "site",
+        bytes: 1,
+        originalName: `${id}.mp4`,
+        posterUrl,
+      },
+    });
+    try {
+      const details = await findMediaUsageDetails([posterUrl]);
+      expect(details.get(posterUrl)?.[0]).toMatch(/^Video poster · /);
+    } finally {
+      await db.media.delete({ where: { id } });
+    }
+  });
 });

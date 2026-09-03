@@ -501,6 +501,12 @@ model Media {
   createdAt    DateTime  @default(now())
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
+  /// Library metadata (B0 · media). `posterUrl` is a URL and is registered in media-usages.ts.
+  tags      String[] @default([])
+  caption   String?
+  favourite Boolean  @default(false)
+  duration  Int?
+  posterUrl String?
 
   @@index([folder])
   // Indexed so the delete guard can look up references by URL (ENG-806).

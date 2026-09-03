@@ -148,6 +148,12 @@ export async function findMediaUsageDetails(
     siteImages: db.siteImage.findMany({
       select: { url: true, mobileUrl: true, key: true, draft: true },
     }),
+    // A film's poster frame is a second URL on the Media row itself (B0 ·
+    // media metadata): deleting the poster would leave the film blank.
+    mediaPosters: db.media.findMany({
+      where: { posterUrl: { in: urls } },
+      select: { posterUrl: true, originalName: true, pathname: true },
+    }),
     // Landing-page social images (Phase G).
     customPages: db.customPage.findMany({
       where: { ogImage: { in: urls } },
@@ -183,6 +189,7 @@ export async function findMediaUsageDetails(
   const seoSettings = await pending.seoSettings;
   const testimonials = await pending.testimonials;
   const siteImages = await pending.siteImages;
+  const mediaPosters = await pending.mediaPosters;
   const customPages = await pending.customPages;
   const customBlocks = await pending.customBlocks;
   const blogPostsContent = await pending.blogPostsContent;
@@ -247,6 +254,9 @@ export async function findMediaUsageDetails(
       add(staged.mobileUrl, `Site image · ${r.key} (staged, mobile)`);
     }
   });
+  mediaPosters.forEach((r) =>
+    add(r.posterUrl, `Video poster · ${r.originalName ?? r.pathname}`),
+  );
   customPages.forEach((r) => add(r.ogImage, `Landing page · ${r.title}`));
   customBlocks.forEach((block) => {
     if (block.type === "richText") {
