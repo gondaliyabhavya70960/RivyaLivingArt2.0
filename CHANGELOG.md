@@ -40,6 +40,14 @@ Measured on a production build at 1024px, scrolling each table's wrapper horizon
 
 `studio-audit.mjs` clean across 30 routes at 1440, 1024, 768 and 390.
 
+### One item closed by looking rather than building
+**Row-enter for appended activity rows (shortlist 15) is not applicable as written.** `ActivityPanel`
+is a pure server component — no state, no effect, no polling, no stream — and the only client
+component near `/studio/activity` is its filter. No row is ever *appended*: the panel re-renders
+whole on navigation or revalidation. An entrance animation would have no trigger to attach to and
+would instead replay across the entire list on every visit to the dashboard, which is exactly the
+decorative motion Part 14 rejects. It becomes real if the panel ever gains live updates.
+
 **A near-miss worth recording.** The commissions table does not render locally or in CI — neither
 database has an inquiry seed — so the first attempt to verify it silently re-measured PRODUCTS: the
 `sed` meant to repoint the probe did not match its own template literal, and the numbers came back
