@@ -5,6 +5,52 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Corrections from the verification sweep (2026-09-03)
+
+The adversarial sweep behind the gated decisions was killed mid-run by a container restart, so that
+work shipped on mechanical analysis alone. The sweep was resumed and finished — 38 agents, no errors —
+and it disagreed with that analysis four times. It was right every time, and its completeness critic
+then found a fifth thing both of us had missed.
+
+### Fixed
+- **`hero-parallax.tsx` restored.** It has no importers, but the audit files it under §3.2 REFINE with
+  a named destination (px-cap the translation, mount it on the bespoke band; roadmap Phase 1b and
+  Phase 3, motion shortlist 9). Unimported is not unwanted. Its deletion had already reached `main`.
+- **`fetch-media-v3.yml` and `fetch-media-v3-video.yml` deleted after all.** Each says in its own
+  header it is safe to delete once the masters are committed, and both conditions hold. The audit's
+  "six workflows" was right; the correction to four was wrong. `fetch-tiers.yml` still stays.
+- **D22 barrier 2 is an empty-table test**, not a `case-` slug prefix: owner slugs come from
+  `slugify(title)`, so an entry titled "Case study — …" would have been read as the seed's own. Also
+  on `main` before this.
+- **The seed is create-only.** Barrier 2 made the upsert's update half unreachable, and that half was
+  the dangerous one — `images: { deleteMany: {} }` plus a forced `PUBLISHED`. Dead code that destroys
+  data is deleted, not left behind the guard.
+- **A dead `tier: true` select** left by D23, and two docs calling the manual affordance "Add to
+  Sheet" when it is labelled "Sync to Sheet".
+
+### Performance — the measurable payoff of D18
+D18 deleted `kinetic-heading.tsx`, the only consumer of GSAP's `SplitText`, but `lib/gsap.ts` kept
+importing and registering the plugin — 3.6 KB gzipped of dead weight inside the shared chunk every
+motion route loads, and inside the chunk the CI gate weighs.
+
+**Motion JS: 51.1 KB → 48.2 KB gzipped.** The gate's ceiling ratchets 52 KB → 49 KB in the same
+commit, per its own rule. Its header no longer claims the whole remaining gap is "not a hygiene call"
+— part of it was. The rest still needs D10: 3.2 KB more means giving up ScrollTrigger or Lenis.
+
+Four further orphans went with it: the `--z-preloader` / `--z-cursor` ladder rungs, the
+`--animate-gild-fill` keyframes and `@utility gild-fill-text` (the preloader's wordmark sweep), and
+the `gild-fill` entry in the tailwind-merge group. `(v2)/layout.tsx` also still promised "the
+components still exist — remounting either is one line", which is the exact ambiguity D18 was
+approved to remove; CLAUDE.md was updated in that commit, the layout was not.
+
+### Raised, not acted on
+- **`src/lib/flourish.ts`** is dead — `git log --all -S splitFlourish` finds only the baseline import,
+  so it has never had a call site here. It is not on D18's approved exact-path list, and an approval
+  of a list is not a criterion to re-apply. Recorded as a D18 addendum in the audit.
+- **Three live `.claude/` skills still point agents at `DESIGN.md`**, now bannered ARCHIVED.
+  Pre-existing; re-pointing them is a content rewrite, since DESIGN.md's Part 0 / A2 / A5 / B2 / B4
+  have no counterpart in REDESIGN.md's numbering.
+
 ## The gated decisions — D23, D18, D22, D24 (2026-09-03)
 
 The owner answered D28, D23, D18, D22 and D24 against the repository's current state — after

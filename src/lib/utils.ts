@@ -52,7 +52,7 @@ const twMerge = extendTailwindMerge({
       // motion override lost silently. Only these three exist — the
       // `animate-mesh-drift` family was removed in the Phase 7 perf review
       // (globals.css:5-12) and must not be re-added here speculatively.
-      animate: [{ animate: ["marquee", "gild-fill", "droplet"] }],
+      animate: [{ animate: ["marquee", "droplet"] }],
     },
   },
 });

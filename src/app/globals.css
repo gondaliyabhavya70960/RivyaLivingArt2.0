@@ -148,18 +148,6 @@
     }
   }
 
-  /* Preloader wordmark fill — the champagne front sweeps across the clipped
-     letters once, inside the show window. Pairs with .gild-fill-text. */
-  --animate-gild-fill: gild-fill var(--dur-base) var(--ease-luxury) both;
-  @keyframes gild-fill {
-    from {
-      background-position: 100% 0;
-    }
-    to {
-      background-position: 0% 0;
-    }
-  }
-
   /* Cure-line droplet — the hero scroll indicator's slow champagne pulse
      (Part 6 §01). Two-second cycle, opacity only, no transform. */
   --animate-droplet: droplet 2.4s var(--ease-settle) infinite;
@@ -407,25 +395,6 @@
 @utility text-header-ink {
   color: var(--header-ink, var(--ink));
   transition: color var(--dur-fast) var(--ease-luxury);
-}
-
-/* Preloader wordmark: a champagne gradient clipped to the glyphs. The image
-   is 3× the text width — champagne-ink → champagne → mineral plus a
-   transparent tail — so animate-gild-fill's position sweep reads as liquid
-   metal filling the letters. */
-@utility gild-fill-text {
-  background-image: linear-gradient(
-    100deg,
-    var(--champagne-ink) 0%,
-    var(--champagne) 20%,
-    var(--mineral) 34%,
-    transparent 46%
-  );
-  background-size: 300% 100%;
-  background-position: 0% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 /* ————————————————————— Motion —————————————————————

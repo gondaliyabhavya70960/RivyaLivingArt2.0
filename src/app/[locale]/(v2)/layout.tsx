@@ -70,11 +70,12 @@ export default async function V2Layout({
       <DraftRibbon />
       {/* Part 14 opens with "motion should communicate craftsmanship, not a
           technology demo", and its budget forbids anything that delays the LCP.
-          Two ornaments failed both tests and are no longer mounted: the
-          first-visit brand preloader (a deliberate delay in front of the hero)
-          and the cursor follower (decoration with no informational job). The
-          components still exist — remounting either is one line — but neither
-          belongs in the calm this design is built around.
+          Two ornaments failed both tests: the first-visit brand preloader (a
+          deliberate delay in front of the hero) and the cursor follower
+          (decoration with no informational job). They were unmounted, and
+          D18 deleted them outright in 2026-09 — keeping the files while
+          promising "remounting is one line" was the ambiguity that decision
+          was approved to remove. `git log --diff-filter=D` has them.
 
           The static film-grain wash stays: it is texture, not motion, and it
           serves the "contemporary craft" register §2.4 asks for. */}

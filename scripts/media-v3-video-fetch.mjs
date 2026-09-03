@@ -84,9 +84,10 @@ function requireFfmpeg() {
       sh(bin, ["-version"]);
     } catch {
       console.error(
-        `${bin} is not on PATH. It is not present on ubuntu-latest by ` +
-          "default — install it first (`sudo apt-get install -y ffmpeg`), or " +
-          "run this through .github/workflows/fetch-media-v3-video.yml, which does.",
+        `${bin} is not on PATH. Install it first ` +
+          "(`sudo apt-get install -y ffmpeg`, or `brew install ffmpeg`). The " +
+          "fetch-media-v3-video.yml workflow that used to install it for you " +
+          "was deleted under D24 once the masters were committed.",
       );
       process.exit(1);
     }
