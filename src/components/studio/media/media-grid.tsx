@@ -33,7 +33,10 @@ import {
 import { BulkAltDialog } from "@/components/studio/media/bulk-alt-dialog";
 import { MediaDetailDrawer } from "@/components/studio/media/media-detail-drawer";
 import { MoveToFolderDialog } from "@/components/studio/media/move-to-folder-dialog";
-import { UploadZone } from "@/components/studio/media/upload-zone";
+import {
+  UPLOAD_INPUT_ID,
+  UploadZone,
+} from "@/components/studio/media/upload-zone";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import {
@@ -728,6 +731,29 @@ export function MediaGrid({
             total === 0
               ? "Upload images, videos or 3D models to use across products, journal posts and pages."
               : "Try clearing a filter or widening the date range."
+          }
+          action={
+            total === 0 ? (
+              <Button
+                type="button"
+                onClick={() =>
+                  document.getElementById(UPLOAD_INPUT_ID)?.click()
+                }
+              >
+                Upload files
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  selection.clear();
+                  router.push("/studio/media");
+                }}
+              >
+                Clear filters
+              </Button>
+            )
           }
         />
       ) : (

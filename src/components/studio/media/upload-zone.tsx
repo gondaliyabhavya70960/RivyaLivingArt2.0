@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useRef, useState, type DragEvent } from "react";
+import { useCallback, useRef, useState, type DragEvent } from "react";
 import { UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
@@ -10,6 +10,12 @@ import {
   type MediaFolder,
 } from "@/components/studio/media/folders";
 import { cn } from "@/lib/utils";
+
+/** One `UploadZone` per page (the media library mounts exactly one), so a
+ *  fixed id — rather than `useId()` — is safe and lets the empty state's
+ *  "Upload files" CTA open the SAME picker without prop-drilling a ref
+ *  through the page. */
+export const UPLOAD_INPUT_ID = "media-upload-input";
 
 /**
  * Mirror of ACCEPTED_UPLOAD_TYPES in @/lib/storage — that module pulls in
@@ -56,7 +62,6 @@ export function UploadZone({
   defaultFolder?: MediaFolder | null;
   onUploaded: (uploaded: UploadedMedia[]) => void;
 }) {
-  const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [folder, setFolder] = useState<MediaFolder>(defaultFolder ?? "other");
   const [dragging, setDragging] = useState(false);
@@ -154,7 +159,7 @@ export function UploadZone({
         </span>
         <input
           ref={inputRef}
-          id={inputId}
+          id={UPLOAD_INPUT_ID}
           type="file"
           multiple
           accept={ACCEPT}
