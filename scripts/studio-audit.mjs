@@ -52,6 +52,7 @@ const DEFAULT_ROUTES = [
   "/studio/seo",
   "/studio/users",
   "/studio/activity",
+  "/studio/research",
 ];
 
 const args = process.argv.slice(2);

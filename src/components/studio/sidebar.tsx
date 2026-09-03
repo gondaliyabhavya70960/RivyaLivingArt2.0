@@ -6,6 +6,7 @@ import {
   Activity,
   BarChart3,
   FileText,
+  FlaskConical,
   FolderTree,
   HelpCircle,
   Image as ImageIcon,
@@ -122,6 +123,7 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       // SEO edits SiteSettings (site-wide fallback metadata) — a settings
       // surface, so it follows the settings rule: admins only.
       { label: "SEO", href: "/studio/seo", icon: Search, adminOnly: true },
+      { label: "Research", href: "/studio/research", icon: FlaskConical },
     ],
   },
   {
