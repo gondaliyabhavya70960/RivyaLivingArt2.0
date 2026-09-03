@@ -143,6 +143,15 @@ export function RichTextEditor({
     ],
     content: toInitialContent(value),
     onUpdate: ({ editor: instance }) => onChange(instance.getJSON()),
+    // The contenteditable is a form control to assistive tech; without a
+    // name axe reports aria-input-field-name (serious) on every editor screen.
+    editorProps: {
+      attributes: {
+        role: "textbox",
+        "aria-multiline": "true",
+        "aria-label": placeholder ?? "Body",
+      },
+    },
   });
 
   // Tiptap v3 does not re-render on transactions by default — subscribe to

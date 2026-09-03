@@ -139,14 +139,8 @@
   --shadow-e3: var(--shadow-e3);
 
   /* ————— Part 14 · Motion ————————————————————————————————————————
-     The marquee track is duplicated once, so -50% loops seamlessly; the
-     global reduced-motion collapse in tokens.css kills it. */
-  --animate-marquee: marquee 32s linear infinite;
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
-    }
-  }
+     The marquee keyframes that lived here left with storefront/marquee.tsx
+     (its only consumer, deleted with the design-lab rebuild). */
 
   /* Cure-line droplet — the hero scroll indicator's slow champagne pulse
      (Part 6 §01). Two-second cycle, opacity only, no transform. */

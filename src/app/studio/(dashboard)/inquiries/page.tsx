@@ -122,7 +122,6 @@ export default async function InquiriesPage({
             status: true,
             isDemo: true,
             createdAt: true,
-            isDemo: true,
             product: { select: { title: true } },
           },
           skip: (pageNum - 1) * PAGE_SIZE,
@@ -181,7 +180,6 @@ export default async function InquiriesPage({
     status: inquiry.status,
     isDemo: inquiry.isDemo,
     createdAt: dateFormatter.format(inquiry.createdAt),
-    isDemo: inquiry.isDemo,
   }));
 
   const cards: CommissionCard[] = boardRows.map((inquiry) => ({
