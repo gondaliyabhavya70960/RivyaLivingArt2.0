@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -51,6 +52,9 @@ export function CureLine({
   marks: readonly CureMark[];
   className?: string;
 }) {
+  // Read here rather than accepting a `label` prop so the four server call
+  // sites (home, process, custom-order, large-resin-art) stay untouched.
+  const t = useTranslations("CureLine");
   const [active, setActive] = useState(0);
   const [offsets, setOffsets] = useState<number[]>([]);
   /* Which ground the rail is currently floating over. The rail is fixed
@@ -108,9 +112,7 @@ export function CureLine({
          active while the viewport is still showing the light band above it,
          and the rail would flip a beat early. */
       const behind = document.elementFromPoint(
-        document.dir === "rtl"
-          ? window.innerWidth - 28
-          : 28,
+        document.dir === "rtl" ? window.innerWidth - 28 : 28,
         window.innerHeight / 2,
       );
       const scope = behind?.closest("[data-theme]");
@@ -157,7 +159,7 @@ export function CureLine({
     <>
       {/* ————— ≥1024px: the rail ————— */}
       <nav
-        aria-label="Page sections"
+        aria-label={t("pageSections")}
         data-slot="cure-line"
         data-theme={overDark ? "navy" : undefined}
         className={cn(
@@ -217,7 +219,8 @@ export function CureLine({
                 <span
                   className={cn(
                     "u-micro absolute start-8 whitespace-nowrap bg-mineral/95 px-2 py-1 opacity-0 transition-opacity duration-(--dur-fast) ease-(--ease-settle) group-hover/cure:opacity-100 group-focus-within/cure:opacity-100 motion-reduce:transition-none in-data-[theme=navy]:bg-obsidian/95",
-                    i === active && "text-ink in-data-[theme=navy]:text-mineral",
+                    i === active &&
+                      "text-ink in-data-[theme=navy]:text-mineral",
                   )}
                 >
                   {String(i + 1).padStart(2, "0")} · {mark.label}
@@ -234,7 +237,7 @@ export function CureLine({
           <span
             ref={barFill}
             style={{ transform: "scaleX(0)" }}
-            className="block h-full origin-left bg-sapphire will-change-transform"
+            className="block h-full origin-left rtl:origin-right bg-sapphire will-change-transform"
           />
         </span>
       </div>

@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1185 slots · 0 flagged as unreachable from any component.
+ * 1188 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -66,6 +66,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Common.dismissAnnouncement","group":"Site chrome","section":"general","label":"Dismiss announcement","kind":"body","tier":"interface","max":400},
   {"key":"Common.announcementDefault","group":"Site chrome","section":"general","label":"Announcement default","kind":"body","tier":"interface","max":400},
   {"key":"Common.ratedOutOf","group":"Site chrome","section":"general","label":"Rated out of","kind":"body","tier":"interface","max":400,"vars":["rating","outOf"]},
+  {"key":"Common.demoMark","group":"Site chrome","section":"general","label":"Demo mark","kind":"body","tier":"interface","max":400},
+  {"key":"Common.demoDetail","group":"Site chrome","section":"general","label":"Demo detail","kind":"body","tier":"interface","max":400},
   {"key":"Header.search","group":"Site chrome","section":"general","label":"Search","kind":"body","tier":"editorial","max":400},
   {"key":"Header.openMenu","group":"Site chrome","section":"general","label":"Open menu","kind":"body","tier":"editorial","max":400},
   {"key":"Header.closeMenu","group":"Site chrome","section":"general","label":"Close menu","kind":"body","tier":"editorial","max":400},
@@ -1195,4 +1197,5 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"LargeFormat.cta.heading","group":"Large format","section":"cta","label":"Heading","kind":"heading","tier":"editorial","max":80},
   {"key":"LargeFormat.cta.body","group":"Large format","section":"cta","label":"Body","kind":"body","tier":"editorial","max":400},
   {"key":"LargeFormat.cta.formCta","group":"Large format","section":"cta","label":"Form cta","kind":"cta","tier":"editorial","max":60},
+  {"key":"CureLine.pageSections","group":"System","section":"general","label":"Page sections","kind":"body","tier":"editorial","max":400},
 ] as const;

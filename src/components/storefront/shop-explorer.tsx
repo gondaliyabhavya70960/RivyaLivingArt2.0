@@ -301,11 +301,10 @@ export function ShopExplorer({
      always attributed to a filter. */
   const hasActiveFilters = Boolean(
     q ||
-      occasion ||
-      band ||
-      stock ||
-      (!lockedCategory &&
-        (category || (type && type !== DEFAULT_ECOSYSTEM))),
+    occasion ||
+    band ||
+    stock ||
+    (!lockedCategory && (category || (type && type !== DEFAULT_ECOSYSTEM))),
   );
 
   const sortLabels: Record<SortKey, string> = {
@@ -556,9 +555,14 @@ export function ShopExplorer({
                   // Mobile: a bottom sheet at 85dvh, sliding up (§4.6).
                   "inset-x-0 bottom-0 h-[85dvh] rounded-t-card",
                   "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
-                  // Desktop: a 448px right drawer, full height.
+                  // Desktop: a 448px end-edge drawer, full height (the
+                  // logical start-auto/end-0 above already puts it on the
+                  // left in RTL, so its entrance/exit direction has to
+                  // follow — a physical "from-right" twin would slide the
+                  // wrong way past a panel already sitting on the left).
                   "sm:inset-y-0 sm:h-dvh sm:w-[28rem] sm:rounded-none sm:start-auto sm:end-0",
                   "sm:data-[state=open]:slide-in-from-right sm:data-[state=closed]:slide-out-to-right",
+                  "sm:rtl:data-[state=open]:slide-in-from-left sm:rtl:data-[state=closed]:slide-out-to-left",
                   "duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none",
                 )}
               >

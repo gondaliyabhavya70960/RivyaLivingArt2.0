@@ -59,7 +59,9 @@
     "logoHome": "Rivya Living Art — accueil",
     "dismissAnnouncement": "Masquer l'annonce",
     "announcementDefault": "Délai actuel · Petites pièces 7–10 jours · Grandes pièces 3–6 semaines",
-    "ratedOutOf": "Noté {rating} sur {outOf} étoiles"
+    "ratedOutOf": "Noté {rating} sur {outOf} étoiles",
+    "demoMark": "Contenu de démonstration",
+    "demoDetail": "Contenu de démonstration — pas une offre réelle"
   },
   "Header": {
     "search": "Recherche",
@@ -1493,5 +1495,8 @@
       "body": "Envoyez l'espace, l'usage et la date qui compte. Dessin, matériaux et prix se règlent avec vous sur WhatsApp avant qu'une seule couche ne soit coulée.",
       "formCta": "Préparer une commande sur mesure"
     }
+  },
+  "CureLine": {
+    "pageSections": "Sections de la page"
   }
 }
