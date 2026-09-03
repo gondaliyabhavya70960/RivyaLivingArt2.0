@@ -11,9 +11,10 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation wave 1 — A1 and B merged; C1, D, E, F1 in flight; G early
+Current Phase:            Transformation wave 2 — wave 1 complete (A1 B C1 D E F1 + G); A3 merged;
+                          A2, A4, C2 in flight; F2 after wave 2
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 · A1 · B · G · C1 · D · F1 COMPLETE (2026-09-03); PR #42 draft; CI green
+Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 COMPLETE (2026-09-03); PR #42 draft; CI green
                           on every head; Vercel preview green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
@@ -21,8 +22,9 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              E (scraper + sheets) in wt-e; wave 2 A2 and A3 in wt-a2 / wt-a3, A4 and
-                          C2 queued behind the two-agent cap
+In Progress:              wave 2 — A2 (homepage + large-format) in wt-a2, A4 (process/about/journal +
+                          Studio process/materials) in wt-a4, C2 (block catalogue) queued behind the
+                          two-agent cap; then F2 (CI demo seed + detail routes + e2e, audit flips, docs)
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
@@ -32,7 +34,12 @@ Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B t
 Files Created:            11 migration dirs (20260904100000 … 20260904110000) · src/lib/
                           {content-status,demo-clause,demo-content,activity-snapshot,
                           process-steps}.ts (+ tests) · tests/db/{testimonials-gate,demo-gate}.test.ts
-                          · tests/stubs/server-only.ts
+                          · tests/stubs/server-only.ts · A3: src/lib/{card-meta,flip,swatch-colors}.ts
+                          (+ tests) · shop/{quick-view,quick-view-trigger,card-hover-video,
+                          card-ask-whatsapp}.tsx · storefront/lightbox.tsx · E: lib/scraper/{stages,
+                          stages-server,normalize}.ts · hooks/use-scrape-runner.ts · scraper/layout.tsx
+                          · actions/{research,sheet-fill}.ts · lib/import/tier-fill.ts · studio
+                          research + sheet-import/conflicts routes · settings/sheet-ids-section.tsx
 Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-usages,shop,
                           search-query,catalog-nav,catalog-mirror,custom-pages-server,
                           custom-page-data,large-format,site-settings,activity,order-visibility,
@@ -40,6 +47,12 @@ Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-us
                           blog,portfolio,products,custom-pages}.ts · src/app/sitemap.ts · every
                           (v2) page that reads content · Studio product list/page · four Studio
                           form schemas · vitest.db.config.mts · tests updated. Nothing deleted.
+                          A3: shop.ts D21 select · catalog-product-card · product page/gallery/
+                          order-panel/model-viewer · portfolio lightbox-gallery · shop + category
+                          pages · search page defaults · design-lab mock rows. E: scraper actions,
+                          adapters, run-scope, breaker, sheets, sheet-push · import.ts preview +
+                          overwriteOwnerEdited · import-wizard · settings form/page · sidebar ·
+                          prisma/import-tiers.ts (thin caller) · docs/{scraper,google-sheets}.md
 Database Changes:         11 additive migrations (44 → 55). One data statement: existing
                           Testimonial rows back-filled to PUBLISHED (they were live). Product
                           isDemo ADD COLUMN takes a brief ACCESS EXCLUSIVE lock — deploy off-peak.
@@ -56,6 +69,12 @@ Tests Run:                typecheck · lint · test (40 files / 391) · test:db 
                           proofs on a production-mode server: hidden demo PDP renders not-found with
                           no Product JSON-LD and no sitemap entry; shown demo PDP renders in full
                           with noindex; the demo title no longer leaks into the 404's <title>
+                          · E + A3 merged head (817865e): typecheck · lint · test (63 / 618) ·
+                          test:db (6 / 28) · copy:check (1,207) · i18n-missing + --stale · build ·
+                          motion 48.4 KB · redesign-audit 18 routes at 1440/390/360 + 8 RTL at 390 ·
+                          a11y-audit 1440/390/RTL · keyboard 1440/390 · e2e 10/10 · studio-audit 34
+                          routes 1440/390 (one 390 overflow on /studio/sheet-import fixed) ·
+                          Lighthouse budgets met · demo proofs incl. the IN_ROOM room-context band
 Tests Passing:            all of the above (motion 48.2 KB is in the 45–49 KB warn band as before)
 Known Issues:             Subagent API returned 529 for the whole batch, so B0 was implemented in
                           the main session rather than by the planned agent workflow; the
@@ -67,6 +86,10 @@ Known Issues:             Subagent API returned 529 for the whole batch, so B0 w
                           before notFound() resolves (loading boundary), so a missing slug
                           answers 200 + the not-found UI + noindex — an SEO item for batch F2,
                           not introduced here.
+                          E leaves syncWebsiteProductsToSheet reading its sheet id from the
+                          environment (its writer is outside E's files; documented in
+                          docs/google-sheets.md). Bulk Import re-imports now skip untouched
+                          matching rows unless "overwrite owner-edited products" is ticked.
 Next Session Instruction: Read this block, then /root/.claude/plans/…elegant-mango.md (the
                           approved plan) and CHANGELOG.md's B0 entry. Branch is
                           claude/rivya-website-redesign-dc3jz0 on PR #42. Wave scripts and

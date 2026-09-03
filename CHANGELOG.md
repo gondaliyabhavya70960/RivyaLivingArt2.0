@@ -5,6 +5,116 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 1 · batch E and wave 2 · batch A3 — scraper + Sheets, and the shop / PDP / category pass (2026-09-03)
+
+Merged `5d6a74c` (A3) and `817865e` (E), each built and gated in its own worktree against its own
+database copy; the merged head was built and audited here before the push. Merge follow-ups:
+`f827adf` (C1's design-lab mock rows gain A3's four card fields — C1 landed after A3 branched, and
+the out-of-stock mock row is marked demo so the lab shows the DemoMark state) and, inside the E
+merge commit, the `FlaskConical` icon both G and E imported into the sidebar (kept once), the
+Settings screen stacking G's Demo content section above E's Sheets section, `studio-audit.mjs`
+keeping both batches' routes, and `import.ts` taking E's merge-aware preview.
+
+### A3 — shop card, quick view, shared lightbox, PDP, category
+- **D21 on the card row.** `src/lib/shop.ts`'s `CARD_SELECT`/`ShopProductItem` grow `materials`,
+  `dimensions`, `videoUrl`, `isDemo` and `images.role`; `materials`/`dimensions` stay outside
+  `TRANSLATABLE_FIELDS.product` (mirroring `large-format.ts`) — owner free text, shown as typed in
+  all nine locales. New `src/lib/card-meta.ts`: `cardMetaLine()` (one mono "materials · dimensions"
+  line, `null` when both are empty) and `accessibleCardName()` (the card link's full, never-truncated
+  accessible name — Part 17's no-ellipsis rule).
+- **`catalog-product-card.tsx`**: the mono meta line; `<DemoMark/>` on a fixture row; the
+  single-image hover zoom only when there is no second image to wipe in; below the stretched card
+  link and outside it, two real ghost controls — `QuickViewTrigger` and an "Ask on WhatsApp" ghost
+  link (`data-wa-source="card"`), both flush-padded after a real 360px overflow was caught by the
+  audit in the worktree and fixed. New `shop/card-hover-video.tsx` (an ambient hover clip, mounted
+  only for a fine hover-capable pointer under no reduced motion, `preload="none"`, never on the
+  priority row) and `shop/card-ask-whatsapp.tsx` (its own client island so the card stays a Server
+  Component).
+- **`shop/quick-view.tsx` + `quick-view-trigger.tsx`**: a storefront Dialog reviving the four
+  `Shop.quickView*` keys that already shipped in nine locales, plus one new `Shop.quickViewLabel`.
+- **PDP**: the related rail is a grid from `md` and a `SnapRail` below it; the manual testimonial
+  grid is replaced by `<ProductTestimonials/>` (product → category → hidden); `reviewJsonLd` is
+  appended to the Product JSON-LD, and the whole Product/Offer/Review graph is omitted for a demo
+  fixture, which also gets `noindex`; `<DemoMark/>` under the eyebrow; a room-context band after the
+  commerce split, only when the product carries an `IN_ROOM` image. `order-panel.tsx` gains a mono
+  demo-order note; `SWATCH_COLORS`/`swatchColor` move to `src/lib/swatch-colors.ts` (a byte-identical
+  pure move, now unit-tested). `customization-controls.tsx`'s empty engraving preview moves off
+  `text-graphite/60` (the AA failure batch G's audit found) to full-opacity `text-graphite`.
+- **Shared lightbox**: new `storefront/lightbox.tsx` — one Dialog + keyboard + RTL + live-region +
+  focus-return implementation with a CSS FLIP entrance (`src/lib/flip.ts`, pure and unit-tested)
+  measured against the opening tile. `gallery.tsx` and `portfolio/lightbox-gallery.tsx` become
+  consumers, keeping their own stage content; `gallery.tsx`'s video and `model-viewer.tsx` gain a
+  `poster`.
+- **`/shop`**: the ecosystem tabs clear the 44px touch floor via `pointer-coarse:` (A1 had flagged
+  the miss). **`/shop/[category]`**: `<Reveal>` on text bands, the related-collections strip gains a
+  `SnapRail` below `sm`, and the breadcrumb JSON-LD's hardcoded English "Home"/"Shop" is localised.
+- `/search` constructs `ShopProductItem` by hand from `search-query.ts` and defaults the four new
+  fields — no behaviour change there. `REDESIGN.md` §0 row 4: the wishlist stays (D11) — an
+  account-less local list, not a bag.
+- i18n ×9: `Shop.card.*`, `Shop.quickViewLabel`, `Product.roomContext.*`, `Product.demoOrderNote`,
+  `Product.dimensionsLabel`, `Lightbox.*`; `site-copy.generated.ts` → 1,207 slots.
+- Measured in the worktree: 490 unit tests, 18 db tests, build, redesign/a11y audits clean at
+  1440/390/360 (+ `/ar` at 390) on `/shop`, `/shop/gift-collections` and a PDP, a manual lightbox
+  keyboard pass on both origins, motion-budget 48.4 KB, E2E 10/10.
+
+### E — scraper pipeline and the sheet fill
+- **A nine-stage rail on `/studio/scraper`** (`src/lib/scraper/stages.ts` + `stages-server.ts`,
+  `scraper/stage-rail.tsx`): sources through confirmed, each cell a live count linking to its
+  screen.
+- **A scrape has a scope**: whole source, one category/listing page, or one product page
+  (`ScrapeJob.scope`, migrated in B0), verified against the source's own host before a job is
+  created; the three adapters honour it.
+- **The runner survives navigation**: `src/hooks/use-scrape-runner.ts` is a module store mounted
+  once by `scraper/layout.tsx`, so a run no longer dies with whichever page component started it;
+  `beforeunload` warns while a run is active.
+- **Stale-job reclaim**: a `RUNNING` job whose `updatedAt` heartbeat is older than ten minutes is
+  presumed dead and no longer locks its source; each page advance is an optimistic
+  `where: { id, cursorPage }` update so two workers never drive one job.
+  `partitionByInFlight` now takes the in-flight jobs (with status and heartbeat) rather than ids,
+  and the breaker is keyed by `sourceKey`.
+- **Normalisation at staging** (`src/lib/scraper/normalize.ts`): material, colour and unit aliases
+  plus `canonicalizeUrl`, applied before `contentHash`, so a source's own inconsistency never
+  manufactures a false change. Reviewer notes on a staged listing (`ScrapedProduct.notes`).
+- **`/studio/research`** — a hand-kept research library (`ResearchRecord`, `actions/research.ts`),
+  never a product on its own.
+- **Bulk Import runs the owner-edit guard**: `previewImport` applies `decideMerge` per row and
+  reports `ownerEditedCount`; the wizard shows "Will overwrite N owner-edited products" behind an
+  explicit `overwriteOwnerEdited` checkbox, and `importProductRow` honours
+  `refresh-availability`. **Behaviour change:** a plain re-import of an already-imported,
+  untouched row is now skipped rather than unconditionally overwritten unless the box is ticked.
+- **The deploy-time sheet fill is one implementation**: `src/lib/import/tier-fill.ts`
+  `runTierFill({ trigger, dryRun })`, with `prisma/import-tiers.ts` a thin caller — proven
+  byte-identical on `SELECT tier, status, count(*)` before and after the extraction (373 draft +
+  4,000 published), idempotent on re-run. `actions/sheet-fill.ts` gives `/studio/sheet-import`
+  Preview and Run now via `decideFillRun("PREVIEW" | "MANUAL")`, and every dropped row says why.
+- **Conflicts and history**: when the sheet and a studio edit change the same field between fills
+  (owner-touched ∧ `studioEditedAt` after the last run ∧ hash differs), one `SheetConflict` per
+  field lands on `/studio/sheet-import/conflicts` — Keep mine · Take sheet · Skip. Every push (job,
+  tier, confirmed list, website mirror) is wrapped in a `SheetSyncRun` with a visible history.
+- **The sheet id lives in Settings** (`readSheetId(settings)`, env fallback) with a "Sheets" section
+  for the spreadsheet id and the five tab ids; `syncWebsiteProductsToSheet`'s underlying writer
+  (`product-sheet-sync.ts`) still resolves env-only — recorded in `docs/google-sheets.md`.
+- `category-map.test.ts` asserts every keyword slug is a seeded category; `/scraper/mapping` is
+  titled "Source → category report". Docs: `docs/scraper.md`, `docs/google-sheets.md`.
+- No storefront copy touched (the Studio is English-only). Measured in the worktree: 450 unit
+  tests, 13 db tests, typecheck, lint.
+
+Verified on the merged head (`817865e` plus the sheet-import wrap fix): typecheck · lint · vitest
+63 files / 618 · test:db 6 / 28 · copy:check 1,207 · i18n-missing and `--stale` clean · `next build`
+· motion-budget 48.4 KB (unchanged) · redesign-audit 0 failing rules on the 13 CI routes plus
+`/product/demo-product-001`, `/shop/gift-collections`, `/blog/demo-post-001`,
+`/portfolio/demo-case-001` and `/p/demo-lander` at 1440 / 390 / 360, and eight `/ar` routes at 390 ·
+a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at 1440 and 390 · E2E
+10/10 · studio-audit clean across 34 routes at 1440 — at 390 it caught `/studio/sheet-import`
+overflowing by 69px: the "Recent fills" summary (`+15 new · 30 updated · 240 unchanged · 1 failed`)
+was `shrink-0` beside the date, which only became too long once the demo ImportRun fixtures were
+seeded; the row now wraps, rebuilt and re-audited clean · Lighthouse budgets met (perf ≥ 85, a11y
+≥ 95) · demo proofs on the running server: no sitemap entry for the fixture, `noindex`, no Product
+JSON-LD, the DemoMark rendered, the demo order note present, and the room-context band rendering
+from the fixture's `IN_ROOM` image (A3 could not exercise that path in its worktree).
+
+---
+
 ## Wave 1 · batch F1 — CSP enforced, JSON-LD literals, magic-byte upload sniff (2026-09-03)
 
 Merged `86f6bba`, built and gated in its own worktree; the merged head was built here and the
