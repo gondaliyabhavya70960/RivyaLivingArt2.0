@@ -222,7 +222,14 @@ export function SectionsBoard({
         {sections.map((row, index) => (
           <li
             key={row.key}
-            className={cn("py-3", !row.visible && "opacity-60")}
+            className={cn(
+              "py-3",
+              // A hidden section is marked by the "Hidden" badge and a muted
+              // tint — never by dimming the row: opacity-60 pushed the graphite
+              // meta text under AA, which the studio audit caught the first
+              // time a default arrangement shipped a section off.
+              !row.visible && "bg-muted/40",
+            )}
           >
             <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
               <div className="min-w-0 flex-1 basis-72">
