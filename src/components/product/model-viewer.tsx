@@ -20,6 +20,7 @@ declare module "react" {
       > & {
         src?: string;
         alt?: string;
+        poster?: string;
         /** Boolean custom-element attributes — pass "" for presence. */
         ar?: string;
         "camera-controls"?: string;
@@ -33,6 +34,10 @@ interface ModelViewerProps {
   /** URL of the .glb/.gltf model. */
   src: string;
   alt: string;
+  /** A photograph shown while the model itself is still fetching — the
+   *  gallery passes its first frame, so a slow .glb download shows the piece
+   *  rather than a blank stage. */
+  poster?: string;
 }
 
 /**
@@ -58,7 +63,7 @@ interface ModelViewerProps {
  * reassurance, WhatsApp) and this is one tile inside a gallery that is still
  * showing the photographs the 3D view is an enhancement of.
  */
-export function ModelViewer({ src, alt }: ModelViewerProps) {
+export function ModelViewer({ src, alt, poster }: ModelViewerProps) {
   const t = useTranslations("Product");
   const prefersReducedMotion = usePrefersReducedMotion();
   const [status, setStatus] = useState<"loading" | "ready" | "failed">(
@@ -109,6 +114,7 @@ export function ModelViewer({ src, alt }: ModelViewerProps) {
     <model-viewer
       src={src}
       alt={alt}
+      {...(poster ? { poster } : {})}
       camera-controls=""
       {...(prefersReducedMotion ? {} : { "auto-rotate": "" })}
       ar=""

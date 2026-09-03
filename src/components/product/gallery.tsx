@@ -3,14 +3,10 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, Play, Rotate3d } from "lucide-react";
+import { Play, Rotate3d } from "lucide-react";
 
 import { ModelViewer } from "@/components/product/model-viewer";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/storefront/dialog";
+import { Lightbox } from "@/components/storefront/lightbox";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import { cn } from "@/lib/utils";
@@ -102,12 +98,6 @@ export function ProductGallery({
     active?.kind === "image" ? (images[active.index] ?? null) : null;
   const lightboxImage =
     lightboxIndex !== null ? (images[lightboxIndex] ?? null) : null;
-
-  function stepLightbox(delta: number) {
-    setLightboxIndex((i) =>
-      i === null ? i : (i + delta + images.length) % images.length,
-    );
-  }
 
   function stepStage(delta: number) {
     if (images.length < 2) return;
@@ -283,6 +273,9 @@ export function ProductGallery({
           <video
             key={videoUrl}
             src={videoUrl}
+            // A frame from the piece's own gallery rather than a black flash
+            // before the first paint (or at all, if autoplay is refused).
+            poster={images[0]?.url}
             controls
             playsInline
             // The selected film starts itself, muted and looping; controls
@@ -298,6 +291,7 @@ export function ProductGallery({
           <ModelViewer
             src={model3dUrl}
             alt={t("gallery.modelAlt", { title })}
+            poster={images[0]?.url}
           />
         ) : null}
 
@@ -319,102 +313,60 @@ export function ProductGallery({
         ) : null}
       </div>
 
-      {/* ——— lightbox: obsidian 96%, mono counter, arrows, Esc ——— */}
-      <Dialog
-        open={lightboxIndex !== null}
-        onOpenChange={(open) => {
-          if (!open) setLightboxIndex(null);
-        }}
-      >
-        <DialogContent
-          closeLabel={tCommon("close")}
-          data-theme="navy"
+      {/* ——— lightbox: the shared component, full-viewport chrome kept.
+          Mounted whenever there is anything to open (unconditionally on
+          `open`) rather than only while open, so Radix's own close animation
+          and `onCloseAutoFocus` still run — an open-gated mount would tear
+          the whole dialog tree down before either could. ——— */}
+      {images.length > 0 ? (
+        <Lightbox
+          open={lightboxIndex !== null}
+          onOpenChange={(open) => {
+            if (!open) setLightboxIndex(null);
+          }}
+          index={lightboxIndex ?? 0}
+          count={images.length}
+          onIndexChange={(i) => setLightboxIndex(i)}
+          // The stage button is the one place a lightbox opens from here —
+          // every index FLIPs in from the same origin.
+          originFor={() => stageButtonRef.current}
+          labels={{
+            prev: t("gallery.previousImage"),
+            next: t("gallery.nextImage"),
+            close: tCommon("close"),
+          }}
+          dialogTitle={t("gallery.lightboxTitle", {
+            title,
+            index: (lightboxIndex ?? 0) + 1,
+            count: images.length,
+          })}
+          statusText={
+            lightboxImage
+              ? t("gallery.lightboxStatus", {
+                  index: (lightboxIndex ?? 0) + 1,
+                  count: images.length,
+                  alt: lightboxImage.alt || title,
+                })
+              : ""
+          }
           /* `left-0` rather than `start-0`: it exists to CANCEL the shared
              DialogContent's own `left-1/2`, and only the same physical
              property can do that in tailwind-merge. The surface is the whole
              viewport, so there is no direction to get wrong. */
-          className="top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 grid-rows-[1fr_auto] gap-4 rounded-none border-none bg-obsidian/96 p-4 text-mineral md:p-8 [&_[data-slot=sf-dialog-close]]:text-mist [&_[data-slot=sf-dialog-close]]:hover:text-mineral"
-          onKeyDown={(e) => {
-            // Direction-aware under RTL: the mirrored chevrons and the keys
-            // must agree on which way "next" points.
-            const rtl =
-              e.currentTarget.closest("[dir]")?.getAttribute("dir") === "rtl" ||
-              document.documentElement.dir === "rtl";
-            if (e.key === "ArrowRight") stepLightbox(rtl ? -1 : 1);
-            if (e.key === "ArrowLeft") stepLightbox(rtl ? 1 : -1);
-          }}
-          onCloseAutoFocus={(e) => {
-            e.preventDefault();
-            stageButtonRef.current?.focus();
-          }}
+          contentClassName="top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 rounded-none border-none"
         >
-          <DialogTitle className="sr-only">
-            {t("gallery.lightboxTitle", {
-              title,
-              index: lightboxIndex !== null ? lightboxIndex + 1 : 1,
-              count: images.length,
-            })}
-          </DialogTitle>
-
-          {/* Live region — prev/next changes are otherwise silent to AT. */}
-          <p role="status" aria-live="polite" className="sr-only">
-            {lightboxImage &&
-              t("gallery.lightboxStatus", {
-                index: lightboxIndex !== null ? lightboxIndex + 1 : 1,
-                count: images.length,
-                alt: lightboxImage.alt || title,
-              })}
-          </p>
-
           {lightboxImage ? (
-            <div className="relative min-h-0 w-full">
-              <Image
-                src={lightboxImage.url}
-                alt={lightboxImage.alt || title}
-                fill
-                sizes="96vw"
-                unoptimized={!isOptimizableImageSrc(lightboxImage.url)}
-                className="object-contain"
-              />
-            </div>
+            <Image
+              src={lightboxImage.url}
+              alt={lightboxImage.alt || title}
+              fill
+              sizes="96vw"
+              unoptimized={!isOptimizableImageSrc(lightboxImage.url)}
+              className="object-contain"
+            />
           ) : null}
-
-          {images.length > 1 ? (
-            <div className="flex items-center justify-center gap-8">
-              <button
-                type="button"
-                aria-label={t("gallery.previousImage")}
-                onClick={() => stepLightbox(-1)}
-                className="inline-flex size-12 items-center justify-center rounded-full border border-hairline-dk text-mineral outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:border-mineral/40 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-obsidian motion-reduce:transition-none"
-              >
-                <ChevronLeft
-                  aria-hidden
-                  strokeWidth={1.5}
-                  className="size-5 rtl:-scale-x-100"
-                />
-              </button>
-              <p className="font-mono text-14 tracking-[0.14em] text-mist tabular-nums">
-                {t("gallery.counter", {
-                  index: pad(lightboxIndex !== null ? lightboxIndex + 1 : 1),
-                  count: pad(images.length),
-                })}
-              </p>
-              <button
-                type="button"
-                aria-label={t("gallery.nextImage")}
-                onClick={() => stepLightbox(1)}
-                className="inline-flex size-12 items-center justify-center rounded-full border border-hairline-dk text-mineral outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:border-mineral/40 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-obsidian motion-reduce:transition-none"
-              >
-                <ChevronRight
-                  aria-hidden
-                  strokeWidth={1.5}
-                  className="size-5 rtl:-scale-x-100"
-                />
-              </button>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+        </Lightbox>
+      ) : null}
     </div>
   );
 }
