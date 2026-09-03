@@ -572,7 +572,9 @@ export async function continueScrapeJob(
 
     const job = await db.scrapeJob.findUnique({
       where: { id },
-      include: { source: { select: { baseUrl: true, tier: true } } },
+      include: {
+        source: { select: { baseUrl: true, tier: true, requestDelayMs: true } },
+      },
     });
     if (!job) throw new Error("Scrape job not found");
 
@@ -635,6 +637,9 @@ export async function continueScrapeJob(
           sourceKey: job.sourceKey,
           vertical: job.vertical,
           page,
+          // The per-source politeness knob (docs/scraper.md "Politeness");
+          // a single pasted URL has no source row and gets the shared default.
+          requestDelayMs: job.source?.requestDelayMs ?? null,
         });
 
         const counts = await upsertPage(job.id, job.sourceKey, products);

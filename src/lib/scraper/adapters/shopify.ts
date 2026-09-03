@@ -10,6 +10,7 @@ import {
   type AdapterContext,
   type RichProduct,
 } from "@/lib/scraper/types";
+import { resolveDelayMs } from "@/lib/scraper/breaker";
 import { jsonldAdapter } from "@/lib/scraper/adapters/jsonld";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { slugify } from "@/lib/slug";
@@ -89,7 +90,9 @@ function mapProduct(p: ShopifyProduct, ctx: AdapterContext): RichProduct | null 
 }
 
 export const shopifyAdapter: Adapter = async (ctx) => {
-  if (ctx.page > 1) await sleep(POLITENESS_DELAY_MS);
+  if (ctx.page > 1) {
+    await sleep(resolveDelayMs(ctx.requestDelayMs, POLITENESS_DELAY_MS));
+  }
 
   const url = `${ctx.baseUrl}/products.json?limit=${PAGE_SIZE}&page=${ctx.page}`;
   // Validate the host + any redirect hop before the request — a source whose

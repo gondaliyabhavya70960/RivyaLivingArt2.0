@@ -17,6 +17,7 @@ import {
   type AdapterContext,
   type RichProduct,
 } from "@/lib/scraper/types";
+import { resolveDelayMs } from "@/lib/scraper/breaker";
 import { discoverProductUrls } from "@/lib/scraper/sitemaps";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { slugify } from "@/lib/slug";
@@ -166,7 +167,7 @@ export const jsonldAdapter: Adapter = async (ctx) => {
 
   const products: RichProduct[] = [];
   for (const pageUrl of slice) {
-    await sleep(JSONLD_DELAY_MS);
+    await sleep(resolveDelayMs(ctx.requestDelayMs, JSONLD_DELAY_MS));
     try {
       // Product URLs come from the (attacker-controllable) sitemap, so each
       // page fetch — and its redirects — must clear the SSRF guard (SEC-107).
