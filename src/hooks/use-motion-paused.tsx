@@ -122,7 +122,7 @@ export function MotionPauseToggle() {
       // No backdrop blur (Part 3.5 keeps blur to the header), the Part 3.8
       // duration token instead of a raw 200ms, and the storefront focus ring
       // rather than the shadcn semantic one.
-      className="fixed bottom-20 start-5 z-40 lg:bottom-5 flex size-9 cursor-pointer items-center justify-center rounded-sm border border-mineral/25 bg-obsidian/80 text-mineral opacity-60 transition-[opacity,border-color,background-color] duration-(--dur-fast) after:absolute after:-inset-1 hover:border-mineral/45 hover:bg-obsidian/90 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian motion-reduce:transition-none"
+      className="fixed bottom-20 start-5 z-(--z-bar) lg:bottom-5 flex size-9 cursor-pointer items-center justify-center rounded-sm border border-mineral/25 bg-obsidian/80 text-mineral opacity-60 transition-[opacity,border-color,background-color] duration-(--dur-fast) after:absolute after:-inset-1 hover:border-mineral/45 hover:bg-obsidian/90 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian motion-reduce:transition-none"
     >
       {paused ? (
         <Play aria-hidden className="size-4" />
