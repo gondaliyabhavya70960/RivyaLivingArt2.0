@@ -6,7 +6,13 @@ import { PageHeader } from "@/components/studio/page-header";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 
-export const metadata: Metadata = { title: "Source → category mapping" };
+// "Report", not "mapping": the screen does not let anyone map anything — it
+// is read-only, one $queryRaw grouped by what already landed where. Naming
+// it a report says so up front, instead of implying an editor that isn't
+// here (the actual mapping lives in category-map.ts's keyword tables, edited
+// in code and reviewed against the catalog's real category slugs by
+// category-map.test.ts).
+export const metadata: Metadata = { title: "Source → category report" };
 export const dynamic = "force-dynamic";
 
 type MappingRow = {
@@ -63,7 +69,7 @@ export default async function MappingReportPage() {
   return (
     <>
       <PageHeader
-        title="Source → category mapping"
+        title="Source → category report"
         description="Where each import source's products landed across the canonical categories — the review surface for the keyword matcher's best-effort mapping."
         actions={
           <Button asChild variant="ghost" size="sm">
