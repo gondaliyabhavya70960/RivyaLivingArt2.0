@@ -14,9 +14,11 @@
  * the built output and a database, so it starts the server and sweeps every
  * public route at 1440px and 390px. Non-zero exit fails the build.
  *
- * The champagne count is the one finding that does NOT fail. It is a design
- * review rather than a test — the selector cannot tell a hairline from a
- * headline — so it prints as a note and a human decides.
+ * Every rule here fails the build. The champagne count was the one exception
+ * — a design review rather than a test, printed as a note for a human — until
+ * Phase 1b, when every audited route was measured passing it and the note
+ * became a rule. The measurement it counts is deliberately narrow (see the
+ * long comment above it); what it will not do is quietly stop being true.
  */
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -412,11 +414,49 @@ for (const route of routesArg.split(",")) {
           // offset-x offset-y blur-radius spread-radius
           return lengths.length >= 3 && parseFloat(lengths[2]) > 0;
         });
+    /* Part 3.8 is four durations — 180 · 350 · 800 · 900ms — and the point
+       of a closed set is that a fifth value never arrives on the grounds
+       that it looked right in one place. Bespoke values did arrive (a 450ms
+       page transition, a 200ms mega menu, `duration-200` in the shadcn
+       primitives) and nothing said so. Computed style is read rather than
+       class names, so a raw CSS rule is caught as readily as a utility. */
+    const SANCTIONED_MS = new Set([0, 180, 350, 800, 900]);
+    const durationsOf = (value) =>
+      String(value || "")
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((part) =>
+          part.endsWith("ms")
+            ? Number.parseFloat(part)
+            : Number.parseFloat(part) * 1000,
+        )
+        .filter((ms) => Number.isFinite(ms));
+
     const blurOffenders = [];
     const shadowOffenders = [];
+    const durationOffenders = [];
     for (const el of document.querySelectorAll("body *")) {
       if (!visible(el)) continue;
       const cs = getComputedStyle(el);
+      /* Transitions and entrances are what Part 3.8's four values govern. An
+         animation that loops forever is a different class of motion and the
+         spec times those individually where it wants them — the announcement
+         rotation at 6s, the toast countdown at 5s, the droplet at 2.4s — so
+         an infinite animation's duration is not held to the four. */
+      const loops = String(cs.animationIterationCount || "").includes(
+        "infinite",
+      );
+      for (const ms of [
+        ...durationsOf(cs.transitionDuration),
+        ...(loops ? [] : durationsOf(cs.animationDuration)),
+      ]) {
+        // Round: the engine reports 0.18s as 0.18 and floating point makes
+        // 179.99999 out of it often enough to matter.
+        if (!SANCTIONED_MS.has(Math.round(ms))) {
+          durationOffenders.push(`${describe(el)} @ ${Math.round(ms)}ms`);
+        }
+      }
       const backdrop = cs.backdropFilter || cs.webkitBackdropFilter || "none";
       if (
         backdrop !== "none" &&
@@ -434,9 +474,28 @@ for (const route of routesArg.split(",")) {
       }
     }
 
+    /* "No scale or lift on hover — colour and underline only" (Part 3.4 ·
+       contract line 107). A hover rule cannot be read off computed style, so
+       this reads the vocabulary the repo writes in: a hover-variant transform
+       utility on anything that behaves as a control. `active:scale-95` is
+       explicitly sanctioned by §7.4 and is not a hover state, so it passes. */
+    const hoverLift = [];
+    for (const el of document.querySelectorAll(
+      "button, a, [role='button'], summary",
+    )) {
+      if (!visible(el)) continue;
+      const cls = typeof el.className === "string" ? el.className : "";
+      const hit = cls
+        .split(/\s+/)
+        .find((c) => /^hover:-?(translate|scale)-/.test(c));
+      if (hit) hoverLift.push(`${describe(el)} .${hit}`);
+    }
+
     return {
       blurOffenders: [...new Set(blurOffenders)].slice(0, 8),
       shadowOffenders: [...new Set(shadowOffenders)].slice(0, 8),
+      durationOffenders: [...new Set(durationOffenders)].slice(0, 8),
+      hoverLift: [...new Set(hoverLift)].slice(0, 8),
       brokenImages: [...new Set(brokenImages)],
       h1Count: h1s.length,
       h1Text: h1s.map((h) => h.text),
@@ -505,9 +564,18 @@ for (const route of routesArg.split(",")) {
   if (audit.shadowOffenders.length) {
     report("FAIL", `drop shadow on the storefront — ${audit.shadowOffenders.join(", ")} (Part 3.5: none, the mobile bottom bar excepted)`);
   }
-  // Advisory only — the selector cannot tell a hairline from a headline.
+  if (audit.durationOffenders.length) {
+    report("FAIL", `duration outside Part 3.8's four values — ${audit.durationOffenders.join(", ")} (180 · 350 · 800 · 900ms)`);
+  }
+  if (audit.hoverLift.length) {
+    report("FAIL", `lift or scale on a control's hover — ${audit.hoverLift.join(", ")} (Part 3.4: colour and underline only)`);
+  }
+  // Promoted from NOTE in Phase 1b: every audited route passes it, so the
+  // rule now holds the line instead of describing it. The count is of
+  // elements that PAINT champagne in the first viewport (see the long note
+  // above the measurement for what is deliberately excluded).
   if (audit.champagne > 2) {
-    report("NOTE", `${audit.champagne} champagne-coloured elements in the first viewport (spec caps visible ones at 2 — review by eye)`);
+    report("FAIL", `${audit.champagne} champagne-coloured elements in the first viewport (Part 3.1 caps visible ones at 2)`);
   }
   if (routeFailures === 0) console.log("  · clean");
 }
