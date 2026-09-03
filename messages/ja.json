@@ -1498,5 +1498,14 @@
   },
   "CureLine": {
     "pageSections": "ページセクション"
+  },
+  "Testimonials": {
+    "demoNotice": "デモの声 — 実際のお客様の声ではありません",
+    "linkedPiece": "この作品を見る",
+    "linkedProject": "このプロジェクトを見る",
+    "watchFilm": "動画を見る",
+    "verifiedBy": "確認済みのお客様",
+    "givenOn": "{date}にいただいた声",
+    "wallHeading": "お客様の声"
   }
 }

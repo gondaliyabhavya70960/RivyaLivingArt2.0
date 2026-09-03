@@ -1498,5 +1498,14 @@
   },
   "CureLine": {
     "pageSections": "أقسام الصفحة"
+  },
+  "Testimonials": {
+    "demoNotice": "شهادة تجريبية — ليست تقييمًا حقيقيًا من عميل",
+    "linkedPiece": "عرض هذه القطعة",
+    "linkedProject": "عرض هذا المشروع",
+    "watchFilm": "مشاهدة الفيلم",
+    "verifiedBy": "عميل موثّق",
+    "givenOn": "قيل بتاريخ {date}",
+    "wallHeading": "بكلماتهم"
   }
 }

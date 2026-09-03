@@ -1498,5 +1498,14 @@
   },
   "CureLine": {
     "pageSections": "પેજ વિભાગો"
+  },
+  "Testimonials": {
+    "demoNotice": "ડેમો પ્રશંસાપત્ર — વાસ્તવિક ગ્રાહક સમીક્ષા નથી",
+    "linkedPiece": "આ કૃતિ જુઓ",
+    "linkedProject": "આ પ્રોજેક્ટ જુઓ",
+    "watchFilm": "ફિલ્મ જુઓ",
+    "verifiedBy": "ચકાસાયેલ ગ્રાહક",
+    "givenOn": "{date} ના રોજ આપ્યું",
+    "wallHeading": "તેમના શબ્દોમાં"
   }
 }

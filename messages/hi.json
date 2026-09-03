@@ -1498,5 +1498,14 @@
   },
   "CureLine": {
     "pageSections": "पेज सेक्शन"
+  },
+  "Testimonials": {
+    "demoNotice": "डेमो प्रशंसापत्र — यह असली ग्राहक समीक्षा नहीं है",
+    "linkedPiece": "यह कृति देखें",
+    "linkedProject": "यह प्रोजेक्ट देखें",
+    "watchFilm": "फ़िल्म देखें",
+    "verifiedBy": "सत्यापित ग्राहक",
+    "givenOn": "{date} को दिया गया",
+    "wallHeading": "उनके शब्दों में"
   }
 }

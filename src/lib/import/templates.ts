@@ -179,7 +179,15 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
     key: "testimonials",
     label: "Testimonials",
     requiredColumns: ["name", "quote"],
-    optionalColumns: ["location", "rating", "avatar_url", "order"],
+    optionalColumns: [
+      "location",
+      "rating",
+      "avatar_url",
+      "order",
+      "designation",
+      "product_slug",
+      "permission_status",
+    ],
     example: {
       name: "Priya Sharma",
       quote:
@@ -188,8 +196,11 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
       rating: "5",
       avatar_url: "https://example.com/img/avatar-priya.jpg",
       order: "1",
+      designation: "Interior designer, Surat",
+      product_slug: "varmala-preservation-frame",
+      permission_status: "GRANTED",
     },
-    docs: "rating is 1-5 (defaults to 5). A row matching an existing name + quote updates that testimonial instead of adding a duplicate.",
+    docs: "rating is 1-5 (defaults to 5). A row matching an existing name + quote updates that testimonial instead of adding a duplicate. product_slug links the row to an existing catalogue product when the slug matches one; permission_status is UNKNOWN, REQUESTED, GRANTED or DECLINED. Imported testimonials arrive as drafts.",
   },
   {
     key: "portfolio",
@@ -240,7 +251,8 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
       content:
         "## Shipping\n\nAll pieces ship insured across India within **2-4 business days** of curing.",
       seo_title: "Shipping Policy | Rivya Living Art",
-      seo_description: "Shipping timelines and packaging for Rivya Living Art orders.",
+      seo_description:
+        "Shipping timelines and packaging for Rivya Living Art orders.",
     },
     docs: "Static site pages. content is Markdown and is converted to the rich-text editor format; re-importing an existing slug updates that page.",
   },

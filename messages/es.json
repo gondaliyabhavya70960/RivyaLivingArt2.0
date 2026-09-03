@@ -1498,5 +1498,14 @@
   },
   "CureLine": {
     "pageSections": "Secciones de la página"
+  },
+  "Testimonials": {
+    "demoNotice": "Testimonio de muestra — no es una reseña real de un cliente",
+    "linkedPiece": "Ver esta pieza",
+    "linkedProject": "Ver este proyecto",
+    "watchFilm": "Ver el vídeo",
+    "verifiedBy": "Cliente verificado",
+    "givenOn": "Dicho el {date}",
+    "wallHeading": "En sus palabras"
   }
 }

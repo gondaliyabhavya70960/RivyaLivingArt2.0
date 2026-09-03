@@ -1498,5 +1498,14 @@
   },
   "CureLine": {
     "pageSections": "页面版块"
+  },
+  "Testimonials": {
+    "demoNotice": "演示评价——并非真实客户评价",
+    "linkedPiece": "查看这件作品",
+    "linkedProject": "查看这个项目",
+    "watchFilm": "观看影片",
+    "verifiedBy": "已验证客户",
+    "givenOn": "于{date}给出",
+    "wallHeading": "客户的话"
   }
 }
