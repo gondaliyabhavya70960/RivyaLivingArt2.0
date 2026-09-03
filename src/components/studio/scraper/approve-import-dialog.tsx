@@ -191,7 +191,7 @@ function ApproveImportBody({
           </Label>
         </div>
 
-        <div className="rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
+        <div className="rounded-card border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
           Everything imports as DRAFT with the rewrite guard — scraped titles,
           text and photos are competitors&apos; copyrighted reference material.
           Publish stays blocked until each product is rewritten as original
@@ -199,7 +199,7 @@ function ApproveImportBody({
         </div>
 
         {errors.length > 0 && (
-          <div className="max-h-44 space-y-1.5 overflow-y-auto rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm">
+          <div className="max-h-44 space-y-1.5 overflow-y-auto rounded-card border border-destructive/40 bg-destructive/10 p-3 text-sm">
             <p className="font-medium text-destructive">
               {errors.length} item{errors.length === 1 ? "" : "s"} failed to
               import:

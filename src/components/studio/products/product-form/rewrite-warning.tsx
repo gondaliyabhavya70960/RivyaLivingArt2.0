@@ -8,7 +8,7 @@ import type { FormValues } from "./schema";
 export function RewriteWarning() {
   const { control } = useFormContext<FormValues>();
   return (
-    <div className="rounded-2xl border border-warning/40 bg-warning/10 p-5">
+    <div className="rounded-card border border-warning/40 bg-warning/10 p-5">
       <div className="flex items-start gap-3">
         <TriangleAlert
           aria-hidden

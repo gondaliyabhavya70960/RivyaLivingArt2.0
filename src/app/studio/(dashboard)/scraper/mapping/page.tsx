@@ -78,7 +78,7 @@ export default async function MappingReportPage() {
         {[...bySource.entries()].map(([source, entry]) => (
           <section
             key={source}
-            className="rounded-xl border border-border bg-card p-5 shadow-sm"
+            className="rounded-card border border-border bg-card p-5 shadow-e1"
           >
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-medium text-foreground">{source}</h2>

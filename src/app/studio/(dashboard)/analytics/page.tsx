@@ -118,7 +118,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-5 shadow-e1">
+    <section className="rounded-card border border-border bg-card p-5 shadow-e1">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="text-sm font-medium text-foreground">{title}</h2>
         {note && <p className="text-12 text-muted-foreground">{note}</p>}

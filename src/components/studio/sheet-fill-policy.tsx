@@ -55,7 +55,7 @@ export function SheetFillPolicy({
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <section className="rounded-card border border-border bg-card p-5 shadow-e1">
       <h2 className="font-medium text-foreground">Automatic fill</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         The sheet fills the catalogue on every deploy. These decide whether it

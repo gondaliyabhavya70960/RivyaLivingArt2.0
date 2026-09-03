@@ -431,7 +431,7 @@ export function SourceDetail({
   return (
     <div className="space-y-6">
       {/* Meta + actions */}
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <section className="rounded-card border border-border bg-card p-5 shadow-e1">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -544,7 +544,7 @@ export function SourceDetail({
         {running && progress && (
           <div
             role="status"
-            className="mt-4 flex items-center gap-2 rounded-xl border border-sand bg-sand px-3 py-2 text-sm text-sapphire-ink"
+            className="mt-4 flex items-center gap-2 rounded-card border border-sand bg-sand px-3 py-2 text-sm text-sapphire-ink"
           >
             <Loader2 className="size-4 animate-spin" aria-hidden />
             Page {progress.cursorPage} · {progress.totalScraped} products so far…
@@ -605,7 +605,7 @@ export function SourceDetail({
               tabIndex={0}
               role="region"
               aria-label="Scraped products"
-              className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
             >
             <table className="w-full text-sm">
               <thead>
@@ -748,7 +748,7 @@ export function SourceDetail({
               tabIndex={0}
               role="region"
               aria-label="Scrape run history"
-              className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
             >
             <table className="w-full text-sm">
               <thead>

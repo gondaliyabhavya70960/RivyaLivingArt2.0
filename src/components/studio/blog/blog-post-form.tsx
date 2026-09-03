@@ -415,7 +415,7 @@ export function BlogPostForm({
                     aria-pressed={active}
                     className={
                       active
-                        ? "rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors"
+                        ? "rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-e1 transition-colors"
                         : "rounded-full border border-foreground/15 px-4 py-1.5 text-sm text-foreground/70 transition-colors hover:border-sapphire-ink/40 hover:text-sapphire-ink"
                     }
                   >

@@ -133,13 +133,13 @@ export function BlockBoard({
       {notice && (
         <p
           role="status"
-          className="rounded-xl border border-alert/40 bg-alert/5 p-3 text-small text-foreground"
+          className="rounded-card border border-alert/40 bg-alert/5 p-3 text-small text-foreground"
         >
           {notice}
         </p>
       )}
       {blocks.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-small text-graphite">
+        <p className="rounded-card border border-dashed border-border p-8 text-center text-small text-graphite">
           No blocks yet. A lander usually opens with a hero and closes with an
           invitation; everything between is up to you.
         </p>
@@ -151,7 +151,7 @@ export function BlockBoard({
             return (
               <li
                 key={block.id}
-                className="rounded-2xl border border-border bg-card"
+                className="rounded-card border border-border bg-card"
               >
                 <div className="flex flex-wrap items-start gap-x-4 gap-y-2 p-4">
                   <div className="min-w-0 flex-1 basis-56">
@@ -252,7 +252,7 @@ export function BlockBoard({
       )}
 
       {adding ? (
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-card border border-border bg-card p-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-small font-medium text-foreground">
               Add a block
@@ -277,7 +277,7 @@ export function BlockBoard({
                     disabled={busy || used}
                     onClick={() => add(type)}
                     className={cn(
-                      "w-full rounded-xl border border-border p-3 text-start transition-colors",
+                      "w-full rounded-card border border-border p-3 text-start transition-colors",
                       used
                         ? "cursor-not-allowed opacity-50"
                         : "hover:border-foreground",

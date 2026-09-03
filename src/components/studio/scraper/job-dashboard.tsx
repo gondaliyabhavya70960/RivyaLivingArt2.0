@@ -329,7 +329,7 @@ export function JobDashboard({
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
         {/* ————— Scrape a website ————— */}
-        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <section className="rounded-card border border-border bg-card p-5 shadow-e1">
           <h2 className="flex items-center gap-2 font-display text-lg text-foreground">
             <Globe className="size-4 text-sapphire-ink" aria-hidden />
             Scrape a website
@@ -385,7 +385,7 @@ export function JobDashboard({
         </section>
 
         {/* ————— Batch runs ————— */}
-        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <section className="rounded-card border border-border bg-card p-5 shadow-e1">
           <h2 className="flex items-center gap-2 font-display text-lg text-foreground">
             <Layers className="size-4 text-sapphire-ink" aria-hidden />
             Batch runs
@@ -429,7 +429,7 @@ export function JobDashboard({
       {activeJobId && (
         <div
           role="status"
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-sand bg-sand px-4 py-3 text-sm text-sapphire-ink"
+          className="flex flex-wrap items-center gap-3 rounded-card border border-sand bg-sand px-4 py-3 text-sm text-sapphire-ink"
         >
           <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
           <span className="font-medium">
@@ -456,7 +456,7 @@ export function JobDashboard({
             tabIndex={0}
             role="region"
             aria-label="Scrape jobs"
-            className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
           <table className="w-full text-sm">
             <thead>

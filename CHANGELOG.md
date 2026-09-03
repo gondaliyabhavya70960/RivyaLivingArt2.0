@@ -5,6 +5,38 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — the Studio drift sweep (2026-09-03, third batch)
+
+108 substitutions across 42 files: `shadow-sm` → `shadow-e1`, and the card radii onto the
+architectural scale. Held back from the previous two batches on purpose — it is a visible restyle,
+not a rename, and it wanted measuring before and after rather than a source-grep count.
+
+### What the grep said vs what the browser said
+The source grep counted 63 `rounded-xl`/`rounded-2xl` occurrences and implied a sweeping change.
+Measuring the RENDERED Studio across all 30 routes found the real scope, and it was different in kind:
+
+- **51 elements at 16px.** `rounded-2xl` is not in this repo's `@theme` at all, so it fell through to
+  Tailwind's stock `1rem` — genuinely off-system, on a scale whose largest step is 8px.
+- **24 elements at 8px.** `rounded-xl` maps to `--r-lg`, which is exactly `rounded-modal`'s value. On
+  a card that is the wrong *name* for the right number.
+- **Everything else was already on 2px/4px.** The panel had drifted in specific places, not all over.
+
+### The split this produced
+A floating surface is modal-class in this system, so `dropdown-menu.tsx`, `select.tsx` and
+`dialog.tsx` went to `rounded-modal` — the same 8px they already rendered, so **zero pixels move**
+while the intent stops being an accident. That also leaves `select.tsx` alone visually, which
+matters: it is the one `ui/` file the storefront renders too, through `order-panel.tsx`. Everything
+else — cards, panels, wells — went to `rounded-card`.
+
+### Verified
+- Off-token radii across 30 routes: **51 + 24 → 0**.
+- Non-`e1` shadows: **69 → 4**, and all four are `shadow-e2` on the sticky save/bulk-action bar —
+  the Studio's sanctioned shadow exception, correctly untouched.
+- `studio-audit.mjs` clean at 1440, 768 and 390 px; before/after screenshots on five routes.
+- Nothing outside `src/components/studio`, `src/app/studio` and `src/components/ui` was touched.
+
+---
+
 ## Transformation Phase 10 — the tablet rail, badge tones and the toaster (2026-09-03, second batch)
 
 ### Added

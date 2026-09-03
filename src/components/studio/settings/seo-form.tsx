@@ -85,7 +85,7 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="rounded-2xl border border-border bg-card p-6 shadow-sm"
+      className="rounded-card border border-border bg-card p-6 shadow-e1"
     >
       <h2 className="font-display text-lg text-foreground">Site-wide defaults</h2>
       <p className="mt-1 text-sm text-muted-foreground">

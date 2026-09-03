@@ -31,7 +31,7 @@ const PER_ENTITY_SEO = [
 
 function PerEntityChecklist() {
   return (
-    <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+    <section className="rounded-card border border-border bg-card p-6 shadow-e1">
       <h2 className="font-display text-lg text-foreground">Per-item SEO</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Per-item SEO lives on each product, post and page form.

@@ -294,7 +294,7 @@ export default async function ContentGapsPage() {
           return (
             <section
               key={gap.key}
-              className="rounded-xl border border-border bg-card p-5 shadow-sm"
+              className="rounded-card border border-border bg-card p-5 shadow-e1"
             >
               <div className="flex items-baseline justify-between gap-3">
                 <h2 className="font-medium text-foreground">{gap.title}</h2>

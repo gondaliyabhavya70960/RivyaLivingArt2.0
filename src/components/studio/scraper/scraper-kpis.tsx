@@ -35,7 +35,7 @@ function StatCard({
   tone: string;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+    <div className="rounded-card border border-border bg-card p-4 shadow-e1">
       <div className="flex items-center justify-between">
         <span className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
           {label}

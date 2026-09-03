@@ -86,7 +86,7 @@ export function MediaSection({
           {imagesArray.fields.map((item, index) => (
             <div
               key={item.id}
-              className="space-y-2 rounded-xl border border-border p-3"
+              className="space-y-2 rounded-card border border-border p-3"
             >
               <Image
                 src={watchedImages[index]?.url ?? item.url}
