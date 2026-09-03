@@ -263,18 +263,21 @@ export function InquiryList({
           <table className="w-full min-w-[52rem] text-small xl:min-w-0">
             <thead className="xl:sticky xl:top-16 xl:z-20 xl:bg-card">
               <StudioTableHead>
-                <th className="w-10 py-3 pe-2 ps-4">
+                <th className="w-10 py-3 pe-2 ps-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
                   <Checkbox
                     aria-label="Select all"
                     checked={selection.allSelected}
                     onCheckedChange={selection.toggleAll}
                   />
                 </th>
-                <th className="py-3 pe-4">
+                {/* Fixed width so the pinned Customer column's offset stays
+                    arithmetic: a content-sized reference column would shift it
+                    the moment the numbers gain a digit. */}
+                <th className="w-20 py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
                   <span aria-hidden>#</span>
                   <span className="sr-only">Reference</span>
                 </th>
-                <th className="py-3 pe-4">Customer</th>
+                <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">Customer</th>
                 <th className="py-3 pe-4">Source</th>
                 <th className="py-3 pe-4">Product</th>
                 <th className="py-3 pe-4">Status</th>
@@ -290,19 +293,19 @@ export function InquiryList({
                   key={inquiry.id}
                   selected={selection.selected.has(inquiry.id)}
                 >
-                  <td className="py-3 pe-2 ps-4 align-middle">
+                  <td className="py-3 pe-2 ps-4 align-middle max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
                     <Checkbox
                       aria-label={`Select inquiry from ${inquiry.customerName}`}
                       checked={selection.selected.has(inquiry.id)}
                       onCheckedChange={() => selection.toggle(inquiry.id)}
                     />
                   </td>
-                  <td className="py-3 pe-4 whitespace-nowrap">
+                  <td className="w-20 py-3 pe-4 whitespace-nowrap max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
                     <span className="u-num text-12 text-graphite">
                       {inquiry.number}
                     </span>
                   </td>
-                  <td className="py-3 pe-4">
+                  <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
                     <Link
                       href={`/studio/inquiries/${inquiry.id}`}
                       className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"

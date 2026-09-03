@@ -17,6 +17,14 @@ import { cn } from "@/lib/utils";
  * both keep it to borders and ink. A row you are merely passing over is not
  * an action, so the hover is a neutral lift.
  *
+ * **The backgrounds are opaque on purpose, and that is load-bearing.** They
+ * used to be `hover:bg-foreground/3` — a translucent wash over whatever the
+ * table sat on. That reads identically on a card, so it cost nothing until a
+ * column needed PINNING: a sticky cell inherits its row's background, and a
+ * translucent one lets the columns scrolling underneath show straight through
+ * it. Mixing the same 3% against the card up front gives the same colour and a
+ * cell that actually covers what passes beneath it.
+ *
  * `motion-reduce:transition-none` because the transition is decorative; the
  * colour still changes, it just stops easing.
  *
@@ -38,7 +46,7 @@ export function StudioRow({
     <tr
       data-selected={selected ? "true" : undefined}
       className={cn(
-        "border-b border-border transition-colors duration-(--dur-fast) last:border-0 hover:bg-foreground/3 data-[selected=true]:bg-foreground/5 motion-reduce:transition-none",
+        "border-b border-border bg-card transition-colors duration-(--dur-fast) last:border-0 hover:bg-[color-mix(in_oklab,var(--color-foreground)_3%,var(--color-card))] data-[selected=true]:bg-[color-mix(in_oklab,var(--color-foreground)_5%,var(--color-card))] motion-reduce:transition-none",
         className,
       )}
       {...props}

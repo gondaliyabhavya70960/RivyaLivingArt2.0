@@ -5,6 +5,49 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — the pinned first columns (2026-09-03, sixth batch)
+
+The last open item of the phase, and the one that needed a prerequisite before it could work at all.
+
+### The prerequisite
+`StudioRow`'s hover and selected tints were `bg-foreground/3` and `/5` — TRANSLUCENT washes. On a
+card that reads identically to an opaque colour, so it cost nothing until a column needed pinning: a
+sticky cell inherits its row's background, and a translucent one lets the columns scrolling
+underneath show straight through it. Both tints are now the same 3% and 5% mixed against the card up
+front — the same colour, and a cell that actually covers what passes beneath it.
+
+### What is pinned
+The first three columns of the two genuinely wide tables — products (checkbox · thumbnail · title)
+and commissions (checkbox · reference · customer) — below `xl` only, which is exactly where those
+tables scroll horizontally. At `xl` they drop their `min-w` and there is nothing to pin against.
+
+### Two offsets that had to be measured, not calculated
+Sticky columns need each one's inline-start offset, and both tables lied about their widths:
+
+- **Products' thumbnail cell declared `w-14` (56px) and rendered 60px** — a 48px image plus `pe-3`.
+  The title pinned 4px adrift until the declared width was corrected to match.
+- **Commissions' reference column had no width at all.** It is content-sized, so the customer
+  column's offset would have shifted the first time a reference number gained a digit. It is now
+  `w-20`, which makes the offset arithmetic instead of a guess.
+
+### Verified
+Measured on a production build at 1024px, scrolling each table's wrapper horizontally:
+
+| table | pinned offsets | held on scroll | first unpinned column | cells opaque |
+|---|---|---|---|---|
+| products | 0 · 40 · 100 px | 289 / 329 / 389 unchanged | 543 → 243 | yes |
+| commissions | 0 · 40 · 120 px | 289 / 329 / 409 unchanged | 582 → 442 | yes |
+
+`studio-audit.mjs` clean across 30 routes at 1440, 1024, 768 and 390.
+
+**A near-miss worth recording.** The commissions table does not render locally or in CI — neither
+database has an inquiry seed — so the first attempt to verify it silently re-measured PRODUCTS: the
+`sed` meant to repoint the probe did not match its own template literal, and the numbers came back
+byte-identical to the previous run. That identity is what gave it away. Three local fixture rows were
+inserted to measure against and deleted afterwards; nothing was seeded into the repo.
+
+---
+
 ## Transformation Phase 10 — the Tabs primitive and the auth-tree boundary (2026-09-03, fifth batch)
 
 ### Added
