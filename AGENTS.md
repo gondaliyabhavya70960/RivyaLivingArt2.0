@@ -58,7 +58,7 @@ verified. This project has been damaged before by a confident false "done".
 | File | Lines | Why |
 |---|---|---|
 | `AGENTS.md` (this) | ~200 | The rules and the shape of the place |
-| `PROJECT_STATE.md` | ~490 | **Start every session here.** Current phase, what is done, what is open, and the decisions that are settled |
+| `PROJECT_STATE.md` | ~600 | **Start every session here.** The SESSION CHECKPOINT block at the top is the resume point; below it: current phase, what is done, what is open, and the decisions that are settled |
 | `CLAUDE.md` | ~370 | The operating manual: subsystem-by-subsystem rules that are expensive to rediscover |
 | `docs/redesign-contract.md` | ~200 | The short form of the design system: tokens, review rules, hard constraints |
 | `REDESIGN.md` | ~1,400 | The full design spec. Read the relevant Part before building any UI — do not read it end to end |
@@ -185,9 +185,12 @@ reproducing the failure first, then showing it gone.
 - **Sheet row deletion is not upsert-in-reverse.** It needs the tab's numeric id and rows
   must be removed in *descending* index order; an ascending pass deletes the wrong rows and
   succeeds while doing it.
-- **CI has never run.** GitHub Actions is blocked by an account-level billing condition
-  (jobs fail in ~2s with `runner_id: 0`), so every gate that has ever passed on this repo
-  was run locally. Run them yourself; do not trust a green PR.
+- **CI runs now — but it cannot reach everything.** Until 2026-08-31 GitHub Actions was blocked by
+  an account-level billing condition (jobs failed in ~2s with `runner_id: 0`) and every gate that
+  passed was run locally. On 2026-09-02 run #71 executed both `ci.yml` jobs on PR #29 on a real
+  runner. A green PR is now evidence for what `ci.yml` covers; it is still not evidence for the
+  detail routes (`/product`, `/blog`, `/portfolio`, `/p`), the E2E smoke, or widths other than
+  1440/390 — run those yourself and say so.
 
 ---
 

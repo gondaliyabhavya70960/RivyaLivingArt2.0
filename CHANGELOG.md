@@ -5,6 +5,69 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 0 — forensic audit and roadmap (2026-09-02)
+
+Documentation only. No application code, schema, content or asset changed.
+
+### Added
+- **`docs/transformation-audit.md`**: the master prompt's 89 sections reconciled against `HEAD` —
+  13 EXISTS · 62 PARTIAL · 2 DATA_GAP · 7 DECISION · 2 MISSING · 3 PROCESS, with 17 forbidden
+  asks named against the rule that blocks each and 20 library pattern families screened out. KEEP/REFINE/REBUILD/REMOVE verdicts for every
+  storefront, motion and Studio surface; the testimonial gap field by field with a proposed additive
+  migration; three demo-data isolation designs with a recommendation; an eleven-library inspiration
+  research pass (all reached) with an 18-pattern shortlist and an install-nothing policy; a 40-item
+  Higgsfield generation plan (nothing generated); 28 owner decisions D7–D28; a risk register; a stale
+  documentation register.
+- **`docs/transformation-roadmap.md`**: Phases 1–17 re-sequenced to what exists, decision gates per
+  phase, an additive migration plan M1–M10, the per-phase definition of done, and the §81 checkpoint
+  protocol.
+
+### Changed
+- **`PROJECT_STATE.md`**: a `SESSION CHECKPOINT` block (the master prompt's fifteen §81 keys) now
+  opens the file; the stale NEXT EXACT TASK (already DONE in Phase 2f) is replaced; the migration
+  count (44), test counts (36 files / 375) and the contradictory "CI is now live" line are corrected
+  in place with dated notes.
+
+### Found: a discarded history layer (audit §1.2, decision D28)
+Twelve pull requests (#15–#20, #22–#27) were merged into `main` on 2026-09-01 and dropped when `main`
+was rewound to `f1cfd95` by 2026-09-02 12:13 UTC; PR #28 was closed unmerged. The layer (38 commits,
+50 files, +1,218/−251) is reachable at `refs/pull/<n>/head` and contains LQIP wiring, the `.env.example`
+fix, reference-doc corrections, uploads hardening, CSP enforcement, four Phase 2e answers and the
+`mirror-images.yml` retirement. Whether the rewind was deliberate is the owner's first decision.
+
+### Found, not fixed (each is its own PR — see the roadmap Phase 1a)
+- `src/actions/scraper-jobs.ts:379-404` and `:749`: a legacy `syncSourceToSheet` push runs after the
+  policy-gated `pushJobToSheet`, bypassing `SheetSyncPolicy`, so the MANUAL default is not the
+  effective default.
+- `scripts/i18n-missing.mjs` cannot detect a changed English value with stale translations
+  (`AGENTS.md:166-169`); this gate must exist before any copy-bearing phase.
+- `ScrapeSource.requestDelayMs` is never read; `studioEditedAt` is written and never read; the Bulk
+  Import wizard's product path upserts by slug without `decideMerge`.
+- Seven `backdrop-blur` sites on the storefront against the contract's "exactly one"; `consent-gate.tsx:74`
+  adds a third storefront shadow and a 16 px radius on a site-wide banner.
+- `revalidatePublic("testimonial")` purges only `/` (`src/actions/helpers.ts:137-139`) while product
+  pages cache for a day; `getTestimonials()` is not total (no `try/catch`); the testimonial band puts
+  ≥ 15 champagne-filled star glyphs in one viewport against the max-two rule, with an untranslated
+  `aria-label`.
+- The four OG share cards and the manifest still paint the superseded v2 palette.
+- Found on this PR's own Vercel preview (`04cbd9a`, `P2037 TooManyConnections` for role
+  `prisma_migration` during prerender): `privacy/page.tsx:55`, `terms/page.tsx:55` and
+  `sitemap.ts:60-82` read the database with no fallback, so a transient database error at build
+  time fails the deploy; the Vercel runtime `DATABASE_URL` carries the migration role instead of
+  the pooled endpoint `src/lib/db.ts` expects.
+
+### Verified this session
+`npm run typecheck` ✓ · `npm run lint` ✓ · `npm test` ✓ (36 files / 375 tests) · `npm run copy:check` ✓
+(1,181 slots) · `node scripts/i18n-missing.mjs` ✓ (0 missing). Not run locally (no database or server
+in the session): build, test:db, e2e, the three audits, Lighthouse.
+
+**GitHub Actions executes.** Pushing this branch triggered CI run #71 (`33664201599`) on PR #29, which
+ran on a real runner: the checks job passed on the runner (job log read), and the build job ran
+`npm run build` against the Postgres service. Run #76 (`33666509956`, head `6c536e7`) then passed
+both jobs in full — build, `test:db`, design/RTL/a11y/Studio audits and the Lighthouse budget. `AGENTS.md`'s "CI has never run" trap and
+`PROJECT_STATE.md`'s BLOCKER entry described 2026-08-31 and are corrected in this PR; retiring D4's
+premise is owner decision D27.
+
 ## [Unreleased] — Prompt Deck Task 07: the first database-backed test slice
 
 ### Added

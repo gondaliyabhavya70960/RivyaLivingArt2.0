@@ -5,6 +5,63 @@
 
 ---
 
+## SESSION CHECKPOINT
+
+The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/transformation-roadmap.md`).
+Updated at the end of every transformation phase. The narrative sections below it are history.
+
+```text
+Current Phase:            Transformation Phase 0 — forensic audit and roadmap
+Phase Status:             COMPLETE (2026-09-02; audited base f1cfd95 = origin/main; branch
+                          claude/session-6h1a70, PR #29; all 11 verifiers and 5 reconcilers reported)
+Completed:                docs/transformation-audit.md (89-section reconciliation, subsystem verdicts,
+                          testimonial and demo-data gap analysis, inspiration-library research,
+                          28 owner decisions D7–D28), docs/transformation-roadmap.md (Phases 1–17
+                          re-sequenced, decision gates, migration plan, definition of done)
+In Progress:              nothing — Phase 0 stops here by instruction (master prompt §89)
+Next Exact Task:          Owner answers the decision gates in docs/transformation-roadmap.md §2
+                          (D7–D28 plus Phase 2e). Then Phase 1a (hygiene and gates): stale-translation
+                          mode for scripts/i18n-missing.mjs; one BASE_URL default across scripts;
+                          remove the legacy un-gated syncSourceToSheet (D23); wire requestDelayMs;
+                          test the descending-index sheet deletion; delete dormant v2 files (D18);
+                          redesign-audit rules for blur/shadow/hover-transform.
+Files Created:            docs/transformation-audit.md · docs/transformation-roadmap.md
+Files Modified:           PROJECT_STATE.md (this block + corrections) · CHANGELOG.md
+Database Changes:         none. 44 migrations at HEAD, purely additive, last
+                          20260831080000_brand_rivya_living_art. Proposed (not applied): M1–M10 in the
+                          roadmap §6.
+Content Changes:          none
+Demo Data:                none — HARD RULE 3. Demo/Content Lab content is an owner decision (D8);
+                          if approved it lives only in non-production databases.
+Assets Added:             none. A 40-item Higgsfield generation plan is recorded in the audit §10.3;
+                          nothing generated.
+Tests Run:                npm run typecheck · npm run lint · npm test · npm run copy:check ·
+                          node scripts/i18n-missing.mjs
+Tests Passing:            Locally: typecheck ✓ · lint ✓ · test ✓ 36 files / 375 tests · copy:check ✓ 1,181 slots ·
+                          i18n-missing ✓ 0 missing in 8 locales. Not run locally (no database, no server
+                          in the session): build, test:db, test:e2e, the three audits, lighthouse.
+                          On GitHub Actions, CI run #76 on PR #29 (head 6c536e7) passed BOTH jobs: build
+                          against Postgres, test:db, design audit 1440/390, RTL sweep, a11y audit, Studio
+                          audit, Lighthouse budget. test:e2e is still not in CI.
+Known Issues:             A DISCARDED HISTORY LAYER: PRs #15–#20 and #22–#27 were merged on 2026-09-01 and
+                          dropped when main was rewound to f1cfd95 by 2026-09-02 12:13 UTC (38 commits, 50 files,
+                          reachable at refs/pull/<n>/head; audit §1.2, decision D28); PR #28 closed unmerged.
+                          GitHub Actions EXECUTES (runs #71 and #76 on PR #29, 2026-09-02) — AGENTS.md:188-190 and
+                          the KNOWN ISSUES "BLOCKER" below are stale and D4's premise is gone; legacy un-gated sheet push
+                          (scraper-jobs.ts:379-404, :749); stale-translation gap in i18n-missing.mjs;
+                          seven storefront blur sites against "exactly one"; OG cards on the v2 palette;
+                          port drift :3111/:3000; 6 obsolete workflows; .env.example carries the retired
+                          domain; count drift in CLAUDE.md (1,181 slots, 7 manifest pages, 13 CI routes).
+Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Get D28 (the rewind
+                          of main) answered before anything else — five Phase 1a items already exist as
+                          reviewed code in the discarded PRs. Do NOT start Phase 1b, 3, 4, 9 or 15 without
+                          the gate decisions recorded under DECISIONS below. Phase 10 may start without any
+                          decision. Branch from origin/main, never local main. CI runs; still run locally
+                          what ci.yml does not sweep (detail routes, E2E, extra widths) and say so.
+```
+
+---
+
 ## PROJECT
 RivyaLivingArt2.0 — *Rivya Living Art*
 
@@ -21,6 +78,7 @@ ResinRiva2.0 — *ResinRiva* (live at `store.bhavyagondaliya.co.in`)
 **Phase 2d — shop coherence + the staged-media delete hole: COMPLETE**
 **Phase 2f #2 — walk Tiptap Json in media-usages to protect body images: COMPLETE**
 **Production launch fixes: COMPLETE** (blank env vars · trailing-slash URLs · wa.me number)
+**Transformation Phase 0 — forensic audit and roadmap: COMPLETE** (2026-09-02; see SESSION CHECKPOINT)
 
 **Phase 2 is closed.** Phase 2e is five OPEN QUESTIONS for the owner, not pending engineering.
 
@@ -41,10 +99,11 @@ than a silent 400.
 
 ## NEXT EXACT TASK
 
-**Phase 2f #2: `/studio/media`'s bulk unused sweep can delete blog-body images irrecoverably.**
-`media-usages.ts` needs to walk Tiptap Json (`BlogPost.content`, `Page.content`, `richText` custom blocks).
+**Owner decision gates, then Transformation Phase 1a.** See the SESSION CHECKPOINT block above and
+`docs/transformation-roadmap.md` §2–§3. Phase 2f #2 (Tiptap walk in `media-usages.ts`) is DONE — see
+Phase 2f below; the earlier text of this section was stale.
 
-Also open: Phase 2e's five owner decisions.
+Also open: Phase 2e's five owner decisions, and D7–D28 from the transformation audit.
 
 ---
 
@@ -358,6 +417,9 @@ the art ecosystem; supplies and print keep their own tabs, category pages and UR
 GitHub Actions cannot allocate a runner for this private repository (billing/minutes). The full gate
 set is run locally before every push and the results reported explicitly. The owner fixes billing
 when convenient; no work is blocked on it.
+*(2026-09-02: the premise is gone — Actions executes, run #71 on PR #29. The evidence habit stays for
+what `ci.yml` deliberately cannot reach: detail routes, the E2E smoke, widths other than 1440/390.
+Formal retirement is owner decision D27 in `docs/transformation-audit.md`.)*
 
 ---
 
@@ -370,9 +432,10 @@ has been modified yet.**
 
 ## DATABASE MIGRATIONS
 
-43 existing migrations, **all applied successfully** to local Postgres 16.13.
+43 existing migrations at import, **all applied successfully** to local Postgres 16.13.
 History is **purely additive** — zero `DROP TABLE` / `DROP COLUMN` / `ALTER COLUMN` across all 43.
-**No new migration written yet.**
+*(Correction 2026-09-02: the 44th, `20260831080000_brand_rivya_living_art`, landed in Phase 1; the
+history is still purely additive across all 44.)*
 
 ## DATA IMPORTS
 
@@ -413,9 +476,12 @@ Optional: `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN`, `EMA
 ## TESTS
 
 - Unit: **29 files / 322 tests — all passing** (~2.5s), `src/**/*.test.ts`, node environment.
-- **Zero** coverage of API routes, server actions, React components, or database queries.
+  *(2026-09-02: now 36 files / 375 tests, plus 2 database-backed files under `tests/db/`.)*
+- **Zero** coverage of API routes, server actions, React components. Database queries: two files
+  under `tests/db/` since 2026-09-01.
 - E2E: `scripts/e2e-smoke.mjs` exists (not run this session — needs a running server + browser).
-- **CI has never executed any of it** — see the `ci.yml` `Main` defect.
+- **CI has never executed any of it** — see the `ci.yml` `Main` defect. *(Superseded 2026-09-02: run #71
+  on PR #29 executed both jobs on a real runner; see BUILD STATUS and D27.)*
 
 ## BUILD STATUS
 
@@ -441,7 +507,11 @@ introduced.
 
 ## KNOWN ISSUES
 
-### BLOCKER — GitHub Actions cannot run on this repository
+### ~~BLOCKER — GitHub Actions cannot run on this repository~~ — SUPERSEDED 2026-09-02
+
+*Actions executes now: run #71 (`33664201599`) on PR #29 ran both jobs on a real runner. The text below
+records the 2026-08-31 state and is kept as history. D4's premise no longer holds; see the SESSION
+CHECKPOINT and decision D27 in `docs/transformation-audit.md`.*
 `ci.yml` now triggers correctly (fixed in Phase 0.5) and fired [run #1](https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0/actions/runs/33363959495),
 the first in the project's history. **Both attempts failed in ~2–6s with `runner_id: 0`, no runner
 name, and HTTP 404 on log download** — no step ever executed. The repository is **private** with
@@ -482,7 +552,8 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 - Typography: Instrument Serif / Inter / JetBrains Mono + 5 Noto Sans script faces.
 - Motion: GSAP + ScrollTrigger + SplitText (lazy barrel), Lenis (fine-pointer + no-reduced-motion
   only), `next-view-transitions` MorphLink.
-- 3D: `@google/model-viewer` only. `three` is unused.
+- 3D: `@google/model-viewer` only. ~~`three` is unused.~~ *(Wrong — see the WON'T-FIX note above: `three` is
+  `@google/model-viewer`'s required peer and must stay. Corrected 2026-09-02.)*
 
 ## ARCHITECTURE DECISIONS
 
@@ -500,18 +571,26 @@ credentials, the 4 dead-branch workflow pins, and the stale `README.md` design s
 
 ## LAST COMMIT
 
+*(Historical — the ZIP-import Phase 0. The current position is the SESSION CHECKPOINT at the top of this
+file; `origin/main` is `f1cfd95` and the transformation branch is `claude/session-6h1a70`, PR #29.)*
+
 `32f21a6` — *Import ResinRiva2.0 source as transformation baseline* (920 files, unmodified)
 `54974ff` — *Phase 0: forensic audit of the imported baseline* (documentation only)
 (this Phase 0.5 defect-fix commit follows)
 
 ## SAFE CONTINUATION POINT
 
+*(Historical. Resume from the SESSION CHECKPOINT block at the top of this file, not from here.)*
+
 **Phases 0 and 0.5 are complete and committed.** No application code has been modified — the
 changes so far are workflows, previously-broken unwired scripts, and stale documentation.
 The baseline is verified green and fully reproducible from `32f21a6`.
 
-**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it, so
-a red CI from here is a real regression, not a pre-existing failure surfacing.
+**CI is now live on `main`.** Every gate was run locally on the same commit before enabling it.
+*(Verified 2026-09-02: GitHub Actions does execute. Run #71, `33664201599`, on PR #29 ran on runner
+`1000000932`; the checks job passed typecheck · lint · copy:check · i18n-missing · vitest 36/375 on the
+runner, and the build job ran `npm run build` against the Postgres service. The KNOWN ISSUES "BLOCKER"
+entry above and `AGENTS.md:188-190` describe 2026-08-31 and are superseded.)*
 
 Resume by answering **D1** and **D2** above, then starting Phase 1 (risk-tiered rename).
 
