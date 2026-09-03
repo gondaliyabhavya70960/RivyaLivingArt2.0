@@ -157,21 +157,24 @@ export function UploadZone({
               : "Uploading…"
             : "Drop files, or click to browse"}
         </span>
-        <input
-          ref={inputRef}
-          id={UPLOAD_INPUT_ID}
-          type="file"
-          multiple
-          accept={ACCEPT}
-          className="sr-only"
-          disabled={uploading}
-          onChange={(e) => {
-            const files = Array.from(e.target.files ?? []);
-            e.target.value = "";
-            void runUpload(files);
-          }}
-        />
       </div>
+      {/* The real control, a sibling of the drop area rather than nested inside
+        it (axe: interactive controls must not be nested), named for AT. */}
+      <input
+        aria-label="Choose files to upload"
+        ref={inputRef}
+        id={UPLOAD_INPUT_ID}
+        type="file"
+        multiple
+        accept={ACCEPT}
+        className="sr-only"
+        disabled={uploading}
+        onChange={(e) => {
+          const files = Array.from(e.target.files ?? []);
+          e.target.value = "";
+          void runUpload(files);
+        }}
+      />
 
       <label className="flex min-h-11 items-center gap-2 text-small text-graphite">
         <span className="u-micro">Into</span>
