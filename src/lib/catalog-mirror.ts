@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
+import { finalizeAsset } from "@/lib/media-ingest";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { ACCEPTED_UPLOAD_TYPES } from "@/lib/storage";
 import type { Prisma } from "@/generated/prisma/client";
@@ -169,11 +170,49 @@ async function mirrorOne(row: MirrorRow): Promise<boolean> {
     // the row's url is the stable identity of the source image, and hashing
     // it lets any code re-derive the mirrored pathname later.
     const digest = createHash("sha1").update(row.url).digest("hex");
-    const storedUrl = await storeCatalogImage(
-      buffer,
-      `catalog/${digest}${ext}`,
-      contentType,
-    );
+    const pathname = `catalog/${digest}${ext}`;
+    const storedUrl = await storeCatalogImage(buffer, pathname, contentType);
+
+    // Make the mirrored file visible to the media library and the unused
+    // sweep (batch D · media system) — before this, ~10k mirrored catalogue
+    // images existed only as ProductImage/PortfolioImage/Category rows, never
+    // as a Media row, so the library never listed them and the unused sweep
+    // never scanned them. Guard against a demo product's picture landing here
+    // is already satisfied upstream: `externalCatalogImageWhere` and its
+    // portfolio/category twins all filter `isDemo: false`, so `mirrorOne`
+    // never runs on a demo fixture's row in the first place.
+    //
+    // Best-effort and NEVER allowed to turn a successful mirror into a
+    // reported failure: `checksum` is `@unique` on Media, so the same bytes
+    // mirrored under a second source URL (a different deterministic
+    // `pathname`) — or bytes a staff member already uploaded by hand — throws
+    // here. The row's url has already been rewritten by this point; that
+    // rewrite must stand regardless.
+    try {
+      const facts = await finalizeAsset(buffer, contentType);
+      await db.media.upsert({
+        where: { pathname },
+        create: {
+          url: storedUrl,
+          pathname,
+          type: "IMAGE",
+          folder: "catalog",
+          bytes: buffer.length,
+          width: facts.width,
+          height: facts.height,
+          checksum: facts.checksum,
+          blurDataUrl: facts.blurDataUrl,
+          dominantHex: facts.dominantHex,
+          provenance: "UPLOAD",
+        },
+        update: {},
+      });
+    } catch (error) {
+      console.error(
+        `catalog-mirror: Media upsert failed for ${pathname}:`,
+        error,
+      );
+    }
 
     await row.save(row.id, storedUrl);
     return true;

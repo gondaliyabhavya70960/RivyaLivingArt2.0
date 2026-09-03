@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { CANONICAL_CATEGORIES } from "./catalog-taxonomy";
 import blurManifest from "./media-v3-blur.json";
+import mediaV3Manifest from "../../docs/media-v3-manifest.json";
 
 /**
  * Every bundled asset the storefront hardcodes, asserted to be on disk.
@@ -61,6 +62,70 @@ describe("the canonical category seed images", () => {
 describe("the web app manifest icon", () => {
   it("is in the repo", () => {
     expect(existsSync(publicPath("/icon-512.png"))).toBe(true);
+  });
+});
+
+describe("the media-v3 generation queue (docs/transformation-audit.md §10.3)", () => {
+  const entries = mediaV3Manifest.plannedSets?.entries ?? [];
+
+  it("has every SET A–F entry batch D added", () => {
+    // Not a file-existence check — these are jobs nobody has run yet. This
+    // just guards the count so a future edit that silently drops an entry
+    // (a bad merge, a copy-paste that skipped one) is caught here rather
+    // than discovered the day someone runs the fetch script and gets 27
+    // masters instead of 28.
+    expect(entries.length).toBe(28);
+  });
+
+  it('never claims a master file exists for a status: "planned" entry', () => {
+    // The whole point of "planned": there is nothing on disk to check yet.
+    // A planned entry that grew a `master` path would be lying about that,
+    // and `media-v3-preflight.mjs`'s rule 3 would then expect a file this
+    // test never asserts is there.
+    for (const entry of entries) {
+      if (entry.status !== "planned") continue;
+      expect(entry, entry.id).not.toHaveProperty("master");
+    }
+  });
+
+  it("gives every non-planned entry a master this file DOES check exists", () => {
+    // Forward-looking: the day an owner promotes an entry out of "planned"
+    // (fills in candidates, culls a keeper, runs media-v3-fetch.mjs), its
+    // master path needs to start passing the same disk check every other
+    // bundled asset passes above. Nothing is promoted yet, so this loop is
+    // empty today — it exists so that day does not slip through silently.
+    for (const entry of entries) {
+      if (entry.status === "planned") continue;
+      const master = (entry as { master?: string }).master;
+      expect(
+        master,
+        `${entry.id} has left "planned" but has no master`,
+      ).toBeTruthy();
+      if (master) {
+        expect(
+          existsSync(publicPath(master.replace(/^public\//, ""))),
+          master,
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("has unique ids that do not collide with a real asset or video id", () => {
+    const realIds = new Set([
+      ...mediaV3Manifest.assets.map((a) => a.id),
+      ...mediaV3Manifest.videos.map((v) => v.id),
+    ]);
+    const seen = new Set<string>();
+    for (const entry of entries) {
+      expect(seen.has(entry.id), `duplicate planned id ${entry.id}`).toBe(
+        false,
+      );
+      seen.add(entry.id);
+      expect(
+        realIds.has(entry.id),
+        `${entry.id} collides with a real asset/video id`,
+      ).toBe(false);
+    }
   });
 });
 

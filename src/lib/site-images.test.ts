@@ -13,6 +13,7 @@ import {
   type SiteImageKey,
   type SiteImageSlot,
 } from "./site-images";
+import { blurFor } from "./lqip";
 import { isCopyKey } from "./site-copy";
 
 /**
@@ -60,8 +61,35 @@ describe("the slot registry", () => {
         mobileUrl: null,
         focalX: 0.5,
         focalY: 0.5,
+        blurDataUrl: blurFor(slot.fallback) ?? null,
       });
     }
+  });
+});
+
+describe("blurDataUrl on the default refs (batch D · media system)", () => {
+  it("carries the bundled LQIP for every Part 15 master the blur manifest knows", () => {
+    // Every default ref's blur is resolved on the SLOT'S OWN fallback url —
+    // never guessed from the key — so this is really re-asserting that the
+    // two registries (site-images.ts's fallbacks, media-v3-blur.json's
+    // `src`s) still agree on which slots are Part 15 masters.
+    const withBlur = SLOTS.filter((s) => blurFor(s.fallback));
+    expect(withBlur.length).toBeGreaterThan(0);
+    for (const slot of withBlur) {
+      expect(
+        SITE_IMAGE_DEFAULT_REFS[slot.key as SiteImageKey].blurDataUrl,
+      ).toBe(blurFor(slot.fallback));
+    }
+  });
+
+  it("is null, not undefined, for a slot the blur manifest has never heard of", () => {
+    // `home.maker` / `about.maker` are backed by `hands-polish.webp`, a
+    // pre-v3 file outside the Part 15 masters (CLAUDE.md's Site Images
+    // section names it explicitly) — the case a null default has to cover.
+    const maker = SLOTS.find((s) => s.key === "home.maker");
+    expect(maker).toBeTruthy();
+    expect(blurFor(maker!.fallback)).toBeUndefined();
+    expect(SITE_IMAGE_DEFAULT_REFS["home.maker"].blurDataUrl).toBeNull();
   });
 });
 
