@@ -16,6 +16,8 @@ import { localeAlternates } from "@/i18n/seo";
 import { groupForCategorySlug } from "@/lib/catalog-taxonomy";
 import { db } from "@/lib/db";
 import { getSiteImages } from "@/lib/site-images-server";
+import { showDemoContent } from "@/lib/demo-content";
+import { demoClause } from "@/lib/demo-clause";
 import {
   buildProductWhere,
   DEFAULT_ECOSYSTEM,
@@ -267,17 +269,19 @@ export default async function ShopPage({
   let categoryOptions: ShopCategoryOption[];
   /** Numbered-pager position — null while `Load more` is driving the view. */
   let pager: { page: number; totalPages: number } | null = null;
+  const showDemo = await showDemoContent();
+  const demo = demoClause(showDemo);
   if (!hasFilters && !after && requestedPage === 1) {
     // The bare /shop entry is per-visitor-identical — serve the 300s
     // tag-invalidated bundle instead of paying 4 uncached queries per hit.
-    const bundle = await fetchDefaultShopFirstPage(locale, sort);
+    const bundle = await fetchDefaultShopFirstPage(locale, sort, showDemo);
     page = bundle.page;
     categoryOptions = bundle.categories;
     pager = { page: bundle.page.page, totalPages: bundle.page.totalPages };
   } else if (after) {
     // A shared or reloaded `Load more` URL: unchanged cursor behaviour, and
     // no numbered pager, because a resumed slice has no page number.
-    const where = buildProductWhere(filters);
+    const where = buildProductWhere(filters, demo);
     [page, categoryOptions] = await Promise.all([
       resolveAfterCursor(after, where).then((cursor) =>
         fetchProductsPage({ where, sort, cursor, locale }),
@@ -285,7 +289,7 @@ export default async function ShopPage({
       fetchShopCategoryOptions(locale),
     ]);
   } else {
-    const where = buildProductWhere(filters);
+    const where = buildProductWhere(filters, demo);
     const [offsetPage, options] = await Promise.all([
       fetchProductsPageAt({ where, sort, page: requestedPage, locale }),
       fetchShopCategoryOptions(locale),

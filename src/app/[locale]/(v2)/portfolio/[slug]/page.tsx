@@ -30,6 +30,7 @@ import {
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { getSiteSettings } from "@/lib/site-settings";
 import { buildWaLink } from "@/lib/whatsapp";
+import { demoWhere, showDemoContent } from "@/lib/demo-content";
 
 /** ISR: studio edits reach the page within 5 minutes. */
 export const revalidate = 300;
@@ -46,7 +47,8 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   // (see blog/[slug]); recent cases prerender, the rest cache on demand.
   try {
     const cases = await db.portfolio.findMany({
-      where: { status: "PUBLISHED" },
+      // Never prerender a fixture; a shown demo case renders on request.
+      where: { status: "PUBLISHED", isDemo: false },
       orderBy: { createdAt: "desc" },
       take: 12,
       select: { slug: true },
@@ -124,10 +126,12 @@ const RELATED_INCLUDE = {
 
 /** 3 other published portfolios — same category first, filled with latest. */
 async function getRelated(portfolioId: string, categoryId: string | null) {
+  const demo = await demoWhere();
   const sameCategory = categoryId
     ? await db.portfolio.findMany({
         where: {
           status: "PUBLISHED",
+          ...demo,
           id: { not: portfolioId },
           categoryId,
         },
@@ -142,6 +146,7 @@ async function getRelated(portfolioId: string, categoryId: string | null) {
   const fill = await db.portfolio.findMany({
     where: {
       status: "PUBLISHED",
+      ...demo,
       id: { notIn: [portfolioId, ...sameCategory.map((p) => p.id)] },
     },
     orderBy: { createdAt: "desc" },
@@ -230,7 +235,7 @@ export async function generateMetadata({
     description,
     alternates: localeAlternates(`/portfolio/${portfolio.slug}`, locale),
     robots:
-      portfolio.status !== "PUBLISHED"
+      portfolio.status !== "PUBLISHED" || portfolio.isDemo
         ? { index: false, follow: false }
         : undefined,
     openGraph: {
@@ -291,6 +296,8 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
   if (!portfolio) notFound();
   // Drafts are visible only with the staff preview link.
   if (portfolio.status !== "PUBLISHED" && !preview) notFound();
+  // A demo case is a 404 unless the owner shows demo content (or staff preview).
+  if (portfolio.isDemo && !preview && !(await showDemoContent())) notFound();
 
   const t = await getTranslations("Portfolio.case");
   const tNav = await getTranslations("Nav");

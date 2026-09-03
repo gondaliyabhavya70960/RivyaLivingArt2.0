@@ -51,7 +51,8 @@ export const OWNED_HOST_MARKERS = [
  * start with "http").
  */
 export const externalCatalogImageWhere: Prisma.ProductImageWhereInput = {
-  product: { status: "PUBLISHED" },
+  // Never mirror a demo fixture's images into owned storage.
+  product: { status: "PUBLISHED", isDemo: false },
   url: { startsWith: "http" },
   NOT: OWNED_HOST_MARKERS.map((marker) => ({ url: { contains: marker } })),
 };
@@ -59,7 +60,7 @@ export const externalCatalogImageWhere: Prisma.ProductImageWhereInput = {
 /** Portfolio gallery rows on published pieces still hot-linking external
  *  hosts (md-sweep coverage gap: 64 rows at audit time). */
 export const externalPortfolioImageWhere: Prisma.PortfolioImageWhereInput = {
-  portfolio: { status: "PUBLISHED" },
+  portfolio: { status: "PUBLISHED", isDemo: false },
   url: { startsWith: "http" },
   NOT: OWNED_HOST_MARKERS.map((marker) => ({ url: { contains: marker } })),
 };

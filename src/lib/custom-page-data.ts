@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { buildProductWhere, fetchProductsPage } from "@/lib/shop";
 import { renderTiptapToHtml } from "@/lib/tiptap-render";
+import { demoWhere } from "@/lib/demo-content";
 
 /**
  * Everything the blocks on one page need beyond their own `data`.
@@ -92,7 +93,10 @@ async function fetchProductsForGrid(data: ProductGridData, locale: string) {
   if (data.mode === "manual") {
     if (data.slugs.length === 0) return [];
     const page = await fetchProductsPage({
-      where: { ...buildProductWhere({}), slug: { in: data.slugs } },
+      where: {
+        ...buildProductWhere({}, await demoWhere()),
+        slug: { in: data.slugs },
+      },
       sort: "featured",
       take: data.limit,
       locale,
@@ -110,6 +114,7 @@ async function fetchProductsForGrid(data: ProductGridData, locale: string) {
       data.mode === "category" && data.category
         ? { category: data.category }
         : {},
+      await demoWhere(),
     ),
     sort: "featured",
     take: data.limit,

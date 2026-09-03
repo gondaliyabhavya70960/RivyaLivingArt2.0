@@ -27,6 +27,7 @@ import {
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { getSiteImages } from "@/lib/site-images-server";
 import type { SiteImageKey } from "@/lib/site-images";
+import { demoWhere } from "@/lib/demo-content";
 import {
   buildProductWhere,
   DEFAULT_SORT,
@@ -176,8 +177,9 @@ export default async function ShopCategoryPage({
   const after = requestedPage > 1 ? undefined : first(sp.after);
 
   const group = groupForCategorySlug(slug);
-  const gridWhere = buildProductWhere(filters);
-  const categoryOnlyWhere = buildProductWhere({ category: slug });
+  const demo = await demoWhere();
+  const gridWhere = buildProductWhere(filters, demo);
+  const categoryOnlyWhere = buildProductWhere({ category: slug }, demo);
   const siblingSlugs = (
     CATALOG_GROUPS[group].slugs as readonly string[]
   ).filter((sibling) => sibling !== slug);
@@ -213,12 +215,7 @@ export default async function ShopCategoryPage({
         ? db.category.findMany({
             where: {
               slug: { in: siblingSlugs },
-              products: {
-                some: {
-                  status: "PUBLISHED",
-                  NOT: { title: { startsWith: "DEMO" } },
-                },
-              },
+              products: { some: { status: "PUBLISHED", ...demo } },
             },
             orderBy: { order: "asc" },
             take: 6,
@@ -230,6 +227,7 @@ export default async function ShopCategoryPage({
       db.portfolio.findFirst({
         where: {
           status: "PUBLISHED",
+          ...demo,
           categoryId: categoryRow.id,
           beforeImageUrl: { not: null },
           afterImageUrl: { not: null },

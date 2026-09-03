@@ -25,6 +25,7 @@ import { getPageSections } from "@/lib/page-sections-server";
 import { getSiteImages } from "@/lib/site-images-server";
 import { getSiteSettings } from "@/lib/site-settings";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
+import { demoWhere } from "@/lib/demo-content";
 
 export async function generateMetadata({
   params,
@@ -74,7 +75,11 @@ export default async function ContactPage({
       getTranslations("Common"),
       getTranslations("WhatsApp"),
       getSiteSettings(),
-      db.faq.findMany({ orderBy: { order: "asc" }, take: 6 }),
+      db.faq.findMany({
+        where: { ...(await demoWhere()) },
+        orderBy: { order: "asc" },
+        take: 6,
+      }),
       getSiteImages(),
       getPageSections("contact"),
     ]);

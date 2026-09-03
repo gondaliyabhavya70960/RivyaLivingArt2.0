@@ -28,6 +28,7 @@ import { getTestimonials } from "@/lib/testimonials";
 import { getPageSections } from "@/lib/page-sections-server";
 import { getSiteImages } from "@/lib/site-images-server";
 import { getFormOptions } from "@/lib/form-options-server";
+import { demoWhere } from "@/lib/demo-content";
 
 export async function generateMetadata({
   params,
@@ -150,12 +151,13 @@ export default async function CustomOrderPage({
   // All empty-safe: a section renders nothing until real studio content
   // exists (no fabricated proof — Part 0). The Faq model has no draft state —
   // every row is live, same as /faq and the PDP (top 4 here).
+  const demo = await demoWhere();
   const [testimonials, faqRows, portfolios, tileCategories] = await Promise.all(
     [
       getTestimonials(3, locale),
-      db.faq.findMany({ orderBy: { order: "asc" }, take: 4 }),
+      db.faq.findMany({ where: { ...demo }, orderBy: { order: "asc" }, take: 4 }),
       db.portfolio.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", ...demo },
         orderBy: { createdAt: "desc" },
         take: 6,
         select: {

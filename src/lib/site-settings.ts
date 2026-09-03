@@ -44,6 +44,11 @@ export const DEFAULT_ANNOUNCEMENT =
 
 export type PublicSiteSettings = {
   announcement: string;
+  /**
+   * The owner's switch for Content Lab rows on the public site. Off by
+   * default; `showDemoContent()` in demo-content.ts is the only reader.
+   */
+  demoContentPublic: boolean;
   /** Brand name + tagline surfaced in the footer (UIUX-601). */
   brandName: string;
   tagline: string;
@@ -169,6 +174,7 @@ const readSiteSettingsRow = unstable_cache(
         announcementStartsAt: true,
         announcementEndsAt: true,
         announcementHref: true,
+        demoContentPublic: true,
       },
     }),
   ["site-settings"],
@@ -195,6 +201,7 @@ export const getSiteSettings = cache(async (): Promise<PublicSiteSettings> => {
   return {
     announcement:
       (scheduled ? s?.announcement?.trim() : "") || DEFAULT_ANNOUNCEMENT,
+    demoContentPublic: s?.demoContentPublic === true,
     brandName: s?.brandName?.trim() || SITE.name,
     tagline: s?.tagline?.trim() || SITE.tagline,
     whatsappNumber: s?.whatsappNumber?.trim() || SITE.whatsappNumber,

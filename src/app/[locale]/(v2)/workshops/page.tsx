@@ -25,6 +25,7 @@ import { formatPriceBand } from "@/lib/utils";
 import { buildWaLink } from "@/lib/whatsapp";
 
 import { WorkshopWaitlist } from "./waitlist-form";
+import { demoWhere } from "@/lib/demo-content";
 
 export async function generateMetadata({
   params,
@@ -120,8 +121,8 @@ export default async function WorkshopsPage({
   const workshops = await db.product.findMany({
     where: {
       status: "PUBLISHED",
+      ...(await demoWhere()),
       category: { slug: "workshops" },
-      NOT: { title: { startsWith: "DEMO" } },
     },
     orderBy: { createdAt: "asc" },
     select: {

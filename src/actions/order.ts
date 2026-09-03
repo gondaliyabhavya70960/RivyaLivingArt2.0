@@ -227,6 +227,7 @@ export async function submitProductOrder(
         title: true,
         status: true,
         inStock: true,
+        isDemo: true,
         customFields: {
           where: { required: true },
           select: { label: true },

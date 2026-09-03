@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
+import { demoClause, NO_DEMO, type DemoClause } from "@/lib/demo-clause";
 import {
   CATALOG_GROUPS,
   DEFAULT_ECOSYSTEM,
@@ -42,6 +43,11 @@ export {
  */
 export function buildProductWhere(
   filters: ShopFilters,
+  /**
+   * The demo-content gate. Defaults to hiding every fixture; a public caller
+   * that wants the owner's switch honoured passes `await demoWhere()`.
+   */
+  demo: DemoClause = NO_DEMO,
 ): Prisma.ProductWhereInput {
   const and: Prisma.ProductWhereInput[] = [];
 
@@ -101,7 +107,7 @@ export function buildProductWhere(
 
   return {
     status: "PUBLISHED",
-    NOT: { title: { startsWith: "DEMO" } },
+    ...demo,
     ...(and.length > 0 ? { AND: and } : {}),
   };
 }
@@ -392,7 +398,9 @@ export async function fetchProductsPage({
       select: CARD_SELECT,
     }),
     withTotal ? db.product.count({ where }) : Promise.resolve(-1),
-    fetchDuplicateTitleCounts(),
+    // The demo gate travels inside `where`; an absent `isDemo: false` means
+    // the caller is showing fixtures, and the duplicate map must match.
+    fetchDuplicateTitleCounts(where.isDemo !== false),
   ]);
 
   // A full fetch window means the DB may hold rows beyond it.
@@ -491,7 +499,9 @@ export async function fetchProductsPageAt({
   // real rather than on an empty grid.
   const [total, duplicateTitleCounts] = await Promise.all([
     db.product.count({ where }),
-    fetchDuplicateTitleCounts(),
+    // The demo gate travels inside `where`; an absent `isDemo: false` means
+    // the caller is showing fixtures, and the duplicate map must match.
+    fetchDuplicateTitleCounts(where.isDemo !== false),
   ]);
   const totalPages = Math.max(1, Math.ceil(total / take));
   const current = Math.min(requested, totalPages);
@@ -598,14 +608,23 @@ export type DefaultShopFirstPage = {
  * same orderBy, same collapse — only the window shape differs.
  */
 export const fetchDefaultShopFirstPage = unstable_cache(
-  async (locale: string, sort: SortKey): Promise<DefaultShopFirstPage> => {
+  // `showDemo` is part of the cache key on purpose: the owner's demo switch
+  // must not serve a bundle computed under the other setting.
+  async (
+    locale: string,
+    sort: SortKey,
+    showDemo: boolean,
+  ): Promise<DefaultShopFirstPage> => {
     const [page, categories] = await Promise.all([
       fetchProductsPageAt({
         // The DEFAULT view, so it carries the default ecosystem. This is the
         // one query the page reaches without passing its resolved filters —
         // leaving it as `buildProductWhere({})` is what made `/shop` keep
         // serving the mixed catalogue after `?type=` gained a default.
-        where: buildProductWhere({ type: DEFAULT_ECOSYSTEM }),
+        where: buildProductWhere(
+          { type: DEFAULT_ECOSYSTEM },
+          demoClause(showDemo),
+        ),
         sort,
         page: 1,
         locale,
@@ -642,10 +661,10 @@ export const fetchDefaultShopFirstPage = unstable_cache(
  * this map in the same breath (title edits change groups).
  */
 export const fetchDuplicateTitleCounts = unstable_cache(
-  async (): Promise<Record<string, number>> => {
+  async (showDemo: boolean): Promise<Record<string, number>> => {
     const groups = await db.product.groupBy({
       by: ["title"],
-      where: buildProductWhere({}),
+      where: buildProductWhere({}, demoClause(showDemo)),
       _count: { _all: true },
       having: { title: { _count: { gt: 1 } } },
     });
@@ -665,6 +684,7 @@ export const fetchDuplicateTitleCounts = unstable_cache(
 export async function fetchProductsBySlugs(
   slugs: string[],
   locale: string,
+  demo: DemoClause = NO_DEMO,
 ): Promise<ShopProductItem[]> {
   const capped = [...new Set(slugs)].slice(0, 48);
   if (capped.length === 0) return [];
@@ -672,7 +692,7 @@ export async function fetchProductsBySlugs(
   const rows = await db.product.findMany({
     where: {
       status: "PUBLISHED",
-      NOT: { title: { startsWith: "DEMO" } },
+      ...demo,
       slug: { in: capped },
     },
     select: CARD_SELECT,

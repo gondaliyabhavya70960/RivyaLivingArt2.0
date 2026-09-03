@@ -26,6 +26,7 @@ import { getSiteImageRefs } from "@/lib/site-images-server";
 import { SlotImage } from "@/components/storefront/slot-image";
 
 import { PortfolioActiveFilters } from "./filter-bar";
+import { demoWhere } from "@/lib/demo-content";
 
 /** ISR: new commission stories reach the page within 5 minutes. */
 export const revalidate = 300;
@@ -329,6 +330,7 @@ export default async function PortfolioPage({
 
   const where = {
     status: "PUBLISHED" as const,
+    ...(await demoWhere()),
     ...(activeCategory ? { category: { slug: activeCategory } } : {}),
   };
 
@@ -336,8 +338,9 @@ export default async function PortfolioPage({
   // every published piece — stable per piece, category filters included.
   // The same rows carry the index line's raw material, so the archive reads
   // its own totals rather than restating a number written by hand.
+  const demo = await demoWhere();
   const numberRows = await db.portfolio.findMany({
-    where: { status: "PUBLISHED" },
+    where: { status: "PUBLISHED", ...demo },
     orderBy: { createdAt: "asc" },
     select: { id: true, year: true, createdAt: true },
   });

@@ -33,6 +33,8 @@ export async function pushWebsiteProducts(): Promise<{
   if (!isSheetSyncConfigured()) return null;
 
   const products = await db.product.findMany({
+    // Demo fixtures never reach the owner's sheet, whatever the site shows.
+    where: { isDemo: false },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,

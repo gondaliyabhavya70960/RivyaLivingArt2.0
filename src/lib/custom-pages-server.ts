@@ -15,6 +15,7 @@ import {
   isLive,
 } from "@/lib/custom-pages";
 import { localize } from "@/lib/localize";
+import { showDemoContent } from "@/lib/demo-content";
 
 /**
  * Reading a custom landing page. The rules live in `custom-pages.ts`; this
@@ -85,6 +86,11 @@ export const getCustomPage = cache(
     if (!row) return null;
 
     if (!isLive(row) && !(await inPreview())) return null;
+    // A demo lander renders only while the owner shows demo content (or to
+    // staff in preview); otherwise it is a 404 like a draft.
+    if (row.isDemo && !(await showDemoContent()) && !(await inPreview())) {
+      return null;
+    }
 
     const lp = localize(row, locale, CUSTOM_PAGE_TRANSLATABLE);
 

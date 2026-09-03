@@ -32,6 +32,7 @@ import {
 import { localize, localizeName, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { buildProductWhere, fetchProductsPage } from "@/lib/shop";
 import { renderTiptapToHtml } from "@/lib/tiptap-render";
+import { demoWhere, showDemoContent } from "@/lib/demo-content";
 
 /** ISR: editorial fixes reach the page within 5 minutes. */
 export const revalidate = 300;
@@ -51,7 +52,8 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   // empty list → graceful degradation to dynamic until content exists.
   try {
     const posts = await db.blogPost.findMany({
-      where: { status: "PUBLISHED" },
+      // Never prerender a fixture; a shown demo post renders on request.
+      where: { status: "PUBLISHED", isDemo: false },
       orderBy: { publishedAt: "desc" },
       take: 12,
       select: { slug: true },
@@ -224,10 +226,12 @@ async function getRelated(post: {
   id: string;
   blogCategoryId: string | null;
 }): Promise<RelatedPost[]> {
+  const demo = await demoWhere();
   const sameCategory: RelatedPost[] = post.blogCategoryId
     ? await db.blogPost.findMany({
         where: {
           status: "PUBLISHED",
+          ...demo,
           blogCategoryId: post.blogCategoryId,
           id: { not: post.id },
         },
@@ -242,6 +246,7 @@ async function getRelated(post: {
   const fill: RelatedPost[] = await db.blogPost.findMany({
     where: {
       status: "PUBLISHED",
+      ...demo,
       id: { notIn: [post.id, ...sameCategory.map((p) => p.id)] },
     },
     orderBy: { publishedAt: { sort: "desc", nulls: "last" } },
@@ -278,7 +283,9 @@ export async function generateMetadata({
     description,
     alternates: localeAlternates(`/blog/${post.slug}`, locale),
     robots:
-      post.status !== "PUBLISHED" ? { index: false, follow: false } : undefined,
+      post.status !== "PUBLISHED" || post.isDemo
+        ? { index: false, follow: false }
+        : undefined,
     openGraph: {
       ...detailOpenGraph(locale),
       title,
@@ -330,6 +337,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) notFound();
   // Drafts are visible only with the staff preview link.
   if (post.status !== "PUBLISHED" && !preview) notFound();
+  // A demo post is a 404 unless the owner shows demo content (or staff preview).
+  if (post.isDemo && !preview && !(await showDemoContent())) notFound();
 
   const [t, tNav, tCommon, tCustom] = await Promise.all([
     getTranslations("Blog"),
@@ -352,7 +361,10 @@ export default async function BlogPostPage({ params }: PageProps) {
     getRelated(post),
     productSlugs.length > 0
       ? fetchProductsPage({
-          where: { ...buildProductWhere({}), slug: { in: productSlugs } },
+          where: {
+            ...buildProductWhere({}, await demoWhere()),
+            slug: { in: productSlugs },
+          },
           sort: "featured",
           take: 3,
           locale,

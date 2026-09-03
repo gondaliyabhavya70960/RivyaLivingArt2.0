@@ -1,6 +1,7 @@
 import "server-only";
 
 import { demoClause, type DemoClause } from "@/lib/demo-clause";
+import { getSiteSettings } from "@/lib/site-settings";
 
 /**
  * Should demo fixtures be shown to whoever is looking?
@@ -11,15 +12,20 @@ import { demoClause, type DemoClause } from "@/lib/demo-clause";
  * production site must not show them unless the owner has said so.
  *
  * Off production (`VERCEL_ENV` is "preview", "development" or unset) the
- * fixtures are always shown.
+ * fixtures are always shown. In production they show only while the owner's
+ * `SiteSettings.demoContentPublic` switch is on — a deliberate act on the
+ * Content Lab screen, never a default. Even then every demo row is marked on
+ * the page, kept out of the sitemap and the structured data, and never
+ * reaches the Google Sheet or the image mirror (those readers hard-code
+ * `isDemo: false` rather than calling this).
  *
- * TODO(B0-commit-3): the owner's `SiteSettings.demoContentPublic` flag joins
- * here — `process.env.VERCEL_ENV !== "production" || settings.demoContentPublic
- * === true` — once the column exists. The migration that adds it and the
- * settings read land together; this module already carries the shape.
+ * Reads through the cached `getSiteSettings()`, so the cost is one cached
+ * lookup per request and a settings publish invalidates it.
  */
 export async function showDemoContent(): Promise<boolean> {
-  return process.env.VERCEL_ENV !== "production";
+  if (process.env.VERCEL_ENV !== "production") return true;
+  const settings = await getSiteSettings();
+  return settings.demoContentPublic;
 }
 
 /** The demo-content WHERE fragment for the current environment. */

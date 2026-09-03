@@ -2,6 +2,8 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
+import { demoClause } from "@/lib/demo-clause";
+import { showDemoContent } from "@/lib/demo-content";
 import {
   CATALOG_GROUPS,
   type CatalogGroup,
@@ -54,7 +56,9 @@ const EMPTY_NAV: CatalogNav = { art: [], supplies: [], print: [] };
  * never cached as an empty nav for 300s.
  */
 const readCatalogNav = unstable_cache(
-  async (locale: string): Promise<CatalogNav> => {
+  // `showDemo` joins the cache key: flipping the owner's demo switch must not
+  // serve a nav computed under the other setting for 24h.
+  async (locale: string, showDemo: boolean): Promise<CatalogNav> => {
     const nav: CatalogNav = { art: [], supplies: [], print: [] };
     const categories = await db.category.findMany({
       select: {
@@ -62,7 +66,11 @@ const readCatalogNav = unstable_cache(
         name: true,
         translations: true,
         _count: {
-          select: { products: { where: { status: "PUBLISHED" } } },
+          select: {
+            products: {
+              where: { status: "PUBLISHED", ...demoClause(showDemo) },
+            },
+          },
         },
       },
     });
@@ -111,7 +119,7 @@ const readCatalogNav = unstable_cache(
 export const getCatalogNav = cache(
   async (locale: string): Promise<CatalogNav> => {
     try {
-      return await readCatalogNav(locale);
+      return await readCatalogNav(locale, await showDemoContent());
     } catch {
       // Header chrome must never crash a render on a DB hiccup — the mega-menu
       // simply collapses to the plain Shop link.

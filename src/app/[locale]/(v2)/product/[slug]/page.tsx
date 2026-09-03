@@ -59,6 +59,7 @@ import { getTestimonials } from "@/lib/testimonials";
 import { formatPriceBand } from "@/lib/utils";
 import { buildWaLink } from "@/lib/whatsapp";
 import { localeAlternates } from "@/i18n/seo";
+import { demoWhere, showDemoContent } from "@/lib/demo-content";
 
 /** ISR: 24h TTL (audit M-P6) — a 39k-URL long tail sees < 1 visit per 5 min,
  *  so a short TTL gave a near-zero hit ratio; studio saves reach the page via
@@ -75,7 +76,8 @@ export const dynamicParams = true;
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   try {
     const products = await db.product.findMany({
-      where: { status: "PUBLISHED", featured: true },
+      // Never prerender a fixture; a shown demo piece renders on request.
+      where: { status: "PUBLISHED", featured: true, isDemo: false },
       orderBy: { createdAt: "desc" },
       take: 12,
       select: { slug: true },
@@ -142,8 +144,9 @@ const RAIL_SELECT = {
 
 // cache() dedupes the fetch so generateMetadata + the page component share a
 // single query per request instead of hitting Postgres twice (PERF-307).
-const getProduct = cache((slug: string) =>
-  db.product.findUnique({
+const getProduct = cache(async (slug: string) => {
+  const demo = await demoWhere();
+  return db.product.findUnique({
     where: { slug },
     include: {
       images: { orderBy: { order: "asc" } },
@@ -151,7 +154,7 @@ const getProduct = cache((slug: string) =>
       customFields: { orderBy: { order: "asc" } },
       // Gap 3 cross-tier provenance — both directions, published links only.
       madeWith: {
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", ...demo },
         select: {
           slug: true,
           title: true,
@@ -160,7 +163,7 @@ const getProduct = cache((slug: string) =>
         },
       },
       usedIn: {
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", ...demo },
         take: 6,
         select: {
           slug: true,
@@ -170,8 +173,8 @@ const getProduct = cache((slug: string) =>
         },
       },
     },
-  }),
-);
+  });
+});
 
 /* ————————————————— metadata ————————————————— */
 
@@ -207,7 +210,7 @@ export async function generateMetadata({
     alternates: localeAlternates(`/product/${product.slug}`, locale),
     // A draft reachable via a preview link must never be indexed (ENG-802).
     robots:
-      product.status !== "PUBLISHED"
+      product.status !== "PUBLISHED" || product.isDemo
         ? { index: false, follow: false }
         : undefined,
     openGraph: {
@@ -249,6 +252,8 @@ export default async function ProductPage({ params }: PageProps) {
   const product = await getProduct(slug);
   if (!product) notFound();
   if (product.status !== "PUBLISHED" && !preview) notFound();
+  // A demo piece is a 404 unless the owner shows demo content (or staff preview).
+  if (product.isDemo && !preview && !(await showDemoContent())) notFound();
 
   const p = localize(product, locale, TRANSLATABLE_FIELDS.product);
   /* Editorial hero name (audit N-01): owner displayName, else derived from
@@ -306,7 +311,7 @@ export default async function ProductPage({ params }: PageProps) {
       where: {
         categoryId: product.categoryId,
         status: "PUBLISHED",
-        NOT: { title: { startsWith: "DEMO" } },
+        ...(await demoWhere()),
         id: { not: product.id },
       },
       // In-stock pieces lead (audit H2): the rail must not open with a wall
@@ -317,11 +322,15 @@ export default async function ProductPage({ params }: PageProps) {
     }),
     // PDP depth (trust at the decision moment): the top studio-managed
     // questions answered on the page itself.
-    db.faq.findMany({ orderBy: { order: "asc" }, take: 3 }),
+    db.faq.findMany({
+      where: { ...(await demoWhere()) },
+      orderBy: { order: "asc" },
+      take: 3,
+    }),
     // Social proof — real studio-curated rows only; [] hides the band.
     getTestimonials(3, locale),
     // M-S4: title → published count for duplicate groups.
-    fetchDuplicateTitleCounts(),
+    fetchDuplicateTitleCounts(await showDemoContent()),
   ]);
 
   // Per-locale FAQ overrides with English fallback (I3).
@@ -338,6 +347,7 @@ export default async function ProductPage({ params }: PageProps) {
           where: {
             title: product.title,
             status: "PUBLISHED",
+            ...(await demoWhere()),
             id: { not: product.id },
           },
           orderBy: { createdAt: "desc" },

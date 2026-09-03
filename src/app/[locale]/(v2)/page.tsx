@@ -34,6 +34,7 @@ import { SlotImage } from "@/components/storefront/slot-image";
 import { getSiteSettings } from "@/lib/site-settings";
 import { getTestimonials } from "@/lib/testimonials";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
+import { demoWhere } from "@/lib/demo-content";
 
 /** ISR: home reflects studio edits within 5 minutes. */
 export const revalidate = 300;
@@ -119,6 +120,7 @@ export default async function Home({
   const tCommon = await getTranslations("Common");
   const tWa = await getTranslations("WhatsApp");
 
+  const demo = await demoWhere();
   const [
     catalog,
     portfolioRows,
@@ -143,7 +145,7 @@ export default async function Home({
     // below a hero that says the studio makes large resin work to commission,
     // linking to a shop that would not contain them.
     fetchProductsPage({
-      where: buildProductWhere({ type: DEFAULT_ECOSYSTEM }),
+      where: buildProductWhere({ type: DEFAULT_ECOSYSTEM }, demo),
       sort: "featured",
       take: 4,
       locale,
@@ -151,7 +153,7 @@ export default async function Home({
     }),
     // §07 recent commissions: one huge, two smaller.
     db.portfolio.findMany({
-      where: { status: "PUBLISHED" },
+      where: { status: "PUBLISHED", ...demo },
       orderBy: { createdAt: "desc" },
       take: 3,
       select: {
@@ -174,7 +176,7 @@ export default async function Home({
     }),
     // §12 journal: one featured, two smaller.
     db.blogPost.findMany({
-      where: { status: "PUBLISHED" },
+      where: { status: "PUBLISHED", ...demo },
       orderBy: { publishedAt: "desc" },
       take: 3,
       select: {
@@ -191,7 +193,7 @@ export default async function Home({
     getSiteSettings(),
     // The hero's fact row states a real number, not a slogan (§6 11:
     // "replace with defensible mono facts").
-    db.portfolio.count({ where: { status: "PUBLISHED" } }),
+    db.portfolio.count({ where: { status: "PUBLISHED", ...demo } }),
     // Slot-resolved editorial imagery (/studio/site-images). Falls back to the
     // bundled file for every slot the owner has not replaced.
     getSiteImages(),

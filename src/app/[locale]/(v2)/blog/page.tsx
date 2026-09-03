@@ -23,6 +23,7 @@ import {
 } from "@/lib/image-src";
 import { localize, localizeName } from "@/lib/localize";
 import { cn } from "@/lib/utils";
+import { demoWhere } from "@/lib/demo-content";
 
 /** ISR: studio edits reach the journal within 5 minutes. */
 export const revalidate = 300;
@@ -333,8 +334,10 @@ export default async function BlogPage({
   const requestedPage =
     Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 
+  const demo = await demoWhere();
   const where = {
     status: "PUBLISHED" as const,
+    ...demo,
     ...(activeCategory && { blogCategory: { slug: activeCategory } }),
     ...(activeTag && { tags: { some: { slug: activeTag } } }),
   };
@@ -342,7 +345,8 @@ export default async function BlogPage({
   const [total, categories, activeTagRow] = await Promise.all([
     db.blogPost.count({ where }),
     db.blogCategory.findMany({
-      where: { posts: { some: { status: "PUBLISHED" } } },
+      // A demo category is listed only while its (demo) posts are shown.
+      where: { ...demo, posts: { some: { status: "PUBLISHED", ...demo } } },
       orderBy: { name: "asc" },
       select: { id: true, name: true, slug: true, translations: true },
     }),

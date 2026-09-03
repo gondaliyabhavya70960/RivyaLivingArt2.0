@@ -49,6 +49,7 @@ export type ProductRow = {
   priceMin: number | null;
   priceMax: number | null;
   status: ContentStatus;
+  isDemo: boolean;
   featured: boolean;
   needsRewrite: boolean;
   /** Owner-sheet tier (1-4) or null for studio-made products. */
@@ -514,7 +515,7 @@ export function ProductList({
                       >
                         {product.title}
                       </Link>
-                      {product.title.startsWith("DEMO") && (
+                      {product.isDemo && (
                         <Badge variant="outline">DEMO</Badge>
                       )}
                       {product.needsRewrite && (
