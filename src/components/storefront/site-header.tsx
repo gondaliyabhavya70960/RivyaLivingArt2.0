@@ -435,6 +435,7 @@ export function SiteHeader({
                   key={link.href}
                   ref={shopTriggerRef}
                   type="button"
+                  data-slot="sf-mega-trigger"
                   aria-expanded={megaOpen}
                   aria-controls={megaOpen ? "shop-mega" : undefined}
                   onMouseEnter={openMega}
@@ -465,6 +466,7 @@ export function SiteHeader({
           >
             <button
               type="button"
+              data-slot="sf-search-trigger"
               aria-label={tHeader("search")}
               onClick={(event) => openSearch(event.currentTarget)}
               className={ICON_ACTION}

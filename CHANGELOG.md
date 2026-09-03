@@ -5,6 +5,38 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 16 — the overlays' keyboard contract (2026-09-03, second batch)
+
+### Added
+- **`scripts/keyboard-audit.mjs`**, mounted in CI at both widths. Axe cannot press a key, so the one
+  thing an overlay must get right — open by keyboard, take focus if it is modal, close on Escape, hand
+  focus back to its trigger — was checked by nobody. A drawer that opens but strands focus behind it
+  passed every gate this repo had.
+- Two `data-slot` hooks (`sf-search-trigger`, `sf-mega-trigger`) in the same contract idiom
+  `e2e-smoke.mjs` already relies on, because those two triggers had no stable selector.
+
+### The result: the overlays were already correct
+Nothing needed fixing. What the exercise produced instead was three corrections to the CHECK, each
+found by investigating a failure rather than reporting it:
+
+- **The mega menu is `role="region"`, not a dialog.** The first version asserted the modal rule against
+  it and flagged a defect that was not there. A disclosure that opens on focus must NOT pull focus in —
+  doing so would trap anyone merely tabbing past the Shop link.
+- **Its contents are the seventh tab stop, not the first**, because the panel renders after the header
+  row. That is DOM order matching visual order. Requiring one press reported a second phantom defect;
+  the check now asserts reachability within a bound.
+- **Driving all three overlays on one page load was flaky** — one run in four — because the previous
+  overlay's Escape leaves focus restoration in flight. Each overlay now gets a fresh load. The drawer,
+  suspected on that evidence, settles focus on "Close menu" 8 times out of 8 when measured properly.
+
+Proven to bite: replacing Escape with a key that does not dismiss turns the run red with three
+failures; restoring it goes green.
+
+### Not covered, and stated rather than left to be inferred
+The portfolio/product lightbox. It lives on detail routes CI does not sweep, because their slugs are
+content rather than code. Roadmap Phase 17 gives CI deterministic detail slugs; the lightbox joins this
+file then.
+
 ## Transformation Phase 16 — SEO and the widths the repo holds itself to (2026-09-03, first batch)
 
 Four items were scoped. Two needed no code, which was established by reading the emitted HTML rather
