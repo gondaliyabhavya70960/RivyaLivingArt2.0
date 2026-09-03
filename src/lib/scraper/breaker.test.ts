@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   BREAKER_THRESHOLD,
   describeBlockedRun,
+  describeBreakerSkip,
   describeTrip,
   nextFailureCount,
   resolveDelayMs,
@@ -52,7 +53,10 @@ describe("describeBlockedRun", () => {
   it("blocks a paused source with its recorded reason", () => {
     const reason = describeTrip("Supplier A", 5);
     expect(
-      describeBlockedRun("Supplier A", { pausedAt: new Date(), pausedReason: reason }),
+      describeBlockedRun("Supplier A", {
+        pausedAt: new Date(),
+        pausedReason: reason,
+      }),
     ).toBe(reason);
   });
 
@@ -89,5 +93,17 @@ describe("resolveDelayMs", () => {
 
   it("ignores a non-finite value", () => {
     expect(resolveDelayMs(Number.NaN, 700)).toBe(700);
+  });
+});
+
+describe("describeBreakerSkip", () => {
+  it("names the missing source's key", () => {
+    expect(describeBreakerSkip("some-resin-store")).toContain(
+      "some-resin-store",
+    );
+  });
+
+  it("reads as a log line, not an error", () => {
+    expect(describeBreakerSkip("x").toLowerCase()).toContain("skipping");
   });
 });

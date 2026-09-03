@@ -12,6 +12,14 @@
  *
  * A QUEUED job counts as in-flight. It has not started, so starting another is
  * the same mistake a moment earlier.
+ *
+ * A RUNNING job can also be a LIE: a serverless invocation that crashed mid
+ * page never got to write FAILED, and without a heartbeat that source would
+ * be "spoken for" forever — no scrape of it could ever be queued again.
+ * `ScrapeJob.updatedAt` (bumped by every write, including the per-page
+ * optimistic advance in `continueScrapeJob`) is that heartbeat, and
+ * `isStaleRunning` / the optional `staleBefore` cutoff below are what let a
+ * dead RUNNING job stop blocking a fresh one.
  */
 
 /** The job states that mean "this source is spoken for". */
@@ -19,12 +27,43 @@ export const IN_FLIGHT_STATUSES = ["QUEUED", "RUNNING"] as const;
 
 export type ScopedSource = { id: string; name: string };
 
+/** The shape of an in-flight job `partitionByInFlight` needs to judge it. */
+export type InFlightJob = {
+  sourceId: string | null;
+  status: string;
+  updatedAt: Date;
+};
+
 export type RunScope<T extends ScopedSource> = {
   /** Sources with no job in flight — these get queued. */
   queueable: T[];
   /** Names of the sources skipped, for the operator's report. */
   skipped: string[];
 };
+
+/**
+ * A RUNNING job is presumed dead once its heartbeat predates `staleBefore` —
+ * a crashed invocation never got to mark it FAILED. It stays resumable by id
+ * through `continueScrapeJob` (an operator can still press Resume on it), but
+ * it no longer counts as "this source is busy" for a fresh run.
+ *
+ * QUEUED never goes stale this way, regardless of `staleBefore`: it means
+ * "not started yet", not "died mid-flight", and an unattended QUEUED job is
+ * exactly what the "one run per source" guard exists to leave alone.
+ *
+ * `staleBefore` is optional and undefined skips the check entirely — every
+ * caller that has not opted into a cutoff keeps today's behaviour.
+ */
+export function isStaleRunning(
+  job: Pick<InFlightJob, "status" | "updatedAt">,
+  staleBefore: Date | undefined,
+): boolean {
+  return (
+    staleBefore !== undefined &&
+    job.status === "RUNNING" &&
+    job.updatedAt.getTime() < staleBefore.getTime()
+  );
+}
 
 /**
  * Split a batch into what may run and what is already running.
@@ -35,9 +74,15 @@ export type RunScope<T extends ScopedSource> = {
  */
 export function partitionByInFlight<T extends ScopedSource>(
   sources: readonly T[],
-  busySourceIds: readonly (string | null)[],
+  inFlightJobs: readonly InFlightJob[],
+  opts: { staleBefore?: Date } = {},
 ): RunScope<T> {
-  const busy = new Set(busySourceIds.filter((id): id is string => Boolean(id)));
+  const busy = new Set<string>();
+  for (const job of inFlightJobs) {
+    if (!job.sourceId) continue; // ScrapeJob.sourceId is nullable (onDelete: SetNull)
+    if (isStaleRunning(job, opts.staleBefore)) continue;
+    busy.add(job.sourceId);
+  }
   const queueable: T[] = [];
   const skipped: string[] = [];
   for (const source of sources) {

@@ -15,10 +15,12 @@ import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import {
   IN_FLIGHT_STATUSES,
+  isStaleRunning,
   partitionByInFlight,
 } from "@/lib/scraper/run-scope";
 import {
   describeBlockedRun,
+  describeBreakerSkip,
   describeTrip,
   nextFailureCount,
   shouldTrip,
@@ -31,6 +33,7 @@ import {
 import { shouldPushOnComplete } from "@/lib/scraper/sheet-policy";
 import { pushJobToSheet } from "@/lib/scraper/sheet-push";
 import { getAdapter } from "@/lib/scraper/adapters";
+import { jsonldAdapter } from "@/lib/scraper/adapters/jsonld";
 import { isPathAllowed } from "@/lib/scraper/robots";
 import {
   fingerprint,
@@ -51,6 +54,17 @@ const CUSTOM_ADAPTER_MESSAGE =
   "Could not detect a supported platform (Shopify, WooCommerce or JSON-LD product markup). This site needs a custom adapter before it can be scraped.";
 const MARKETPLACE_MESSAGE =
   "Marketplaces (Amazon, Etsy, Flipkart, Meesho, IndiaMART…) are never scraped — use their official APIs instead.";
+
+/**
+ * A RUNNING job whose heartbeat (`ScrapeJob.updatedAt`) is older than this is
+ * presumed dead — the serverless invocation advancing it crashed before it
+ * could write FAILED. Past this age it no longer counts as "this source is
+ * busy" (`run-scope.ts`'s `isStaleRunning`), so a fresh scrape can be queued
+ * instead of the source being blocked forever by a job nobody is polling.
+ * The old job stays in place and is still resumable by id if it turns out to
+ * be alive after all.
+ */
+const STALE_RUNNING_MS = 10 * 60 * 1000;
 
 /** Lightweight job state returned to the client runner for polling. */
 export type ScrapeJobSnapshot = {
@@ -216,7 +230,9 @@ async function recordPriceMoves(
     // First sighting: anchor the series so a later move has something to move
     // FROM. These rows were just created, so their ids are not in hand — the
     // point is keyed by source and external id via a lookup below.
-    const firstSeen = unique.filter((p) => !existingByExternalId.has(p.externalId));
+    const firstSeen = unique.filter(
+      (p) => !existingByExternalId.has(p.externalId),
+    );
     if (firstSeen.length > 0) {
       const rows = await db.scrapedProduct.findMany({
         where: {
@@ -372,10 +388,24 @@ const createJobSchema = z
     sourceId: z.string().min(1).optional(),
     inputUrl: z.string().trim().min(1).max(2048).optional(),
     tier: z.enum(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D"]).optional(),
+    // SOURCE crawls the whole registered site (or, with no sourceId, the
+    // pasted URL as a new one). CATEGORY paginates one listing page; URL
+    // fetches one product page via the JSON-LD path regardless of platform —
+    // both need a registered source (for its tier/breaker/policy) AND the
+    // specific target page, which is neither the same field as a plain
+    // pasted URL nor optional once scope says so.
+    scope: z.enum(["SOURCE", "CATEGORY", "URL"]).default("SOURCE"),
   })
-  .refine((v) => Boolean(v.sourceId) !== Boolean(v.inputUrl), {
-    message: "Pass exactly one of sourceId or inputUrl.",
-  });
+  .refine(
+    (v) =>
+      v.scope === "SOURCE"
+        ? Boolean(v.sourceId) !== Boolean(v.inputUrl)
+        : Boolean(v.sourceId) && Boolean(v.inputUrl),
+    {
+      message:
+        "Pass exactly one of sourceId or inputUrl for a whole-source run, or both for a category/URL scope.",
+    },
+  );
 
 export type CreateScrapeJobInput = z.input<typeof createJobSchema>;
 
@@ -415,7 +445,9 @@ export async function createScrapeJob(
         where: { id: parsed.sourceId },
       });
       if (!found) {
-        return { userError: "Source not found — refresh the registry and try again." };
+        return {
+          userError: "Source not found — refresh the registry and try again.",
+        };
       }
       platform = found.platform;
       if (platform === "UNKNOWN") {
@@ -428,9 +460,38 @@ export async function createScrapeJob(
             ...(platform !== "UNKNOWN" ? { verifiedAt: new Date() } : {}),
           },
         });
-        if (platform === "UNKNOWN") return { userError: CUSTOM_ADAPTER_MESSAGE };
+        if (platform === "UNKNOWN")
+          return { userError: CUSTOM_ADAPTER_MESSAGE };
       }
       source = found;
+
+      // CATEGORY/URL: the schema already guarantees inputUrl is present
+      // here. It must resolve to the SAME host as the registered source —
+      // otherwise a scoped run would let a trusted source's tier, breaker
+      // and politeness settings crawl an unrelated site by pasting its URL
+      // into a field meant for one of that source's own pages.
+      if (parsed.scope !== "SOURCE") {
+        let scopedUrl: URL;
+        try {
+          scopedUrl = new URL(parsed.inputUrl ?? "");
+        } catch {
+          return { userError: "That doesn't look like a valid page URL." };
+        }
+        let sourceHost: string;
+        try {
+          sourceHost = new URL(source.baseUrl).hostname;
+        } catch {
+          sourceHost = "";
+        }
+        if (
+          scopedUrl.hostname.replace(/^www\./, "") !==
+          sourceHost.replace(/^www\./, "")
+        ) {
+          return {
+            userError: `That page isn't on ${sourceHost || source.name} — paste a URL from this source.`,
+          };
+        }
+      }
     } else {
       let baseUrl: string;
       try {
@@ -438,7 +499,8 @@ export async function createScrapeJob(
       } catch {
         return { userError: "That doesn't look like a valid website URL." };
       }
-      if (isBlockedMarketplace(baseUrl)) return { userError: MARKETPLACE_MESSAGE };
+      if (isBlockedMarketplace(baseUrl))
+        return { userError: MARKETPLACE_MESSAGE };
 
       platform = await fingerprint(baseUrl);
       if (platform === "UNKNOWN") return { userError: CUSTOM_ADAPTER_MESSAGE };
@@ -469,13 +531,24 @@ export async function createScrapeJob(
     const inFlight = await db.scrapeJob.findFirst({
       where: { sourceId: source.id, status: { in: [...IN_FLIGHT_STATUSES] } },
       orderBy: { createdAt: "desc" },
-      select: { id: true },
+      select: { id: true, status: true, updatedAt: true },
     });
     // Returning the job that is ALREADY running, rather than an error, is what
     // makes this action idempotent: pressing Scrape twice leaves one job and
     // lands the operator on it. An error here would be technically correct and
     // practically useless — they would still have to go and find it.
-    if (inFlight) return { jobId: inFlight.id, alreadyRunning: true };
+    //
+    // Unless it's stale: a RUNNING job whose heartbeat predates
+    // STALE_RUNNING_MS is presumed dead (the invocation advancing it crashed
+    // before writing FAILED), and no longer blocks a fresh job for this
+    // source. It stays in the database, still resumable by id if it turns
+    // out to be alive after all.
+    if (
+      inFlight &&
+      !isStaleRunning(inFlight, new Date(Date.now() - STALE_RUNNING_MS))
+    ) {
+      return { jobId: inFlight.id, alreadyRunning: true };
+    }
 
     // The circuit breaker. A source paused after repeated failures does not
     // get new jobs until an operator has looked at it — continuing to send
@@ -487,14 +560,20 @@ export async function createScrapeJob(
     });
     if (blocked) return { userError: blocked };
 
+    // SOURCE crawls source.baseUrl; CATEGORY/URL crawl the specific page the
+    // operator pasted, already verified above to be on this source's host.
+    const targetUrl =
+      parsed.scope === "SOURCE" ? source.baseUrl : (parsed.inputUrl as string);
+
     const job = await db.scrapeJob.create({
       data: {
         sourceId: source.id,
-        inputUrl: source.baseUrl,
+        inputUrl: targetUrl,
         sourceKey: source.key,
         sourceName: source.name,
         platform,
         vertical: source.vertical,
+        scope: parsed.scope,
         // status QUEUED / cursorPage 0 via schema defaults.
       },
       select: { id: true },
@@ -505,7 +584,7 @@ export async function createScrapeJob(
       action: "create",
       entity: "ScrapeJob",
       entityId: job.id,
-      meta: { sourceKey: source.key, platform },
+      meta: { sourceKey: source.key, platform, scope: parsed.scope },
     });
     revalidatePath(STUDIO_PATH);
     return { jobId: job.id, alreadyRunning: false };
@@ -571,7 +650,11 @@ export async function continueScrapeJob(
       });
     }
 
-    const adapter = getAdapter(job.platform);
+    // URL scope always goes through the JSON-LD path, one product page,
+    // regardless of the source's detected platform — a Shopify/WooCommerce
+    // API has no concept of "just this one URL" the way a JSON-LD fetch does.
+    const adapter =
+      job.scope === "URL" ? jsonldAdapter : getAdapter(job.platform);
 
     let cursorPage = job.cursorPage;
     let totalScraped = job.totalScraped;
@@ -581,7 +664,14 @@ export async function continueScrapeJob(
     let error: string | null = null;
 
     try {
-      const baseUrl = normalizeBaseUrl(job.source?.baseUrl ?? job.inputUrl);
+      // SOURCE crawls the registered source's base URL; CATEGORY/URL crawl
+      // the specific page `createScrapeJob` stored in `inputUrl` for this
+      // job — `job.source.baseUrl` would be the wrong target for those.
+      const baseUrl = normalizeBaseUrl(
+        job.scope === "SOURCE"
+          ? (job.source?.baseUrl ?? job.inputUrl)
+          : job.inputUrl,
+      );
 
       // Politeness: honour robots.txt once, before the first page is fetched.
       // Gate on the site root — the universal "may we crawl you at all" signal.
@@ -610,9 +700,36 @@ export async function continueScrapeJob(
           // The per-source politeness knob (docs/scraper.md "Politeness");
           // a single pasted URL has no source row and gets the shared default.
           requestDelayMs: job.source?.requestDelayMs ?? null,
+          scope: job.scope,
         });
 
         const counts = await upsertPage(job.id, job.sourceKey, products);
+
+        // Optimistic per-page advance: the `where` only matches while
+        // cursorPage is still what THIS invocation last saw. Two workers
+        // resuming the same job at once — two tabs both pressing Resume, or
+        // a stale-reclaimed job that turns out not to be dead after all —
+        // would otherwise both fold the same page's counts in. The write is
+        // also the heartbeat (`updatedAt`) STALE_RUNNING_MS reads.
+        const advanced = await db.scrapeJob.updateMany({
+          where: { id: job.id, cursorPage },
+          data: {
+            cursorPage: page,
+            totalScraped: totalScraped + products.length,
+            newCount: newCount + counts.created,
+            updatedCount: updatedCount + counts.updated,
+          },
+        });
+        if (advanced.count === 0) {
+          // Lost the race — another invocation already advanced this job
+          // past the page just fetched. Report its real state instead of
+          // fighting over whose numbers land.
+          const current = await db.scrapeJob.findUniqueOrThrow({
+            where: { id: job.id },
+          });
+          return toSnapshot(current);
+        }
+
         newCount += counts.created;
         updatedCount += counts.updated;
         cursorPage = page;
@@ -631,7 +748,8 @@ export async function continueScrapeJob(
     } catch (err) {
       // Counts up to the failure point are kept.
       status = "FAILED";
-      error = err instanceof Error ? err.message : "Scrape failed unexpectedly.";
+      error =
+        err instanceof Error ? err.message : "Scrape failed unexpectedly.";
     }
 
     const finished = status === "DONE" || status === "FAILED";
@@ -656,10 +774,16 @@ export async function continueScrapeJob(
     // Deliberately not awaited into the job's own success: `pushJobToSheet`
     // swallows its failures and marks the rows SYNC_PENDING, because a scrape
     // that worked must not be reported as failed by a third party's outage.
-    if (finished && job.sourceId) {
+    if (finished) {
+      // Looked up by sourceKey, not job.sourceId: the FK is nullable
+      // (onDelete: SetNull) and goes null the moment a source row is
+      // deleted, while sourceKey is a plain string that survives that — and
+      // a source re-registered under the same key keeps its failure history
+      // instead of restarting silently disconnected from it (breaker.ts).
       const source = await db.scrapeSource.findUnique({
-        where: { id: job.sourceId },
+        where: { key: job.sourceKey },
         select: {
+          id: true,
           sheetSyncPolicy: true,
           name: true,
           consecutiveFailures: true,
@@ -667,7 +791,8 @@ export async function continueScrapeJob(
       });
 
       // Breaker bookkeeping: count consecutive failures, reset on success,
-      // and pause the source once it trips.
+      // and pause the source once it trips. No source row under this key
+      // means there is nothing left to trip or reset — log and move on.
       if (source) {
         const failures = nextFailureCount(
           source.consecutiveFailures,
@@ -675,7 +800,7 @@ export async function continueScrapeJob(
         );
         const trip = shouldTrip(failures);
         await db.scrapeSource.update({
-          where: { id: job.sourceId },
+          where: { id: source.id },
           data: {
             consecutiveFailures: failures,
             ...(trip
@@ -685,9 +810,13 @@ export async function continueScrapeJob(
                 }
               : {}),
             // A success clears an old pause as well as the counter.
-            ...(status === "DONE" ? { pausedAt: null, pausedReason: null } : {}),
+            ...(status === "DONE"
+              ? { pausedAt: null, pausedReason: null }
+              : {}),
           },
         });
+      } else {
+        console.warn(describeBreakerSkip(job.sourceKey));
       }
       // THE ONLY SHEET WRITE IN THIS FILE. A second, un-gated push used to
       // run below on every finished job that staged anything — including a
@@ -759,25 +888,28 @@ export async function createTierJobs(
       orderBy: { name: "asc" },
     });
     sources.sort(
-      (a, b) => TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.name.localeCompare(b.name),
+      (a, b) =>
+        TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.name.localeCompare(b.name),
     );
 
     if (sources.length === 0) return { jobIds: [], skipped: [] };
 
-    // The same one-run-per-source rule as createScrapeJob. Without it the batch
-    // is the faster way to cause exactly the duplicate that guard prevents:
-    // press a tier button twice and every source gets a second crawl.
+    // The same one-run-per-source rule as createScrapeJob, including the
+    // same stale-reclaim: a RUNNING job whose heartbeat predates
+    // STALE_RUNNING_MS no longer blocks a fresh batch job for its source.
+    // Without the base guard, the batch is the faster way to cause exactly
+    // the duplicate it prevents: press a tier button twice and every source
+    // gets a second crawl.
     const busy = await db.scrapeJob.findMany({
       where: {
         sourceId: { in: sources.map((s) => s.id) },
         status: { in: [...IN_FLIGHT_STATUSES] },
       },
-      select: { sourceId: true },
+      select: { sourceId: true, status: true, updatedAt: true },
     });
-    const { queueable, skipped } = partitionByInFlight(
-      sources,
-      busy.map((j) => j.sourceId),
-    );
+    const { queueable, skipped } = partitionByInFlight(sources, busy, {
+      staleBefore: new Date(Date.now() - STALE_RUNNING_MS),
+    });
 
     if (queueable.length === 0) return { jobIds: [], skipped };
 
