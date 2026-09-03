@@ -16,6 +16,7 @@ import {
 } from "@/actions/faqs";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { DemoBadge } from "@/components/studio/demo-badge";
+import { SortHead, useSort } from "@/components/studio/sort-header";
 import {
   TranslationsSection,
   type TranslationsValue,
@@ -230,10 +231,37 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
     });
   }, [faqs, search, demoOnly]);
 
-  const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
+  const {
+    sorted,
+    sort,
+    toggle: toggleSort,
+  } = useSort<FaqRow>(
     filtered,
+    (row, key) => {
+      switch (key) {
+        case "question":
+          return row.question;
+        case "answer":
+          return row.answer;
+        case "order":
+          return row.order;
+        default:
+          return null;
+      }
+    },
+    { key: "order", dir: "asc" },
+  );
+  // Manual up/down reorder only makes sense in the un-sorted, un-filtered
+  // view — it swaps a row with its neighbour in the GLOBAL order field, and
+  // "neighbour" stops meaning anything once the visible order is a search
+  // match or a different column's sort.
+  const canReorder =
+    sort.key === "order" && sort.dir === "asc" && !search.trim() && !demoOnly;
+
+  const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
+    sorted,
     PAGE_SIZE,
-    `${search}|${demoOnly}`,
+    `${search}|${demoOnly}|${sort.key}|${sort.dir}`,
   );
   const rowIds = useMemo(() => pageRows.map((f) => f.id), [pageRows]);
   const selection = useSelection(rowIds);
@@ -282,8 +310,6 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
       toast.error(res.error);
     }
   }
-
-  const filtering = search.trim() !== "" || demoOnly;
 
   if (faqs.length === 0) {
     return (
@@ -349,18 +375,28 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
                     aria-label="Select all"
                   />
                 </th>
-                <th scope="col" className="px-4 py-3 font-medium">
-                  Question
-                </th>
-                <th scope="col" className="px-4 py-3 font-medium">
-                  Answer
-                </th>
+                <SortHead
+                  label="Question"
+                  sortKey="question"
+                  sort={sort}
+                  onSort={toggleSort}
+                />
+                <SortHead
+                  label="Answer"
+                  sortKey="answer"
+                  sort={sort}
+                  onSort={toggleSort}
+                />
                 <th scope="col" className="px-4 py-3 font-medium">
                   Status
                 </th>
-                <th scope="col" className="px-4 py-3 font-medium">
-                  Order
-                </th>
+                <SortHead
+                  label="Order"
+                  sortKey="order"
+                  sort={sort}
+                  onSort={toggleSort}
+                  numeric
+                />
                 <th scope="col" className="w-16 px-4 py-3">
                   <span className="sr-only">Edit</span>
                 </th>
@@ -415,11 +451,11 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
                         disabled={
                           (page - 1) * pageSize + index === 0 ||
                           reordering ||
-                          filtering
+                          !canReorder
                         }
                         title={
-                          filtering
-                            ? "Clear the search and demo filter to reorder"
+                          !canReorder
+                            ? "Sort by Order and clear the search/demo filter to reorder"
                             : undefined
                         }
                         onClick={() => handleReorder(faq.id, "up")}
@@ -434,11 +470,11 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
                         disabled={
                           (page - 1) * pageSize + index === total - 1 ||
                           reordering ||
-                          filtering
+                          !canReorder
                         }
                         title={
-                          filtering
-                            ? "Clear the search and demo filter to reorder"
+                          !canReorder
+                            ? "Sort by Order and clear the search/demo filter to reorder"
                             : undefined
                         }
                         onClick={() => handleReorder(faq.id, "down")}
