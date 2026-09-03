@@ -12,7 +12,8 @@ import { extractTiptapImageUrls } from "@/lib/tiptap-media";
 /**
  * Returns the subset of `urls` that are still referenced by live content —
  * product/portfolio galleries, category covers, blog covers, product/portfolio
- * media, testimonial avatars, the site logo/hero, the named editorial slots
+ * media, testimonial avatars/installation photos/films/posters, the site
+ * logo/hero, the named editorial slots
  * behind /studio/site-images (the desktop and mobile crop of both the live and
  * the STAGED value), landing-page social images and block pictures, and Tiptap
  * rich-text body images (blog posts, legal pages, richText landing blocks) — so
@@ -108,9 +109,23 @@ export async function findMediaUsageDetails(
     // The default sharing picture lives inside the defaultSeo Json, so it
     // cannot be filtered in SQL. There is exactly one settings row.
     seoSettings: db.siteSettings.findMany({ select: { defaultSeo: true } }),
+    // A testimonial carries up to four pictures: the customer's avatar, the
+    // installed piece, a short film and its poster (B0 · testimonial system).
     testimonials: db.testimonial.findMany({
-      where: { avatarUrl: { in: urls } },
-      select: { avatarUrl: true },
+      where: {
+        OR: [
+          { avatarUrl: { in: urls } },
+          { installationImageUrl: { in: urls } },
+          { videoUrl: { in: urls } },
+          { videoPosterUrl: { in: urls } },
+        ],
+      },
+      select: {
+        avatarUrl: true,
+        installationImageUrl: true,
+        videoUrl: true,
+        videoPosterUrl: true,
+      },
     }),
     // Named editorial slots (/studio/site-images), BOTH halves — live and
     // staged. Omitting these let a library file that a hero points at pass the
@@ -209,7 +224,12 @@ export async function findMediaUsageDetails(
       add(seo.ogImage, "Default sharing picture");
     }
   });
-  testimonials.forEach((r) => add(r.avatarUrl, "Testimonial avatar"));
+  testimonials.forEach((r) => {
+    add(r.avatarUrl, "Testimonial avatar");
+    add(r.installationImageUrl, "Testimonial installation photo");
+    add(r.videoUrl, "Testimonial film");
+    add(r.videoPosterUrl, "Testimonial film poster");
+  });
   // Labelled per slot rather than "Site image ×3": when the guard blocks a
   // delete the owner needs to know WHICH picture they are about to break.
   siteImages.forEach((r) => {

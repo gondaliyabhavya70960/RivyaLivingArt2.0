@@ -73,6 +73,11 @@ export async function requireStaffPage(roles: Role[] = ["ADMIN", "EDITOR"]) {
  * public routes that render it so owner edits appear on the live site without
  * waiting out the 5-minute ISR window. A new content type is one map entry
  * rather than edits scattered across the action files.
+ *
+ * `slug` narrows the refresh to one detail route where the entity has one
+ * (product, blogPost, portfolio, page, customPage). For "testimonial" it is
+ * the slug of the linked PRODUCT — a testimonial has no page of its own, but
+ * the PDP it is attached to does.
  */
 export type RevalidatableEntity =
   | "product"
@@ -135,7 +140,12 @@ export function revalidatePublic(entity: RevalidatableEntity, slug?: string) {
       paths.push("/faq");
       break;
     case "testimonial":
-      paths.push("/");
+      // Every page that renders a words band. `slug` is the PRODUCT slug the
+      // testimonial is linked to (its own id is never a URL); without one,
+      // every PDP is refreshed, since the resolver can filter per product.
+      paths.push("/", "/custom-order", "/large-resin-art");
+      if (slug) paths.push(`/product/${slug}`);
+      else revalidateLocalizedPattern("/product/[slug]");
       break;
     case "page":
       if (slug) paths.push(`/${slug}`);

@@ -127,6 +127,7 @@ model Product {
   images         ProductImage[]
   customFields   CustomizationField[]
   inquiries      Inquiry[]
+  testimonials   Testimonial[]
 
   @@unique([importSource, importRef])
   @@index([categoryId, status])
@@ -264,6 +265,7 @@ model Portfolio {
   status         ContentStatus    @default(DRAFT)
   createdAt      DateTime         @default(now())
   images         PortfolioImage[]
+  testimonials   Testimonial[]
 
   // Public list/home/sitemap filter by status + order by createdAt; the detail
   // "related" query filters categoryId + status. Product/BlogPost carry the
@@ -337,6 +339,28 @@ model BlogPost {
 
 // ————————————————————— Site content —————————————————————
 
+/// A testimonial's lifecycle. Only PUBLISHED rows reach a visitor; the public
+/// resolver filters on it. New rows start as DRAFT — the migration that added
+/// the column back-filled every row that existed at the time to PUBLISHED so
+/// the site did not change on deploy.
+enum TestimonialStatus {
+  DRAFT
+  PENDING_REVIEW
+  VERIFIED
+  PUBLISHED
+  ARCHIVED
+}
+
+/// Whether the customer agreed to have their words published. Tracked
+/// separately from `status` because the two move independently: a quote can
+/// be verified as genuine long before the customer has been asked.
+enum PermissionStatus {
+  UNKNOWN
+  REQUESTED
+  GRANTED
+  DECLINED
+}
+
 model Testimonial {
   id           String  @id @default(cuid())
   name         String
@@ -348,6 +372,51 @@ model Testimonial {
   /// Per-locale { quote, location } overrides; base is English (I3).
   /// The customer's name is never translated.
   translations Json?
+
+  status               TestimonialStatus @default(DRAFT)
+  featured             Boolean           @default(false)
+  /// Demo fixture — hidden from visitors unless the demo gate lets it through
+  /// (`src/lib/demo-content.ts`). Never true for a real customer's words.
+  isDemo               Boolean           @default(false)
+  /// "Interior designer, Surat" — the line under the name.
+  designation          String?
+  /// Free-text category slug the words are about, for per-collection walls.
+  category             String?
+  /// When the customer gave the testimonial (not when it was entered).
+  givenAt              DateTime?
+  /// BCP-47 tag of the language the quote was given in.
+  language             String?
+  /// The piece or the case study the words are about. SetNull on both:
+  /// deleting a product must never delete a customer's words.
+  productId            String?
+  product              Product?          @relation(fields: [productId], references: [id], onDelete: SetNull)
+  portfolioId          String?
+  portfolio            Portfolio?        @relation(fields: [portfolioId], references: [id], onDelete: SetNull)
+  /// What they bought, in their words, when it is not a catalogue product.
+  productTitle         String?
+  /// "commission" · "catalogue" · "workshop" — code-side vocabulary.
+  purchaseType         String?
+  /// Library rows behind avatarUrl / installationImageUrl, when picked there.
+  mediaId              String?
+  installationImageUrl String?
+  installationMediaId  String?
+  /// A short film of the customer or the installed piece, and its poster.
+  videoUrl             String?
+  videoPosterUrl       String?
+  /// Staff-only. NEVER selected by a public reader.
+  internalNotes        String?           @db.Text
+  permissionStatus     PermissionStatus  @default(UNKNOWN)
+  verifiedAt           DateTime?
+  /// Kept as an id rather than a relation, like Product.confirmedById: the
+  /// record that someone verified this outlives the staff account.
+  verifiedById         String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @default(now()) @updatedAt
+
+  @@index([status, featured, order])
+  @@index([productId])
+  @@index([portfolioId])
+  @@index([isDemo])
 }
 
 model Faq {
