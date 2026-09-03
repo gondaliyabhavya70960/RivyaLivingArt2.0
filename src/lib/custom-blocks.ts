@@ -114,6 +114,19 @@ export const faqPickerSchema = z.object({
   faqIds: z.array(z.string().trim().max(40)).max(12).default([]),
 });
 
+/** Section spacing an owner may choose. Never `section-major` — a lander
+ *  assembled from a menu does not get to claim the page's two big moments,
+ *  those are reserved for pages a person actually designed. */
+const spacing = z.enum(["compact", "standard"]).default("standard");
+
+export const collectionGridSchema = z.object({
+  heading: text(160),
+  intro: text(400),
+  /** Up to six collections, in the order the owner picked them. */
+  slugs: z.array(z.string().trim().max(160)).max(6).default([]),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -136,6 +149,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "imageCta",
   "faqPicker",
   "finalCta",
+  "collectionGrid",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -146,6 +160,7 @@ export type ProductGridData = z.infer<typeof productGridSchema>;
 export type ImageCtaData = z.infer<typeof imageCtaSchema>;
 export type FaqPickerData = z.infer<typeof faqPickerSchema>;
 export type FinalCtaData = z.infer<typeof finalCtaSchema>;
+export type CollectionGridData = z.infer<typeof collectionGridSchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -250,6 +265,17 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     // is wrong in every arrangement anyone builds is not a toggle.
     ground: "alternating",
     once: true,
+  },
+  collectionGrid: {
+    type: "collectionGrid",
+    label: "Collections",
+    description: "A row of collections, picked by hand, doorway tiles.",
+    schema: collectionGridSchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "intro", label: "Intro", kind: "textarea" },
+    ],
+    ground: "alternating",
   },
 };
 

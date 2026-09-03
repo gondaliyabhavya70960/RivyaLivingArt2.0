@@ -22,7 +22,12 @@ describe("the block catalogue", () => {
     // Not a style preference — the catalogue's size is the only thing standing
     // between a page an owner assembles and layout rot (§4.8). Growing it is a
     // decision, and this test is where the decision gets made out loud.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(6);
+    //
+    // 7, not 6 (2026-09-03): `collectionGrid` — a row of collections picked
+    // by hand, reusing `CollectionCard`'s existing doorway-tile grammar. The
+    // roadmap's Phase 11 block-catalogue growth adds ten types in total, one
+    // per commit; this is the first.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(7);
   });
 
   it("declares every type it lists", () => {
@@ -103,6 +108,22 @@ describe("parsing a block's data", () => {
     expect(describeBlockDataProblem("hero", { image: "nope.jpg" })).toMatch(
       /library/,
     );
+  });
+
+  it("refuses more than six collections", () => {
+    // Like the bad-blob case above: a seventh slug makes the whole blob
+    // fail its own schema, so the block renders its (empty) defaults rather
+    // than a silently truncated seven-turned-six list.
+    const data = parseBlockData<{ slugs: string[] }>("collectionGrid", {
+      slugs: ["a", "b", "c", "d", "e", "f", "g"],
+    });
+    expect(data.slugs).toEqual([]);
+  });
+
+  it("defaults every new block's spacing to standard", () => {
+    expect(
+      parseBlockData<{ spacing: string }>("collectionGrid", {}).spacing,
+    ).toBe("standard");
   });
 });
 

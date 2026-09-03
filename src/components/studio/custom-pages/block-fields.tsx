@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { saveCustomBlock } from "@/actions/custom-pages";
@@ -26,6 +27,7 @@ import {
 } from "@/lib/custom-blocks";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import { toTranslationsRecord } from "@/lib/translations-form";
+import { cn } from "@/lib/utils";
 
 /**
  * One block's fields.
@@ -337,6 +339,41 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "collectionGrid" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("intro")}
+            label="Intro"
+            value={String(data.intro ?? "")}
+            onChange={(v) => set("intro", v)}
+          />
+          <fieldset className="space-y-2">
+            <legend className="text-small font-medium text-foreground">
+              Collections
+            </legend>
+            <p className="text-xs text-graphite">
+              Up to six, in the order they should read.
+            </p>
+            <CollectionSlugPicker
+              chosen={Array.isArray(data.slugs) ? (data.slugs as string[]) : []}
+              onChange={(next) => set("slugs", next)}
+              options={pickers.categories}
+            />
+          </fieldset>
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {def.translatable.length > 0 && (
         <TranslationsSection
           idPrefix={`blk-${block.id}`}
@@ -504,6 +541,152 @@ function CtaFields({
         value={String(data.ctaHref ?? "")}
         onChange={(v) => set("ctaHref", v)}
       />
+    </div>
+  );
+}
+
+/** The spacing choice every catalogue-growth block offers — never
+ *  `section-major`, which is reserved for a page's two hand-built moments. */
+function SpacingField({
+  id,
+  value,
+  onChange,
+}: {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>Spacing</Label>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+      >
+        <option value="standard">Standard</option>
+        <option value="compact">Compact</option>
+      </select>
+    </div>
+  );
+}
+
+/**
+ * An ordered, capped multi-pick from a short fixed list — `pickers.categories`
+ * has ~16 rows, small enough that a search box would be overhead. A tag toggles
+ * on click; the chosen list keeps ITS OWN order (arrows), because the storefront
+ * renders these grids in the order the owner picked, not alphabetically.
+ */
+function CollectionSlugPicker({
+  chosen,
+  onChange,
+  options,
+  max = 6,
+}: {
+  chosen: string[];
+  onChange: (next: string[]) => void;
+  options: { slug: string; name: string }[];
+  max?: number;
+}) {
+  const nameOf = (slug: string) =>
+    options.find((o) => o.slug === slug)?.name ?? slug;
+
+  function toggle(slug: string) {
+    if (chosen.includes(slug)) {
+      onChange(chosen.filter((s) => s !== slug));
+      return;
+    }
+    if (chosen.length >= max) return;
+    onChange([...chosen, slug]);
+  }
+
+  function move(slug: string, delta: number) {
+    const next = [...chosen];
+    const from = next.indexOf(slug);
+    const to = from + delta;
+    if (to < 0 || to >= next.length) return;
+    [next[from], next[to]] = [next[to], next[from]];
+    onChange(next);
+  }
+
+  return (
+    <div className="space-y-3">
+      {chosen.length === 0 ? (
+        <p className="text-xs text-graphite">
+          Nothing picked yet — this block will not appear on the page.
+        </p>
+      ) : (
+        <ol className="space-y-1">
+          {chosen.map((slug, index) => (
+            <li
+              key={slug}
+              className="flex items-center gap-2 rounded-lg border border-border p-2"
+            >
+              <span className="min-w-0 flex-1 truncate text-small text-foreground">
+                {nameOf(slug)}
+              </span>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={index === 0}
+                onClick={() => move(slug, -1)}
+              >
+                <ArrowUp aria-hidden className="size-4" />
+                <span className="sr-only">Move {nameOf(slug)} up</span>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={index === chosen.length - 1}
+                onClick={() => move(slug, 1)}
+              >
+                <ArrowDown aria-hidden className="size-4" />
+                <span className="sr-only">Move {nameOf(slug)} down</span>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => toggle(slug)}
+              >
+                <X aria-hidden className="size-4" />
+                <span className="sr-only">Remove {nameOf(slug)}</span>
+              </Button>
+            </li>
+          ))}
+        </ol>
+      )}
+      {options.length === 0 ? (
+        <p className="text-xs text-graphite">
+          No collections to pick from yet.
+        </p>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {options.map((option) => {
+            const already = chosen.includes(option.slug);
+            const full = !already && chosen.length >= max;
+            return (
+              <button
+                key={option.slug}
+                type="button"
+                disabled={already || full}
+                onClick={() => toggle(option.slug)}
+                className={cn(
+                  "inline-flex h-9 items-center rounded-full border px-3 text-small transition-colors",
+                  already
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:text-foreground disabled:opacity-50",
+                )}
+              >
+                {option.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

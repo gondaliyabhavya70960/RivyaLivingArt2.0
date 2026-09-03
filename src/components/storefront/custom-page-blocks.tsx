@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { getLocale } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import {
@@ -10,12 +11,14 @@ import {
 } from "@/components/storefront/accordion";
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
+import { CollectionCard } from "@/components/storefront/collection-card";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import {
   Eyebrow,
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import type {
+  CollectionGridData,
   FaqPickerData,
   FinalCtaData,
   HeroData,
@@ -25,11 +28,13 @@ import type {
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
+import { db } from "@/lib/db";
 import {
   isOptimizableImageSrc,
   isRenderableSrc,
   sizedExternalSrc,
 } from "@/lib/image-src";
+import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import type { ShopProductItem } from "@/lib/shop";
 import { cn } from "@/lib/utils";
 
@@ -44,8 +49,21 @@ import { cn } from "@/lib/utils";
  * assembling a lander picks what goes on it and in what order; they do not
  * pick how it looks, because that is how a page stops matching the site.
  *
- * Server components: the block data is already resolved and localized by the
- * route, and nothing here is interactive except the FAQ accordion.
+ * Server components: the six original blocks take their extra data
+ * (products, FAQs, rendered rich text) pre-resolved through
+ * `resolveBlockExtras` — `custom-page-data.ts` batches every block's query
+ * into one `Promise.all` per page so a six-block lander costs one round trip,
+ * not six in series.
+ *
+ * The catalogue-growth blocks below (`collectionGrid` on) do NOT go through
+ * that path — `custom-page-data.ts` and the route that calls it belong to no
+ * batch in this wave's file-ownership table, so this batch cannot add a case
+ * there without editing a file it does not own. Each of those blocks queries
+ * the database directly inside its own render function instead: correct, and
+ * every block still costs at most one query, but a page carrying several of
+ * them runs those queries in series rather than in one batched round trip.
+ * Folding them into `resolveBlockExtras` is a follow-up once that file's
+ * ownership is open again.
  */
 
 /** Everything a block might need beyond its own `data`. */
@@ -84,16 +102,29 @@ const GROUND_CLASS: Record<BlockGround, string> = {
   sand: "bg-sand",
 };
 
+/**
+ * An owner's spacing choice, mapped to the site's two smaller section tiers.
+ * `section-major` is never reachable from a block — it is reserved for the
+ * two big moments a person actually designed into a page, not a menu pick.
+ */
+const SPACING_CLASS: Record<"compact" | "standard", string> = {
+  compact: "section-compact",
+  standard: "section-standard",
+};
+
 /** The shared shell: one ground, one rhythm, one rail. */
 function Band({
   ground,
   major = false,
+  spacing = "standard",
   labelledBy,
   className,
   children,
 }: {
   ground: BlockGround;
   major?: boolean;
+  /** Ignored when `major` is set — a major band keeps its own rhythm. */
+  spacing?: "compact" | "standard";
   labelledBy?: string;
   className?: string;
   children: ReactNode;
@@ -103,7 +134,7 @@ function Band({
       aria-labelledby={labelledBy}
       data-theme={ground === "obsidian" ? "navy" : undefined}
       className={cn(
-        major ? "section-major" : "section-standard",
+        major ? "section-major" : SPACING_CLASS[spacing],
         GROUND_CLASS[ground],
         className,
       )}
@@ -290,6 +321,95 @@ function ProductGridBlock({
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
           {products.map((item) => (
             <CatalogProductCard key={item.id} item={item} variant="full" />
+          ))}
+        </div>
+      </div>
+    </Band>
+  );
+}
+
+/**
+ * The collections a `collectionGrid` block shows.
+ *
+ * Only visible categories, only the ones the owner picked, in the owner's
+ * order — the same "no mode invents a product" discipline `fetchProductsForGrid`
+ * follows for `productGrid`, applied to shelves instead of pieces.
+ */
+async function fetchCollectionsForGrid(
+  slugs: readonly string[],
+  locale: string,
+) {
+  if (slugs.length === 0) return [];
+  const rows = await db.category.findMany({
+    where: { visible: true, slug: { in: [...slugs] } },
+    select: {
+      slug: true,
+      name: true,
+      description: true,
+      image: true,
+      translations: true,
+    },
+  });
+  const bySlug = new Map(
+    rows.map((row) => [
+      row.slug,
+      localize(row, locale, TRANSLATABLE_FIELDS.category),
+    ]),
+  );
+  // The owner's order, not the query's — `where … in` does not preserve it.
+  return slugs.flatMap((slug) => {
+    const category = bySlug.get(slug);
+    return category ? [category] : [];
+  });
+}
+
+async function CollectionGridBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: CollectionGridData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const locale = await getLocale();
+  const collections = await fetchCollectionsForGrid(data.slugs, locale);
+  // Nothing picked, or every pick since hidden or deleted: no band at all,
+  // same contract as the product grid.
+  if (collections.length === 0) return null;
+  const headingId = `${id}-heading`;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      <div className="flex flex-col gap-10">
+        {data.heading ? (
+          <SectionHeading
+            id={headingId}
+            as={heading}
+            title={data.heading}
+            intro={data.intro || undefined}
+            size={heading === "h1" ? "h1" : "h2"}
+          />
+        ) : null}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {collections.map((category) => (
+            <CollectionCard
+              key={category.slug}
+              href={`/shop/${category.slug}`}
+              name={category.name}
+              promise={category.description || category.name}
+              image={category.image}
+              imageAlt=""
+              ratio="3/4"
+            />
           ))}
         </div>
       </div>
@@ -551,5 +671,17 @@ export function CustomPageBlock({
           waHref={waHref}
         />
       );
+    case "collectionGrid": {
+      const data = block.data as CollectionGridData;
+      return (
+        <CollectionGridBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
   }
 }
