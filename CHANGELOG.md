@@ -5,6 +5,66 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 1 · batches C1 and D — Studio content management and the media library (2026-09-03)
+
+Merged `a9447c4` (C1) and `cc8983d` (D), each built and gated in its own worktree; the merged head
+was then built and audited here before the push. Two merge follow-ups landed as `89af275`.
+
+### C1 — Studio content management, part 1
+- The five main content lists (products, blog, portfolio, inquiries, FAQs) share one shape: sort
+  on every sortable column, a "Demo only" filter for Content Lab fixtures, and — on products,
+  blog, portfolio and FAQs — a phone card layout below `md` instead of a sideways table. Products
+  and inquiries gain a per-browser "Columns" menu.
+- `ContentStatus`'s REVIEW and ARCHIVED values (migrated in B0) are reachable: four status tabs
+  with live counts on products, blog and portfolio, with bulk Send to review / Archive / Restore
+  to draft beside Publish / Draft; the dashboard counts split the same way; FAQs get a status
+  column with a click-to-toggle badge. **Visible change:** blog and portfolio lists now open on
+  the Published tab, the convention products already used.
+- Blog and portfolio forms are tabbed (Content · Media · Taxonomy · SEO; Story · Media · Results ·
+  Taxonomy) on the product form's pattern with per-tab error dots; blog posts gain a Related
+  collection; portfolio gets the real device-frame preview; the category editor gains SEO
+  title/description and a visibility toggle; categories, FAQ and staff dialogs get inline,
+  screen-reader-wired errors; every product image can carry a role (hero · detail · in-room ·
+  process).
+- The four update actions record a bounded before-picture in `ActivityLog.meta.before`
+  (`snapshotBefore`). Product, blog and portfolio forms autosave to the browser every 800 ms with
+  a Restore / Discard banner; the draft clears on a real save and never touches the database.
+- The topbar bell opens an inbox derived from existing rows (review queues, last scrape jobs,
+  last sheet-import runs, last publish events) — no new table.
+- `/design-lab` is rebuilt on the live v3 components behind the staff login and the production
+  404; `storefront/{product-card,tabs,order-summary-preview,marquee}.tsx` are deleted with it.
+- Measured in the worktree: 415 unit tests (33 new), 13 db tests, typecheck, lint, copy:check,
+  i18n.
+
+### D — the media library becomes a DAM
+- `/studio/media` is URL-driven: keyset pagination (60 a page), sort, and server-side type /
+  orientation / favourite / demo / size / date filters stacking with folder, search, missing-alt,
+  unused and AI-generated; grid/list toggle; phone cards. Orientation is answered by three small
+  static `$queryRaw` calls (Prisma cannot compare two columns in a plain filter).
+- A detail drawer per file: dimensions, bytes, checksum, provenance, a labelled "used in" list
+  linking to the owning Studio section, inline caption/tags/favourite/alt, replace-file at the
+  same URL, and for video a poster capture (frame at one second → its own library row). Bulk bar
+  gains Move, batch description and favourite. Upload is a drag-and-drop zone with a folder picker.
+  The media picker lists video as well as images.
+- The Part 15 blur-up placeholders are finally rendered: every site-image slot resolves its LQIP
+  on the URL it actually resolved to (bundled master or owner override), so a repointed slot never
+  paints the picture it used to show. Mirrored catalogue images get a library row of their own.
+  The generation queue for the next photography batch (bench concepts, large-format art, concept
+  rooms, four process steps, mobile crops, three video loops) is recorded in
+  `docs/media-v3-manifest.json` as `plannedSets`, for the owner's machine to run.
+- `src/lib/media.ts` (dead Cloudinary constants, zero importers) now carries the library's shared
+  formatting helpers instead.
+- Measured in the worktree: 411 unit tests, 23 db tests (10 new), typecheck, lint, copy:check.
+
+### Merge follow-ups (`89af275`)
+- The inquiries page had G's and C1's `isDemo` additions auto-merged into the same select and row
+  mapping; one copy remains.
+- The marquee keyframes left `globals.css` with their only consumer.
+- The Tiptap editor's contenteditable now carries a role, `aria-multiline` and an accessible name,
+  closing the `aria-input-field-name` finding the Content Lab audit reproduced on every editor.
+
+---
+
 ## Transformation batch G — Content Lab (2026-09-03)
 
 Merged `b642f17`, built in its own worktree against its own database copy; it depends only on B0,
