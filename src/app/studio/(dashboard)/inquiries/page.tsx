@@ -246,7 +246,9 @@ export default async function InquiriesPage({
             </div>
             <Link
               href={demoHref}
-              aria-pressed={demoOnly}
+              // A navigating filter is a link, so its "on" state is aria-current
+              // (aria-pressed belongs to buttons; axe flags it on an anchor).
+              aria-current={demoOnly ? "true" : undefined}
               className={
                 demoOnly
                   ? `${TAB} rounded-full border border-border bg-foreground/6 font-medium text-foreground`
