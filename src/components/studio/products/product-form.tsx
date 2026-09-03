@@ -8,6 +8,12 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteProducts, upsertProduct } from "@/actions/products";
 import { Button } from "@/components/ui/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import {
@@ -33,6 +39,45 @@ import { ProductTranslationsSection } from "./product-form/translations-section"
 
 export type { ProductFormInitial } from "./product-form/schema";
 
+/**
+ * §12's product form is twelve stacked sections — the longest scroll in the
+ * Studio. The roadmap groups them into five tabs; these are the field names
+ * each tab owns, and they exist for one reason beyond layout.
+ *
+ * **A tab can hide a validation error.** Submit with a bad SEO title while
+ * General is showing and, without this map, the form simply refuses to submit
+ * with nothing on screen to explain why — the classic way tabbed forms strand
+ * people. `onInvalid` below reads the first errored field, finds its tab and
+ * switches to it, and every tab with an error is marked in the strip.
+ */
+const TABS = [
+  {
+    value: "general",
+    label: "General",
+    fields: [
+      "title", "displayName", "shortTagline", "description", "categoryId",
+      "featured", "status", "priceMin", "priceMax", "showPrice", "inStock",
+      "tier", "timeline", "materials", "dimensions", "occasions",
+      "confirmRewrite",
+    ],
+  },
+  { value: "images", label: "Images", fields: ["images", "videoUrl"] },
+  { value: "customization", label: "Customization", fields: ["customFields"] },
+  {
+    value: "details",
+    label: "Details",
+    fields: ["lexical", "madeWith", "careNotes", "translations"],
+  },
+  { value: "seo", label: "SEO", fields: ["seoTitle", "seoDescription", "ogImage"] },
+] as const;
+
+/** The tab a field belongs to, or undefined for a field no tab claims. */
+function tabForField(field: string): string | undefined {
+  const root = field.split(".")[0];
+  return TABS.find((tab) => (tab.fields as readonly string[]).includes(root))
+    ?.value;
+}
+
 export function ProductForm({
   categories,
   product,
@@ -53,6 +98,23 @@ export function ProductForm({
   });
 
   useUnsavedChangesGuard(methods.formState.isDirty && !saving);
+
+  const [tab, setTab] = useState<string>(TABS[0].value);
+
+  /* Which tabs are holding an error right now, so the strip can say so
+     without the owner opening each one to look. */
+  const errored = new Set(
+    Object.keys(methods.formState.errors)
+      .map(tabForField)
+      .filter((value): value is string => Boolean(value)),
+  );
+
+  /** A refused submit lands the owner ON the problem rather than nowhere. */
+  function onInvalid(errors: Record<string, unknown>) {
+    const first = Object.keys(errors)[0];
+    const target = first ? tabForField(first) : undefined;
+    if (target) setTab(target);
+  }
 
   async function onSubmit(values: FormValues) {
     setSaving(true);
@@ -89,23 +151,66 @@ export function ProductForm({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
+        className="space-y-6"
+      >
         {product?.needsRewrite && <RewriteWarning />}
         {product?.importSource && <ProvenanceSection product={product} />}
 
-        <EssentialsSection categories={categories} />
-        {/* Sections below swap their resin flavor for print fields when the
-            product is tier 4 or filed in a print-group category (M-A3). */}
-        <PricingSpecsSection categories={categories} />
-        <PrintProductionSection categories={categories} />
-        <OccasionsSection categories={categories} />
-        <LexicalSection />
-        <ProvenanceLinksSection />
-        <CareNotesSection categories={categories} />
-        <MediaSection uploading={uploading} setUploading={setUploading} />
-        <CustomizationFieldsSection categories={categories} />
-        <SeoSection slug={product?.slug} />
-        <ProductTranslationsSection />
+        <Tabs value={tab} onValueChange={setTab}>
+          <TabsList aria-label="Product sections">
+            {TABS.map((entry) => (
+              <TabsTrigger key={entry.value} value={entry.value}>
+                {entry.label}
+                {errored.has(entry.value) && (
+                  <>
+                    <span
+                      aria-hidden
+                      className="size-1.5 rounded-full bg-destructive"
+                    />
+                    <span className="sr-only"> (has an error)</span>
+                  </>
+                )}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* `forceMount` on every panel, which is the whole reason this is
+              safe. Radix unmounts an inactive tab by default; these panels
+              hold registered form fields, an in-flight upload and a rich-text
+              editor, and unmounting them on a tab change would throw away
+              editor instances and upload state mid-edit. Mounted-but-`hidden`
+              keeps the DOM and the accessibility tree honest. */}
+          <TabsContent forceMount value="general" className="space-y-6">
+            <EssentialsSection categories={categories} />
+            {/* Sections below swap their resin flavor for print fields when
+                the product is tier 4 or filed in a print-group category
+                (M-A3). */}
+            <PricingSpecsSection categories={categories} />
+            <PrintProductionSection categories={categories} />
+            <OccasionsSection categories={categories} />
+          </TabsContent>
+
+          <TabsContent forceMount value="images" className="space-y-6">
+            <MediaSection uploading={uploading} setUploading={setUploading} />
+          </TabsContent>
+
+          <TabsContent forceMount value="customization" className="space-y-6">
+            <CustomizationFieldsSection categories={categories} />
+          </TabsContent>
+
+          <TabsContent forceMount value="details" className="space-y-6">
+            <LexicalSection />
+            <ProvenanceLinksSection />
+            <CareNotesSection categories={categories} />
+            <ProductTranslationsSection />
+          </TabsContent>
+
+          <TabsContent forceMount value="seo" className="space-y-6">
+            <SeoSection slug={product?.slug} />
+          </TabsContent>
+        </Tabs>
 
         {/* Sticky save bar */}
         <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">

@@ -51,6 +51,33 @@ only place the change can be confirmed.
 
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
+### Added: the product form is five tabs
+Twelve stacked sections were the longest scroll in the Studio. They are now **General · Images ·
+Customization · Details · SEO**.
+
+Two things had to be right for tabs to be an improvement rather than a hiding place:
+
+- **Nothing unmounts.** Radix drops inactive content by default, and these panels hold registered
+  form fields, an upload in flight and a rich-text editor instance — losing those on a tab change
+  would be worse than the scroll. Every panel is `forceMount`ed.
+- **An error cannot hide behind a tab.** Submitting with a bad SEO title while General is showing
+  would otherwise refuse to submit with nothing on screen to explain why — the classic way tabbed
+  forms strand people. Each tab declares the fields it owns; a refused submit switches to the first
+  tab holding an error, and every errored tab is marked in the strip.
+
+### The bug in the first version, caught by measuring
+`forceMount` alone produced tabs that **did not hide anything**. Radix computes presence as
+`forceMount || isSelected` and then sets `hidden: !present` — so forcing the mount also forces
+`hidden` to false, and all five panels rendered at once. The strip would have shipped as decoration
+over a form that still scrolled as one column, which is worse than no tabs because it claims to have
+hidden something. `TabsContent` now carries `data-[state=inactive]:hidden`, which is inert without
+`forceMount` and load-bearing with it. Counting visible panels in the browser is what found it —
+the screenshot alone looked plausible.
+
+Measured after the fix: 13 panels mounted (5 product + 8 translation locales), **0 inactive panels
+visible**, and **15 inputs still mounted inside inactive panels** — so the hiding is visual only and
+no field was thrown away. An empty submit activates General and marks it.
+
 ### Added: the media library reaches the rich-text editor
 The image button asked for a URL — including for images already in the owner's own library. The
 round trip was: leave the post, open Media Library, copy a URL, come back, paste. Doing that for a

@@ -90,6 +90,20 @@ export function TabsTrigger({
   );
 }
 
+/**
+ * `data-[state=inactive]:hidden` is load-bearing whenever a caller passes
+ * `forceMount`, and easy to miss: Radix computes presence as
+ * `forceMount || isSelected` and then sets `hidden: !present`, so forcing the
+ * mount ALSO forces `hidden` to false — every panel renders, visibly, at once.
+ * A tab strip over a form that still scrolls as one column is worse than no
+ * tabs, because it claims to have hidden something.
+ *
+ * Callers force the mount when a panel owns state that must not be thrown
+ * away on a tab change — a registered form field, an upload in flight, a
+ * rich-text editor instance. They still need the panel out of sight and out
+ * of the accessibility tree, which is what this does. Without `forceMount`
+ * Radix does not render inactive content at all and the class is inert.
+ */
 export function TabsContent({
   className,
   ...props
@@ -98,7 +112,7 @@ export function TabsContent({
     <TabsPrimitive.Content
       data-slot="tabs-content"
       className={cn(
-        "outline-none focus-visible:ring-2 focus-visible:ring-focus",
+        "outline-none focus-visible:ring-2 focus-visible:ring-focus data-[state=inactive]:hidden",
         className,
       )}
       {...props}
