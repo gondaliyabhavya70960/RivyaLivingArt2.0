@@ -13,6 +13,7 @@ import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { CollectionCard } from "@/components/storefront/collection-card";
 import { FeaturedTestimonial } from "@/components/storefront/featured-testimonial";
+import { HeroMedia } from "@/components/storefront/hero-media";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import {
   Eyebrow,
@@ -32,6 +33,7 @@ import type {
   RichTextData,
   TestimonialBlockData,
   TestimonialGridData,
+  VideoHeroData,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
@@ -226,6 +228,96 @@ function HeroBlock({
           />
         </div>
       ) : null}
+
+      <div
+        className={cn(
+          "u-shell relative flex flex-col gap-8 pb-20",
+          first ? "pt-32" : "pt-20",
+        )}
+      >
+        {data.eyebrow ? (
+          <Eyebrow rule={false} className="text-champagne">
+            {data.eyebrow}
+          </Eyebrow>
+        ) : null}
+        {data.headline ? (
+          <Tag
+            id={headingId}
+            className="max-w-[16ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+          >
+            {data.headline}
+          </Tag>
+        ) : null}
+        {data.body ? (
+          <p className="u-prose font-body text-body leading-relaxed text-mist">
+            {data.body}
+          </p>
+        ) : null}
+        {data.ctaLabel && data.ctaHref ? (
+          <div className="flex flex-wrap items-center gap-4">
+            <BlockCta label={data.ctaLabel} href={data.ctaHref} />
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * `videoHero` — the other way to open a page (shares `hero`'s `"hero"` slot,
+ * so the two never coexist on one page; `describeBlockArrangementProblem`
+ * refuses the combination before a save can produce it).
+ *
+ * Structured exactly like `HeroBlock` — same min-height, same gradient, same
+ * text stack — with `HeroMedia` standing in for the plain `<Image>`. The
+ * poster is always the LCP element (Part 14 forbids delaying it); the film
+ * itself mounts client-side, muted and looping, only for a motion-safe
+ * fine-pointer visitor — `HeroMedia` already gates autoplay off reduced
+ * motion and touch, which is what makes it "never autoplay on touch" for
+ * free rather than something this block has to re-implement.
+ *
+ * No poster, no band: an owner who has picked a film but not yet a poster
+ * has not finished configuring this block, and a hero with no LCP image is
+ * worse than no hero (§9 — a block with no content renders nothing).
+ */
+function VideoHeroBlock({
+  id,
+  data,
+  heading,
+  first,
+}: {
+  id: string;
+  data: VideoHeroData;
+  heading: "h1" | "h2";
+  first: boolean;
+}) {
+  const Tag = heading;
+  const poster = isRenderableSrc(data.posterUrl) ? data.posterUrl : null;
+  const video = isRenderableSrc(data.videoUrl) ? data.videoUrl : null;
+  const headingId = `${id}-heading`;
+
+  if (!poster) return null;
+
+  return (
+    <section
+      data-theme="navy"
+      aria-labelledby={data.headline ? headingId : undefined}
+      className={cn(
+        "relative flex min-h-[70svh] flex-col justify-end overflow-hidden bg-obsidian text-mineral",
+        first && "-mt-20",
+      )}
+    >
+      <div className="absolute inset-0">
+        <HeroMedia
+          posterSrc={poster}
+          videoUrl={video ?? undefined}
+          posterAlt={data.imageAlt}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-obsidian/92 via-obsidian/65 to-obsidian/20"
+        />
+      </div>
 
       <div
         className={cn(
@@ -1062,5 +1154,14 @@ export function CustomPageBlock({
         />
       );
     }
+    case "videoHero":
+      return (
+        <VideoHeroBlock
+          id={block.id}
+          data={block.data as VideoHeroData}
+          heading={heading}
+          first={first}
+        />
+      );
   }
 }

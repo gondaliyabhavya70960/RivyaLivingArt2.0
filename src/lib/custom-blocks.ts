@@ -47,6 +47,26 @@ const href = z
     if (problem) ctx.addIssue({ code: "custom", message: problem });
   });
 
+/**
+ * A media-library URL for a video (or its poster), or empty. Same rule as
+ * `imageUrl` — site-root paths and absolute URLs only — with wording that
+ * does not tell an owner to "pick a picture" when they are pointing at a
+ * film.
+ */
+const mediaUrl = z
+  .string()
+  .trim()
+  .max(600)
+  .default("")
+  .superRefine((value, ctx) => {
+    if (!value) return;
+    if (value.startsWith("/") || /^https?:\/\//i.test(value)) return;
+    ctx.addIssue({
+      code: "custom",
+      message: "Pick a file from the library, or paste a full https:// URL.",
+    });
+  });
+
 /** A media-library URL, or empty. Site-root paths and absolute URLs only. */
 const imageUrl = z
   .string()
@@ -172,6 +192,23 @@ export const testimonialGridSchema = z.object({
   spacing,
 });
 
+/**
+ * The same fields `heroSchema` carries, minus `spacing` (a dark, full-bleed
+ * opening band has no compact/standard choice, like the plain hero) — plus a
+ * video. Shares the `"hero"` slot with `hero` in `CUSTOM_BLOCKS` below: a
+ * page opens once, and this is the other way to do it.
+ */
+export const videoHeroSchema = z.object({
+  videoUrl: mediaUrl,
+  posterUrl: imageUrl,
+  imageAlt: text(200),
+  eyebrow: text(60),
+  headline: text(160),
+  body: text(600),
+  ctaLabel: text(40),
+  ctaHref: href,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -199,6 +236,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "journalGrid",
   "testimonial",
   "testimonialGrid",
+  "videoHero",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -214,6 +252,7 @@ export type PortfolioGridData = z.infer<typeof portfolioGridSchema>;
 export type JournalGridData = z.infer<typeof journalGridSchema>;
 export type TestimonialBlockData = z.infer<typeof testimonialSchema>;
 export type TestimonialGridData = z.infer<typeof testimonialGridSchema>;
+export type VideoHeroData = z.infer<typeof videoHeroSchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -237,8 +276,17 @@ type BlockDef = {
    * rhythm by accident — the accident is not expressible.
    */
   ground: "dark" | "alternating";
-  /** At most one per page — a second hero is two `h1`s. */
-  once?: boolean;
+  /**
+   * A slot this block claims. At most one block occupying a given slot may
+   * appear on a page — the mechanism a plain "at most one of this exact
+   * type" boolean cannot express once two DIFFERENT types compete for the
+   * same opening: `hero` and `videoHero` are two ways to open a page, never
+   * both, so they share the `"hero"` slot. `finalCta` keeps a slot of its
+   * own (`"finalCta"`) for the same single-per-page rule it always had —
+   * nothing else may ever claim it, so it is still, in effect, "at most one
+   * of this type".
+   */
+  slot?: "hero" | "finalCta";
 };
 
 export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
@@ -255,7 +303,7 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
       { name: "imageAlt", label: "Picture description", kind: "text" },
     ],
     ground: "dark",
-    once: true,
+    slot: "hero",
   },
   richText: {
     type: "richText",
@@ -317,7 +365,7 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     // band is dark and runs straight into the obsidian footer". A toggle that
     // is wrong in every arrangement anyone builds is not a toggle.
     ground: "alternating",
-    once: true,
+    slot: "finalCta",
   },
   collectionGrid: {
     type: "collectionGrid",
@@ -369,6 +417,21 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     schema: testimonialGridSchema,
     translatable: [{ name: "heading", label: "Heading", kind: "text" }],
     ground: "alternating",
+  },
+  videoHero: {
+    type: "videoHero",
+    label: "Video hero",
+    description: "The opening film, headline and one button.",
+    schema: videoHeroSchema,
+    translatable: [
+      { name: "eyebrow", label: "Eyebrow", kind: "text" },
+      { name: "headline", label: "Headline", kind: "text" },
+      { name: "body", label: "Body", kind: "textarea" },
+      { name: "ctaLabel", label: "Button label", kind: "text" },
+      { name: "imageAlt", label: "Poster description", kind: "text" },
+    ],
+    ground: "dark",
+    slot: "hero",
   },
 };
 
@@ -457,12 +520,24 @@ export function resolveBlockGrounds(
 export function describeBlockArrangementProblem(
   blocks: readonly { type: CustomBlockType; data?: unknown }[],
 ): string | null {
-  for (const type of CUSTOM_BLOCK_TYPES) {
-    if (!CUSTOM_BLOCKS[type].once) continue;
-    const count = blocks.filter((b) => b.type === type).length;
-    if (count > 1) {
-      return `A page has one ${CUSTOM_BLOCKS[type].label.toLowerCase()}, not ${count}.`;
+  // Group by SLOT, not by type — `hero` and `videoHero` are two different
+  // types that must never coexist, and a same-type-only check cannot see
+  // that. `Map` insertion order matches the blocks' own order, so the
+  // message always names the block that was already on the page first.
+  const bySlot = new Map<string, CustomBlockType[]>();
+  for (const block of blocks) {
+    const slot = CUSTOM_BLOCKS[block.type].slot;
+    if (!slot) continue;
+    const claimants = bySlot.get(slot) ?? [];
+    claimants.push(block.type);
+    bySlot.set(slot, claimants);
+  }
+  for (const [slot, claimants] of bySlot) {
+    if (claimants.length <= 1) continue;
+    if (slot === "hero" && new Set(claimants).size > 1) {
+      return `A page opens once — pick either ${CUSTOM_BLOCKS.hero.label.toLowerCase()} or ${CUSTOM_BLOCKS.videoHero.label.toLowerCase()}, not both.`;
     }
+    return `A page has one ${CUSTOM_BLOCKS[claimants[0]].label.toLowerCase()}, not ${claimants.length}.`;
   }
 
   const grounds = resolveBlockGrounds(blocks);
@@ -510,7 +585,9 @@ export function describeBlockArrangementNotice(
 export function resolveHeadingLevels(
   blocks: readonly { type: CustomBlockType }[],
 ): ("h1" | "h2")[] {
-  const heroAt = blocks.findIndex((b) => b.type === "hero");
+  // `videoHero` shares the `hero` slot: whichever of the two opens the page
+  // owns the h1, same as a plain hero always has.
+  const heroAt = blocks.findIndex((b) => CUSTOM_BLOCKS[b.type].slot === "hero");
   const ownerIndex = heroAt >= 0 ? heroAt : blocks.length > 0 ? 0 : -1;
   return blocks.map((_, index) => (index === ownerIndex ? "h1" : "h2"));
 }

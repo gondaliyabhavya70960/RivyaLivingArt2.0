@@ -37,7 +37,9 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       return;
     }
 
-    const testUrls = ["https://res.cloudinary.com/dhaqpl1kz/image/upload/sample.jpg"];
+    const testUrls = [
+      "https://res.cloudinary.com/dhaqpl1kz/image/upload/sample.jpg",
+    ];
     const details = await findMediaUsageDetails(testUrls);
     expect(details).toBeInstanceOf(Map);
   });
@@ -136,6 +138,47 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       expect(details.get(url)).toContain("Research · Research row");
     } finally {
       await db.researchRecord.delete({ where: { id } });
+    }
+  });
+
+  // C2 · block catalogue growth: `videoHero` carries two URLs (the film and
+  // its poster) on one block row, each guarded under its own label — a
+  // delete guard that only saw one of the two would let the other 404 the
+  // page's opening band with no warning.
+  it("guards a videoHero block's video and poster", async (ctx) => {
+    if (!db) {
+      ctx.skip();
+      return;
+    }
+    const id = `test-media-usages-videohero-${Date.now()}`;
+    const videoUrl = `/uploads/test/${id}-film.mp4`;
+    const posterUrl = `/uploads/test/${id}-poster.jpg`;
+    const page = await db.customPage.create({
+      data: {
+        id,
+        slug: id,
+        title: "Media usages test lander",
+      },
+    });
+    await db.customBlock.create({
+      data: {
+        pageId: page.id,
+        type: "videoHero",
+        order: 0,
+        data: { videoUrl, posterUrl },
+      },
+    });
+    try {
+      const details = await findMediaUsageDetails([videoUrl, posterUrl]);
+      expect(details.get(videoUrl)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(video\)$/,
+      );
+      expect(details.get(posterUrl)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(poster\)$/,
+      );
+    } finally {
+      // Deletes the block via the page's cascade.
+      await db.customPage.delete({ where: { id } });
     }
   });
 });
