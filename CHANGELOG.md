@@ -5,6 +5,44 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — the Studio's three route boundaries (2026-09-03)
+
+The first slice of Phase 10. All three boundaries already existed; each was wrong in a way no gate
+could see, because `studio-audit.mjs` sweeps 30 routes and none of them is an error.
+
+### Added
+- **The Studio error boundary now SHOWS its reference code.** Next puts a `digest` on every
+  production error, and this boundary logged it to the console — where the owner, who is not holding
+  devtools open, never saw it. "The products page broke" was the whole bug report, and nothing tied
+  it to a server log. The digest is now on screen, in mono under a hairline, selectable. The
+  `console.error` stays for whoever does have devtools open.
+
+### Changed
+- **The loading skeleton is flat.** It carried `animate-pulse`; the roadmap asks for flat, no
+  shimmer, and Part 14 rejects motion that is decoration. A pulse says "still waiting", which the
+  placeholder shape already says.
+- All three files onto the tokens: `rounded-2xl`/`rounded-xl` → `rounded-card`, `shadow-sm` →
+  `shadow-e1`.
+
+### Verified rather than assumed
+The audit cannot reach these routes, so they were driven directly against a production build:
+- `not-found` — reached via `/studio/products/<bad-id>` and `/studio/blog/<bad-id>`. Computed style
+  `border-radius: 4px`, `box-shadow: rgba(8, 10, 14, 0.06) 0px 1px 2px` — the tokens, resolved.
+- `error` — reached by building a throwing route into a scratch build, since a digest only exists
+  for a real server error. Rendered `Reference 650846091` in JetBrains Mono, inside the admin chrome
+  rather than the public dark error page. The probe route was deleted before the commit and is
+  absent from the final build.
+
+### Deliberately NOT done
+- **The rest of the Phase 10 drift sweep.** `shadow-sm` is on 47 more sites and `rounded-xl`/
+  `rounded-2xl` on 63; the radius half takes the Studio from 12–16 px to 4 px, which is a visible
+  restyle of every card in the panel, not a token rename. It wants its own PR with screenshots, not
+  a footnote to a three-file change.
+- Tablet sidebar, command-palette verbs, Sonner/badge/Tabs, sticky table headers and the dashboard
+  tiles remain open; the design lab is still gated on D17 and the demo-products tile on D8.
+
+---
+
 ## Transformation Phase 16 — the overlays' keyboard contract (2026-09-03, second batch)
 
 ### Added
