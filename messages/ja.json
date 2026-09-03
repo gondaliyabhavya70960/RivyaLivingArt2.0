@@ -59,7 +59,8 @@
     "logoHome": "Rivya Living Art — ホーム",
     "dismissAnnouncement": "お知らせを閉じる",
     "announcementDefault": "現在の製作期間 · 小さな作品 7〜10日 · 大きな作品 3〜6週間",
-    "ratedOutOf": "{outOf}つ星のうち{rating}"
+    "ratedOutOf": "{outOf}つ星のうち{rating}",
+    "demoMark": "デモコンテンツ"
   },
   "Header": {
     "search": "検索",
@@ -1493,5 +1494,14 @@
       "body": "空間、用途、そして大切な日付をお送りください。一層目を流す前に、設計・素材・価格をWhatsAppで決めます。",
       "formCta": "オーダーメイドを計画する"
     }
+  },
+  "Testimonials": {
+    "demoNotice": "デモの声 — 実際のお客様の声ではありません",
+    "linkedPiece": "この作品を見る",
+    "linkedProject": "このプロジェクトを見る",
+    "watchFilm": "動画を見る",
+    "verifiedBy": "確認済みのお客様",
+    "givenOn": "{date}にいただいた声",
+    "wallHeading": "お客様の声"
   }
 }

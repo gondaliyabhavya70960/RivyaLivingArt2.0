@@ -59,7 +59,8 @@
     "logoHome": "Rivya Living Art — होम",
     "dismissAnnouncement": "सूचना बंद करें",
     "announcementDefault": "मौजूदा समय · छोटी कृतियाँ 7–10 दिन · बड़ी कृतियाँ 3–6 सप्ताह",
-    "ratedOutOf": "{outOf} में से {rating} स्टार"
+    "ratedOutOf": "{outOf} में से {rating} स्टार",
+    "demoMark": "डेमो सामग्री"
   },
   "Header": {
     "search": "खोजें",
@@ -1493,5 +1494,14 @@
       "body": "जगह, इस्तेमाल और जो तारीख़ मायने रखती है वह भेजिए। एक भी परत ढलने से पहले डिज़ाइन, सामग्री और दाम आपसे व्हाट्सऐप पर तय होते हैं।",
       "formCta": "कस्टम ऑर्डर की योजना बनाएँ"
     }
+  },
+  "Testimonials": {
+    "demoNotice": "डेमो प्रशंसापत्र — यह असली ग्राहक समीक्षा नहीं है",
+    "linkedPiece": "यह कृति देखें",
+    "linkedProject": "यह प्रोजेक्ट देखें",
+    "watchFilm": "फ़िल्म देखें",
+    "verifiedBy": "सत्यापित ग्राहक",
+    "givenOn": "{date} को दिया गया",
+    "wallHeading": "उनके शब्दों में"
   }
 }

@@ -59,7 +59,8 @@
     "logoHome": "Rivya Living Art — الصفحة الرئيسية",
     "dismissAnnouncement": "إخفاء الإعلان",
     "announcementDefault": "مدة التنفيذ الحالية · القطع الصغيرة 7–10 أيام · القطع الكبيرة 3–6 أسابيع",
-    "ratedOutOf": "تقييم {rating} من {outOf} نجوم"
+    "ratedOutOf": "تقييم {rating} من {outOf} نجوم",
+    "demoMark": "محتوى تجريبي"
   },
   "Header": {
     "search": "بحث",
@@ -1493,5 +1494,14 @@
       "body": "أرسل المساحة والاستعمال والموعد الذي يهمّك. يُتفق على التصميم والخامات والسعر معك على واتساب قبل صبّ أي طبقة.",
       "formCta": "خطّط طلبًا خاصًا"
     }
+  },
+  "Testimonials": {
+    "demoNotice": "شهادة تجريبية — ليست تقييمًا حقيقيًا من عميل",
+    "linkedPiece": "عرض هذه القطعة",
+    "linkedProject": "عرض هذا المشروع",
+    "watchFilm": "مشاهدة الفيلم",
+    "verifiedBy": "عميل موثّق",
+    "givenOn": "قيل بتاريخ {date}",
+    "wallHeading": "بكلماتهم"
   }
 }

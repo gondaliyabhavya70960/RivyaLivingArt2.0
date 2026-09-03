@@ -59,7 +59,8 @@
     "logoHome": "Rivya Living Art — Startseite",
     "dismissAnnouncement": "Hinweis ausblenden",
     "announcementDefault": "Aktuelle Lieferzeit · Kleine Stücke 7–10 Tage · Große Stücke 3–6 Wochen",
-    "ratedOutOf": "Bewertet mit {rating} von {outOf} Sternen"
+    "ratedOutOf": "Bewertet mit {rating} von {outOf} Sternen",
+    "demoMark": "Demo-Inhalt"
   },
   "Header": {
     "search": "Suche",
@@ -1493,5 +1494,14 @@
       "body": "Schicken Sie den Raum, die Nutzung und das Datum, auf das es ankommt. Entwurf, Materialien und Preis werden mit Ihnen auf WhatsApp geklärt, bevor eine einzige Schicht gegossen wird.",
       "formCta": "Sonderanfertigung planen"
     }
+  },
+  "Testimonials": {
+    "demoNotice": "Demo-Erfahrungsbericht — keine echte Kundenbewertung",
+    "linkedPiece": "Dieses Stück ansehen",
+    "linkedProject": "Dieses Projekt ansehen",
+    "watchFilm": "Film ansehen",
+    "verifiedBy": "Verifizierter Kunde",
+    "givenOn": "Abgegeben am {date}",
+    "wallHeading": "In ihren Worten"
   }
 }

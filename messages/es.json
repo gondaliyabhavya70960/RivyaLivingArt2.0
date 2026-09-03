@@ -59,7 +59,8 @@
     "logoHome": "Rivya Living Art — inicio",
     "dismissAnnouncement": "Descartar el aviso",
     "announcementDefault": "Plazo actual · Piezas pequeñas 7–10 días · Piezas grandes 3–6 semanas",
-    "ratedOutOf": "Valorado con {rating} de {outOf} estrellas"
+    "ratedOutOf": "Valorado con {rating} de {outOf} estrellas",
+    "demoMark": "Contenido de muestra"
   },
   "Header": {
     "search": "Buscar",
@@ -1493,5 +1494,14 @@
       "body": "Envía el espacio, el uso y la fecha que importa. El diseño, los materiales y el precio se acuerdan contigo por WhatsApp antes de verter una sola capa.",
       "formCta": "Planificar un encargo"
     }
+  },
+  "Testimonials": {
+    "demoNotice": "Testimonio de muestra — no es una reseña real de un cliente",
+    "linkedPiece": "Ver esta pieza",
+    "linkedProject": "Ver este proyecto",
+    "watchFilm": "Ver el vídeo",
+    "verifiedBy": "Cliente verificado",
+    "givenOn": "Dicho el {date}",
+    "wallHeading": "En sus palabras"
   }
 }

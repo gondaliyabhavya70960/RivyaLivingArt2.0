@@ -59,7 +59,8 @@
     "logoHome": "Rivya Living Art — હોમ",
     "dismissAnnouncement": "સૂચના બંધ કરો",
     "announcementDefault": "હાલનો સમય · નાની કૃતિઓ 7–10 દિવસ · મોટી કૃતિઓ 3–6 અઠવાડિયાં",
-    "ratedOutOf": "{outOf} માંથી {rating} તારા"
+    "ratedOutOf": "{outOf} માંથી {rating} તારા",
+    "demoMark": "ડેમો સામગ્રી"
   },
   "Header": {
     "search": "શોધો",
@@ -1493,5 +1494,14 @@
       "body": "જગ્યા, વપરાશ અને જે તારીખ મહત્ત્વની હોય તે મોકલો. એક પણ સ્તર ઢાળાય તે પહેલાં ડિઝાઇન, સામગ્રી અને ભાવ તમારી સાથે વૉટ્સએપ પર નક્કી થાય છે.",
       "formCta": "કસ્ટમ ઓર્ડરનું આયોજન કરો"
     }
+  },
+  "Testimonials": {
+    "demoNotice": "ડેમો પ્રશંસાપત્ર — વાસ્તવિક ગ્રાહક સમીક્ષા નથી",
+    "linkedPiece": "આ કૃતિ જુઓ",
+    "linkedProject": "આ પ્રોજેક્ટ જુઓ",
+    "watchFilm": "ફિલ્મ જુઓ",
+    "verifiedBy": "ચકાસાયેલ ગ્રાહક",
+    "givenOn": "{date} ના રોજ આપ્યું",
+    "wallHeading": "તેમના શબ્દોમાં"
   }
 }
