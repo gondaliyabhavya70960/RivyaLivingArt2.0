@@ -12,7 +12,7 @@ import { logActivity, snapshotBefore } from "@/lib/activity";
 import { findMediaUsages } from "@/lib/media-usages";
 import { db } from "@/lib/db";
 import { seoFilename, splitFilename } from "@/lib/media-filename";
-import { finalizeAsset } from "@/lib/media-ingest";
+import { finalizeAsset, MediaTypeMismatchError } from "@/lib/media-ingest";
 import {
   ACCEPTED_UPLOAD_TYPES,
   deleteFile,
@@ -171,7 +171,13 @@ export async function uploadMediaFiles(
         });
       } catch (error) {
         console.error(`Media upload failed for ${file.name}:`, error);
-        failed.push(`${file.name} (storage error)`);
+        // A declared-type mismatch (F1's byte sniff) is the owner's to act on;
+        // name it instead of folding it into the generic storage message.
+        failed.push(
+          error instanceof MediaTypeMismatchError
+            ? `${file.name} (${error.message})`
+            : `${file.name} (storage error)`,
+        );
       }
     }
 

@@ -13,7 +13,7 @@ Updated at the end of every transformation phase. The narrative sections below i
 ```text
 Current Phase:            Transformation wave 1 — A1 and B merged; C1, D, E, F1 in flight; G early
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 · A1 · B · G · C1 · D COMPLETE (2026-09-03); PR #42 draft; CI green
+Phase Status:             B0 · A1 · B · G · C1 · D · F1 COMPLETE (2026-09-03); PR #42 draft; CI green
                           on every head; Vercel preview green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
@@ -21,8 +21,8 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              E (scraper + sheets) and F1 (hygiene) in wt-e / wt-f1; wave 2 A2 and
-                          A3 in wt-a2 / wt-a3, A4 and C2 queued behind the two-agent cap
+In Progress:              E (scraper + sheets) in wt-e; wave 2 A2 and A3 in wt-a2 / wt-a3, A4 and
+                          C2 queued behind the two-agent cap
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken

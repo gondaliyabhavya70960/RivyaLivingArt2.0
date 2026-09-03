@@ -5,6 +5,26 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 1 · batch F1 — CSP enforced, JSON-LD literals, magic-byte upload sniff (2026-09-03)
+
+Merged `86f6bba`, built and gated in its own worktree; the merged head was built here and the
+enforced policy checked against the running site before the push.
+
+## F1 — CSP enforcement, JSON-LD accuracy, upload magic-byte validation
+
+Three hygiene fixes, each small enough to verify in isolation.
+
+**CSP now blocks instead of only reporting.** The report-only period ran clean, so `next.config.ts` renames the header key from `Content-Security-Policy-Report-Only` to `Content-Security-Policy`. The directive string carries forward unchanged except for one real gap the enforced header would have hit immediately: `frame-src` now allows `https://www.google.com`, because the click-to-activate Google Maps embed on `/contact` (`StudioMap`) had nowhere else to load from. Every other third-party host already loading client-side — Vercel Analytics/Speed Insights, Meta Pixel, GA4 — was already allow-listed; verified against `src/components/analytics/*` and the locale layout rather than assumed. Nonces were considered and rejected: minting one per request would force pages off the prerendered path, and this storefront depends on 13 routes × 9 locales staying statically generated to keep database fan-out off the request path. Rollback is a one-line key rename back to `-Report-Only`; the header comment records this so a revert never has to re-derive the policy.
+
+**The Organization/LocalBusiness JSON-LD stopped lying about language support.** `availableLanguage` was a literal `["en", "hi"]`, unchanged since the site had two locales — it now spreads `locales` from `src/i18n/config.ts`, all nine. The literal `priceRange: "₹₹–₹₹₹"` is gone too: there is no settings column behind it, and inventing one just to keep a schema field filled would be exactly the kind of number the redesign contract forbids. Rendering nothing beats a stale or fabricated figure.
+
+**Uploads are now checked against their own bytes, not just their claimed type.** `src/lib/media-ingest.ts` gains `sniffContentType(buffer)` — magic-byte detection for the seven signature-bearing formats the studio accepts (JPEG, PNG, WebP, AVIF, MP4, WebM, GLB) — and `validateDeclaredType(buffer, declared)`, which throws a typed `MediaTypeMismatchError` when the sniffed family (image/video/model) disagrees with what the upload declared. `finalizeAsset` now runs this check first, before touching sharp or computing a checksum, closing a gap where the studio's upload action trusted `file.type` — a value the browser sends and the client fully controls — with nothing behind it. USDZ stays declared-type-only and says why: it's a zip container, and a zip's magic bytes can't distinguish a real USDZ from any other zip-based file. Verified with 25 new tests over hand-built byte fixtures (no files on disk), covering every signature, every mismatch direction, and the case where nothing was recognized at all.
+
+Merge follow-up: the upload action now names a declared-type mismatch in its per-file failure
+list instead of folding it into "(storage error)".
+
+---
+
 ## Wave 1 · batches C1 and D — Studio content management and the media library (2026-09-03)
 
 Merged `a9447c4` (C1) and `cc8983d` (D), each built and gated in its own worktree; the merged head
