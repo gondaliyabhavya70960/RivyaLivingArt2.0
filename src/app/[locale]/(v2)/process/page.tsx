@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -5,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
+import { AccordionGallery } from "@/components/storefront/accordion-gallery";
 import { Button } from "@/components/storefront/button";
 import { CureLine, type CureMark } from "@/components/storefront/cure-line";
 import { HeroMedia } from "@/components/storefront/hero-media";
@@ -14,7 +16,7 @@ import {
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import { getPageSections } from "@/lib/page-sections-server";
-import { getSiteImages } from "@/lib/site-images-server";
+import { getSiteImageRefs, getSiteImages } from "@/lib/site-images-server";
 import type { SiteImageKey } from "@/lib/site-images";
 import { getSiteSettings } from "@/lib/site-settings";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
@@ -36,38 +38,24 @@ export async function generateMetadata({
 /** ISR so the WhatsApp number and the quoting line stay fresh. */
 export const revalidate = 300;
 
-/**
- * The six stages, and the photograph that belongs to each. Copy lives in
- * `Process.timeline.*`; only the imagery is chosen here, and every frame is a
- * first-party `/media` file (Part 15.2 — studio photography is real).
- */
-const STEPS = [
-  { key: "step1", image: "process.step1" },
-  { key: "step2", image: "process.step2" },
-  { key: "step3", image: "process.step3" },
-  { key: "step4", image: "process.step4" },
-  { key: "step5", image: "process.step5" },
-  { key: "step6", image: "process.step6" },
-] as const satisfies readonly { key: string; image: SiteImageKey }[];
-
-/** The four materials, in the canonical instance About links to (§11.4). */
-const MATERIALS = [
-  { key: "m1", image: "process.material1" },
-  { key: "m2", image: "process.material2" },
-  { key: "m3", image: "process.material3" },
-  { key: "m4", image: "process.material4" },
-] as const satisfies readonly { key: string; image: SiteImageKey }[];
-
 /* ————————————————— page —————————————————
  *
  * The process — REDESIGN.md §11.4, and the cure line's native habitat.
  *
- * The six stages keep their copy and their order; what changes is that the
- * page now *has* a spine. A vertical hairline fills in the reserved 56px
- * gutter as you scroll, notched once per stage, and the number of the stage
- * you are reading goes active — the same device the whole site borrows,
- * doing here the exact job it was designed for (§2.6). Below 1024px it
- * collapses to a 2px progress bar, as it does everywhere.
+ * Ten stages now, not six (owner decision, 2026-09-03 — `PROCESS_STEPS` in
+ * `src/lib/process-steps.ts`): Concept · Material selection · Wood
+ * preparation · Resin composition · Casting · Curing · Surface refinement ·
+ * Hand finishing · Quality inspection · Delivery. The last is delivery
+ * only — the studio states no installation service. Their order and
+ * visibility are their own arrangeable list, `getPageSections("process-
+ * steps")`, one level below this page's own `stages` band; the cure line's
+ * marks are built from that SAME resolved list, so hiding a stage here
+ * removes its tick too rather than leaving a gap in the rail.
+ *
+ * The four materials are a second such list, `getPageSections("materials")`,
+ * shared with About (§11.4's "canonical instance" — reordering a material
+ * here moves it there too). They render through `AccordionGallery`, which
+ * replaces the plain four-card grid this band used to be.
  *
  * Desktop lays each stage out as a sticky photograph in columns 1–5 with the
  * stage itself in 7–12; the photograph holds while its own stage scrolls past
@@ -87,16 +75,31 @@ export default async function ProcessPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tFooter, tCommon, tWa, settings, images, sections] =
-    await Promise.all([
-      getTranslations("Process"),
-      getTranslations("Footer"),
-      getTranslations("Common"),
-      getTranslations("WhatsApp"),
-      getSiteSettings(),
-      getSiteImages(),
-      getPageSections("process"),
-    ]);
+  const [
+    t,
+    tAccordion,
+    tFooter,
+    tCommon,
+    tWa,
+    settings,
+    images,
+    imageRefs,
+    sections,
+    stepSections,
+    materialSections,
+  ] = await Promise.all([
+    getTranslations("Process"),
+    getTranslations("AccordionGallery"),
+    getTranslations("Footer"),
+    getTranslations("Common"),
+    getTranslations("WhatsApp"),
+    getSiteSettings(),
+    getSiteImages(),
+    getSiteImageRefs(),
+    getPageSections("process"),
+    getPageSections("process-steps"),
+    getPageSections("materials"),
+  ]);
   // Localized greeting — the bare defaultWaGreeting() sent the English
   // fallback to all 9 locales (Part 0 audit A6-002).
   const waHref = buildWaLink(
@@ -114,18 +117,37 @@ export default async function ProcessPage({
       .map((line) => line.trim())
       .find(Boolean) ?? tCommon("announcementDefault");
 
-  /* §2.6 — one tick per stage, labelled in mono. This is the page the cure
-     line exists for, so the marks are the stages themselves. */
-  const cureMarks: CureMark[] = STEPS.map((step, index) => ({
+  const visibleSteps = stepSections.filter((step) => step.visible);
+  const visibleMaterials = materialSections.filter(
+    (material) => material.visible,
+  );
+
+  /* §2.6 — one tick per stage, labelled in mono, built from the SAME
+     resolved-and-ordered list the timeline below renders — hiding a stage
+     removes its tick, moving one moves the tick with it. */
+  const cureMarks: CureMark[] = visibleSteps.map((step, index) => ({
     id: `stage-${String(index + 1).padStart(2, "0")}`,
     label: t(`timeline.${step.key}Title`),
   }));
+
+  const materialItems = visibleMaterials.map((material) => {
+    const n = material.key.slice(1);
+    return {
+      key: material.key,
+      src: images[`process.material${n}` as SiteImageKey],
+      alt: t(`materials.alt${n}`),
+      title: t(`materials.m${n}Title`),
+      copy: t(`materials.m${n}Copy`),
+    };
+  });
 
   const sectionNodes: Record<string, ReactNode> = {
     /* ════════ 01 · Hero — the pour, full-bleed and dark ════════
             `/process` is a transparent-navbar route, so the band pulls up under
             the 80px header slot. HeroMedia keeps the poster as the LCP and
-            gates the loop (motion-safe, fine pointer, shared pause chip). */
+            gates the loop (motion-safe, fine pointer, shared pause chip); the
+            slow drift sits on its own wrapper, never the poster `<img>`
+            itself (Part 14 — the LCP element is never animated). */
     pour: (
       <section
         data-theme="navy"
@@ -135,7 +157,8 @@ export default async function ProcessPage({
         <div className="absolute inset-0">
           <HeroMedia
             videoUrl={images["process.heroVideo"]}
-            posterSrc={images["process.heroPoster"]}
+            poster={imageRefs["process.heroPoster"]}
+            drift
           />
           <span
             aria-hidden
@@ -144,22 +167,31 @@ export default async function ProcessPage({
         </div>
 
         <div className="u-shell relative flex flex-col gap-8 pt-32 pb-24">
-          <Eyebrow rule={false} className="text-champagne">
-            {t("hero.eyebrow")}
-          </Eyebrow>
+          {/* `Eyebrow` has no style prop, so the stagger delay wraps it
+              rather than reaching inside a shared component this batch does
+              not own. */}
+          <div className="sf-hero-rise" style={{ "--i": 0 } as CSSProperties}>
+            <Eyebrow rule={false} className="text-champagne">
+              {t("hero.eyebrow")}
+            </Eyebrow>
+          </div>
           <h1
             id="process-heading"
-            className="max-w-[12ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            style={{ "--i": 1 } as CSSProperties}
+            className="sf-hero-rise max-w-[12ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
           >
             {t("hero.headline")}
           </h1>
-          <p className="u-prose font-body text-body leading-relaxed text-mist">
+          <p
+            style={{ "--i": 2 } as CSSProperties}
+            className="sf-hero-rise u-prose font-body text-body leading-relaxed text-mist"
+          >
             {t("hero.lead")}
           </p>
         </div>
       </section>
     ),
-    /* ════════ 02 · The six stages ════════ */
+    /* ════════ 02 · The ten stages ════════ */
     stages: (
       <section
         aria-labelledby="stages-heading"
@@ -173,8 +205,9 @@ export default async function ProcessPage({
           />
 
           <ol className="flex flex-col gap-16 lg:gap-0">
-            {STEPS.map((step, index) => {
+            {visibleSteps.map((step, index) => {
               const number = String(index + 1).padStart(2, "0");
+              const image = step.imageKeys[0] as SiteImageKey;
               return (
                 <li
                   key={step.key}
@@ -185,7 +218,7 @@ export default async function ProcessPage({
                           next stage the next photograph takes over. */}
                   <div className="lg:col-span-5 lg:self-start lg:sticky lg:top-28">
                     <MeniscusImage
-                      src={images[step.image]}
+                      src={images[image]}
                       alt={t(`timeline.${step.key}Alt`)}
                       width={1000}
                       height={1250}
@@ -229,27 +262,13 @@ export default async function ProcessPage({
             title={t("materials.headingEndure")}
             intro={t("materials.intro")}
           />
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {MATERIALS.map((material, index) => (
-              <li key={material.key} className="flex flex-col gap-4">
-                <MeniscusImage
-                  src={images[material.image]}
-                  alt={t(`materials.alt${index + 1}`)}
-                  width={800}
-                  height={1000}
-                  sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
-                  className="aspect-[4/5] rounded-image"
-                  imageClassName="object-cover"
-                />
-                <h3 className="font-body text-16 font-medium text-ink">
-                  {t(`materials.${material.key}Title`)}
-                </h3>
-                <p className="font-body text-14 leading-relaxed text-graphite">
-                  {t(`materials.${material.key}Copy`)}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <AccordionGallery
+            items={materialItems}
+            labels={{
+              expand: tAccordion("expand"),
+              collapse: tAccordion("collapse"),
+            }}
+          />
         </div>
       </section>
     ),

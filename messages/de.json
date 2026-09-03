@@ -323,35 +323,51 @@
     "hero": {
       "eyebrow": "unser prozess",
       "headline": "Von der Idee zum Erbstück.",
-      "lead": "Sechs unaufgeregte Schritte zwischen Ihrer ersten Nachricht und dem Stück in Ihren Händen. So genau entsteht eine Rivya Living Art-Auftragsarbeit — und so lange dauert es, ehrlich gesagt."
+      "lead": "Zehn ruhige Schritte zwischen Ihrer ersten Nachricht und dem fertigen Stück in Ihren Händen. So entsteht eine Rivya-Living-Art-Auftragsarbeit – und so lange dauert es tatsächlich."
     },
     "timeline": {
-      "heading": "Sechs Schritte, keine Abkürzungen",
-      "step1Title": "Das Briefing",
-      "step1Copy": "Alles beginnt mit einem WhatsApp-Gespräch. Sie teilen die Idee, Referenzfotos, die Größen, die Ihnen vorschweben, und das Budget, mit dem Sie sich wohlfühlen — und wir stellen die Fragen, die das Design formen.",
-      "step2Title": "Entwurf & Vorschau",
-      "step2Copy": "Wir übersetzen das Briefing in Skizzen und, bei 3D-gedruckten Arbeiten, in digitale Vorschauen. Nichts wird gegossen, bevor Sie das Design freigegeben haben — jedes Detail ist abgestimmt, ehe Resin je die Gussform berührt.",
-      "step3Title": "Materialien",
-      "step3Copy": "Epoxidharz in Künstlerqualität, Mineralpigmente, konservierte Blüten und ausgewähltes Holz. Birgt das Stück Ihre eigenen Blumen oder Andenken, bereiten wir diese zuerst auf und konservieren sie — mit der Sorgfalt, die sie verdienen.",
-      "step4Title": "Der Guss",
-      "step4Copy": "Resin wird Schicht für Schicht eingebracht, jeder Guss härtet 24–72 Stunden aus, bevor der nächste folgt. Erst das Schichten verleiht einem Stück seine Tiefe — und genau deshalb lässt es sich niemals überstürzen.",
-      "step5Title": "Die Veredelung",
-      "step5Copy": "Nach dem vollständigen Aushärten wird das Stück von 400er bis 3000er Körnung geschliffen und anschließend poliert, bis es wie Glas wirkt. Beschläge, Haken oder Ständer werden von Hand angebracht und geprüft.",
-      "step6Title": "Qualität & Versand",
-      "step6Copy": "Sie erhalten Fotos des fertigen Stücks zur Freigabe, bevor es versandt wird. Anschließend wird es bruchsicher verpackt und mit nachverfolgbarem Versand überallhin in Indien geschickt.",
+      "heading": "Zehn Schritte, keine Abkürzungen",
+      "step1Title": "Konzept",
+      "step1Copy": "Es beginnt mit einem Gespräch per WhatsApp. Sie teilen die Idee, Referenzfotos, die Maße, die Ihnen vorschweben, und das Budget, mit dem Sie sich wohlfühlen – und wir stellen die Fragen, die das Design formen, und skizzieren es, bevor überhaupt etwas gegossen wird.",
+      "step2Title": "Materialauswahl",
+      "step2Copy": "Kunstharz in Galeriequalität, mineralische Pigmente, konservierte Blüten und abgelagertes Holz werden auf den Auftrag abgestimmt – und, für eine tragende Struktur, eine 3D-gedruckte Form. Enthält das Stück Ihre eigenen Blumen oder Erinnerungsstücke, bereiten und konservieren wir sie bereits in diesem Schritt.",
+      "step3Title": "Holzvorbereitung",
+      "step3Copy": "Abgelagertes Teakholz und Flussholz wird gehobelt, geschliffen und versiegelt, bevor es je mit Harz in Berührung kommt – so ist die Maserung bereit, einen Guss ohne Verzug oder Blasen an der Fügestelle aufzunehmen.",
+      "step4Title": "Harzkomposition",
+      "step4Copy": "Pigment wird in kleinen Chargen ins Harz eingemischt und gegen das Licht geprüft, bevor der eigentliche Guss beginnt – Blattgold und konservierte Pflanzen kommen erst hinein, wenn die Farbe stimmt.",
+      "step5Title": "Guss",
+      "step5Copy": "Das komponierte Harz wird Schicht für Schicht in die Form gegossen, jede Schicht wird geglättet und mit einem präzisen Heißluftgerät bearbeitet, um Luft zu entfernen, bevor sie zu binden beginnt.",
+      "step6Title": "Aushärtung",
+      "step6Copy": "Jede gegossene Schicht härtet 24–72 Stunden aus, bevor die nächste folgt, und das fertige Stück ruht unter kontrollierten Bedingungen, bis es vollständig ausgehärtet ist – Harz belohnt Geduld, nicht Eile.",
       "eyebrow": "wie ein stück entsteht",
-      "step1Meta": "Auf WhatsApp",
-      "step2Meta": "Kein Guss ohne Ihre Freigabe",
-      "step3Meta": "Epoxid in Künstlerqualität",
-      "step4Meta": "24–72 Stunden pro Schicht",
-      "step5Meta": "Körnung 400 → 3000",
-      "step6Meta": "Nachverfolgbar, überall in Indien",
+      "step1Meta": "Per WhatsApp",
+      "step2Meta": "Kunstharz in Galeriequalität",
+      "step3Meta": "Von Hand",
+      "step4Meta": "Nichts wird gegossen, bevor Sie zustimmen",
+      "step5Meta": "Schicht für Schicht",
+      "step6Meta": "24–72 Stunden pro Schicht",
       "step1Alt": "Die Werkbank zu Beginn einer Auftragsarbeit",
       "step2Alt": "Ein FDM-Druckkopf legt durchscheinendes blaues Filament auf die Druckplatte",
       "step3Alt": "Blattgoldflocken, schwebend in absetzendem blauem Harz",
       "step4Alt": "Tiefes Saphir-Resin mitten im Guss, das sich in einer runden Gussform ausbreitet",
       "step5Alt": "Behandschuhte Hände bearbeiten blaues Harz mit einem Präzisions-Heißluftgebläse",
-      "step6Alt": "Fertige Harzstücke, arrangiert in einer ausgekleideten Geschenkschachtel"
+      "step6Alt": "Fertige Harzstücke, arrangiert in einer ausgekleideten Geschenkschachtel",
+      "step7Title": "Oberflächenveredelung",
+      "step7Copy": "Ist das Stück vollständig ausgehärtet, wird es von Körnung 400 bis 3000 geschliffen und dann poliert, bis die Oberfläche wie Glas wirkt und die Tiefe darunter völlig klar hervortritt.",
+      "step7Meta": "Körnung 400 → 3000",
+      "step7Alt": "Wassertropfen auf einer spiegelglatt polierten Harzoberfläche, darunter schwebende Goldflocken",
+      "step8Title": "Handveredelung",
+      "step8Copy": "Beschläge, Haken oder Standfüße werden angebracht und von Hand geprüft, und jede Kante wird ein letztes Mal überarbeitet, bevor ein Stück als fertig gilt.",
+      "step8Meta": "Von Hand ausgestattet",
+      "step8Alt": "Eine champagnerfarbene Goldader zieht sich durch eine von Hand veredelte Harzoberfläche",
+      "step9Title": "Qualitätsprüfung",
+      "step9Copy": "Das fertige Stück wird Kante für Kante mit dem Auftrag abgeglichen, und Sie erhalten Fotos davon zur eigenen Freigabe, bevor irgendetwas verschickt wird.",
+      "step9Meta": "Fotos vor dem Versand",
+      "step9Alt": "Die abgeschrägte Kante einer ausgehärteten Epoxidplatte im Licht",
+      "step10Title": "Lieferung",
+      "step10Copy": "Nach Freigabe wird das Stück bruchsicher verpackt und mit nachverfolgbarem Versand überallhin in Indien verschickt. Das Studio bietet keine Montage an – mit der Lieferung endet der Auftrag.",
+      "step10Meta": "Nachverfolgbar, überallhin in Indien",
+      "step10Alt": "Ein fertiges Tablett und eine Schale aus Harz und Teakholz, bereit, das Studio zu verlassen"
     },
     "materials": {
       "heading": "Woraus Ihr Stück besteht",
@@ -1062,7 +1078,12 @@
     "emptyStatement": "Dazu ist noch nichts abgelegt.",
     "emptyDirection": "Das Journal entsteht zwischen den Güssen — versuchen Sie ein anderes Thema oder lesen Sie alles.",
     "emptyStatementUnfiltered": "Das Journal startet in Kürze.",
-    "emptyDirectionUnfiltered": "Wir schreiben die ersten Beiträge zwischen den Güssen. Schauen Sie bald wieder vorbei."
+    "emptyDirectionUnfiltered": "Wir schreiben die ersten Beiträge zwischen den Güssen. Schauen Sie bald wieder vorbei.",
+    "relatedCollections": {
+      "eyebrow": "weiter entdecken",
+      "heading": "Die Kollektion entdecken",
+      "cardEyebrow": "Kollektion"
+    }
   },
   "Portfolio": {
     "meta": {
@@ -1507,5 +1528,9 @@
     "verifiedBy": "Verifizierter Kunde",
     "givenOn": "Abgegeben am {date}",
     "wallHeading": "In ihren Worten"
+  },
+  "AccordionGallery": {
+    "expand": "Erweitern",
+    "collapse": "Einklappen"
   }
 }

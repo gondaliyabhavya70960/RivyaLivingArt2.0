@@ -27,6 +27,8 @@ import {
   SlidersHorizontal,
   Menu,
   FlaskConical,
+  Hammer,
+  Palette,
 } from "lucide-react";
 import type { Role } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
@@ -142,6 +144,16 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
         icon: FlaskConical,
         adminOnly: true,
       },
+    ],
+  },
+  // Appended, not inserted into "catalog" above — two more Page Sections
+  // screens, pre-filtered to the ten process steps and the four materials
+  // (`src/lib/page-sections.ts` `SUBLIST_PAGES`), each its own route.
+  {
+    heading: "content arrangement",
+    items: [
+      { label: "Process Steps", href: "/studio/process", icon: Hammer },
+      { label: "Materials", href: "/studio/materials", icon: Palette },
     ],
   },
 ];
