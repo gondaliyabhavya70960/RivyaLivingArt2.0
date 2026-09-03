@@ -220,6 +220,11 @@ export async function generateMetadata({
     const t = await getTranslations({ locale, namespace: "Portfolio.meta" });
     return { title: t("notFound") };
   }
+  // Metadata runs before the page body, so the body's demo gate alone let a
+  // hidden fixture's title reach the not-found page's <title>.
+  if (portfolio.isDemo && !(await draftMode()).isEnabled && !(await showDemoContent())) {
+    notFound();
+  }
   const lp = localize(portfolio, locale, TRANSLATABLE_FIELDS.portfolio);
 
   const condensed = lp.story.trim().replace(/\s+/g, " ");

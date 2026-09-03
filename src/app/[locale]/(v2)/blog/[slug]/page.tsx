@@ -268,6 +268,11 @@ export async function generateMetadata({
     const t = await getTranslations({ locale, namespace: "Blog" });
     return { title: t("post.notFoundTitle") };
   }
+  // Metadata runs before the page body, so the body's demo gate alone let a
+  // hidden fixture's title reach the not-found page's <title>.
+  if (post.isDemo && !(await draftMode()).isEnabled && !(await showDemoContent())) {
+    notFound();
+  }
   const lp = localize(post, locale, TRANSLATABLE_FIELDS.blogPost);
 
   const title = lp.seoTitle || lp.title;
