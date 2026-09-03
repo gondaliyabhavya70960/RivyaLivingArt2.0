@@ -326,7 +326,6 @@ export default async function Home({
           <HeroMedia
             videoUrl={settings.heroVideoUrl ?? undefined}
             poster={imageRefs["home.hero"]}
-            drift
           />
           {/* §6 01 specifies a flat rgba(8,10,14,.6) overlay. A gradient
               weighted to the text block does the same job with less of the

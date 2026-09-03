@@ -247,9 +247,13 @@ export default async function LargeResinArtPage({
           {/* HeroMedia, not MeniscusImage: this is the LCP and Part 14
               forbids revealing or delaying it. The `poster` form is what
               carries the owner's mobile crop and focal point, which a 16:9
-              hero needs; `drift` is the same slow 6s settle the homepage
-              hero uses. */}
-          <HeroMedia poster={imageRefs["largeFormat.hero"]} drift />
+              hero needs. Not `drift`: `.sf-hero-drift`'s 6000ms is not one
+              of Part 3.8's four sanctioned durations and is not an infinite
+              loop, so `redesign-audit.mjs` fails it the moment anything
+              actually mounts it — a gap in tokens.css/globals.css (A1's
+              files), not something this batch can fix without touching
+              them. Flagged under OPEN ITEMS rather than routed around. */}
+          <HeroMedia poster={imageRefs["largeFormat.hero"]} />
           <span className="absolute inset-0 bg-gradient-to-t from-obsidian/92 via-obsidian/60 to-obsidian/35" />
         </div>
 
