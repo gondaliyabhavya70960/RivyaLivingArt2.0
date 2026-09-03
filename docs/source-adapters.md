@@ -58,9 +58,11 @@ selector matched the wrong thing.
 
 ## Testing
 
-Fixture-based, never hitting the network — the existing adapter tests are the
-pattern. A test that makes a real request fails in CI and re-fails whenever the
-competitor redesigns.
+Fixture-based, never hitting the network. No adapter test exists yet (checked
+2026-09-03); the pure-module suites beside the adapters — `validation.test.ts`,
+`breaker.test.ts`, `sheet-delete-plan.test.ts` — are the pattern to follow when
+one is written. A test that makes a real request fails in CI and re-fails
+whenever the competitor redesigns.
 
 ## When a site changes shape
 
