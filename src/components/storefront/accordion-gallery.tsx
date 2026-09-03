@@ -57,7 +57,12 @@ export function AccordionGallery({
 }) {
   const groupId = useId();
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [activeKey, setActiveKey] = useState<string>(items[0]?.key ?? "");
+  // No default active strip: starting on item1 meant a mouse hovering item2
+  // grew and revealed item2 as a SECOND active strip alongside the one still
+  // "active" from load, rather than in place of it — flex-grow having no
+  // notion of mutual exclusion. Starting with none active keeps every
+  // trigger's tabIndex roving to whichever one, if any, is truly active.
+  const [activeKey, setActiveKey] = useState<string | null>(null);
 
   // Part 16 — a gallery with nothing to show must not render at all.
   if (items.length === 0) return null;
@@ -131,9 +136,18 @@ export function AccordionGallery({
                 fill
                 sizes="(min-width:768px) 40vw, 100vw"
                 className={cn(
-                  "absolute inset-0 object-cover opacity-100 transition-opacity duration-(--dur-base) ease-(--ease-luxury)",
-                  !prefersReducedMotion &&
-                    "md:opacity-0 md:group-data-[active]/strip:opacity-100",
+                  "absolute inset-0 object-cover transition-opacity duration-(--dur-base) ease-(--ease-luxury)",
+                  // Reduced motion shows every macro at rest, same as every
+                  // copy panel below. Otherwise it is the SAME three
+                  // triggers that widen the strip — hover, focus-within or a
+                  // click — so the photograph and the width open together;
+                  // un-prefixed (not `md:`-only) so a tap on a stacked
+                  // mobile card reveals its macro too, rather than a
+                  // permanently-visible macro hiding the base photograph
+                  // every other card on the page still shows.
+                  prefersReducedMotion
+                    ? "opacity-100"
+                    : "opacity-0 group-hover/strip:opacity-100 group-focus-within/strip:opacity-100 group-data-[active]/strip:opacity-100",
                 )}
               />
             ) : null}
@@ -142,45 +156,51 @@ export function AccordionGallery({
               className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-obsidian/90 via-obsidian/40 to-transparent"
             />
 
-            <button
-              type="button"
-              data-theme="navy"
-              id={trigger}
-              aria-expanded={expanded}
-              aria-controls={panel}
-              tabIndex={active ? 0 : -1}
-              onClick={() => setActiveKey(item.key)}
-              onFocus={() => setActiveKey(item.key)}
-              onKeyDown={(event) => onKeyDown(event, index)}
-              className="absolute inset-0 flex flex-col justify-end p-5 text-start outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 md:p-6"
-            >
-              <span className="u-micro text-mist">
-                {String(index + 1).padStart(2, "0")}
-                <span className="sr-only">
-                  {" "}
-                  — {expanded ? labels.collapse : labels.expand}
-                </span>
-              </span>
-              <span className="mt-2 font-display text-h3 leading-[1.1] text-mineral">
-                {item.title}
-              </span>
-            </button>
-
-            <div
-              id={panel}
-              role="region"
-              aria-labelledby={trigger}
-              className="pointer-events-none absolute inset-x-0 bottom-0 p-5 pt-20 md:p-6 md:pt-28"
-            >
-              <p
-                className={cn(
-                  "font-body text-14 leading-relaxed text-mist opacity-100 transition-opacity duration-(--dur-base) ease-(--ease-luxury)",
-                  !prefersReducedMotion &&
-                    "md:opacity-0 md:group-data-[active]/strip:opacity-100",
-                )}
+            {/* Trigger and panel share ONE bottom-anchored flex column so
+                the title and the copy stack in normal flow — two
+                independently bottom-pinned layers here used to sit on top
+                of each other the moment a title wrapped to a second line. */}
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-5 md:p-6">
+              <button
+                type="button"
+                data-theme="navy"
+                id={trigger}
+                aria-expanded={expanded}
+                aria-controls={panel}
+                tabIndex={(activeKey === null ? index === 0 : active) ? 0 : -1}
+                onClick={() => setActiveKey(item.key)}
+                onFocus={() => setActiveKey(item.key)}
+                onKeyDown={(event) => onKeyDown(event, index)}
+                className="flex flex-col items-start text-start outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3"
               >
-                {item.copy}
-              </p>
+                <span className="u-micro text-mist">
+                  {String(index + 1).padStart(2, "0")}
+                  <span className="sr-only">
+                    {" "}
+                    — {expanded ? labels.collapse : labels.expand}
+                  </span>
+                </span>
+                <span className="mt-2 font-display text-h3 leading-[1.1] text-mineral">
+                  {item.title}
+                </span>
+              </button>
+
+              <div id={panel} role="region" aria-labelledby={trigger}>
+                <p
+                  data-theme="navy"
+                  className={cn(
+                    "font-body text-14 leading-relaxed text-mist opacity-100 transition-opacity duration-(--dur-base) ease-(--ease-luxury)",
+                    // Below md every panel is already visible — the stacked
+                    // card IS the reveal. At md+ only the widened strip
+                    // shows its words, and "widened" is the same three
+                    // triggers the strip itself grows on.
+                    !prefersReducedMotion &&
+                      "md:opacity-0 md:group-hover/strip:opacity-100 md:group-focus-within/strip:opacity-100 md:group-data-[active]/strip:opacity-100",
+                  )}
+                >
+                  {item.copy}
+                </p>
+              </div>
             </div>
           </li>
         );
