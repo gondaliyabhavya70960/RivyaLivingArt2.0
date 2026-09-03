@@ -498,11 +498,17 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+      // Mirrors the visible breadcrumb — see the blog PDP for why.
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: tCommon("home"),
+        item: SITE.url,
+      },
       {
         "@type": "ListItem",
         position: 2,
-        name: "Portfolio",
+        name: tNav("portfolio"),
         item: `${SITE.url}/portfolio`,
       },
       {

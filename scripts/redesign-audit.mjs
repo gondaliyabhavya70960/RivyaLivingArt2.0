@@ -474,6 +474,55 @@ for (const route of routesArg.split(",")) {
       }
     }
 
+    /* Targets: "44×44px minimum, 8px separation" (REDESIGN.md:867, contract
+       line 160). Measured on the rendered box, with three deliberate
+       exemptions that would otherwise make this rule pure noise:
+
+       - A link inside running text. WCAG 2.2's own target-size criterion
+         exempts links in a sentence, and a 68ch prose column full of inline
+         links is not a tap grid. Detected by an ancestor p/li/blockquote that
+         carries text of its own around the link.
+       - An element whose hit area is expanded by a pseudo-element. Fourteen
+         controls in this repo use `after:absolute after:-inset-*` for exactly
+         that, and getBoundingClientRect cannot see it — so the class is read
+         directly rather than pretending the measurement is complete.
+       - Anything inside the Studio scope, which is a dense desktop tool and
+         not held to the storefront's tap floor.
+
+       Reported at NOTE while the count settles: the measurement is honest but
+       the exemption list is the part that decides whether it can ever fail. */
+    const TAP_MIN = 44;
+    const inRunningText = (el) => {
+      const p = el.closest("p, li, blockquote, figcaption");
+      if (!p) return false;
+      const own = (p.textContent ?? "").trim().length;
+      const mine = (el.textContent ?? "").trim().length;
+      return own > mine + 8; // the paragraph says more than the link does
+    };
+    const smallTargets = [];
+    for (const el of document.querySelectorAll(
+      "a[href], button, [role='button'], summary, input:not([type='hidden']), select",
+    )) {
+      if (!visible(el)) continue;
+      if (el.closest(".studio-v2")) continue;
+      // Not a target for anyone: the spam honeypots (an aria-hidden .sr-only
+      // wrapper with tabIndex -1), and the skip link, which is 1×1 until it
+      // takes focus and full size the moment it matters.
+      if (el.closest('[aria-hidden="true"]')) continue;
+      if (el.getAttribute("tabindex") === "-1") continue;
+      if (el.closest(".sr-only")) continue;
+      const cls = typeof el.className === "string" ? el.className : "";
+      if (/\bsr-only\b/.test(cls)) continue;
+      if (/after:-?inset|before:-?inset/.test(cls)) continue; // expanded hit area
+      if (el.tagName === "A" && inRunningText(el)) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < TAP_MIN || r.height < TAP_MIN) {
+        smallTargets.push(
+          `${describe(el)} ${Math.round(r.width)}×${Math.round(r.height)}`,
+        );
+      }
+    }
+
     /* "No scale or lift on hover — colour and underline only" (Part 3.4 ·
        contract line 107). A hover rule cannot be read off computed style, so
        this reads the vocabulary the repo writes in: a hover-variant transform
@@ -496,6 +545,8 @@ for (const route of routesArg.split(",")) {
       shadowOffenders: [...new Set(shadowOffenders)].slice(0, 8),
       durationOffenders: [...new Set(durationOffenders)].slice(0, 8),
       hoverLift: [...new Set(hoverLift)].slice(0, 8),
+      smallTargets: [...new Set(smallTargets)].slice(0, 10),
+      smallTargetCount: new Set(smallTargets).size,
       brokenImages: [...new Set(brokenImages)],
       h1Count: h1s.length,
       h1Text: h1s.map((h) => h.text),
@@ -569,6 +620,9 @@ for (const route of routesArg.split(",")) {
   }
   if (audit.hoverLift.length) {
     report("FAIL", `lift or scale on a control's hover — ${audit.hoverLift.join(", ")} (Part 3.4: colour and underline only)`);
+  }
+  if (audit.smallTargetCount) {
+    report("NOTE", `${audit.smallTargetCount} interactive element(s) under the 44px tap floor — ${audit.smallTargets.join(", ")}`);
   }
   // Promoted from NOTE in Phase 1b: every audited route passes it, so the
   // rule now holds the line instead of describing it. The count is of

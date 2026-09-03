@@ -177,10 +177,17 @@ jobs:
       # two major sections, at most three dark bands and never adjacent,
       # numbers in mono, alt text that describes the picture, no horizontal
       # overflow. Both widths, because overflow is a width-specific bug.
+      # 360 and 1280 are not arbitrary: CLAUDE.md's definition of done says
+      # "works at 360px and 1280px", and until now CI swept 1440 and 390 —
+      # neither of the two widths the repo holds itself to. 1440/390 stay
+      # because they are the design targets; these two make the stated
+      # contract enforceable. Both were measured clean before being added.
       - name: Design audit
         run: |
           node scripts/redesign-audit.mjs "$AUDIT_ROUTES"
+          node scripts/redesign-audit.mjs "$AUDIT_ROUTES" --w 1280
           node scripts/redesign-audit.mjs "$AUDIT_ROUTES" --w 390
+          node scripts/redesign-audit.mjs "$AUDIT_ROUTES" --w 360
 
       # The same structural gate under `dir="rtl"`. 390px is the one that
       # matters: an unmirrored physical property shows up as horizontal

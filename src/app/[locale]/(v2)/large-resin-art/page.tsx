@@ -122,7 +122,13 @@ export default async function LargeResinArtPage({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+      // Mirrors the visible breadcrumb; position 2 was already localised.
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: tCommon("home"),
+        item: SITE.url,
+      },
       {
         "@type": "ListItem",
         position: 2,
