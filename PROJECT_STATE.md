@@ -429,6 +429,47 @@ Formal retirement is owner decision D27 in `docs/transformation-audit.md`.)*
 
 ---
 
+## DECISIONS (answered 2026-09-03 — the transformation gates; also settled, do not re-litigate)
+
+The owner answered these against the repository's **current** state, after Phase 0 (PR #29), Phase 1a
+(PR #30) and Phase 1b (PR #31) had merged — not against the older checkpoint. All five are YES.
+
+### D28 — The rewind of `main`: **YES, it stands**
+Current `main` is the authoritative baseline. The discarded layer is **not** restored wholesale: it was
+never one coherent feature — LQIP wiring, CSP, uploads hardening, search and breadcrumb behaviour, docs —
+and current `main` has already moved past it (20 commits beyond `f1cfd95`; `950d9ac` is 39 behind and
+diverged). Several of those changes have since been re-derived by the Phase 1a and 1b work.
+
+**The rule this sets: recover a discarded change only as an individually reviewed, individually justified
+PR, never as a bulk cherry-pick.** `refs/pull/<n>/head` stays readable for reference. A discarded PR is
+evidence that a problem was once solved, not evidence that its patch still applies.
+
+### D23 — The legacy un-gated sheet push: **YES, remove it**
+`SheetSyncPolicy` becomes the sole authority for sheet writes. `syncSourceToSheet` and its call site come
+out of `src/actions/scraper-jobs.ts`, with a regression test proving MANUAL + DONE performs zero sheet
+writes. Two write paths into one shared document is how rows get duplicated, and the legacy path ran even
+on FAILED jobs. **First code change of the batch, in its own commit.**
+
+### D18 — Dormant v2 files: **YES, delete — but only the audited, proven-unreferenced ones**
+By exact path, after proving no import, no dynamic reference, no barrel re-export, no build or CI entry
+point. Explicitly NOT a broad "delete anything that looks old" sweep. Dead v2 files are dangerous in this
+repository specifically because it already carries several historical transformation layers: a future
+reader — or agent — mistakes one for live architecture.
+
+### D22 — The portfolio seed: **YES, keep it, but gate it twice**
+The seed stays; it is useful for fresh databases and development. What goes is its ability to behave like
+production content initialisation. **Two independent barriers**: an explicit opt-in flag, AND a refusal to
+seed when portfolio case data already exists. Production defaults to off. HARD RULE 3 must be structurally
+difficult to violate, not a convention someone has to remember.
+
+### D24 — Housekeeping: **YES, with `.env.example` carved out**
+Obsolete workflows, tracked artifacts and reports, superseded documentation and stale counts all go, after
+reference verification. **`.env.example` is a separate owner change**: the historical PR that fixed it was
+dropped in the rewind (D28), so its current state must be verified rather than assumed — and `.env*` edits
+are denied in-session regardless.
+
+---
+
 ## FILES CHANGED
 
 Baseline commit `32f21a6` — 920 files imported unmodified, 1 file modified (`README.md` replaced by
