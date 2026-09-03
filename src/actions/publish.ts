@@ -249,6 +249,71 @@ export async function discardSurfaceDraft(
   });
 }
 
+/** One entry in a surface's history, shaped for the list that renders it. */
+export type SurfaceRevision = {
+  id: string;
+  summary: string | null;
+  createdAt: string;
+  author: string | null;
+  /** How many copy slots and images the snapshot holds. */
+  copyCount: number;
+  imageCount: number;
+};
+
+/**
+ * A surface's publish history, newest first.
+ *
+ * `restoreRevision` below has existed and worked since publishing shipped, and
+ * was UNREACHABLE: nothing listed revisions, so no owner could ever hold a
+ * revision id. The history was being written on every publish and could only
+ * be read with a database client. This is the missing half.
+ *
+ * Readable by any staff member — seeing what changed is not a privileged act.
+ * Putting a version BACK still requires ADMIN, which is `restoreRevision`'s
+ * own check and stays there.
+ *
+ * Capped at 50: this is "undo the thing I just broke", not an audit ledger,
+ * and `/studio/activity` already keeps the long record.
+ */
+export async function listSurfaceRevisions(
+  surface: string,
+): Promise<ActionResult<SurfaceRevision[]>> {
+  return runAction(async () => {
+    await requireStaff();
+    const rows = await db.contentRevision.findMany({
+      where: { surface },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    // `authorId` carries no relation, so the emails are a second read rather
+    // than an include. One query for the whole page of rows, not one each.
+    const ids = [...new Set(rows.map((r) => r.authorId).filter(Boolean))];
+    const users = ids.length
+      ? await db.user.findMany({
+          where: { id: { in: ids as string[] } },
+          select: { id: true, email: true },
+        })
+      : [];
+    const emailById = new Map(users.map((u) => [u.id, u.email]));
+
+    return rows.map((row) => {
+      const payload = (row.payload ?? {}) as {
+        copy?: Record<string, unknown>;
+        images?: Record<string, unknown>;
+      };
+      return {
+        id: row.id,
+        summary: row.summary,
+        createdAt: row.createdAt.toISOString(),
+        author: row.authorId ? (emailById.get(row.authorId) ?? null) : null,
+        copyCount: Object.keys(payload.copy ?? {}).length,
+        imageCount: Object.keys(payload.images ?? {}).length,
+      };
+    });
+  });
+}
+
 /**
  * Restore an earlier version — INTO THE DRAFT, never straight to live.
  *

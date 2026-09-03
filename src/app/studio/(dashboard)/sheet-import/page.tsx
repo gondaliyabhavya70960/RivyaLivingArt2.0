@@ -198,7 +198,7 @@ export default async function SheetImportPage() {
 
         {/* What the fills actually did. Before this the only record was a
             build log, which nobody keeps. */}
-        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <section className="rounded-card border border-border bg-card p-5 shadow-e1">
           <h2 className="font-medium text-foreground">Recent fills</h2>
           {importRuns.length === 0 ? (
             <p className="mt-1 text-sm text-muted-foreground">
@@ -237,10 +237,10 @@ export default async function SheetImportPage() {
         {kpis.map(({ label, value, icon: Icon }) => (
           <div
             key={label}
-            className="rounded-2xl border border-border bg-card p-5 shadow-sm"
+            className="rounded-card border border-border bg-card p-5 shadow-e1"
           >
             <div className="flex items-center gap-4">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sand text-sapphire-ink">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-card bg-sand text-sapphire-ink">
                 <Icon className="size-5" />
               </div>
               <div className="min-w-0">
@@ -260,7 +260,7 @@ export default async function SheetImportPage() {
             tabIndex={0}
             role="region"
             aria-label="Sheet rows"
-            className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="mt-6 overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
         <table className="w-full text-sm">
           <thead>
@@ -306,7 +306,7 @@ export default async function SheetImportPage() {
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums">
                     {(noImage.get(tier) ?? 0) > 0 ? (
-                      <Badge variant="outline" className="border-warning/40 text-warning">{noImage.get(tier)}</Badge>
+                      <Badge variant="warning">{noImage.get(tier)}</Badge>
                     ) : (
                       <span className="text-muted-foreground">0</span>
                     )}
@@ -326,7 +326,7 @@ export default async function SheetImportPage() {
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="rounded-card border border-border bg-card p-5 shadow-e1">
           <div className="flex items-center gap-3">
             <RefreshCw className="size-4 text-sapphire-ink" aria-hidden />
             <h2 className="font-display text-lg text-foreground">
@@ -368,7 +368,7 @@ export default async function SheetImportPage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="rounded-card border border-border bg-card p-5 shadow-e1">
           <div className="flex items-center gap-3">
             <CircleAlert className="size-4 text-sapphire-ink" aria-hidden />
             <h2 className="font-display text-lg text-foreground">
@@ -395,7 +395,7 @@ export default async function SheetImportPage() {
           </ol>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="rounded-card border border-border bg-card p-5 shadow-e1">
           <div className="flex items-center gap-3">
             <Globe className="size-4 text-sapphire-ink" aria-hidden />
             <h2 className="font-display text-lg text-foreground">

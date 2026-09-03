@@ -83,10 +83,10 @@ const STATUS_LABELS: Record<ReviewStatus, string> = {
 
 const STATUS_BADGE: Record<
   ReviewStatus,
-  { variant: "default" | "secondary" | "outline"; className?: string }
+  { variant: "default" | "secondary" | "outline" | "success"; className?: string }
 > = {
   PENDING: { variant: "outline" },
-  APPROVED: { variant: "outline", className: "border-success/40 text-success" },
+  APPROVED: { variant: "success" },
   REJECTED: { variant: "secondary", className: "text-muted-foreground" },
   IMPORTED: { variant: "default" },
 };
@@ -136,7 +136,7 @@ function ReviewCard({
       <button
         type="button"
         onClick={onOpen}
-        className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-left transition-shadow hover:shadow-sm motion-reduce:transition-none"
+        className="flex h-full w-full flex-col overflow-hidden rounded-card border border-border bg-card text-left transition-shadow hover:shadow-e1 motion-reduce:transition-none"
       >
         {row.images[0] ? (
           // eslint-disable-next-line @next/next/no-img-element -- scraped images live on arbitrary hosts; never next/image
@@ -256,7 +256,7 @@ function DetailSheetBody({
 
       <div className="flex-1 space-y-5 overflow-y-auto px-4 pb-4">
         {/* Inline edit — curate the staged data before it imports as a draft. */}
-        <div className="space-y-3 rounded-xl border border-border p-3">
+        <div className="space-y-3 rounded-card border border-border p-3">
           <div className="flex items-center justify-between">
             <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
               Edit before import
@@ -388,7 +388,7 @@ function DetailSheetBody({
         )}
 
         {(row.seoTitle || row.seoDescription) && (
-          <div className="space-y-1 rounded-xl bg-muted/60 p-3 text-sm">
+          <div className="space-y-1 rounded-card bg-muted/60 p-3 text-sm">
             <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
               SEO
             </h3>

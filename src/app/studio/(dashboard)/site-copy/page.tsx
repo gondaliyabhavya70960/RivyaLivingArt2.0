@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { requireStaffPage } from "@/actions/helpers";
 import { PageHeader } from "@/components/studio/page-header";
 import { PublishBar } from "@/components/studio/publish/publish-bar";
+import { RevisionHistory } from "@/components/studio/publish/revision-history";
 import {
   SiteCopyBoard,
   type CopyRow,
@@ -125,6 +126,10 @@ export default async function SiteCopyPage({
         eyebrow="Storefront"
         title="Site Copy"
         description="Every word the storefront places itself — headlines, paragraphs, buttons, image descriptions. Product, category, journal and FAQ words are edited on their own screens."
+        // In the header rather than the publish bar: that bar hides itself
+        // when nothing is staged, which is exactly when history is wanted —
+        // you published something wrong, so there is no draft and no bar.
+        actions={<RevisionHistory surface={group} />}
       />
       <SiteCopyBoard
         group={group}

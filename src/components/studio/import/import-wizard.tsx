@@ -127,7 +127,7 @@ function StatusBadge({ status }: { status: "create" | "update" | "error" }) {
 
 function CountChip({ label, value }: { label: string; value: number }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm shadow-sm">
+    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm shadow-e1">
       <span className="font-semibold tabular-nums text-foreground">{value}</span>
       <span className="text-muted-foreground">{label}</span>
     </span>
@@ -261,7 +261,7 @@ export function ImportWizard() {
                   aria-checked={selected}
                   onClick={() => setTypeKey(t.key)}
                   className={cn(
-                    "rounded-2xl border bg-card p-5 text-left shadow-sm transition-colors",
+                    "rounded-card border bg-card p-5 text-left shadow-e1 transition-colors",
                     selected
                       ? "border-sapphire-ink ring-2 ring-sapphire-ink/30"
                       : "border-border hover:border-sapphire-ink/40",
@@ -297,7 +297,7 @@ export function ImportWizard() {
 
       {step === 2 && template && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-card border border-border bg-card p-6 shadow-e1">
             <p className="mb-4 text-sm text-muted-foreground">
               Importing <span className="font-medium text-foreground">{template.label}</span> —
               up to {MAX_IMPORT_ROWS} rows per run.
@@ -334,7 +334,7 @@ export function ImportWizard() {
             <div
               onDragOver={(event) => event.preventDefault()}
               onDrop={handleDrop}
-              className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-foreground/15 bg-muted/30 px-6 py-8 text-center"
+              className="flex flex-col items-center justify-center gap-2 rounded-card border border-dashed border-foreground/15 bg-muted/30 px-6 py-8 text-center"
             >
               {file ? (
                 <>
@@ -398,7 +398,7 @@ export function ImportWizard() {
             tabIndex={0}
             role="region"
             aria-label="Rows to import"
-            className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
             <table className="w-full text-sm">
               <thead>
@@ -482,7 +482,7 @@ export function ImportWizard() {
 
       {step === 3 && report && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-card border border-border bg-card p-6 shadow-e1">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="size-5 text-sapphire-ink" />
               <h2 className="font-display text-xl text-foreground">

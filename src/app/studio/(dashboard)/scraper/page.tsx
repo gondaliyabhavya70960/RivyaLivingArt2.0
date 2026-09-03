@@ -162,7 +162,7 @@ export default async function ScraperPage() {
         }
       />
       {liveSheetCounts.length > 0 && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl bg-muted p-4 text-sm text-foreground/80">
+        <div className="mb-6 flex items-start gap-3 rounded-card bg-muted p-4 text-sm text-foreground/80">
           <p>
             The live catalog is fed by the{" "}
             <Link

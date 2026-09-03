@@ -51,7 +51,7 @@ function DetailCard({
   actions?: ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-4 shadow-sm">
+    <section className="rounded-card border border-border bg-card p-4 shadow-e1">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-lg text-foreground">{title}</h2>
         {actions && <div className="flex items-center gap-2">{actions}</div>}
@@ -156,7 +156,7 @@ export default async function InquiryDetailPage({
               </>
             }
           >
-            <pre className="whitespace-pre-wrap break-words rounded-xl bg-muted/60 p-4 font-sans text-sm leading-relaxed text-foreground">
+            <pre className="whitespace-pre-wrap break-words rounded-card bg-muted/60 p-4 font-sans text-sm leading-relaxed text-foreground">
               {inquiry.whatsappMessage}
             </pre>
           </DetailCard>

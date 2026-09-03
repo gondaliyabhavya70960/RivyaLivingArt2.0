@@ -175,6 +175,15 @@ async function getDashboardData() {
       }),
       db.blogPost.count(),
       db.subscriber.count(),
+      // §12.3's remaining surfaces. Every one of these has a Studio screen the
+      // owner can reach from the sidebar, and until now none of them reported
+      // a number on the Overview — so "is there anything in the portfolio?"
+      // meant navigating there to find out.
+      db.testimonial.count(),
+      db.portfolio.count(),
+      db.media.count(),
+      db.scrapedProduct.count(),
+      db.importRun.count(),
     ]),
     // Catalog composition by sheet tier (published only) for the tier strip.
     db.product.groupBy({
@@ -320,6 +329,11 @@ export default async function DashboardPage() {
       workshopListings,
       blogPosts,
       subscribers,
+      testimonials,
+      portfolioPieces,
+      mediaFiles,
+      scrapedRecords,
+      importRuns,
     ],
     tierGroups,
     chartSeries,
@@ -491,6 +505,45 @@ export default async function DashboardPage() {
             {conversionRate}
           </span>
         </div>
+      </div>
+
+      {/* The rest of what the owner maintains. These five surfaces each have a
+          screen in the sidebar and reported nothing here, so the only way to
+          answer "is there anything in the portfolio yet?" was to go and look.
+          Counts, not judgements: an empty surface reads 0 rather than being
+          hidden, because 0 is the answer. */}
+      <h2 className="u-micro mb-3">CONTENT &amp; PIPELINE</h2>
+      <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <Link href="/studio/testimonials" className={STRIP_LINK}>
+          <span className="u-micro">Testimonials</span>
+          <span className="u-num text-20 text-foreground">
+            {num(testimonials)}
+          </span>
+        </Link>
+        <Link href="/studio/portfolio" className={STRIP_LINK}>
+          <span className="u-micro">Portfolio pieces</span>
+          <span className="u-num text-20 text-foreground">
+            {num(portfolioPieces)}
+          </span>
+        </Link>
+        <Link href="/studio/media" className={STRIP_LINK}>
+          <span className="u-micro">Media files</span>
+          <span className="u-num text-20 text-foreground">
+            {num(mediaFiles)}
+          </span>
+        </Link>
+        <Link href="/studio/scraper/review" className={STRIP_LINK}>
+          <span className="u-micro">Scraped records</span>
+          <span className="u-num text-20 text-foreground">
+            {num(scrapedRecords)}
+          </span>
+        </Link>
+        <Link href="/studio/import" className={STRIP_LINK}>
+          <span className="u-micro">Import runs</span>
+          <span className="u-num text-20 text-foreground">
+            {num(importRuns)}
+          </span>
+        </Link>
       </div>
 
       <div className="grid items-start gap-4 lg:grid-cols-3">

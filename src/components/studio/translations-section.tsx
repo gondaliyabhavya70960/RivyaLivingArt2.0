@@ -7,9 +7,14 @@ import { FormSection } from "@/components/studio/form-section";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { getDir, localeLabels, type Locale } from "@/i18n/config";
 import { translatableLocales } from "@/lib/localize";
-import { cn } from "@/lib/utils";
 
 /** One translatable field — `name` must match the model's TRANSLATABLE_FIELDS. */
 export type TranslatableFieldDef = {
@@ -59,12 +64,14 @@ export function TranslationsSection({
   idPrefix: string;
 }) {
   const [active, setActive] = useState<Locale>(translatableLocales[0]);
-  const forLocale = value[active] ?? {};
 
-  function setField(field: string, fieldValue: unknown) {
+  /* Writes target the locale the panel belongs to, not whatever `active`
+     happens to be at call time — the two are the same today, and passing it
+     explicitly keeps them that way if a panel ever renders off-screen. */
+  function setField(locale: Locale, field: string, fieldValue: unknown) {
     onChange({
       ...value,
-      [active]: { ...(value[active] ?? {}), [field]: fieldValue },
+      [locale]: { ...(value[locale] ?? {}), [field]: fieldValue },
     });
   }
 
@@ -73,47 +80,44 @@ export function TranslationsSection({
       title="Translations"
       description="Optional per-language overrides. Leave a field blank to fall back to the English original — the English text is edited in the fields above."
     >
-      {/* Language strip — a dot marks languages that already have content. */}
-      <div
-        role="tablist"
-        aria-label="Translation language"
-        className="flex flex-wrap gap-2"
+      {/* Language strip — a dot marks languages that already have content.
+          On Radix rather than nine buttons wearing tab roles: the old strip
+          declared `role="tablist"`/`role="tab"` without `aria-controls`, gave
+          the panel no `role="tabpanel"`, and kept every one of the nine
+          locales in the tab order, so getting past it took nine presses of Tab
+          and the arrow keys the pattern promises did nothing. */}
+      <Tabs
+        value={active}
+        onValueChange={(next) => setActive(next as Locale)}
+        className="gap-5"
       >
-        {translatableLocales.map((locale) => {
-          const filled = hasContent(value[locale]);
-          const selected = locale === active;
-          return (
-            <button
-              key={locale}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setActive(locale)}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors",
-                selected
-                  ? "border-sapphire-ink/50 bg-sand text-foreground"
-                  : "border-foreground/10 text-muted-foreground hover:border-foreground/25 hover:text-foreground",
-              )}
-            >
+        <TabsList variant="pill" aria-label="Translation language">
+          {translatableLocales.map((locale) => (
+            <TabsTrigger key={locale} value={locale} variant="pill">
               {localeLabels[locale]}
-              {filled && (
+              {hasContent(value[locale]) && (
                 <>
                   <span aria-hidden className="size-1.5 rounded-full bg-primary" />
                   <span className="sr-only"> (has content)</span>
                 </>
               )}
-            </button>
-          );
-        })}
-      </div>
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      {/* Fields for the active language. dir follows the language (Arabic = rtl);
-          the English reference stays ltr. */}
-      <div className="space-y-5" dir={getDir(active)}>
+        {/* One panel per language; Radix mounts only the active one. dir
+            follows the language (Arabic = rtl); the English reference stays
+            ltr. */}
+        {translatableLocales.map((panelLocale) => (
+          <TabsContent
+            key={panelLocale}
+            value={panelLocale}
+            className="space-y-5"
+            dir={getDir(panelLocale)}
+          >
         {fields.map((field) => {
-          const id = `${idPrefix}-${active}-${field.name}`;
-          const current = forLocale[field.name];
+          const id = `${idPrefix}-${panelLocale}-${field.name}`;
+          const current = (value[panelLocale] ?? {})[field.name];
           const asText = typeof current === "string" ? current : "";
           return (
             <div key={field.name} className="space-y-1.5">
@@ -130,7 +134,7 @@ export function TranslationsSection({
                 <Input
                   id={id}
                   value={asText}
-                  onChange={(e) => setField(field.name, e.target.value)}
+                  onChange={(e) => setField(panelLocale, field.name, e.target.value)}
                 />
               )}
               {field.kind === "textarea" && (
@@ -138,7 +142,7 @@ export function TranslationsSection({
                   id={id}
                   rows={3}
                   value={asText}
-                  onChange={(e) => setField(field.name, e.target.value)}
+                  onChange={(e) => setField(panelLocale, field.name, e.target.value)}
                 />
               )}
               {field.kind === "lexical" && (
@@ -161,7 +165,7 @@ export function TranslationsSection({
                         const copy = [...rows];
                         while (copy.length <= rowIndex) copy.push(null);
                         copy[rowIndex] = { ...cell, [key]: next };
-                        setField(field.name, copy);
+                        setField(panelLocale, field.name, copy);
                       };
                       return (
                         <div
@@ -201,16 +205,18 @@ export function TranslationsSection({
                 // Remount per language so the editor loads that language's doc
                 // (RichTextEditor reads `value` only on mount).
                 <RichTextEditor
-                  key={`${active}-${field.name}`}
+                  key={`${panelLocale}-${field.name}`}
                   value={current}
-                  onChange={(json) => setField(field.name, json)}
+                  onChange={(json) => setField(panelLocale, field.name, json)}
                   placeholder="Translated content…"
                 />
               )}
             </div>
           );
         })}
-      </div>
+          </TabsContent>
+        ))}
+      </Tabs>
     </FormSection>
   );
 }

@@ -451,7 +451,7 @@ export function ProductList({
           <table className="w-full min-w-[62rem] text-small xl:min-w-0">
             <thead className="xl:sticky xl:top-16 xl:z-20 xl:bg-card">
               <StudioTableHead>
-                <th className="w-10 py-3 pe-2 ps-4">
+                <th className="w-10 py-3 pe-2 ps-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
                   <Checkbox
                     aria-label="Select all"
                     checked={selection.allSelected}
@@ -462,8 +462,8 @@ export function ProductList({
                     }}
                   />
                 </th>
-                <th className="w-14 py-3 pe-3" />
-                <th className="py-3 pe-4">Title</th>
+                <th className="w-15 py-3 pe-3 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10" />
+                <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-25">Title</th>
                 <th className="py-3 pe-4">Category</th>
                 <th className="py-3 pe-4">Price</th>
                 <th className="py-3 pe-4">Status</th>
@@ -482,14 +482,14 @@ export function ProductList({
                   key={product.id}
                   selected={selection.selected.has(product.id)}
                 >
-                  <td className="py-3 pe-2 ps-4 align-middle">
+                  <td className="py-3 pe-2 ps-4 align-middle max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
                     <Checkbox
                       aria-label={`Select ${product.title}`}
                       checked={selection.selected.has(product.id)}
                       onCheckedChange={() => selection.toggle(product.id)}
                     />
                   </td>
-                  <td className="py-2 pe-3">
+                  <td className="py-2 pe-3 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
                     {product.thumbnailUrl ? (
                       <Image
                         src={product.thumbnailUrl}
@@ -506,7 +506,7 @@ export function ProductList({
                       />
                     )}
                   </td>
-                  <td className="py-3 pe-4">
+                  <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-25">
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
                         href={`/studio/products/${product.id}`}
@@ -518,7 +518,7 @@ export function ProductList({
                         <Badge variant="outline">DEMO</Badge>
                       )}
                       {product.needsRewrite && (
-                        <Badge variant="outline" className="border-warning/40 text-warning">needs rewrite</Badge>
+                        <Badge variant="warning">needs rewrite</Badge>
                       )}
                       {product.demoted && (
                         <Badge
@@ -543,12 +543,7 @@ export function ProductList({
                         outline; Draft keeps the neutral chip. */}
                     <Badge
                       variant={
-                        product.status === "PUBLISHED" ? "outline" : "secondary"
-                      }
-                      className={
-                        product.status === "PUBLISHED"
-                          ? "border-success/40 text-success"
-                          : undefined
+                        product.status === "PUBLISHED" ? "success" : "secondary"
                       }
                     >
                       {product.status === "PUBLISHED" ? "Published" : "Draft"}

@@ -80,13 +80,13 @@ export function QualityTriage({
         {groups.map((group) => (
           <section
             key={group.field}
-            className="rounded-xl border border-border bg-card p-5 shadow-sm"
+            className="rounded-card border border-border bg-card p-5 shadow-e1"
           >
             <div className="flex items-baseline justify-between gap-3">
               <h2 className="flex items-center gap-2 font-medium text-foreground">
                 {group.field}
                 {group.severity === "ERROR" && (
-                  <Badge variant="outline" className="border-alert/50 text-alert">
+                  <Badge variant="alert">
                     unusable
                   </Badge>
                 )}
@@ -143,7 +143,7 @@ export function QualityTriage({
       </div>
 
       {sources.length > 0 && (
-        <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <section className="rounded-card border border-border bg-card p-5 shadow-e1">
           <h2 className="font-medium text-foreground">Worst sources</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             A source at the top of this list usually means one broken adapter,

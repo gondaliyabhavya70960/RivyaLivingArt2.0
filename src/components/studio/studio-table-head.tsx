@@ -25,7 +25,7 @@ export function StudioTableHead({
   return (
     <tr
       className={cn(
-        "border-b border-border [&>th]:u-micro [&>th]:whitespace-nowrap [&>th]:text-start [&>th]:font-normal",
+        "border-b border-border bg-card [&>th]:u-micro [&>th]:whitespace-nowrap [&>th]:text-start [&>th]:font-normal",
         className,
       )}
     >

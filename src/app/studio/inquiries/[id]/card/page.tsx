@@ -90,7 +90,7 @@ export default async function CommissionCardPage({
       {/* The card itself — hairline frame on the studio's paper. */}
       <section
         aria-label="Commission card"
-        className="border border-border bg-card px-10 py-12 shadow-sm print:border-foreground/30 print:shadow-none"
+        className="border border-border bg-card px-10 py-12 shadow-e1 print:border-foreground/30 print:shadow-none"
       >
         <p className="font-mono text-xs font-medium tracking-[0.22em] text-muted-foreground uppercase">
           Commission card

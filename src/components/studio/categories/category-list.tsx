@@ -288,7 +288,7 @@ export function CategoryList({ categories }: { categories: CategoryRow[] }) {
             tabIndex={0}
             role="region"
             aria-label="Categories"
-            className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
         <table className="w-full text-sm">
           <thead>

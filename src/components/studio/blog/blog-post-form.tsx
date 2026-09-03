@@ -16,6 +16,7 @@ import {
 } from "@/actions/blog";
 import { uploadMediaFiles } from "@/actions/media";
 import { MediaPicker } from "@/components/studio/media/media-picker";
+import { DraftPreview } from "@/components/studio/draft-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -415,7 +416,7 @@ export function BlogPostForm({
                     aria-pressed={active}
                     className={
                       active
-                        ? "rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors"
+                        ? "rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-e1 transition-colors"
                         : "rounded-full border border-foreground/15 px-4 py-1.5 text-sm text-foreground/70 transition-colors hover:border-sapphire-ink/40 hover:text-sapphire-ink"
                     }
                   >
@@ -510,19 +511,10 @@ export function BlogPostForm({
         </div>
         <div className="flex items-center gap-2">
           {post && (
-            /* Public blog page ships in Phase 8 — the link 404s until then. */
-            <Button asChild variant="link" size="sm">
-              <a
-                // Enables Next draft mode via the staff-gated route handler,
-                // then lands on the public page (audit C2).
-                href={`/api/draft?redirect=${encodeURIComponent(`/blog/${post.slug}`)}`}
-                target="_blank"
-                rel="noreferrer"
-                title="Public blog page arrives in Phase 8"
-              >
-                View draft preview ↗
-              </a>
-            </Button>
+            // Enables Next draft mode via the staff-gated route handler and
+            // frames the public page (audit C2); the dialog keeps the new-tab
+            // link inside it, so nothing is lost.
+            <DraftPreview path={`/blog/${post.slug}`} />
           )}
           <Button type="submit" disabled={saving || uploading}>
             {saving ? "Saving…" : "Save"}

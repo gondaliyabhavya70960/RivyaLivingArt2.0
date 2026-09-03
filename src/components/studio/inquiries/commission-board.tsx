@@ -42,10 +42,17 @@ export type CommissionCard = {
   createdAt: string;
 };
 
+/**
+ * Same three tones as `badgeVariants`, at the same weights — this pill is not
+ * a `<Badge>` because it carries two data points (`priority · band`) and needs
+ * the wider box, but it sat at /50 while the scraper's badges sat at /40, so
+ * the identical state was drawn two ways on two screens an owner moves between
+ * all day. Weights match now; only the sizing differs.
+ */
 const PRIORITY_TONE = {
   flat: "border-border text-graphite",
-  warning: "border-warning/50 text-warning",
-  alert: "border-alert/50 text-alert",
+  warning: "border-warning/40 bg-warning/8 text-warning",
+  alert: "border-alert/40 bg-alert/8 text-alert",
 } as const;
 
 /**

@@ -13,6 +13,14 @@ const badgeVariants = cva(
         secondary: "border-transparent bg-muted text-foreground",
         gold: "border-champagne/50 bg-champagne/10 text-champagne-ink",
         outline: "border-border text-foreground",
+        // Status tones. Eight call sites hand-rolled these as
+        // `variant="outline"` plus `border-<tone>/40 text-<tone>` — and drifted:
+        // the same "this is fine" green was /40 in the scraper and /50 on the
+        // commission board, so two screens an owner moves between all day drew
+        // the same state at two different weights. One name, one weight.
+        success: "border-success/40 bg-success/8 text-success",
+        warning: "border-warning/40 bg-warning/8 text-warning",
+        alert: "border-alert/40 bg-alert/8 text-alert",
       },
     },
     defaultVariants: {

@@ -167,7 +167,7 @@ export function AllWebsites({ sources }: { sources: SourceOverviewRow[] }) {
           tabIndex={0}
           role="region"
           aria-label="All websites"
-          className="max-h-[32rem] overflow-auto rounded-2xl border border-border bg-card shadow-sm [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          className="max-h-[32rem] overflow-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
         >
           <table className="w-full text-sm">
             <thead className="sticky top-0 z-10 bg-card">

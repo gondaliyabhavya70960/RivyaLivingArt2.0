@@ -32,7 +32,7 @@ function TabNav({ active }: { active: TabKey }) {
   return (
     <nav
       aria-label="Blog sections"
-      className="mb-6 flex w-fit gap-1 rounded-full border border-border bg-card p-1 shadow-sm"
+      className="mb-6 flex w-fit gap-1 rounded-full border border-border bg-card p-1 shadow-e1"
     >
       {TABS.map((tab) => (
         <Link

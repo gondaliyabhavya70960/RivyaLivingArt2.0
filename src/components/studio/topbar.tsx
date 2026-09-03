@@ -62,7 +62,7 @@ export function StudioTopbar({
         } to review`;
 
   return (
-    <header className="sticky top-0 z-30 -mx-5 mb-8 hidden h-16 border-b border-border bg-background px-5 sm:-mx-8 sm:px-8 lg:flex lg:items-center lg:gap-4">
+    <header className="sticky top-0 z-30 -mx-5 mb-8 hidden h-16 border-b border-border bg-background px-5 sm:-mx-8 sm:flex sm:items-center sm:gap-4 sm:px-8">
       <div className="min-w-0 flex-1">
         <StudioBreadcrumbs />
       </div>

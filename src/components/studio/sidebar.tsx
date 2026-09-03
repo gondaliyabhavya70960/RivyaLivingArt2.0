@@ -169,7 +169,7 @@ export function StudioNav({
         if (items.length === 0) return null;
         return (
           <div key={section.heading}>
-            <p className="u-micro px-3 text-mist/70 [[data-sidebar-collapsed]_&]:hidden">
+            <p className="u-micro px-3 text-mist/70 max-lg:hidden [[data-sidebar-collapsed]_&]:hidden">
               {section.heading}
             </p>
             <ul className="mt-2 space-y-px">
@@ -182,12 +182,12 @@ export function StudioNav({
                   return (
                     <li key={item.href}>
                       <span
-                        className="flex min-h-11 cursor-not-allowed items-center gap-3 border-s-2 border-transparent px-3 py-2 text-small text-mist/40"
+                        className="flex min-h-11 cursor-not-allowed items-center gap-3 border-s-2 border-transparent px-3 py-2 text-small text-mist/40 max-lg:justify-center"
                         title={`Coming in Phase ${item.phase}`}
                       >
                         <item.icon className="size-4" strokeWidth={1.5} />
-                        {item.label}
-                        <span className="u-micro ms-auto rounded-full border border-hairline-dk px-2 py-px">
+                        <span className="max-lg:hidden">{item.label}</span>
+                        <span className="u-micro ms-auto rounded-full border border-hairline-dk px-2 py-px max-lg:hidden">
                           {item.phase}
                         </span>
                       </span>
@@ -202,7 +202,7 @@ export function StudioNav({
                       title={item.label}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex min-h-11 items-center gap-3 border-s-2 px-3 py-2 text-small outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset motion-reduce:transition-none",
+                        "flex min-h-11 items-center gap-3 border-s-2 px-3 py-2 text-small outline-none transition-colors max-lg:justify-center [[data-sidebar-collapsed]_&]:lg:justify-center duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset motion-reduce:transition-none",
                         active
                           ? "border-champagne bg-mineral/6 font-medium text-mineral"
                           : "border-transparent text-mist hover:bg-mineral/4 hover:text-mineral",
@@ -213,7 +213,7 @@ export function StudioNav({
                         className="size-4 shrink-0"
                         strokeWidth={1.5}
                       />
-                      <span className="min-w-0 truncate [[data-sidebar-collapsed]_&]:hidden">
+                      <span className="min-w-0 truncate max-lg:hidden [[data-sidebar-collapsed]_&]:hidden">
                         {item.label}
                       </span>
                     </Link>

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { Toaster } from "sonner";
 import { signOut } from "@/lib/auth";
@@ -11,6 +11,7 @@ import { CommandPalette } from "@/components/studio/command-palette";
 import { SidebarCollapseToggle } from "@/components/studio/sidebar-collapse";
 import { StudioMobileNav } from "@/components/studio/mobile-nav";
 import { StudioTopbar } from "@/components/studio/topbar";
+import { UnsavedChangesDialog } from "@/components/studio/unsaved-changes-dialog";
 
 /**
  * Studio shell — REDESIGN.md §12.2: "a creative atelier management system,
@@ -60,6 +61,11 @@ export default async function StudioLayout({
         }}
       />
       <CommandPalette role={session.user.role} />
+      {/* The unsaved-changes confirmation. Mounted here, once, because it has
+          to outlive the form it asks about — the whole point is that the form
+          is being navigated away from. It talks to the guard hook through the
+          module store, the same shape the drawer and the palette use. */}
+      <UnsavedChangesDialog />
       {/* Skip link — first focusable element, bypasses the sidebar nav. */}
       <a
         href="#studio-content"
@@ -68,20 +74,33 @@ export default async function StudioLayout({
         Skip to content
       </a>
 
-      {/* Desktop sidebar — 256px, inside §12.2's 240–260px band. */}
+      {/* Sidebar — an 80px icon RAIL from 640px, the full 256px panel (inside
+          §12.2's 240–260px band) from 1024px.
+
+          It used to be `lg:flex` alone, which meant a tablet — the device an
+          owner actually reviews commissions on from the sofa — got the PHONE
+          chrome: no persistent nav at all, every navigation a drawer open. The
+          rail is the same nav with its labels dropped, so between 640 and
+          1024 the sections stay one tap away.
+
+          Below `lg` the rail is not collapsible: there is no room for the
+          panel, so `data-sidebar-collapsed` (the owner's per-device choice) is
+          scoped to `lg` and up rather than applying at every width. */}
       <aside
         data-theme="navy"
-        className="fixed inset-y-0 start-0 z-40 hidden w-64 flex-col overflow-y-auto border-e border-hairline-dk bg-obsidian px-3 py-6 lg:flex [--background:var(--obsidian)] [--ring:var(--focus)] [[data-sidebar-collapsed]_&]:w-20 [[data-sidebar-collapsed]_&]:px-2"
+        className="fixed inset-y-0 start-0 z-40 hidden w-20 flex-col overflow-y-auto border-e border-hairline-dk bg-obsidian px-2 py-6 sm:flex lg:w-64 lg:px-3 [--background:var(--obsidian)] [--ring:var(--focus)] [[data-sidebar-collapsed]_&]:lg:w-20 [[data-sidebar-collapsed]_&]:lg:px-2"
       >
-        <div className="px-3 [[data-sidebar-collapsed]_&]:hidden">
+        <div className="px-3 max-lg:hidden [[data-sidebar-collapsed]_&]:hidden">
           <Logo href="/studio" className="h-7 text-mineral" />
           <p className="u-micro mt-2 text-mist/70">STUDIO</p>
         </div>
         <div className="mt-9 flex-1">
           <StudioNav role={session.user.role} />
         </div>
-        <SidebarCollapseToggle />
-        <div className="mt-3 border-t border-hairline-dk px-3 pt-4 [[data-sidebar-collapsed]_&]:hidden">
+        <div className="max-lg:hidden">
+          <SidebarCollapseToggle />
+        </div>
+        <div className="mt-3 border-t border-hairline-dk px-3 pt-4 max-lg:hidden [[data-sidebar-collapsed]_&]:hidden">
           <p className="truncate text-small text-mineral">
             {session?.user?.email}
           </p>
@@ -117,7 +136,7 @@ export default async function StudioLayout({
 
       <main
         id="studio-content"
-        className="min-w-0 flex-1 px-5 pb-24 pt-16 sm:px-8 lg:ms-64 lg:pt-0 [[data-sidebar-collapsed]_&]:lg:ms-20"
+        className="min-w-0 flex-1 px-5 pb-24 pt-16 sm:ms-20 sm:px-8 sm:pt-0 lg:ms-64 [[data-sidebar-collapsed]_&]:lg:ms-20"
       >
         <StudioTopbar
           email={session?.user?.email ?? ""}
@@ -128,7 +147,46 @@ export default async function StudioLayout({
         />
         {children}
       </main>
-      <Toaster position="top-right" richColors closeButton />
+      {/* Sonner's `richColors` paints its OWN palette — the success toast is
+          a hardcoded `hsl(143, 85%, 96%)`, nowhere near this repo's
+          `--success` (#2c6b5b) — so every confirmation in the Studio arrived
+          in a green the design system does not contain. The flag stays on,
+          because it is what gives success/error/warning distinct treatments
+          at all; its variables are repointed at the tokens instead. They
+          They are the `.studio-v2` scope's own names — `--surface`, `--text`,
+          `--border`, not the shadcn `--card`/`--foreground` aliases. Sonner
+          portals its list to `document.body`, and `.studio-v2` sits on
+          `<html>`, so the scope does reach it; but an undefined custom
+          property makes the whole `color-mix()` invalid at computed-value
+          time and the declaration is dropped SILENTLY — the first version of
+          this used `var(--card)`, which does not exist here, and every toast
+          came out with a transparent background while the text colours looked
+          right. Measured, not assumed (see the PR). The dark block re-points
+          the same names, so it follows for free. */}
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        style={
+          {
+            "--normal-bg": "var(--surface)",
+            "--normal-text": "var(--text)",
+            "--normal-border": "var(--border)",
+            "--success-bg": "color-mix(in oklab, var(--success) 8%, var(--surface))",
+            "--success-text": "var(--success)",
+            "--success-border": "color-mix(in oklab, var(--success) 40%, transparent)",
+            "--error-bg": "color-mix(in oklab, var(--alert) 8%, var(--surface))",
+            "--error-text": "var(--alert)",
+            "--error-border": "color-mix(in oklab, var(--alert) 40%, transparent)",
+            "--warning-bg": "color-mix(in oklab, var(--warning) 8%, var(--surface))",
+            "--warning-text": "var(--warning)",
+            "--warning-border": "color-mix(in oklab, var(--warning) 40%, transparent)",
+            "--info-bg": "color-mix(in oklab, var(--info) 8%, var(--surface))",
+            "--info-text": "var(--info)",
+            "--info-border": "color-mix(in oklab, var(--info) 40%, transparent)",
+          } as CSSProperties
+        }
+      />
     </div>
   );
 }

@@ -181,7 +181,7 @@ function AddToCatalogBody({
           </Label>
         </div>
 
-        <div className="rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
+        <div className="rounded-card border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
           Everything imports as DRAFT with the rewrite guard — scraped titles,
           text and photos are competitors&apos; copyrighted reference material.
           Publish stays blocked until each product is rewritten as original

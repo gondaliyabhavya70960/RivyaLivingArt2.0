@@ -43,7 +43,7 @@ export function CustomizationFieldsSection({
             return (
               <div
                 key={item.id}
-                className="space-y-3 rounded-xl border border-border p-4"
+                className="space-y-3 rounded-card border border-border p-4"
               >
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">

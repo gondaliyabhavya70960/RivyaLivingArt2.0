@@ -5,6 +5,389 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Deploys — cap the prerender's database fan-out (2026-09-03)
+
+Every Vercel deployment since 09:03 failed. The database was never the problem, and neither was any
+of the Studio work in flight.
+
+### The arithmetic
+The storefront prerenders 13 routes × 9 locales, and each page reads the CMS resolvers — site copy,
+site images, nav menus. Next runs static generation across **one worker process per core**, and each
+process builds its own Prisma client with `max: 5` sockets (`src/lib/db.ts`). Vercel's build machine
+reports:
+
+```
+Build machine configuration: 30 cores, 60 GB
+```
+
+30 × 5 = **150 simultaneous connections** against a hosted Postgres whose cap is far below that.
+`experimental.cpus: 4` puts the ceiling at 20. It is the PRODUCT of the worker count and `max` that
+has to stay under the provider's limit, so neither number moves without the other.
+
+### Why it looked like something else
+- The failure names the database, so it reads as an outage. It is not: preflight reported
+  `psql ✓ connected and queried`, all 44 migrations applied, and `bootstrap` finished. **Only the
+  prerender fell over.**
+- **CI never sees it.** GitHub Actions builds against a throwaway Postgres container with no
+  meaningful connection cap, which is exactly why the same commit is green there and red on Vercel.
+- My own first diagnosis blamed six overlapping builds. A build that ran completely alone failed
+  identically, which falsified it — one 30-core build is enough on its own.
+
+### A stale comment that misdirected the diagnosis
+`src/lib/db.ts` described the deployed database as **Neon**. It is **Prisma Postgres**
+(`db.prisma.io`) — the build preflight prints the host on every deploy. Pooler limits differ between
+providers, so the name is not cosmetic: it sent the first investigation at the wrong service. Header
+corrected.
+
+### Verified, and what is NOT verified
+`npm run build` passes with the option accepted (Next lists `· cpus: 4` among the active experimental
+flags); design audit, a11y audit, Studio audit and the unit suite are all clean afterwards.
+
+**This does not prove the deploy is fixed.** The local machine has 4 cores, so the cap is a no-op
+here — nothing local can reproduce a 30-worker fan-out or a hosted connection limit. Vercel is the
+only place the change can be confirmed.
+
+---
+
+## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
+
+### Added: the draft in a device frame, without leaving the editor
+Every editing screen already linked to `/api/draft?redirect=…` in a new tab. That answers "how does
+this read" but not "how does this read ON A PHONE" — the question that actually bites, since the
+repo's own definition of done names 360px and 1280px and checking the small end meant a new tab plus
+devtools plus a device-toolbar toggle. Most people do not, so long headlines and wrapped buttons
+ship.
+
+`DraftPreview` frames the public page at 390 / 768 / 1280 inside the editor, and keeps the new-tab
+link inside the dialog so nothing is lost. Wired into the product and journal forms.
+
+**Not scaled, on purpose.** A shrunk desktop preview reads as "roughly right" and hides exactly the
+crowding it exists to reveal, so each width renders 1:1 and the desktop frame scrolls if the dialog
+is narrower.
+
+Framing is safe here and deliberately narrow: the storefront carries `X-Frame-Options: SAMEORIGIN`
+and `frame-ancestors 'self'`, while **`/studio/*` is `DENY`** and stays that way — this frames public
+pages only, never an admin screen.
+
+Verified against a production build on a real product: the frame renders 390×700 by default, the
+framed document's `h1` is the product's own title (so the draft cookie is minted and the storefront
+really renders inside it), and switching to Tablet resizes it to 768.
+
+### Fixed: the undo that existed and could not be reached
+`restoreRevision` shipped with publishing and works — ADMIN-only, restoring **into the draft** rather
+than straight to live, so a mis-clicked restore is itself recoverable. It was **unreachable**. Every
+publish wrote a `ContentRevision`, and nothing anywhere listed them, so no owner could ever hold a
+revision id. The history was being recorded faithfully and could only be read with a database
+client.
+
+`listSurfaceRevisions` is the missing half, and `RevisionHistory` is the dialog that renders it:
+summary, timestamp, author, and how many copy slots and images each snapshot holds. Reading history
+needs only staff; putting a version back still needs ADMIN, which is `restoreRevision`'s own check
+and stays there. Capped at 50 — this is "undo what I just broke", not an audit ledger, and
+`/studio/activity` already keeps the long record.
+
+**Deliberately not inside `PublishBar`.** That bar renders nothing when there is nothing staged,
+which is exactly the moment history is wanted: you published something wrong, so there is no draft
+and no bar. Putting it there would have hidden the feature behind the one state where it is useless.
+It lives in the page header instead.
+
+### Added: the product form is five tabs
+Twelve stacked sections were the longest scroll in the Studio. They are now **General · Images ·
+Customization · Details · SEO**.
+
+Two things had to be right for tabs to be an improvement rather than a hiding place:
+
+- **Nothing unmounts.** Radix drops inactive content by default, and these panels hold registered
+  form fields, an upload in flight and a rich-text editor instance — losing those on a tab change
+  would be worse than the scroll. Every panel is `forceMount`ed.
+- **An error cannot hide behind a tab.** Submitting with a bad SEO title while General is showing
+  would otherwise refuse to submit with nothing on screen to explain why — the classic way tabbed
+  forms strand people. Each tab declares the fields it owns; a refused submit switches to the first
+  tab holding an error, and every errored tab is marked in the strip.
+
+### The bug in the first version, caught by measuring
+`forceMount` alone produced tabs that **did not hide anything**. Radix computes presence as
+`forceMount || isSelected` and then sets `hidden: !present` — so forcing the mount also forces
+`hidden` to false, and all five panels rendered at once. The strip would have shipped as decoration
+over a form that still scrolled as one column, which is worse than no tabs because it claims to have
+hidden something. `TabsContent` now carries `data-[state=inactive]:hidden`, which is inert without
+`forceMount` and load-bearing with it. Counting visible panels in the browser is what found it —
+the screenshot alone looked plausible.
+
+Measured after the fix: 13 panels mounted (5 product + 8 translation locales), **0 inactive panels
+visible**, and **15 inputs still mounted inside inactive panels** — so the hiding is visual only and
+no field was thrown away. An empty submit activates General and marks it.
+
+### Added: the media library reaches the rich-text editor
+The image button asked for a URL — including for images already in the owner's own library. The
+round trip was: leave the post, open Media Library, copy a URL, come back, paste. Doing that for a
+file that is already there is also how duplicate uploads get made.
+
+`MediaPicker` gained an optional `trigger`, so a caller that already has a button can supply it
+(the picker keeps its own dialog state; the trigger goes in rather than the state coming out). The
+five existing consumers are untouched.
+
+The toolbar now carries **both**, because they are different jobs: pick from the library, or paste an
+address for an image that genuinely lives elsewhere.
+
+### Fixed: seven forms silently discarded the owner's edits
+`useUnsavedChangesGuard` warned on `beforeunload` ONLY, and said so in its own header: "no in-app
+navigation interception". That is the half that almost never fires. An owner editing a product does
+not close the tab — they click **Products** in the sidebar, or a breadcrumb, or the logo. Every one
+of those is an in-app navigation, and every one of them threw the edit away with no warning of any
+kind. Seven forms carried this: blog, custom pages, portfolio, settings, SEO, products, pages.
+
+The guard now also intercepts in-app navigation. Next's App Router has no `router.events` to
+subscribe to and `next/link` navigates on click, so the interception is a capture-phase listener on
+the document — catching the click before it reaches the link. Browser Back is covered via `popstate`.
+
+What it deliberately does NOT intercept, because each is the owner asking for something else:
+modified clicks (⌘/ctrl/shift/alt, middle button — those open a new tab and leave the form alone),
+`target="_blank"`, `download`, non-http protocols, other origins, same-page fragments, and anything
+inside `[data-unsaved-allow]` (the opt-out for a form's own Cancel link, which means to discard).
+
+The confirmation is a real dialog mounted once in the dashboard layout, talking to the hook through
+a module store — the same shape the drawer and the ⌘K palette already use, and necessary for the
+same reason: the dialog has to OUTLIVE the form it is asking about.
+
+### Changed: the three `window.prompt` calls are dialogs
+The rich-text editor's link and image buttons, and "name this view". The browser prompt is
+suppressible (a browser that decides a tab shows too many dialogs discards the call and returns
+`null`, indistinguishable from Cancel — the action then silently does nothing), cannot validate, and
+steals focus out of the editor in a way that loses the selection the link was meant to wrap.
+
+### A false claim caught before it shipped
+The first draft of this work asserted, in a code comment and nearly in the PR body, that the link
+button "handed `javascript:` straight to `setLink`" — i.e. that this change closed an injection hole.
+**It did not.** `@tiptap/extension-link` 3.27.1 carries `isAllowedUri` and refuses disallowed
+protocols on its own. The URL check here is defence in depth and, mainly, FEEDBACK: the old prompt
+accepted anything and said nothing, so a mistyped URL was silently dropped by tiptap and the owner
+was left wondering why the button had not worked. Checking the dependency before describing the
+change is what caught it.
+
+### Verified rather than assumed
+Driven against a production build:
+- **Clean form** → clicking a sidebar link navigates normally (no false positive).
+- **Dirty form** → click intercepted, URL unchanged at `/studio/settings`, dialog shown.
+- **"Stay and keep editing"** → stays. **"Discard and leave"** → lands on `/studio/categories`.
+- Both prompt dialogs open with **no native `window.prompt` firing at any point**; an empty view name
+  is blocked ("Give the view a name."), and `javascript:alert(1)` is rejected with "Only http and
+  https links are allowed." while the dialog stays open.
+
+---
+
+## Transformation Phase 10 — the pinned first columns (2026-09-03, sixth batch)
+
+The last open item of the phase, and the one that needed a prerequisite before it could work at all.
+
+### The prerequisite
+`StudioRow`'s hover and selected tints were `bg-foreground/3` and `/5` — TRANSLUCENT washes. On a
+card that reads identically to an opaque colour, so it cost nothing until a column needed pinning: a
+sticky cell inherits its row's background, and a translucent one lets the columns scrolling
+underneath show straight through it. Both tints are now the same 3% and 5% mixed against the card up
+front — the same colour, and a cell that actually covers what passes beneath it.
+
+### What is pinned
+The first three columns of the two genuinely wide tables — products (checkbox · thumbnail · title)
+and commissions (checkbox · reference · customer) — below `xl` only, which is exactly where those
+tables scroll horizontally. At `xl` they drop their `min-w` and there is nothing to pin against.
+
+### Two offsets that had to be measured, not calculated
+Sticky columns need each one's inline-start offset, and both tables lied about their widths:
+
+- **Products' thumbnail cell declared `w-14` (56px) and rendered 60px** — a 48px image plus `pe-3`.
+  The title pinned 4px adrift until the declared width was corrected to match.
+- **Commissions' reference column had no width at all.** It is content-sized, so the customer
+  column's offset would have shifted the first time a reference number gained a digit. It is now
+  `w-20`, which makes the offset arithmetic instead of a guess.
+
+### Verified
+Measured on a production build at 1024px, scrolling each table's wrapper horizontally:
+
+| table | pinned offsets | held on scroll | first unpinned column | cells opaque |
+|---|---|---|---|---|
+| products | 0 · 40 · 100 px | 289 / 329 / 389 unchanged | 543 → 243 | yes |
+| commissions | 0 · 40 · 120 px | 289 / 329 / 409 unchanged | 582 → 442 | yes |
+
+`studio-audit.mjs` clean across 30 routes at 1440, 1024, 768 and 390.
+
+### One item closed by looking rather than building
+**Row-enter for appended activity rows (shortlist 15) is not applicable as written.** `ActivityPanel`
+is a pure server component — no state, no effect, no polling, no stream — and the only client
+component near `/studio/activity` is its filter. No row is ever *appended*: the panel re-renders
+whole on navigation or revalidation. An entrance animation would have no trigger to attach to and
+would instead replay across the entire list on every visit to the dashboard, which is exactly the
+decorative motion Part 14 rejects. It becomes real if the panel ever gains live updates.
+
+**A near-miss worth recording.** The commissions table does not render locally or in CI — neither
+database has an inquiry seed — so the first attempt to verify it silently re-measured PRODUCTS: the
+`sed` meant to repoint the probe did not match its own template literal, and the numbers came back
+byte-identical to the previous run. That identity is what gave it away. Three local fixture rows were
+inserted to measure against and deleted afterwards; nothing was seeded into the repo.
+
+---
+
+## Transformation Phase 10 — the Tabs primitive and the auth-tree boundary (2026-09-03, fifth batch)
+
+### Added
+- **`ui/tabs.tsx`** — the Studio's tab primitive on Radix, separate from `storefront/tabs.tsx` because
+  that one is the storefront vocabulary and this one reads the `.studio-v2` scope; sharing would mean
+  one of them rendering in the other's palette. Two variants: `pill` (the language strip) and
+  `underline` (the default bar the Phase 11 editor tabs will use).
+- **An error boundary for the /studio AUTH tree.** `login`, `signup`, `forgot-password` and
+  `reset-password` sit directly under `src/app/studio/`, **not** inside `(dashboard)` — so the
+  boundary fixed earlier today never covered them. A failure while signing in bubbled to the global
+  boundary and answered in the storefront's dark public voice: staff trying to get in were told
+  "this piece isn't here", with a WhatsApp button. Same contract as the dashboard's, digest included.
+
+### Fixed — the language strip was announcing a pattern it did not implement
+`translations-section.tsx` hand-rolled `role="tablist"` and `role="tab"` and then broke the contract
+in two ways that a screen-reader user meets immediately:
+
+- **No `aria-controls`, and the panel had no `role="tabpanel"`.** The relationship was announced and
+  then not wired to anything.
+- **No roving `tabindex`.** All **eight** locale buttons were separate tab stops, so getting past the
+  strip to the fields took eight presses of Tab, and the Left/Right arrows the pattern promises did
+  nothing at all.
+
+### Verified rather than assumed
+The conversion moves nine locales' worth of translation data, so it was driven rather than trusted:
+
+- **Tab stops inside the strip: 8 → 1.** One press enters it, the next lands in the panel.
+- **Arrow keys move focus and selection** together; `aria-controls`, `role="tabpanel"` and
+  `aria-labelledby` are all wired by Radix.
+- **The data binding survived**, which was the actual risk: typing into one language leaves the other
+  language's field empty, and the value is still there on return. Writes now take the panel's own
+  locale as an argument rather than closing over `active`.
+
+### A measurement trap worth naming twice
+The first pass at verifying this read `tabindex` off the DOM straight after `networkidle` and
+concluded the roving focus was broken — every trigger read `-1`. It was measuring before Radix had
+hydrated. This is the **same trap that broke `main` in #37**, where the keyboard gate drove keys
+before the page was interactive. Pressing an actual Tab, rather than reading an attribute, is what
+settled it.
+
+---
+
+## Transformation Phase 10 — tiles, skeletons and palette verbs (2026-09-03, fourth batch)
+
+### Added
+- **Five dashboard tiles: testimonials, portfolio pieces, media files, scraped records, import runs.**
+  Each has a screen in the sidebar and reported nothing on the Overview, so "is there anything in the
+  portfolio yet?" could only be answered by navigating there. Counts, not judgements — an empty
+  surface reads 0 rather than being hidden, because 0 is the answer.
+- **Twelve per-route `loading.tsx` skeletons** at final dimensions, composed from a new
+  `studio/skeleton.tsx`: the header footprint, a filter bar, a table at real row height, a media
+  grid. Flat, never a shimmer — a pulse says "still waiting", which the shape already says. The
+  point of a skeleton is that nothing MOVES when the data lands; a generic stack of grey bars that
+  then reflows into a table is worse than a blank frame, because it promises a layout and breaks it.
+- **A `Do` group in the ⌘K palette** — create a product, write a journal post, add a portfolio piece,
+  run the scraper, import from the sheet, bulk import, upload media. They carry `keywords`, so typing
+  "add" finds "Create a product", which the label alone does not contain.
+  The verbs **navigate, they do not execute**: "Run the scraper" opens the sources screen where the
+  run button and its confirmation live. Firing a scrape from a fuzzy-matched keystroke would be a
+  side effect nobody asked for twice.
+
+### Fixed
+- **The palette claimed "Nothing matches." while it was still looking.** Two characters start a
+  debounced product search; until it returned, the empty state asserted an answer the palette did not
+  have, so a wrong result flashed before the right one. It now says "Searching products…" while the
+  results in hand belong to an older query. Flat, no spinner — the wait is ~180 ms plus a query.
+
+### What measuring changed about the sticky-header item
+The roadmap asks for a sticky header row on wide tables. Driving it in a browser found the work
+mostly done and the remaining half blocked on something else:
+
+- Only **2 of 21** studio tables carry a `min-w` — products and inquiries. Those are the wide ones,
+  and both already go `xl:sticky`. Confirmed working: at 1440 the products `<thead>` pins at 64 px
+  under the topbar while the page scrolls past it.
+- The other 19 sit in `overflow-x-auto` wrappers, which compute `overflow-y: auto` and become their
+  own scroll container. Sticky inside one of those has nothing to stick against, so adding it would
+  be a **silent no-op**. Products only works because `xl:overflow-x-visible` hands the sticky back to
+  the page.
+- **The pinned first column is genuinely not done, and it needs one thing first.** `StudioRow`'s
+  hover and selected tints are semi-transparent, so a pinned cell would let the scrolled-under
+  content show through it. Doing it properly means giving the row an opaque composite
+  (`color-mix` against the card) so a pinned cell can inherit it. Left for its own change rather
+  than half-built.
+
+---
+
+## Transformation Phase 10 — the Studio drift sweep (2026-09-03, third batch)
+
+108 substitutions across 42 files: `shadow-sm` → `shadow-e1`, and the card radii onto the
+architectural scale. Held back from the previous two batches on purpose — it is a visible restyle,
+not a rename, and it wanted measuring before and after rather than a source-grep count.
+
+### What the grep said vs what the browser said
+The source grep counted 63 `rounded-xl`/`rounded-2xl` occurrences and implied a sweeping change.
+Measuring the RENDERED Studio across all 30 routes found the real scope, and it was different in kind:
+
+- **51 elements at 16px.** `rounded-2xl` is not in this repo's `@theme` at all, so it fell through to
+  Tailwind's stock `1rem` — genuinely off-system, on a scale whose largest step is 8px.
+- **24 elements at 8px.** `rounded-xl` maps to `--r-lg`, which is exactly `rounded-modal`'s value. On
+  a card that is the wrong *name* for the right number.
+- **Everything else was already on 2px/4px.** The panel had drifted in specific places, not all over.
+
+### The split this produced
+A floating surface is modal-class in this system, so `dropdown-menu.tsx`, `select.tsx` and
+`dialog.tsx` went to `rounded-modal` — the same 8px they already rendered, so **zero pixels move**
+while the intent stops being an accident. That also leaves `select.tsx` alone visually, which
+matters: it is the one `ui/` file the storefront renders too, through `order-panel.tsx`. Everything
+else — cards, panels, wells — went to `rounded-card`.
+
+### Verified
+- Off-token radii across 30 routes: **51 + 24 → 0**.
+- Non-`e1` shadows: **69 → 4**, and all four are `shadow-e2` on the sticky save/bulk-action bar —
+  the Studio's sanctioned shadow exception, correctly untouched.
+- `studio-audit.mjs` clean at 1440, 768 and 390 px; before/after screenshots on five routes.
+- Nothing outside `src/components/studio`, `src/app/studio` and `src/components/ui` was touched.
+
+---
+
+## Transformation Phase 10 — the tablet rail, badge tones and the toaster (2026-09-03, second batch)
+
+### Added
+- **The Studio has a sidebar between 640 and 1024 px.** It was `lg:flex` alone, so a tablet — the
+  device an owner actually reviews commissions on — got the PHONE chrome: no persistent nav, every
+  navigation a drawer open. From 640 px the sidebar is now an 80 px icon rail carrying the same nav
+  with its labels dropped (each link already had a `title`), and the topbar comes with it, so search,
+  notifications and profile arrive at the same breakpoint. The full 256 px panel still starts at
+  1024 px. The owner's collapse toggle is scoped to `lg` and up — below that there is no room for
+  the panel, so there is nothing to collapse.
+- **`success`, `warning` and `alert` Badge variants.** Eight call sites hand-rolled these as
+  `variant="outline"` plus `border-<tone>/40 text-<tone>` — and had drifted: the same "this is fine"
+  green was `/40` in the scraper and `/50` on the commission board, so two screens an owner moves
+  between all day drew the same state at two different weights.
+
+### Fixed
+- **Every toast in the Studio came out in a colour the design system does not contain.** Sonner's
+  `richColors` paints its own palette — success is a hardcoded `hsl(143, 85%, 96%)`, nowhere near
+  this repo's `--success` (`#2c6b5b`). The flag stays on, because it is what gives success, error and
+  warning distinct treatments at all; its CSS variables are repointed at the tokens instead.
+
+### The bug this caught in its own first draft
+The first version repointed them at `var(--card)` and `var(--foreground)` — the shadcn aliases. Those
+do not exist in this repo: the `.studio-v2` scope's names are `--surface`, `--text` and `--border`.
+An undefined custom property makes the whole `color-mix()` **invalid at computed-value time and the
+declaration is dropped silently**, so the toasts came out with the right text colour and a fully
+transparent background, which looks close enough to correct to ship. It was caught only by measuring
+`getComputedStyle` on a real rendered toast — `background: rgba(0, 0, 0, 0)`. Sonner portals its list
+to `document.body` and `.studio-v2` sits on `<html>`, so the scope does reach it; the names were
+simply wrong.
+
+### Verified rather than assumed
+- The rail measured at five widths on a production build: 390 (mobile bar, sidebar hidden), 640 and
+  768 (rail 80 px, `margin-inline-start: 80px`, labels hidden), 1024 and 1440 (panel 256 px, labels
+  shown). No horizontal page overflow at any of them.
+- Toast colours measured on real toasts fired from a scratch-build probe route: success text
+  `rgb(44, 107, 91)` = `--success`, error `rgb(155, 58, 46)` = `--alert`, warning `rgb(138, 106, 30)`
+  = `--warning`, each on its own 8% tint with a 40% border. The probe route was deleted before the
+  commit and is absent from the final build.
+- `studio-audit.mjs` clean across 30 routes at 1440, 768, 640 and 390 px.
+
+---
+
 ## Transformation Phase 10 — the Studio's three route boundaries (2026-09-03)
 
 The first slice of Phase 10. All three boundaries already existed; each was wrong in a way no gate

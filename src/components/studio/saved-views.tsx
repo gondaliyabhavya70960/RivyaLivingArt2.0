@@ -1,10 +1,11 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Bookmark, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { PromptDialog } from "@/components/studio/prompt-dialog";
 
 type SavedView = { name: string; qs: string };
 
@@ -86,8 +87,9 @@ export function SavedViews({ storageKey }: { storageKey: string }) {
 
   const currentQs = searchParams.toString();
 
-  const save = () => {
-    const name = window.prompt("Name this view:")?.trim();
+  const [naming, setNaming] = useState(false);
+
+  const save = (name: string) => {
     if (!name) return;
     persist(
       [
@@ -101,6 +103,19 @@ export function SavedViews({ storageKey }: { storageKey: string }) {
 
   return (
     <div className="mb-3 flex flex-wrap items-center gap-2">
+      {/* Keyed on `naming` so each opening mounts a fresh, empty field. */}
+      <PromptDialog
+        key={naming ? "open" : "closed"}
+        open={naming}
+        onOpenChange={setNaming}
+        title="Name this view"
+        description="Saves the current filters and search so you can come back to them."
+        label="View name"
+        placeholder="e.g. Drafts needing photos"
+        submitLabel="Save view"
+        validate={(value) => (value ? null : "Give the view a name.")}
+        onSubmit={save}
+      />
       {views.map((view) => {
         const active = view.qs === currentQs;
         return (
@@ -138,7 +153,7 @@ export function SavedViews({ storageKey }: { storageKey: string }) {
           variant="ghost"
           size="sm"
           className="min-h-9"
-          onClick={save}
+          onClick={() => setNaming(true)}
         >
           <Bookmark strokeWidth={1.5} /> Save view
         </Button>
