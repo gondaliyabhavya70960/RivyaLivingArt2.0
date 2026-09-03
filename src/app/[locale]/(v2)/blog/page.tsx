@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
 import { Button } from "@/components/storefront/button";
+import { DemoMark } from "@/components/storefront/demo-mark";
 import { EmptyState } from "@/components/storefront/empty-state";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
@@ -89,6 +90,7 @@ type PostCard = {
   translations: unknown;
   /** Already localized by the time a card renders — see `localizedPosts`. */
   blogCategory: { name: string; slug: string } | null;
+  isDemo: boolean;
 };
 
 /* ————————————————— module-level helpers ————————————————— */
@@ -187,7 +189,11 @@ function JournalCard({
   featured = false,
 }: {
   post: PostCard;
-  labels: { fallbackCategory: string; minRead: (m: number) => string };
+  labels: {
+    fallbackCategory: string;
+    minRead: (m: number) => string;
+    demoMark: string;
+  };
   dateFormatter: Intl.DateTimeFormat;
   featured?: boolean;
 }) {
@@ -243,8 +249,9 @@ function JournalCard({
           featured && "lg:col-span-4 lg:col-start-9",
         )}
       >
-        <p className="u-micro">
-          {post.blogCategory?.name ?? labels.fallbackCategory}
+        <p className="u-micro flex flex-wrap items-center gap-2">
+          <span>{post.blogCategory?.name ?? labels.fallbackCategory}</span>
+          {post.isDemo ? <DemoMark label={labels.demoMark} /> : null}
         </p>
         {featured ? (
           <h2 className="font-display text-h2 leading-[1.06] tracking-display text-ink">
@@ -386,6 +393,7 @@ export default async function BlogPage({
             blogCategory: {
               select: { name: true, slug: true, translations: true },
             },
+            isDemo: true,
           },
         });
 
@@ -415,6 +423,7 @@ export default async function BlogPage({
   const labels = {
     fallbackCategory: t("journalFallbackCategory"),
     minRead: (minutes: number) => t("minRead", { minutes }),
+    demoMark: tCommon("demoMark"),
   };
 
   return (
