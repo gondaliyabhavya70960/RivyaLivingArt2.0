@@ -58,7 +58,8 @@
     "linkCopied": "تم نسخ الرابط",
     "logoHome": "Rivya Living Art — الصفحة الرئيسية",
     "dismissAnnouncement": "إخفاء الإعلان",
-    "announcementDefault": "مدة التنفيذ الحالية · القطع الصغيرة 7–10 أيام · القطع الكبيرة 3–6 أسابيع"
+    "announcementDefault": "مدة التنفيذ الحالية · القطع الصغيرة 7–10 أيام · القطع الكبيرة 3–6 أسابيع",
+    "ratedOutOf": "تقييم {rating} من {outOf} نجوم"
   },
   "Header": {
     "search": "بحث",
@@ -1255,7 +1256,10 @@
       "previousImage": "الصورة السابقة",
       "nextImage": "الصورة التالية",
       "lightboxStatus": "الصورة {index} من {count}: {alt}",
-      "railLabel": "صور المنتج"
+      "railLabel": "صور المنتج",
+      "modelLoading": "جارٍ تحميل العرض ثلاثي الأبعاد…",
+      "modelFailed": "تعذّر تحميل العرض ثلاثي الأبعاد.",
+      "modelRetry": "حاول مرة أخرى"
     },
     "referenceUploader": {
       "addImages": "أضف صورًا مرجعية",

@@ -58,7 +58,8 @@
     "linkCopied": "લિંક કૉપિ થઈ",
     "logoHome": "Rivya Living Art — હોમ",
     "dismissAnnouncement": "સૂચના બંધ કરો",
-    "announcementDefault": "હાલનો સમય · નાની કૃતિઓ 7–10 દિવસ · મોટી કૃતિઓ 3–6 અઠવાડિયાં"
+    "announcementDefault": "હાલનો સમય · નાની કૃતિઓ 7–10 દિવસ · મોટી કૃતિઓ 3–6 અઠવાડિયાં",
+    "ratedOutOf": "{outOf} માંથી {rating} તારા"
   },
   "Header": {
     "search": "શોધો",
@@ -1255,7 +1256,10 @@
       "previousImage": "પાછલો ફોટો",
       "nextImage": "આગલો ફોટો",
       "lightboxStatus": "{count}માંથી ફોટો {index}: {alt}",
-      "railLabel": "ઉત્પાદનના ફોટા"
+      "railLabel": "ઉત્પાદનના ફોટા",
+      "modelLoading": "3D દૃશ્ય લોડ થઈ રહ્યું છે…",
+      "modelFailed": "3D દૃશ્ય લોડ થઈ શક્યું નહીં.",
+      "modelRetry": "ફરી પ્રયાસ કરો"
     },
     "referenceUploader": {
       "addImages": "સંદર્ભ ફોટા ઉમેરો",

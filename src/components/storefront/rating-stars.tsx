@@ -1,14 +1,23 @@
 import { Star } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { cn } from "@/lib/utils";
 
 /**
- * v2.0 rating stars (DESIGN.md B3 · A2 rule 5): star ratings are true gold
- * #D4AF37 — one of gold's two sanctioned jobs on any surface. Server
- * component; purely presentational with an accessible text alternative.
- * Icons per A4: lucide, 1.5px stroke.
+ * Rating stars — REDESIGN.md Part 3.1: champagne is the accent for "a tiny
+ * highlight", and a filled star is exactly that. Server component, purely
+ * presentational.
+ *
+ * The accessible name is a translated string, not a template literal. It used
+ * to read "Rated 5 out of 5 stars" in all nine locales — the class of bug the
+ * i18n gate exists to catch and cannot see, because a hardcoded string is
+ * never a missing key. `getTranslations` (rather than a `label` prop) keeps
+ * all four call sites unchanged; each already resolves a request locale,
+ * `/design-lab` included, which seeds one explicitly.
+ *
+ * Icons per Part 3.6: lucide, 1.5px stroke.
  */
-export function RatingStars({
+export async function RatingStars({
   rating,
   outOf = 5,
   className,
@@ -19,12 +28,13 @@ export function RatingStars({
   className?: string;
 }) {
   const filled = Math.floor(Math.max(0, Math.min(rating, outOf)));
+  const t = await getTranslations("Common");
 
   return (
     <span
       className={cn("inline-flex items-center gap-0.5 text-champagne", className)}
       role="img"
-      aria-label={`Rated ${rating} out of ${outOf} stars`}
+      aria-label={t("ratedOutOf", { rating, outOf })}
     >
       {Array.from({ length: outOf }, (_, i) => (
         <Star

@@ -58,7 +58,8 @@
     "linkCopied": "リンクをコピーしました",
     "logoHome": "Rivya Living Art — ホーム",
     "dismissAnnouncement": "お知らせを閉じる",
-    "announcementDefault": "現在の製作期間 · 小さな作品 7〜10日 · 大きな作品 3〜6週間"
+    "announcementDefault": "現在の製作期間 · 小さな作品 7〜10日 · 大きな作品 3〜6週間",
+    "ratedOutOf": "{outOf}つ星のうち{rating}"
   },
   "Header": {
     "search": "検索",
@@ -1255,7 +1256,10 @@
       "previousImage": "前の画像",
       "nextImage": "次の画像",
       "lightboxStatus": "{count} 枚中 {index} 枚目：{alt}",
-      "railLabel": "商品画像"
+      "railLabel": "商品画像",
+      "modelLoading": "3Dビューを読み込んでいます…",
+      "modelFailed": "3Dビューを読み込めませんでした。",
+      "modelRetry": "再試行"
     },
     "referenceUploader": {
       "addImages": "参考画像を追加",

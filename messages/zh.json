@@ -58,7 +58,8 @@
     "linkCopied": "链接已复制",
     "logoHome": "Rivya Living Art — 首页",
     "dismissAnnouncement": "关闭公告",
-    "announcementDefault": "当前制作周期 · 小件 7–10 天 · 大件 3–6 周"
+    "announcementDefault": "当前制作周期 · 小件 7–10 天 · 大件 3–6 周",
+    "ratedOutOf": "{outOf} 星中的 {rating} 星"
   },
   "Header": {
     "search": "搜索",
@@ -1255,7 +1256,10 @@
       "previousImage": "上一张图片",
       "nextImage": "下一张图片",
       "lightboxStatus": "第 {index} 张，共 {count} 张：{alt}",
-      "railLabel": "作品图片"
+      "railLabel": "作品图片",
+      "modelLoading": "正在加载 3D 视图…",
+      "modelFailed": "3D 视图加载失败。",
+      "modelRetry": "重试"
     },
     "referenceUploader": {
       "addImages": "添加参考图片",
