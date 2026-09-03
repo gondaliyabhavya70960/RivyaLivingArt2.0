@@ -25,7 +25,7 @@ export async function DraftRibbon() {
   return (
     <div
       role="status"
-      className="sticky top-0 z-[60] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-alert px-4 py-2 text-center font-mono text-12 tracking-[0.12em] text-mineral uppercase"
+      className="sticky top-0 z-(--z-ribbon) flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-alert px-4 py-2 text-center font-mono text-12 tracking-[0.12em] text-mineral uppercase"
     >
       <span>Preview — showing changes that are not published</span>
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}

@@ -103,7 +103,7 @@ export function CursorFollower() {
     <div
       ref={ringRef}
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[120] size-8 rounded-full border border-mineral opacity-0 mix-blend-difference transition-[opacity,scale] duration-(--dur-micro) ease-(--ease-out) data-active:scale-150 data-active:border-2"
+      className="pointer-events-none fixed left-0 top-0 z-(--z-cursor) size-8 rounded-full border border-mineral opacity-0 mix-blend-difference transition-[opacity,scale] duration-(--dur-fast) ease-(--ease-luxury) data-active:scale-150 data-active:border-2"
     />
   );
 }

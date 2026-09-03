@@ -12,10 +12,10 @@ import { usePathname } from "@/i18n/navigation";
  * away on every storefront page. Royal primary voice per A2 rule 2 (WhatsApp
  * green stays reserved for the PDP's final Place Order action).
  *
- * Hidden on the PDP: its own sticky order bar (z-30, lg:hidden) already owns
- * that edge with higher purchase intent. The in-flow spacer keeps the
- * footer's last rows scrollable above the fixed bar; z-30 sits under the
- * consent card (z-[55]) and the mobile menu (z-[60]), and the bar carries
+ * Hidden on the PDP: its own sticky order bar (--z-bar, lg:hidden) already
+ * owns that edge with higher purchase intent. The in-flow spacer keeps the
+ * footer's last rows scrollable above the fixed bar; --z-bar sits under the
+ * consent card (--z-consent) and the mobile menu (--z-drawer), and it carries
  * data-slot="sf-mobile-wa-bar" so the open menu inerts it with the rest of
  * the page chrome.
  */
@@ -40,7 +40,7 @@ export function MobileWhatsappBar({
       <div aria-hidden className="h-16 lg:hidden" />
       <div
         data-slot="sf-mobile-wa-bar"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-mineral/95 backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-(--z-bar) border-t border-hairline bg-mineral/95 backdrop-blur lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="px-5 py-2.5">

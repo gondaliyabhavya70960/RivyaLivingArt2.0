@@ -142,20 +142,53 @@
   --shadow-e3: 0 12px 32px rgba(8, 10, 14, 0.12);
 
   /* ————— Part 3.8 · Motion ————————————————————————————————————————
-     Two curves, four durations. --ease-out is kept as an alias of the house
-     curve so the ~200 existing `ease-(--ease-out)` call sites keep animating
-     on the specified easing instead of a second, competing one. */
+     Two curves, four durations, and nothing else. Three aliases used to sit
+     here (--ease-out, --dur-micro, --dur-enter) pointing at the values
+     below, so v2-era call sites kept animating on the house curve rather
+     than a second, competing one. Every one of those call sites now names
+     the Part 3.8 token directly, so the aliases are gone: a second name for
+     the same value is how a second value eventually gets in. */
   --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-settle: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --ease-out: var(--ease-luxury);
   --dur-fast: 180ms;
   --dur-base: 350ms;
   --dur-slow: 800ms;
   --dur-reveal: 900ms;
-  /* Legacy duration names still referenced by the chrome and the studio
-     primitives, re-pointed onto the Part 3.8 set. */
-  --dur-micro: var(--dur-fast);
-  --dur-enter: var(--dur-base);
+
+  /* ————— Stacking order ————————————————————————————————————————
+     Every layer that joins the GLOBAL stack — anything `fixed` or `sticky`
+     — names its rung here instead of carrying a magic number. The couplings
+     used to live only in prose ("z-[55] keeps it UNDER the mobile menu",
+     "below the drawer scrim (z-59)"), which is a comment one edit away from
+     being false. These values are exactly the ones the chrome already had:
+     this ladder renamed them, it did not re-order them.
+
+     Two rungs deliberately tie. The header and a dialog both sit at 50 (a
+     modal opened from the header is later in the DOM, so it wins); the
+     drawer and the staff draft ribbon both sit at 60. Local stacking inside
+     a card (`z-10` on a badge, `-z-10` behind the mega-menu panel) is NOT on
+     this ladder — it is relative to its own parent and must stay that way. */
+  --z-grain: 25; /* the film-grain wash, over content, under all chrome */
+  --z-bar: 30; /* mobile bottom bar · WhatsApp bar/FAB · sticky shop filters */
+  --z-rail: 40; /* the cure line */
+  --z-header: 50; /* the sticky site header */
+  --z-dialog: 50; /* modal overlay + panel (storefront dialog, shop drawer) */
+  --z-progress: 51; /* the journal reading progress bar, over the header */
+  --z-consent: 55; /* the analytics consent card, under the mobile menu */
+  --z-scrim: 59; /* the drawer's scrim */
+  --z-drawer: 60; /* the mobile menu drawer itself */
+  --z-ribbon: 60; /* the staff draft-preview ribbon */
+  --z-overlay: 70; /* the search overlay — the topmost storefront surface */
+  --z-preloader: 100; /* the first-visit preloader (currently unmounted) */
+  --z-cursor: 120; /* the cursor follower (currently unmounted) */
+  --z-skip: 200; /* the skip link, above everything it might have to escape */
+
+  /* The Studio is its own stacking domain — a separate route tree with no
+     storefront chrome — so its rungs are named apart rather than folded in
+     above (its skip link is 60, not the storefront's 200). */
+  --z-studio-skip: 60;
+  --z-studio-scrim: 65;
+  --z-studio-palette: 70;
 
   /* ————— Semantic layer (shadcn-compatible) ————————————————————————
      The storefront consumes the palette names directly; this set exists for

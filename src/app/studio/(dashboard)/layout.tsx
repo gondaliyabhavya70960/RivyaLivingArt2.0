@@ -63,7 +63,7 @@ export default async function StudioLayout({
       {/* Skip link — first focusable element, bypasses the sidebar nav. */}
       <a
         href="#studio-content"
-        className="sr-only rounded-full focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[60] focus:bg-card focus:px-5 focus:py-3 focus:text-small focus:font-medium focus:text-foreground focus:shadow-e2 focus:outline-none focus:ring-2 focus:ring-focus"
+        className="sr-only rounded-full focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-(--z-studio-skip) focus:bg-card focus:px-5 focus:py-3 focus:text-small focus:font-medium focus:text-foreground focus:shadow-e2 focus:outline-none focus:ring-2 focus:ring-focus"
       >
         Skip to content
       </a>

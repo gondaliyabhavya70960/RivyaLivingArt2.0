@@ -161,7 +161,7 @@ export function CureLine({
         data-slot="cure-line"
         data-theme={overDark ? "navy" : undefined}
         className={cn(
-          "group/cure pointer-events-none fixed inset-y-0 start-0 z-40 hidden w-cure lg:block",
+          "group/cure pointer-events-none fixed inset-y-0 start-0 z-(--z-rail) hidden w-cure lg:block",
           className,
         )}
       >
@@ -229,7 +229,7 @@ export function CureLine({
       </nav>
 
       {/* ————— <1024px: a 2px top bar carrying the active label ————— */}
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-40 lg:hidden">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-(--z-rail) lg:hidden">
         <span aria-hidden className="block h-0.5 w-full bg-hairline">
           <span
             ref={barFill}
