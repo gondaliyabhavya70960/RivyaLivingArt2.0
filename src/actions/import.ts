@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { requireStaff, revalidatePublic, type ActionResult } from "@/actions/helpers";
+import {
+  requireStaff,
+  revalidatePublic,
+  type ActionResult,
+} from "@/actions/helpers";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
@@ -68,7 +72,10 @@ const PUBLIC_ENTITY: Partial<
  * are user-facing and must reach the client verbatim, which runAction's
  * generic error blurring would prevent.
  */
-function toFriendlyError(error: unknown, fallback: string): ActionResult<never> {
+function toFriendlyError(
+  error: unknown,
+  fallback: string,
+): ActionResult<never> {
   if (error instanceof ImportError) return { ok: false, error: error.message };
   console.error("Bulk import failed:", error);
   if (error instanceof Error && error.message === "Unauthorized") {
@@ -148,7 +155,10 @@ export async function previewImport(
     const counts = { create: 0, update: 0, error: 0, total: validated.length };
     for (const row of validated) counts[row.status] += 1;
 
-    return { ok: true, data: { rows: validated, counts, totalRows, truncated } };
+    return {
+      ok: true,
+      data: { rows: validated, counts, totalRows, truncated },
+    };
   } catch (error) {
     return toFriendlyError(
       error,
@@ -164,7 +174,10 @@ const runSchema = z.object({
   rows: z
     .array(z.record(z.string(), z.string()))
     .min(1, "Nothing to import — every row failed validation.")
-    .max(MAX_IMPORT_ROWS, `Imports are capped at ${MAX_IMPORT_ROWS} rows per file.`),
+    .max(
+      MAX_IMPORT_ROWS,
+      `Imports are capped at ${MAX_IMPORT_ROWS} rows per file.`,
+    ),
 });
 
 export type RunImportInput = z.input<typeof runSchema>;
@@ -301,7 +314,8 @@ async function buildContext(
     const tagBySlug = new Map<string, string>();
     for (const row of rows) {
       const category = row.data.category?.trim();
-      if (category) categoryBySlug.set(slugify(category) || "category", category);
+      if (category)
+        categoryBySlug.set(slugify(category) || "category", category);
       for (const tag of splitList(row.data.tags)) {
         tagBySlug.set(slugify(tag) || "tag", tag);
       }
@@ -387,7 +401,9 @@ async function mirrorProductImage(url: string): Promise<string> {
   if (url.includes(".blob.vercel-storage.com")) return url; // already ours
 
   try {
-    const response = await safeFetch(url, { signal: AbortSignal.timeout(20_000) });
+    const response = await safeFetch(url, {
+      signal: AbortSignal.timeout(20_000),
+    });
     if (!response.ok) return url;
     const contentType = (response.headers.get("content-type") ?? "")
       .split(";")[0]
@@ -402,10 +418,9 @@ async function mirrorProductImage(url: string): Promise<string> {
     const ext = ACCEPTED_UPLOAD_TYPES[contentType] ?? ".jpg";
     const base =
       slugify(
-        decodeURIComponent(new URL(url).pathname.split("/").pop() ?? "").replace(
-          /\.[^.]+$/,
-          "",
-        ),
+        decodeURIComponent(
+          new URL(url).pathname.split("/").pop() ?? "",
+        ).replace(/\.[^.]+$/, ""),
       ) || "import";
     const stored = await putFile(buffer, {
       pathname: `products/${base}${ext}`,
@@ -561,10 +576,15 @@ async function importProductRow(
       });
     }
 
-    await tx.customizationField.deleteMany({ where: { productId: product.id } });
+    await tx.customizationField.deleteMany({
+      where: { productId: product.id },
+    });
     if (customFields.length > 0) {
       await tx.customizationField.createMany({
-        data: customFields.map((field) => ({ ...field, productId: product.id })),
+        data: customFields.map((field) => ({
+          ...field,
+          productId: product.id,
+        })),
       });
     }
   });
@@ -589,7 +609,8 @@ async function importBlogPostRow(
 
   const categoryName = row.category?.trim();
   const blogCategoryId = categoryName
-    ? (ctx.blogCategoryIdBySlug.get(slugify(categoryName) || "category") ?? null)
+    ? (ctx.blogCategoryIdBySlug.get(slugify(categoryName) || "category") ??
+      null)
     : null;
   const tagSlugs = [
     ...new Set(splitList(row.tags).map((tag) => slugify(tag) || "tag")),
@@ -656,7 +677,11 @@ async function importFaqRow(
     return "updated";
   }
   await db.faq.create({
-    data: { question, answer: row.answer.trim(), order: order ?? ctx.nextOrder++ },
+    data: {
+      question,
+      answer: row.answer.trim(),
+      order: order ?? ctx.nextOrder++,
+    },
   });
   return "created";
 }
@@ -669,9 +694,36 @@ async function importTestimonialRow(
   const quote = row.quote.trim();
   const rating = intOrNull(row.rating);
   const order = intOrNull(row.order);
+
+  // Only a recognised value is ever written — a blank or malformed cell
+  // leaves an existing row's permission untouched on update, and defaults to
+  // UNKNOWN (the schema's own default) on create.
+  const PERMISSION_VALUES = [
+    "UNKNOWN",
+    "REQUESTED",
+    "GRANTED",
+    "DECLINED",
+  ] as const;
+  const permissionRaw = row.permission_status?.trim().toUpperCase();
+  const permissionStatus = PERMISSION_VALUES.find((v) => v === permissionRaw);
+
+  // A slug that does not resolve to a real product is left alone rather than
+  // clearing any link the row already has — a typo in one cell of a 500-row
+  // sheet must not silently unlink a testimonial from its piece.
+  const productSlug = row.product_slug?.trim();
+  const linkedProduct = productSlug
+    ? await db.product.findUnique({
+        where: { slug: productSlug },
+        select: { id: true },
+      })
+    : null;
+
   const data = {
     location: nullIfEmpty(row.location),
     avatarUrl: nullIfEmpty(row.avatar_url),
+    designation: nullIfEmpty(row.designation),
+    ...(permissionStatus ? { permissionStatus } : {}),
+    ...(linkedProduct ? { productId: linkedProduct.id } : {}),
   };
 
   const existing = await db.testimonial.findFirst({
@@ -692,6 +744,10 @@ async function importTestimonialRow(
     });
     return "updated";
   }
+  // Imported testimonials arrive as drafts — a bulk sheet of quotes has not
+  // been through the review pipeline `describeTestimonialProblem` polices
+  // (permission included), so nothing an import writes reaches the
+  // storefront until a human opens the row.
   await db.testimonial.create({
     data: {
       ...data,
@@ -699,6 +755,8 @@ async function importTestimonialRow(
       quote,
       rating: rating ?? 5,
       order: order ?? ctx.nextOrder++,
+      status: "DRAFT",
+      permissionStatus: permissionStatus ?? "UNKNOWN",
     },
   });
   return "created";
@@ -746,7 +804,9 @@ async function importPortfolioRow(
       ? await tx.portfolio.update({ where: { id: existing.id }, data: base })
       : await tx.portfolio.create({ data: { ...base, slug } });
 
-    await tx.portfolioImage.deleteMany({ where: { portfolioId: portfolio.id } });
+    await tx.portfolioImage.deleteMany({
+      where: { portfolioId: portfolio.id },
+    });
     if (images.length > 0) {
       await tx.portfolioImage.createMany({
         data: images.map((image) => ({ ...image, portfolioId: portfolio.id })),
@@ -763,7 +823,9 @@ async function importPageRow(
   const slug = row.slug.trim();
   const data = {
     title: row.title.trim(),
-    content: (await markdownToTiptap(row.content ?? "")) as Prisma.InputJsonValue,
+    content: (await markdownToTiptap(
+      row.content ?? "",
+    )) as Prisma.InputJsonValue,
     seoTitle: nullIfEmpty(row.seo_title),
     seoDescription: nullIfEmpty(row.seo_description),
   };
