@@ -11,6 +11,7 @@ import { CommandPalette } from "@/components/studio/command-palette";
 import { SidebarCollapseToggle } from "@/components/studio/sidebar-collapse";
 import { StudioMobileNav } from "@/components/studio/mobile-nav";
 import { StudioTopbar } from "@/components/studio/topbar";
+import { UnsavedChangesDialog } from "@/components/studio/unsaved-changes-dialog";
 
 /**
  * Studio shell — REDESIGN.md §12.2: "a creative atelier management system,
@@ -60,6 +61,11 @@ export default async function StudioLayout({
         }}
       />
       <CommandPalette role={session.user.role} />
+      {/* The unsaved-changes confirmation. Mounted here, once, because it has
+          to outlive the form it asks about — the whole point is that the form
+          is being navigated away from. It talks to the guard hook through the
+          module store, the same shape the drawer and the palette use. */}
+      <UnsavedChangesDialog />
       {/* Skip link — first focusable element, bypasses the sidebar nav. */}
       <a
         href="#studio-content"

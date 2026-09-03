@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { ReactNode } from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import type { Editor, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
+
+import {
+  PromptDialog,
+  validateUrl,
+} from "@/components/studio/prompt-dialog";
 import Placeholder from "@tiptap/extension-placeholder";
 import {
   Bold,
@@ -159,31 +164,68 @@ export function RichTextEditor({
         : null,
   });
 
-  const handleLink = useCallback(() => {
-    if (!editor) return;
-    const previous = (editor.getAttributes("link").href as string | undefined) ?? "";
-    // Media picker replaces the prompt later; prompt keeps Phase scope small.
-    const url = window.prompt("Link URL (leave empty to remove the link)", previous);
-    if (url === null) return;
-    if (url.trim() === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run();
-  }, [editor]);
+  /**
+   * Link and image used to call `window.prompt`. Both now open a real dialog
+   * (`prompt-dialog.tsx` records why), which is also where a URL is checked
+   * before it reaches the document. Tiptap already refuses disallowed
+   * protocols itself, so this is not what stops a `javascript:` link — it is
+   * what TELLS the owner, instead of silently dropping the value.
+   */
+  const [urlPrompt, setUrlPrompt] = useState<"link" | "image" | null>(null);
+  const linkHref = editor
+    ? ((editor.getAttributes("link").href as string | undefined) ?? "")
+    : "";
 
-  const handleImage = useCallback(() => {
-    if (!editor) return;
-    // Media picker arrives later — paste a URL for now.
-    const url = window.prompt("Image URL");
-    if (!url?.trim()) return;
-    editor.chain().focus().setImage({ src: url.trim() }).run();
-  }, [editor]);
+  const applyLink = useCallback(
+    (url: string) => {
+      if (!editor) return;
+      if (url === "") {
+        editor.chain().focus().extendMarkRange("link").unsetLink().run();
+        return;
+      }
+      editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    },
+    [editor],
+  );
+
+  const applyImage = useCallback(
+    (url: string) => {
+      if (!editor || !url) return;
+      editor.chain().focus().setImage({ src: url }).run();
+    },
+    [editor],
+  );
+
+  const handleLink = useCallback(() => setUrlPrompt("link"), []);
+  const handleImage = useCallback(() => setUrlPrompt("image"), []);
 
   const ready = Boolean(editor);
 
   return (
     <div className="rounded-lg border border-input bg-card transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50">
+      {/* Keyed on the mode so each opening starts from the right value. */}
+      <PromptDialog
+        key={urlPrompt ?? "closed"}
+        open={urlPrompt !== null}
+        onOpenChange={(next) => {
+          if (!next) setUrlPrompt(null);
+        }}
+        title={urlPrompt === "image" ? "Insert an image" : "Link"}
+        description={
+          urlPrompt === "image"
+            ? "Paste the address of an image. Uploads live in the Media Library."
+            : "Leave the field empty to remove the link."
+        }
+        label={urlPrompt === "image" ? "Image URL" : "Link URL"}
+        placeholder="https://…"
+        defaultValue={urlPrompt === "link" ? linkHref : ""}
+        submitLabel={urlPrompt === "image" ? "Insert" : "Apply"}
+        validate={(value) =>
+          // An empty link means "remove it"; an empty image means nothing.
+          urlPrompt === "link" && value === "" ? null : validateUrl(value)
+        }
+        onSubmit={urlPrompt === "image" ? applyImage : applyLink}
+      />
       <div
         role="toolbar"
         aria-label="Formatting"

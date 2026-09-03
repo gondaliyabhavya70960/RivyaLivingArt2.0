@@ -191,7 +191,7 @@ Touches: `src/app/studio/(dashboard)/layout.tsx`, `loading.tsx`, `error.tsx`, `s
 ### Phase 11 — Studio content management
 
 - Unified per-page editor `/studio/pages/<key>` composing words, pictures and order from the registries (UI composition, no data change); revision list per surface with restore-to-draft.
-- Product form: tabs (General · Images · Customization · Details · SEO), two columns with the draft preview, `FieldError` everywhere, helper text; blog and portfolio editors likewise; in-app navigation interception in `useUnsavedChangesGuard`; guard on dialog CRUD; `window.prompt` → `Dialog` + `Input`; `MediaPicker` wired into the editor image button; picker gains video.
+- Product form: tabs (General · Images · Customization · Details · SEO), two columns with the draft preview, `FieldError` everywhere, helper text; blog and portfolio editors likewise; ~~in-app navigation interception in `useUnsavedChangesGuard`~~ **DONE 2026-09-03** (it was `beforeunload` only, so seven forms discarded edits on any sidebar click — measured: clean form navigates, dirty form is held, both answers behave); guard on dialog CRUD; ~~`window.prompt` → `Dialog` + `Input`~~ **DONE 2026-09-03** (all three sites; no native prompt fires); `MediaPicker` wired into the editor image button; picker gains video.
 - Autosave only as local-draft persistence unless a per-row draft column is decided.
 - D15 blocks, one per commit: Collection Grid, Portfolio Grid, Journal Grid, Testimonial (after Phase 9); then Video Hero / Video Story / galleries after the picker supports video and `media-usages.ts` walks them; `custom-blocks.test.ts:25` updated deliberately each time.
 - Device-frame preview (`<iframe>` on `/api/draft?redirect`).

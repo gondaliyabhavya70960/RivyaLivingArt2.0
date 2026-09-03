@@ -5,6 +5,54 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
+
+### Fixed: seven forms silently discarded the owner's edits
+`useUnsavedChangesGuard` warned on `beforeunload` ONLY, and said so in its own header: "no in-app
+navigation interception". That is the half that almost never fires. An owner editing a product does
+not close the tab — they click **Products** in the sidebar, or a breadcrumb, or the logo. Every one
+of those is an in-app navigation, and every one of them threw the edit away with no warning of any
+kind. Seven forms carried this: blog, custom pages, portfolio, settings, SEO, products, pages.
+
+The guard now also intercepts in-app navigation. Next's App Router has no `router.events` to
+subscribe to and `next/link` navigates on click, so the interception is a capture-phase listener on
+the document — catching the click before it reaches the link. Browser Back is covered via `popstate`.
+
+What it deliberately does NOT intercept, because each is the owner asking for something else:
+modified clicks (⌘/ctrl/shift/alt, middle button — those open a new tab and leave the form alone),
+`target="_blank"`, `download`, non-http protocols, other origins, same-page fragments, and anything
+inside `[data-unsaved-allow]` (the opt-out for a form's own Cancel link, which means to discard).
+
+The confirmation is a real dialog mounted once in the dashboard layout, talking to the hook through
+a module store — the same shape the drawer and the ⌘K palette already use, and necessary for the
+same reason: the dialog has to OUTLIVE the form it is asking about.
+
+### Changed: the three `window.prompt` calls are dialogs
+The rich-text editor's link and image buttons, and "name this view". The browser prompt is
+suppressible (a browser that decides a tab shows too many dialogs discards the call and returns
+`null`, indistinguishable from Cancel — the action then silently does nothing), cannot validate, and
+steals focus out of the editor in a way that loses the selection the link was meant to wrap.
+
+### A false claim caught before it shipped
+The first draft of this work asserted, in a code comment and nearly in the PR body, that the link
+button "handed `javascript:` straight to `setLink`" — i.e. that this change closed an injection hole.
+**It did not.** `@tiptap/extension-link` 3.27.1 carries `isAllowedUri` and refuses disallowed
+protocols on its own. The URL check here is defence in depth and, mainly, FEEDBACK: the old prompt
+accepted anything and said nothing, so a mistyped URL was silently dropped by tiptap and the owner
+was left wondering why the button had not worked. Checking the dependency before describing the
+change is what caught it.
+
+### Verified rather than assumed
+Driven against a production build:
+- **Clean form** → clicking a sidebar link navigates normally (no false positive).
+- **Dirty form** → click intercepted, URL unchanged at `/studio/settings`, dialog shown.
+- **"Stay and keep editing"** → stays. **"Discard and leave"** → lands on `/studio/categories`.
+- Both prompt dialogs open with **no native `window.prompt` firing at any point**; an empty view name
+  is blocked ("Give the view a name."), and `javascript:alert(1)` is rejected with "Only http and
+  https links are allowed." while the dialog stays open.
+
+---
+
 ## Transformation Phase 10 — the pinned first columns (2026-09-03, sixth batch)
 
 The last open item of the phase, and the one that needed a prerequisite before it could work at all.
