@@ -366,7 +366,7 @@ export function SiteHeader({
            shift. `pointer-events-none` on the slot / `auto` on the row keeps
            the empty strip beneath a compact bar click-through. */
         className={cn(
-          "pointer-events-none sticky top-0 z-50 h-20 font-body",
+          "pointer-events-none sticky top-0 z-(--z-header) h-20 font-body",
           "transition-transform duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
           hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
         )}
@@ -514,8 +514,8 @@ export function SiteHeader({
               className={cn(
                 "absolute inset-x-0 top-full hidden border-y border-hairline bg-mineral p-8 lg:block",
                 megaPresence.closing
-                  ? "opacity-0 transition-opacity duration-200 ease-(--ease-luxury)"
-                  : "animate-in fade-in slide-in-from-top-[6px] fill-mode-backwards duration-200 ease-(--ease-luxury) motion-reduce:animate-none",
+                  ? "opacity-0 transition-opacity duration-(--dur-fast) ease-(--ease-luxury)"
+                  : "animate-in fade-in slide-in-from-top-[6px] fill-mode-backwards duration-(--dur-fast) ease-(--ease-luxury) motion-reduce:animate-none",
               )}
             >
               {/* Full-bleed surface behind the shell-width contents: the panel
@@ -591,7 +591,7 @@ export function SiteHeader({
             aria-hidden
             onClick={() => setMenuOpen(false)}
             className={cn(
-              "fixed inset-0 z-[59] bg-obsidian/60",
+              "fixed inset-0 z-(--z-scrim) bg-obsidian/60",
               menuPresence.closing
                 ? "opacity-0 transition-opacity duration-(--dur-base) ease-(--ease-luxury)"
                 : "animate-in fade-in duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none",
@@ -604,7 +604,7 @@ export function SiteHeader({
             aria-label={tHeader("siteMenu")}
             data-theme="navy"
             className={cn(
-              "fixed inset-y-0 end-0 z-[60] flex w-full max-w-md flex-col overflow-y-auto overscroll-contain bg-obsidian font-body text-mineral",
+              "fixed inset-y-0 end-0 z-(--z-drawer) flex w-full max-w-md flex-col overflow-y-auto overscroll-contain bg-obsidian font-body text-mineral",
               menuPresence.closing
                 ? "translate-x-full rtl:-translate-x-full transition-transform duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none"
                 : "animate-in slide-in-from-right duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none",

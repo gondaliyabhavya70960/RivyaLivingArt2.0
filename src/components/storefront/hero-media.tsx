@@ -83,7 +83,7 @@ export function HeroMedia({
           tabIndex={-1}
           onCanPlay={() => setCanPlay(true)}
           className={cn(
-            "absolute inset-0 size-full object-cover transition-opacity duration-(--dur-enter) ease-(--ease-out) motion-reduce:transition-none",
+            "absolute inset-0 size-full object-cover transition-opacity duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
             canPlay ? "opacity-100" : "opacity-0",
           )}
         >

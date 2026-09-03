@@ -62,8 +62,8 @@ export function ConsentGate() {
   // No choice yet — show a dismissible banner using existing dark-canvas
   // tokens. Part 0 audit fixes (A8-002..004, A2-005): role="region" (it is a
   // non-modal banner — role="dialog" promised a focus/Escape contract it
-  // never implemented); z-[55] keeps it UNDER the aria-modal mobile menu
-  // (z-[60]); safe-area margin clears the iOS home-indicator; min-h-11
+  // never implemented); --z-consent keeps it UNDER the aria-modal mobile
+  // menu (--z-drawer); safe-area margin clears the iOS home-indicator; min-h-11
   // restores the A5 44px tap floor on the two decision buttons.
   return (
     <div
@@ -75,7 +75,7 @@ export function ConsentGate() {
          card radius of 4px — this banner carried a third shadow, a second
          blur and a 16px radius on every page (Phase 0 audit §3.2). A solid
          obsidian ground with a hairline is the whole surface language. */
-      className="fixed inset-x-3 bottom-3 z-[55] mx-auto max-w-3xl rounded-card border border-mineral/15 bg-obsidian p-5 sm:inset-x-6 sm:p-6"
+      className="fixed inset-x-3 bottom-3 z-(--z-consent) mx-auto max-w-3xl rounded-card border border-mineral/15 bg-obsidian p-5 sm:inset-x-6 sm:p-6"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-small leading-relaxed text-mineral/80">
