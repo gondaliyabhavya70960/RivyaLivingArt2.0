@@ -9,8 +9,9 @@ import { PrismaClient } from "../src/generated/prisma/client";
  * prose describes the studio's standard resin practice and never invents
  * measurements, materials or claims the source data does not support.
  *
- * Slugs are prefixed `case-`, so the seed never touches a portfolio entry the
- * owner authored in the studio.
+ * Slugs are prefixed `case-`. That prefix is provenance, NOT the guard — see
+ * barrier 2 below, which tests the table for emptiness precisely because an
+ * owner's own title can mint a `case-…` slug too.
  *
  * ── TWO BARRIERS (owner decision D22, 2026-09-03) ──────────────────────────
  *
@@ -34,7 +35,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
  * Either barrier alone would be enough to stop the damage; both are here
  * because HARD RULE 3 (never invent portfolio content) deserves to be
  * structurally difficult to violate rather than merely documented. Re-running
- * deliberately means opting in AND clearing the `case-*` rows first.
+ * deliberately means opting in AND emptying the `Portfolio` table first.
  */
 
 type Case = {
@@ -529,7 +530,6 @@ async function main() {
     const catId = new Map(categories.map((c) => [c.slug, c.id]));
 
     let created = 0;
-    let updated = 0;
     for (const c of CASES) {
       const data = {
         title: c.title,
@@ -547,46 +547,30 @@ async function main() {
           tags: c.tags,
         },
       };
-      const existing = await db.portfolio.findUnique({
-        where: { slug: c.slug },
-        select: { id: true },
+      // CREATE ONLY. Barrier 2 above guarantees an empty table, so the
+      // upsert's update branch was unreachable — and it was the dangerous
+      // half: it rebuilt each gallery with `images: { deleteMany: {} }` and
+      // forced `status: PUBLISHED`, which is how an owner's replaced
+      // photograph and unpublished case came back on every deploy. Dead code
+      // that destroys data is worth deleting rather than leaving to be
+      // re-enabled by a future edit to the guard.
+      await db.portfolio.create({
+        data: {
+          ...data,
+          slug: c.slug,
+          images: {
+            create: c.images.map((url, order) => ({
+              url,
+              alt: c.title,
+              order,
+            })),
+          },
+        },
       });
-      if (existing) {
-        await db.portfolio.update({
-          where: { id: existing.id },
-          data: {
-            ...data,
-            images: {
-              deleteMany: {},
-              create: c.images.map((url, order) => ({
-                url,
-                alt: c.title,
-                order,
-              })),
-            },
-          },
-        });
-        updated++;
-      } else {
-        await db.portfolio.create({
-          data: {
-            ...data,
-            slug: c.slug,
-            images: {
-              create: c.images.map((url, order) => ({
-                url,
-                alt: c.title,
-                order,
-              })),
-            },
-          },
-        });
-        created++;
-      }
+      created++;
     }
     console.log(
-      `seed-portfolio-cases: ${created} created, ${updated} updated ` +
-        `(${CASES.length} cases).`,
+      `seed-portfolio-cases: ${created} created (${CASES.length} cases).`,
     );
   } finally {
     await db.$disconnect();

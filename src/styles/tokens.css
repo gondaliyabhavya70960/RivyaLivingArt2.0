@@ -179,8 +179,6 @@
   --z-drawer: 60; /* the mobile menu drawer itself */
   --z-ribbon: 60; /* the staff draft-preview ribbon */
   --z-overlay: 70; /* the search overlay — the topmost storefront surface */
-  --z-preloader: 100; /* the first-visit preloader (currently unmounted) */
-  --z-cursor: 120; /* the cursor follower (currently unmounted) */
   --z-skip: 200; /* the skip link, above everything it might have to escape */
 
   /* The Studio is its own stacking domain — a separate route tree with no

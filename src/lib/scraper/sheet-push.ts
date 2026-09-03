@@ -6,7 +6,7 @@ import { isSheetSyncConfigured, syncRowsToSheet } from "@/lib/scraper/sheets";
 /**
  * The one writer that pushes a job's staged rows into its tier tab.
  *
- * There is exactly one of these on purpose. The manual "Add to Sheet" action
+ * There is exactly one of these on purpose. The manual "Sync to Sheet" action
  * and the automatic ON_COMPLETE hook are the same push with different
  * triggers — two write paths into a shared document is how rows get
  * duplicated, and the merge key only protects against that if every writer

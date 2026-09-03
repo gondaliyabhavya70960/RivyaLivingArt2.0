@@ -87,7 +87,7 @@ run genuinely is that large; it is wrong when the sheet has shifted under you.
 ## A scrape "succeeded" but the sheet has nothing
 
 **Cause.** The source's sync policy is `MANUAL` (the default) — rows are staged
-and waiting for you to press **Add to Sheet**.
+and waiting for you to press **Sync to Sheet** on the job.
 
 Or: the push failed and the rows are `SYNC_PENDING`. Those look different in
 the studio on purpose. Use **Retry sync**, which re-pushes whole jobs and

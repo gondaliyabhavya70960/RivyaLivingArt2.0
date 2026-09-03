@@ -10,14 +10,21 @@
  * rather than one:
  *
  *   BUDGET  45 KB — the spec.
- *   CEILING 52 KB — what the repository actually ships today.
+ *   CEILING 49 KB — what the repository actually ships today.
  *
  * The gate FAILS above the ceiling and WARNS between the two. That is a
  * ratchet, not a re-spec: the shipped payload can only go down from here,
- * while closing the remaining gap stays an owner decision (D10 — which
- * motion patterns the site keeps), because the only ways to drop ~6 KB are
- * to give up a GSAP plugin or Lenis, and neither is a hygiene call. Lower
- * the ceiling in the same commit as any change that reduces the payload.
+ * and the ceiling is lowered in the same commit as any change that reduces
+ * it. It has already moved once — 52 KB to 49 KB — when D18 turned out to
+ * have made `SplitText` dead (it lost its only consumer with
+ * `kinetic-heading.tsx`) and dropping its registration from `lib/gsap.ts`
+ * took 2.9 KB gzipped off every route that uses any GSAP effect.
+ *
+ * That is worth noting because this header used to claim the remaining gap
+ * was "not a hygiene call". Part of it was. What is left needs an owner
+ * decision (D10 — which motion patterns the site keeps), because closing
+ * 3.2 KB more means giving up ScrollTrigger or Lenis, and those carry the
+ * two sanctioned pinned scrubs and the smooth-scroll layer.
  *
  * WHAT COUNTS. Only the chunks that CONTAIN a motion library, never the
  * component chunks that import one — those hold app code that would exist
@@ -37,11 +44,11 @@ const DIR = dirIndex === -1 ? ".next/static/chunks" : args[dirIndex + 1];
 const asJson = args.includes("--json");
 
 const BUDGET_BYTES = 45 * 1024;
-const CEILING_BYTES = 52 * 1024;
+const CEILING_BYTES = 49 * 1024;
 
 /** A library is present only when its own implementation is in the file. */
 const LIBRARIES = [
-  { name: "gsap + ScrollTrigger + SplitText", markers: ["_gsap", "registerPlugin"], min: 8 },
+  { name: "gsap + ScrollTrigger", markers: ["_gsap", "registerPlugin"], min: 8 },
   { name: "lenis", markers: ["wheelMultiplier", "syncTouch", "virtualScroll"], min: 3 },
 ];
 
