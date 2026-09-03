@@ -99,7 +99,7 @@ function needsRewriteFor(
   return !!vendor && vendor.length > 3 && d.includes(vendor.toLowerCase());
 }
 
-type TierSpec = {
+export type TierSpec = {
   tab: string;
   tier: 1 | 2 | 3 | 4;
   cap: number | null;
@@ -222,7 +222,7 @@ function splitImages(raw: string | undefined): string[] {
   return urls;
 }
 
-type SheetRow = {
+export type SheetRow = {
   sourceKey: string;
   vertical: string;
   externalId: string;
@@ -427,9 +427,13 @@ export type TierFillResult = {
   totals: TierFillTotals;
   runSummary: Record<string, TierFillTierSummary>;
   dropped: TierFillDroppedRow[];
-  /** Products newly flagged with a sheet/studio conflict this run — see the
-   *  module note. Empty on the very first run (nothing to compare against)
-   *  and always empty in dryRun (a preview writes nothing). */
+  /** Fields with a sheet/studio conflict this run detected — see the module
+   *  note. Computed the same way whether or not this is a dryRun (a preview
+   *  can show what WOULD be flagged); zero on the very first run ever, since
+   *  there is nothing to compare against yet. */
+  conflictsDetected: number;
+  /** Of `conflictsDetected`, how many were actually written as SheetConflict
+   *  rows — always 0 in dryRun, since a preview writes nothing. */
   conflictsWritten: number;
   /** OwnerImportReady batch totals, when that tab was present. */
   ownerReady: { created: number; updated: number; failed: number } | null;
@@ -448,6 +452,165 @@ export type RunTierFillOptions = {
    *  instead (the studio actions do, for the run's own record). */
   log?: (message: string) => void;
 };
+
+export type TierRowPlan = {
+  /** The rows this tier will actually process, in sheet order. */
+  rows: SheetRow[];
+  /** Every row that left the set, and why — one entry per row for a
+   *  row-level reason, one summary entry for the tab-wide "missing fields"
+   *  reason (those rows have no parsed identity to name). */
+  dropped: TierFillDroppedRow[];
+  /** Row count after the gift-card/tombstone screen, before dedupe/cap —
+   *  what `runSummary[tab].detected` reports. */
+  detectedCount: number;
+  /** `${sourceKey}:${externalId}` keys chosen for Tier-1 merchandising. */
+  featuredKeys: Set<string>;
+};
+
+/**
+ * Pure planner: which rows of one tier's tab are selected, which are
+ * dropped and why, and (Tier 1 only) which are featured. Extracted from the
+ * write loop below so the row-selection logic — the part an operator
+ * actually wants to see in a preview — is testable over fixture rows
+ * without a database (tier-fill.test.ts).
+ */
+export function planTierRows(
+  spec: TierSpec,
+  rawRows: Record<string, string>[],
+  tombstoneKeys: ReadonlySet<string>,
+): TierRowPlan {
+  const dropped: TierFillDroppedRow[] = [];
+
+  const stage1: SheetRow[] = [];
+  let missingCount = 0;
+  for (const raw of rawRows) {
+    const parsedRow = parseRow(raw);
+    if (parsedRow) stage1.push(parsedRow);
+    else missingCount++;
+  }
+  if (missingCount > 0) {
+    dropped.push({
+      tab: spec.tab,
+      reason: `${missingCount} row(s) missing title, externalId or sourceKey`,
+    });
+  }
+
+  const stage2: SheetRow[] = [];
+  for (const r of stage1) {
+    if (spec.tier !== 1 && EXCLUDED_TITLE.test(r.title)) {
+      dropped.push({
+        tab: spec.tab,
+        sourceKey: r.sourceKey,
+        externalId: r.externalId,
+        title: r.title,
+        reason:
+          "gift card — a purchase instrument of that store, not a product of this one",
+      });
+      continue;
+    }
+    stage2.push(r);
+  }
+
+  const stage3: SheetRow[] = [];
+  for (const r of stage2) {
+    if (tombstoneKeys.has(`sheet:${r.sourceKey}|${r.externalId}`)) {
+      dropped.push({
+        tab: spec.tab,
+        sourceKey: r.sourceKey,
+        externalId: r.externalId,
+        title: r.title,
+        reason: "deleted by the owner — deletions are honored permanently",
+      });
+      continue;
+    }
+    stage3.push(r);
+  }
+  const detectedCount = stage3.length;
+
+  // Dedupe inside the tab on (sourceKey, externalId).
+  const seen = new Set<string>();
+  const stage4: SheetRow[] = [];
+  for (const r of stage3) {
+    const key = `${r.sourceKey}:${r.externalId}`;
+    if (seen.has(key)) {
+      dropped.push({
+        tab: spec.tab,
+        sourceKey: r.sourceKey,
+        externalId: r.externalId,
+        title: r.title,
+        reason: "duplicate row in this tab",
+      });
+      continue;
+    }
+    seen.add(key);
+    stage4.push(r);
+  }
+
+  // "Top N" = the sheet's own order (owner brief, master prompt): the
+  // tabs carry no ranking/score column, and the brief's rule for that
+  // case is explicit — use the existing sheet order. The quality score
+  // below still drives FEATURED merchandising picks, never selection.
+  let rows = stage4;
+  if (spec.cap !== null && rows.length > spec.cap) {
+    for (const r of rows.slice(spec.cap)) {
+      dropped.push({
+        tab: spec.tab,
+        sourceKey: r.sourceKey,
+        externalId: r.externalId,
+        title: r.title,
+        reason: `beyond this tier's cap of ${spec.cap}`,
+      });
+    }
+    rows = rows.slice(0, spec.cap);
+  }
+
+  // Featured Tier-1 picks: best-scoring owner rows with imagery.
+  const featuredKeys = new Set<string>();
+  if (spec.tier === 1) {
+    [...rows]
+      .filter((r) => r.images.length > 0 && r.description.length > 60)
+      .sort((a, b) => score(b) - score(a))
+      .slice(0, FEATURED_TIER1)
+      .forEach((r) => featuredKeys.add(`${r.sourceKey}:${r.externalId}`));
+  }
+
+  return { rows, dropped, detectedCount, featuredKeys };
+}
+
+/** One field of a sheet/studio conflict — see `runTierFill`'s conflict note. */
+export type ConflictFieldDiff = {
+  field: (typeof CONFLICT_FIELDS)[number];
+  sheetValue: string | null;
+  dbValue: string | null;
+};
+
+/**
+ * Pure: which of `CONFLICT_FIELDS` differ between what the sheet would
+ * write and what the database currently holds, serialized the same way
+ * `SheetConflict.sheetValue`/`dbValue` are stored (String(...), null stays
+ * null). Extracted so the field-diff logic is unit-tested directly.
+ */
+export function diffConflictFields(
+  sheetSide: Record<(typeof CONFLICT_FIELDS)[number], unknown>,
+  dbSide: Record<(typeof CONFLICT_FIELDS)[number], unknown>,
+): ConflictFieldDiff[] {
+  const diffs: ConflictFieldDiff[] = [];
+  for (const field of CONFLICT_FIELDS) {
+    if (dbSide[field] === sheetSide[field]) continue;
+    diffs.push({
+      field,
+      sheetValue:
+        sheetSide[field] === null || sheetSide[field] === undefined
+          ? null
+          : String(sheetSide[field]),
+      dbValue:
+        dbSide[field] === null || dbSide[field] === undefined
+          ? null
+          : String(dbSide[field]),
+    });
+  }
+  return diffs;
+}
 
 // ————————————————————— the fill —————————————————————
 
@@ -640,6 +803,7 @@ export async function runTierFill(
         totals: { created: 0, updated: 0, unchanged: 0, failed: 0 },
         runSummary: {},
         dropped: [],
+        conflictsDetected: 0,
         conflictsWritten: 0,
         ownerReady: null,
         importRunId: null,
@@ -672,101 +836,14 @@ export async function runTierFill(
       continue;
     }
 
-    // Staged filtering (see the module note): each stage records WHY a row
-    // left the set, instead of a silent filter chain, so a preview can show
-    // the operator the reason rather than just a smaller number.
-    const stage1: SheetRow[] = [];
-    let missingCount = 0;
-    for (const raw of rawRows) {
-      const parsedRow = parseRow(raw);
-      if (parsedRow) stage1.push(parsedRow);
-      else missingCount++;
-    }
-    if (missingCount > 0) {
-      dropped.push({
-        tab: spec.tab,
-        reason: `${missingCount} row(s) missing title, externalId or sourceKey`,
-      });
-    }
-
-    const stage2: SheetRow[] = [];
-    for (const r of stage1) {
-      if (spec.tier !== 1 && EXCLUDED_TITLE.test(r.title)) {
-        dropped.push({
-          tab: spec.tab,
-          sourceKey: r.sourceKey,
-          externalId: r.externalId,
-          title: r.title,
-          reason:
-            "gift card — a purchase instrument of that store, not a product of this one",
-        });
-        continue;
-      }
-      stage2.push(r);
-    }
-
-    const stage3: SheetRow[] = [];
-    for (const r of stage2) {
-      if (tombstones.has(`sheet:${r.sourceKey}|${r.externalId}`)) {
-        dropped.push({
-          tab: spec.tab,
-          sourceKey: r.sourceKey,
-          externalId: r.externalId,
-          title: r.title,
-          reason: "deleted by the owner — deletions are honored permanently",
-        });
-        continue;
-      }
-      stage3.push(r);
-    }
-    const detectedCount = stage3.length;
-
-    // Dedupe inside the tab on (sourceKey, externalId).
-    const seen = new Set<string>();
-    const stage4: SheetRow[] = [];
-    for (const r of stage3) {
-      const key = `${r.sourceKey}:${r.externalId}`;
-      if (seen.has(key)) {
-        dropped.push({
-          tab: spec.tab,
-          sourceKey: r.sourceKey,
-          externalId: r.externalId,
-          title: r.title,
-          reason: "duplicate row in this tab",
-        });
-        continue;
-      }
-      seen.add(key);
-      stage4.push(r);
-    }
-
-    // "Top N" = the sheet's own order (owner brief, master prompt): the
-    // tabs carry no ranking/score column, and the brief's rule for that
-    // case is explicit — use the existing sheet order. The quality score
-    // below still drives FEATURED merchandising picks, never selection.
-    let rows = stage4;
-    if (spec.cap !== null && rows.length > spec.cap) {
-      for (const r of rows.slice(spec.cap)) {
-        dropped.push({
-          tab: spec.tab,
-          sourceKey: r.sourceKey,
-          externalId: r.externalId,
-          title: r.title,
-          reason: `beyond this tier's cap of ${spec.cap}`,
-        });
-      }
-      rows = rows.slice(0, spec.cap);
-    }
-
-    // Featured Tier-1 picks: best-scoring owner rows with imagery.
-    const featuredKeys = new Set<string>();
-    if (spec.tier === 1) {
-      [...rows]
-        .filter((r) => r.images.length > 0 && r.description.length > 60)
-        .sort((a, b) => score(b) - score(a))
-        .slice(0, FEATURED_TIER1)
-        .forEach((r) => featuredKeys.add(`${r.sourceKey}:${r.externalId}`));
-    }
+    // See planTierRows (pure, tested directly in tier-fill.test.ts) for the
+    // row-selection logic — which rows are selected, which are dropped and
+    // why, and (Tier 1 only) which are featured.
+    const plan = planTierRows(spec, rawRows, tombstones);
+    dropped.push(...plan.dropped);
+    const detectedCount = plan.detectedCount;
+    const rows = plan.rows;
+    const featuredKeys = plan.featuredKeys;
 
     const tierStats = { created: 0, updated: 0, skipped: 0, failed: 0 };
 
@@ -908,20 +985,8 @@ export async function runTierFill(
                 description: data.description,
                 inStock: data.inStock,
               };
-              for (const field of CONFLICT_FIELDS) {
-                if (dbSide[field] === sheetSide[field]) continue;
-                conflictRows.push({
-                  productId: existing.id,
-                  field,
-                  sheetValue:
-                    sheetSide[field] === null || sheetSide[field] === undefined
-                      ? null
-                      : String(sheetSide[field]),
-                  dbValue:
-                    dbSide[field] === null || dbSide[field] === undefined
-                      ? null
-                      : String(dbSide[field]),
-                });
+              for (const diff of diffConflictFields(sheetSide, dbSide)) {
+                conflictRows.push({ productId: existing.id, ...diff });
               }
             }
           } else if (!dryRun) {
@@ -1274,6 +1339,7 @@ export async function runTierFill(
     totals,
     runSummary,
     dropped,
+    conflictsDetected: conflictRows.length,
     conflictsWritten: dryRun ? 0 : conflictRows.length,
     ownerReady,
     importRunId,

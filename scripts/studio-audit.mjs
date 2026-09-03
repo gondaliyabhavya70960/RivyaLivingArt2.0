@@ -53,6 +53,7 @@ const DEFAULT_ROUTES = [
   "/studio/users",
   "/studio/activity",
   "/studio/research",
+  "/studio/sheet-import/conflicts",
 ];
 
 const args = process.argv.slice(2);
