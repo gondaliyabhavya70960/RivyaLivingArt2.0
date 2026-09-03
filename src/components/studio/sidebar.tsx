@@ -26,6 +26,7 @@ import {
   Type,
   SlidersHorizontal,
   Menu,
+  FlaskConical,
 } from "lucide-react";
 import type { Role } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
@@ -135,6 +136,12 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       },
       { label: "Users", href: "/studio/users", icon: Users, adminOnly: true },
       { label: "Activity", href: "/studio/activity", icon: Activity },
+      {
+        label: "Content Lab",
+        href: "/studio/content-lab",
+        icon: FlaskConical,
+        adminOnly: true,
+      },
     ],
   },
 ];
