@@ -5,6 +5,7 @@ import { draftMode } from "next/headers";
 import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
+import { blurForMany } from "@/lib/lqip-server";
 import { readStagedImage } from "@/lib/site-image-draft";
 import {
   SITE_IMAGE_DEFAULT_REFS,
@@ -73,6 +74,12 @@ export const getSiteImageRefs = cache(async (): Promise<SiteImageRefMap> => {
   });
 
   const resolved: SiteImageRefMap = { ...SITE_IMAGE_DEFAULT_REFS };
+  // Every key whose ref got REPLACED below still needs a blur resolved on
+  // its NEW url — the default ref's blur (bundled-master-keyed) is wrong the
+  // instant a slot is repointed. Collected here and resolved in one batched
+  // call after the loop, rather than per-row, so a page with a dozen
+  // overridden slots costs one query instead of a dozen.
+  const overridden: { key: SiteImageKey; url: string }[] = [];
   for (const row of rows) {
     const staged = draft ? readStagedImage(row.draft) : null;
     const url = (staged?.url ?? row.url).trim();
@@ -86,8 +93,21 @@ export const getSiteImageRefs = cache(async (): Promise<SiteImageRefMap> => {
       mobileUrl: mobileSource?.trim() || null,
       focalX: clampFocal(staged?.focalX ?? row.focalX),
       focalY: clampFocal(staged?.focalY ?? row.focalY),
+      // Placeholder until the batched resolve below fills it in. Never left
+      // as the bundled default's blur — a slot repointed at a different
+      // picture must never paint the OLD picture's placeholder behind it.
+      blurDataUrl: null,
     };
+    overridden.push({ key: row.key, url });
   }
+
+  if (overridden.length > 0) {
+    const blurMap = await blurForMany(overridden.map((o) => o.url));
+    for (const { key, url } of overridden) {
+      resolved[key].blurDataUrl = blurMap.get(url) ?? null;
+    }
+  }
+
   return resolved;
 });
 
@@ -111,7 +131,6 @@ async function inPreview(): Promise<boolean> {
     return false;
   }
 }
-
 
 /**
  * Out-of-range focal values would produce an object-position off the frame,

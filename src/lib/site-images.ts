@@ -25,6 +25,8 @@
  *    category editor. Slotting them too would give one picture two owners.
  */
 
+import { blurFor } from "@/lib/lqip";
+
 export type SiteImageSlot = {
   key: string;
   /** Surface the slot belongs to — the studio screen groups by this. */
@@ -700,15 +702,31 @@ export type SiteImageRef = {
   /** object-position, 0–1. (0.5, 0.5) is CSS's own default. */
   focalX: number;
   focalY: number;
+  /**
+   * 20px LQIP data URI for `url` (batch D · media system), resolved on the
+   * slot's actual RESOLVED url — never on the slot's key — so a repointed
+   * slot never paints the bundled default's blur behind a picture it no
+   * longer shows. Null when no placeholder is known for this URL: an owner
+   * upload predating the metadata capture, or any file `finalizeAsset`
+   * could not read.
+   */
+  blurDataUrl: string | null;
 };
 
 export type SiteImageRefMap = Record<SiteImageKey, SiteImageRef>;
 
-/** Every slot's bundled default as a ref — centred, no mobile crop. */
+/** Every slot's bundled default as a ref — centred, no mobile crop, its
+ *  bundled LQIP when the master has one recorded. */
 export const SITE_IMAGE_DEFAULT_REFS: SiteImageRefMap = Object.fromEntries(
   SITE_IMAGE_SLOTS.map((slot) => [
     slot.key,
-    { url: slot.fallback, mobileUrl: null, focalX: 0.5, focalY: 0.5 },
+    {
+      url: slot.fallback,
+      mobileUrl: null,
+      focalX: 0.5,
+      focalY: 0.5,
+      blurDataUrl: blurFor(slot.fallback) ?? null,
+    },
   ]),
 ) as SiteImageRefMap;
 

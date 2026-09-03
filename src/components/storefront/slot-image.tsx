@@ -42,6 +42,15 @@ export function SlotImage({
     ...props,
     alt,
     unoptimized: !isOptimizableImageSrc(slot.url),
+    // Batch D · media system: next/image swaps a blur placeholder for the
+    // real image by replacing its background-image, not by animating an
+    // opacity — so this never violates §2.7's "no image fades in" (that rule
+    // is about the MeniscusImage reveal; a resolved blur-up ground is not a
+    // fade). Only set when the resolved slot actually has one and the caller
+    // did not already choose a placeholder of their own.
+    ...(slot.blurDataUrl && !props.placeholder
+      ? { placeholder: "blur" as const, blurDataURL: slot.blurDataUrl }
+      : {}),
   };
 
   const mobile = slot.mobileUrl

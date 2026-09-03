@@ -68,6 +68,20 @@ export type MeniscusImageProps = ImageProps & {
   focal?: { x: number; y: number };
 };
 
+/**
+ * Batch D · media system: `next/image` swaps a blur placeholder for the real
+ * decoded image by replacing its `background-image`, not by animating an
+ * opacity — so defaulting `placeholder` on whenever a caller hands this a
+ * `blurDataURL` never contradicts §2.7's "no image fades in" (that rule
+ * governs the meniscus reveal mechanism above, not a resolved blur-up
+ * ground). Only fills in when the caller passed `blurDataURL` but no
+ * explicit `placeholder` of their own.
+ */
+function withBlurPlaceholder(props: ImageProps): ImageProps {
+  if (!props.blurDataURL || props.placeholder) return props;
+  return { ...props, placeholder: "blur" };
+}
+
 /** A solid mask whose height is animated from 0% to 100%, anchored bottom. */
 const MASK_IMAGE = "linear-gradient(#000, #000)";
 
@@ -77,8 +91,9 @@ export function MeniscusImage({
   reveal = true,
   mobileSrc,
   focal,
-  ...props
+  ...rest
 }: MeniscusImageProps) {
+  const props = withBlurPlaceholder(rest);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLSpanElement>(null);
