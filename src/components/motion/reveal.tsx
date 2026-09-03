@@ -81,7 +81,11 @@ export function Reveal({
           duration: 0.35,
           delay,
           ...(stagger > 0 && { stagger }),
-          ease: "power2.out",
+          // Part 3.8's house curve — registered on the shared gsap instance
+          // by src/lib/gsap.ts, from the same control points tokens.css's
+          // `--ease-luxury` uses, so this reveal moves on the identical
+          // curve every CSS transition on the site does.
+          ease: "luxury",
           // A settled reveal needs no transform layer — release it so the
           // browser can drop the compositing surface.
           onComplete: () => {
