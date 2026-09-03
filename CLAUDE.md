@@ -85,7 +85,12 @@ records what shipped, and lists what genuinely remains.
   `node scripts/media-v3-fetch.mjs` on any machine with ordinary internet still
   works. It cannot run inside a session: the Higgsfield CDN answers 403 to the
   agent proxy's egress policy, and that is an organization policy denial to
-  report, not to route around.
+  report, not to route around. The two Actions workflows that used to run it on
+  a runner (`fetch-media-v3.yml`, `fetch-media-v3-video.yml`) were deleted under
+  D24 — each said in its own header it was safe to delete once the masters were
+  committed, and they are. Rebuilding now means running the script on an
+  ordinary machine; `git log --diff-filter=D` has the workflows if a runner is
+  ever wanted again.
 - **Wired.** 58 of the 62 slots default to these masters. Four keep what they
   had: `home.maker` and `about.maker` (§15.2 — the maker is never AI, and
   `site-images-import.test.ts` records that the file behind them is itself a
@@ -280,15 +285,22 @@ ScrollTrigger for the two pinned scrubs.
   the components that own them.
 - **The dormant v2 motion layer is gone** (owner decision D18, 2026-09-03).
   `Preloader`, `preloader-signal`, `CursorFollower`, `Magnetic`,
-  `HeroParallax`, `KineticHeading`, `SplitTextHeading`, `MobileWhatsappBar`
-  and `WishlistCount` were deleted: nine files, zero imports between them and
-  anything mounted, all carrying v2.0/v7 headers from a superseded system.
-  They were kept for a while as "remounting is one line", which is exactly the
-  ambiguity D18 removes — a reader, human or agent, could not tell dead
-  architecture from live. Part 14 forbids the first two on their own terms
-  (nothing may delay the LCP; motion that is a technology demo is rejected).
-  `git log --diff-filter=D` finds them if one is ever wanted back.
-  `src/components/motion/` is now `Reveal` and `PageTransition`.
+  `KineticHeading`, `SplitTextHeading`, `MobileWhatsappBar` and `WishlistCount`
+  were deleted: eight files, zero imports between them and anything mounted,
+  all carrying v2.0/v7 headers from a superseded system. They were kept for a
+  while as "remounting is one line", which is exactly the ambiguity D18 removes
+  — a reader, human or agent, could not tell dead architecture from live.
+  Part 14 forbids the first two on their own terms (nothing may delay the LCP;
+  motion that is a technology demo is rejected). `git log --diff-filter=D`
+  finds them if one is ever wanted back.
+- **`hero-parallax.tsx` has zero importers and is NOT dormant.** It was deleted
+  in the first pass of D18 and put back: the audit files it under §3.2 REFINE,
+  not §3.3 REMOVE, and names its destination — px-cap the translation at
+  `Math.min(40, h * 0.12)` and mount it on the homepage bespoke band
+  (roadmap Phase 1b for the refit, Phase 3 for the mount, motion shortlist
+  entry 9). Unimported is not the same as unwanted; deleting it would have
+  destroyed approved work. `src/components/motion/` is `Reveal`,
+  `PageTransition` and this.
 - The Studio is English-only by design and consumes the shadcn semantic layer,
   re-pointed under the `.studio-v2` scope in globals.css (with its own
   `prefers-color-scheme: dark` block). The commission board is built on the

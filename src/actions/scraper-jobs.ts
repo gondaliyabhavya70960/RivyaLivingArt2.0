@@ -541,7 +541,9 @@ export async function continueScrapeJob(
     const job = await db.scrapeJob.findUnique({
       where: { id },
       include: {
-        source: { select: { baseUrl: true, tier: true, requestDelayMs: true } },
+        // `tier` used to be selected here for the legacy push's tier tab; D23
+        // removed the only reader, so the job no longer loads it.
+        source: { select: { baseUrl: true, requestDelayMs: true } },
       },
     });
     if (!job) throw new Error("Scrape job not found");

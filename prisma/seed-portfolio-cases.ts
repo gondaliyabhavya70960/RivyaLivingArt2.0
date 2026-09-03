@@ -25,8 +25,11 @@ import { PrismaClient } from "../src/generated/prisma/client";
  *
  *   1. `PORTFOLIO_SEED=1` — an explicit opt-in. Unset means do nothing, which
  *      is what production gets. Nobody has to remember a convention.
- *   2. No existing `case-*` row. The seed populates an empty archive; it
- *      never re-asserts itself over one that exists.
+ *   2. An EMPTY `Portfolio` table. The seed populates an empty archive; it
+ *      never re-asserts itself over one that exists. The test is the whole
+ *      table rather than a `case-` slug prefix because owner slugs come from
+ *      `slugify(title)`, so an entry titled "Case study — …" would look like
+ *      this seed's own work.
  *
  * Either barrier alone would be enough to stop the damage; both are here
  * because HARD RULE 3 (never invent portfolio content) deserves to be
@@ -506,16 +509,16 @@ async function main() {
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
   });
   try {
-    // Barrier 2 — never re-assert over an archive that already exists. The
-    // check is on `case-*` specifically: an owner's own portfolio entries are
-    // not this seed's business either way, and counting them would make the
-    // seed skip on a database it was meant to populate.
-    const existing = await db.portfolio.count({
-      where: { slug: { startsWith: "case-" } },
-    });
+    // Barrier 2 — populate an EMPTY archive, never re-assert over one that
+    // exists. The test is the whole table, not a `case-` slug prefix: owner
+    // slugs are minted by `slugify(title)` (actions/portfolio.ts:158), so a
+    // portfolio entry the owner titles "Case study — …" mints `case-study-…`
+    // and a prefix test would read their content as this seed's own. Table
+    // emptiness cannot be confused that way.
+    const existing = await db.portfolio.count();
     if (existing > 0) {
       console.log(
-        `seed-portfolio-cases: ${existing} case-* row(s) already present — skipping (D22).`,
+        `seed-portfolio-cases: ${existing} portfolio row(s) already present — skipping (D22).`,
       );
       return;
     }
