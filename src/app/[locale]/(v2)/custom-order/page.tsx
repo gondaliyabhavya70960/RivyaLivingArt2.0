@@ -155,7 +155,11 @@ export default async function CustomOrderPage({
   const [testimonials, faqRows, portfolios, tileCategories] = await Promise.all(
     [
       getTestimonials(3, locale),
-      db.faq.findMany({ where: { ...demo }, orderBy: { order: "asc" }, take: 4 }),
+      db.faq.findMany({
+        where: { status: "PUBLISHED", ...demo },
+        orderBy: { order: "asc" },
+        take: 4,
+      }),
       db.portfolio.findMany({
         where: { status: "PUBLISHED", ...demo },
         orderBy: { createdAt: "desc" },

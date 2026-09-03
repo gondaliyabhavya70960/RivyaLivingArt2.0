@@ -438,6 +438,8 @@ model Faq {
   question     String
   answer       String @db.Text
   order        Int    @default(0)
+  /// Public readers select PUBLISHED; existing rows were back-filled to it.
+  status       ContentStatus @default(PUBLISHED)
   /// Per-locale { question, answer } overrides; base is English (I3).
   translations Json?
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.

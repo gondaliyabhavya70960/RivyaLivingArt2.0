@@ -69,7 +69,10 @@ export default async function FaqPage({
     getTranslations("Nav"),
     getTranslations("Common"),
     getTranslations("WhatsApp"),
-    db.faq.findMany({ where: { ...(await demoWhere()) }, orderBy: { order: "asc" } }),
+    db.faq.findMany({
+      where: { status: "PUBLISHED", ...(await demoWhere()) },
+      orderBy: { order: "asc" },
+    }),
     getSiteSettings(),
   ]);
 

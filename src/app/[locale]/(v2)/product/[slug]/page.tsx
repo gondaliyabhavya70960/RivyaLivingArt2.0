@@ -323,7 +323,7 @@ export default async function ProductPage({ params }: PageProps) {
     // PDP depth (trust at the decision moment): the top studio-managed
     // questions answered on the page itself.
     db.faq.findMany({
-      where: { ...(await demoWhere()) },
+      where: { status: "PUBLISHED", ...(await demoWhere()) },
       orderBy: { order: "asc" },
       take: 3,
     }),

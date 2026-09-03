@@ -46,7 +46,11 @@ export async function resolveBlockExtras(
   const [faqRows, ...grids] = await Promise.all([
     faqIds.size > 0
       ? db.faq.findMany({
-          where: { id: { in: [...faqIds] } },
+          where: {
+            id: { in: [...faqIds] },
+            status: "PUBLISHED",
+            ...(await demoWhere()),
+          },
           orderBy: { order: "asc" },
         })
       : Promise.resolve([]),

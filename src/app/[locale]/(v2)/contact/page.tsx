@@ -76,7 +76,7 @@ export default async function ContactPage({
       getTranslations("WhatsApp"),
       getSiteSettings(),
       db.faq.findMany({
-        where: { ...(await demoWhere()) },
+        where: { status: "PUBLISHED", ...(await demoWhere()) },
         orderBy: { order: "asc" },
         take: 6,
       }),
