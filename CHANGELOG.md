@@ -5,6 +5,56 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 1a — hygiene and gates (2026-09-03)
+
+The ungated half of the roadmap's Phase 1a: every item that needed no owner decision. No schema,
+content or asset changed; no Server Action changed behaviour except the scraper reading a column it
+already stored. The gated items (D18 dormant files, D22 portfolio seed, D23 legacy sheet push, D24
+housekeeping, D28 the rewind of `main`) are untouched and wait on `docs/transformation-roadmap.md` §2.
+
+### Added
+- **Stale-translation gate.** `scripts/i18n-missing.mjs --stale [--base <ref>]` compares every
+  catalogue with a git ref and fails when an English value changed and a locale's did not — the hole
+  AGENTS.md recorded under "Traps" that the presence check could not see. CI runs it on every pull
+  request against the PR's base branch (`.github/workflows/ci.yml`, two new steps).
+- **`src/lib/scraper/sheet-delete-plan.ts`** + test: the Sheets row-deletion index arithmetic
+  extracted from `deleteRowsFromTab` as a pure planner. Five cases replay the plan against a simulated
+  tab and prove the descending-order invariant — including that the same requests run ascending
+  delete the wrong rows and report success.
+- **Two contract rules in `scripts/redesign-audit.mjs`**, read from computed style: `backdrop-filter`
+  anywhere outside the sticky header and its search panel fails; a `box-shadow` with a blur radius
+  anywhere outside the mobile bottom bar fails (zero-blur shadows — Tailwind rings, 1px rules — are
+  borders by another name and pass). Nothing gated either rule before.
+
+### Changed
+- **Scraper politeness.** `ScrapeSource.requestDelayMs` — declared, documented and stored for a
+  month while nothing read it — now reaches the Shopify, WooCommerce and JSON-LD adapters through
+  `AdapterContext.requestDelayMs`, resolved by the existing `resolveDelayMs` (never faster than the
+  shared floor). `continueScrapeJob` selects the column and passes it.
+- **Total reads on prerendered routes.** `/privacy`, `/terms` and `sitemap.xml` no longer fail
+  `next build` on a transient database error (the Phase 0 PR's Vercel preview died on exactly this,
+  P2037, with a docs-only diff). The legal pages render the site's error state — logged, never a
+  404, `row: null` still means "no row" — and the sitemap serves its static routes for one
+  revalidate window.
+- **Blur in one place, shadows in none.** The dialog overlay, the wishlist button and the
+  motion-paused chip drop their `backdrop-blur`; the consent banner's `shadow-2xl` becomes the
+  hairline every other surface uses; the PDP share buttons use the `Button` primitive instead of
+  bespoke classes. The header and the search overlay keep theirs — the contract's one place.
+- **One port.** Twelve scripts defaulted to `:3111` or `:3000` by accident of authorship; all now
+  honour `BASE_URL` and default to `http://localhost:3000` (their old per-script variables still
+  work as a fallback).
+- **Docs.** `docs/source-adapters.md` no longer points at an adapter test that does not exist;
+  `CLAUDE.md` counts corrected (13 CI routes, 1,181 copy slots, seven manifest pages); the
+  `ci.yml` note on `AUDIT_ROUTES` no longer calls the CI database empty — `import-tiers` fills it on
+  every build.
+
+### Verified
+typecheck · lint · test (37 files / 380) · copy:check · i18n-missing plain and `--stale` · `npm run
+build` against a local Postgres 16 · test:db · redesign-audit and a11y-audit at 1440 and 390 over the 13
+CI routes and the 6 RTL routes, all clean · test:e2e 10/10. The two new audit rules were also proven
+to fire: the shadow rule on `/studio/login` (shadcn's `shadow-xs`), the blur rule on a synthetic page
+carrying one blurred element beside a zero-blur ring and a 1px hairline rule, which pass.
+
 ## Transformation Phase 0 — forensic audit and roadmap (2026-09-02)
 
 Documentation only. No application code, schema, content or asset changed.
