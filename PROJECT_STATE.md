@@ -11,7 +11,7 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            The gated decisions — D23, D18, D22, D24 implemented
+Current Phase:            The gated decisions — D23, D18, D22, D24 implemented, then corrected
 Phase Status:             COMPLETE (2026-09-03; base 2757692 = origin/main after PR #31; branch
                           claude/session-6h1a70). All five gates the owner answered are now either
                           recorded (D28) or built (D23, D18, D22, D24).
@@ -46,8 +46,13 @@ Tests Run:                typecheck · lint · test (383) · copy:check (1,185) 
                           on a live database in all three states · the D23 guard proven by
                           reintroducing a second writer and watching it fail
 Tests Passing:            all of the above
-Known Issues:             Motion payload 51.1 KB gzipped against Part 14's 45 KB budget — the gate
-                          ratchets at 52 KB and closing the gap is D10. .env.example unverified:
+Known Issues:             Motion payload 48.2 KB gzipped against Part 14's 45 KB budget (was 51.1
+                          before the orphaned SplitText registration went) — the gate now ratchets at
+                          49 KB and the remaining 3.2 KB is D10's to decide. Two mistakes reached main
+                          in PR #32 and are repaired in PR #33: the hero-parallax deletion and the
+                          D22 slug-prefix barrier. src/lib/flourish.ts is dead but unapproved for
+                          deletion (D18 addendum). Three .claude/ skills point at the archived
+                          DESIGN.md. .env.example unverified:
                           `.env*` is denied for READING as well as writing in this environment, so
                           the audit's claims about its contents could not be checked; the complete
                           list of variables the code reads is in PR #32's body. test:e2e still not
