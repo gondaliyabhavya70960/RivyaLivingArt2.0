@@ -374,6 +374,62 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "portfolioGrid" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("intro")}
+            label="Intro"
+            value={String(data.intro ?? "")}
+            onChange={(v) => set("intro", v)}
+          />
+          <div className="space-y-2">
+            <Label htmlFor={id("mode")}>Which case studies</Label>
+            <select
+              id={id("mode")}
+              value={String(data.mode ?? "recent")}
+              onChange={(e) => set("mode", e.target.value)}
+              className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+            >
+              <option value="recent">The newest published</option>
+              <option value="manual">Ones I choose</option>
+            </select>
+          </div>
+          {data.mode === "manual" && (
+            <SlugListField
+              id={id("slugs")}
+              label="Case study slugs"
+              hint="The last part of the commission's web address, one per line — e.g. seaside-shell-candle. Up to six, read in this order."
+              value={Array.isArray(data.slugs) ? (data.slugs as string[]) : []}
+              onChange={(next) => set("slugs", next)}
+              max={6}
+            />
+          )}
+          <div className="space-y-2">
+            <Label htmlFor={id("limit")}>How many</Label>
+            <Input
+              id={id("limit")}
+              type="number"
+              min={2}
+              max={6}
+              value={Number(data.limit ?? 4)}
+              onChange={(e) => set("limit", Number(e.target.value))}
+              className="w-28"
+            />
+          </div>
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {def.translatable.length > 0 && (
         <TranslationsSection
           idPrefix={`blk-${block.id}`}
@@ -568,6 +624,66 @@ function SpacingField({
         <option value="standard">Standard</option>
         <option value="compact">Compact</option>
       </select>
+    </div>
+  );
+}
+
+/**
+ * A plain-text fallback for "pick some rows by slug or id", one per line.
+ *
+ * `ProductPicker` (search, thumbnails, ordering) is the pattern the plan asks
+ * every manual picker here to reuse — but it is built on a search server
+ * action scoped to products. Building the same for case studies, testimonials
+ * and blog categories means a new server action per entity, and
+ * `src/actions/*` carries no owner in this batch's file-ownership table this
+ * wave. Until one of those actions exists, an owner types what they typed
+ * everywhere else on this screen before the picker shipped: the last part of
+ * the row's own web address. Local state, not the parent's — so a half-typed
+ * line is not re-split into an array on every keystroke.
+ */
+function SlugListField({
+  id,
+  label,
+  hint,
+  value,
+  onChange,
+  max,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  value: string[];
+  onChange: (next: string[]) => void;
+  max: number;
+}) {
+  const [text, setText] = useState(value.join("\n"));
+
+  function commit(next: string) {
+    setText(next);
+    const parsed = [
+      ...new Set(
+        next
+          .split(/[\n,]/)
+          .map((s) => s.trim())
+          .filter(Boolean),
+      ),
+    ].slice(0, max);
+    onChange(parsed);
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Textarea
+        id={id}
+        rows={3}
+        value={text}
+        onChange={(e) => commit(e.target.value)}
+      />
+      {hint && <p className="text-xs text-graphite">{hint}</p>}
+      <p className="text-xs text-graphite">
+        {value.length} of {max} picked.
+      </p>
     </div>
   );
 }

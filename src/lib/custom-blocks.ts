@@ -127,6 +127,17 @@ export const collectionGridSchema = z.object({
   spacing,
 });
 
+export const portfolioGridSchema = z.object({
+  heading: text(160),
+  intro: text(400),
+  /** `recent` is the newest published case studies; `manual` is up to six the
+   *  owner chose by slug. No mode invents a case study (HARD RULES §1.1). */
+  mode: z.enum(["recent", "manual"]).default("recent"),
+  slugs: z.array(z.string().trim().max(160)).max(6).default([]),
+  limit: z.number().int().min(2).max(6).default(4),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -150,6 +161,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "faqPicker",
   "finalCta",
   "collectionGrid",
+  "portfolioGrid",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -161,6 +173,7 @@ export type ImageCtaData = z.infer<typeof imageCtaSchema>;
 export type FaqPickerData = z.infer<typeof faqPickerSchema>;
 export type FinalCtaData = z.infer<typeof finalCtaSchema>;
 export type CollectionGridData = z.infer<typeof collectionGridSchema>;
+export type PortfolioGridData = z.infer<typeof portfolioGridSchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -271,6 +284,17 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     label: "Collections",
     description: "A row of collections, picked by hand, doorway tiles.",
     schema: collectionGridSchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "intro", label: "Intro", kind: "textarea" },
+    ],
+    ground: "alternating",
+  },
+  portfolioGrid: {
+    type: "portfolioGrid",
+    label: "Case studies",
+    description: "Real commissions — the newest ones, or ones you choose.",
+    schema: portfolioGridSchema,
     translatable: [
       { name: "heading", label: "Heading", kind: "text" },
       { name: "intro", label: "Intro", kind: "textarea" },

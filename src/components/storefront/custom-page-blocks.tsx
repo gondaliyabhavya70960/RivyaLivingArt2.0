@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import {
@@ -23,18 +23,20 @@ import type {
   FinalCtaData,
   HeroData,
   ImageCtaData,
+  PortfolioGridData,
   ProductGridData,
   RichTextData,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
 import { db } from "@/lib/db";
+import { demoWhere } from "@/lib/demo-content";
 import {
   isOptimizableImageSrc,
   isRenderableSrc,
   sizedExternalSrc,
 } from "@/lib/image-src";
-import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
+import { localize, localizeName, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import type { ShopProductItem } from "@/lib/shop";
 import { cn } from "@/lib/utils";
 
@@ -417,6 +419,129 @@ async function CollectionGridBlock({
   );
 }
 
+type PortfolioTile = {
+  slug: string;
+  title: string;
+  categoryName: string | null;
+  cover: string | null;
+  coverAlt: string;
+};
+
+/**
+ * The case studies a `portfolioGrid` block shows. `manual` never invents one
+ * (HARD RULES §1.1) — a slug that is not PUBLISHED, hidden by the demo gate,
+ * or simply deleted just drops out, same as `fetchProductsForGrid`.
+ */
+async function fetchPortfolioForGrid(
+  data: PortfolioGridData,
+  locale: string,
+): Promise<PortfolioTile[]> {
+  if (data.mode === "manual" && data.slugs.length === 0) return [];
+
+  const where = {
+    status: "PUBLISHED" as const,
+    ...(await demoWhere()),
+    ...(data.mode === "manual" ? { slug: { in: [...data.slugs] } } : {}),
+  };
+  const rows = await db.portfolio.findMany({
+    where,
+    orderBy: data.mode === "manual" ? undefined : { createdAt: "desc" },
+    take: data.limit,
+    select: {
+      slug: true,
+      title: true,
+      translations: true,
+      category: { select: { name: true, translations: true } },
+      images: {
+        select: { url: true, alt: true },
+        orderBy: { order: "asc" },
+        take: 1,
+      },
+    },
+  });
+
+  const tiles = rows.map((row) => {
+    // Only `title` (+ `category.name`) is selected above, so localizing
+    // against the FULL `TRANSLATABLE_FIELDS.portfolio`/`.category` tuples
+    // would ask `localize` to read columns this query never fetched.
+    const title = localize(row, locale, ["title"]).title;
+    const categoryName = row.category
+      ? localizeName(row.category, locale)
+      : null;
+    const cover = row.images[0] ?? null;
+    return {
+      slug: row.slug,
+      title,
+      categoryName,
+      cover: isRenderableSrc(cover?.url) ? cover.url : null,
+      coverAlt: cover?.alt ?? "",
+    };
+  });
+
+  if (data.mode !== "manual") return tiles;
+  // The owner's order, not the query's — `where … in` does not preserve it.
+  const bySlug = new Map(tiles.map((tile) => [tile.slug, tile]));
+  return data.slugs.flatMap((slug) => {
+    const tile = bySlug.get(slug);
+    return tile ? [tile] : [];
+  });
+}
+
+async function PortfolioGridBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: PortfolioGridData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const locale = await getLocale();
+  const [tiles, tCase] = await Promise.all([
+    fetchPortfolioForGrid(data, locale),
+    getTranslations({ locale, namespace: "Portfolio.case" }),
+  ]);
+  if (tiles.length === 0) return null;
+  const headingId = `${id}-heading`;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      <div className="flex flex-col gap-10">
+        {data.heading ? (
+          <SectionHeading
+            id={headingId}
+            as={heading}
+            title={data.heading}
+            intro={data.intro || undefined}
+            size={heading === "h1" ? "h1" : "h2"}
+          />
+        ) : null}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {tiles.map((tile) => (
+            <CollectionCard
+              key={tile.slug}
+              href={`/portfolio/${tile.slug}`}
+              name={tile.categoryName ?? tCase("fallbackCategory")}
+              promise={tile.title}
+              image={tile.cover}
+              imageAlt={tile.coverAlt}
+              ratio="4/5"
+            />
+          ))}
+        </div>
+      </div>
+    </Band>
+  );
+}
+
 function ImageCtaBlock({
   id,
   data,
@@ -675,6 +800,18 @@ export function CustomPageBlock({
       const data = block.data as CollectionGridData;
       return (
         <CollectionGridBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
+    case "portfolioGrid": {
+      const data = block.data as PortfolioGridData;
+      return (
+        <PortfolioGridBlock
           id={block.id}
           data={data}
           ground={ground}
