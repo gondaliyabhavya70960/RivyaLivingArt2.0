@@ -11,7 +11,7 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            The gated decisions — D23, D18, D22, D24 implemented, then corrected
+Current Phase:            Transformation Phase 16 — SEO, accessibility, performance (first batch)
 Phase Status:             COMPLETE (2026-09-03; base 2757692 = origin/main after PR #31; branch
                           claude/session-6h1a70). All five gates the owner answered are now either
                           recorded (D28) or built (D23, D18, D22, D24).
@@ -21,7 +21,11 @@ Completed:                D23 legacy un-gated sheet push removed + one-writer in
                           workflows, .playwright-mcp/ and two regenerable audit artifacts deleted
                           and gitignored, nine superseded docs bannered, stale text corrected
 In Progress:              nothing
-Next Exact Task:          Owner answers the remaining gates — D7-D17, D19-D21, D25-D27
+Next Exact Task:          TWO OWNER CALLS FIRST: (1) the storefront is under its own 44px tap floor
+                          in shared chrome — buttons 40px, footer links 39px, announcement 32px,
+                          locale switcher and shop tabs 22-39px wide; raising them is a design-system
+                          change. (2) src/lib/flourish.ts is dead code not on D18's approved list.
+                          Then the remaining gates — D7-D17, D19-D21, D25-D27
                           (docs/transformation-roadmap.md §2). Unblocked without any decision:
                           Phase 10 (Studio shell, minus the D8 demo tile and D17 design lab) and
                           Phase 16 (SEO/a11y/perf, minus CSP). Phase 1b's remaining half needs D10,
