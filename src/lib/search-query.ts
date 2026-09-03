@@ -246,6 +246,7 @@ export async function searchCategories(
       { name: { contains: term, mode: "insensitive" as const } },
       { description: { contains: term, mode: "insensitive" as const } },
     ]),
+    visible: true,
     products: { some: base },
   } satisfies Prisma.CategoryWhereInput;
 

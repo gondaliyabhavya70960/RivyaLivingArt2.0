@@ -44,6 +44,11 @@ model Category {
   order        Int         @default(0)
   /// Per-locale { name, description } overrides; base is English (I3).
   translations Json?
+  /// Owner SEO overrides; null falls back to the name-derived metadata.
+  seoTitle       String?
+  seoDescription String?
+  /// false takes the shelf off every public surface without deleting it.
+  visible        Boolean     @default(true)
   products     Product[]
   portfolios   Portfolio[]
 }

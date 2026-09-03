@@ -61,6 +61,7 @@ const readCatalogNav = unstable_cache(
   async (locale: string, showDemo: boolean): Promise<CatalogNav> => {
     const nav: CatalogNav = { art: [], supplies: [], print: [] };
     const categories = await db.category.findMany({
+      where: { visible: true },
       select: {
         slug: true,
         name: true,

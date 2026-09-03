@@ -178,7 +178,7 @@ export default async function CustomOrderPage({
         },
       }),
       db.category.findMany({
-        where: { slug: { in: TILE_SLUGS } },
+        where: { slug: { in: TILE_SLUGS }, visible: true },
         select: { slug: true, image: true },
       }),
     ],

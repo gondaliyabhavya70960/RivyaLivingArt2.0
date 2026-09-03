@@ -564,6 +564,7 @@ export async function fetchShopCategoryOptions(
 ): Promise<ShopCategoryOption[]> {
   const [categories, counts] = await Promise.all([
     db.category.findMany({
+      where: { visible: true },
       orderBy: { order: "asc" },
       select: { id: true, slug: true, name: true, translations: true },
     }),

@@ -28,6 +28,7 @@ import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { getSiteImages } from "@/lib/site-images-server";
 import type { SiteImageKey } from "@/lib/site-images";
 import { demoWhere } from "@/lib/demo-content";
+import { draftMode } from "next/headers";
 import {
   buildProductWhere,
   DEFAULT_SORT,
@@ -110,16 +111,26 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "Shop" });
   const row = await db.category.findUnique({
     where: { slug },
-    select: { name: true, description: true, translations: true },
+    select: {
+      name: true,
+      description: true,
+      translations: true,
+      seoTitle: true,
+      seoDescription: true,
+      visible: true,
+    },
   });
   const tNav = await getTranslations({ locale, namespace: "Nav" });
   if (!row) return { title: tNav("shop") };
   const category = localize(row, locale, TRANSLATABLE_FIELDS.category);
   return {
-    title: category.name,
+    title: row.seoTitle?.trim() || category.name,
     description:
-      category.description ??
+      row.seoDescription?.trim() ||
+      category.description ||
       t("categoryMetaDescription", { category: category.name }),
+    // A hidden shelf reachable via preview must never be indexed.
+    ...(row.visible ? {} : { robots: { index: false, follow: false } }),
     // Collapse ?occasion/?band/?stock/?sort/?q filter permutations onto the
     // clean category URL so ranking signals don't split.
     alternates: localeAlternates(`/shop/${slug}`, locale),
@@ -161,6 +172,8 @@ export default async function ShopCategoryPage({
 
   const categoryRow = await db.category.findUnique({ where: { slug } });
   if (!categoryRow) notFound();
+  // A hidden shelf is a 404 to visitors; staff still reach it in preview.
+  if (!categoryRow.visible && !(await draftMode()).isEnabled) notFound();
   const category = localize(categoryRow, locale, TRANSLATABLE_FIELDS.category);
 
   const sp = await searchParams;
@@ -215,6 +228,7 @@ export default async function ShopCategoryPage({
         ? db.category.findMany({
             where: {
               slug: { in: siblingSlugs },
+              visible: true,
               products: { some: { status: "PUBLISHED", ...demo } },
             },
             orderBy: { order: "asc" },

@@ -371,6 +371,7 @@ export default async function PortfolioPage({
     }),
     db.portfolio.count({ where }),
     db.category.findMany({
+      where: { visible: true },
       orderBy: { order: "asc" },
       select: {
         slug: true,

@@ -301,7 +301,12 @@ export default async function ShopPage({
 
   // Tile photography for the §7.3 strip — the owner's own category images.
   const categoryImages = new Map(
-    (await db.category.findMany({ select: { slug: true, image: true } })).map(
+    (
+      await db.category.findMany({
+        where: { visible: true },
+        select: { slug: true, image: true },
+      })
+    ).map(
       (row) => [row.slug, row.image],
     ),
   );

@@ -171,7 +171,7 @@ export default async function Home({
     }),
     // §05 tile photography — the owner's own category images.
     db.category.findMany({
-      where: { slug: { in: TILE_CATEGORY_SLUGS } },
+      where: { slug: { in: TILE_CATEGORY_SLUGS }, visible: true },
       select: { slug: true, image: true },
     }),
     // §12 journal: one featured, two smaller.

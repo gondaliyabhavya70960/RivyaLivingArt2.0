@@ -85,7 +85,7 @@ async function readContentSlugs(): Promise<ContentSlugs> {
     // Only categories that actually have a published, non-DEMO product —
     // empty category pages are thin content and shouldn't be submitted (SEO-008).
     db.category.findMany({
-      where: { products: { some: PUBLISHED_NOT_DEMO } },
+      where: { visible: true, products: { some: PUBLISHED_NOT_DEMO } },
       select: { slug: true },
     }),
     db.blogPost.findMany({
