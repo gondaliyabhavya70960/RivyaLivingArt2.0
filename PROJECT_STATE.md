@@ -11,18 +11,19 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation batch B0 — schema, demo gates, shared helpers (approved
-                          plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             COMPLETE (2026-09-03); PR #42 draft, 13 commits beyond main
+Current Phase:            Transformation wave 1 — A1 and B merged; C1, D, E, F1 in flight; G early
+                          (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
+Phase Status:             B0 COMPLETE · A1 COMPLETE · B COMPLETE (2026-09-03); PR #42 draft,
+                          30 commits beyond main; CI green on every head so far
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
                           demo gate on every public reader + DEMO prefix retired · Faq.status ·
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              B0 batch verification (build, redesign/a11y/keyboard/studio audits,
-                          e2e, behaviour proofs); then wave 1 (A1 · B · C1 · D · E · F1) in
-                          parallel worktrees
+In Progress:              C1 (Studio content) and D (media) building in /home/user/wt-c1 and
+                          wt-d; E and F1 queued behind the two-agent cap; G (Content Lab)
+                          building in wt-g on its own workflow
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken

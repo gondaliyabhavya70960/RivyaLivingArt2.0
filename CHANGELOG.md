@@ -5,6 +5,66 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 1 · batches A1 and B — design-system hygiene, chrome, and the testimonial system (2026-09-03)
+
+Two of wave 1's six batches merged (`39c10dd`, `df8fc64`) after each was built and verified in
+its own worktree against its own copy of the catalogue database. C1 (Studio content), D (media),
+E (scraper + sheets) and F1 (hygiene) follow the same way.
+
+### A1 — the house curve is one curve, and the header watches the page
+- `src/lib/bezier-ease.ts` (a ~30-line Newton–Raphson cubic-bezier solver) lets `gsap.ts` register
+  `"luxury"` and `"settle"` eases from the exact control points `tokens.css` defines, mirrored in
+  `motion-tokens.ts` and pinned by a test that reads the CSS back. `gsap/CustomEase` would have
+  cost ~2.5 KB gzipped against a 49 KB ceiling for two fixed curves. `Reveal` eases on `"luxury"`.
+- `tokens.css` names Tailwind's five breakpoints in `@theme`; its cure-gutter query and the one
+  that lived inside a JS string in `toast.tsx` now read `@variant lg` off `--breakpoint-lg`.
+  Verified in the built CSS: both compile to `@media (min-width:64rem)`.
+- `hero-parallax.tsx` moves `Math.min(40, height * 0.12)` (Part 14's 20–40 px cap) instead of 12 %
+  of the hero. Three primitives in `globals.css`, each with a reduced-motion resting state:
+  `.sf-hero-rise`, `.sf-hero-drift` (on the poster's wrapper, never the LCP image),
+  `.sf-manifesto-brighten` (scroll-linked, no JS). `hero-media.tsx` accepts a `SiteImageRef`
+  (mobile crop + focal point) as well as a bare URL, and can opt into the drift.
+- `use-hero-ink.ts`: an IntersectionObserver over the header's own top-80 px band replaces the
+  seven-route transparency allowlist (the list stays as the SSR seed); the header exposes
+  `data-ink` so the audit can check it.
+- `brand-colors.ts` carries the thirteen v3 roles (a test reads `tokens.css` and asserts each hex)
+  and re-skins the four OG cards, the manifest, the root error page and email. `BRAND.gold` is a
+  deprecated alias of champagne until the order panel's swatch table moves (batch A3).
+- RTL residue closed: drawer entrance, nav underline origin, filter drawer, cure-line origin; the
+  cure line's `aria-label` is now `CureLine.pageSections` in nine locales; `ui/select.tsx` uses
+  logical padding. New `SnapRail` (first importer of `carousel-nav.tsx`) and `DemoMark`.
+  `button.tsx` `sm` and the announcement link clear 44 px on a coarse pointer.
+- Measured: 417 unit tests, build, design/a11y audits at 1440 and 390 (+ Arabic), keyboard paths,
+  E2E 10/10. Motion 48.4 KB gzipped (the two registered eases), under the 49 KB ceiling.
+- Open, routed to A3: the shop ecosystem tabs still miss the 44 px floor at 390.
+
+### B — testimonials: a review pipeline, a publish guard, three storefront modes
+- `describeTestimonialProblem` (`src/lib/testimonials-rules.ts`, 24-assertion matrix) refuses
+  PUBLISHED unless the customer's permission is recorded as GRANTED; it runs before every write,
+  single or bulk, and returns its reason. Rows already live before this shipped are untouched
+  (the guard fires on a save, never retroactively).
+- `/studio/testimonials/new` and `/[id]` replace the dialog: a five-tab form (Quote · Attribution ·
+  Links · Media · Review) on the product-form pattern, product/portfolio pickers reusing the
+  provenance search, translations, draft preview. The list gained sort, status filter, search,
+  a bulk bar (Publish reports what it skipped and why) and phone-width cards.
+- `TestimonialCard` grew `editorial`, `linked` (beside the piece's own photograph) and `video`
+  (poster + play chip, never autoplay) variants; `TestimonialWall` (CSS columns, never a
+  carousel), `FeaturedTestimonial`, and `ProductTestimonials` (product → category → nothing) are
+  built and wait for their mounts in A2/A3. `review-jsonld.ts` emits Review/AggregateRating only
+  from PUBLISHED, non-demo, permission-GRANTED rows. `/custom-order` reads six through the wall.
+- Bulk-imported testimonials arrive as drafts and may link a product by slug.
+- Measured: 419 unit tests, 13 db tests, build, Studio audit clean on the two new routes at both
+  widths, design/a11y clean on `/custom-order` with all three variants live, E2E 10/10.
+- Merge notes: B's `demo-mark.tsx` stand-in was dropped for A1's; `Common.demoMark` keeps A1's
+  wording; the resolver now serves the localised `designation`/`productTitle` (`aca1c0c`).
+
+### Worktree lesson
+`npm run build` panics under Turbopack in a worktree whose `node_modules` is a symlink to the
+sibling checkout. The working invocation is the same three steps with
+`NEXT_PRIVATE_OUTPUT_TRACE_ROOT=/home/user npx next build`; `next.config.ts` is not touched.
+
+---
+
 ## Transformation batch B0 — schema, demo gates, shared helpers (2026-09-03)
 
 The owner answered the roadmap's remaining gates (D7–D27) in one sitting and asked for the
