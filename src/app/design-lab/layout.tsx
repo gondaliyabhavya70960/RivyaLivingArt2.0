@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl";
+import { ViewTransitions } from "next-view-transitions";
 
 import "../globals.css";
 import { instrumentSerif, inter, jetbrainsMono } from "@/app/fonts";
+import { requireStaffPage } from "@/actions/helpers";
+import enMessages from "../../../messages/en.json";
 
 export const metadata: Metadata = {
   title: "Rivya Living Art Design Lab",
@@ -11,25 +14,38 @@ export const metadata: Metadata = {
 };
 
 /**
- * Dev-only root for the Phase 1 kitchen sink (DESIGN.md E6 Phase 1). Its own
- * <html> root so the v2.0 library renders on the Midnight Gild LIGHT canvas
- * (ivory :root tokens) without the v7 `dark` class or site chrome. Excluded
- * from locale routing in src/middleware.ts; the page 404s in production.
+ * Design lab root — REDESIGN.md's staff-only review surface for the live v3
+ * storefront primitives (D17). Its own `<html>` root so the page renders on
+ * the real v3 tokens without the site chrome (SiteHeader, AnnouncementBar,
+ * etc.) mounted around it. Excluded from locale routing (`src/proxy.ts`);
+ * `page.tsx` 404s in production on top of the staff gate below.
+ *
+ * `requireStaffPage()` runs here AND in `page.tsx` — mock products must
+ * never be publicly reachable (HARD RULE 3), and a layout that forgets the
+ * check is exactly the kind of gap a future page added under this route
+ * could fall through. Belt and suspenders, not redundancy for its own sake.
+ *
+ * `<ViewTransitions>` wraps the tree because `CatalogProductCard` renders a
+ * `MorphLink`, which calls `useTransitionRouter()` — that throws outside the
+ * provider `[locale]/layout.tsx` normally supplies.
  */
-export default function DesignLabLayout({
+export default async function DesignLabLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  await requireStaffPage();
+
   return (
     <html
       lang="en"
       className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-mineral font-body text-ink">
-        {/* Bare intl context (locale only, no messages): the lab sits outside
-            the [locale] tree but ProductCard's next-intl Link hydrates with
-            useLocale. */}
-        <NextIntlClientProvider locale="en" messages={{}}>
-          {children}
+        {/* Bare intl context (locale + the full English catalogue): the lab
+            sits outside the [locale] tree, but several live primitives call
+            useTranslations/getTranslations (CatalogProductCard, RatingStars,
+            WishlistButton) and need real strings to resolve, not {}. */}
+        <NextIntlClientProvider locale="en" messages={enMessages}>
+          <ViewTransitions>{children}</ViewTransitions>
         </NextIntlClientProvider>
       </body>
     </html>
