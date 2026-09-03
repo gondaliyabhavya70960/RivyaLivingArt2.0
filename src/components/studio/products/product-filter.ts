@@ -13,8 +13,16 @@ import type { Prisma } from "@/generated/prisma/client";
  */
 
 /** Status tabs. The list DEFAULTS to Published (audit M-A1) — an absent
- *  `status` param means PUBLISHED; "ALL" is the explicit everything tab. */
-export const PRODUCT_STATUS_TABS = ["PUBLISHED", "DRAFT", "ALL"] as const;
+ *  `status` param means PUBLISHED; "ALL" is the explicit everything tab.
+ *  REVIEW and ARCHIVED (10 remnants) join DRAFT/PUBLISHED/ALL — every public
+ *  reader still treats anything but PUBLISHED as invisible (B0). */
+export const PRODUCT_STATUS_TABS = [
+  "PUBLISHED",
+  "REVIEW",
+  "DRAFT",
+  "ARCHIVED",
+  "ALL",
+] as const;
 export type ProductStatusTab = (typeof PRODUCT_STATUS_TABS)[number];
 
 export const productListFilterSchema = z.object({
@@ -24,6 +32,9 @@ export const productListFilterSchema = z.object({
   category: z.string().trim().min(1).max(64).optional().catch(undefined),
   tier: z.enum(["1", "2", "3", "4"]).optional().catch(undefined),
   stock: z.enum(["in", "out"]).optional().catch(undefined),
+  /** "1" narrows to Content Lab fixtures (`isDemo: true`) — 10 remnants'
+   *  demo filter, present on every list that carries `isDemo` rows. */
+  demo: z.literal("1").optional().catch(undefined),
 });
 
 export type ProductListFilter = z.infer<typeof productListFilterSchema>;
@@ -37,6 +48,7 @@ export function parseProductListFilter(raw: {
   category?: string;
   tier?: string;
   stock?: string;
+  demo?: string;
 }): ProductListFilter {
   const parsed = productListFilterSchema.safeParse(raw);
   return parsed.success ? parsed.data : {};
@@ -61,5 +73,6 @@ export function buildProductWhere(
     ...(filter.tier ? { tier: Number(filter.tier) } : {}),
     ...(filter.stock === "in" ? { inStock: true } : {}),
     ...(filter.stock === "out" ? { inStock: false } : {}),
+    ...(filter.demo === "1" ? { isDemo: true } : {}),
   };
 }

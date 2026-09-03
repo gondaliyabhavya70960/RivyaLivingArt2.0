@@ -29,16 +29,24 @@ import {
   productListFilterSchema,
   type ProductListFilter,
 } from "@/components/studio/products/product-filter";
-import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
+import {
+  CONTENT_STATUSES,
+  type ContentStatusValue,
+} from "@/lib/content-status";
 
 const optionalUrl = z
   .union([z.literal(""), z.url("Enter a valid URL.")])
   .optional();
 
+const PRODUCT_IMAGE_ROLES = ["HERO", "DETAIL", "IN_ROOM", "PROCESS"] as const;
+
 const imageSchema = z.object({
   url: z.string().min(1),
   alt: z.string().max(300).default(""),
   order: z.number().int().nonnegative(),
+  /** What the shot is FOR (11: MediaSection's per-image role select) —
+   *  optional, so an unset image behaves exactly as it always has. */
+  role: z.enum(PRODUCT_IMAGE_ROLES).nullable().optional(),
 });
 
 const customFieldSchema = z.object({
@@ -93,8 +101,7 @@ const upsertProductSchema = z
     customFields: z.array(customFieldSchema).default([]),
   })
   .refine(
-    (d) =>
-      d.priceMin == null || d.priceMax == null || d.priceMin <= d.priceMax,
+    (d) => d.priceMin == null || d.priceMax == null || d.priceMin <= d.priceMax,
     {
       message: "Minimum price cannot exceed maximum price.",
       path: ["priceMax"],
@@ -140,9 +147,7 @@ export async function searchProductsForLink(
  * back missing, and the picker keeps showing it: that row is the owner's
  * evidence that the grid is about to render short.
  */
-export async function productsForGridBySlugs(
-  slugs: string[],
-): Promise<
+export async function productsForGridBySlugs(slugs: string[]): Promise<
   ActionResult<
     {
       slug: string;
@@ -174,9 +179,7 @@ export async function productsForGridBySlugs(
   });
 }
 
-export async function searchProductsForGrid(
-  q: string,
-): Promise<
+export async function searchProductsForGrid(q: string): Promise<
   ActionResult<
     {
       slug: string;
@@ -201,7 +204,11 @@ export async function searchProductsForGrid(
       // Published first, then the owner's curated picks — the same order the
       // storefront's "featured" sort uses, so the picker opens on the pieces
       // most likely to be wanted.
-      orderBy: [{ status: "desc" }, { featured: "desc" }, { createdAt: "desc" }],
+      orderBy: [
+        { status: "desc" },
+        { featured: "desc" },
+        { createdAt: "desc" },
+      ],
       take: 20,
       select: {
         slug: true,
@@ -245,11 +252,18 @@ export async function upsertProduct(
     ? await db.product.findUnique({ where: { id: data.id } })
     : null;
   if (data.id && !existing) {
-    return { ok: false, error: "Product not found — it may have been deleted." };
+    return {
+      ok: false,
+      error: "Product not found — it may have been deleted.",
+    };
   }
 
   // PUBLISH GUARD — scraped reference content must be rewritten first.
-  if (existing?.needsRewrite && data.status === "PUBLISHED" && !data.confirmRewrite) {
+  if (
+    existing?.needsRewrite &&
+    data.status === "PUBLISHED" &&
+    !data.confirmRewrite
+  ) {
     return {
       ok: false,
       error:
@@ -301,7 +315,9 @@ export async function upsertProduct(
       status: data.status,
       // Confirming the rewrite clears the flag; otherwise keep whatever
       // the scraper set (new manual products are never flagged).
-      needsRewrite: data.confirmRewrite ? false : (existing?.needsRewrite ?? false),
+      needsRewrite: data.confirmRewrite
+        ? false
+        : (existing?.needsRewrite ?? false),
     };
 
     // Slug is minted once on create and never changes on edit.
@@ -317,57 +333,60 @@ export async function upsertProduct(
         );
 
     const product = await createWithUniqueSlug(slug, (candidateSlug) =>
-     db.$transaction(async (tx) => {
-      // Gap 3 provenance: the picker's list replaces the link set wholesale
-      // (`set` on update, `connect` on create — `set` is update-only in
-      // Prisma's nested writes); a row can never link itself.
-      const linkIds = data.madeWithIds.filter((id) => id !== existing?.id);
-      const row = existing
-        ? await tx.product.update({
-            where: { id: existing.id },
-            data: {
-              ...base,
-              madeWith: { set: linkIds.map((id) => ({ id })) },
-            },
-          })
-        : await tx.product.create({
-            data: {
-              ...base,
-              slug: candidateSlug,
-              madeWith: { connect: linkIds.map((id) => ({ id })) },
-            },
+      db.$transaction(async (tx) => {
+        // Gap 3 provenance: the picker's list replaces the link set wholesale
+        // (`set` on update, `connect` on create — `set` is update-only in
+        // Prisma's nested writes); a row can never link itself.
+        const linkIds = data.madeWithIds.filter((id) => id !== existing?.id);
+        const row = existing
+          ? await tx.product.update({
+              where: { id: existing.id },
+              data: {
+                ...base,
+                madeWith: { set: linkIds.map((id) => ({ id })) },
+              },
+            })
+          : await tx.product.create({
+              data: {
+                ...base,
+                slug: candidateSlug,
+                madeWith: { connect: linkIds.map((id) => ({ id })) },
+              },
+            });
+
+        // Replace-all strategy for both child collections.
+        await tx.productImage.deleteMany({ where: { productId: row.id } });
+        if (data.images.length > 0) {
+          await tx.productImage.createMany({
+            data: data.images.map((img, i) => ({
+              productId: row.id,
+              url: img.url,
+              alt: img.alt,
+              order: img.order ?? i,
+              role: img.role ?? null,
+            })),
           });
+        }
 
-      // Replace-all strategy for both child collections.
-      await tx.productImage.deleteMany({ where: { productId: row.id } });
-      if (data.images.length > 0) {
-        await tx.productImage.createMany({
-          data: data.images.map((img, i) => ({
-            productId: row.id,
-            url: img.url,
-            alt: img.alt,
-            order: img.order ?? i,
-          })),
+        await tx.customizationField.deleteMany({
+          where: { productId: row.id },
         });
-      }
+        if (data.customFields.length > 0) {
+          await tx.customizationField.createMany({
+            data: data.customFields.map((field, i) => ({
+              productId: row.id,
+              label: field.label,
+              type: field.type,
+              options: field.options,
+              required: field.required,
+              helpText: nullIfEmpty(field.helpText),
+              order: field.order ?? i,
+            })),
+          });
+        }
 
-      await tx.customizationField.deleteMany({ where: { productId: row.id } });
-      if (data.customFields.length > 0) {
-        await tx.customizationField.createMany({
-          data: data.customFields.map((field, i) => ({
-            productId: row.id,
-            label: field.label,
-            type: field.type,
-            options: field.options,
-            required: field.required,
-            helpText: nullIfEmpty(field.helpText),
-            order: field.order ?? i,
-          })),
-        });
-      }
-
-      return row;
-     }),
+        return row;
+      }),
     );
 
     await logActivity({
@@ -398,7 +417,9 @@ export async function upsertProduct(
   });
 }
 
-const idsSchema = z.array(z.string().min(1)).min(1, "Select at least one product.");
+const idsSchema = z
+  .array(z.string().min(1))
+  .min(1, "Select at least one product.");
 
 /**
  * Bulk actions accept either explicit row ids (page-scoped selection) or the
@@ -587,8 +608,7 @@ export async function deleteProducts(
         imagesCleaned,
         ...(sheetRemoval
           ? {
-              sheetRowsRemoved:
-                sheetRemoval.website + sheetRemoval.confirmed,
+              sheetRowsRemoved: sheetRemoval.website + sheetRemoval.confirmed,
             }
           : {}),
       },
@@ -645,7 +665,11 @@ export async function setProductsCategory(
       userId: session.user.id,
       action: "bulk-recategorize",
       entity: "Product",
-      meta: { count: updated, categoryId: category.id, categoryName: category.name },
+      meta: {
+        count: updated,
+        categoryId: category.id,
+        categoryName: category.name,
+      },
     });
 
     revalidatePath("/studio/products");
