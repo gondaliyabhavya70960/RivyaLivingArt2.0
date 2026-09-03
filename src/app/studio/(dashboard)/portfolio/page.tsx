@@ -15,40 +15,70 @@ export const metadata: Metadata = { title: "Portfolio" };
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" });
 
+const PORTFOLIO_STATUS_VALUES: readonly ContentStatus[] = [
+  ContentStatus.DRAFT,
+  ContentStatus.REVIEW,
+  ContentStatus.PUBLISHED,
+  ContentStatus.ARCHIVED,
+];
+
 export default async function PortfolioPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; demo?: string }>;
 }) {
-  const { q, status } = await searchParams;
+  const { q, status, demo } = await searchParams;
 
+  // Same convention as products/blog: an absent `status` means PUBLISHED;
+  // "ALL" is explicit.
   const statusFilter =
-    status === ContentStatus.DRAFT || status === ContentStatus.PUBLISHED
-      ? status
-      : undefined;
+    status === "ALL"
+      ? undefined
+      : PORTFOLIO_STATUS_VALUES.includes(status as ContentStatus)
+        ? (status as ContentStatus)
+        : ContentStatus.PUBLISHED;
 
   const where: Prisma.PortfolioWhereInput = {
     ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
     ...(statusFilter ? { status: statusFilter } : {}),
+    ...(demo === "1" ? { isDemo: true } : {}),
   };
 
-  const portfolios = await db.portfolio.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-    include: {
-      category: { select: { name: true } },
-      images: { orderBy: { order: "asc" }, take: 1 },
-    },
-  });
+  const [portfolios, statusGroups] = await Promise.all([
+    db.portfolio.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        category: { select: { name: true } },
+        images: { orderBy: { order: "asc" }, take: 1 },
+      },
+    }),
+    db.portfolio.groupBy({
+      by: ["status"],
+      where: {
+        ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
+        ...(demo === "1" ? { isDemo: true } : {}),
+      },
+      _count: { _all: true },
+    }),
+  ]);
 
   const rows: PortfolioRow[] = portfolios.map((portfolio) => ({
     id: portfolio.id,
     title: portfolio.title,
     categoryName: portfolio.category?.name ?? null,
     status: portfolio.status,
+    isDemo: portfolio.isDemo,
     thumbnailUrl: portfolio.images[0]?.url ?? portfolio.afterImageUrl ?? null,
     createdAt: dateFormatter.format(portfolio.createdAt),
   }));
+
+  const statusCounts = Object.fromEntries(
+    PORTFOLIO_STATUS_VALUES.map((value) => [
+      value,
+      statusGroups.find((g) => g.status === value)?._count._all ?? 0,
+    ]),
+  ) as Record<ContentStatus, number>;
 
   return (
     <div>
@@ -64,7 +94,11 @@ export default async function PortfolioPage({
         }
       />
 
-      <PortfolioList portfolios={rows} initialQuery={q ?? ""} />
+      <PortfolioList
+        portfolios={rows}
+        initialQuery={q ?? ""}
+        statusCounts={statusCounts}
+      />
     </div>
   );
 }
