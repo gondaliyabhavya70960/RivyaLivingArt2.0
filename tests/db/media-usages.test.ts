@@ -119,4 +119,23 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       await db.media.delete({ where: { id } });
     }
   });
+
+  // B0 · research library: pictures live in a Json array on the record.
+  it("guards research record pictures", async (ctx) => {
+    if (!db) {
+      ctx.skip();
+      return;
+    }
+    const id = `test-media-usages-research-${Date.now()}`;
+    const url = `/uploads/test/${id}-1.jpg`;
+    await db.researchRecord.create({
+      data: { id, source: "test", title: "Research row", images: [url] },
+    });
+    try {
+      const details = await findMediaUsageDetails([url]);
+      expect(details.get(url)).toContain("Research · Research row");
+    } finally {
+      await db.researchRecord.delete({ where: { id } });
+    }
+  });
 });

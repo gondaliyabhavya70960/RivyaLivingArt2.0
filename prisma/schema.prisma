@@ -1173,3 +1173,29 @@ model SheetSyncRun {
 
   @@index([startedAt])
 }
+
+/// A hand-kept research note from a relevant website (B0 · research
+/// library): RESEARCH, never PRODUCTION. `images` is a Json array of URLs,
+/// registered in media-usages.ts.
+model ResearchRecord {
+  id          String    @id @default(cuid())
+  source      String
+  url         String?
+  title       String
+  category    String?
+  materials   String?
+  dimensions  String?
+  price       String?
+  images      Json      @default("[]")
+  description String?   @db.Text
+  tags        String[]  @default([])
+  extractedAt DateTime?
+  notes       String?   @db.Text
+  status      String    @default("RESEARCH")
+  isDemo      Boolean   @default(false)
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  @@index([status, createdAt])
+}

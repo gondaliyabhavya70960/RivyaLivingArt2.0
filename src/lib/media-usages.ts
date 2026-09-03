@@ -154,6 +154,11 @@ export async function findMediaUsageDetails(
       where: { posterUrl: { in: urls } },
       select: { posterUrl: true, originalName: true, pathname: true },
     }),
+    // Research records keep a Json array of picture URLs (B0 · research
+    // library); read unfiltered and matched in JS like the block bodies.
+    researchRecords: db.researchRecord.findMany({
+      select: { title: true, images: true },
+    }),
     // Landing-page social images (Phase G).
     customPages: db.customPage.findMany({
       where: { ogImage: { in: urls } },
@@ -190,6 +195,7 @@ export async function findMediaUsageDetails(
   const testimonials = await pending.testimonials;
   const siteImages = await pending.siteImages;
   const mediaPosters = await pending.mediaPosters;
+  const researchRecords = await pending.researchRecords;
   const customPages = await pending.customPages;
   const customBlocks = await pending.customBlocks;
   const blogPostsContent = await pending.blogPostsContent;
@@ -257,6 +263,12 @@ export async function findMediaUsageDetails(
   mediaPosters.forEach((r) =>
     add(r.posterUrl, `Video poster · ${r.originalName ?? r.pathname}`),
   );
+  researchRecords.forEach((r) => {
+    if (!Array.isArray(r.images)) return;
+    for (const u of r.images) {
+      if (typeof u === "string") add(u, `Research · ${r.title}`);
+    }
+  });
   customPages.forEach((r) => add(r.ogImage, `Landing page · ${r.title}`));
   customBlocks.forEach((block) => {
     if (block.type === "richText") {
