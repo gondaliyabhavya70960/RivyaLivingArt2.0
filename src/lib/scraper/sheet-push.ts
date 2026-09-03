@@ -1,7 +1,12 @@
 import type { ScrapeTier } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 import { rowToScrapeDeck } from "@/lib/scraper/export";
-import { isSheetSyncConfigured, syncRowsToSheet } from "@/lib/scraper/sheets";
+import {
+  isSheetSyncConfigured,
+  syncRowsToSheet,
+  TAB_BY_TIER,
+  type SheetIdSettings,
+} from "@/lib/scraper/sheets";
 
 /**
  * The one writer that pushes a job's staged rows into its tier tab.
@@ -26,8 +31,51 @@ export type PushOutcome =
 /** The tier a job's rows belong to. Jobs outlive their source (SetNull). */
 const FALLBACK_TIER: ScrapeTier = "RESIN_GOODS";
 
-export async function pushJobToSheet(jobId: string): Promise<PushOutcome> {
-  if (!isSheetSyncConfigured()) return { status: "unconfigured" };
+/**
+ * Record one row of push history (B0's `SheetSyncRun`) — the sheet-import
+ * screen's "last 20" table. Never throws: a push that succeeded (or failed
+ * and was already marked SYNC_PENDING) must not be reported as broken just
+ * because the history row itself could not be written.
+ */
+export async function recordSheetSyncRun(opts: {
+  tab: string;
+  rows: number;
+  status: "SYNCED" | "FAILED" | "UNCONFIGURED" | "EMPTY";
+  error?: string | null;
+  startedAt: Date;
+}): Promise<void> {
+  try {
+    await db.sheetSyncRun.create({
+      data: {
+        direction: "PUSH",
+        tab: opts.tab,
+        rows: opts.rows,
+        status: opts.status,
+        error: opts.error ?? null,
+        startedAt: opts.startedAt,
+        finishedAt: new Date(),
+      },
+    });
+  } catch (err) {
+    console.error(
+      "sheet-push: could not record SheetSyncRun (continuing):",
+      err,
+    );
+  }
+}
+
+/**
+ * Push one job's staged products to their tier tab. `settings` (the owner's
+ * `SiteSettings.sheetId`) is optional — every existing caller that has not
+ * been updated to fetch and pass it keeps resolving the sheet id from the
+ * deploy environment exactly as before (`readSheetId`).
+ */
+export async function pushJobToSheet(
+  jobId: string,
+  settings?: SheetIdSettings,
+): Promise<PushOutcome> {
+  const startedAt = new Date();
+  if (!isSheetSyncConfigured(settings)) return { status: "unconfigured" };
 
   const job = await db.scrapeJob.findUnique({
     where: { id: jobId },
@@ -40,11 +88,13 @@ export async function pushJobToSheet(jobId: string): Promise<PushOutcome> {
 
   const tier = job.source?.tier ?? FALLBACK_TIER;
   const ids = job.products.map((p) => p.id);
+  const tab = TAB_BY_TIER[tier];
 
   try {
     const { updated, appended } = await syncRowsToSheet(
       tier,
       job.products.map(rowToScrapeDeck),
+      settings,
     );
 
     await db.$transaction([
@@ -70,6 +120,12 @@ export async function pushJobToSheet(jobId: string): Promise<PushOutcome> {
         : []),
     ]);
 
+    await recordSheetSyncRun({
+      tab,
+      rows: ids.length,
+      status: "SYNCED",
+      startedAt,
+    });
     return { status: "synced", updated, appended, total: ids.length };
   } catch (err) {
     const error = err instanceof Error ? err.message : "Sheet write failed.";
@@ -92,6 +148,13 @@ export async function pushJobToSheet(jobId: string): Promise<PushOutcome> {
         : []),
     ]);
 
+    await recordSheetSyncRun({
+      tab,
+      rows: ids.length,
+      status: "FAILED",
+      error,
+      startedAt,
+    });
     return { status: "failed", error, pending: ids.length };
   }
 }
