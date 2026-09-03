@@ -6,13 +6,18 @@ import { Check, ExternalLink, X } from "lucide-react";
 import { toast } from "sonner";
 
 import {
+  setScrapedNotes,
   setScrapedReviewStatus,
   updateStagedProduct,
 } from "@/actions/scraper-review";
 import { ApproveImportDialog } from "@/components/studio/scraper/approve-import-dialog";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
-import { Pagination, PAGE_SIZE, usePagination } from "@/components/studio/pagination";
+import {
+  Pagination,
+  PAGE_SIZE,
+  usePagination,
+} from "@/components/studio/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -33,6 +38,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 import type { ReviewStatus } from "@/generated/prisma/enums";
 import { useSelection } from "@/hooks/use-selection";
 
@@ -57,6 +63,9 @@ export type ScrapedRow = {
   seoDescription: string | null;
   images: string[];
   imageAlts: string[];
+  /** The one field an otherwise-immutable staged row may change: a
+   *  reviewer's own comment on the listing, not the source's data. */
+  notes: string | null;
   reviewStatus: ReviewStatus;
   /** Precomputed on the server: lastSeen > firstSeen. */
   updated: boolean;
@@ -83,7 +92,10 @@ const STATUS_LABELS: Record<ReviewStatus, string> = {
 
 const STATUS_BADGE: Record<
   ReviewStatus,
-  { variant: "default" | "secondary" | "outline" | "success"; className?: string }
+  {
+    variant: "default" | "secondary" | "outline" | "success";
+    className?: string;
+  }
 > = {
   PENDING: { variant: "outline" },
   APPROVED: { variant: "success" },
@@ -186,6 +198,7 @@ function DetailSheetBody({
   busy,
   onReview,
   onSave,
+  onSaveNotes,
 }: {
   row: ScrapedRow;
   busy: boolean;
@@ -198,6 +211,7 @@ function DetailSheetBody({
     priceMin: number | null;
     priceMax: number | null;
   }) => Promise<void>;
+  onSaveNotes: (id: string, notes: string | null) => Promise<void>;
 }) {
   const [title, setTitle] = useState(row.title);
   const [tagline, setTagline] = useState(row.shortTagline ?? "");
@@ -210,6 +224,18 @@ function DetailSheetBody({
   );
   const [saving, setSaving] = useState(false);
   const locked = row.reviewStatus === "IMPORTED";
+
+  // Notes are the one field this otherwise-immutable row may change, and
+  // they save independently of — and even once — the row is locked: a
+  // reviewer's comment on the listing is not the source's data.
+  const [notes, setNotes] = useState(row.notes ?? "");
+  const [savingNotes, setSavingNotes] = useState(false);
+
+  async function handleSaveNotes() {
+    setSavingNotes(true);
+    await onSaveNotes(row.id, notes.trim() || null);
+    setSavingNotes(false);
+  }
 
   async function handleSave() {
     const min = priceMin.trim() === "" ? null : Math.round(Number(priceMin));
@@ -333,6 +359,33 @@ function DetailSheetBody({
           </div>
         </div>
 
+        {/* Reviewer notes — the one field that stays editable even once the
+            row is locked (IMPORTED): a comment on the listing, not the
+            source's data. */}
+        <div className="space-y-2 rounded-card border border-border p-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
+              Reviewer notes
+            </h3>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSaveNotes}
+              disabled={savingNotes || busy}
+            >
+              {savingNotes ? "Saving…" : "Save"}
+            </Button>
+          </div>
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Anything worth flagging for the next reviewer…"
+            aria-label="Reviewer notes"
+            rows={3}
+            maxLength={4000}
+          />
+        </div>
+
         {row.images.length > 0 && (
           <div className="flex gap-2 overflow-x-auto pb-1">
             {row.images.map((url, i) => (
@@ -350,7 +403,9 @@ function DetailSheetBody({
         )}
 
         {row.shortTagline && (
-          <p className="text-sm font-medium text-foreground">{row.shortTagline}</p>
+          <p className="text-sm font-medium text-foreground">
+            {row.shortTagline}
+          </p>
         )}
 
         {row.description && (
@@ -470,7 +525,10 @@ export function ReviewGrid({
   // Selection is scoped to the visible page.
   const rowIds = useMemo(() => pageRows.map((row) => row.id), [pageRows]);
   const selection = useSelection(rowIds);
-  const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
+  const rowById = useMemo(
+    () => new Map(rows.map((row) => [row.id, row])),
+    [rows],
+  );
 
   const [detail, setDetail] = useState<ScrapedRow | null>(null);
   const [busy, setBusy] = useState(false);
@@ -553,6 +611,17 @@ export function ReviewGrid({
     router.refresh();
   }
 
+  async function handleSaveNotes(id: string, notes: string | null) {
+    const res = await setScrapedNotes(id, notes);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Note saved.");
+    setDetail((d) => (d && d.id === id ? { ...d, notes } : d));
+    router.refresh();
+  }
+
   return (
     <>
       {/* Filters */}
@@ -614,7 +683,9 @@ export function ReviewGrid({
             className="inline-flex items-center gap-1.5 rounded-full border border-foreground/15 bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground"
           >
             {STATUS_LABELS[status]}
-            <span className="tabular-nums text-foreground">{counts[status]}</span>
+            <span className="tabular-nums text-foreground">
+              {counts[status]}
+            </span>
           </span>
         ))}
       </div>
@@ -701,6 +772,7 @@ export function ReviewGrid({
             busy={busy}
             onReview={handleDetailReview}
             onSave={handleSaveEdit}
+            onSaveNotes={handleSaveNotes}
           />
         )}
       </Sheet>

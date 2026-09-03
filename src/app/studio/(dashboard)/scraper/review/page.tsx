@@ -120,6 +120,7 @@ export default async function ScrapeReviewPage({
     seoDescription: row.seoDescription,
     images: toStringArray(row.images),
     imageAlts: toStringArray(row.imageAlts),
+    notes: row.notes,
     reviewStatus: row.reviewStatus,
     updated: row.lastSeen.getTime() > row.firstSeen.getTime(),
     firstSeen: dateFormatter.format(row.firstSeen),
