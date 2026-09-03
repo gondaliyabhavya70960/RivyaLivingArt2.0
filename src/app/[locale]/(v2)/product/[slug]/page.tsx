@@ -27,15 +27,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/storefront/accordion";
+import { ProductTestimonials } from "@/components/product/product-testimonials";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
+import { DemoMark } from "@/components/storefront/demo-mark";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import {
   Eyebrow,
   SectionHeading,
 } from "@/components/storefront/section-heading";
-import { TestimonialCard } from "@/components/storefront/testimonial-card";
+import { SnapRail } from "@/components/storefront/snap-rail";
 import { JsonLd } from "@/components/seo/json-ld";
 import type { Prisma } from "@/generated/prisma/client";
 import { detailOpenGraph } from "@/app/shared-metadata";
@@ -48,11 +50,8 @@ import {
   sizedExternalSrc,
 } from "@/lib/image-src";
 import { editorialName } from "@/lib/product-name";
-import {
-  localize,
-  localizeLexical,
-  TRANSLATABLE_FIELDS,
-} from "@/lib/localize";
+import { localize, localizeLexical, TRANSLATABLE_FIELDS } from "@/lib/localize";
+import { reviewJsonld } from "@/lib/review-jsonld";
 import { fetchDuplicateTitleCounts, type ShopProductItem } from "@/lib/shop";
 import { getSiteSettings } from "@/lib/site-settings";
 import { getTestimonials } from "@/lib/testimonials";
@@ -132,6 +131,12 @@ const RAIL_SELECT = {
   seoTitle: true,
   seoDescription: true,
   translations: true,
+  // D21: carried through so the rail's cards get the mono meta line, the
+  // hover clip and the demo mark same as every other catalog card.
+  materials: true,
+  dimensions: true,
+  videoUrl: true,
+  isDemo: true,
   category: {
     select: { slug: true, name: true, description: true, translations: true },
   },
@@ -189,7 +194,11 @@ export async function generateMetadata({
   }
   // Metadata runs before the page body, so the body's demo gate alone let a
   // hidden fixture's title reach the not-found page's <title>.
-  if (product.isDemo && !(await draftMode()).isEnabled && !(await showDemoContent())) {
+  if (
+    product.isDemo &&
+    !(await draftMode()).isEnabled &&
+    !(await showDemoContent())
+  ) {
     notFound();
   }
   const p = localize(product, locale, TRANSLATABLE_FIELDS.product);
@@ -270,14 +279,20 @@ export default async function ProductPage({ params }: PageProps) {
     TRANSLATABLE_FIELDS.category,
   );
 
-  const [messages, tCommon, tNav, tWaOrder, tHome, tBlog] = await Promise.all([
-    getMessages(),
-    getTranslations("Common"),
-    getTranslations("Nav"),
-    getTranslations("WhatsAppOrder"),
-    getTranslations("Home"),
-    getTranslations("Blog"),
-  ]);
+  const [messages, tCommon, tNav, tWaOrder, tBlog, tLightbox] =
+    await Promise.all([
+      getMessages(),
+      getTranslations("Common"),
+      getTranslations("Nav"),
+      getTranslations("WhatsAppOrder"),
+      getTranslations("Blog"),
+      getTranslations("Lightbox"),
+    ]);
+  const railLabels = {
+    prev: tLightbox("prev"),
+    next: tLightbox("next"),
+    of: tLightbox("of"),
+  };
   // The PDP's own namespace ships English-first: catalogs that don't carry
   // "Product" yet resolve against the default-locale catalog instead of
   // rendering raw key paths; real translations win the moment they land.
@@ -298,12 +313,21 @@ export default async function ProductPage({ params }: PageProps) {
   // supplies and 3D print present as their own ecosystems).
   const group = groupForCategorySlug(product.category.slug);
 
+  // The exact same product → category fallback `<ProductTestimonials>`
+  // applies below, fetched here too so `reviewJsonld` describes the reviews
+  // a visitor can actually see on this page rather than a different set.
+  const fetchReviewTestimonials = async () => {
+    const own = await getTestimonials({ productId: product.id, locale });
+    if (own.length > 0) return own;
+    return getTestimonials({ category: product.category.slug, locale });
+  };
+
   const [
     settings,
     careSettings,
     categoryRows,
     faqRows,
-    testimonials,
+    reviewTestimonials,
     duplicateTitleCounts,
   ] = await Promise.all([
     getSiteSettings(),
@@ -332,8 +356,10 @@ export default async function ProductPage({ params }: PageProps) {
       orderBy: { order: "asc" },
       take: 3,
     }),
-    // Social proof — real studio-curated rows only; [] hides the band.
-    getTestimonials(3, locale),
+    // Social proof, for the Review/AggregateRating JSON-LD only — the band
+    // itself is `<ProductTestimonials>` below, which runs the identical
+    // product → category fallback query on its own.
+    fetchReviewTestimonials(),
     // M-S4: title → published count for duplicate groups.
     fetchDuplicateTitleCounts(await showDemoContent()),
   ]);
@@ -380,6 +406,7 @@ export default async function ProductPage({ params }: PageProps) {
     showPrice: product.showPrice,
     inStock: product.inStock,
     timeline: product.timeline,
+    isDemo: product.isDemo,
     customFields: product.customFields.map((field) => ({
       id: field.id,
       label: field.label,
@@ -414,6 +441,10 @@ export default async function ProductPage({ params }: PageProps) {
       tier: row.tier,
       inStock: row.inStock,
       featured: row.featured,
+      materials: row.materials?.trim() || null,
+      dimensions: row.dimensions?.trim() || null,
+      videoUrl: row.videoUrl?.trim() || null,
+      isDemo: row.isDemo,
     };
   };
 
@@ -562,43 +593,72 @@ export default async function ProductPage({ params }: PageProps) {
   const blockImageB =
     galleryImages[2] ?? (galleryImages.length > 1 ? galleryImages[0] : null);
 
-  /* ——— schema.org: Product (+ AggregateOffer when priced) & breadcrumbs ——— */
+  /* The room-context band (A3) — only when the owner actually photographed
+     this piece IN a room. `ProductImage.role` is nullable on every existing
+     frame; most products carry none, so the band is absent far more often
+     than it appears rather than ever inventing a lifestyle shot. */
+  const roomContextRow = product.images.find(
+    (image) => image.role === "IN_ROOM" && isRenderableSrc(image.url),
+  );
+  const roomContextImage = roomContextRow
+    ? { url: roomContextRow.url, alt: roomContextRow.alt || heroName }
+    : null;
 
-  const productJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: p.title,
-    description: description || p.shortTagline || undefined,
-    ...(galleryImages.length > 0
-      ? { image: galleryImages.map((image) => absoluteUrl(image.url)) }
-      : {}),
-    // Inline rather than an @id reference to the Organization: `brand` feeds
-    // the Product rich result, and a consumer that does not resolve the graph
-    // should still see a name. Settings are already loaded on this route.
-    brand: { "@type": "Brand", name: settings.brandName },
-    /* A merchant identifier so the Product rich result can be keyed to a
-       single piece (RR-09). Deliberately the slug and NOT `importRef`: that
-       column is a SCRAPER dedupe key (schema.prisma:96-100) holding the
-       source site's own reference, and publishing it in structured data
-       would put a supplier's internal id on a public page. The slug is
-       unique, stable and already public in the canonical URL. */
-    sku: product.slug,
-    category: category.name,
-    ...(product.showPrice && product.priceMin != null
-      ? {
-          offers: {
-            "@type": "AggregateOffer",
-            lowPrice: product.priceMin,
-            highPrice: product.priceMax ?? product.priceMin,
-            priceCurrency: "INR",
-            availability: product.inStock
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-            url: productUrl,
-          },
-        }
-      : {}),
-  };
+  /* ——— schema.org: Product (+ AggregateOffer when priced), Review/
+     AggregateRating & breadcrumbs. A demo fixture gets NONE of the Product
+     graph — not the Product node, not AggregateOffer, not the reviews — a
+     synthetic Content Lab row must never read to a search engine as a real
+     priced, reviewed product (owner decision 9 / Part 0's no-invented-content
+     rule extends to structured data same as visible copy). */
+
+  const reviewData = product.isDemo
+    ? null
+    : reviewJsonld(reviewTestimonials, p.title);
+
+  const productJsonLd = product.isDemo
+    ? null
+    : {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: p.title,
+        description: description || p.shortTagline || undefined,
+        ...(galleryImages.length > 0
+          ? { image: galleryImages.map((image) => absoluteUrl(image.url)) }
+          : {}),
+        // Inline rather than an @id reference to the Organization: `brand`
+        // feeds the Product rich result, and a consumer that does not
+        // resolve the graph should still see a name. Settings are already
+        // loaded on this route.
+        brand: { "@type": "Brand", name: settings.brandName },
+        /* A merchant identifier so the Product rich result can be keyed to a
+           single piece (RR-09). Deliberately the slug and NOT `importRef`:
+           that column is a SCRAPER dedupe key (schema.prisma:96-100) holding
+           the source site's own reference, and publishing it in structured
+           data would put a supplier's internal id on a public page. The slug
+           is unique, stable and already public in the canonical URL. */
+        sku: product.slug,
+        category: category.name,
+        ...(product.showPrice && product.priceMin != null
+          ? {
+              offers: {
+                "@type": "AggregateOffer",
+                lowPrice: product.priceMin,
+                highPrice: product.priceMax ?? product.priceMin,
+                priceCurrency: "INR",
+                availability: product.inStock
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+                url: productUrl,
+              },
+            }
+          : {}),
+        ...(reviewData
+          ? {
+              review: reviewData.review,
+              aggregateRating: reviewData.aggregateRating,
+            }
+          : {}),
+      };
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -621,7 +681,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <>
-      <JsonLd data={productJsonLd} />
+      {productJsonLd ? <JsonLd data={productJsonLd} /> : null}
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* pb reserves room for the sticky action bar above the mobile nav. */}
@@ -659,6 +719,11 @@ export default async function ProductPage({ params }: PageProps) {
               {/* The information panel, in §9.2's order. */}
               <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
                 <p className="u-micro">{category.name}</p>
+                {product.isDemo ? (
+                  <p className="mt-1">
+                    <DemoMark label={tCommon("demoDetail")} />
+                  </p>
+                ) : null}
 
                 {/* Long imported SEO titles step down a scale so the headline
                     never eats half a mobile viewport (audit M-M3). */}
@@ -766,6 +831,44 @@ export default async function ProductPage({ params }: PageProps) {
             </div>
           </div>
         </section>
+
+        {/* ═══ Room context — only when the owner photographed it IN one ═══ */}
+        {roomContextImage ? (
+          <section
+            aria-labelledby="room-context-heading"
+            className="section-standard bg-mineral"
+          >
+            <div className="u-shell grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
+              <MeniscusImage
+                src={sizedExternalSrc(roomContextImage.url, 1200)}
+                alt={roomContextImage.alt}
+                width={1200}
+                height={900}
+                sizes="(min-width:1024px) 45vw, 100vw"
+                unoptimized={!isOptimizableImageSrc(roomContextImage.url)}
+                className="aspect-[4/3] lg:col-span-6"
+                imageClassName="object-cover"
+              />
+              <div className="flex flex-col gap-4 lg:col-span-5 lg:col-start-8">
+                <Eyebrow>{tp("roomContext.eyebrow")}</Eyebrow>
+                <h2
+                  id="room-context-heading"
+                  className="font-display text-h2 leading-[1.08] tracking-display"
+                >
+                  {tp("roomContext.heading")}
+                </h2>
+                <p className="u-lede font-body text-body leading-relaxed text-graphite">
+                  {tp("roomContext.caption")}
+                </p>
+                {dimensions ? (
+                  <p className="u-num text-14 text-graphite">
+                    {tp("dimensionsLabel")}: {dimensions}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {/* ═══ Customize — the Part 0 conversion surface ═══ */}
         <section
@@ -959,7 +1062,9 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* ═══ 9.4 · ONE related rail of four ═══ */}
+        {/* ═══ 9.4 · ONE related rail of four — a grid from `md`, a
+            `SnapRail` below it (Part 3: never infinite, but a phone-width
+            4-up grid crushes every card to a sliver). ═══ */}
         {relatedItems.length > 0 || sameTitleItems.length > 0 ? (
           <section className="section-standard bg-mineral">
             <div className="u-shell flex flex-col gap-12">
@@ -970,10 +1075,20 @@ export default async function ProductPage({ params }: PageProps) {
                     size="h3"
                     title={tp("sameTitle.heading")}
                   />
-                  <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-8">
+                  <div className="hidden md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-10">
                     {sameTitleItems.map((item) => (
                       <CatalogProductCard key={item.id} item={item} />
                     ))}
+                  </div>
+                  <div className="md:hidden">
+                    <SnapRail
+                      ariaLabel={tp("sameTitle.heading")}
+                      labels={railLabels}
+                      itemClassName="w-[70vw] max-w-[19rem]"
+                      items={sameTitleItems.map((item) => (
+                        <CatalogProductCard key={item.id} item={item} />
+                      ))}
+                    />
                   </div>
                 </div>
               ) : null}
@@ -992,10 +1107,20 @@ export default async function ProductPage({ params }: PageProps) {
                       </Button>
                     }
                   />
-                  <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-8">
+                  <div className="hidden md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-10">
                     {relatedItems.map((item) => (
                       <CatalogProductCard key={item.id} item={item} />
                     ))}
+                  </div>
+                  <div className="md:hidden">
+                    <SnapRail
+                      ariaLabel={tp("relatedHeading")}
+                      labels={railLabels}
+                      itemClassName="w-[70vw] max-w-[19rem]"
+                      items={relatedItems.map((item) => (
+                        <CatalogProductCard key={item.id} item={item} />
+                      ))}
+                    />
                   </div>
                 </div>
               ) : null}
@@ -1003,33 +1128,12 @@ export default async function ProductPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        {/* ═══ Social proof — hidden until the studio publishes real rows ═══ */}
-        {testimonials.length > 0 ? (
-          <section
-            aria-labelledby="pdp-testimonials-heading"
-            className="section-standard bg-sand"
-          >
-            <div className="u-shell flex flex-col gap-10">
-              <SectionHeading
-                id="pdp-testimonials-heading"
-                eyebrow={tHome("testimonials.eyebrow")}
-                title={tHome("testimonials.heading")}
-              />
-              <div className="grid gap-6 md:grid-cols-3">
-                {testimonials.map((testimonial) => (
-                  <TestimonialCard
-                    key={testimonial.id}
-                    quote={testimonial.quote}
-                    name={testimonial.name}
-                    location={testimonial.location ?? undefined}
-                    rating={testimonial.rating}
-                    avatarUrl={testimonial.avatarUrl}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        ) : null}
+        {/* ═══ Words — product → category → hidden entirely ═══ */}
+        <ProductTestimonials
+          productId={product.id}
+          categorySlug={product.category.slug}
+          locale={locale}
+        />
 
         {/* ═══ 9.5 · Mobile sticky action bar ═══ */}
         <StickyMobileCta

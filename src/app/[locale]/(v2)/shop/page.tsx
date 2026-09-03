@@ -306,9 +306,7 @@ export default async function ShopPage({
         where: { visible: true },
         select: { slug: true, image: true },
       })
-    ).map(
-      (row) => [row.slug, row.image],
-    ),
+    ).map((row) => [row.slug, row.image]),
   );
 
   const groupLabels = {
@@ -502,11 +500,17 @@ export default async function ShopPage({
 /**
  * §7.2's tab. Large text, a sapphire underline when current — the same active
  * mark the pagination uses, so "you are here" means one thing site-wide.
- * `min-h-14` keeps the 44px target while the type stays editorial.
+ * `min-h-14` clears the 44px HEIGHT floor, but the row carries no horizontal
+ * padding (the underline sits flush under the letters, by design) — at the
+ * `text-h3` clamp's mobile floor (24px) a three-letter tab like "ALL" measures
+ * under 44px WIDE, which is what the audit flagged (A1's CHANGELOG note).
+ * `pointer-coarse:` only fires on a touch pointer, so the fine-pointer desktop
+ * row (already correctly sized) is untouched by either addition.
  */
 function cnTab(current: boolean): string {
   return [
     "-mb-px inline-flex min-h-14 items-center border-b-2 font-display text-h3 leading-none whitespace-nowrap",
+    "pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:justify-center",
     "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
     "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral",
     current

@@ -875,7 +875,9 @@
       "wishlistRemove": "أزل {title} من قائمة أمنياتك",
       "madeToOrder": "تُصنع حسب الطلب",
       "viewPiece": "عرض القطعة",
-      "shipsIn": "الشحن خلال 7–10 أيام"
+      "shipsIn": "الشحن خلال 7–10 أيام",
+      "askOnWhatsApp": "اسأل عبر WhatsApp",
+      "materialsDimensions": "الخامات والأبعاد"
     },
     "collection": {
       "count": "{count, plural, =0 {لا قطع بعد} one {# قطعة} two {قطعتان} few {# قطع} many {# قطعة} other {# قطعة}}",
@@ -944,7 +946,8 @@
       "cta": "شاهد كيف تُصنع",
       "imageAlt": "صبّة ريزن تتصلّب تحت ضوء الاستوديو، وسطحها ما زال يستقرّ."
     },
-    "sortName": "الاسم"
+    "sortName": "الاسم",
+    "quickViewLabel": "عرض سريع"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "التفاصيل",
       "detailsHeading": "كيف تُصنع وتُحفظ وتُوصَّل",
       "viewCollection": "عرض المجموعة"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "في غرفة حقيقية",
+      "heading": "شاهدها في مكانها",
+      "caption": "تم تصويرها في غرفة حقيقية، بحجمها الفعلي — وليست تصميمًا رقميًا."
+    },
+    "demoOrderNote": "هذه قطعة تجريبية من معمل المحتوى — سيتم إرسال الطلب مع بادئة [DEMO] عبر WhatsApp.",
+    "dimensionsLabel": "الأبعاد"
   },
   "Consent": {
     "label": "الموافقة على ملفات تعريف الارتباط والتحليلات",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "عميل موثّق",
     "givenOn": "قيل بتاريخ {date}",
     "wallHeading": "بكلماتهم"
+  },
+  "Lightbox": {
+    "prev": "السابق",
+    "next": "التالي",
+    "close": "إغلاق",
+    "of": "من"
   }
 }

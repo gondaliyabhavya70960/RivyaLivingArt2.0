@@ -143,6 +143,20 @@ export type ShopProductItem = {
    * The card layer translates the chip label; this is just the number.
    */
   duplicateCount?: number;
+  /**
+   * Owner-typed free text, rendered as written — the D21 card meta line
+   * (`src/lib/card-meta.ts`). Deliberately NOT in `TRANSLATABLE_FIELDS.product`
+   * (mirroring `src/lib/large-format.ts`'s note): they render beside a
+   * translated label rather than inside a translated sentence, and are never
+   * parsed, sorted or compared, so the same nine-locale value is correct in
+   * every one of them.
+   */
+  materials: string | null;
+  dimensions: string | null;
+  /** Card-hover clip, owner-supplied. Never autoplays on the first (priority) row. */
+  videoUrl: string | null;
+  /** Synthetic Content Lab row — the card renders `<DemoMark/>` when true. */
+  isDemo: boolean;
 };
 
 export type ShopPage = {
@@ -243,9 +257,15 @@ const CARD_SELECT = {
   tier: true,
   inStock: true,
   featured: true,
+  // D21: owner-typed free text for the mono card meta line, the card-hover
+  // clip and the demo mark — none of these were on the card row before.
+  materials: true,
+  dimensions: true,
+  videoUrl: true,
+  isDemo: true,
   category: { select: { name: true, translations: true } },
   images: {
-    select: { url: true, alt: true },
+    select: { url: true, alt: true, role: true },
     orderBy: { order: "asc" },
     take: 2,
   },
@@ -290,6 +310,10 @@ function toShopProductItem(
     // Only carried when the title genuinely belongs to a duplicate group —
     // absent on unique titles so the card chip never renders there (M-S4).
     ...(duplicateCount != null && duplicateCount > 1 ? { duplicateCount } : {}),
+    materials: row.materials?.trim() || null,
+    dimensions: row.dimensions?.trim() || null,
+    videoUrl: row.videoUrl?.trim() || null,
+    isDemo: row.isDemo,
   };
 }
 

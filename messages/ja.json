@@ -875,7 +875,9 @@
       "wishlistRemove": "{title} をウィッシュリストから削除",
       "madeToOrder": "受注制作",
       "viewPiece": "作品を見る",
-      "shipsIn": "7〜10日で発送"
+      "shipsIn": "7〜10日で発送",
+      "askOnWhatsApp": "WhatsApp で相談する",
+      "materialsDimensions": "素材とサイズ"
     },
     "collection": {
       "count": "{count, plural, =0 {作品はまだありません} one {# 点} other {# 点}}",
@@ -944,7 +946,8 @@
       "cta": "つくりかたを見る",
       "imageAlt": "工房の光の下で硬化していくレジン。その表面は、まだ落ち着いていく途中。"
     },
-    "sortName": "名前順"
+    "sortName": "名前順",
+    "quickViewLabel": "クイックビュー"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "詳細",
       "detailsHeading": "つくりかた、お手入れ、お届けについて",
       "viewCollection": "コレクションを見る"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "部屋の中で",
+      "heading": "実際の空間で見る",
+      "caption": "実際の部屋で、実寸で撮影 — スタジオのレンダリングではありません。"
+    },
+    "demoOrderNote": "これはコンテンツラボのデモ商品です — 注文は送信されますが、WhatsAppでは [DEMO] が先頭に付きます。",
+    "dimensionsLabel": "寸法"
   },
   "Consent": {
     "label": "Cookie と分析への同意",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "確認済みのお客様",
     "givenOn": "{date}にいただいた声",
     "wallHeading": "お客様の声"
+  },
+  "Lightbox": {
+    "prev": "前へ",
+    "next": "次へ",
+    "close": "閉じる",
+    "of": "の"
   }
 }

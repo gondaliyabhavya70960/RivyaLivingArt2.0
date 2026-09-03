@@ -2,9 +2,14 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 
+import { CardAskWhatsApp } from "@/components/shop/card-ask-whatsapp";
+import { CardHoverVideo } from "@/components/shop/card-hover-video";
+import { QuickViewTrigger } from "@/components/shop/quick-view-trigger";
 import { WishlistButton } from "@/components/shop/wishlist-button";
+import { DemoMark } from "@/components/storefront/demo-mark";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import { MorphLink } from "@/components/storefront/morph-link";
+import { accessibleCardName, cardMetaLine } from "@/lib/card-meta";
 import {
   isOptimizableImageSrc,
   isRenderableSrc,
@@ -99,6 +104,7 @@ export function CatalogProductCard({
   priority?: boolean;
 }) {
   const t = useTranslations("Shop");
+  const tCommon = useTranslations("Common");
   const image = isRenderableSrc(item.image?.url) ? item.image : null;
   const hoverImage = isRenderableSrc(item.hoverImage?.url)
     ? item.hoverImage
@@ -107,6 +113,7 @@ export function CatalogProductCard({
     item.showPrice && item.priceMin != null
       ? formatPriceBand(item.priceMin, item.priceMax)
       : null;
+  const metaLine = cardMetaLine(item);
 
   const compact = variant === "compact";
 
@@ -133,7 +140,14 @@ export function CatalogProductCard({
             priority={priority}
             unoptimized={!isOptimizableImageSrc(image.url)}
             className="absolute inset-0"
-            imageClassName="object-cover"
+            imageClassName={cn(
+              "object-cover",
+              // A second gallery image already wipes in on hover — a scale
+              // on TOP of that wipe would be two competing reveals. Only the
+              // single-image card gets the zoom.
+              !hoverImage &&
+                "transition-transform duration-(--dur-slow) ease-(--ease-luxury) group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
+            )}
           />
           {hoverImage && !compact ? (
             /* The meniscus wipe: the second image is clipped to nothing and
@@ -165,6 +179,13 @@ export function CatalogProductCard({
           {monogram(item.displayTitle)}
         </span>
       )}
+
+      {/* The card-hover clip (D21) — an ambient loop over the stage, never
+          on the LCP row. Mounts nothing at all for a touch visitor or under
+          reduced motion (see `card-hover-video.tsx`). */}
+      {item.videoUrl && !priority ? (
+        <CardHoverVideo src={item.videoUrl} />
+      ) : null}
 
       {!compact && item.featured ? (
         <span className="u-micro absolute start-3 top-3 bg-mineral/92 px-2.5 py-1 text-ink">
@@ -199,7 +220,11 @@ export function CatalogProductCard({
               href={`/product/${item.slug}`}
               className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
             >
-              <TitleText full={item.title} visible={item.displayTitle} clamp={1} />
+              <TitleText
+                full={accessibleCardName(item)}
+                visible={item.displayTitle}
+                clamp={1}
+              />
             </MorphLink>
           </h3>
           <p className="u-num mt-1 text-14 text-graphite">
@@ -218,8 +243,13 @@ export function CatalogProductCard({
     >
       {stage}
       <div className="mt-4 flex flex-col gap-1.5">
-        {item.categoryName ? (
-          <p className="u-micro">{item.categoryName}</p>
+        {item.categoryName || item.isDemo ? (
+          <div className="flex items-center gap-2">
+            {item.categoryName ? (
+              <p className="u-micro">{item.categoryName}</p>
+            ) : null}
+            {item.isDemo ? <DemoMark label={tCommon("demoMark")} /> : null}
+          </div>
         ) : null}
         <h3 className="font-body text-16 leading-snug font-medium text-ink in-data-[theme=navy]:text-mineral">
           {/* MorphLink drives the card → PDP view-transition morph. */}
@@ -227,9 +257,19 @@ export function CatalogProductCard({
             href={`/product/${item.slug}`}
             className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
           >
-            <TitleText full={item.title} visible={item.displayTitle} clamp={2} />
+            <TitleText
+              full={accessibleCardName(item)}
+              visible={item.displayTitle}
+              clamp={2}
+            />
           </MorphLink>
         </h3>
+        {metaLine ? (
+          <p className="u-micro line-clamp-1">
+            <span className="sr-only">{t("card.materialsDimensions")}: </span>
+            {metaLine}
+          </p>
+        ) : null}
         <p className="u-num text-16 text-ink in-data-[theme=navy]:text-mineral">
           {priceLabel ?? t("card.viewDetails")}
         </p>
@@ -252,6 +292,15 @@ export function CatalogProductCard({
             className="size-4 rtl:-scale-x-100"
           />
         </p>
+      </div>
+
+      {/* Below the stretched card link and OUTSIDE it: `relative z-10` puts
+          these two real controls above the invisible full-card anchor
+          (the same technique the wishlist heart already uses), so they stay
+          reachable rather than silently triggering navigation instead. */}
+      <div className="relative z-10 mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+        <QuickViewTrigger item={item} />
+        <CardAskWhatsApp title={item.title} slug={item.slug} />
       </div>
     </article>
   );
@@ -279,7 +328,10 @@ function TitleText({
   return (
     <>
       <span className="sr-only">{full}</span>
-      <span aria-hidden className={clamp === 1 ? "line-clamp-1" : "line-clamp-2"}>
+      <span
+        aria-hidden
+        className={clamp === 1 ? "line-clamp-1" : "line-clamp-2"}
+      >
         {visible}
       </span>
     </>

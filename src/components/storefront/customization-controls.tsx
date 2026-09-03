@@ -431,7 +431,12 @@ export function EngravingField({
           aria-hidden
           className={cn(
             "font-display text-h3 leading-tight break-words",
-            value.trim() ? "text-ink" : "text-graphite/60",
+            // Full-opacity graphite, not the /60 fade this replaced: at
+            // text-h3 on bg-sand the faded tone measured under 4.5:1 (batch
+            // G's a11y audit on /product/demo-product-001, routed to A3).
+            // aria-hidden exempts it from being announced but not from being
+            // SEEN, and axe's color-contrast rule checks exactly that.
+            value.trim() ? "text-ink" : "text-graphite",
           )}
         >
           {value.trim() || previewPlaceholder}

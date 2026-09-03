@@ -875,7 +875,9 @@
       "wishlistRemove": "Quitar {title} de tu lista de deseos",
       "madeToOrder": "Hecho por encargo",
       "viewPiece": "Ver la pieza",
-      "shipsIn": "Envío en 7–10 días"
+      "shipsIn": "Envío en 7–10 días",
+      "askOnWhatsApp": "Pregunta por WhatsApp",
+      "materialsDimensions": "Materiales y dimensiones"
     },
     "collection": {
       "count": "{count, plural, =0 {Aún sin piezas} one {# pieza} other {# piezas}}",
@@ -944,7 +946,8 @@
       "cta": "Ve cómo se hace",
       "imageAlt": "Un vertido de resina curando bajo la luz del estudio, con la superficie aún asentándose."
     },
-    "sortName": "Nombre"
+    "sortName": "Nombre",
+    "quickViewLabel": "Vista rápida"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "los detalles",
       "detailsHeading": "Cómo se hace, se conserva y se entrega",
       "viewCollection": "Ver la colección"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "En una habitación",
+      "heading": "Véala en su lugar",
+      "caption": "Fotografiada en una habitación real, a escala real — no es un render de estudio."
+    },
+    "demoOrderNote": "Esta es una pieza de demostración del Content Lab — el pedido se envía igual, con el prefijo [DEMO] en WhatsApp.",
+    "dimensionsLabel": "Dimensiones"
   },
   "Consent": {
     "label": "Consentimiento de cookies y analítica",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "Cliente verificado",
     "givenOn": "Dicho el {date}",
     "wallHeading": "En sus palabras"
+  },
+  "Lightbox": {
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "close": "Cerrar",
+    "of": "de"
   }
 }

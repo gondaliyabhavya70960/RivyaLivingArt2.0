@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1195 slots · 0 flagged as unreachable from any component.
+ * 1207 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -702,6 +702,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.card.madeToOrder","group":"Shop","section":"card","label":"Made to order","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.card.viewPiece","group":"Shop","section":"card","label":"View piece","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.card.shipsIn","group":"Shop","section":"card","label":"Ships in","kind":"body","tier":"editorial","max":400},
+  {"key":"Shop.card.askOnWhatsApp","group":"Shop","section":"card","label":"Ask on whats app","kind":"body","tier":"editorial","max":400},
+  {"key":"Shop.card.materialsDimensions","group":"Shop","section":"card","label":"Materials dimensions","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.collection.count","group":"Shop","section":"collection","label":"Count","kind":"body","tier":"editorial","max":400,"vars":["count"]},
   {"key":"Shop.collection.featuredHeading","group":"Shop","section":"collection","label":"Featured heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Shop.collection.relatedHeading","group":"Shop","section":"collection","label":"Related heading","kind":"heading","tier":"editorial","max":80},
@@ -755,6 +757,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.editorialBreak.body","group":"Shop","section":"editorialBreak","label":"Body","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.editorialBreak.cta","group":"Shop","section":"editorialBreak","label":"Cta","kind":"cta","tier":"editorial","max":60},
   {"key":"Shop.editorialBreak.imageAlt","group":"Shop","section":"editorialBreak","label":"Image alt","kind":"alt","tier":"editorial","max":160},
+  {"key":"Shop.quickViewLabel","group":"Shop","section":"general","label":"Quick view label","kind":"label","tier":"editorial","max":60},
   {"key":"Search.meta.title","group":"Shop","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Search.meta.description","group":"Shop","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Search.heroEyebrow","group":"Shop","section":"general","label":"Hero eyebrow","kind":"eyebrow","tier":"editorial","max":48},
@@ -1086,6 +1089,11 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Product.sections.detailsEyebrow","group":"Shop","section":"sections","label":"Details eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Product.sections.detailsHeading","group":"Shop","section":"sections","label":"Details heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Product.sections.viewCollection","group":"Shop","section":"sections","label":"View collection","kind":"body","tier":"editorial","max":400},
+  {"key":"Product.roomContext.eyebrow","group":"Shop","section":"roomContext","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Product.roomContext.heading","group":"Shop","section":"roomContext","label":"Heading","kind":"heading","tier":"editorial","max":80},
+  {"key":"Product.roomContext.caption","group":"Shop","section":"roomContext","label":"Caption","kind":"micro","tier":"interface","max":200},
+  {"key":"Product.demoOrderNote","group":"Shop","section":"general","label":"Demo order note","kind":"micro","tier":"interface","max":200},
+  {"key":"Product.dimensionsLabel","group":"Shop","section":"general","label":"Dimensions label","kind":"label","tier":"editorial","max":60},
   {"key":"Upload.add","group":"System","section":"general","label":"Add","kind":"body","tier":"interface","max":400},
   {"key":"Upload.drop","group":"System","section":"general","label":"Drop","kind":"body","tier":"interface","max":400},
   {"key":"Upload.formats","group":"System","section":"general","label":"Formats","kind":"body","tier":"interface","max":400,"vars":["maxMb"]},
@@ -1205,4 +1213,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Testimonials.verifiedBy","group":"System","section":"general","label":"Verified by","kind":"body","tier":"editorial","max":400},
   {"key":"Testimonials.givenOn","group":"System","section":"general","label":"Given on","kind":"body","tier":"editorial","max":400,"vars":["date"]},
   {"key":"Testimonials.wallHeading","group":"System","section":"general","label":"Wall heading","kind":"heading","tier":"editorial","max":80},
+  {"key":"Lightbox.prev","group":"System","section":"general","label":"Prev","kind":"body","tier":"editorial","max":400},
+  {"key":"Lightbox.next","group":"System","section":"general","label":"Next","kind":"body","tier":"editorial","max":400},
+  {"key":"Lightbox.close","group":"System","section":"general","label":"Close","kind":"body","tier":"editorial","max":400},
+  {"key":"Lightbox.of","group":"System","section":"general","label":"Of","kind":"body","tier":"editorial","max":400},
 ] as const;

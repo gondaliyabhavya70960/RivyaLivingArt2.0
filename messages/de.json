@@ -875,7 +875,9 @@
       "wishlistRemove": "{title} von der Wunschliste entfernen",
       "madeToOrder": "Auf Bestellung gefertigt",
       "viewPiece": "Stück ansehen",
-      "shipsIn": "Versand in 7–10 Tagen"
+      "shipsIn": "Versand in 7–10 Tagen",
+      "askOnWhatsApp": "Auf WhatsApp fragen",
+      "materialsDimensions": "Materialien und Maße"
     },
     "collection": {
       "count": "{count, plural, =0 {Noch keine Stücke} one {# Stück} other {# Stücke}}",
@@ -944,7 +946,8 @@
       "cta": "Sehen, wie es entsteht",
       "imageAlt": "Ein Resin-Guss härtet im Atelierlicht aus, seine Oberfläche beruhigt sich noch."
     },
-    "sortName": "Name"
+    "sortName": "Name",
+    "quickViewLabel": "Schnellansicht"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "die details",
       "detailsHeading": "Wie es entsteht, bewahrt und geliefert wird",
       "viewCollection": "Kollektion ansehen"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "Im Raum",
+      "heading": "So wirkt es im Raum",
+      "caption": "Fotografiert in einem echten Raum, in Originalgröße — kein Studio-Rendering."
+    },
+    "demoOrderNote": "Dies ist ein Content-Lab-Demostück — die Bestellung wird trotzdem gesendet, mit dem Präfix [DEMO] auf WhatsApp.",
+    "dimensionsLabel": "Abmessungen"
   },
   "Consent": {
     "label": "Einwilligung zu Cookies und Analyse",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "Verifizierter Kunde",
     "givenOn": "Abgegeben am {date}",
     "wallHeading": "In ihren Worten"
+  },
+  "Lightbox": {
+    "prev": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen",
+    "of": "von"
   }
 }
