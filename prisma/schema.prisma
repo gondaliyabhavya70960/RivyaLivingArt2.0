@@ -139,6 +139,7 @@ model Product {
   testimonials   Testimonial[]
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
+  sheetConflicts SheetConflict[]
 
   @@unique([importSource, importRef])
   @@index([categoryId, status])
@@ -589,6 +590,9 @@ model SiteSettings {
   sheetFillMaxCreates  Int?
   /// Owner switch: render demo rows on the public site (always marked, never in the sitemap).
   demoContentPublic Boolean @default(false)
+  /// The owner's spreadsheet and its tab ids; null falls back to the environment.
+  sheetId     String?
+  sheetTabIds Json    @default("{}")
 }
 
 /// One run of the sheet → catalog fill: what it read, what it changed, and
@@ -611,6 +615,7 @@ model ImportRun {
   finishedAt    DateTime?
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
+  conflicts SheetConflict[]
 
   @@index([startedAt])
 }
@@ -1116,4 +1121,40 @@ model CustomBlock {
   translations Json?
 
   @@index([pageId, order])
+}
+
+/// One field on one product where the sheet and the Studio disagree after an
+/// owner edit (B0 · sheets). Status is a String with a code-side enum, the
+/// ImportRun.trigger precedent, so a new state never needs an enum migration.
+model SheetConflict {
+  id           String     @id @default(cuid())
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  importRunId  String?
+  importRun    ImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
+  field        String
+  sheetValue   String?
+  dbValue      String?
+  status       String     @default("OPEN")
+  createdAt    DateTime   @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+
+  @@index([status, createdAt])
+  @@index([productId])
+}
+
+/// One push of rows to the owner's sheet (B0 · sheets): the history the
+/// sheet-import screen shows. No URL columns.
+model SheetSyncRun {
+  id         String    @id @default(cuid())
+  direction  String
+  tab        String
+  rows       Int       @default(0)
+  status     String
+  error      String?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  @@index([startedAt])
 }
