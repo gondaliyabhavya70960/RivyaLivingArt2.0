@@ -10,6 +10,23 @@
    this file, so nothing in src/ still asks for a token that is not here.
    ———————————————————————————————————————————————————————————————— */
 
+/* ————— Breakpoints ————————————————————————————————————————————
+   Tailwind v4 derives `sm:`/`md:`/`lg:`/`xl:`/`2xl:` from `--breakpoint-*`
+   in an `@theme` block — these five ARE the framework's own defaults
+   (40/48/64/80/96rem), restated here rather than left implicit, so the
+   breakpoint the cure gutter's raw `@media (min-width: 1024px)` query below
+   mirrors has a named, single source of truth instead of a bare number that
+   could drift from `--breakpoint-lg` unnoticed. tokens.css is `@import`ed by
+   globals.css BEFORE its own `@theme inline` block, so this block reaches
+   the same Tailwind build. */
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+}
+
 :root {
   /* ————— Part 3.1 · Colour ————————————————————————————————————————
      Thirteen roles, no more. Champagne discipline (never a fill, never a
@@ -229,8 +246,14 @@
 /* Part 3.3 — "On ≥1024px, a 56px cure gutter sits outside the content shell
    at the left." Reserved globally rather than per page: the cure line is
    fixed chrome, and a rail that overlaps the text on some pages and not on
-   others is worse than no rail at all. */
-@media (min-width: 1024px) {
+   others is worse than no rail at all.
+
+   `@variant lg` rather than a raw `@media (min-width: 1024px)`: tokens.css is
+   Tailwind-processed (confirmed in the built CSS — the `@variant` block below
+   compiles to the same `@media (width >= 64rem)` rule this replaced), so it
+   reads `--breakpoint-lg` above instead of repeating 1024px as a second,
+   driftable number. */
+@variant lg {
   :root {
     --shell-pad-start: calc(var(--shell-pad) + var(--gutter-cure));
   }

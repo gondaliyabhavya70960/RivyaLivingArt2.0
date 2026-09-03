@@ -37,8 +37,11 @@ import { cn } from "@/lib/utils";
  *    it lands centred on mobile and left on desktop without a second mount.
  * 4. **It clears the mobile WhatsApp bar.** That bar is `lg:hidden` at 64px,
  *    and sonner's mobile breakpoint is 600px — the two do not line up, so the
- *    bottom offset is raised for everything under 1024px in COUNTDOWN_CSS
- *    rather than through `mobileOffset`, which only reaches 600px.
+ *    bottom offset is raised for everything under `--breakpoint-lg` rather
+ *    than through `mobileOffset`, which only reaches 600px. The ≥1024px
+ *    reset back to sonner's own offset lives in globals.css under
+ *    `@variant lg` — a Tailwind at-rule cannot be authored inside a JS
+ *    template string, which COUNTDOWN_CSS below otherwise is.
  *
  * Mount `<SfToaster/>` once in the storefront layout; fire from anywhere with
  * the `toast` export. The Studio keeps its own plain sonner `<Toaster/>` and
@@ -74,9 +77,6 @@ const COUNTDOWN_CSS = `
 [data-sonner-toast]:hover .sf-toast-countdown,
 [data-sonner-toast]:focus-within .sf-toast-countdown { animation-play-state: paused }
 [data-sonner-toaster][data-sonner-theme][data-y-position="bottom"] { bottom: calc(5.5rem + env(safe-area-inset-bottom)) }
-@media (min-width: 1024px) {
-  [data-sonner-toaster][data-sonner-theme][data-y-position="bottom"] { bottom: var(--offset-bottom) }
-}
 `;
 
 type ToastTone = "success" | "alert" | "neutral";

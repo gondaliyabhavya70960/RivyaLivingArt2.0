@@ -425,6 +425,66 @@
     animation-duration: var(--dur-fast);
     animation-timing-function: var(--ease-luxury);
   }
+
+  /* Hero text entrance — roadmap Phase 1b `sf-hero-rise`. A rise + opacity
+     over the reveal duration, staggered per element by `--i` (an integer
+     index the caller sets inline, e.g. `style={{ "--i": 1 }}`); `--rise`
+     lets a caller widen the distance for a larger headline. This is for
+     hero COPY only — never the priority poster image, which is the LCP and
+     is never animated or delayed (Part 14). */
+  .sf-hero-rise {
+    animation: sf-hero-rise var(--dur-reveal) var(--ease-luxury) both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+  @keyframes sf-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(var(--rise, 28px));
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Hero media drift — a slow 6s settle to 1.04x scale on the wrapper AROUND
+     the poster `<Image>`, never the `<img>` itself (hero-media.tsx), so the
+     LCP element's own box is never transformed. Turned off once the ambient
+     video takes over (`data-video-playing="true"`) so the two motions never
+     compete for the same frame. */
+  .sf-hero-drift {
+    animation: sf-hero-drift 6s var(--ease-luxury) forwards;
+  }
+  .sf-hero-drift[data-video-playing="true"] {
+    animation: none;
+  }
+  @keyframes sf-hero-drift {
+    to {
+      transform: scale(1.04);
+    }
+  }
+
+  /* Manifesto brighten — a scroll-linked opacity lift (0.35 → 1) as the band
+     crosses the middle of the viewport, driven by a view-progress timeline
+     rather than an IntersectionObserver, so there is no JS on the critical
+     path and no scroll listener at all. `@supports`-gated: browsers without
+     `animation-timeline: view()` simply never apply the reduced starting
+     opacity (declared inside the block, so it can't leak out as a stuck
+     0.35 on an unsupporting browser) and the text renders at its normal
+     opacity throughout. */
+  @supports (animation-timeline: view()) {
+    .sf-manifesto-brighten {
+      opacity: 0.35;
+      animation: sf-manifesto-brighten linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+    @keyframes sf-manifesto-brighten {
+      to {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -433,6 +493,26 @@
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
+  }
+
+  /* The global collapse in tokens.css already forces every animation's
+     duration to ~0, which lands a time-based animation on its end frame —
+     but `sf-manifesto-brighten` is driven by a view() timeline, not a
+     duration, so it needs its own explicit final state rather than relying
+     on that collapse. Stated for all three here so the resting look of each
+     is never left to infer from a keyframe. */
+  .sf-hero-rise {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .sf-hero-drift {
+    animation: none;
+    transform: scale(1.04);
+  }
+  .sf-manifesto-brighten {
+    animation: none;
+    opacity: 1;
   }
 }
 
@@ -450,6 +530,17 @@
   mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;
+}
+
+/* toast.tsx note 4: the mobile-raised bottom offset that clears the
+   WhatsApp bar reverts to sonner's own `--offset-bottom` once that bar is
+   `lg:hidden`. Lives here rather than in the component's own injected
+   `<style>` string because `@variant` is a Tailwind at-rule, which a JS
+   template string cannot author. */
+@variant lg {
+  [data-sonner-toaster][data-sonner-theme][data-y-position="bottom"] {
+    bottom: var(--offset-bottom);
+  }
 }
 
 /* ————————————————————————————————————————————————————————————————
@@ -527,5 +618,4 @@
   dl > div {
     break-inside: avoid;
   }
-
 }
