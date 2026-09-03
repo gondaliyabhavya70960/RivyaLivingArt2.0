@@ -11,54 +11,58 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation Phase 1a — hygiene and gates (the ungated half)
-Phase Status:             COMPLETE for every item that needed no owner decision (2026-09-03; base 2c476e8 =
-                          origin/main after PR #29; branch claude/session-6h1a70). Gated items still open:
-                          D18 · D22 · D23 · D24 · D28.
-Completed:                stale-translation mode (i18n-missing.mjs --stale) + its CI step; BASE_URL / :3000
-                          across 12 scripts; ScrapeSource.requestDelayMs wired into the three adapters;
-                          sheet-delete-plan.ts + 5 tests; total reads on /privacy, /terms and sitemap.xml;
-                          blur/shadow sweep (dialog overlay, wishlist button, motion chip, consent banner,
-                          share buttons) + two computed-style rules in redesign-audit.mjs; docs corrections
-                          (source-adapters.md testing note, CLAUDE.md counts, ci.yml AUDIT_ROUTES note)
-In Progress:              nothing — the rest of Phase 1a waits on owner decisions
-Next Exact Task:          Owner answers D28 (the rewind of main) and D23 (the legacy un-gated
-                          syncSourceToSheet), then D18 / D22 / D24 — docs/transformation-roadmap.md §2.
-                          With D23 approved: remove the second sheet push in scraper-jobs.ts (:379-404,
-                          :749) so SheetSyncPolicy is the only gate. Without any decision: Phase 10 (SEO/OG).
-Files Created:            src/lib/scraper/sheet-delete-plan.ts · src/lib/scraper/sheet-delete-plan.test.ts
-Files Modified:           .github/workflows/ci.yml · scripts/i18n-missing.mjs · scripts/redesign-audit.mjs ·
-                          12 scripts (BASE_URL default) · src/lib/scraper/{types,sheets}.ts ·
-                          src/lib/scraper/adapters/{shopify,woocommerce,jsonld}.ts · src/actions/scraper-jobs.ts ·
-                          src/app/sitemap.ts · src/app/[locale]/(v2)/{privacy,terms}/page.tsx ·
-                          consent-gate.tsx · dialog.tsx · wishlist-button.tsx · use-motion-paused.tsx ·
-                          share-buttons.tsx · docs/source-adapters.md · CLAUDE.md · CHANGELOG.md · this file
-Database Changes:         none. 44 migrations at HEAD, unchanged. A column already stored
-                          (ScrapeSource.requestDelayMs) is now read.
-Content Changes:          none
+Current Phase:            Transformation Phase 1b — tokens, budgets and the contract's last corners
+Phase Status:             COMPLETE for every item that needed no owner decision (2026-09-03; base 08959cd =
+                          origin/main after PR #30; branch claude/session-6h1a70). Phase 1a's ungated half
+                          shipped in PR #30, Phase 0 in PR #29. Gates still open: D10 · D17 · D18 · D19 ·
+                          D20 · D22 · D23 · D24 · D28.
+Completed:                the --z-* stacking ladder (17 named rungs; 26 call sites migrated, values
+                          unchanged and verified in the browser); the legacy motion aliases retired onto
+                          Part 3.8 (34 sites, three aliases deleted, four bespoke durations folded in);
+                          rating-stars and model-viewer through next-intl; model-viewer auto-rotate gated
+                          on reduced motion and its failed import given a retry; scripts/motion-budget.mjs
+                          + its CI step; three more redesign-audit rules (non-token duration, hover lift,
+                          champagne promoted from note to rule)
+In Progress:              nothing — what remains of Phase 1b is gated
+Next Exact Task:          Owner answers the gates in docs/transformation-roadmap.md §2. D28 (the rewind of
+                          main) is still first; D10 now also blocks the motion budget (below) as well as
+                          Phases 1b-motion, 2 and 3. Ungated work still available without any decision:
+                          Phase 10 (Studio shell, minus the D8 demo tile and D17 design lab) and Phase 16
+                          (SEO/a11y/perf, minus CSP).
+Files Created:            scripts/motion-budget.mjs
+Files Modified:           src/styles/tokens.css · src/app/globals.css · .github/workflows/ci.yml ·
+                          scripts/redesign-audit.mjs · 20 components across storefront/motion/studio/ui ·
+                          messages/*.json ×9 · src/lib/site-copy.generated.ts · CLAUDE.md · CHANGELOG.md ·
+                          this file
+Database Changes:         none. 44 migrations at HEAD, unchanged.
+Content Changes:          four new interface strings (3D viewer loading/failed/retry, the rating label),
+                          written in all nine locales. No editorial copy invented.
 Demo Data:                none — HARD RULE 3.
 Assets Added:             none
-Tests Run:                typecheck · lint · test · copy:check · i18n-missing (plain and --stale --base
-                          origin/main) · npm run build against a local Postgres 16 (migrate deploy +
-                          bootstrap + next build) · test:db · next start, then redesign-audit.mjs at 1440
-                          and 390 over the 13 CI routes and the 6 RTL routes · a11y-audit.mjs at 1440 and
-                          390 plus RTL at 390 · test:e2e · a negative control of the two new audit rules
-                          against /studio/login (shadcn shadows), which they flag.
-Tests Passing:            all of the above: typecheck ✓ · lint ✓ · test ✓ 37 files / 380 · copy:check ✓
-                          1,181 slots · i18n ✓ 0 missing, 0 stale · build ✓ · test:db ✓ 2 files / 6 ·
-                          redesign-audit ✓ 38 route-widths clean · a11y ✓ 0 critical/serious on 32 ·
-                          e2e ✓ 10/10. Not run locally: studio-audit.mjs (needs the CI studio user) and
-                          lighthouse-audit.mjs (this diff adds no bytes to a route) — both run in CI.
-Known Issues:             Phase 0's list minus what closed here. Still open: the DISCARDED HISTORY LAYER
-                          (D28); the legacy un-gated sheet push (D23); OG cards on the v2 palette (Phase 10);
-                          6 obsolete workflows and .env.example's retired domain (D24); dormant v2 files
-                          (D18); test:e2e still not in CI.
-Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Get D28 answered first —
-                          five of the gated items already exist as reviewed code in the discarded PRs. Each
-                          gated Phase 1a item is its own PR. Do NOT start Phase 1b, 3, 4, 9 or 15 without the
-                          gate decisions recorded under DECISIONS below. Branch from origin/main, never local
-                          main. CI runs; run locally what ci.yml does not sweep (detail routes, E2E, extra
-                          widths) and say so.
+Tests Run:                typecheck · lint · test · copy:check · i18n-missing (plain and --stale) ·
+                          npm run build against a local Postgres 16 · test:db · next start, then
+                          redesign-audit at 1440 and 390 over the 13 CI routes and the 6 RTL routes ·
+                          a11y-audit at both widths plus RTL · test:e2e · motion-budget · a synthetic
+                          negative control proving the hover rule fires · computed z-index read back
+                          from the rendered page to prove the ladder did not re-order the stack
+Tests Passing:            all of it: typecheck ✓ · lint ✓ · test ✓ 37 files / 380 · copy:check ✓ 1,185
+                          slots · i18n ✓ 0 missing, 0 stale · build ✓ · test:db ✓ 6 · redesign-audit ✓ 38
+                          route-widths clean WITH the three new rules · a11y ✓ 0 critical/serious on 32 ·
+                          e2e ✓ 10/10 · motion-budget warns (see below), exits 0. Not run locally:
+                          studio-audit (needs the CI studio user) and lighthouse.
+Known Issues:             NEW — the Part 14 motion budget is EXCEEDED: 51.1 KB gzipped against a 45 KB
+                          spec (GSAP+ScrollTrigger+SplitText 45.8, Lenis 5.2). The gate enforces a ceiling
+                          at the shipped size and warns about the gap; closing it means dropping a plugin
+                          or Lenis, which is D10. Still open from before: the DISCARDED HISTORY LAYER
+                          (D28); the legacy un-gated sheet push (D23); OG cards on the v2 palette (D19);
+                          dormant v2 files and the design lab (D18, D17); housekeeping (D24); test:e2e
+                          still not in CI. Note /design-lab 404s in a production build, so CI can never
+                          audit it.
+Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Every remaining Phase 1
+                          item is gated; do not start 1b's motion patterns, Phase 2 or Phase 3 without
+                          D10. Phase 10 and Phase 16 need no decision. Branch from origin/main, never
+                          local main. CI runs and is the gate of record; still run locally what ci.yml
+                          does not sweep (detail routes, E2E, extra widths) and say so.
 ```
 
 ---

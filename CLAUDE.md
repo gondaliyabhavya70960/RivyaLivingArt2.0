@@ -115,7 +115,7 @@ blank one. Adding a surface means following this, not inventing a ninth shape.
 
 | Surface | Registry | Table | Resolver |
 |---|---|---|---|
-| `/studio/site-copy` | `site-copy.ts` (1,181 slots) | `SiteCopy` | `getSiteCopy()` |
+| `/studio/site-copy` | `site-copy.ts` (1,185 slots) | `SiteCopy` | `getSiteCopy()` |
 | `/studio/site-images` | `site-images.ts` (62 slots) | `SiteImage` | `getSiteImages()` |
 | `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
 | `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
