@@ -51,6 +51,7 @@ model Category {
   visible        Boolean     @default(true)
   products     Product[]
   portfolios   Portfolio[]
+  posts BlogPost[] @relation("BlogPostCollection")
 }
 
 enum ContentStatus {
@@ -353,6 +354,10 @@ model BlogPost {
   updatedAt      DateTime      @updatedAt
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
+  /// Optional link to a shop collection, for the article's related-collections strip.
+  categoryId String?
+  category   Category? @relation("BlogPostCollection", fields: [categoryId], references: [id], onDelete: SetNull)
+  @@index([categoryId])
 
   @@index([status, publishedAt])
 }
