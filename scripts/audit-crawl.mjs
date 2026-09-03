@@ -5,14 +5,14 @@
  * title/description/canonical, horizontal overflow, WhatsApp CTA count, and
  * axe WCAG 2 A/AA violations. Failed requests to hosts the sandbox proxy
  * blocks are tagged sandboxBlocked so they don't read as site defects.
- * Run against a production server: BASE=http://localhost:3111 node scripts/audit-crawl.mjs
+ * Run against a production server: BASE=http://localhost:3000 node scripts/audit-crawl.mjs
  */
 import { writeFileSync, mkdirSync } from "node:fs";
 import { chromium } from "playwright-core";
 import { AxeBuilder } from "@axe-core/playwright";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.BASE ?? "http://localhost:3000";
 const SANDBOX_BLOCKED =
   /resinartsjaipur\.com|leoberrygifts\.com|kanhakreation\.com|wp\.com|_vercel\//;
 

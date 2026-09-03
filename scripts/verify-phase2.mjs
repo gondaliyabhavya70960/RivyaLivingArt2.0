@@ -2,13 +2,13 @@
  * Phase 2 verification (DESIGN.md E8): screenshots of the rebuilt Home /
  * Shop / PDP at 1280+375, then the end-to-end order flow — fill the PDP
  * customization form, submit, assert the wa.me deep link and the /whatsapp-
- * order fallback. Dev-only tooling; expects `next dev` on :3111 against the
+ * order fallback. Dev-only tooling; expects `next dev` on :3000 (BASE_URL) against the
  * local Postgres. Usage: node scripts/verify-phase2.mjs [product-slug]
  */
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 const SLUG =
   process.argv[2] ??
   "varmala-preservation-resin-clock-custom-anniversary-keepsake";

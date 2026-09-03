@@ -2,7 +2,7 @@
  * Storefront E2E smoke (the manual verification loop, automated). Runs
  * against an ALREADY RUNNING server — local `next start` or a deployed URL:
  *
- *   BASE_URL=http://localhost:3111 npm run test:e2e
+ *   BASE_URL=http://localhost:3000 npm run test:e2e
  *
  * Checks the invariants every session verified by hand: chrome renders, the
  * shop lists product cards with editorial names, the PDP carries an order
@@ -16,7 +16,7 @@
 import { execSync } from "node:child_process";
 import { chromium } from "playwright-core";
 
-const BASE = (process.env.BASE_URL ?? "http://localhost:3111").replace(/\/$/, "");
+const BASE = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const WA_NUMBER = "917096036250";
 
 const results = [];

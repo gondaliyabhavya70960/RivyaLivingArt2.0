@@ -12,7 +12,7 @@
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.P5_BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.P5_BASE ?? "http://localhost:3000";
 const OUT = "screenshots";
 
 const bin = resolveChromiumPath();

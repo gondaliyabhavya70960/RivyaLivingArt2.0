@@ -4,14 +4,14 @@
  * audit/lh-summary.json. Sandbox note: perf numbers here are lower bounds —
  * the proxy blocks external catalog-image hosts and throttles CPU; a11y/SEO/
  * best-practices are valid. Run against a production server.
- * Usage: BASE=http://localhost:3111 node scripts/audit-lighthouse.mjs
+ * Usage: BASE=http://localhost:3000 node scripts/audit-lighthouse.mjs
  */
 import { writeFileSync, mkdirSync } from "node:fs";
 import lighthouse from "lighthouse";
 import { launch } from "chrome-launcher";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.BASE ?? "http://localhost:3000";
 const ROUTES = [
   ["home", "/"],
   ["plp", "/shop"],

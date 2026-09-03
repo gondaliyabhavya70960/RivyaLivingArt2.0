@@ -2,12 +2,12 @@
  * Phase 7 verification: full sweep of every rebuilt route.
  * For each route: HTTP status, document title, console errors, viewport
  * screenshot at 1280 (screenshots/p7-<name>-1280.png); key pages also at 375.
- * Run against :3111 (dev for visuals, prod for timing).
+ * Run against :3000 (BASE_URL) (dev for visuals, prod for timing).
  */
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.P7_BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.P7_BASE ?? "http://localhost:3000";
 const OUT = "screenshots";
 
 const ROUTES = [

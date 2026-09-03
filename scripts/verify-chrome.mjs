@@ -1,6 +1,6 @@
 /**
  * Chrome (header/footer) verification: the restored original chrome in the
- * Midnight Gild skin. Run against :3111.
+ * Midnight Gild skin. Run against :3000 (BASE_URL).
  * States captured: header at rest over the home hero (transparent), floating
  * chip after scroll, mega-menu open, mobile dialog open (375), footer rows;
  * plus behavior probes (scroll lock, focus trap presence, aria wiring).
@@ -9,7 +9,7 @@
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.BASE ?? "http://localhost:3000";
 const OUT = "screenshots";
 
 const bin = resolveChromiumPath();
