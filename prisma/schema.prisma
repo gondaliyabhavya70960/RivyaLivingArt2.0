@@ -152,6 +152,14 @@ model Product {
   @@index([confirmedAt])
 }
 
+/// What a product photograph shows, so the page can pick the in-room frame.
+enum ProductImageRole {
+  HERO
+  DETAIL
+  IN_ROOM
+  PROCESS
+}
+
 model ProductImage {
   id        String  @id @default(cuid())
   url       String
@@ -159,6 +167,8 @@ model ProductImage {
   order     Int     @default(0)
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  /// Null on every existing frame; the room-context band needs IN_ROOM.
+  role ProductImageRole?
 
   @@index([productId])
 }
