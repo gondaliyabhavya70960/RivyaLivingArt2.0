@@ -6,7 +6,14 @@ import { defineConfig } from "vitest/config";
  * Runs against real Postgres (in CI or local dev when DATABASE_URL is set).
  */
 export default defineConfig({
-  resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      // The `server-only` marker has no runtime and does not resolve outside
+      // Next's bundler; alias it so server modules load under the runner.
+      "server-only": path.resolve(__dirname, "tests/stubs/server-only.ts"),
+    },
+  },
   test: {
     include: ["tests/db/**/*.test.ts"],
     environment: "node",
