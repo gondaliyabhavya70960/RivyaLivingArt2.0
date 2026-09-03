@@ -1,6 +1,6 @@
 /**
  * First-visit sequencing between the Preloader overlay and entrance motion
- * (Part 0 audit S-03, closed in Phase 1). The z-[100] overlay used to cover
+ * (Part 0 audit S-03, closed in Phase 1). The --z-preloader overlay covered
  * the hero heading's SplitText reveal for its whole show window, wasting the
  * one playback a first-time visitor gets. The Preloader arms this gate the
  * moment it decides to show and releases it when its exit fade STARTS (the

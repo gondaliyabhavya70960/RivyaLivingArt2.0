@@ -265,7 +265,7 @@ export default async function PublicLayout({
             past the announcement bar + nav straight to content (A11Y-005). */}
                 <a
                   href="#main-content"
-                  className="sr-only rounded-full focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:bg-background focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-e3 focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="sr-only rounded-full focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-(--z-skip) focus:bg-background focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-e3 focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   {tCommon("skipToContent")}
                 </a>

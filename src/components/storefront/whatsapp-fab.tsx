@@ -64,7 +64,7 @@ export function WhatsAppFab({ waHref }: { waHref: string }) {
       aria-hidden={!shown}
       tabIndex={shown ? undefined : -1}
       className={cn(
-        "fixed end-8 bottom-8 z-30 hidden size-14 items-center justify-center rounded-full bg-whatsapp-deep text-mineral outline-none lg:flex",
+        "fixed end-8 bottom-8 z-(--z-bar) hidden size-14 items-center justify-center rounded-full bg-whatsapp-deep text-mineral outline-none lg:flex",
         "transition-[opacity,transform] duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
         "hover:bg-whatsapp focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3",
         shown

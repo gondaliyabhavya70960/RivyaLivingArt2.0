@@ -58,7 +58,8 @@
     "linkCopied": "लिंक कॉपी हो गया",
     "logoHome": "Rivya Living Art — होम",
     "dismissAnnouncement": "सूचना बंद करें",
-    "announcementDefault": "मौजूदा समय · छोटी कृतियाँ 7–10 दिन · बड़ी कृतियाँ 3–6 सप्ताह"
+    "announcementDefault": "मौजूदा समय · छोटी कृतियाँ 7–10 दिन · बड़ी कृतियाँ 3–6 सप्ताह",
+    "ratedOutOf": "{outOf} में से {rating} स्टार"
   },
   "Header": {
     "search": "खोजें",
@@ -1255,7 +1256,10 @@
       "previousImage": "पिछली इमेज",
       "nextImage": "अगली इमेज",
       "lightboxStatus": "{count} में से इमेज {index}: {alt}",
-      "railLabel": "उत्पाद की तस्वीरें"
+      "railLabel": "उत्पाद की तस्वीरें",
+      "modelLoading": "3D दृश्य लोड हो रहा है…",
+      "modelFailed": "3D दृश्य लोड नहीं हो सका।",
+      "modelRetry": "फिर से कोशिश करें"
     },
     "referenceUploader": {
       "addImages": "संदर्भ तस्वीरें जोड़ें",

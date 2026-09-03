@@ -434,7 +434,7 @@ function SearchPanel() {
       aria-label={t("dialogLabel")}
       onKeyDown={onKeyDown}
       className={cn(
-        "fixed inset-0 z-[70] flex flex-col bg-obsidian/92 font-body text-mineral",
+        "fixed inset-0 z-(--z-overlay) flex flex-col bg-obsidian/92 font-body text-mineral",
         // Part 3.5 allows blur in exactly one place — the sticky header. The
         // overlay IS the header's own layer (it is the search action's panel),
         // so it carries that one sanctioned blur and nothing else does.

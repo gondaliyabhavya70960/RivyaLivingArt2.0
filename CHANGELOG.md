@@ -5,6 +5,64 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 1b — tokens, budgets and the contract's last corners (2026-09-03)
+
+The ungated half of roadmap Phase 1b, plus the two Phase 1a gate items that needed no decision. No
+schema, content or asset changed; no visual value moved except one crossfade (below). The motion
+patterns 1b would otherwise adopt stay gated on D10, the OG re-skin on D19, the hero rise/drift on D20.
+
+### Added
+- **A named stacking ladder.** `--z-grain · bar · rail · header · dialog · progress · consent · scrim
+  · drawer · ribbon · overlay · preloader · cursor · skip` in `tokens.css`, with three more for the
+  Studio's separate domain. Every `fixed`/`sticky` layer now names its rung: the couplings that lived
+  only in prose ("z-[55] keeps it UNDER the mobile menu", "below the drawer scrim (z-59)") are code.
+  **The values are unchanged** — verified in the browser after the migration (header 50, grain 25,
+  bottom bar 30, as before). Local stacking inside a card (`z-10` on a badge) is deliberately not on
+  the ladder.
+- **`scripts/motion-budget.mjs`** + a CI step: gzips the chunks that *contain* GSAP and Lenis (never
+  the component chunks that merely import them) and holds them to a budget. The Phase 0 audit called
+  this budget "unmeasured"; it is now measured, and the measurement is a finding — see below.
+- **Three more `redesign-audit.mjs` rules.** A transition or entrance whose duration is not one of
+  Part 3.8's four values fails (infinite ambient loops are exempt — the spec times those
+  individually); a lift or scale on a control's `hover:` fails; and the champagne count, printed as
+  an advisory note since it was written, is now a rule, because every audited route passes it.
+- **Four translation keys** in nine locales for the 3D viewer and the rating stars.
+
+### Changed
+- **The legacy motion aliases are gone.** `--ease-out`, `--dur-micro` and `--dur-enter` were second
+  names for `--ease-luxury`, `--dur-fast` and `--dur-base`; 34 call sites now name the Part 3.8 token
+  directly and the aliases are deleted from `tokens.css`. The bespoke values went with them: the page
+  transition's `450ms`, the mega menu's and the shadcn primitives' `duration-200`, and the
+  announcement bar's `300ms` crossfade — §5.1 names that last figure, and Part 3 is the value
+  authority, so it is `--dur-base` now (50ms nobody can see, one fewer duration in the codebase).
+- **`rating-stars.tsx`** read "Rated 5 out of 5 stars" to every locale. Its accessible name is a
+  translated string now — the class of bug the i18n gate cannot see, because a hardcoded string is
+  never a missing key.
+- **`model-viewer.tsx`** got three fixes, none of them visible to any gate: `auto-rotate` ignored
+  `prefers-reduced-motion` (Part 14 says no exceptions, and the global CSS collapse cannot reach a web
+  component spinning its own WebGL camera), its strings were hardcoded English, and a failed import
+  left the loading state up forever — it now says so and offers a retry.
+- **`product-card.tsx`**'s header no longer describes it as the storefront's card. It is the
+  superseded v2 component, rendered only by `/design-lab` (which 404s in production); the live card is
+  `catalog-product-card.tsx`, which already has no fill, no shadow and no lift. Its hover shadow is
+  left in place deliberately: the design lab's fate is D17 and this file goes with it.
+
+### Found: the motion budget is over
+Part 14 budgets motion JS at **≤45 KB gzipped**. Measured on the real build it is **51.1 KB** — GSAP
+with ScrollTrigger and SplitText in one chunk (45.8 KB) plus Lenis (5.2 KB). Closing a ~6 KB gap means
+giving up a GSAP plugin or Lenis, which is a motion-scope decision (**D10**), not hygiene. So the gate
+enforces a **ceiling at the shipped size and warns about the gap**: the number can only go down while
+the decision is pending, and the ceiling drops with it. Lower it in the same commit as any reduction.
+
+### Verified
+typecheck · lint · test (37 files / 380) · copy:check (1,185 slots — four new keys) · i18n-missing
+plain and `--stale` · `npm run build` against a local Postgres 16 · test:db · redesign-audit at 1440
+and 390 over the 13 CI routes and the 6 RTL routes, **38 route-widths clean with the three new rules
+live** · a11y-audit at both widths plus RTL, 0 critical/serious · test:e2e 10/10 · motion-budget.
+The hover rule was proven to fire on a synthetic page: the `hover:scale-105` button fails while
+`active:scale-95`, a colour-only link and a non-control card pass. Computed z-index values were read
+back from the rendered page to prove the ladder renamed the stack without re-ordering it.
+
 ## Transformation Phase 1a — hygiene and gates (2026-09-03)
 
 The ungated half of the roadmap's Phase 1a: every item that needed no owner decision. No schema,

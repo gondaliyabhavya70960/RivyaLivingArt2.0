@@ -98,8 +98,8 @@ export function CommandPalette({ role }: { role: Role }) {
       }}
       shouldFilter
       label="Studio command palette"
-      className="fixed left-1/2 top-24 z-[70] w-[min(38rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-modal border border-border bg-card shadow-e3"
-      overlayClassName="fixed inset-0 z-[65] bg-obsidian/80"
+      className="fixed left-1/2 top-24 z-(--z-studio-palette) w-[min(38rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-modal border border-border bg-card shadow-e3"
+      overlayClassName="fixed inset-0 z-(--z-studio-scrim) bg-obsidian/80"
     >
       <div className="flex items-center gap-3 border-b border-border px-4">
         <Search

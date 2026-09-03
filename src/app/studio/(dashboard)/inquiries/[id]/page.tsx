@@ -199,7 +199,7 @@ export default async function InquiryDetailPage({
                       alt={`Reference image ${index + 1}`}
                       width={112}
                       height={112}
-                      className="size-28 object-cover transition-transform duration-200 group-hover:scale-105"
+                      className="size-28 object-cover transition-transform duration-(--dur-fast) group-hover:scale-105"
                     />
                     <span className="absolute inset-0 flex items-center justify-center bg-foreground/0 opacity-0 transition-opacity group-hover:bg-foreground/40 group-hover:opacity-100">
                       <ExternalLink className="size-4 text-white" />

@@ -411,7 +411,7 @@ export function ShopExplorer({
     <div>
       {/* ═══ TOOLBAR — §7.4, 64px, sticky beneath the 64px scrolled header.
           No blur: Part 3.5 reserves it for the header alone. ═══ */}
-      <div className="sticky top-16 z-30 border-y border-hairline bg-mineral">
+      <div className="sticky top-16 z-(--z-bar) border-y border-hairline bg-mineral">
         <div className="u-shell flex h-16 items-center gap-2 md:gap-6">
           <form
             role="search"
@@ -498,7 +498,7 @@ export function ShopExplorer({
                 align="end"
                 sideOffset={8}
                 aria-label={t("toolbar.sortMenuLabel")}
-                className="z-50 min-w-56 rounded-card border border-hairline bg-mineral p-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none"
+                className="z-(--z-dialog) min-w-56 rounded-card border border-hairline bg-mineral p-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none"
               >
                 {SORTS.map((key) => (
                   <MenuPrimitive.Item
@@ -547,12 +547,12 @@ export function ShopExplorer({
             </DialogPrimitive.Trigger>
 
             <DialogPrimitive.Portal>
-              <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-obsidian/60 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 motion-reduce:animate-none" />
+              <DialogPrimitive.Overlay className="fixed inset-0 z-(--z-dialog) bg-obsidian/60 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 motion-reduce:animate-none" />
               <DialogPrimitive.Content
                 data-theme="light"
                 aria-describedby={undefined}
                 className={cn(
-                  "fixed z-50 flex flex-col bg-mineral text-ink outline-none",
+                  "fixed z-(--z-dialog) flex flex-col bg-mineral text-ink outline-none",
                   // Mobile: a bottom sheet at 85dvh, sliding up (§4.6).
                   "inset-x-0 bottom-0 h-[85dvh] rounded-t-card",
                   "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",

@@ -41,7 +41,7 @@ export function WishlistButton({
         // No backdrop blur: Part 3.5 keeps blur to the header, and this chip
         // sits on every catalogue card. A denser obsidian ground carries the
         // contrast the blur used to.
-        "relative flex size-9 cursor-pointer items-center justify-center rounded-sm border border-mineral/20 bg-obsidian/80 text-mineral transition-[opacity,border-color,background-color] duration-(--dur-micro) ease-(--ease-out) after:absolute after:-inset-1 hover:border-mineral/45 hover:bg-obsidian/90 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian motion-reduce:transition-none",
+        "relative flex size-9 cursor-pointer items-center justify-center rounded-sm border border-mineral/20 bg-obsidian/80 text-mineral transition-[opacity,border-color,background-color] duration-(--dur-fast) ease-(--ease-luxury) after:absolute after:-inset-1 hover:border-mineral/45 hover:bg-obsidian/90 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian motion-reduce:transition-none",
         // Hidden hearts get pointer-events-none so they never intercept a
         // corner tap over the card link; touch devices always show them
         // (UIUX-006), and a saved heart stays visible everywhere.

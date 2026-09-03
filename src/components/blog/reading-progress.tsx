@@ -15,9 +15,9 @@ import { useEffect, useRef } from "react";
  * - **Not announced.** `aria-hidden`: the scrollbar already conveys position
  *   to assistive technology, and a second live position readout is noise.
  * - **Not below the header.** The spec puts it at the top of the *viewport*,
- *   so it sits above the sticky header (z-50) rather than under its
+ *   so it sits above the sticky header (--z-header) rather than under its
  *   translucent bar, where an 88%-opaque ground would have washed it out.
- *   It stays below the drawer scrim (z-59) so an open menu covers it.
+ *   It stays below the drawer scrim (--z-scrim) so an open menu covers it.
  * - **Not a layout cost.** Writes are `transform` only, coalesced into one
  *   rAF per frame, on a passive listener.
  *
@@ -58,7 +58,7 @@ export function ReadingProgress() {
     <div
       aria-hidden
       data-slot="sf-reading-progress"
-      className="pointer-events-none fixed inset-x-0 top-0 z-[51] h-0.5 origin-left scale-x-0 bg-sapphire rtl:origin-right"
+      className="pointer-events-none fixed inset-x-0 top-0 z-(--z-progress) h-0.5 origin-left scale-x-0 bg-sapphire rtl:origin-right"
       ref={barRef}
     />
   );

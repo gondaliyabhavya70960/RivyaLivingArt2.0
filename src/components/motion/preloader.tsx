@@ -96,7 +96,7 @@ export function Preloader() {
     <div
       aria-hidden="true"
       className={cn(
-        "pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-obsidian transition-opacity duration-(--dur-enter) ease-(--ease-out)",
+        "pointer-events-none fixed inset-0 z-(--z-preloader) flex items-center justify-center bg-obsidian transition-opacity duration-(--dur-base) ease-(--ease-luxury)",
         exiting && "opacity-0",
       )}
     >
@@ -105,11 +105,11 @@ export function Preloader() {
           "font-display text-39 tracking-display text-mineral/30 sm:text-49",
           exiting
             ? // Exit: rise away while fading (motion parity: y 0 -> -32).
-              "-translate-y-8 opacity-0 transition-[opacity,transform] duration-(--dur-enter) ease-(--ease-out)"
+              "-translate-y-8 opacity-0 transition-[opacity,transform] duration-(--dur-base) ease-(--ease-luxury)"
             : // Enter: rise in from y 24. fill-mode-backwards ends at the
               // natural (visible, untransformed) state, so the exit
               // transition above can take over cleanly.
-              "animate-in fade-in slide-in-from-bottom-6 fill-mode-backwards duration-(--dur-enter) ease-(--ease-out)",
+              "animate-in fade-in slide-in-from-bottom-6 fill-mode-backwards duration-(--dur-base) ease-(--ease-luxury)",
         )}
       >
         {/* Gold "resin fill": the same glyphs twice — a dim ivory base, and a

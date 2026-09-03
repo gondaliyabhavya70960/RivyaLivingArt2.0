@@ -134,6 +134,13 @@ jobs:
       # next build — the same sequence Vercel runs.
       - run: npm run build
 
+      # Part 14's motion budget, measured on the chunks the build just wrote.
+      # Recorded as "unmeasured" by the Phase 0 audit; the payload is over the
+      # 45 KB spec figure today, so the step enforces a ceiling at the shipped
+      # size and warns about the gap — see the header of the script.
+      - name: Motion budget
+        run: node scripts/motion-budget.mjs
+
       # The first database-backed tests (Prompt 07): executes queries against
       # the throwaway Postgres container stood up in this job.
       - name: Database-backed tests

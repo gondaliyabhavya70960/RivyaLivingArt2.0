@@ -58,7 +58,8 @@
     "linkCopied": "Link copied",
     "logoHome": "Rivya Living Art — home",
     "dismissAnnouncement": "Dismiss announcement",
-    "announcementDefault": "Current lead time · Small pieces 7–10 days · Statement pieces 3–6 weeks"
+    "announcementDefault": "Current lead time · Small pieces 7–10 days · Statement pieces 3–6 weeks",
+    "ratedOutOf": "Rated {rating} out of {outOf} stars"
   },
   "Header": {
     "search": "Search",
@@ -1255,7 +1256,10 @@
       "previousImage": "Previous image",
       "nextImage": "Next image",
       "lightboxStatus": "Image {index} of {count}: {alt}",
-      "railLabel": "Product images"
+      "railLabel": "Product images",
+      "modelLoading": "Loading the 3D view…",
+      "modelFailed": "The 3D view didn’t load.",
+      "modelRetry": "Try again"
     },
     "referenceUploader": {
       "addImages": "Add reference images",

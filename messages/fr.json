@@ -58,7 +58,8 @@
     "linkCopied": "Lien copié",
     "logoHome": "Rivya Living Art — accueil",
     "dismissAnnouncement": "Masquer l'annonce",
-    "announcementDefault": "Délai actuel · Petites pièces 7–10 jours · Grandes pièces 3–6 semaines"
+    "announcementDefault": "Délai actuel · Petites pièces 7–10 jours · Grandes pièces 3–6 semaines",
+    "ratedOutOf": "Noté {rating} sur {outOf} étoiles"
   },
   "Header": {
     "search": "Recherche",
@@ -1255,7 +1256,10 @@
       "previousImage": "Image précédente",
       "nextImage": "Image suivante",
       "lightboxStatus": "Image {index} sur {count} : {alt}",
-      "railLabel": "Images du produit"
+      "railLabel": "Images du produit",
+      "modelLoading": "Chargement de la vue 3D…",
+      "modelFailed": "La vue 3D n’a pas pu être chargée.",
+      "modelRetry": "Réessayer"
     },
     "referenceUploader": {
       "addImages": "Ajouter des images de référence",

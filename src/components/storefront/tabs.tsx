@@ -43,7 +43,7 @@ export function TabsTrigger({
       data-slot="sf-tabs-trigger"
       className={cn(
         "-mb-px inline-flex min-h-11 items-center border-b-2 border-transparent pb-3 font-body text-14 text-graphite outline-none",
-        "transition-colors duration-(--dur-micro) ease-(--ease-out) hover:text-ink motion-reduce:transition-none",
+        "transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-ink motion-reduce:transition-none",
         "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2",
         "data-[state=active]:border-sapphire data-[state=active]:font-medium data-[state=active]:text-sapphire",
         "disabled:pointer-events-none disabled:opacity-50",

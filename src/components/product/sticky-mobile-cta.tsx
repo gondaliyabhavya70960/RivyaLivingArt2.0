@@ -69,7 +69,7 @@ export function StickyMobileCta({
     <div
       inert={hidden || undefined}
       className={cn(
-        "fixed inset-x-0 bottom-18 z-30 border-y border-hairline bg-mineral lg:hidden",
+        "fixed inset-x-0 bottom-18 z-(--z-bar) border-y border-hairline bg-mineral lg:hidden",
         "transition-transform duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
         hidden && "translate-y-[calc(100%+4.5rem)]",
       )}

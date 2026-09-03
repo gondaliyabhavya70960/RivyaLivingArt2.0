@@ -12,16 +12,26 @@ import { cn } from "@/lib/utils";
 const DISMISS_KEY = "rr-announcement-dismissed";
 const DISMISS_DAYS = 30;
 
-/** §5.1: rotate every 6s with a 300ms crossfade. */
+/**
+ * §5.1: rotate every 6s with a crossfade.
+ *
+ * The crossfade is Part 3.8's `--dur-base`, not the 300ms §5.1 names. Part 3
+ * is the value authority — "never invent animation values; they are all
+ * defined in Part 3" — and a scale of four durations only means anything if a
+ * fifth cannot enter on the grounds that one section wrote a different number.
+ * 50ms on a crossfade is imperceptible; a fifth duration in the codebase is
+ * not. One constant drives both the CSS transition and the JS swap below, so
+ * they cannot drift apart.
+ */
 const ROTATE_MS = 6000;
-const FADE_MS = 300;
+const FADE_MS = 350;
 
 /**
  * The announcement bar — REDESIGN.md §5.1.
  *
  * 36px, obsidian, an 11px mono uppercase line centred in it, a 1px champagne
  * bottom hairline at 15%, and a dismiss control whose choice persists for
- * thirty days. Up to three messages rotate every 6s with a 300ms crossfade;
+ * thirty days. Up to three messages rotate every 6s with a --dur-base crossfade;
  * rotation pauses on hover and focus, an explicit pause control exists
  * (WCAG 2.2.2), and reduced motion freezes it on the first message.
  *
@@ -80,7 +90,7 @@ export function AnnouncementBar({
     return () => window.clearInterval(id);
   }, [rotating]);
 
-  /* …then swap the message once the 300ms crossfade completes. */
+  /* …then swap the message once the crossfade completes. */
   useEffect(() => {
     if (!faded) return;
     const id = window.setTimeout(() => {

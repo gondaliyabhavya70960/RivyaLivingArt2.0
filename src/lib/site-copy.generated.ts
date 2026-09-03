@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1181 slots · 0 flagged as unreachable from any component.
+ * 1185 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -65,6 +65,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Common.logoHome","group":"Site chrome","section":"general","label":"Logo home","kind":"body","tier":"interface","max":400},
   {"key":"Common.dismissAnnouncement","group":"Site chrome","section":"general","label":"Dismiss announcement","kind":"body","tier":"interface","max":400},
   {"key":"Common.announcementDefault","group":"Site chrome","section":"general","label":"Announcement default","kind":"body","tier":"interface","max":400},
+  {"key":"Common.ratedOutOf","group":"Site chrome","section":"general","label":"Rated out of","kind":"body","tier":"interface","max":400,"vars":["rating","outOf"]},
   {"key":"Header.search","group":"Site chrome","section":"general","label":"Search","kind":"body","tier":"editorial","max":400},
   {"key":"Header.openMenu","group":"Site chrome","section":"general","label":"Open menu","kind":"body","tier":"editorial","max":400},
   {"key":"Header.closeMenu","group":"Site chrome","section":"general","label":"Close menu","kind":"body","tier":"editorial","max":400},
@@ -1007,6 +1008,9 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Product.gallery.nextImage","group":"Shop","section":"gallery","label":"Next image","kind":"body","tier":"editorial","max":400},
   {"key":"Product.gallery.lightboxStatus","group":"Shop","section":"gallery","label":"Lightbox status","kind":"body","tier":"editorial","max":400,"vars":["index","count","alt"]},
   {"key":"Product.gallery.railLabel","group":"Shop","section":"gallery","label":"Rail label","kind":"label","tier":"editorial","max":60},
+  {"key":"Product.gallery.modelLoading","group":"Shop","section":"gallery","label":"Model loading","kind":"body","tier":"editorial","max":400},
+  {"key":"Product.gallery.modelFailed","group":"Shop","section":"gallery","label":"Model failed","kind":"body","tier":"editorial","max":400},
+  {"key":"Product.gallery.modelRetry","group":"Shop","section":"gallery","label":"Model retry","kind":"body","tier":"editorial","max":400},
   {"key":"Product.referenceUploader.addImages","group":"Shop","section":"referenceUploader","label":"Add images","kind":"body","tier":"editorial","max":400},
   {"key":"Product.referenceUploader.hint","group":"Shop","section":"referenceUploader","label":"Hint","kind":"micro","tier":"interface","max":200,"vars":["maxImages","maxMb"]},
   {"key":"Product.referenceUploader.errorTooMany","group":"Shop","section":"referenceUploader","label":"Error too many","kind":"body","tier":"editorial","max":400,"vars":["max"]},
