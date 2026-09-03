@@ -20,12 +20,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
 
 export type CustomPageFormInitial = {
   id: string;
   slug: string;
   title: string;
-  status: "DRAFT" | "PUBLISHED";
+  status: ContentStatusValue;
   /** `datetime-local` value, or "" for "as soon as it is published". */
   publishAt: string;
   noindex: boolean;
@@ -38,7 +39,7 @@ export type CustomPageFormInitial = {
 const formSchema = z.object({
   title: z.string().trim().min(2, "Give the page a title."),
   slug: z.string(),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
+  status: z.enum(CONTENT_STATUSES),
   publishAt: z.string(),
   noindex: z.boolean(),
   seoTitle: z.string(),

@@ -16,6 +16,7 @@ import { logActivity } from "@/lib/activity";
 import { deleteFile } from "@/lib/storage";
 import { findMediaUsages } from "@/lib/media-usages";
 import { uniqueSlug } from "@/lib/slug";
+import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
 
 const STUDIO_PATH = "/studio/portfolio";
 
@@ -63,7 +64,7 @@ const upsertPortfolioSchema = z.object({
   videoUrl: optionalUrl,
   resultsMeta: resultsMetaSchema,
   categoryId: z.string().min(1).nullable().optional(),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
+  status: z.enum(CONTENT_STATUSES),
   translations: z
     .record(z.string(), z.record(z.string(), z.unknown()))
     .optional(),
@@ -213,12 +214,12 @@ const idsSchema = z
 
 export async function setPortfoliosStatus(
   ids: string[],
-  status: "DRAFT" | "PUBLISHED",
+  status: ContentStatusValue,
 ): Promise<ActionResult<{ updated: number }>> {
   const session = await requireStaff();
 
   const parsed = z
-    .object({ ids: idsSchema, status: z.enum(["DRAFT", "PUBLISHED"]) })
+    .object({ ids: idsSchema, status: z.enum(CONTENT_STATUSES) })
     .safeParse({ ids, status });
   if (!parsed.success) {
     return {

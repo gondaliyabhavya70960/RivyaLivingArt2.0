@@ -50,7 +50,11 @@ model Category {
 
 enum ContentStatus {
   DRAFT
+  /// Written, awaiting approval. Every public reader treats it as DRAFT.
+  REVIEW
   PUBLISHED
+  /// Retired but kept. Never public, never orderable.
+  ARCHIVED
 }
 
 model Product {

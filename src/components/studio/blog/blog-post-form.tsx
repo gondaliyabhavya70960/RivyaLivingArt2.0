@@ -35,6 +35,7 @@ import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
+import { CONTENT_STATUSES } from "@/lib/content-status";
 
 // ————————————————————— Types & schema —————————————————————
 
@@ -68,7 +69,7 @@ const formSchema = z.object({
   authorName: z.string().trim().min(1, "Author name is required."),
   blogCategoryId: z.string(),
   tagIds: z.array(z.string()),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
+  status: z.enum(CONTENT_STATUSES),
   publishedAt: z.string(),
   seoTitle: z.string(),
   seoDescription: z.string(),

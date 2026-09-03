@@ -15,6 +15,7 @@ import { nullIfEmpty } from "@/lib/utils";
 import { normalizeTranslations, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { createWithUniqueSlug, slugify, uniqueSlug } from "@/lib/slug";
 import { Prisma } from "@/generated/prisma/client";
+import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
 
 const STUDIO_PATH = "/studio/blog";
 
@@ -37,7 +38,7 @@ const upsertPostSchema = z.object({
   authorName: z.string().trim().min(1, "Author name is required.").max(120),
   blogCategoryId: z.string().min(1).nullable().optional(),
   tagIds: z.array(z.string().min(1)).default([]),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
+  status: z.enum(CONTENT_STATUSES),
   publishedAt: z.iso.datetime("Invalid publish date.").nullable().optional(),
   seoTitle: z.string().trim().max(300).optional(),
   seoDescription: z.string().trim().max(500).optional(),
@@ -192,12 +193,12 @@ export async function deleteBlogPosts(
 
 export async function setBlogPostsStatus(
   ids: string[],
-  status: "DRAFT" | "PUBLISHED",
+  status: ContentStatusValue,
 ): Promise<ActionResult<{ updated: number }>> {
   const session = await requireStaff();
 
   const parsed = z
-    .object({ ids: idsSchema, status: z.enum(["DRAFT", "PUBLISHED"]) })
+    .object({ ids: idsSchema, status: z.enum(CONTENT_STATUSES) })
     .safeParse({ ids, status });
   if (!parsed.success) {
     return {

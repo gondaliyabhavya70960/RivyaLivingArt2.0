@@ -29,6 +29,7 @@ import {
   productListFilterSchema,
   type ProductListFilter,
 } from "@/components/studio/products/product-filter";
+import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
 
 const optionalUrl = z
   .union([z.literal(""), z.url("Enter a valid URL.")])
@@ -86,7 +87,7 @@ const upsertProductSchema = z
     translations: z
       .record(z.string(), z.record(z.string(), z.unknown()))
       .optional(),
-    status: z.enum(["DRAFT", "PUBLISHED"]),
+    status: z.enum(CONTENT_STATUSES),
     confirmRewrite: z.boolean(),
     images: z.array(imageSchema).default([]),
     customFields: z.array(customFieldSchema).default([]),
@@ -441,11 +442,11 @@ async function resolveTargetIds(
 
 export async function setProductsStatus(
   target: BulkProductTarget,
-  status: "DRAFT" | "PUBLISHED",
+  status: ContentStatusValue,
 ): Promise<ActionResult<{ updated: number; skippedRewrite: number }>> {
   const session = await requireStaff();
 
-  const parsedStatus = z.enum(["DRAFT", "PUBLISHED"]).safeParse(status);
+  const parsedStatus = z.enum(CONTENT_STATUSES).safeParse(status);
   if (!parsedStatus.success) {
     return { ok: false, error: "Invalid request." };
   }

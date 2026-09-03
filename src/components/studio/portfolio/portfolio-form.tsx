@@ -50,6 +50,7 @@ import {
 import { translatableLocales } from "@/lib/localize";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
+import { CONTENT_STATUSES } from "@/lib/content-status";
 
 // ————————————————————— Types & schema —————————————————————
 
@@ -104,7 +105,7 @@ const formSchema = z.object({
     .string()
     .refine((v) => v === "" || /^\d{4}$/.test(v), "Enter a 4-digit year."),
   categoryId: z.string(),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
+  status: z.enum(CONTENT_STATUSES),
   beforeImageUrl: optionalUrl,
   afterImageUrl: optionalUrl,
   videoUrl: optionalUrl,

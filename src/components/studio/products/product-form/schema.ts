@@ -6,6 +6,7 @@ import {
   type Occasion,
 } from "@/components/studio/products/occasions";
 import { toTranslationsRecord } from "@/lib/translations-form";
+import { CONTENT_STATUSES } from "@/lib/content-status";
 
 // ————————————————————— Initial (server) shape —————————————————————
 
@@ -112,7 +113,7 @@ export const formSchema = z
     description: z.string(),
     categoryId: z.string().min(1, "Pick a category."),
     featured: z.boolean(),
-    status: z.enum(["DRAFT", "PUBLISHED"]),
+    status: z.enum(CONTENT_STATUSES),
     priceMin: priceString,
     priceMax: priceString,
     showPrice: z.boolean(),

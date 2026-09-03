@@ -38,9 +38,9 @@ describe("canOrderProduct", () => {
   });
 
   it("refuses any status that is not exactly PUBLISHED", () => {
-    // Fails closed if ContentStatus ever grows a third member (ARCHIVED,
-    // SCHEDULED…): a new status is not orderable until someone says it is.
-    for (const status of ["ARCHIVED", "SCHEDULED", "published", "", "draft"]) {
+    // ContentStatus grew REVIEW and ARCHIVED (migration 20260904101000);
+    // neither is orderable, and any future member fails closed the same way.
+    for (const status of ["REVIEW", "ARCHIVED", "SCHEDULED", "published", "", "draft"]) {
       expect(canOrderProduct({ status, previewEnabled: false })).toBe(false);
     }
   });
