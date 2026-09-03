@@ -148,6 +148,115 @@ export const SITE_IMAGE_SLOTS = [
     fallback: "/media/v3/story-polish.avif",
     altKey: "Home.why.proof.heirloom.alt",
   },
+  /* Furniture and room tiles (Home.furniture / Home.rooms, off by default —
+     `page-sections.ts`). CONCEPT IMAGERY, not photographs of delivered
+     furniture: the studio takes furniture on commission but carries none in
+     stock (D5), and every one of these ten slots stands in for a piece that
+     does not exist yet. The fallbacks below are existing §15.4 masters that
+     read as bench, formwork, surface or interior atmosphere rather than a
+     finished object — the closest honest stand-in the asset set has — and
+     every place they render, the page captions them "Concept" (`DemoMark`
+     styling) so a visitor never mistakes one for a delivered commission. */
+  {
+    key: "home.furniture.dining",
+    group: "Homepage",
+    label: "Furniture · Dining table",
+    where: "Homepage · What we commission, first tile",
+    ratio: "4:5",
+    fallback: "/media/v3/workshop-table.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.dining.alt",
+  },
+  {
+    key: "home.furniture.coffee",
+    group: "Homepage",
+    label: "Furniture · Coffee table",
+    where: "Homepage · What we commission, second tile",
+    ratio: "4:5",
+    fallback: "/media/v3/tile-live.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.coffee.alt",
+  },
+  {
+    key: "home.furniture.side",
+    group: "Homepage",
+    label: "Furniture · Side table",
+    where: "Homepage · What we commission, third tile",
+    ratio: "4:5",
+    fallback: "/media/v3/macro-teak.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.side.alt",
+  },
+  {
+    key: "home.furniture.console",
+    group: "Homepage",
+    label: "Furniture · Console",
+    where: "Homepage · What we commission, fourth tile",
+    ratio: "4:5",
+    fallback: "/media/v3/story-cure.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.console.alt",
+  },
+  {
+    key: "home.furniture.chair",
+    group: "Homepage",
+    label: "Furniture · Chair",
+    where: "Homepage · What we commission, fifth tile",
+    ratio: "4:5",
+    fallback: "/media/v3/tile-create.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.chair.alt",
+  },
+  {
+    key: "home.furniture.bench",
+    group: "Homepage",
+    label: "Furniture · Bench",
+    where: "Homepage · What we commission, sixth tile",
+    ratio: "4:5",
+    fallback: "/media/v3/story-polish.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.bench.alt",
+  },
+  {
+    key: "home.rooms.living",
+    group: "Homepage",
+    label: "Rooms · Living room",
+    where: "Homepage · In the room, first tile",
+    ratio: "4:3",
+    fallback: "/media/v3/hero-pour.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.living.alt",
+  },
+  {
+    key: "home.rooms.dining",
+    group: "Homepage",
+    label: "Rooms · Dining room",
+    where: "Homepage · In the room, second tile",
+    ratio: "4:3",
+    fallback: "/media/v3/texture-band.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.dining.alt",
+  },
+  {
+    key: "home.rooms.study",
+    group: "Homepage",
+    label: "Rooms · Study",
+    where: "Homepage · In the room, third tile",
+    ratio: "4:3",
+    fallback: "/media/v3/studio-interior.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.study.alt",
+  },
+  {
+    key: "home.rooms.bedroom",
+    group: "Homepage",
+    label: "Rooms · Bedroom",
+    where: "Homepage · In the room, fourth tile",
+    ratio: "4:3",
+    fallback: "/media/v3/story-gild.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.bedroom.alt",
+  },
 
   /* ————————————————— About ————————————————— */
   {

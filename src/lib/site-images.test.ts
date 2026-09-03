@@ -87,7 +87,7 @@ describe("alt keys", () => {
 
   it("covers the slots that carry real descriptions", () => {
     const withAlt = SLOTS.filter((s) => s.altKey);
-    expect(withAlt.length).toBe(42);
+    expect(withAlt.length).toBe(52);
   });
 });
 

@@ -61,7 +61,8 @@
     "announcementDefault": "Plazo actual · Piezas pequeñas 7–10 días · Piezas grandes 3–6 semanas",
     "ratedOutOf": "Valorado con {rating} de {outOf} estrellas",
     "demoMark": "Contenido de demostración",
-    "demoDetail": "Contenido de demostración — no es un anuncio real"
+    "demoDetail": "Contenido de demostración — no es un anuncio real",
+    "of": "de"
   },
   "Header": {
     "search": "Buscar",
@@ -300,7 +301,10 @@
       "print": "impresión 3d",
       "process": "proceso",
       "journal": "diario",
-      "words": "palabras amables"
+      "words": "palabras amables",
+      "largeFormat": "gran formato",
+      "furniture": "mobiliario",
+      "rooms": "en la habitación"
     },
     "manifesto": {
       "line1": "Objetos hechos despacio.",
@@ -313,6 +317,84 @@
       "body": "Cada pieza de Rivya Living Art pasa por las mismas manos, del primer vertido a la última pasada de grano 3000. Aquí no hay línea de producción: solo un banco, unos moldes y el tiempo que una pieza necesita.",
       "cta": "Conoce al artesano",
       "imageAlt": "Manos puliendo una superficie de resina curada en el banco del estudio"
+    },
+    "largeFormat": {
+      "eyebrow": "obra a gran formato",
+      "heading": "También hecho a gran escala",
+      "intro": "Mesas, paneles murales, piezas escultóricas y trabajos de preservación, pensados para una habitación y no para un estante.",
+      "cta": "Ver obra a gran formato",
+      "index": "{number} de {total}"
+    },
+    "furniture": {
+      "eyebrow": "lo que hacemos por encargo",
+      "heading": "Lo que hacemos por encargo",
+      "intro": "El estudio no guarda muebles en stock. Envíanos la habitación y la pieza que imaginas, y las planificamos juntas.",
+      "cta": "Empezar un encargo de mueble",
+      "conceptLabel": "Concepto",
+      "kinds": {
+        "dining": {
+          "title": "Mesa de comedor",
+          "lead": "Vertida a la medida de tu mesa, nunca a un tamaño estándar.",
+          "leadTime": "3–6 semanas",
+          "alt": "Un gran banco de trabajo de madera en el estudio, usado aquí como imagen de concepto para una mesa de comedor."
+        },
+        "coffee": {
+          "title": "Mesa de centro",
+          "lead": "Una mesa baja pensada según cómo te sientas de verdad.",
+          "leadTime": "3–6 semanas",
+          "alt": "Una tabla terminada de resina y teca con un cuenco sobre la mesa del estudio, usada aquí como imagen de concepto para una mesa de centro."
+        },
+        "side": {
+          "title": "Mesa auxiliar",
+          "lead": "Una sola superficie, del tamaño del rincón donde vive.",
+          "leadTime": "3–6 semanas",
+          "alt": "Un macro del veteado de teca sellada, usado aquí como imagen de concepto para una mesa auxiliar."
+        },
+        "console": {
+          "title": "Consola",
+          "lead": "Una pieza de recibidor, fundida para la pared contra la que se apoya.",
+          "leadTime": "3–6 semanas",
+          "alt": "El estudio de noche — moldes llenos curando bajo una lámpara de trabajo cálida, usado aquí como imagen de concepto para una consola."
+        },
+        "chair": {
+          "title": "Silla",
+          "lead": "Un asiento formado y acabado a mano, uno a la vez.",
+          "leadTime": "3–6 semanas",
+          "alt": "Manos colocando pétalos dentro de un molde vacío, usado aquí como imagen de concepto para una silla."
+        },
+        "bench": {
+          "title": "Banco",
+          "lead": "Un asiento alargado para una entrada o una mesa.",
+          "leadTime": "3–6 semanas",
+          "alt": "Resina azul profundo captando la luz sobre una superficie terminada, usada aquí como imagen de concepto para un banco."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "en la habitación",
+      "heading": "En la habitación",
+      "intro": "Una pieza por encargo casi nunca está sola — así es el tipo de habitación en la que vive.",
+      "conceptLabel": "Concepto",
+      "living": {
+        "title": "Salón",
+        "caption": "Una pieza por encargo, mostrada en un salón.",
+        "alt": "Resina vertida en un chorro lento y constante, usada aquí como imagen de concepto para un salón."
+      },
+      "dining": {
+        "title": "Comedor",
+        "caption": "Una pieza por encargo, mostrada en un comedor.",
+        "alt": "Una banda macro de textura de resina en capas, usada aquí como imagen de concepto para un comedor."
+      },
+      "study": {
+        "title": "Estudio",
+        "caption": "Una pieza por encargo, mostrada en un estudio.",
+        "alt": "Moldes llenos curando durante la noche bajo una lámpara de trabajo cálida, usada aquí como imagen de concepto para un estudio."
+      },
+      "bedroom": {
+        "title": "Dormitorio",
+        "caption": "Una pieza por encargo, mostrada en un dormitorio.",
+        "alt": "Copos de pan de oro flotando en resina azul translúcida asentándose, usada aquí como imagen de concepto para un dormitorio."
+      }
     }
   },
   "Process": {
@@ -1425,7 +1507,13 @@
       "scope": "obra grande",
       "how": "cómo va",
       "brief": "tu encargo",
-      "gallery": "piezas"
+      "gallery": "piezas",
+      "philosophy": "filosofía",
+      "materials": "materiales",
+      "pieces": "mobiliario",
+      "work": "trabajos anteriores",
+      "words": "palabras",
+      "faq": "preguntas"
     },
     "hero": {
       "eyebrow": "encargos de gran formato",
@@ -1494,6 +1582,31 @@
       "heading": "Cuéntanos cómo es la sala",
       "body": "Envía el espacio, el uso y la fecha que importa. El diseño, los materiales y el precio se acuerdan contigo por WhatsApp antes de verter una sola capa.",
       "formCta": "Planificar un encargo"
+    },
+    "philosophy": {
+      "eyebrow": "por qué planificar primero",
+      "heading": "Planificado antes de tener precio",
+      "p1": "Una pieza grande convive con una habitación durante años, así que se diseña específicamente para esa habitación — nunca cortada a un tamaño estándar y enviada.",
+      "p2": "El estudio acepta pocos encargos grandes a la vez, por la misma razón por la que cada uno tarda semanas y no días: el trabajo de resina en capas a esta escala no se puede apresurar sin que se note después.",
+      "p3": "No se vierte nada hasta que el diseño, el acabado y el tamaño se acuerdan por escrito — la habitación tiene una sola oportunidad de medirse bien, y el estudio no adivina."
+    },
+    "pieces": {
+      "eyebrow": "mobiliario a esta escala",
+      "heading": "El lado del mueble en el trabajo a gran formato",
+      "intro": "Los mismos seis tipos que en la página de inicio — una mesa, una consola, un banco — planificados y vertidos para una habitación concreta."
+    },
+    "work": {
+      "eyebrow": "encargado antes",
+      "heading": "Obra a gran formato, entregada",
+      "cta": "Ver todos los encargos"
+    },
+    "words": {
+      "eyebrow": "en sus palabras",
+      "heading": "Lo que dicen los clientes de obra a gran formato"
+    },
+    "faq": {
+      "eyebrow": "preguntas frecuentes",
+      "heading": "Preguntas sobre el trabajo a gran formato"
     }
   },
   "CureLine": {

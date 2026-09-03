@@ -39,6 +39,9 @@ export type SectionRow = {
   movable: boolean;
   conditional: boolean;
   ownsH1: boolean;
+  /** false for a section a fresh install ships with turned off — see
+   *  `SectionDef.defaultVisible`. */
+  defaultVisible: boolean;
   visible: boolean;
   unpublished: boolean;
   notes: string;
@@ -242,6 +245,9 @@ export function SectionsBoard({
                   )}
                   {row.conditional && (
                     <Badge variant="outline">Shows when there is content</Badge>
+                  )}
+                  {!row.defaultVisible && (
+                    <Badge variant="outline">Off by default</Badge>
                   )}
                 </div>
                 <p className="mt-0.5 text-xs text-graphite">

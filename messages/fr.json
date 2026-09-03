@@ -61,7 +61,8 @@
     "announcementDefault": "Délai actuel · Petites pièces 7–10 jours · Grandes pièces 3–6 semaines",
     "ratedOutOf": "Noté {rating} sur {outOf} étoiles",
     "demoMark": "Contenu de démonstration",
-    "demoDetail": "Contenu de démonstration — pas une offre réelle"
+    "demoDetail": "Contenu de démonstration — pas une offre réelle",
+    "of": "sur"
   },
   "Header": {
     "search": "Recherche",
@@ -300,7 +301,10 @@
       "print": "impression 3d",
       "process": "processus",
       "journal": "journal",
-      "words": "de belles paroles"
+      "words": "de belles paroles",
+      "largeFormat": "grand format",
+      "furniture": "mobilier",
+      "rooms": "dans la pièce"
     },
     "manifesto": {
       "line1": "Des objets faits lentement.",
@@ -313,6 +317,84 @@
       "body": "Chaque pièce Rivya Living Art passe entre les mêmes mains, de la première coulée au dernier passage au grain 3000. Il n'y a pas de chaîne de production ici — seulement un établi, quelques moules, et le temps qu'une pièce demande.",
       "cta": "Rencontrer l'artisan",
       "imageAlt": "Des mains polissent une surface de résine durcie sur l'établi de l'atelier"
+    },
+    "largeFormat": {
+      "eyebrow": "travaux grand format",
+      "heading": "Fabriqué à grande échelle aussi",
+      "intro": "Tables, panneaux muraux, pièces sculpturales et travaux de conservation, pensés pour une pièce plutôt que pour une étagère.",
+      "cta": "Voir les pièces grand format",
+      "index": "{number} sur {total}"
+    },
+    "furniture": {
+      "eyebrow": "ce que nous réalisons sur commande",
+      "heading": "Ce que nous réalisons sur commande",
+      "intro": "L'atelier ne garde pas de meubles en stock. Envoyez-nous la pièce de votre intérieur et celle que vous imaginez, et nous les pensons ensemble.",
+      "cta": "Commencer une commande de mobilier",
+      "conceptLabel": "Concept",
+      "kinds": {
+        "dining": {
+          "title": "Table à manger",
+          "lead": "Coulée aux dimensions de votre table, jamais à une taille standard.",
+          "leadTime": "3–6 semaines",
+          "alt": "Un grand établi en bois dans l'atelier, utilisé ici comme image de concept pour une table à manger."
+        },
+        "coffee": {
+          "title": "Table basse",
+          "lead": "Une table basse pensée selon la façon dont vous vous asseyez réellement.",
+          "leadTime": "3–6 semaines",
+          "alt": "Un plateau en résine et teck terminé, avec un bol, sur la table de l'atelier, utilisé ici comme image de concept pour une table basse."
+        },
+        "side": {
+          "title": "Table d'appoint",
+          "lead": "Une surface unique, à la taille du coin qu'elle occupe.",
+          "leadTime": "3–6 semaines",
+          "alt": "Un gros plan du grain de teck scellé, utilisé ici comme image de concept pour une table d'appoint."
+        },
+        "console": {
+          "title": "Console",
+          "lead": "Une pièce d'entrée, coulée pour le mur contre lequel elle repose.",
+          "leadTime": "3–6 semaines",
+          "alt": "L'atelier de nuit — des moules remplis durcissant sous une lampe de travail chaude, utilisé ici comme image de concept pour une console."
+        },
+        "chair": {
+          "title": "Chaise",
+          "lead": "Une assise façonnée et finie à la main, une à la fois.",
+          "leadTime": "3–6 semaines",
+          "alt": "Des mains disposant des pétales dans un moule vide, utilisé ici comme image de concept pour une chaise."
+        },
+        "bench": {
+          "title": "Banc",
+          "lead": "Une longue assise pour une entrée ou une table.",
+          "leadTime": "3–6 semaines",
+          "alt": "Une résine bleu profond captant la lumière sur une surface terminée, utilisé ici comme image de concept pour un banc."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "dans la pièce",
+      "heading": "Dans la pièce",
+      "intro": "Une pièce sur commande est rarement seule — voici le type de pièce où elle prend place.",
+      "conceptLabel": "Concept",
+      "living": {
+        "title": "Salon",
+        "caption": "Une pièce sur commande, représentée dans un salon.",
+        "alt": "De la résine coulée en un filet lent et régulier, utilisé ici comme image de concept pour un salon."
+      },
+      "dining": {
+        "title": "Salle à manger",
+        "caption": "Une pièce sur commande, représentée dans une salle à manger.",
+        "alt": "Une bande macro de texture de résine en couches, utilisé ici comme image de concept pour une salle à manger."
+      },
+      "study": {
+        "title": "Bureau",
+        "caption": "Une pièce sur commande, représentée dans un bureau.",
+        "alt": "Des moules remplis durcissant toute la nuit sous une lampe de travail chaude, utilisé ici comme image de concept pour un bureau."
+      },
+      "bedroom": {
+        "title": "Chambre",
+        "caption": "Une pièce sur commande, représentée dans une chambre.",
+        "alt": "Des paillettes d'or dérivant dans une résine bleue translucide qui se stabilise, utilisé ici comme image de concept pour une chambre."
+      }
     }
   },
   "Process": {
@@ -1425,7 +1507,13 @@
       "scope": "grandes pièces",
       "how": "déroulement",
       "brief": "votre brief",
-      "gallery": "pièces"
+      "gallery": "pièces",
+      "philosophy": "philosophie",
+      "materials": "matériaux",
+      "pieces": "mobilier",
+      "work": "réalisations",
+      "words": "témoignages",
+      "faq": "questions"
     },
     "hero": {
       "eyebrow": "commandes grand format",
@@ -1494,6 +1582,31 @@
       "heading": "Parlez-nous du lieu",
       "body": "Envoyez l'espace, l'usage et la date qui compte. Dessin, matériaux et prix se règlent avec vous sur WhatsApp avant qu'une seule couche ne soit coulée.",
       "formCta": "Préparer une commande sur mesure"
+    },
+    "philosophy": {
+      "eyebrow": "pourquoi planifier d'abord",
+      "heading": "Pensé avant d'être chiffré",
+      "p1": "Une grande pièce vit avec un intérieur pendant des années ; elle est donc conçue précisément pour cet intérieur — jamais taillée à une dimension standard puis expédiée.",
+      "p2": "L'atelier n'accepte qu'un petit nombre de commandes grand format à la fois, pour la même raison que chacune prend des semaines plutôt que des jours : un travail de résine en couches à cette échelle ne peut pas être précipité sans que cela se voie plus tard.",
+      "p3": "Rien n'est coulé avant que le design, la finition et la taille ne soient convenus par écrit — la pièce n'a qu'une seule chance d'être correctement mesurée, et l'atelier ne devine pas."
+    },
+    "pieces": {
+      "eyebrow": "le mobilier à cette échelle",
+      "heading": "Le volet mobilier du travail grand format",
+      "intro": "Les six mêmes types que sur la page d'accueil — une table, une console, un banc — pensés et coulés pour un intérieur précis."
+    },
+    "work": {
+      "eyebrow": "déjà réalisé sur commande",
+      "heading": "Travaux grand format, livrés",
+      "cta": "Voir toutes les réalisations"
+    },
+    "words": {
+      "eyebrow": "dans leurs mots",
+      "heading": "Ce que disent les clients de travaux grand format"
+    },
+    "faq": {
+      "eyebrow": "questions fréquentes",
+      "heading": "Questions sur le travail grand format"
     }
   },
   "CureLine": {
