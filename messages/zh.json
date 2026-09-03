@@ -59,7 +59,9 @@
     "logoHome": "Rivya Living Art — 首页",
     "dismissAnnouncement": "关闭公告",
     "announcementDefault": "当前制作周期 · 小件 7–10 天 · 大件 3–6 周",
-    "ratedOutOf": "{outOf} 星中的 {rating} 星"
+    "ratedOutOf": "{outOf} 星中的 {rating} 星",
+    "demoMark": "演示内容",
+    "demoDetail": "演示内容 — 并非真实商品"
   },
   "Header": {
     "search": "搜索",
@@ -1493,5 +1495,8 @@
       "body": "发来空间、用途，以及那个重要的日期。在浇下第一层之前，设计、材料与价格都会通过 WhatsApp 与你敲定。",
       "formCta": "规划定制订单"
     }
+  },
+  "CureLine": {
+    "pageSections": "页面版块"
   }
 }

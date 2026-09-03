@@ -75,8 +75,12 @@ const buttonVariants = cva(
       },
       size: {
         /* --btn-pad feeds the underline insets so the rule spans the label,
-           not the padding. */
-        sm: "h-10 px-5 text-14 [--btn-pad:1.25rem]",
+           not the padding. `sm` is 40px on a mouse/trackpad (Part 3.6);
+           `pointer-coarse:min-h-11` floors it to the 44px touch-target
+           minimum on a coarse pointer without touching the fine-pointer
+           visual — CSS clamps a used height to at least `min-height`, so the
+           fixed `h-10` and the coarse-pointer floor never fight. */
+        sm: "h-10 px-5 text-14 pointer-coarse:min-h-11 [--btn-pad:1.25rem]",
         md: "h-12 px-7 text-16 [--btn-pad:1.75rem]",
         lg: "h-14 px-9 text-16 [--btn-pad:2.25rem]",
         /* Icon-only actions still clear the 44px floor. */

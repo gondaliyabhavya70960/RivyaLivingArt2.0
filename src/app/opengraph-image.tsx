@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { ogBrand, wordmarkSize } from "@/app/og-brand";
-import { BRAND, porcelainAlpha } from "@/lib/brand-colors";
+import { BRAND, mineralAlpha } from "@/lib/brand-colors";
 import { SITE } from "@/lib/constants";
 
 // `alt` is read at module scope, so it cannot await Settings. It names the
@@ -11,9 +11,9 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /**
- * Default share card: void→sapphire gradient, giant serif wordmark with a
- * gold full stop, tagline and site url. Georgia stands in for Fraunces —
- * bundling the display TTF isn't possible offline.
+ * Default share card: obsidian→sapphire gradient, giant serif wordmark with
+ * a champagne full stop, tagline and a mono site-url line. Georgia stands in
+ * for Instrument Serif — bundling the display TTF isn't possible offline.
  */
 export default async function OpengraphImage() {
   const brand = await ogBrand();
@@ -26,7 +26,7 @@ export default async function OpengraphImage() {
         flexDirection: "column",
         justifyContent: "center",
         padding: "80px 96px",
-        background: `linear-gradient(135deg, ${BRAND.voidBlue} 0%, ${BRAND.navyMidnight} 48%, ${BRAND.royal} 100%)`,
+        background: `linear-gradient(135deg, ${BRAND.obsidian} 0%, ${BRAND.deepOcean} 48%, ${BRAND.sapphire} 100%)`,
         fontFamily: "Georgia, serif",
       }}
     >
@@ -35,7 +35,7 @@ export default async function OpengraphImage() {
           display: "flex",
           alignItems: "baseline",
           flexWrap: "wrap",
-          color: BRAND.porcelain,
+          color: BRAND.mineral,
           fontSize: wordmarkSize(brand.name),
           lineHeight: 1.05,
           fontWeight: 700,
@@ -43,13 +43,13 @@ export default async function OpengraphImage() {
         }}
       >
         {brand.name}
-        <span style={{ color: BRAND.gold }}>.</span>
+        <span style={{ color: BRAND.champagne }}>.</span>
       </div>
       <div
         style={{
           marginTop: 36,
           maxWidth: 900,
-          color: porcelainAlpha(0.82),
+          color: mineralAlpha(0.82),
           fontSize: 34,
           lineHeight: 1.4,
         }}
@@ -68,12 +68,13 @@ export default async function OpengraphImage() {
           style={{
             width: 44,
             height: 2,
-            backgroundColor: BRAND.gold,
+            backgroundColor: BRAND.champagne,
           }}
         />
         <div
           style={{
-            color: porcelainAlpha(0.6),
+            fontFamily: "monospace",
+            color: mineralAlpha(0.6),
             fontSize: 26,
             letterSpacing: "0.08em",
           }}

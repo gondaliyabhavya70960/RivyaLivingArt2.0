@@ -30,8 +30,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
       "Handcrafted resin art, made to order in India — every order finalized on WhatsApp.",
     start_url: "/",
     display: "standalone",
-    theme_color: BRAND.royal,
-    background_color: BRAND.canvas,
+    theme_color: BRAND.obsidian,
+    background_color: BRAND.mineral,
     icons: [
       {
         src: icon,
