@@ -150,6 +150,18 @@ export const journalGridSchema = z.object({
   spacing,
 });
 
+export const testimonialSchema = z.object({
+  /** The Testimonial row's id. The row must be PUBLISHED and pass the demo
+   *  gate at RENDER time or the block shows nothing — an id an owner picked
+   *  while a quote was live is not a promise it stays live. */
+  testimonialId: text(40),
+  /** `editorial` is the pull-quote card; `featured` is the cinematic single-
+   *  quote treatment `FeaturedTestimonial` already builds for a homepage or
+   *  PDP moment. */
+  variant: z.enum(["editorial", "featured"]).default("editorial"),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -175,6 +187,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "collectionGrid",
   "portfolioGrid",
   "journalGrid",
+  "testimonial",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -188,6 +201,7 @@ export type FinalCtaData = z.infer<typeof finalCtaSchema>;
 export type CollectionGridData = z.infer<typeof collectionGridSchema>;
 export type PortfolioGridData = z.infer<typeof portfolioGridSchema>;
 export type JournalGridData = z.infer<typeof journalGridSchema>;
+export type TestimonialBlockData = z.infer<typeof testimonialSchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -324,6 +338,16 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
       { name: "heading", label: "Heading", kind: "text" },
       { name: "intro", label: "Intro", kind: "textarea" },
     ],
+    ground: "alternating",
+  },
+  testimonial: {
+    type: "testimonial",
+    label: "Testimonial",
+    description: "One customer's words, alone — a pull-quote or a moment.",
+    schema: testimonialSchema,
+    // Nothing here is text an owner types — the words live on the
+    // Testimonial row and are translated there, in the testimonials Studio.
+    translatable: [],
     ground: "alternating",
   },
 };

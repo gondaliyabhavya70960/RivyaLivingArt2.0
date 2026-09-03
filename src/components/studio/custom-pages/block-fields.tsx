@@ -471,6 +471,35 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "testimonial" && (
+        <>
+          <TextField
+            id={id("testimonialId")}
+            label="Testimonial id"
+            hint="The id column on the testimonials list — the last segment of its edit link, /studio/testimonials/<this>. Must be a PUBLISHED testimonial or this block shows nothing."
+            value={String(data.testimonialId ?? "")}
+            onChange={(v) => set("testimonialId", v)}
+          />
+          <div className="space-y-2">
+            <Label htmlFor={id("variant")}>Treatment</Label>
+            <select
+              id={id("variant")}
+              value={String(data.variant ?? "editorial")}
+              onChange={(e) => set("variant", e.target.value)}
+              className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+            >
+              <option value="editorial">Pull-quote card</option>
+              <option value="featured">Full-width cinematic quote</option>
+            </select>
+          </div>
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {def.translatable.length > 0 && (
         <TranslationsSection
           idPrefix={`blk-${block.id}`}

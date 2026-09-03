@@ -12,11 +12,13 @@ import {
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { CollectionCard } from "@/components/storefront/collection-card";
+import { FeaturedTestimonial } from "@/components/storefront/featured-testimonial";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import {
   Eyebrow,
   SectionHeading,
 } from "@/components/storefront/section-heading";
+import { TestimonialCard } from "@/components/storefront/testimonial-card";
 import type {
   CollectionGridData,
   FaqPickerData,
@@ -27,6 +29,7 @@ import type {
   PortfolioGridData,
   ProductGridData,
   RichTextData,
+  TestimonialBlockData,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
@@ -39,6 +42,7 @@ import {
 } from "@/lib/image-src";
 import { localize, localizeName, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import type { ShopProductItem } from "@/lib/shop";
+import { getTestimonials } from "@/lib/testimonials";
 import { cn } from "@/lib/utils";
 
 /**
@@ -628,6 +632,61 @@ async function JournalGridBlock({
   );
 }
 
+/**
+ * One testimonial, alone. Fetched through `getTestimonials()` — the same
+ * PUBLISHED + demo-gated pathway every other public reader of this table
+ * uses, rather than a second query against `Testimonial` with the gate
+ * reimplemented here. `take` is generous because the lookup is by id, not by
+ * the caller's own filter; a studio with more live testimonials than this
+ * would need a dedicated by-id reader in `lib/testimonials.ts`, which is
+ * outside this batch's owned files this wave.
+ */
+async function TestimonialBlock({
+  id,
+  data,
+  ground,
+  spacing,
+}: {
+  id: string;
+  data: TestimonialBlockData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+}) {
+  if (!data.testimonialId) return null;
+  const locale = await getLocale();
+  const pool = await getTestimonials({ take: 500, locale });
+  const testimonial = pool.find((t) => t.id === data.testimonialId) ?? null;
+  // Refused, withdrawn, or hidden by the demo gate since the owner picked
+  // it: the block renders nothing rather than a stale or invented quote.
+  if (!testimonial) return null;
+
+  if (data.variant === "featured") {
+    return (
+      <Band ground={ground} spacing={spacing}>
+        <FeaturedTestimonial testimonial={testimonial} />
+      </Band>
+    );
+  }
+
+  return (
+    <Band ground={ground} spacing={spacing}>
+      <div className="mx-auto max-w-2xl" data-block-id={id}>
+        <TestimonialCard
+          quote={testimonial.quote}
+          name={testimonial.name}
+          location={testimonial.location}
+          designation={testimonial.designation}
+          rating={testimonial.rating}
+          avatarUrl={testimonial.avatarUrl}
+          demo={testimonial.isDemo}
+          variant="editorial"
+          size="large"
+        />
+      </div>
+    </Band>
+  );
+}
+
 function ImageCtaBlock({
   id,
   data,
@@ -915,6 +974,17 @@ export function CustomPageBlock({
           ground={ground}
           spacing={data.spacing}
           heading={heading}
+        />
+      );
+    }
+    case "testimonial": {
+      const data = block.data as TestimonialBlockData;
+      return (
+        <TestimonialBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
         />
       );
     }
