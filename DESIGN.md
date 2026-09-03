@@ -1,3 +1,12 @@
+> **ARCHIVED — superseded, kept for history.** This document does not describe the
+> repository as it stands. The live reference is **REDESIGN.md (v3 "Liquid Luxury") and docs/redesign-contract.md**.
+>
+> Owner decision D24 (2026-09-03) approved archiving the superseded documents. They
+> are bannered in place rather than moved under `docs/archive/`: `DESIGN.md` alone has
+> 164 inbound references, and many of them sit in dated records — CHANGELOG entries,
+> PROJECT_STATE history, prior audits — where rewriting the path would falsify what
+> those documents said at the time. A banner marks the file without editing history.
+
 # ResinRiva 2.0 — Master Design & Build Document
 ### Claude Code Edition · v2.0 · "Liquid Light × Midnight Gild"
 **How to use this document:** Save this file as `DESIGN.md` in the root of the ResinRiva2.0 repo. Your `CLAUDE.md` (Part E, ready to paste) points Claude Code at it, so every session starts with the full design system, page blueprints, and motion rules in reach. Build phase-by-phase using the prompt playbook in Part E.6.
