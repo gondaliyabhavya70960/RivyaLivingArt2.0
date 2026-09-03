@@ -5,6 +5,48 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — the Tabs primitive and the auth-tree boundary (2026-09-03, fifth batch)
+
+### Added
+- **`ui/tabs.tsx`** — the Studio's tab primitive on Radix, separate from `storefront/tabs.tsx` because
+  that one is the storefront vocabulary and this one reads the `.studio-v2` scope; sharing would mean
+  one of them rendering in the other's palette. Two variants: `pill` (the language strip) and
+  `underline` (the default bar the Phase 11 editor tabs will use).
+- **An error boundary for the /studio AUTH tree.** `login`, `signup`, `forgot-password` and
+  `reset-password` sit directly under `src/app/studio/`, **not** inside `(dashboard)` — so the
+  boundary fixed earlier today never covered them. A failure while signing in bubbled to the global
+  boundary and answered in the storefront's dark public voice: staff trying to get in were told
+  "this piece isn't here", with a WhatsApp button. Same contract as the dashboard's, digest included.
+
+### Fixed — the language strip was announcing a pattern it did not implement
+`translations-section.tsx` hand-rolled `role="tablist"` and `role="tab"` and then broke the contract
+in two ways that a screen-reader user meets immediately:
+
+- **No `aria-controls`, and the panel had no `role="tabpanel"`.** The relationship was announced and
+  then not wired to anything.
+- **No roving `tabindex`.** All **eight** locale buttons were separate tab stops, so getting past the
+  strip to the fields took eight presses of Tab, and the Left/Right arrows the pattern promises did
+  nothing at all.
+
+### Verified rather than assumed
+The conversion moves nine locales' worth of translation data, so it was driven rather than trusted:
+
+- **Tab stops inside the strip: 8 → 1.** One press enters it, the next lands in the panel.
+- **Arrow keys move focus and selection** together; `aria-controls`, `role="tabpanel"` and
+  `aria-labelledby` are all wired by Radix.
+- **The data binding survived**, which was the actual risk: typing into one language leaves the other
+  language's field empty, and the value is still there on return. Writes now take the panel's own
+  locale as an argument rather than closing over `active`.
+
+### A measurement trap worth naming twice
+The first pass at verifying this read `tabindex` off the DOM straight after `networkidle` and
+concluded the roving focus was broken — every trigger read `-1`. It was measuring before Radix had
+hydrated. This is the **same trap that broke `main` in #37**, where the keyboard gate drove keys
+before the page was interactive. Pressing an actual Tab, rather than reading an attribute, is what
+settled it.
+
+---
+
 ## Transformation Phase 10 — tiles, skeletons and palette verbs (2026-09-03, fourth batch)
 
 ### Added
