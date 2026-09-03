@@ -79,6 +79,29 @@ const nextConfig: NextConfig = {
     // real 404 status (a [locale] catch-all route would stream a soft 200
     // through the loading boundary instead — see ENG-813).
     globalNotFound: true,
+    /**
+     * Caps the static-generation worker COUNT, because the prerender's
+     * database fan-out is what it multiplies.
+     *
+     * The storefront prerenders 13 routes × 9 locales, and every one of them
+     * reads the CMS resolvers — site copy, site images, nav menus. Next runs
+     * those across one worker process per core, and each process builds its
+     * own Prisma client with `max: 5` sockets (src/lib/db.ts). On Vercel's
+     * build machine that is 30 cores, so the ceiling was 30 × 5 = 150
+     * simultaneous connections against a hosted Postgres whose cap is far
+     * below that. Deploys failed with `TooManyConnections` on role
+     * `prisma_migration` while the database itself was healthy — preflight
+     * connected, all 44 migrations applied, and only the prerender fell over.
+     *
+     * 4 workers puts the ceiling at 20 sockets. Raise it only alongside a
+     * lower `max` in db.ts: it is the PRODUCT of the two that has to stay
+     * under the provider's limit.
+     *
+     * CI never saw this because it builds against a throwaway Postgres
+     * container with no meaningful connection cap — which is exactly why the
+     * failure only ever appeared on Vercel.
+     */
+    cpus: 4,
   },
   images: {
     formats: ["image/avif", "image/webp"],

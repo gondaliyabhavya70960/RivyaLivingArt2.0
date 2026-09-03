@@ -5,6 +5,50 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Deploys — cap the prerender's database fan-out (2026-09-03)
+
+Every Vercel deployment since 09:03 failed. The database was never the problem, and neither was any
+of the Studio work in flight.
+
+### The arithmetic
+The storefront prerenders 13 routes × 9 locales, and each page reads the CMS resolvers — site copy,
+site images, nav menus. Next runs static generation across **one worker process per core**, and each
+process builds its own Prisma client with `max: 5` sockets (`src/lib/db.ts`). Vercel's build machine
+reports:
+
+```
+Build machine configuration: 30 cores, 60 GB
+```
+
+30 × 5 = **150 simultaneous connections** against a hosted Postgres whose cap is far below that.
+`experimental.cpus: 4` puts the ceiling at 20. It is the PRODUCT of the worker count and `max` that
+has to stay under the provider's limit, so neither number moves without the other.
+
+### Why it looked like something else
+- The failure names the database, so it reads as an outage. It is not: preflight reported
+  `psql ✓ connected and queried`, all 44 migrations applied, and `bootstrap` finished. **Only the
+  prerender fell over.**
+- **CI never sees it.** GitHub Actions builds against a throwaway Postgres container with no
+  meaningful connection cap, which is exactly why the same commit is green there and red on Vercel.
+- My own first diagnosis blamed six overlapping builds. A build that ran completely alone failed
+  identically, which falsified it — one 30-core build is enough on its own.
+
+### A stale comment that misdirected the diagnosis
+`src/lib/db.ts` described the deployed database as **Neon**. It is **Prisma Postgres**
+(`db.prisma.io`) — the build preflight prints the host on every deploy. Pooler limits differ between
+providers, so the name is not cosmetic: it sent the first investigation at the wrong service. Header
+corrected.
+
+### Verified, and what is NOT verified
+`npm run build` passes with the option accepted (Next lists `· cpus: 4` among the active experimental
+flags); design audit, a11y audit, Studio audit and the unit suite are all clean afterwards.
+
+**This does not prove the deploy is fixed.** The local machine has 4 cores, so the cap is a no-op
+here — nothing local can reproduce a 30-worker fan-out or a hosted connection limit. Vercel is the
+only place the change can be confirmed.
+
+---
+
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
 ### Fixed: seven forms silently discarded the owner's edits
