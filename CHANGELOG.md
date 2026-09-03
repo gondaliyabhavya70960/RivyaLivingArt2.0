@@ -5,6 +5,56 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 16 — SEO and the widths the repo holds itself to (2026-09-03, first batch)
+
+Four items were scoped. Two needed no code, which was established by reading the emitted HTML rather
+than by trusting the plan.
+
+### Fixed
+- **The breadcrumb JSON-LD was hardcoded English on a nine-locale site.** `blog/[slug]`,
+  `portfolio/[slug]` and `large-resin-art` emitted `name: "Home"` / `"Blog"` / `"Portfolio"` while the
+  visible breadcrumb three lines away rendered `tCommon("home")` and `tNav("blog")`. Structured data is
+  meant to describe what the page shows, so every non-English page was telling search engines something
+  its own markup contradicted. Verified on the built server: `/de` now emits `"Startseite"`, `/ar`
+  emits `"الرئيسية"`. `shop/[category]` and `product/[slug]` already used `crumb.label`.
+
+### Changed
+- **CI sweeps the widths the repo holds itself to.** `CLAUDE.md`'s definition of done says "works at
+  360px and 1280px"; CI swept 1440 and 390 — neither of them. All four now run, each measured clean
+  over the 13 routes before being added.
+- **Tap targets are measured and reported, not failed** — see below for why.
+
+### Found: the storefront is under its own 44px tap floor
+The roadmap asks for a touch-target rule. It cannot fail the build, because the shared chrome does not
+pass it at 390px — consistently 8–10 elements per route:
+
+| Element | Rendered | Floor |
+|---|---|---|
+| `sf-button` (default) | 40px tall | 44 |
+| Footer links | 39px tall | 44 |
+| Announcement-bar link | 32px tall | 44 |
+| Locale switcher | 34–39px wide | 44 |
+| Shop tabs | 22–38px wide | 44 |
+
+Raising them is a design-system change across shared components and belongs to the owner, so the rule
+reports at NOTE. Its exemptions are the reviewable part: inline links in running text (WCAG 2.2 exempts
+them), hit areas expanded by an `after:-inset-*` pseudo-element (14 in this repo, invisible to
+`getBoundingClientRect`), the `aria-hidden` / `tabIndex={-1}` spam honeypots, the `sr-only` skip link
+(1×1 until focused), and the Studio.
+
+### Not done, because it is already right
+- **"Twitter block per detail page"** — Next already derives `twitter:title`, `twitter:description` and
+  `twitter:image` from each page's own metadata. Confirmed in the emitted head.
+- **"Localised `og:url`"** — its absence is deliberate and documented (`shared-metadata.ts`, A3-002): a
+  config-level `og:url` would default to the homepage and misattribute every non-root share, and
+  scrapers fall back to the fetched URL when it is absent. `rel=canonical` already carries the correct
+  localised URL. Adding it would mean spreading the shared `openGraph` across 19 pages to dodge the
+  wholesale-replace trap that same file documents — real risk, no gain.
+
+### Still open in Phase 16
+Keyboard-path checks for the drawer, search, mega menu and lightbox; a refreshed Lighthouse baseline.
+Review schema waits on Phase 9. CSP remains its own owner decision.
+
 ## Corrections from the verification sweep (2026-09-03)
 
 The adversarial sweep behind the gated decisions was killed mid-run by a container restart, so that
