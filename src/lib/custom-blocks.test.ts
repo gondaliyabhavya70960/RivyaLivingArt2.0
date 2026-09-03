@@ -26,10 +26,12 @@ describe("the block catalogue", () => {
     // 7, not 6 (2026-09-03): `collectionGrid` — a row of collections picked
     // by hand, reusing `CollectionCard`'s existing doorway-tile grammar.
     // 8, not 7 (2026-09-03): `portfolioGrid` — real commissions, the newest
-    // published cases or up to six the owner chose. The roadmap's Phase 11
+    // published cases or up to six the owner chose.
+    // 9, not 8 (2026-09-03): `journalGrid` — the newest published posts,
+    // across the journal or filtered to one category. The roadmap's Phase 11
     // block-catalogue growth adds ten types in total, one per commit; this
     // count keeps climbing through the rest of the file's history.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(8);
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(9);
   });
 
   it("declares every type it lists", () => {

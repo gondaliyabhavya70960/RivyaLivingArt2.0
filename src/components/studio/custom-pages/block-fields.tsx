@@ -430,6 +430,47 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "journalGrid" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("intro")}
+            label="Intro"
+            value={String(data.intro ?? "")}
+            onChange={(v) => set("intro", v)}
+          />
+          <TextField
+            id={id("categorySlug")}
+            label="Journal category (optional)"
+            hint="The category's slug, e.g. gift-guides. Leave blank for the newest posts across every category."
+            value={String(data.categorySlug ?? "")}
+            onChange={(v) => set("categorySlug", v)}
+          />
+          <div className="space-y-2">
+            <Label htmlFor={id("limit")}>How many</Label>
+            <Input
+              id={id("limit")}
+              type="number"
+              min={2}
+              max={6}
+              value={Number(data.limit ?? 4)}
+              onChange={(e) => set("limit", Number(e.target.value))}
+              className="w-28"
+            />
+          </div>
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {def.translatable.length > 0 && (
         <TranslationsSection
           idPrefix={`blk-${block.id}`}

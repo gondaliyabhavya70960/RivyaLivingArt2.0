@@ -23,6 +23,7 @@ import type {
   FinalCtaData,
   HeroData,
   ImageCtaData,
+  JournalGridData,
   PortfolioGridData,
   ProductGridData,
   RichTextData,
@@ -542,6 +543,91 @@ async function PortfolioGridBlock({
   );
 }
 
+/** The journal posts a `journalGrid` block shows: always the newest
+ *  published, across every category or filtered to one. */
+async function fetchJournalForGrid(data: JournalGridData, locale: string) {
+  const category = data.categorySlug.trim();
+  const rows = await db.blogPost.findMany({
+    where: {
+      status: "PUBLISHED",
+      ...(await demoWhere()),
+      ...(category ? { blogCategory: { slug: category } } : {}),
+    },
+    orderBy: { publishedAt: "desc" },
+    take: data.limit,
+    select: {
+      slug: true,
+      title: true,
+      translations: true,
+      coverImage: true,
+      blogCategory: { select: { name: true, translations: true } },
+    },
+  });
+  return rows.map((row) => ({
+    slug: row.slug,
+    title: localize(row, locale, ["title"]).title,
+    categoryName: row.blogCategory
+      ? localizeName(row.blogCategory, locale)
+      : null,
+    cover: isRenderableSrc(row.coverImage) ? row.coverImage : null,
+  }));
+}
+
+async function JournalGridBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: JournalGridData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const locale = await getLocale();
+  const [posts, tBlog] = await Promise.all([
+    fetchJournalForGrid(data, locale),
+    getTranslations({ locale, namespace: "Blog" }),
+  ]);
+  if (posts.length === 0) return null;
+  const headingId = `${id}-heading`;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      <div className="flex flex-col gap-10">
+        {data.heading ? (
+          <SectionHeading
+            id={headingId}
+            as={heading}
+            title={data.heading}
+            intro={data.intro || undefined}
+            size={heading === "h1" ? "h1" : "h2"}
+          />
+        ) : null}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {posts.map((post) => (
+            <CollectionCard
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              name={post.categoryName ?? tBlog("journalFallbackCategory")}
+              promise={post.title}
+              image={post.cover}
+              imageAlt=""
+              ratio="4/5"
+            />
+          ))}
+        </div>
+      </div>
+    </Band>
+  );
+}
+
 function ImageCtaBlock({
   id,
   data,
@@ -812,6 +898,18 @@ export function CustomPageBlock({
       const data = block.data as PortfolioGridData;
       return (
         <PortfolioGridBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
+    case "journalGrid": {
+      const data = block.data as JournalGridData;
+      return (
+        <JournalGridBlock
           id={block.id}
           data={data}
           ground={ground}

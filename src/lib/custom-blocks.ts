@@ -138,6 +138,18 @@ export const portfolioGridSchema = z.object({
   spacing,
 });
 
+export const journalGridSchema = z.object({
+  heading: text(160),
+  intro: text(400),
+  /** One journal category's slug, or empty for the newest across all of
+   *  them. Always the newest published — a lander has no "manual" mode here
+   *  because the journal already has one page whose whole job is browsing by
+   *  hand (/blog); this block is a taste, not a second archive. */
+  categorySlug: text(160),
+  limit: z.number().int().min(2).max(6).default(4),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -162,6 +174,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "finalCta",
   "collectionGrid",
   "portfolioGrid",
+  "journalGrid",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -174,6 +187,7 @@ export type FaqPickerData = z.infer<typeof faqPickerSchema>;
 export type FinalCtaData = z.infer<typeof finalCtaSchema>;
 export type CollectionGridData = z.infer<typeof collectionGridSchema>;
 export type PortfolioGridData = z.infer<typeof portfolioGridSchema>;
+export type JournalGridData = z.infer<typeof journalGridSchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -295,6 +309,17 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     label: "Case studies",
     description: "Real commissions — the newest ones, or ones you choose.",
     schema: portfolioGridSchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "intro", label: "Intro", kind: "textarea" },
+    ],
+    ground: "alternating",
+  },
+  journalGrid: {
+    type: "journalGrid",
+    label: "Journal",
+    description: "The newest posts from the journal, or one category's.",
+    schema: journalGridSchema,
     translatable: [
       { name: "heading", label: "Heading", kind: "text" },
       { name: "intro", label: "Intro", kind: "textarea" },
