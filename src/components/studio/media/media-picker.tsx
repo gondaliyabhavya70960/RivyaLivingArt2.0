@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { ImageIcon, Loader2, Search } from "lucide-react";
@@ -29,11 +31,19 @@ export function MediaPicker({
   onSelect,
   defaultFolder,
   triggerLabel = "From library",
+  trigger,
 }: {
   onSelect: (item: PickerMediaItem) => void;
   /** Pre-selected folder tab (e.g. "products" in the product form). */
   defaultFolder?: string;
   triggerLabel?: string;
+  /**
+   * Replaces the default outline button. The rich-text toolbar needs an icon
+   * button that matches its neighbours, and the picker owns its own dialog
+   * state, so the trigger is passed in rather than the open state passed out.
+   * Must accept a ref and spread props — it goes through `asChild`.
+   */
+  trigger?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [folder, setFolder] = useState<string | undefined>(defaultFolder);
@@ -74,9 +84,11 @@ export function MediaPicker({
       }}
     >
       <DialogTrigger asChild>
-        <Button type="button" variant="outline" size="sm" className="min-h-11">
-          <ImageIcon /> {triggerLabel}
-        </Button>
+        {trigger ?? (
+          <Button type="button" variant="outline" size="sm" className="min-h-11">
+            <ImageIcon /> {triggerLabel}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>

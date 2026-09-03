@@ -51,6 +51,18 @@ only place the change can be confirmed.
 
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
+### Added: the media library reaches the rich-text editor
+The image button asked for a URL — including for images already in the owner's own library. The
+round trip was: leave the post, open Media Library, copy a URL, come back, paste. Doing that for a
+file that is already there is also how duplicate uploads get made.
+
+`MediaPicker` gained an optional `trigger`, so a caller that already has a button can supply it
+(the picker keeps its own dialog state; the trigger goes in rather than the state coming out). The
+five existing consumers are untouched.
+
+The toolbar now carries **both**, because they are different jobs: pick from the library, or paste an
+address for an image that genuinely lives elsewhere.
+
 ### Fixed: seven forms silently discarded the owner's edits
 `useUnsavedChangesGuard` warned on `beforeunload` ONLY, and said so in its own header: "no in-app
 navigation interception". That is the half that almost never fires. An owner editing a product does

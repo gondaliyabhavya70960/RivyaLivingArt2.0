@@ -8,6 +8,8 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 
+import { MediaPicker } from "@/components/studio/media/media-picker";
+
 import {
   PromptDialog,
   validateUrl,
@@ -16,6 +18,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import {
   Bold,
   Heading2,
+  Image as ImageIcon,
   Heading3,
   ImagePlus,
   Italic,
@@ -319,7 +322,32 @@ export function RichTextEditor({
         >
           <LinkIcon className="size-4" />
         </ToolbarButton>
-        <ToolbarButton label="Image" disabled={!ready} onClick={handleImage}>
+        {/* Two ways in, because they are different jobs. The picker is the
+            common one — the owner's images are already in the library, and
+            re-pasting a URL for one of them is how duplicates get made. The
+            URL button stays for an image that genuinely lives elsewhere. */}
+        <MediaPicker
+          defaultFolder="blog"
+          onSelect={(item) => applyImage(item.url)}
+          trigger={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Image from the media library"
+              disabled={!ready}
+              onMouseDown={(e) => e.preventDefault()}
+              className="size-8 rounded-lg text-foreground/70"
+            >
+              <ImageIcon className="size-4" />
+            </Button>
+          }
+        />
+        <ToolbarButton
+          label="Image from a URL"
+          disabled={!ready}
+          onClick={handleImage}
+        >
           <ImagePlus className="size-4" />
         </ToolbarButton>
 
