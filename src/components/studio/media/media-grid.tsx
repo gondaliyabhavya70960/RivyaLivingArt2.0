@@ -432,6 +432,9 @@ export function MediaGrid({
           : { key: "date", dir: "desc" };
 
   function handleColumnSort(key: string) {
+    // The unused scan has its own fixed newest-first order — see the grid
+    // view's disabled Sort select for the same rule stated the other way.
+    if (filters.filter === "unused") return;
     if (key === "name") navigate({ sort: "name" });
     else if (key === "size") navigate({ sort: "largest" });
     else if (key === "date")
@@ -653,15 +656,24 @@ export function MediaGrid({
             {/* The sort control is redundant with the list view's own
                 clickable column headers, so it only appears in grid view —
                 two controls doing the same job would just disagree about
-                which one is "the" sort. */}
+                which one is "the" sort. Disabled (not hidden) while
+                "Unused" is active: that scan has its own fixed newest-first
+                order, and a control that visibly does nothing says so more
+                honestly than one quietly ignored. */}
             {view === "grid" && (
               <label className="flex items-center gap-2 text-small text-graphite">
                 <span className="u-micro">Sort</span>
                 <select
                   value={filters.sort}
                   onChange={(e) => navigate({ sort: e.target.value })}
+                  disabled={filters.filter === "unused"}
+                  title={
+                    filters.filter === "unused"
+                      ? "The unused scan always shows newest first"
+                      : undefined
+                  }
                   aria-label="Sort order"
-                  className={SELECT_CLASS}
+                  className={cn(SELECT_CLASS, "disabled:opacity-40")}
                 >
                   {(["newest", "oldest", "largest", "name"] as SortValue[]).map(
                     (value) => (
