@@ -732,6 +732,13 @@ model ScrapeSource {
   @@index([tier, enabled])
 }
 
+/// How much of a source a scrape job covers.
+enum ScrapeScope {
+  SOURCE
+  CATEGORY
+  URL
+}
+
 model ScrapeJob {
   id           String           @id @default(cuid())
   sourceId     String?
@@ -753,6 +760,10 @@ model ScrapeJob {
   products     ScrapedProduct[]
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
+  /// What the job was asked to cover: the whole source, one listing, or one page.
+  scope     ScrapeScope @default(SOURCE)
+  /// Heartbeat: touched on every page advance so a dead RUNNING job can be reclaimed.
+  updatedAt DateTime    @default(now()) @updatedAt
 
   @@index([status, createdAt])
 }
@@ -794,6 +805,8 @@ model ScrapedProduct {
   sheetSyncedAt     DateTime?
   sheetSyncError    String?
   importedProductId String?
+  /// The one mutable field on an otherwise immutable staged row: the reviewer's notes.
+  notes String? @db.Text
 
   @@unique([sourceKey, externalId])
   @@index([reviewStatus])
