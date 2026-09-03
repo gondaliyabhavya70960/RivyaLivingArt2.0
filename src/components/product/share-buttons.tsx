@@ -5,7 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import { Check, Link2, MessageCircle } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+// The storefront primitive, not the Studio-scoped shadcn button: that one
+// carries shadow-e1 and rounded-sm, neither of which belongs on a storefront
+// surface (Part 3.5), and this was the only storefront file importing it.
+import { Button } from "@/components/storefront/button";
 
 interface ShareButtonsProps {
   slug: string;
@@ -71,7 +74,7 @@ export function ShareButtons({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button variant="outline" asChild>
+      <Button variant="secondary" size="sm" asChild>
         <a
           href={waShareHref}
           target="_blank"
@@ -84,7 +87,7 @@ export function ShareButtons({
         </a>
       </Button>
 
-      <Button variant="outline" asChild>
+      <Button variant="secondary" size="sm" asChild>
         <a
           href={hintHref}
           target="_blank"
@@ -97,11 +100,7 @@ export function ShareButtons({
         </a>
       </Button>
 
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => void handleCopy()}
-      >
+      <Button type="button" variant="secondary" size="sm" onClick={() => void handleCopy()}>
         {copied ? (
           <Check aria-hidden className="size-4" />
         ) : (

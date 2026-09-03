@@ -33,7 +33,12 @@ export function DialogClose({
   return <DialogPrimitive.Close data-slot="sf-dialog-close" {...props} />;
 }
 
-/** Navy-midnight scrim + blur; tw-animate fade in/out on --dur-micro. */
+/**
+ * Obsidian scrim, no blur — Part 3.5 allows blur in exactly one place (the
+ * sticky header), and this overlay sits under every lightbox on the site.
+ * The scrim is a shade darker than it was with the blur so the page behind
+ * still recedes; tw-animate fade in/out on --dur-micro.
+ */
 function DialogOverlay({
   className,
   ...props
@@ -42,7 +47,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="sf-dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-obsidian/60 backdrop-blur-sm",
+        "fixed inset-0 z-50 bg-obsidian/70",
         "duration-(--dur-micro) data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 motion-reduce:animate-none",
         className,
       )}

@@ -71,10 +71,16 @@ export function ConsentGate() {
       data-slot="sf-consent"
       aria-label={t("label")}
       style={{ marginBottom: "env(safe-area-inset-bottom)" }}
-      className="fixed inset-x-3 bottom-3 z-[55] mx-auto max-w-3xl rounded-2xl border border-mineral/15 bg-obsidian/95 p-5 shadow-e3 backdrop-blur-md sm:inset-x-6 sm:p-6"
+      /* Part 3.5: no storefront drop shadow, blur only in the header, and a
+         card radius of 4px — this banner carried a third shadow, a second
+         blur and a 16px radius on every page (Phase 0 audit §3.2). A solid
+         obsidian ground with a hairline is the whole surface language. */
+      className="fixed inset-x-3 bottom-3 z-[55] mx-auto max-w-3xl rounded-card border border-mineral/15 bg-obsidian p-5 sm:inset-x-6 sm:p-6"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm leading-relaxed text-mineral/80">{t("body")}</p>
+        <p className="text-small leading-relaxed text-mineral/80">
+          {t("body")}
+        </p>
         <div className="flex shrink-0 gap-3">
           <Button
             size="sm"
