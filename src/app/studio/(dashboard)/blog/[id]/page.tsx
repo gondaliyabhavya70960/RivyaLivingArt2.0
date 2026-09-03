@@ -17,13 +17,17 @@ export default async function EditBlogPostPage({
 }) {
   const { id } = await params;
 
-  const [post, categories, tags] = await Promise.all([
+  const [post, categories, collections, tags] = await Promise.all([
     db.blogPost.findUnique({
       where: { id },
       include: { tags: { select: { id: true } } },
     }),
     db.blogCategory.findMany({
       orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+    db.category.findMany({
+      orderBy: { order: "asc" },
       select: { id: true, name: true },
     }),
     db.tag.findMany({
@@ -43,6 +47,7 @@ export default async function EditBlogPostPage({
     coverImage: post.coverImage ?? "",
     authorName: post.authorName,
     blogCategoryId: post.blogCategoryId ?? "",
+    categoryId: post.categoryId ?? "",
     tagIds: post.tags.map((tag) => tag.id),
     status: post.status,
     publishedAt: post.publishedAt?.toISOString() ?? "",
@@ -57,7 +62,12 @@ export default async function EditBlogPostPage({
         title={post.title}
         description="Edit the post — changes go live only when saved."
       />
-      <BlogPostForm categories={categories} tags={tags} post={initial} />
+      <BlogPostForm
+        categories={categories}
+        collections={collections}
+        tags={tags}
+        post={initial}
+      />
     </div>
   );
 }

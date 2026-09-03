@@ -37,7 +37,9 @@ function TabNav({ active }: { active: TabKey }) {
       {TABS.map((tab) => (
         <Link
           key={tab.key}
-          href={tab.key === "posts" ? "/studio/blog" : `/studio/blog?tab=${tab.key}`}
+          href={
+            tab.key === "posts" ? "/studio/blog" : `/studio/blog?tab=${tab.key}`
+          }
           aria-current={active === tab.key ? "page" : undefined}
           className={
             active === tab.key
@@ -52,37 +54,83 @@ function TabNav({ active }: { active: TabKey }) {
   );
 }
 
-async function PostsTab({ q, status }: { q?: string; status?: string }) {
+const BLOG_STATUS_VALUES: readonly ContentStatus[] = [
+  ContentStatus.DRAFT,
+  ContentStatus.REVIEW,
+  ContentStatus.PUBLISHED,
+  ContentStatus.ARCHIVED,
+];
+
+async function PostsTab({
+  q,
+  status,
+  demo,
+}: {
+  q?: string;
+  status?: string;
+  demo?: string;
+}) {
+  // Same convention as the products list: an absent `status` means
+  // PUBLISHED (the live catalog, not everything); "ALL" is explicit.
   const statusFilter =
-    status === ContentStatus.DRAFT || status === ContentStatus.PUBLISHED
-      ? status
-      : undefined;
+    status === "ALL"
+      ? undefined
+      : BLOG_STATUS_VALUES.includes(status as ContentStatus)
+        ? (status as ContentStatus)
+        : ContentStatus.PUBLISHED;
 
   const where: Prisma.BlogPostWhereInput = {
     ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
     ...(statusFilter ? { status: statusFilter } : {}),
+    ...(demo === "1" ? { isDemo: true } : {}),
   };
 
-  const posts = await db.blogPost.findMany({
-    where,
-    orderBy: { updatedAt: "desc" },
-    include: {
-      blogCategory: { select: { name: true } },
-      tags: { select: { name: true }, orderBy: { name: "asc" } },
-    },
-  });
+  const [posts, statusGroups] = await Promise.all([
+    db.blogPost.findMany({
+      where,
+      orderBy: { updatedAt: "desc" },
+      include: {
+        blogCategory: { select: { name: true } },
+        tags: { select: { name: true }, orderBy: { name: "asc" } },
+      },
+    }),
+    db.blogPost.groupBy({
+      by: ["status"],
+      where: {
+        ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
+        ...(demo === "1" ? { isDemo: true } : {}),
+      },
+      _count: { _all: true },
+    }),
+  ]);
 
   const rows: BlogPostRow[] = posts.map((post) => ({
     id: post.id,
     title: post.title,
     status: post.status,
+    isDemo: post.isDemo,
     categoryName: post.blogCategory?.name ?? null,
     tagNames: post.tags.map((tag) => tag.name),
     authorName: post.authorName,
-    publishedAt: post.publishedAt ? dateFormatter.format(post.publishedAt) : null,
+    publishedAt: post.publishedAt
+      ? dateFormatter.format(post.publishedAt)
+      : null,
   }));
 
-  return <BlogPostList posts={rows} initialQuery={q ?? ""} />;
+  const statusCounts = Object.fromEntries(
+    BLOG_STATUS_VALUES.map((value) => [
+      value,
+      statusGroups.find((g) => g.status === value)?._count._all ?? 0,
+    ]),
+  ) as Record<ContentStatus, number>;
+
+  return (
+    <BlogPostList
+      posts={rows}
+      initialQuery={q ?? ""}
+      statusCounts={statusCounts}
+    />
+  );
 }
 
 async function CategoriesTab() {
@@ -122,9 +170,14 @@ async function TagsTab() {
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; q?: string; status?: string }>;
+  searchParams: Promise<{
+    tab?: string;
+    q?: string;
+    status?: string;
+    demo?: string;
+  }>;
 }) {
-  const { tab: rawTab, q, status } = await searchParams;
+  const { tab: rawTab, q, status, demo } = await searchParams;
   const tab: TabKey =
     rawTab === "categories" || rawTab === "tags" ? rawTab : "posts";
 
@@ -144,7 +197,7 @@ export default async function BlogPage({
 
       <TabNav active={tab} />
 
-      {tab === "posts" && <PostsTab q={q} status={status} />}
+      {tab === "posts" && <PostsTab q={q} status={status} demo={demo} />}
       {tab === "categories" && <CategoriesTab />}
       {tab === "tags" && <TagsTab />}
     </div>

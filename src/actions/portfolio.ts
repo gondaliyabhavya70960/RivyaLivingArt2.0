@@ -12,11 +12,14 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
-import { logActivity } from "@/lib/activity";
+import { logActivity, snapshotBefore } from "@/lib/activity";
 import { deleteFile } from "@/lib/storage";
 import { findMediaUsages } from "@/lib/media-usages";
 import { uniqueSlug } from "@/lib/slug";
-import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
+import {
+  CONTENT_STATUSES,
+  type ContentStatusValue,
+} from "@/lib/content-status";
 
 const STUDIO_PATH = "/studio/portfolio";
 
@@ -57,7 +60,10 @@ const upsertPortfolioSchema = z.object({
   clientNote: z.string().optional(),
   location: z.string().max(120).optional(),
   year: z
-    .union([z.literal(""), z.string().regex(/^\d{4}$/, "Enter a 4-digit year.")])
+    .union([
+      z.literal(""),
+      z.string().regex(/^\d{4}$/, "Enter a 4-digit year."),
+    ])
     .optional(),
   beforeImageUrl: optionalUrl,
   afterImageUrl: optionalUrl,
@@ -197,7 +203,21 @@ export async function upsertPortfolio(
       action: existing ? "update" : "create",
       entity: "Portfolio",
       entityId: portfolio.id,
-      meta: { title: portfolio.title, status: portfolio.status },
+      meta: {
+        title: portfolio.title,
+        status: portfolio.status,
+        ...(existing
+          ? {
+              before: snapshotBefore(existing, [
+                "title",
+                "status",
+                "categoryId",
+                "year",
+                "location",
+              ]),
+            }
+          : {}),
+      },
     });
 
     revalidatePath(STUDIO_PATH);
@@ -277,8 +297,8 @@ export async function deletePortfolios(
       ...new Set([
         ...images.map((img) => img.url),
         ...rows.flatMap((row) =>
-          [row.beforeImageUrl, row.afterImageUrl].filter(
-            (url): url is string => Boolean(url),
+          [row.beforeImageUrl, row.afterImageUrl].filter((url): url is string =>
+            Boolean(url),
           ),
         ),
       ]),

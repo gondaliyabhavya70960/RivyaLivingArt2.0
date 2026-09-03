@@ -158,7 +158,9 @@ async function getDashboardData() {
         where: { reviewStatus: ReviewStatus.PENDING },
       }),
       db.product.count({ where: { status: ContentStatus.PUBLISHED } }),
+      db.product.count({ where: { status: ContentStatus.REVIEW } }),
       db.product.count({ where: { status: ContentStatus.DRAFT } }),
+      db.product.count({ where: { status: ContentStatus.ARCHIVED } }),
       // Live-but-unbuyable slice of the catalog.
       db.product.count({
         where: { status: ContentStatus.PUBLISHED, inStock: false },
@@ -350,7 +352,9 @@ export default async function DashboardPage() {
       convertedInquiries,
       pendingScraperApprovals,
       publishedProducts,
+      reviewProducts,
       draftProducts,
+      archivedProducts,
       outOfStockPublished,
       workshopListings,
       blogPosts,
@@ -501,17 +505,29 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
         <Link href="/studio/products" className={STRIP_LINK}>
           <span className="u-micro">Published products</span>
           <span className="u-num text-20 text-foreground">
             {num(publishedProducts)}
           </span>
         </Link>
+        <Link href="/studio/products?status=REVIEW" className={STRIP_LINK}>
+          <span className="u-micro">Products in review</span>
+          <span className="u-num text-20 text-foreground">
+            {num(reviewProducts)}
+          </span>
+        </Link>
         <Link href="/studio/products?status=DRAFT" className={STRIP_LINK}>
           <span className="u-micro">Draft products</span>
           <span className="u-num text-20 text-foreground">
             {num(draftProducts)}
+          </span>
+        </Link>
+        <Link href="/studio/products?status=ARCHIVED" className={STRIP_LINK}>
+          <span className="u-micro">Archived products</span>
+          <span className="u-num text-20 text-foreground">
+            {num(archivedProducts)}
           </span>
         </Link>
         <Link href="/studio/blog" className={STRIP_LINK}>

@@ -2,10 +2,12 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { Bell, ExternalLink, LogOut, Search, User } from "lucide-react";
+import { ExternalLink, LogOut, Search, User } from "lucide-react";
 
 import { StudioBreadcrumbs } from "@/components/studio/breadcrumbs";
+import { NotificationsPopover } from "@/components/studio/notifications-popover";
 import type { Role } from "@/generated/prisma/client";
+import type { InboxItem } from "@/lib/studio-inbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,35 +33,47 @@ const ACTION =
  * would be exactly that duplication. The trail ends on the current page, so
  * the bar still answers "where am I" — as navigation, which is what it is.
  *
- * `Notifications` is a real count, not a dot: NEW commissions plus the scraper
- * rows waiting on a human. Both are already the two things in this Studio that
- * queue up waiting for the owner, and both deep-link to the queue that holds
- * them.
+ * `Notifications` was a real count, not a dot — NEW commissions plus the
+ * scraper rows waiting on a human — and still is, but the bell now opens
+ * `<NotificationsPopover/>` rather than only linking through: five more
+ * queues (testimonials, products/posts/pieces in review, sheet conflicts,
+ * recent scrape/import results, publish activity) surface without a trip to
+ * `/studio/activity` first. `newCommissions` is folded into the same list as
+ * its own pending item — `getStudioInbox()` deliberately does not query
+ * inquiries (that queue already headlines the dashboard), so this is where
+ * the two meet.
  */
 export function StudioTopbar({
   email,
   role,
   newCommissions,
-  pendingApprovals,
+  inbox,
   signOut,
 }: {
   email: string;
   role: Role;
   newCommissions: number;
-  pendingApprovals: number;
+  /** From `getStudioInbox()`, computed once per navigation in the layout. */
+  inbox: InboxItem[];
   signOut: () => Promise<void>;
 }) {
   const searchRef = useRef<HTMLButtonElement>(null);
-  const pending = newCommissions + pendingApprovals;
 
-  const notificationLabel =
-    pending === 0
-      ? "Nothing waiting on you"
-      : `${pending} waiting on you: ${newCommissions} new commission${
-          newCommissions === 1 ? "" : "s"
-        }, ${pendingApprovals} scraper row${
-          pendingApprovals === 1 ? "" : "s"
-        } to review`;
+  const items: InboxItem[] =
+    newCommissions > 0
+      ? [
+          {
+            id: "pending:inquiries",
+            kind: "pending",
+            label: `${newCommissions} new commission${newCommissions === 1 ? "" : "s"}`,
+            detail: "awaiting a first reply",
+            href: "/studio/inquiries?status=NEW",
+            at: null,
+            tone: "warning",
+          },
+          ...inbox,
+        ]
+      : inbox;
 
   return (
     <header className="sticky top-0 z-30 -mx-5 mb-8 hidden h-16 border-b border-border bg-background px-5 sm:-mx-8 sm:flex sm:items-center sm:gap-4 sm:px-8">
@@ -84,18 +98,7 @@ export function StudioTopbar({
           </kbd>
         </button>
 
-        <Link href="/studio/activity" className={ACTION} title="Notifications">
-          <span className="relative">
-            <Bell aria-hidden strokeWidth={1.5} className="size-5" />
-            {pending > 0 && (
-              <span
-                aria-hidden
-                className="absolute -end-1 -top-1 size-1.5 rounded-full bg-alert"
-              />
-            )}
-          </span>
-          <span className="sr-only">{notificationLabel}</span>
-        </Link>
+        <NotificationsPopover items={items} />
 
         <a
           href={`https://wa.me/${SITE.whatsappNumber}`}

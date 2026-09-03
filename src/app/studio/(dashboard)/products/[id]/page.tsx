@@ -27,7 +27,7 @@ export default async function EditProductPage({
       include: {
         images: { orderBy: { order: "asc" } },
         customFields: { orderBy: { order: "asc" } },
-      madeWith: { select: { id: true, title: true, tier: true } },
+        madeWith: { select: { id: true, title: true, tier: true } },
       },
     }),
     db.category.findMany({
@@ -88,6 +88,7 @@ export default async function EditProductPage({
       url: image.url,
       alt: image.alt,
       order: image.order,
+      role: image.role,
     })),
     customFields: product.customFields.map((field) => ({
       label: field.label,

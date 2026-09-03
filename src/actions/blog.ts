@@ -9,13 +9,16 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
-import { logActivity } from "@/lib/activity";
+import { logActivity, snapshotBefore } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
 import { normalizeTranslations, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { createWithUniqueSlug, slugify, uniqueSlug } from "@/lib/slug";
 import { Prisma } from "@/generated/prisma/client";
-import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
+import {
+  CONTENT_STATUSES,
+  type ContentStatusValue,
+} from "@/lib/content-status";
 
 const STUDIO_PATH = "/studio/blog";
 
@@ -30,13 +33,21 @@ const optionalUrl = z
 
 const upsertPostSchema = z.object({
   id: z.string().min(1).optional(),
-  title: z.string().trim().min(2, "Title needs at least 2 characters.").max(200),
+  title: z
+    .string()
+    .trim()
+    .min(2, "Title needs at least 2 characters.")
+    .max(200),
   excerpt: z.string().trim().max(600).optional(),
   /** Tiptap document JSON. */
   content: z.record(z.string(), z.unknown()),
   coverImage: optionalUrl,
   authorName: z.string().trim().min(1, "Author name is required.").max(120),
   blogCategoryId: z.string().min(1).nullable().optional(),
+  /** B0's `BlogPost.categoryId` → shop `Category` — the "Related collection"
+   *  select (11: Taxonomy tab), distinct from `blogCategoryId` above (the
+   *  journal's own taxonomy). Feeds the article's related-collections strip. */
+  categoryId: z.string().min(1).nullable().optional(),
   tagIds: z.array(z.string().min(1)).default([]),
   status: z.enum(CONTENT_STATUSES),
   publishedAt: z.iso.datetime("Invalid publish date.").nullable().optional(),
@@ -72,11 +83,28 @@ export async function upsertBlogPost(
       return { ok: false, error: "The selected category no longer exists." };
     }
   }
+  if (data.categoryId) {
+    const collection = await db.category.findUnique({
+      where: { id: data.categoryId },
+      select: { id: true },
+    });
+    if (!collection) {
+      return { ok: false, error: "The selected collection no longer exists." };
+    }
+  }
 
   const existing = data.id
     ? await db.blogPost.findUnique({
         where: { id: data.id },
-        select: { id: true, slug: true },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          excerpt: true,
+          status: true,
+          blogCategoryId: true,
+          categoryId: true,
+        },
       })
     : null;
   if (data.id && !existing) {
@@ -109,6 +137,7 @@ export async function upsertBlogPost(
       coverImage: nullIfEmpty(data.coverImage),
       authorName: data.authorName,
       blogCategoryId: data.blogCategoryId ?? null,
+      categoryId: data.categoryId ?? null,
       status: data.status,
       publishedAt,
       seoTitle: nullIfEmpty(data.seoTitle),
@@ -145,7 +174,21 @@ export async function upsertBlogPost(
       action: existing ? "update" : "create",
       entity: "BlogPost",
       entityId: post.id,
-      meta: { title: post.title, status: post.status },
+      meta: {
+        title: post.title,
+        status: post.status,
+        ...(existing
+          ? {
+              before: snapshotBefore(existing, [
+                "title",
+                "excerpt",
+                "status",
+                "blogCategoryId",
+                "categoryId",
+              ]),
+            }
+          : {}),
+      },
     });
 
     revalidatePath(STUDIO_PATH);
@@ -317,7 +360,9 @@ export async function setTaxonomyTranslations(
   return runAction(async () => {
     const cleaned = normalizeTranslations(
       translations,
-      kind === "category" ? TRANSLATABLE_FIELDS.blogCategory : TRANSLATABLE_FIELDS.tag,
+      kind === "category"
+        ? TRANSLATABLE_FIELDS.blogCategory
+        : TRANSLATABLE_FIELDS.tag,
     );
     // Shared between the two models, so the JSON value is cast once rather
     // than inferred per call — same idiom as `custom-pages.ts`.

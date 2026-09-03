@@ -24,6 +24,9 @@ export default async function CategoriesPage() {
     image: category.image,
     order: category.order,
     productCount: category._count.products,
+    seoTitle: category.seoTitle,
+    seoDescription: category.seoDescription,
+    visible: category.visible,
     translations: category.translations,
   }));
 

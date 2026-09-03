@@ -1,19 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 
 /**
- * Marks a row as Content Lab fixture content in a Studio list or detail
- * screen — never a real product, post, case study, testimonial or inquiry.
+ * Marks a studio list row backed by a Content Lab fixture (`isDemo: true`) —
+ * never a real product, post, piece, FAQ, page or inquiry the owner entered.
+ * Secondary tone so it reads as a fact about provenance, not a status the row
+ * can move through.
  *
- * Minimal placeholder: this batch (G — Content Lab) needed a demo marker
- * before the wave-1 batch that owns the canonical version had landed in this
- * worktree. Kept intentionally small (a styled `Badge`, nothing else) so the
- * merge can keep whichever copy carries more — see the batch's SHARED-FILE
- * NOTES.
+ * `product-list.tsx` already renders an outline "DEMO" badge inline (audit
+ * M-A1) — left as-is there rather than swapped in, since it participates in
+ * that row's own flex-wrap layout; every OTHER list gains this one.
  */
-export function DemoBadge({ className }: { className?: string }) {
-  return (
-    <Badge variant="outline" className={className}>
-      Demo
-    </Badge>
-  );
+export function DemoBadge() {
+  return <Badge variant="secondary">Demo</Badge>;
 }

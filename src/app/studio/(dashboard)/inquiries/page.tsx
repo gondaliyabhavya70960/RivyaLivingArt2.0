@@ -92,6 +92,7 @@ export default async function InquiriesPage({
           ],
         }
       : {}),
+    ...(demo === "1" ? { isDemo: true } : {}),
   };
 
   // Count first so the requested page can be clamped to the real range — a
@@ -119,6 +120,7 @@ export default async function InquiriesPage({
             phone: true,
             source: true,
             status: true,
+            isDemo: true,
             createdAt: true,
             isDemo: true,
             product: { select: { title: true } },
@@ -177,6 +179,7 @@ export default async function InquiriesPage({
     source: inquiry.source,
     productTitle: inquiry.product?.title ?? null,
     status: inquiry.status,
+    isDemo: inquiry.isDemo,
     createdAt: dateFormatter.format(inquiry.createdAt),
     isDemo: inquiry.isDemo,
   }));

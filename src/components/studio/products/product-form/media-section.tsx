@@ -1,16 +1,28 @@
 import { useRef } from "react";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import Image from "next/image";
-import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { uploadMediaFiles } from "@/actions/media";
 import { MediaPicker } from "@/components/studio/media/media-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FormSection } from "./form-section";
 import { Model3dUrlField, VideoUrlField } from "./spec-fields";
-import type { FormValues } from "./schema";
+import { IMAGE_ROLE_OPTIONS, type FormValues } from "./schema";
 
 /** Gallery image upload/order/alt + video and 3D-model URLs. */
 export function MediaSection({
@@ -45,7 +57,7 @@ export function MediaSection({
     }
     const uploaded = result.data ?? [];
     for (const media of uploaded) {
-      imagesArray.append({ url: media.url, alt: "" });
+      imagesArray.append({ url: media.url, alt: "", role: "none" });
     }
     toast.success(
       `Uploaded ${uploaded.length} image${uploaded.length === 1 ? "" : "s"}.`,
@@ -77,7 +89,9 @@ export function MediaSection({
         </Button>
         <MediaPicker
           defaultFolder="products"
-          onSelect={(item) => imagesArray.append({ url: item.url, alt: "" })}
+          onSelect={(item) =>
+            imagesArray.append({ url: item.url, alt: "", role: "none" })
+          }
         />
       </div>
 
@@ -90,7 +104,9 @@ export function MediaSection({
             >
               <Image
                 src={watchedImages[index]?.url ?? item.url}
-                unoptimized={!isOptimizableImageSrc(watchedImages[index]?.url ?? item.url)}
+                unoptimized={
+                  !isOptimizableImageSrc(watchedImages[index]?.url ?? item.url)
+                }
                 alt={watchedImages[index]?.alt ?? ""}
                 width={320}
                 height={320}
@@ -100,6 +116,27 @@ export function MediaSection({
                 aria-label={`Alt text for image ${index + 1}`}
                 placeholder="Alt text"
                 {...register(`images.${index}.alt`)}
+              />
+              <Controller
+                control={control}
+                name={`images.${index}.role`}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      className="w-full"
+                      aria-label={`Role for image ${index + 1}`}
+                    >
+                      <SelectValue placeholder="No role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {IMAGE_ROLE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               <div className="flex items-center justify-between">
                 <div className="flex gap-1">

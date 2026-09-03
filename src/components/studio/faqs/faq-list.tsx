@@ -3,24 +3,34 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
-import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ArrowDown, ArrowUp, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteFaqs, reorderFaq, upsertFaq } from "@/actions/faqs";
+import type { ContentStatus } from "@/generated/prisma/enums";
+import {
+  deleteFaqs,
+  reorderFaq,
+  setFaqStatus,
+  upsertFaq,
+} from "@/actions/faqs";
 import { BulkBar } from "@/components/studio/bulk-bar";
+import { DemoBadge } from "@/components/studio/demo-badge";
+import { SortHead, useSort } from "@/components/studio/sort-header";
 import {
   TranslationsSection,
   type TranslationsValue,
 } from "@/components/studio/translations-section";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { FieldError } from "@/components/studio/field-error";
 import { EmptyState } from "@/components/studio/page-header";
 import {
   Pagination,
   PAGE_SIZE,
   usePagination,
 } from "@/components/studio/pagination";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -42,6 +52,8 @@ export type FaqRow = {
   question: string;
   answer: string;
   order: number;
+  status: ContentStatus;
+  isDemo: boolean;
   /** Raw per-locale overrides JSON from the database (`{ [locale]: {…} }`). */
   translations: unknown;
 };
@@ -83,6 +95,8 @@ function FaqFormBody({
   const router = useRouter();
   const [question, setQuestion] = useState(faq?.question ?? "");
   const [answer, setAnswer] = useState(faq?.answer ?? "");
+  const [questionError, setQuestionError] = useState<string | null>(null);
+  const [answerError, setAnswerError] = useState<string | null>(null);
   const [translations, setTranslations] = useState<TranslationsValue>(() =>
     toTranslationsRecord(faq?.translations),
   );
@@ -91,10 +105,20 @@ function FaqFormBody({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!question.trim() || !answer.trim()) {
-      toast.error("Question and answer are required.");
-      return;
+    let hasError = false;
+    if (!question.trim()) {
+      setQuestionError("Question is required.");
+      hasError = true;
+    } else {
+      setQuestionError(null);
     }
+    if (!answer.trim()) {
+      setAnswerError("Answer is required.");
+      hasError = true;
+    } else {
+      setAnswerError(null);
+    }
+    if (hasError) return;
     setBusy(true);
     const res = await upsertFaq({
       id: faq?.id,
@@ -141,7 +165,13 @@ function FaqFormBody({
             placeholder="How long does a custom order take?"
             required
             autoFocus
+            aria-invalid={!!questionError}
+            aria-describedby={questionError ? "faq-question-error" : undefined}
           />
+          <FieldError id="faq-question-error">{questionError}</FieldError>
+          <p className="text-xs text-muted-foreground">
+            Shown exactly as typed on the public FAQ page.
+          </p>
         </div>
 
         <div className="space-y-1.5">
@@ -153,7 +183,10 @@ function FaqFormBody({
             placeholder="Most custom pieces are cured, finished and shipped within 2–3 weeks…"
             rows={5}
             required
+            aria-invalid={!!answerError}
+            aria-describedby={answerError ? "faq-answer-error" : undefined}
           />
+          <FieldError id="faq-answer-error">{answerError}</FieldError>
         </div>
 
         <TranslationsSection
@@ -205,9 +238,65 @@ export function NewFaqButton() {
 
 export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("q") ?? "";
+  const demoOnly = searchParams.get("demo") === "1";
+  const [searchInput, setSearchInput] = useState(search);
+
+  function updateParams(next: Record<string, string | undefined>) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(next)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return faqs.filter((faq) => {
+      if (demoOnly && !faq.isDemo) return false;
+      if (!q) return true;
+      return (
+        faq.question.toLowerCase().includes(q) ||
+        faq.answer.toLowerCase().includes(q)
+      );
+    });
+  }, [faqs, search, demoOnly]);
+
+  const {
+    sorted,
+    sort,
+    toggle: toggleSort,
+  } = useSort<FaqRow>(
+    filtered,
+    (row, key) => {
+      switch (key) {
+        case "question":
+          return row.question;
+        case "answer":
+          return row.answer;
+        case "order":
+          return row.order;
+        default:
+          return null;
+      }
+    },
+    { key: "order", dir: "asc" },
+  );
+  // Manual up/down reorder only makes sense in the un-sorted, un-filtered
+  // view — it swaps a row with its neighbour in the GLOBAL order field, and
+  // "neighbour" stops meaning anything once the visible order is a search
+  // match or a different column's sort.
+  const canReorder =
+    sort.key === "order" && sort.dir === "asc" && !search.trim() && !demoOnly;
+
   const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
-    faqs,
+    sorted,
     PAGE_SIZE,
+    `${search}|${demoOnly}|${sort.key}|${sort.dir}`,
   );
   const rowIds = useMemo(() => pageRows.map((f) => f.id), [pageRows]);
   const selection = useSelection(rowIds);
@@ -215,6 +304,7 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [reordering, setReordering] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   async function handleDelete() {
     const count = selection.count;
@@ -239,6 +329,23 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
     else toast.error(res.error);
   }
 
+  async function handleToggleStatus(faq: FaqRow) {
+    setTogglingId(faq.id);
+    const next = faq.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+    const res = await setFaqStatus(faq.id, next);
+    setTogglingId(null);
+    if (res.ok) {
+      toast.success(
+        next === "PUBLISHED"
+          ? "FAQ published."
+          : "FAQ moved to draft — hidden from the public FAQ page.",
+      );
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
+  }
+
   if (faqs.length === 0) {
     return (
       <EmptyState
@@ -251,99 +358,259 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
 
   return (
     <>
-      <div
-            tabIndex={0}
-            role="region"
-            aria-label="FAQs"
-            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
-        <table className="w-full text-sm">
-          <thead>
-            <StudioTableHead>
-              <th scope="col" className="w-12 px-4 py-3">
-                <Checkbox
-                  checked={selection.allSelected}
-                  onCheckedChange={selection.toggleAll}
-                  aria-label="Select all"
-                />
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Question
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Answer
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Order
-              </th>
-              <th scope="col" className="w-16 px-4 py-3">
-                <span className="sr-only">Edit</span>
-              </th>
-            </StudioTableHead>
-          </thead>
-          <tbody>
-            {pageRows.map((faq, index) => (
-              <StudioRow
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <form
+          className="relative"
+          onSubmit={(e) => {
+            e.preventDefault();
+            updateParams({ q: searchInput.trim() || undefined });
+          }}
+        >
+          <Search
+            aria-hidden
+            strokeWidth={1.5}
+            className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="search"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search FAQs…"
+            aria-label="Search FAQs"
+            className="h-10 w-64 ps-10"
+          />
+        </form>
+        <button
+          type="button"
+          aria-pressed={demoOnly}
+          onClick={() => updateParams({ demo: demoOnly ? undefined : "1" })}
+          className={
+            demoOnly
+              ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              : "inline-flex min-h-11 items-center rounded-full border border-border px-4 text-small text-graphite outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+          }
+        >
+          Demo only
+        </button>
+      </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="No FAQs found"
+          description="Try clearing the search or the demo filter."
+        />
+      ) : (
+        <>
+          {/* §12.6 — on a phone the table becomes cards. */}
+          <label className="mb-3 flex min-h-11 cursor-pointer items-center gap-3 text-small text-graphite md:hidden">
+            <Checkbox
+              checked={selection.allSelected}
+              onCheckedChange={selection.toggleAll}
+              aria-label="Select all"
+            />
+            Select all on this page
+          </label>
+          <ul className="space-y-3 md:hidden">
+            {pageRows.map((faq) => (
+              <li
                 key={faq.id}
+                className="rounded-card border border-border bg-card p-4 shadow-e1"
               >
-                <td className="px-4 py-3">
+                <div className="flex items-start gap-3">
                   <Checkbox
                     checked={selection.selected.has(faq.id)}
                     onCheckedChange={() => selection.toggle(faq.id)}
                     aria-label={`Select ${faq.question}`}
+                    className="mt-1"
                   />
-                </td>
-                <td className="max-w-xs px-4 py-3 font-medium text-foreground">
-                  {truncate(faq.question)}
-                </td>
-                <td className="max-w-sm px-4 py-3 text-muted-foreground">
-                  {truncate(faq.answer)}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      disabled={
-                        (page - 1) * pageSize + index === 0 || reordering
-                      }
-                      onClick={() => handleReorder(faq.id, "up")}
-                      aria-label={`Move "${faq.question}" up`}
-                    >
-                      <ArrowUp className="size-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      disabled={
-                        (page - 1) * pageSize + index === total - 1 ||
-                        reordering
-                      }
-                      onClick={() => handleReorder(faq.id, "down")}
-                      aria-label={`Move "${faq.question}" down`}
-                    >
-                      <ArrowDown className="size-4" />
-                    </Button>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-small font-medium text-foreground">
+                        {truncate(faq.question)}
+                      </p>
+                      {faq.isDemo && <DemoBadge />}
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-small text-graphite">
+                      {faq.answer}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStatus(faq)}
+                        disabled={togglingId === faq.id}
+                        aria-label={
+                          faq.status === "PUBLISHED"
+                            ? `Move "${faq.question}" to draft`
+                            : `Publish "${faq.question}"`
+                        }
+                      >
+                        <Badge
+                          variant={
+                            faq.status === "PUBLISHED" ? "success" : "secondary"
+                          }
+                        >
+                          {faq.status === "PUBLISHED" ? "Published" : "Draft"}
+                        </Badge>
+                      </button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ms-auto"
+                        onClick={() => setEditing(faq)}
+                        aria-label={`Edit "${faq.question}"`}
+                      >
+                        <Pencil className="size-4" /> Edit
+                      </Button>
+                    </div>
                   </div>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8"
-                    onClick={() => setEditing(faq)}
-                    aria-label={`Edit "${faq.question}"`}
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
-                </td>
-              </StudioRow>
+                </div>
+              </li>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </ul>
+
+          <div
+            tabIndex={0}
+            role="region"
+            aria-label="FAQs"
+            className="hidden overflow-x-auto rounded-card border border-border bg-card shadow-e1 md:block [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
+            <table className="w-full text-sm">
+              <thead>
+                <StudioTableHead>
+                  <th scope="col" className="w-12 px-4 py-3">
+                    <Checkbox
+                      checked={selection.allSelected}
+                      onCheckedChange={selection.toggleAll}
+                      aria-label="Select all"
+                    />
+                  </th>
+                  <SortHead
+                    label="Question"
+                    sortKey="question"
+                    sort={sort}
+                    onSort={toggleSort}
+                  />
+                  <SortHead
+                    label="Answer"
+                    sortKey="answer"
+                    sort={sort}
+                    onSort={toggleSort}
+                  />
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Status
+                  </th>
+                  <SortHead
+                    label="Order"
+                    sortKey="order"
+                    sort={sort}
+                    onSort={toggleSort}
+                    numeric
+                  />
+                  <th scope="col" className="w-16 px-4 py-3">
+                    <span className="sr-only">Edit</span>
+                  </th>
+                </StudioTableHead>
+              </thead>
+              <tbody>
+                {pageRows.map((faq, index) => (
+                  <StudioRow key={faq.id}>
+                    <td className="px-4 py-3">
+                      <Checkbox
+                        checked={selection.selected.has(faq.id)}
+                        onCheckedChange={() => selection.toggle(faq.id)}
+                        aria-label={`Select ${faq.question}`}
+                      />
+                    </td>
+                    <td className="max-w-xs px-4 py-3 font-medium text-foreground">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{truncate(faq.question)}</span>
+                        {faq.isDemo && <DemoBadge />}
+                      </div>
+                    </td>
+                    <td className="max-w-sm px-4 py-3 text-muted-foreground">
+                      {truncate(faq.answer)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStatus(faq)}
+                        disabled={togglingId === faq.id}
+                        aria-label={
+                          faq.status === "PUBLISHED"
+                            ? `Move "${faq.question}" to draft`
+                            : `Publish "${faq.question}"`
+                        }
+                        className="inline-flex min-h-8 items-center rounded-input outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                      >
+                        <Badge
+                          variant={
+                            faq.status === "PUBLISHED" ? "success" : "secondary"
+                          }
+                        >
+                          {faq.status === "PUBLISHED" ? "Published" : "Draft"}
+                        </Badge>
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          disabled={
+                            (page - 1) * pageSize + index === 0 ||
+                            reordering ||
+                            !canReorder
+                          }
+                          title={
+                            !canReorder
+                              ? "Sort by Order and clear the search/demo filter to reorder"
+                              : undefined
+                          }
+                          onClick={() => handleReorder(faq.id, "up")}
+                          aria-label={`Move "${faq.question}" up`}
+                        >
+                          <ArrowUp className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          disabled={
+                            (page - 1) * pageSize + index === total - 1 ||
+                            reordering ||
+                            !canReorder
+                          }
+                          title={
+                            !canReorder
+                              ? "Sort by Order and clear the search/demo filter to reorder"
+                              : undefined
+                          }
+                          onClick={() => handleReorder(faq.id, "down")}
+                          aria-label={`Move "${faq.question}" down`}
+                        >
+                          <ArrowDown className="size-4" />
+                        </Button>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        onClick={() => setEditing(faq)}
+                        aria-label={`Edit "${faq.question}"`}
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                    </td>
+                  </StudioRow>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <Pagination
         page={page}

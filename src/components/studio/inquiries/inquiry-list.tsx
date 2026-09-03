@@ -22,10 +22,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BulkBar } from "@/components/studio/bulk-bar";
+import { ColumnsMenu } from "@/components/studio/columns-menu";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import { Pagination } from "@/components/studio/pagination";
+import { SortHead, useSort } from "@/components/studio/sort-header";
+import { useColumnVisibility } from "@/hooks/use-column-visibility";
+import type { ColumnDef } from "@/lib/column-visibility";
 import {
   SELECTABLE_STATUSES,
   SOURCE_BADGE_VARIANTS,
@@ -43,11 +47,17 @@ export type InquiryRow = {
   source: InquirySource;
   productTitle: string | null;
   status: InquiryStatus;
+  isDemo: boolean;
   /** Pre-formatted on the server to keep hydration deterministic. */
   createdAt: string;
-  /** Content Lab fixture (batch G) — never a real commission. */
-  isDemo?: boolean;
 };
+
+const INQUIRY_COLUMNS: ColumnDef[] = [
+  { key: "source", label: "Source" },
+  { key: "product", label: "Product" },
+  { key: "status", label: "Status" },
+  { key: "received", label: "Received" },
+];
 
 export function InquiryList({
   inquiries,
@@ -75,11 +85,38 @@ export function InquiryList({
 
   const statusFilter = searchParams.get("status") ?? "ALL";
   const sourceFilter = searchParams.get("source") ?? "ALL";
+  const demoFilter = searchParams.get("demo") === "1";
 
-  // Rows are the current server page (ENG-805). Selection is scoped to it.
-  const pageRows = inquiries;
+  // Rows are the current server page (ENG-805), sorted client-side —
+  // SortHead sorts what is on screen, same as products.
+  const {
+    sorted,
+    sort,
+    toggle: toggleSort,
+  } = useSort<InquiryRow>(
+    inquiries,
+    (row, key) => {
+      switch (key) {
+        case "customer":
+          return row.customerName;
+        case "source":
+          return row.source;
+        case "product":
+          return row.productTitle;
+        case "status":
+          return row.status;
+        case "received":
+          return row.createdAt;
+        default:
+          return null;
+      }
+    },
+    { key: "received", dir: "desc" },
+  );
+  const pageRows = sorted;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const selection = useSelection(pageRows.map((i) => i.id));
+  const columns = useColumnVisibility("inquiries", INQUIRY_COLUMNS);
 
   // Filter/search changes reset to page 1; pagination sets `page` explicitly.
   function updateParams(next: Record<string, string | undefined>) {
@@ -192,6 +229,21 @@ export function InquiryList({
             ))}
           </SelectContent>
         </Select>
+
+        <button
+          type="button"
+          aria-pressed={demoFilter}
+          onClick={() => updateParams({ demo: demoFilter ? undefined : "1" })}
+          className={
+            demoFilter
+              ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              : "inline-flex min-h-11 items-center rounded-full border border-border px-4 text-small text-graphite outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+          }
+        >
+          Demo only
+        </button>
+
+        <ColumnsMenu tableKey="inquiries" columns={INQUIRY_COLUMNS} />
       </div>
 
       {inquiries.length === 0 ? (
@@ -226,17 +278,15 @@ export function InquiryList({
                     className="mt-1"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="flex items-center gap-1.5 u-micro">
-                      {inquiry.number}
-                      {inquiry.isDemo && <DemoBadge />}
-                    </p>
-                    <h3 className="mt-0.5 text-small font-medium text-foreground">
+                    <p className="u-micro">{inquiry.number}</p>
+                    <h3 className="mt-0.5 flex flex-wrap items-center gap-2 text-small font-medium text-foreground">
                       <Link
                         href={`/studio/inquiries/${inquiry.id}`}
                         className="rounded-input underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
                       >
                         {inquiry.customerName}
                       </Link>
+                      {inquiry.isDemo && <DemoBadge />}
                     </h3>
                     <p className="u-num text-12 text-graphite">
                       {inquiry.phone}
@@ -287,13 +337,46 @@ export function InquiryList({
                     <span aria-hidden>#</span>
                     <span className="sr-only">Reference</span>
                   </th>
-                  <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
-                    Customer
-                  </th>
-                  <th className="py-3 pe-4">Source</th>
-                  <th className="py-3 pe-4">Product</th>
-                  <th className="py-3 pe-4">Status</th>
-                  <th className="py-3 pe-4">Received</th>
+                  <SortHead
+                    label="Customer"
+                    sortKey="customer"
+                    sort={sort}
+                    onSort={toggleSort}
+                    className="max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30"
+                  />
+                  {columns.isVisible("source") && (
+                    <SortHead
+                      label="Source"
+                      sortKey="source"
+                      sort={sort}
+                      onSort={toggleSort}
+                    />
+                  )}
+                  {columns.isVisible("product") && (
+                    <SortHead
+                      label="Product"
+                      sortKey="product"
+                      sort={sort}
+                      onSort={toggleSort}
+                    />
+                  )}
+                  {columns.isVisible("status") && (
+                    <SortHead
+                      label="Status"
+                      sortKey="status"
+                      sort={sort}
+                      onSort={toggleSort}
+                    />
+                  )}
+                  {columns.isVisible("received") && (
+                    <SortHead
+                      label="Received"
+                      sortKey="received"
+                      sort={sort}
+                      onSort={toggleSort}
+                      numeric
+                    />
+                  )}
                   <th className="py-3 pe-4">
                     <span className="sr-only">Actions</span>
                   </th>
@@ -313,46 +396,56 @@ export function InquiryList({
                       />
                     </td>
                     <td className="w-20 py-3 pe-4 whitespace-nowrap max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
-                      <span className="flex items-center gap-1.5 u-num text-12 text-graphite">
+                      <span className="u-num text-12 text-graphite">
                         {inquiry.number}
-                        {inquiry.isDemo && <DemoBadge />}
                       </span>
                     </td>
                     <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
-                      <Link
-                        href={`/studio/inquiries/${inquiry.id}`}
-                        className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
-                      >
-                        {inquiry.customerName}
-                      </Link>
+                      <span className="flex flex-wrap items-center gap-2">
+                        <Link
+                          href={`/studio/inquiries/${inquiry.id}`}
+                          className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                        >
+                          {inquiry.customerName}
+                        </Link>
+                        {inquiry.isDemo && <DemoBadge />}
+                      </span>
                       <p className="u-num text-12 text-graphite">
                         {inquiry.phone}
                       </p>
                     </td>
-                    <td className="py-3 pe-4">
-                      <Badge variant={SOURCE_BADGE_VARIANTS[inquiry.source]}>
-                        {SOURCE_LABELS[inquiry.source]}
-                      </Badge>
-                    </td>
+                    {columns.isVisible("source") && (
+                      <td className="py-3 pe-4">
+                        <Badge variant={SOURCE_BADGE_VARIANTS[inquiry.source]}>
+                          {SOURCE_LABELS[inquiry.source]}
+                        </Badge>
+                      </td>
+                    )}
                     {/* The catalogue's titles run long (SEO-fed). One clamped
                       line keeps the row scannable; the full title stays in the
                       tooltip and on the detail page. */}
-                    <td className="max-w-[34ch] py-3 pe-4">
-                      <span
-                        className="block truncate text-graphite"
-                        title={inquiry.productTitle ?? undefined}
-                      >
-                        {inquiry.productTitle ?? "—"}
-                      </span>
-                    </td>
-                    <td className="py-3 pe-4">
-                      <Badge variant={STATUS_BADGE_VARIANTS[inquiry.status]}>
-                        {STATUS_LABELS[inquiry.status]}
-                      </Badge>
-                    </td>
-                    <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
-                      {inquiry.createdAt}
-                    </td>
+                    {columns.isVisible("product") && (
+                      <td className="max-w-[34ch] py-3 pe-4">
+                        <span
+                          className="block truncate text-graphite"
+                          title={inquiry.productTitle ?? undefined}
+                        >
+                          {inquiry.productTitle ?? "—"}
+                        </span>
+                      </td>
+                    )}
+                    {columns.isVisible("status") && (
+                      <td className="py-3 pe-4">
+                        <Badge variant={STATUS_BADGE_VARIANTS[inquiry.status]}>
+                          {STATUS_LABELS[inquiry.status]}
+                        </Badge>
+                      </td>
+                    )}
+                    {columns.isVisible("received") && (
+                      <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
+                        {inquiry.createdAt}
+                      </td>
+                    )}
                     <td className="py-3 pe-4 text-end">
                       <Link
                         href={`/studio/inquiries/${inquiry.id}`}

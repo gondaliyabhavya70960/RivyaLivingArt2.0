@@ -4,7 +4,8 @@ import { Toaster } from "sonner";
 import { signOut } from "@/lib/auth";
 import { requireStaffPage } from "@/actions/helpers";
 import { db } from "@/lib/db";
-import { InquiryStatus, ReviewStatus } from "@/generated/prisma/enums";
+import { InquiryStatus } from "@/generated/prisma/enums";
+import { getStudioInbox } from "@/lib/studio-inbox";
 import { Logo } from "@/components/layout/logo";
 import { StudioNav } from "@/components/studio/sidebar";
 import { CommandPalette } from "@/components/studio/command-palette";
@@ -28,9 +29,11 @@ import { UnsavedChangesDialog } from "@/components/studio/unsaved-changes-dialog
  * read — `--ring` (base `:focus-visible` outline) onto `--focus`, and
  * `--background` (ring-offset) onto the obsidian ground.
  *
- * The two notification counts are the only queries this layout adds: they are
- * the two queues in this Studio that wait on a human, and the bar renders a
- * count rather than a decorative dot.
+ * New-commission count and the studio inbox are the only queries this layout
+ * adds: `newCommissions` seeds the mobile bar's dot and the topbar's own
+ * "new commission" item (`getStudioInbox()` deliberately covers everything
+ * BUT inquiries — that queue already headlines the dashboard), and the inbox
+ * itself is the rest of what waits on a human across the Studio.
  */
 export default async function StudioLayout({
   children,
@@ -39,9 +42,9 @@ export default async function StudioLayout({
 }) {
   const session = await requireStaffPage();
 
-  const [newCommissions, pendingApprovals] = await Promise.all([
+  const [newCommissions, inbox] = await Promise.all([
     db.inquiry.count({ where: { status: InquiryStatus.NEW } }),
-    db.scrapedProduct.count({ where: { reviewStatus: ReviewStatus.PENDING } }),
+    getStudioInbox(),
   ]);
 
   const signOutAction = async () => {
@@ -142,7 +145,7 @@ export default async function StudioLayout({
           email={session?.user?.email ?? ""}
           role={session.user.role}
           newCommissions={newCommissions}
-          pendingApprovals={pendingApprovals}
+          inbox={inbox}
           signOut={signOutAction}
         />
         {children}
@@ -172,18 +175,25 @@ export default async function StudioLayout({
             "--normal-bg": "var(--surface)",
             "--normal-text": "var(--text)",
             "--normal-border": "var(--border)",
-            "--success-bg": "color-mix(in oklab, var(--success) 8%, var(--surface))",
+            "--success-bg":
+              "color-mix(in oklab, var(--success) 8%, var(--surface))",
             "--success-text": "var(--success)",
-            "--success-border": "color-mix(in oklab, var(--success) 40%, transparent)",
-            "--error-bg": "color-mix(in oklab, var(--alert) 8%, var(--surface))",
+            "--success-border":
+              "color-mix(in oklab, var(--success) 40%, transparent)",
+            "--error-bg":
+              "color-mix(in oklab, var(--alert) 8%, var(--surface))",
             "--error-text": "var(--alert)",
-            "--error-border": "color-mix(in oklab, var(--alert) 40%, transparent)",
-            "--warning-bg": "color-mix(in oklab, var(--warning) 8%, var(--surface))",
+            "--error-border":
+              "color-mix(in oklab, var(--alert) 40%, transparent)",
+            "--warning-bg":
+              "color-mix(in oklab, var(--warning) 8%, var(--surface))",
             "--warning-text": "var(--warning)",
-            "--warning-border": "color-mix(in oklab, var(--warning) 40%, transparent)",
+            "--warning-border":
+              "color-mix(in oklab, var(--warning) 40%, transparent)",
             "--info-bg": "color-mix(in oklab, var(--info) 8%, var(--surface))",
             "--info-text": "var(--info)",
-            "--info-border": "color-mix(in oklab, var(--info) 40%, transparent)",
+            "--info-border":
+              "color-mix(in oklab, var(--info) 40%, transparent)",
           } as CSSProperties
         }
       />

@@ -10,7 +10,7 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
-import { logActivity } from "@/lib/activity";
+import { logActivity, snapshotBefore } from "@/lib/activity";
 import { CATALOG_NAV_TAG } from "@/lib/catalog-nav";
 import { db } from "@/lib/db";
 import { normalizeTranslations, TRANSLATABLE_FIELDS } from "@/lib/localize";
@@ -34,6 +34,11 @@ const upsertSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
   description: z.string().trim().max(2000).optional(),
   image: z.string().trim().max(2048).optional(),
+  /** B0's SEO overrides — null falls back to the name-derived metadata. */
+  seoTitle: z.string().trim().max(300).optional(),
+  seoDescription: z.string().trim().max(500).optional(),
+  /** false takes the shelf off every public surface without deleting it. */
+  visible: z.boolean().optional(),
   translations: z
     .record(z.string(), z.record(z.string(), z.unknown()))
     .optional(),
@@ -64,6 +69,9 @@ export async function upsertCategory(
       name: parsed.name,
       description: parsed.description || null,
       image: parsed.image || null,
+      seoTitle: parsed.seoTitle || null,
+      seoDescription: parsed.seoDescription || null,
+      visible: parsed.visible ?? true,
       translations:
         normalized === null
           ? Prisma.DbNull
@@ -71,7 +79,27 @@ export async function upsertCategory(
     };
 
     let id: string;
+    let before: ReturnType<typeof snapshotBefore> | undefined;
     if (parsed.id) {
+      const existing = await db.category.findUnique({
+        where: { id: parsed.id },
+        select: {
+          name: true,
+          description: true,
+          seoTitle: true,
+          seoDescription: true,
+          visible: true,
+        },
+      });
+      if (existing) {
+        before = snapshotBefore(existing, [
+          "name",
+          "description",
+          "seoTitle",
+          "seoDescription",
+          "visible",
+        ]);
+      }
       // Slug intentionally untouched — immutable after creation.
       const updated = await db.category.update({
         where: { id: parsed.id },
@@ -111,7 +139,7 @@ export async function upsertCategory(
       action: parsed.id ? "update" : "create",
       entity: "Category",
       entityId: id,
-      meta: { name: parsed.name },
+      meta: { name: parsed.name, ...(before ? { before } : {}) },
     });
     revalidatePath(STUDIO_PATH);
     revalidatePublic("category");
@@ -126,9 +154,7 @@ const deleteSchema = z.array(z.string().min(1)).min(1);
  * Bulk delete. Refuses to delete any batch in which a category still has
  * products — the caller gets a friendly error naming the offenders.
  */
-export async function deleteCategories(
-  input: string[],
-): Promise<ActionResult> {
+export async function deleteCategories(input: string[]): Promise<ActionResult> {
   const result = await runAction(async () => {
     const session = await requireStaff();
     const ids = deleteSchema.parse(input);

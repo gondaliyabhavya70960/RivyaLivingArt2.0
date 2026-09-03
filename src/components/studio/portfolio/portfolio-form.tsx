@@ -34,9 +34,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { DraftPreview } from "@/components/studio/draft-preview";
 import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { MediaPicker } from "@/components/studio/media/media-picker";
 import { TranslationsSection } from "@/components/studio/translations-section";
 import {
@@ -49,6 +52,7 @@ import {
 } from "@/components/ui/dialog";
 import { translatableLocales } from "@/lib/localize";
 import { toTranslationsRecord } from "@/lib/translations-form";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { CONTENT_STATUSES } from "@/lib/content-status";
 
@@ -129,6 +133,48 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+/** Which tab a field belongs to (product-form.tsx pattern). */
+const TABS = [
+  {
+    value: "story",
+    label: "Story",
+    fields: [
+      "title",
+      "story",
+      "brief",
+      "process",
+      "clientNote",
+      "location",
+      "year",
+    ],
+  },
+  {
+    value: "media",
+    label: "Media",
+    fields: ["beforeImageUrl", "afterImageUrl", "videoUrl", "images"],
+  },
+  {
+    value: "results",
+    label: "Results",
+    fields: [
+      "metaType",
+      "metaMaterial",
+      "metaSize",
+      "metaTimeline",
+      "metaTechnique",
+      "metaComplexity",
+      "metaTags",
+    ],
+  },
+  { value: "taxonomy", label: "Taxonomy", fields: ["categoryId", "status"] },
+] as const;
+
+function tabForField(field: string): string | undefined {
+  const root = field.split(".")[0];
+  return TABS.find((tab) => (tab.fields as readonly string[]).includes(root))
+    ?.value;
+}
+
 // ————————————————————— Small helpers —————————————————————
 
 /** next/image throws on unparseable src — only preview absolute URLs. */
@@ -152,12 +198,15 @@ export function PortfolioForm({
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [tab, setTab] = useState<string>(TABS[0].value);
 
   const {
     register,
     control,
     handleSubmit,
     setValue,
+    watch,
+    reset,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -194,6 +243,26 @@ export function PortfolioForm({
 
   useUnsavedChangesGuard(isDirty && !saving);
 
+  const draft = useLocalDraft<FormValues>({
+    key: "portfolio",
+    id: portfolio?.id,
+    watch,
+    reset,
+    enabled: !saving,
+  });
+
+  const errored = new Set(
+    Object.keys(errors)
+      .map(tabForField)
+      .filter((value): value is string => Boolean(value)),
+  );
+
+  function onInvalid(fieldErrors: Record<string, unknown>) {
+    const first = Object.keys(fieldErrors)[0];
+    const target = first ? tabForField(first) : undefined;
+    if (target) setTab(target);
+  }
+
   const imagesArray = useFieldArray({ control, name: "images" });
 
   const watchedImages = useWatch({ control, name: "images" });
@@ -203,11 +272,17 @@ export function PortfolioForm({
   );
   const beforeImageUrl = useWatch({ control, name: "beforeImageUrl" });
   const afterImageUrl = useWatch({ control, name: "afterImageUrl" });
-  const [titleBase, storyBase, briefBase, processBase, clientNoteBase, locationBase] =
-    useWatch({
-      control,
-      name: ["title", "story", "brief", "process", "clientNote", "location"],
-    });
+  const [
+    titleBase,
+    storyBase,
+    briefBase,
+    processBase,
+    clientNoteBase,
+    locationBase,
+  ] = useWatch({
+    control,
+    name: ["title", "story", "brief", "process", "clientNote", "location"],
+  });
 
   /** Shared upload path — everything lands in the "portfolio" folder. */
   async function uploadToPortfolio(files: File[]) {
@@ -315,7 +390,10 @@ export function PortfolioForm({
       toast.error(result.error);
       return;
     }
-    toast.success(portfolio ? "Portfolio piece saved." : "Portfolio piece created.");
+    draft.discard();
+    toast.success(
+      portfolio ? "Portfolio piece saved." : "Portfolio piece created.",
+    );
     if (!portfolio && result.data) {
       router.push(`/studio/portfolio/${result.data.id}`);
     } else {
@@ -340,477 +418,544 @@ export function PortfolioForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* (a) Essentials */}
-      <FormSection title="Essentials">
-        <div className="space-y-1.5">
-          <Label htmlFor="portfolio-title">Title</Label>
-          <Input
-            id="portfolio-title"
-            aria-invalid={!!errors.title}
-            aria-describedby={errors.title ? "portfolio-title-error" : undefined}
-            {...register("title")}
-          />
-          <FieldError id="portfolio-title-error">
-            {errors.title?.message}
-          </FieldError>
-        </div>
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+      <LocalDraftBar
+        savedAt={draft.savedAt}
+        onRestore={draft.restore}
+        onDiscard={draft.discard}
+      />
 
-        <div className="space-y-1.5">
-          <Label htmlFor="portfolio-story">Story</Label>
-          <Textarea
-            id="portfolio-story"
-            rows={10}
-            placeholder="The brief, the process, the reveal — tell the piece's journey."
-            {...register("story")}
-          />
-        </div>
-      </FormSection>
-
-      {/* (a2) Case study (audit CS-01) — optional narrative; each filled
-          field becomes its own section on the public piece page. */}
-      <FormSection title="Case study">
-        <div className="space-y-1.5">
-          <Label htmlFor="portfolio-brief">The brief</Label>
-          <Textarea
-            id="portfolio-brief"
-            rows={3}
-            placeholder="What the client asked for — shown as its own section when filled"
-            {...register("brief")}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="portfolio-process">The process</Label>
-          <Textarea
-            id="portfolio-process"
-            rows={4}
-            placeholder="How the piece was made — stages, decisions, time"
-            {...register("process")}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="portfolio-client-note">Client&apos;s words</Label>
-          <Textarea
-            id="portfolio-client-note"
-            rows={3}
-            placeholder="Their reaction, verbatim — real words only, never invented"
-            {...register("clientNote")}
-          />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-location">Location</Label>
-            <Input
-              id="portfolio-location"
-              placeholder="Surat"
-              aria-invalid={!!errors.location}
-              {...register("location")}
-            />
-            <FieldError id="portfolio-location-error">
-              {errors.location?.message}
-            </FieldError>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-year">Year</Label>
-            <Input
-              id="portfolio-year"
-              inputMode="numeric"
-              placeholder="2026"
-              aria-invalid={!!errors.year}
-              {...register("year")}
-            />
-            <FieldError id="portfolio-year-error">
-              {errors.year?.message}
-            </FieldError>
-          </div>
-        </div>
-      </FormSection>
-
-      {/* (a3) Classification — category + publish state (previously the tail
-          of Essentials; own card since the case-study block landed between). */}
-      <FormSection title="Classification">
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>Category</Label>
-            <Controller
-              control={control}
-              name="categoryId"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full" aria-label="Category">
-                    <SelectValue placeholder="No category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={NO_CATEGORY}>No category</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList aria-label="Portfolio sections">
+          {TABS.map((entry) => (
+            <TabsTrigger key={entry.value} value={entry.value}>
+              {entry.label}
+              {errored.has(entry.value) && (
+                <>
+                  <span
+                    aria-hidden
+                    className="size-1.5 rounded-full bg-destructive"
+                  />
+                  <span className="sr-only"> (has an error)</span>
+                </>
               )}
-            />
-          </div>
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-          <div className="space-y-1.5">
-            <Label>Status</Label>
-            <Controller
-              control={control}
-              name="status"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full" aria-label="Status">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="DRAFT">Draft</SelectItem>
-                    <SelectItem value="PUBLISHED">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
-        </div>
-      </FormSection>
-
-      {/* (b) Before / after */}
-      <FormSection
-        title="Before & after"
-        description="The transformation pair shown at the top of the case study."
-      >
-        <input
-          ref={beforeInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => handleSingleUpload("beforeImageUrl", e.target.files)}
-        />
-        <input
-          ref={afterInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => handleSingleUpload("afterImageUrl", e.target.files)}
-        />
-
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-before">Before image URL</Label>
-            <div className="flex gap-2">
+        <TabsContent forceMount value="story" className="space-y-6">
+          <FormSection title="Essentials">
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolio-title">Title</Label>
               <Input
-                id="portfolio-before"
-                placeholder="https://…"
-                aria-invalid={!!errors.beforeImageUrl}
+                id="portfolio-title"
+                aria-invalid={!!errors.title}
                 aria-describedby={
-                  errors.beforeImageUrl ? "portfolio-before-error" : undefined
+                  errors.title ? "portfolio-title-error" : undefined
                 }
-                {...register("beforeImageUrl")}
+                {...register("title")}
               />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="shrink-0"
-                disabled={uploading}
-                onClick={() => beforeInputRef.current?.click()}
-              >
-                <Upload /> Upload
-              </Button>
+              <FieldError id="portfolio-title-error">
+                {errors.title?.message}
+              </FieldError>
             </div>
-            <FieldError id="portfolio-before-error">
-              {errors.beforeImageUrl?.message}
-            </FieldError>
-            {isPreviewable(beforeImageUrl) && (
-              <Image
-                src={beforeImageUrl}
-                unoptimized={!isOptimizableImageSrc(beforeImageUrl)}
-                alt="Before preview"
-                width={320}
-                height={180}
-                className="aspect-video w-full rounded-lg border border-border object-cover"
+
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolio-story">Story</Label>
+              <Textarea
+                id="portfolio-story"
+                rows={10}
+                placeholder="The brief, the process, the reveal — tell the piece's journey."
+                {...register("story")}
+              />
+            </div>
+          </FormSection>
+
+          {/* Case study (audit CS-01) — optional narrative; each filled
+              field becomes its own section on the public piece page. */}
+          <FormSection title="Case study">
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolio-brief">The brief</Label>
+              <Textarea
+                id="portfolio-brief"
+                rows={3}
+                placeholder="What the client asked for — shown as its own section when filled"
+                {...register("brief")}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolio-process">The process</Label>
+              <Textarea
+                id="portfolio-process"
+                rows={4}
+                placeholder="How the piece was made — stages, decisions, time"
+                {...register("process")}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolio-client-note">Client&apos;s words</Label>
+              <Textarea
+                id="portfolio-client-note"
+                rows={3}
+                placeholder="Their reaction, verbatim — real words only, never invented"
+                {...register("clientNote")}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-location">Location</Label>
+                <Input
+                  id="portfolio-location"
+                  placeholder="Surat"
+                  aria-invalid={!!errors.location}
+                  {...register("location")}
+                />
+                <FieldError id="portfolio-location-error">
+                  {errors.location?.message}
+                </FieldError>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-year">Year</Label>
+                <Input
+                  id="portfolio-year"
+                  inputMode="numeric"
+                  placeholder="2026"
+                  aria-invalid={!!errors.year}
+                  {...register("year")}
+                />
+                <FieldError id="portfolio-year-error">
+                  {errors.year?.message}
+                </FieldError>
+              </div>
+            </div>
+          </FormSection>
+
+          <Controller
+            control={control}
+            name="translations"
+            render={({ field }) => (
+              <TranslationsSection
+                value={field.value}
+                onChange={field.onChange}
+                idPrefix="portfolio"
+                fields={[
+                  {
+                    name: "title",
+                    label: "Title",
+                    kind: "text",
+                    base: titleBase,
+                  },
+                  {
+                    name: "story",
+                    label: "Story",
+                    kind: "textarea",
+                    base: storyBase,
+                  },
+                  {
+                    name: "brief",
+                    label: "The brief",
+                    kind: "textarea",
+                    base: briefBase,
+                  },
+                  {
+                    name: "process",
+                    label: "The process",
+                    kind: "textarea",
+                    base: processBase,
+                  },
+                  {
+                    name: "clientNote",
+                    label: "Client's words",
+                    kind: "textarea",
+                    base: clientNoteBase,
+                  },
+                  {
+                    name: "location",
+                    label: "Location",
+                    kind: "text",
+                    base: locationBase,
+                  },
+                ]}
               />
             )}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-after">After image URL</Label>
-            <div className="flex gap-2">
-              <Input
-                id="portfolio-after"
-                placeholder="https://…"
-                aria-invalid={!!errors.afterImageUrl}
-                aria-describedby={
-                  errors.afterImageUrl ? "portfolio-after-error" : undefined
-                }
-                {...register("afterImageUrl")}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="shrink-0"
-                disabled={uploading}
-                onClick={() => afterInputRef.current?.click()}
-              >
-                <Upload /> Upload
-              </Button>
-            </div>
-            <FieldError id="portfolio-after-error">
-              {errors.afterImageUrl?.message}
-            </FieldError>
-            {isPreviewable(afterImageUrl) && (
-              <Image
-                src={afterImageUrl}
-                unoptimized={!isOptimizableImageSrc(afterImageUrl)}
-                alt="After preview"
-                width={320}
-                height={180}
-                className="aspect-video w-full rounded-lg border border-border object-cover"
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="portfolio-video">Video URL</Label>
-          <Input
-            id="portfolio-video"
-            placeholder="https://…"
-            aria-invalid={!!errors.videoUrl}
-            aria-describedby={
-              errors.videoUrl ? "portfolio-video-error" : undefined
-            }
-            {...register("videoUrl")}
           />
-          <p className="text-xs text-muted-foreground">
-            A short making-of or reveal clip, shown with the case study.
-          </p>
-          <FieldError id="portfolio-video-error">
-            {errors.videoUrl?.message}
-          </FieldError>
-        </div>
-      </FormSection>
+        </TabsContent>
 
-      {/* (c) Results metadata */}
-      <FormSection
-        title="Results"
-        description="ADM-style case study meta — shown as a facts strip on the public page."
-      >
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-meta-type">Type</Label>
-            <Input
-              id="portfolio-meta-type"
-              placeholder="e.g. Wedding preservation"
-              {...register("metaType")}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-meta-material">Material</Label>
-            <Input
-              id="portfolio-meta-material"
-              placeholder="e.g. Epoxy resin, bridal florals"
-              {...register("metaMaterial")}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-meta-size">Size</Label>
-            <Input
-              id="portfolio-meta-size"
-              placeholder='e.g. 12" × 16" block'
-              {...register("metaSize")}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-meta-timeline">Timeline</Label>
-            <Input
-              id="portfolio-meta-timeline"
-              placeholder="e.g. 6 weeks"
-              {...register("metaTimeline")}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-meta-technique">Technique</Label>
-            <Input
-              id="portfolio-meta-technique"
-              placeholder="e.g. Botanical preservation casting"
-              {...register("metaTechnique")}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="portfolio-meta-complexity">Complexity</Label>
-            <Input
-              id="portfolio-meta-complexity"
-              placeholder="e.g. Signature / High / Moderate"
-              {...register("metaComplexity")}
-            />
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="portfolio-meta-tags">Tags</Label>
-            <Input
-              id="portfolio-meta-tags"
-              placeholder="comma separated — e.g. varmala, wedding, preservation"
-              {...register("metaTags")}
-            />
-          </div>
-        </div>
-      </FormSection>
-
-      {/* (d) Gallery */}
-      <FormSection
-        title="Gallery"
-        description="The first image is the cover on the portfolio grid. Reorder with the arrows."
-      >
-        <div>
-          <input
-            ref={galleryInputRef}
-            type="file"
-            multiple
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => handleGalleryUpload(e.target.files)}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            onClick={() => galleryInputRef.current?.click()}
+        <TabsContent forceMount value="media" className="space-y-6">
+          <FormSection
+            title="Before & after"
+            description="The transformation pair shown at the top of the case study."
           >
-            <ImagePlus /> {uploading ? "Uploading…" : "Upload images"}
-          </Button>
-          <MediaPicker
-            defaultFolder="portfolio"
-            onSelect={(item) =>
-              imagesArray.append({
-                url: item.url,
-                alt: "",
-                caption: "",
-                translations: {},
-              })
-            }
-          />
-        </div>
+            <input
+              ref={beforeInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) =>
+                handleSingleUpload("beforeImageUrl", e.target.files)
+              }
+            />
+            <input
+              ref={afterInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) =>
+                handleSingleUpload("afterImageUrl", e.target.files)
+              }
+            />
 
-        {imagesArray.fields.length > 0 && (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {imagesArray.fields.map((item, index) => (
-              <div
-                key={item.id}
-                className="space-y-2 rounded-card border border-border p-3"
-              >
-                <Image
-                  src={watchedImages[index]?.url ?? item.url}
-                  unoptimized={!isOptimizableImageSrc(watchedImages[index]?.url ?? item.url)}
-                  alt={watchedImages[index]?.alt ?? ""}
-                  width={320}
-                  height={320}
-                  className="aspect-square w-full rounded-lg border border-border object-cover"
-                />
-                <Input
-                  aria-label={`Alt text for image ${index + 1}`}
-                  placeholder="Alt text"
-                  {...register(`images.${index}.alt`)}
-                />
-                {/* Alt describes the picture for someone who cannot see it;
-                    the caption tells every reader something the picture does
-                    not. Both, or either, or neither. */}
-                <Input
-                  aria-label={`Caption for image ${index + 1}`}
-                  placeholder="Caption (printed beside the plate number)"
-                  {...register(`images.${index}.caption`)}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start"
-                  onClick={() => setCaptionLocaleIndex(index)}
-                >
-                  <Languages aria-hidden className="size-4" />
-                  <span className="tabular-nums">
-                    {
-                      translatableLocales.filter((locale) => {
-                        const value =
-                          watchedImages?.[index]?.translations?.[locale]
-                            ?.caption;
-                        return typeof value === "string" && value.trim() !== "";
-                      }).length
-                    }{" "}
-                    / {translatableLocales.length}
-                  </span>
-                  <span className="sr-only">
-                    languages — translate the caption for image {index + 1}
-                  </span>
-                </Button>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      aria-label="Move image up"
-                      disabled={index === 0}
-                      onClick={() => imagesArray.move(index, index - 1)}
-                    >
-                      <ArrowUp className="size-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      aria-label="Move image down"
-                      disabled={index === imagesArray.fields.length - 1}
-                      onClick={() => imagesArray.move(index, index + 1)}
-                    >
-                      <ArrowDown className="size-4" />
-                    </Button>
-                  </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-before">Before image URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="portfolio-before"
+                    placeholder="https://…"
+                    aria-invalid={!!errors.beforeImageUrl}
+                    aria-describedby={
+                      errors.beforeImageUrl
+                        ? "portfolio-before-error"
+                        : undefined
+                    }
+                    {...register("beforeImageUrl")}
+                  />
                   <Button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    aria-label="Remove image"
-                    onClick={() => imagesArray.remove(index)}
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    disabled={uploading}
+                    onClick={() => beforeInputRef.current?.click()}
                   >
-                    <Trash2 className="size-4" />
+                    <Upload /> Upload
                   </Button>
                 </div>
+                <FieldError id="portfolio-before-error">
+                  {errors.beforeImageUrl?.message}
+                </FieldError>
+                {isPreviewable(beforeImageUrl) && (
+                  <Image
+                    src={beforeImageUrl}
+                    unoptimized={!isOptimizableImageSrc(beforeImageUrl)}
+                    alt="Before preview"
+                    width={320}
+                    height={180}
+                    className="aspect-video w-full rounded-lg border border-border object-cover"
+                  />
+                )}
               </div>
-            ))}
-          </div>
-        )}
-      </FormSection>
 
-      {/* (e) Translations */}
-      <Controller
-        control={control}
-        name="translations"
-        render={({ field }) => (
-          <TranslationsSection
-            value={field.value}
-            onChange={field.onChange}
-            idPrefix="portfolio"
-            fields={[
-              { name: "title", label: "Title", kind: "text", base: titleBase },
-              { name: "story", label: "Story", kind: "textarea", base: storyBase },
-              { name: "brief", label: "The brief", kind: "textarea", base: briefBase },
-              { name: "process", label: "The process", kind: "textarea", base: processBase },
-              {
-                name: "clientNote",
-                label: "Client's words",
-                kind: "textarea",
-                base: clientNoteBase,
-              },
-              { name: "location", label: "Location", kind: "text", base: locationBase },
-            ]}
-          />
-        )}
-      />
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-after">After image URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="portfolio-after"
+                    placeholder="https://…"
+                    aria-invalid={!!errors.afterImageUrl}
+                    aria-describedby={
+                      errors.afterImageUrl ? "portfolio-after-error" : undefined
+                    }
+                    {...register("afterImageUrl")}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    disabled={uploading}
+                    onClick={() => afterInputRef.current?.click()}
+                  >
+                    <Upload /> Upload
+                  </Button>
+                </div>
+                <FieldError id="portfolio-after-error">
+                  {errors.afterImageUrl?.message}
+                </FieldError>
+                {isPreviewable(afterImageUrl) && (
+                  <Image
+                    src={afterImageUrl}
+                    unoptimized={!isOptimizableImageSrc(afterImageUrl)}
+                    alt="After preview"
+                    width={320}
+                    height={180}
+                    className="aspect-video w-full rounded-lg border border-border object-cover"
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolio-video">Video URL</Label>
+              <Input
+                id="portfolio-video"
+                placeholder="https://…"
+                aria-invalid={!!errors.videoUrl}
+                aria-describedby={
+                  errors.videoUrl ? "portfolio-video-error" : undefined
+                }
+                {...register("videoUrl")}
+              />
+              <p className="text-xs text-muted-foreground">
+                A short making-of or reveal clip, shown with the case study.
+              </p>
+              <FieldError id="portfolio-video-error">
+                {errors.videoUrl?.message}
+              </FieldError>
+            </div>
+          </FormSection>
+
+          <FormSection
+            title="Gallery"
+            description="The first image is the cover on the portfolio grid. Reorder with the arrows."
+          >
+            <div>
+              <input
+                ref={galleryInputRef}
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleGalleryUpload(e.target.files)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={uploading}
+                onClick={() => galleryInputRef.current?.click()}
+              >
+                <ImagePlus /> {uploading ? "Uploading…" : "Upload images"}
+              </Button>
+              <MediaPicker
+                defaultFolder="portfolio"
+                onSelect={(item) =>
+                  imagesArray.append({
+                    url: item.url,
+                    alt: "",
+                    caption: "",
+                    translations: {},
+                  })
+                }
+              />
+            </div>
+
+            {imagesArray.fields.length > 0 && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {imagesArray.fields.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="space-y-2 rounded-card border border-border p-3"
+                  >
+                    <Image
+                      src={watchedImages[index]?.url ?? item.url}
+                      unoptimized={
+                        !isOptimizableImageSrc(
+                          watchedImages[index]?.url ?? item.url,
+                        )
+                      }
+                      alt={watchedImages[index]?.alt ?? ""}
+                      width={320}
+                      height={320}
+                      className="aspect-square w-full rounded-lg border border-border object-cover"
+                    />
+                    <Input
+                      aria-label={`Alt text for image ${index + 1}`}
+                      placeholder="Alt text"
+                      {...register(`images.${index}.alt`)}
+                    />
+                    {/* Alt describes the picture for someone who cannot see
+                        it; the caption tells every reader something the
+                        picture does not. Both, or either, or neither. */}
+                    <Input
+                      aria-label={`Caption for image ${index + 1}`}
+                      placeholder="Caption (printed beside the plate number)"
+                      {...register(`images.${index}.caption`)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                      onClick={() => setCaptionLocaleIndex(index)}
+                    >
+                      <Languages aria-hidden className="size-4" />
+                      <span className="tabular-nums">
+                        {
+                          translatableLocales.filter((locale) => {
+                            const value =
+                              watchedImages?.[index]?.translations?.[locale]
+                                ?.caption;
+                            return (
+                              typeof value === "string" && value.trim() !== ""
+                            );
+                          }).length
+                        }{" "}
+                        / {translatableLocales.length}
+                      </span>
+                      <span className="sr-only">
+                        languages — translate the caption for image {index + 1}
+                      </span>
+                    </Button>
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-1">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          aria-label="Move image up"
+                          disabled={index === 0}
+                          onClick={() => imagesArray.move(index, index - 1)}
+                        >
+                          <ArrowUp className="size-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          aria-label="Move image down"
+                          disabled={index === imagesArray.fields.length - 1}
+                          onClick={() => imagesArray.move(index, index + 1)}
+                        >
+                          <ArrowDown className="size-4" />
+                        </Button>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Remove image"
+                        onClick={() => imagesArray.remove(index)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </FormSection>
+        </TabsContent>
+
+        <TabsContent forceMount value="results" className="space-y-6">
+          <FormSection
+            title="Results"
+            description="ADM-style case study meta — shown as a facts strip on the public page."
+          >
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-meta-type">Type</Label>
+                <Input
+                  id="portfolio-meta-type"
+                  placeholder="e.g. Wedding preservation"
+                  {...register("metaType")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-meta-material">Material</Label>
+                <Input
+                  id="portfolio-meta-material"
+                  placeholder="e.g. Epoxy resin, bridal florals"
+                  {...register("metaMaterial")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-meta-size">Size</Label>
+                <Input
+                  id="portfolio-meta-size"
+                  placeholder='e.g. 12" × 16" block'
+                  {...register("metaSize")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-meta-timeline">Timeline</Label>
+                <Input
+                  id="portfolio-meta-timeline"
+                  placeholder="e.g. 6 weeks"
+                  {...register("metaTimeline")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-meta-technique">Technique</Label>
+                <Input
+                  id="portfolio-meta-technique"
+                  placeholder="e.g. Botanical preservation casting"
+                  {...register("metaTechnique")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="portfolio-meta-complexity">Complexity</Label>
+                <Input
+                  id="portfolio-meta-complexity"
+                  placeholder="e.g. Signature / High / Moderate"
+                  {...register("metaComplexity")}
+                />
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label htmlFor="portfolio-meta-tags">Tags</Label>
+                <Input
+                  id="portfolio-meta-tags"
+                  placeholder="comma separated — e.g. varmala, wedding, preservation"
+                  {...register("metaTags")}
+                />
+              </div>
+            </div>
+          </FormSection>
+        </TabsContent>
+
+        <TabsContent forceMount value="taxonomy" className="space-y-6">
+          <FormSection title="Classification">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Category</Label>
+                <Controller
+                  control={control}
+                  name="categoryId"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full" aria-label="Category">
+                        <SelectValue placeholder="No category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={NO_CATEGORY}>No category</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Status</Label>
+                <Controller
+                  control={control}
+                  name="status"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full" aria-label="Status">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="DRAFT">Draft</SelectItem>
+                        <SelectItem value="REVIEW">Review</SelectItem>
+                        <SelectItem value="PUBLISHED">Published</SelectItem>
+                        <SelectItem value="ARCHIVED">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+          </FormSection>
+        </TabsContent>
+      </Tabs>
 
       {/* Sticky save bar */}
       <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">
@@ -829,24 +974,7 @@ export function PortfolioForm({
           )}
         </div>
         <div className="flex items-center gap-2">
-          {portfolio && (
-            <div className="flex items-center gap-1">
-              <Button asChild variant="link" size="sm">
-                <a
-                  // Enables Next draft mode via the staff-gated route handler,
-                  // then lands on the public page (audit C2).
-                  href={`/api/draft?redirect=${encodeURIComponent(`/portfolio/${portfolio.slug}`)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View draft preview ↗
-                </a>
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                (public page ships in Phase 8)
-              </span>
-            </div>
-          )}
+          {portfolio && <DraftPreview path={`/portfolio/${portfolio.slug}`} />}
           <Button type="submit" disabled={saving || uploading}>
             {saving ? "Saving…" : "Save"}
           </Button>
@@ -888,8 +1016,7 @@ export function PortfolioForm({
                       name: "caption",
                       label: "Caption",
                       kind: "text",
-                      base:
-                        watchedImages?.[captionLocaleIndex]?.caption ?? "",
+                      base: watchedImages?.[captionLocaleIndex]?.caption ?? "",
                     },
                   ]}
                 />
@@ -898,10 +1025,7 @@ export function PortfolioForm({
           )}
 
           <DialogFooter>
-            <Button
-              type="button"
-              onClick={() => setCaptionLocaleIndex(null)}
-            >
+            <Button type="button" onClick={() => setCaptionLocaleIndex(null)}>
               Done
             </Button>
           </DialogFooter>
