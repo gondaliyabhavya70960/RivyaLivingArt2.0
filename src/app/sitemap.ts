@@ -55,7 +55,24 @@ function localizedEntries(
   }));
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+/** The content half of the sitemap — everything that needs the database. */
+type ContentSlugs = {
+  products: { slug: string; updatedAt: Date }[];
+  categories: { slug: string }[];
+  posts: { slug: string; updatedAt: Date }[];
+  portfolios: { slug: string; createdAt: Date }[];
+  landers: { slug: string; updatedAt: Date }[];
+};
+
+const NO_CONTENT: ContentSlugs = {
+  products: [],
+  categories: [],
+  posts: [],
+  portfolios: [],
+  landers: [],
+};
+
+async function readContentSlugs(): Promise<ContentSlugs> {
   const [products, categories, posts, portfolios, landers] = await Promise.all([
     db.product.findMany({
       where: PUBLISHED_NOT_DEMO,
@@ -84,6 +101,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, updatedAt: true },
     }),
   ]);
+  return { products, categories, posts, portfolios, landers };
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Total, like the CMS resolvers (site-copy-server.ts): the sitemap is
+  // prerendered by `next build`, and a transient database error there used
+  // to fail the whole deploy — the Phase 0 PR's own Vercel preview died on
+  // this read with a docs-only diff (P2037, the preview database's connection
+  // limit). A sitemap of static routes for one revalidate window beats no
+  // deploy at all; the error is logged, never swallowed silently.
+  const { products, categories, posts, portfolios, landers } =
+    await readContentSlugs().catch((error: unknown) => {
+      console.error(
+        "Sitemap content unavailable — serving static routes only:",
+        error,
+      );
+      return NO_CONTENT;
+    });
 
   return [
     // Static routes carry NO lastModified: stamping new Date() each hourly

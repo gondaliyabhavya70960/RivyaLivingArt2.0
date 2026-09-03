@@ -17,6 +17,7 @@ import {
   PRODUCT_SHEET_COLUMNS,
   PRODUCT_SHEET_TAB,
 } from "@/lib/scraper/product-sheet";
+import { planRowDeletions } from "@/lib/scraper/sheet-delete-plan";
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
@@ -302,31 +303,22 @@ export async function deleteRowsFromTab(opts: {
     `${spreadsheetId}/values/${encodeURIComponent(`${tab}!A2:${lastCol}`)}`,
   );
 
-  const wanted = new Set(keys);
-  const rowNumbers: number[] = [];
-  (existing.values ?? []).forEach((cells, i) => {
-    const key = keyOf(cells);
-    if (key && wanted.has(key)) rowNumbers.push(i + 2); // A2 is sheet row 2
+  // Descending order and 0-based ranges are the planner's contract, and
+  // sheet-delete-plan.test.ts proves it against a simulated tab — this call
+  // site must never re-sort or re-index what it is handed.
+  const plan = planRowDeletions({
+    rows: existing.values ?? [],
+    keyOf,
+    keys,
+    sheetId,
   });
-  if (rowNumbers.length === 0) return { deleted: 0 };
+  if (plan.rowNumbers.length === 0) return { deleted: 0 };
 
-  rowNumbers.sort((a, b) => b - a);
   await sheetsApi(token, `${spreadsheetId}:batchUpdate`, {
     method: "POST",
-    body: {
-      requests: rowNumbers.map((row) => ({
-        deleteDimension: {
-          range: {
-            sheetId,
-            dimension: "ROWS",
-            startIndex: row - 1, // deleteDimension is 0-based
-            endIndex: row,
-          },
-        },
-      })),
-    },
+    body: { requests: plan.requests },
   });
-  return { deleted: rowNumbers.length };
+  return { deleted: plan.rowNumbers.length };
 }
 
 /**

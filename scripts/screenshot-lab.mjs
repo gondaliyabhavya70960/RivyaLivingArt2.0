@@ -1,7 +1,7 @@
 import { chromium } from "playwright-core";
 
 const OUT = process.env.OUT_DIR || "screenshots";
-const URL = "http://localhost:3111/design-lab";
+const URL = `${process.env.BASE_URL ?? "http://localhost:3000"}/design-lab`;
 
 import { resolveChromiumPath } from "./lib/browser.mjs";
 const bin = resolveChromiumPath();

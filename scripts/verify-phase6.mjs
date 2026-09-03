@@ -1,5 +1,5 @@
 /**
- * Phase 6 verification: story & content sweep against :3111.
+ * Phase 6 verification: story & content sweep against :3000 (BASE_URL).
  * - /about (v2): transparent navbar, CraftChapters pinned scrub (2 checkpoints
  *   + rAF stats on a cold wheel pass), reduced-motion + 375px static fallback
  * - home: §9 UGC band (portfolio-fed) + footer socials + hero video wiring
@@ -9,7 +9,7 @@
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.P6_BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.P6_BASE ?? "http://localhost:3000";
 const OUT = "screenshots";
 
 const bin = resolveChromiumPath();

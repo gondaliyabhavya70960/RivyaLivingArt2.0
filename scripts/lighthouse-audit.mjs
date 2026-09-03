@@ -17,7 +17,7 @@ import { launch } from "chrome-launcher";
 
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = process.env.LH_BASE ?? "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? process.env.LH_BASE ?? "http://localhost:3000";
 
 /**
  * The budget. Overridable per run so a deliberately heavier branch can be

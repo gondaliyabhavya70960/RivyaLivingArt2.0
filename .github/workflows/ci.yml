@@ -56,6 +56,19 @@ jobs:
       - name: Translation coverage
         run: node scripts/i18n-missing.mjs
 
+      # The check above has a hole: a changed ENGLISH value with untouched
+      # translations passes it (the keys exist, the values differ from
+      # English) and ships eight stale languages. Compare every catalogue with
+      # the PR's base: a key whose English changed must have changed in every
+      # locale too. Pull requests only — a push to main has no base to diff.
+      - name: Fetch the base branch for the stale-translation check
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags --depth=1 origin ${{ github.base_ref }}
+
+      - name: Stale translations
+        if: github.event_name == 'pull_request'
+        run: node scripts/i18n-missing.mjs --stale --base origin/${{ github.base_ref }}
+
       - run: npm run test
 
   build:
@@ -88,9 +101,11 @@ jobs:
       # The routes the audits sweep. Every public page that renders on a
       # freshly bootstrapped database — which is what CI has: `prisma/seed.ts`
       # gives it categories, FAQs and legal pages, `seed-blogs.ts` the journal,
-      # and there is no catalogue. Detail routes (/product/…, /blog/…,
-      # /portfolio/…) are deliberately absent: their slugs depend on content CI
-      # does not have, and a gate that guesses a URL fails on the wrong thing.
+      # and `prisma/import-tiers.ts` (run by bootstrap on every build) the
+      # tracked tier snapshot under data/tiers plus the 20 portfolio cases —
+      # so this database is NOT empty. Detail routes (/product/…, /blog/…,
+      # /portfolio/…) are still absent because their slugs are content, not
+      # code; sweeping them with deterministic slugs is roadmap Phase 16.
       # /search is a query-only noindex route with nothing to audit empty.
       AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms"
       # Arabic is a shipped locale and nothing in CI ever loaded one. The repo

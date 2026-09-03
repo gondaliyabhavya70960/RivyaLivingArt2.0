@@ -43,6 +43,15 @@ export type AdapterContext = {
   vertical: string;
   /** 1-based page cursor. */
   page: number;
+  /**
+   * The source's own politeness delay (`ScrapeSource.requestDelayMs`), or
+   * null for the shared default. Adapters resolve it through `resolveDelayMs`
+   * (breaker.ts), which only ever makes a source SLOWER than the floor — the
+   * knob exists for a site that rate-limits us, not to speed past our own
+   * default. It was declared, documented and stored for a month before
+   * anything read it (Phase 0 audit §8).
+   */
+  requestDelayMs?: number | null;
 };
 
 export type Adapter = (ctx: AdapterContext) => Promise<AdapterPage>;

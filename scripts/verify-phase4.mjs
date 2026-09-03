@@ -1,13 +1,13 @@
 /**
  * Phase 4 verification: staff login → dashboard / inquiries screenshots →
  * pricing e2e (set quoted price + staff note on an inquiry, save, verify).
- * Dev-only; expects `next dev` on :3111, local Postgres, and the local
+ * Dev-only; expects `next dev` on :3000 (BASE_URL), local Postgres, and the local
  * admin (STUDIO_EMAIL / STUDIO_PASSWORD — never a real account).
  */
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 const OUT = "screenshots";
 
 // Credentials come from the environment so none is committed. scripts/ci-staff-user.ts

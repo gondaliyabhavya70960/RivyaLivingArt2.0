@@ -5,8 +5,11 @@ import { cache } from "react";
 
 import { localeAlternates } from "@/i18n/seo";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
+import { ErrorState } from "@/components/storefront/error-state";
 import { Eyebrow } from "@/components/storefront/section-heading";
+import { SITE } from "@/lib/constants";
 import { db } from "@/lib/db";
+import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
 import { withHeadingAnchors } from "@/lib/document-toc";
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { renderTiptapToHtml } from "@/lib/tiptap-render";
@@ -52,7 +55,50 @@ const PROSE_LEGAL = [
 ].join(" ");
 
 // cache() dedupes the query between generateMetadata and the page render.
-const getPage = cache(() => db.page.findUnique({ where: { slug: "terms" } }));
+//
+// Total, like the CMS resolvers (site-copy-server.ts) and the privacy page:
+// prerendered by `next build`, where a transient database error used to fail
+// the whole deploy. A failure renders the error state below, logged loudly
+// and never folded into a 404 — `row: null` still means "no row" — and
+// `revalidate` re-reads in five minutes so a blip heals on its own.
+const getPage = cache(async () => {
+  try {
+    const row = await db.page.findUnique({ where: { slug: "terms" } });
+    return { row, failed: false as const };
+  } catch (error) {
+    console.error("Legal page unavailable — rendering the error state:", error);
+    return { row: null, failed: true as const };
+  }
+});
+
+/**
+ * Rendered instead of the document when the database is unreachable — the
+ * four elements of the site's error boundary (§11.11) on the page's own light
+ * ground (§11.10 gives a legal page no dark band), minus the retry action a
+ * server component cannot wire; a reload is the retry.
+ */
+async function LegalUnavailable() {
+  const [t, tCommon] = await Promise.all([
+    getTranslations("ErrorPage"),
+    getTranslations("Common"),
+  ]);
+  return (
+    <section className="section-standard bg-mineral text-ink">
+      <div className="u-shell">
+        <ErrorState
+          headingLevel="h1"
+          eyebrow={t("eyebrow")}
+          statement={t("heading")}
+          reassurance={t("body")}
+          retryLabel={t("retry")}
+          whatsappHref={buildWaLink(defaultWaGreeting(), SITE.whatsappNumber)}
+          whatsappLabel={t("whatsapp")}
+          whatsappNewTabLabel={tCommon("openInNewTab")}
+        />
+      </div>
+    </section>
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -60,7 +106,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const [row, t] = await Promise.all([
+  const [{ row }, t] = await Promise.all([
     getPage(),
     getTranslations({ locale, namespace: "Legal" }),
   ]);
@@ -89,12 +135,13 @@ export default async function TermsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [row, t, tNav, tCommon] = await Promise.all([
+  const [{ row, failed }, t, tNav, tCommon] = await Promise.all([
     getPage(),
     getTranslations("Legal"),
     getTranslations("Nav"),
     getTranslations("Common"),
   ]);
+  if (failed) return <LegalUnavailable />;
   if (!row) notFound();
 
   // Per-locale { title, content } overrides with English fallback (I3),

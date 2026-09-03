@@ -3,12 +3,12 @@
  * Memory Preservation page + wa.me fallback at 1280+375, then the custom
  * commission e2e — fill, submit, assert the Inquiry row and the #RR-<n>
  * reference in the message — on desktop AND a 375px viewport, as the DoD
- * demands. Dev-only tooling; expects `next dev` on :3111 + local Postgres.
+ * demands. Dev-only tooling; expects `next dev` on :3000 (BASE_URL) + local Postgres.
  */
 import { chromium } from "playwright-core";
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
-const BASE = "http://localhost:3111";
+const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 const OUT = "screenshots";
 
 const bin = resolveChromiumPath();

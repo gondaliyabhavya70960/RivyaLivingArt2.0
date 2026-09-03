@@ -37,7 +37,7 @@ records what shipped, and lists what genuinely remains.
 - CI: `.github/workflows/ci.yml` runs typecheck · lint · copy:check · test on
   every PR to Main, plus the real `npm run build` against a throwaway Postgres
   — and then starts that build and runs `redesign-audit.mjs` + `a11y-audit.mjs`
-  over 12 public routes at 1440px and 390px. Both gate the build.
+  over 13 public routes at 1440px and 390px. Both gate the build.
 - typecheck: `npm run typecheck`   (tsc --noEmit)
 - lint: `npm run lint -- --fix`
 - build: `npm run build`   (runs prisma migrate deploy + bootstrap first — needs DATABASE_URL)
@@ -115,11 +115,11 @@ blank one. Adding a surface means following this, not inventing a ninth shape.
 
 | Surface | Registry | Table | Resolver |
 |---|---|---|---|
-| `/studio/site-copy` | `site-copy.ts` (1,115 slots) | `SiteCopy` | `getSiteCopy()` |
+| `/studio/site-copy` | `site-copy.ts` (1,181 slots) | `SiteCopy` | `getSiteCopy()` |
 | `/studio/site-images` | `site-images.ts` (62 slots) | `SiteImage` | `getSiteImages()` |
 | `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
 | `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
-| `/studio/sections` | `page-sections.ts` (6 pages) | `PageSection` | `getPageSections()` |
+| `/studio/sections` | `page-sections.ts` (7 pages) | `PageSection` | `getPageSections()` |
 | `/studio/custom-pages` | `custom-blocks.ts` (6 types) | `CustomPage` · `CustomBlock` | `getCustomPage()` |
 | `/studio/media` | — | `Media` | — |
 | `/studio/settings` · `/studio/seo` | `constants.ts` (fallbacks) | `SiteSettings` | `getSiteSettings()` |
@@ -212,7 +212,7 @@ below are the ones that are expensive to rediscover.
   only when the price moves. A gap between points means the price held.
 
 ### Design QA (needs a running server)
-The first two now run in CI over 12 routes at both widths; run them locally
+The first two now run in CI over 13 routes at both widths; run them locally
 when you want a route CI does not cover — anything under /product, /blog,
 /portfolio or /p needs content the CI database has no seed for.
 - `node scripts/redesign-audit.mjs "/en,/en/shop,…" [--w 390]` — REDESIGN.md
@@ -342,7 +342,7 @@ attempt has already failed and been recorded.
   catalogue's floor in those categories is a ₹7 bezel finding and a ₹350
   ornament, so a derived figure would be a real number attached to the wrong
   thing. The tiles carry timelines instead.
-- **The section manifest covers six pages**, not every page. `/shop`, `/blog`,
+- **The section manifest covers seven pages**, not every page. `/shop`, `/blog`,
   `/portfolio` and `/faq` are a hero plus their listing — hiding the listing
   makes the page pointless — and the detail routes are driven by content rather
   than by an arrangement. See `src/lib/page-sections.ts`.

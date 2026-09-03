@@ -383,7 +383,60 @@ for (const route of routesArg.split(",")) {
       })
       .filter(Boolean);
 
+    /* Part 3.5 as computed style. "Blur in exactly one place: the sticky
+       header on scroll" — plus the header's own search panel, which the
+       overlay documents as that same layer. "No drop shadows on the
+       storefront", with the mobile bottom bar's 1px hairline rule as the one
+       public exception (the Studio bulk bar never renders on these routes).
+       Nothing gated either rule, and blur crept into six mounted elements
+       and a shadow into the consent banner before anyone noticed (Phase 0
+       audit §4.4). A "drop shadow" here is a box-shadow with a blur radius;
+       Tailwind rings and the 1px rules render through box-shadow too and are
+       borders by another name, so a zero-blur shadow is not an offender.
+       Hidden elements are skipped — the sr-only skip link carries a focus
+       shadow it never paints unfocused. */
+    const describe = (el) => {
+      const slot = el.dataset?.slot ? `[data-slot=${el.dataset.slot}]` : "";
+      const id = el.id ? `#${el.id}` : "";
+      const cls =
+        typeof el.className === "string" && el.className
+          ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".")
+          : "";
+      return `${el.tagName.toLowerCase()}${id}${slot}${cls}`;
+    };
+    const hasBlurRadius = (boxShadow) =>
+      boxShadow
+        .split(/,(?![^(]*\))/)
+        .some((shadow) => {
+          const lengths = shadow.replace(/rgba?\([^)]*\)/g, "").match(/-?[\d.]+px/g) ?? [];
+          // offset-x offset-y blur-radius spread-radius
+          return lengths.length >= 3 && parseFloat(lengths[2]) > 0;
+        });
+    const blurOffenders = [];
+    const shadowOffenders = [];
+    for (const el of document.querySelectorAll("body *")) {
+      if (!visible(el)) continue;
+      const cs = getComputedStyle(el);
+      const backdrop = cs.backdropFilter || cs.webkitBackdropFilter || "none";
+      if (
+        backdrop !== "none" &&
+        !el.closest("[data-slot='sf-site-header'], [data-slot='sf-search-overlay']")
+      ) {
+        blurOffenders.push(describe(el));
+      }
+      if (
+        cs.boxShadow &&
+        cs.boxShadow !== "none" &&
+        hasBlurRadius(cs.boxShadow) &&
+        !el.closest("[data-slot='sf-bottom-bar']")
+      ) {
+        shadowOffenders.push(describe(el));
+      }
+    }
+
     return {
+      blurOffenders: [...new Set(blurOffenders)].slice(0, 8),
+      shadowOffenders: [...new Set(shadowOffenders)].slice(0, 8),
       brokenImages: [...new Set(brokenImages)],
       h1Count: h1s.length,
       h1Text: h1s.map((h) => h.text),
@@ -445,6 +498,12 @@ for (const route of routesArg.split(",")) {
   }
   if (audit.brandAlts.length) {
     report("FAIL", `alt text names the brand instead of describing the picture — "${audit.brandAlts[0]}"`);
+  }
+  if (audit.blurOffenders.length) {
+    report("FAIL", `backdrop-filter outside the header — ${audit.blurOffenders.join(", ")} (Part 3.5: blur in exactly one place)`);
+  }
+  if (audit.shadowOffenders.length) {
+    report("FAIL", `drop shadow on the storefront — ${audit.shadowOffenders.join(", ")} (Part 3.5: none, the mobile bottom bar excepted)`);
   }
   // Advisory only — the selector cannot tell a hairline from a headline.
   if (audit.champagne > 2) {
