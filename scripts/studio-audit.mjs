@@ -53,6 +53,7 @@ const DEFAULT_ROUTES = [
   "/studio/users",
   "/studio/activity",
   "/studio/testimonials/new",
+  "/studio/content-lab",
 ];
 
 const args = process.argv.slice(2);

@@ -283,6 +283,31 @@ async function getDashboardData() {
     who: row.user?.name ?? "System",
   }));
 
+  // Content Lab (batch G) — the sum of every isDemo row across the tables
+  // it seeds. Deliberately outside the transaction above and wrapped in its
+  // own try/catch: this tile is informational, and a Content Lab query
+  // failing must never take the rest of the Overview down with it.
+  let demoRecords: number | null = null;
+  try {
+    const demoCounts = await db.$transaction([
+      db.blogCategory.count({ where: { isDemo: true } }),
+      db.blogPost.count({ where: { isDemo: true } }),
+      db.media.count({ where: { isDemo: true } }),
+      db.product.count({ where: { isDemo: true } }),
+      db.portfolio.count({ where: { isDemo: true } }),
+      db.testimonial.count({ where: { isDemo: true } }),
+      db.faq.count({ where: { isDemo: true } }),
+      db.customPage.count({ where: { isDemo: true } }),
+      db.inquiry.count({ where: { isDemo: true } }),
+      db.researchRecord.count({ where: { isDemo: true } }),
+      db.scrapeJob.count({ where: { isDemo: true } }),
+      db.importRun.count({ where: { isDemo: true } }),
+    ]);
+    demoRecords = demoCounts.reduce((sum, n) => sum + n, 0);
+  } catch (error) {
+    console.error("dashboard: demo-records count failed:", error);
+  }
+
   return {
     counts,
     tierGroups,
@@ -295,6 +320,7 @@ async function getDashboardData() {
     topProducts,
     recentInquiries,
     activity,
+    demoRecords,
   };
 }
 
@@ -341,6 +367,7 @@ export default async function DashboardPage() {
     topProducts,
     recentInquiries,
     activity,
+    demoRecords,
   } = await getDashboardData();
 
   const num = (n: number) => n.toLocaleString("en-IN");
@@ -513,7 +540,7 @@ export default async function DashboardPage() {
           Counts, not judgements: an empty surface reads 0 rather than being
           hidden, because 0 is the answer. */}
       <h2 className="u-micro mb-3">CONTENT &amp; PIPELINE</h2>
-      <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <Link href="/studio/testimonials" className={STRIP_LINK}>
           <span className="u-micro">Testimonials</span>
           <span className="u-num text-20 text-foreground">
@@ -542,6 +569,12 @@ export default async function DashboardPage() {
           <span className="u-micro">Import runs</span>
           <span className="u-num text-20 text-foreground">
             {num(importRuns)}
+          </span>
+        </Link>
+        <Link href="/studio/content-lab" className={STRIP_LINK}>
+          <span className="u-micro">Demo records</span>
+          <span className="u-num text-20 text-foreground">
+            {demoRecords === null ? "—" : num(demoRecords)}
           </span>
         </Link>
       </div>
@@ -574,11 +607,11 @@ export default async function DashboardPage() {
             </p>
           ) : (
             <div
-            tabIndex={0}
-            role="region"
-            aria-label="Recent inquiries"
-            className="mt-4 overflow-x-auto [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
+              tabIndex={0}
+              role="region"
+              aria-label="Recent inquiries"
+              className="mt-4 overflow-x-auto [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            >
               <table className="w-full text-small">
                 <thead>
                   <StudioTableHead>

@@ -1,0 +1,180 @@
+[
+  {
+    "id": "demo-block-lander-hero",
+    "pageId": "demo-lander",
+    "type": "hero",
+    "order": 0,
+    "data": {
+      "image": "/media/v3/hero-pour.avif",
+      "imageAlt": "A hand-poured resin river table catching afternoon light.",
+      "eyebrow": "CONTENT LAB DEMO",
+      "headline": "Concept pieces, made to order",
+      "body": "This landing page is Content Lab fixture content, built to prove out every block in the catalogue.",
+      "ctaLabel": "Start a commission",
+      "ctaHref": "/custom-order"
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-richtext",
+    "pageId": "demo-lander",
+    "type": "richText",
+    "order": 1,
+    "data": {
+      "heading": "How a commission works",
+      "body": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "A commission usually starts with a size and a colour mood rather than a finished design, and that is by design. The studio's own process is to build a small sample pour in the requested palette before committing to the full piece, because a colour that reads calm on a phone screen can read cold in a living room with north-facing light. Two rounds of reference photos are standard before a final pour begins, and reference photos of the actual room the piece will sit in are worth more than a Pinterest board full of other people's resin work."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "This landing page is a Content Lab fixture — placeholder editorial content demonstrating the block catalogue, not a live campaign."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-grid",
+    "pageId": "demo-lander",
+    "type": "productGrid",
+    "order": 2,
+    "data": {
+      "heading": "A few concept pieces",
+      "intro": "Manually curated for this demo page — real landers pick their own slugs.",
+      "mode": "manual",
+      "slugs": [
+        "demo-product-001",
+        "demo-product-002",
+        "demo-product-006",
+        "demo-product-010"
+      ],
+      "category": "",
+      "limit": 4
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-imagecta",
+    "pageId": "demo-lander",
+    "type": "imageCta",
+    "order": 3,
+    "data": {
+      "image": "/media/v3/login-backdrop.avif",
+      "imageAlt": "A macro detail of poured resin over teak.",
+      "heading": "Not sure what you want yet?",
+      "body": "Send a rough idea or a reference photo — the brief takes shape from there.",
+      "ctaLabel": "Message the studio",
+      "ctaHref": "/custom-order",
+      "imageSide": "start"
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-faqpicker",
+    "pageId": "demo-lander",
+    "type": "faqPicker",
+    "order": 4,
+    "data": {
+      "heading": "Commonly asked",
+      "faqIds": [
+        "demo-faq-002",
+        "demo-faq-006",
+        "demo-faq-010"
+      ]
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-finalcta",
+    "pageId": "demo-lander",
+    "type": "finalCta",
+    "order": 5,
+    "data": {
+      "heading": "Ready to start?",
+      "body": "Every order finalises on WhatsApp — no payment gateway, no account.",
+      "ctaLabel": "Order on WhatsApp",
+      "ctaHref": "",
+      "whatsapp": true
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-002-hero",
+    "pageId": "demo-page-002",
+    "type": "hero",
+    "order": 0,
+    "data": {
+      "image": "/media/v3/macro-epoxy.avif",
+      "imageAlt": "A seasonal collection of resin pieces staged on a studio bench.",
+      "eyebrow": "COMING SOON",
+      "headline": "A seasonal drop, scheduled ahead",
+      "body": "This page proves out publishAt scheduling — it goes live at a future date even though it is already PUBLISHED.",
+      "ctaLabel": "",
+      "ctaHref": ""
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-003-hero",
+    "pageId": "demo-page-003",
+    "type": "hero",
+    "order": 0,
+    "data": {
+      "image": "/media/v3/macro-flower.avif",
+      "imageAlt": "A quiet corner of the studio, out of the public catalogue.",
+      "eyebrow": "PREVIEW ONLY",
+      "headline": "A page kept out of search",
+      "body": "noindex: true — this page renders but is never indexed or listed.",
+      "ctaLabel": "",
+      "ctaHref": ""
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-004-hero",
+    "pageId": "demo-page-004",
+    "type": "hero",
+    "order": 0,
+    "data": {
+      "image": "/media/v3/macro-pigment.avif",
+      "imageAlt": "An unfinished commission on the studio bench.",
+      "eyebrow": "DRAFT",
+      "headline": "A landing page still being written",
+      "body": "",
+      "ctaLabel": "",
+      "ctaHref": ""
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-005-hero",
+    "pageId": "demo-page-005",
+    "type": "hero",
+    "order": 0,
+    "data": {
+      "image": "/media/v3/macro-teak.avif",
+      "imageAlt": "A retired campaign banner, kept for the record.",
+      "eyebrow": "ARCHIVED",
+      "headline": "A past campaign, kept for the record",
+      "body": "",
+      "ctaLabel": "",
+      "ctaHref": ""
+    },
+    "translations": null
+  }
+]

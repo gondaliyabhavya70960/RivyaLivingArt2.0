@@ -1,0 +1,2442 @@
+[
+  {
+    "id": "demo-product-image-001-01",
+    "productId": "demo-product-001",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Geode Side Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-001-02",
+    "productId": "demo-product-001",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Geode Side Table — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": "IN_ROOM"
+  },
+  {
+    "id": "demo-product-image-001-03",
+    "productId": "demo-product-001",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Geode Side Table — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": "DETAIL"
+  },
+  {
+    "id": "demo-product-image-001-04",
+    "productId": "demo-product-001",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Geode Side Table — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": "PROCESS"
+  },
+  {
+    "id": "demo-product-image-001-05",
+    "productId": "demo-product-001",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Geode Side Table — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-001-06",
+    "productId": "demo-product-001",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Geode Side Table — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-001-07",
+    "productId": "demo-product-001",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Geode Side Table — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-001-08",
+    "productId": "demo-product-001",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Geode Side Table — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-01",
+    "productId": "demo-product-002",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Resin & Teak Bench — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-002-02",
+    "productId": "demo-product-002",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Resin & Teak Bench — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-03",
+    "productId": "demo-product-002",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Resin & Teak Bench — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-04",
+    "productId": "demo-product-002",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Resin & Teak Bench — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-05",
+    "productId": "demo-product-002",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Resin & Teak Bench — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-06",
+    "productId": "demo-product-002",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Resin & Teak Bench — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-07",
+    "productId": "demo-product-002",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Resin & Teak Bench — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-002-08",
+    "productId": "demo-product-002",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Resin & Teak Bench — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-004-01",
+    "productId": "demo-product-004",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Abstract Pour Dining Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-005-01",
+    "productId": "demo-product-005",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Emerald River Coffee Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-005-02",
+    "productId": "demo-product-005",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Emerald River Coffee Table — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-005-03",
+    "productId": "demo-product-005",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Emerald River Coffee Table — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-005-04",
+    "productId": "demo-product-005",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Emerald River Coffee Table — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-005-05",
+    "productId": "demo-product-005",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Emerald River Coffee Table — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-005-06",
+    "productId": "demo-product-005",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Emerald River Coffee Table — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-005-07",
+    "productId": "demo-product-005",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Emerald River Coffee Table — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-005-08",
+    "productId": "demo-product-005",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Emerald River Coffee Table — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-007-01",
+    "productId": "demo-product-007",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Amber Pour Side Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-008-01",
+    "productId": "demo-product-008",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Sapphire Wave Bench — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-008-02",
+    "productId": "demo-product-008",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Sapphire Wave Bench — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-008-03",
+    "productId": "demo-product-008",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Sapphire Wave Bench — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-008-04",
+    "productId": "demo-product-008",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Sapphire Wave Bench — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-008-05",
+    "productId": "demo-product-008",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Sapphire Wave Bench — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-008-06",
+    "productId": "demo-product-008",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Sapphire Wave Bench — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-008-07",
+    "productId": "demo-product-008",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Sapphire Wave Bench — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-008-08",
+    "productId": "demo-product-008",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Sapphire Wave Bench — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-010-01",
+    "productId": "demo-product-010",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Deep Ocean Table Top — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-011-01",
+    "productId": "demo-product-011",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Gold Vein Console — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-011-02",
+    "productId": "demo-product-011",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Gold Vein Console — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-011-03",
+    "productId": "demo-product-011",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Gold Vein Console — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-011-04",
+    "productId": "demo-product-011",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Gold Vein Console — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-011-05",
+    "productId": "demo-product-011",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Gold Vein Console — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-011-06",
+    "productId": "demo-product-011",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Gold Vein Console — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-011-07",
+    "productId": "demo-product-011",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Gold Vein Console — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-011-08",
+    "productId": "demo-product-011",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Gold Vein Console — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-013-01",
+    "productId": "demo-product-013",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Ivory Terrazzo Coffee Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-014-01",
+    "productId": "demo-product-014",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Cascading Resin Bench — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-014-02",
+    "productId": "demo-product-014",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Cascading Resin Bench — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-014-03",
+    "productId": "demo-product-014",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Cascading Resin Bench — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-014-04",
+    "productId": "demo-product-014",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Cascading Resin Bench — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-014-05",
+    "productId": "demo-product-014",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Cascading Resin Bench — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-014-06",
+    "productId": "demo-product-014",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Cascading Resin Bench — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-014-07",
+    "productId": "demo-product-014",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Cascading Resin Bench — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-014-08",
+    "productId": "demo-product-014",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Cascading Resin Bench — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-016-01",
+    "productId": "demo-product-016",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Botanical Suspension Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-017-01",
+    "productId": "demo-product-017",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Storm Glass Side Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-017-02",
+    "productId": "demo-product-017",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Storm Glass Side Table — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-017-03",
+    "productId": "demo-product-017",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Storm Glass Side Table — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-017-04",
+    "productId": "demo-product-017",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Storm Glass Side Table — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-017-05",
+    "productId": "demo-product-017",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Storm Glass Side Table — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-017-06",
+    "productId": "demo-product-017",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Storm Glass Side Table — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-017-07",
+    "productId": "demo-product-017",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Storm Glass Side Table — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-017-08",
+    "productId": "demo-product-017",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Storm Glass Side Table — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-019-01",
+    "productId": "demo-product-019",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Reef Pattern Dining Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-020-01",
+    "productId": "demo-product-020",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "River Dining Table — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-020-02",
+    "productId": "demo-product-020",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "River Dining Table — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-020-03",
+    "productId": "demo-product-020",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "River Dining Table — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-020-04",
+    "productId": "demo-product-020",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "River Dining Table — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-020-05",
+    "productId": "demo-product-020",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "River Dining Table — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-020-06",
+    "productId": "demo-product-020",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "River Dining Table — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-020-07",
+    "productId": "demo-product-020",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "River Dining Table — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-020-08",
+    "productId": "demo-product-020",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "River Dining Table — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-022-01",
+    "productId": "demo-product-022",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Ocean Wave Console — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-023-01",
+    "productId": "demo-product-023",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Marbled Resin Canvas — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-023-02",
+    "productId": "demo-product-023",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Marbled Resin Canvas — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-023-03",
+    "productId": "demo-product-023",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Marbled Resin Canvas — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-023-04",
+    "productId": "demo-product-023",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Marbled Resin Canvas — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-023-05",
+    "productId": "demo-product-023",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Marbled Resin Canvas — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-023-06",
+    "productId": "demo-product-023",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Marbled Resin Canvas — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-023-07",
+    "productId": "demo-product-023",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Marbled Resin Canvas — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-023-08",
+    "productId": "demo-product-023",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Marbled Resin Canvas — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-025-01",
+    "productId": "demo-product-025",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Golden Vein Wall Piece — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-026-01",
+    "productId": "demo-product-026",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Coastal Storm Panel — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-026-02",
+    "productId": "demo-product-026",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Coastal Storm Panel — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-026-03",
+    "productId": "demo-product-026",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Coastal Storm Panel — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-026-04",
+    "productId": "demo-product-026",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Coastal Storm Panel — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-026-05",
+    "productId": "demo-product-026",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Coastal Storm Panel — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-026-06",
+    "productId": "demo-product-026",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Coastal Storm Panel — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-026-07",
+    "productId": "demo-product-026",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Coastal Storm Panel — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-026-08",
+    "productId": "demo-product-026",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Coastal Storm Panel — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-028-01",
+    "productId": "demo-product-028",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Monsoon Abstract Art — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-029-01",
+    "productId": "demo-product-029",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Reef Study Wall Panel — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-029-02",
+    "productId": "demo-product-029",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Reef Study Wall Panel — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-029-03",
+    "productId": "demo-product-029",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Reef Study Wall Panel — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-029-04",
+    "productId": "demo-product-029",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Reef Study Wall Panel — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-029-05",
+    "productId": "demo-product-029",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Reef Study Wall Panel — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-029-06",
+    "productId": "demo-product-029",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Reef Study Wall Panel — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-029-07",
+    "productId": "demo-product-029",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Reef Study Wall Panel — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-029-08",
+    "productId": "demo-product-029",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Reef Study Wall Panel — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-031-01",
+    "productId": "demo-product-031",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Tidepool Abstract Canvas — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-032-01",
+    "productId": "demo-product-032",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Copper Vein Wall Art — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-032-02",
+    "productId": "demo-product-032",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Copper Vein Wall Art — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-032-03",
+    "productId": "demo-product-032",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Copper Vein Wall Art — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-032-04",
+    "productId": "demo-product-032",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Copper Vein Wall Art — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-032-05",
+    "productId": "demo-product-032",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Copper Vein Wall Art — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-032-06",
+    "productId": "demo-product-032",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Copper Vein Wall Art — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-032-07",
+    "productId": "demo-product-032",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Copper Vein Wall Art — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-032-08",
+    "productId": "demo-product-032",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Copper Vein Wall Art — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-034-01",
+    "productId": "demo-product-034",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Layered Pigment Canvas — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-035-01",
+    "productId": "demo-product-035",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Aurora Pour Wall Art — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-035-02",
+    "productId": "demo-product-035",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Aurora Pour Wall Art — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-035-03",
+    "productId": "demo-product-035",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Aurora Pour Wall Art — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-035-04",
+    "productId": "demo-product-035",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Aurora Pour Wall Art — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-035-05",
+    "productId": "demo-product-035",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Aurora Pour Wall Art — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-035-06",
+    "productId": "demo-product-035",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Aurora Pour Wall Art — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-035-07",
+    "productId": "demo-product-035",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Aurora Pour Wall Art — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-035-08",
+    "productId": "demo-product-035",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Aurora Pour Wall Art — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-037-01",
+    "productId": "demo-product-037",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Salt Marsh Abstract Canvas — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-038-01",
+    "productId": "demo-product-038",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Ocean Wave Wall Art — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-038-02",
+    "productId": "demo-product-038",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Ocean Wave Wall Art — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-038-03",
+    "productId": "demo-product-038",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Ocean Wave Wall Art — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-038-04",
+    "productId": "demo-product-038",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Ocean Wave Wall Art — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-038-05",
+    "productId": "demo-product-038",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Ocean Wave Wall Art — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-038-06",
+    "productId": "demo-product-038",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Ocean Wave Wall Art — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-038-07",
+    "productId": "demo-product-038",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Ocean Wave Wall Art — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-038-08",
+    "productId": "demo-product-038",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Ocean Wave Wall Art — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-040-01",
+    "productId": "demo-product-040",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Sunset Pour Painting — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-041-01",
+    "productId": "demo-product-041",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Void Form Objet — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-041-02",
+    "productId": "demo-product-041",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Void Form Objet — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-041-03",
+    "productId": "demo-product-041",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Void Form Objet — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-041-04",
+    "productId": "demo-product-041",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Void Form Objet — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-041-05",
+    "productId": "demo-product-041",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Void Form Objet — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-041-06",
+    "productId": "demo-product-041",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Void Form Objet — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-041-07",
+    "productId": "demo-product-041",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Void Form Objet — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-041-08",
+    "productId": "demo-product-041",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Void Form Objet — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-043-01",
+    "productId": "demo-product-043",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Poured Resin Figure — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-044-01",
+    "productId": "demo-product-044",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Abstract Objet — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-044-02",
+    "productId": "demo-product-044",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Abstract Objet — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-044-03",
+    "productId": "demo-product-044",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Abstract Objet — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-044-04",
+    "productId": "demo-product-044",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Abstract Objet — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-044-05",
+    "productId": "demo-product-044",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Abstract Objet — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-044-06",
+    "productId": "demo-product-044",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Abstract Objet — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-044-07",
+    "productId": "demo-product-044",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Abstract Objet — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-044-08",
+    "productId": "demo-product-044",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Abstract Objet — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-046-01",
+    "productId": "demo-product-046",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Botanical Suspension Sculpture — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-047-01",
+    "productId": "demo-product-047",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Free-Form Resin Objet — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-047-02",
+    "productId": "demo-product-047",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Free-Form Resin Objet — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-047-03",
+    "productId": "demo-product-047",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Free-Form Resin Objet — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-047-04",
+    "productId": "demo-product-047",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Free-Form Resin Objet — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-047-05",
+    "productId": "demo-product-047",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Free-Form Resin Objet — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-047-06",
+    "productId": "demo-product-047",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Free-Form Resin Objet — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-047-07",
+    "productId": "demo-product-047",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Free-Form Resin Objet — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-047-08",
+    "productId": "demo-product-047",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Free-Form Resin Objet — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-049-01",
+    "productId": "demo-product-049",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Molten Form Objet — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-050-01",
+    "productId": "demo-product-050",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Drift Sculpture — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-050-02",
+    "productId": "demo-product-050",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Drift Sculpture — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-050-03",
+    "productId": "demo-product-050",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Drift Sculpture — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-050-04",
+    "productId": "demo-product-050",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Drift Sculpture — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-050-05",
+    "productId": "demo-product-050",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Drift Sculpture — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-050-06",
+    "productId": "demo-product-050",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Drift Sculpture — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-050-07",
+    "productId": "demo-product-050",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Drift Sculpture — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-050-08",
+    "productId": "demo-product-050",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Drift Sculpture — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-052-01",
+    "productId": "demo-product-052",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Suspended Petal Sculpture — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-053-01",
+    "productId": "demo-product-053",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Marble Pattern Wall Clock — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-053-02",
+    "productId": "demo-product-053",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Marble Pattern Wall Clock — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-053-03",
+    "productId": "demo-product-053",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Marble Pattern Wall Clock — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-053-04",
+    "productId": "demo-product-053",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Marble Pattern Wall Clock — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-053-05",
+    "productId": "demo-product-053",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Marble Pattern Wall Clock — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-053-06",
+    "productId": "demo-product-053",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Marble Pattern Wall Clock — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-053-07",
+    "productId": "demo-product-053",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Marble Pattern Wall Clock — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-053-08",
+    "productId": "demo-product-053",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Marble Pattern Wall Clock — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-055-01",
+    "productId": "demo-product-055",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Crystal-Look Vase — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-056-01",
+    "productId": "demo-product-056",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Pigment Art Vase — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-056-02",
+    "productId": "demo-product-056",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Pigment Art Vase — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-056-03",
+    "productId": "demo-product-056",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Pigment Art Vase — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-056-04",
+    "productId": "demo-product-056",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Pigment Art Vase — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-056-05",
+    "productId": "demo-product-056",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Pigment Art Vase — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-056-06",
+    "productId": "demo-product-056",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Pigment Art Vase — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-056-07",
+    "productId": "demo-product-056",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Pigment Art Vase — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-056-08",
+    "productId": "demo-product-056",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Pigment Art Vase — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-058-01",
+    "productId": "demo-product-058",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Resin-Embellished Vanity Mirror — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-059-01",
+    "productId": "demo-product-059",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Monogram Letter Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-059-02",
+    "productId": "demo-product-059",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Monogram Letter Set — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-059-03",
+    "productId": "demo-product-059",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Monogram Letter Set — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-059-04",
+    "productId": "demo-product-059",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Monogram Letter Set — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-059-05",
+    "productId": "demo-product-059",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Monogram Letter Set — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-059-06",
+    "productId": "demo-product-059",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Monogram Letter Set — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-059-07",
+    "productId": "demo-product-059",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Monogram Letter Set — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-059-08",
+    "productId": "demo-product-059",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Monogram Letter Set — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-061-01",
+    "productId": "demo-product-061",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Anniversary Preservation Frame — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-062-01",
+    "productId": "demo-product-062",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Coaster Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-062-02",
+    "productId": "demo-product-062",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Coaster Set — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-062-03",
+    "productId": "demo-product-062",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Coaster Set — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-062-04",
+    "productId": "demo-product-062",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Coaster Set — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-062-05",
+    "productId": "demo-product-062",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Coaster Set — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-062-06",
+    "productId": "demo-product-062",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Coaster Set — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-062-07",
+    "productId": "demo-product-062",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Coaster Set — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-062-08",
+    "productId": "demo-product-062",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Coaster Set — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-064-01",
+    "productId": "demo-product-064",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Gold Leaf Serving Tray — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-065-01",
+    "productId": "demo-product-065",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Engagement Tray — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-065-02",
+    "productId": "demo-product-065",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Engagement Tray — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-065-03",
+    "productId": "demo-product-065",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Engagement Tray — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-065-04",
+    "productId": "demo-product-065",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Engagement Tray — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-065-05",
+    "productId": "demo-product-065",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Engagement Tray — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-065-06",
+    "productId": "demo-product-065",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Engagement Tray — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-065-07",
+    "productId": "demo-product-065",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Engagement Tray — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-065-08",
+    "productId": "demo-product-065",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Engagement Tray — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-067-01",
+    "productId": "demo-product-067",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Jesmonite Tableware Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-068-01",
+    "productId": "demo-product-068",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Festive Hamper Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-068-02",
+    "productId": "demo-product-068",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Festive Hamper Set — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-068-03",
+    "productId": "demo-product-068",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Festive Hamper Set — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-068-04",
+    "productId": "demo-product-068",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Festive Hamper Set — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-068-05",
+    "productId": "demo-product-068",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Festive Hamper Set — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-068-06",
+    "productId": "demo-product-068",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Festive Hamper Set — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-068-07",
+    "productId": "demo-product-068",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Festive Hamper Set — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-068-08",
+    "productId": "demo-product-068",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Festive Hamper Set — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-070-01",
+    "productId": "demo-product-070",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Housewarming Tray Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-071-01",
+    "productId": "demo-product-071",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Team Milestone Gift Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-071-02",
+    "productId": "demo-product-071",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Team Milestone Gift Set — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-071-03",
+    "productId": "demo-product-071",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Team Milestone Gift Set — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-071-04",
+    "productId": "demo-product-071",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Team Milestone Gift Set — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-071-05",
+    "productId": "demo-product-071",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Team Milestone Gift Set — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-071-06",
+    "productId": "demo-product-071",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Team Milestone Gift Set — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-071-07",
+    "productId": "demo-product-071",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Team Milestone Gift Set — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-071-08",
+    "productId": "demo-product-071",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Team Milestone Gift Set — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-073-01",
+    "productId": "demo-product-073",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Wedding Favour Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-074-01",
+    "productId": "demo-product-074",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Bespoke Gifting Trio — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-074-02",
+    "productId": "demo-product-074",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Bespoke Gifting Trio — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-074-03",
+    "productId": "demo-product-074",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Bespoke Gifting Trio — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-074-04",
+    "productId": "demo-product-074",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Bespoke Gifting Trio — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-074-05",
+    "productId": "demo-product-074",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Bespoke Gifting Trio — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-074-06",
+    "productId": "demo-product-074",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Bespoke Gifting Trio — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-074-07",
+    "productId": "demo-product-074",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Bespoke Gifting Trio — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-074-08",
+    "productId": "demo-product-074",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Bespoke Gifting Trio — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-076-01",
+    "productId": "demo-product-076",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Pressed Petal Bracelet — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-077-01",
+    "productId": "demo-product-077",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Botanical Pendant Necklace — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-077-02",
+    "productId": "demo-product-077",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Botanical Pendant Necklace — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-077-03",
+    "productId": "demo-product-077",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Botanical Pendant Necklace — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-077-04",
+    "productId": "demo-product-077",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Botanical Pendant Necklace — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-077-05",
+    "productId": "demo-product-077",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Botanical Pendant Necklace — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-077-06",
+    "productId": "demo-product-077",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Botanical Pendant Necklace — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-077-07",
+    "productId": "demo-product-077",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Botanical Pendant Necklace — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-077-08",
+    "productId": "demo-product-077",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Botanical Pendant Necklace — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-079-01",
+    "productId": "demo-product-079",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Ocean Wave Ring — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-080-01",
+    "productId": "demo-product-080",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Keepsake Charm Bracelet — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-080-02",
+    "productId": "demo-product-080",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Keepsake Charm Bracelet — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-080-03",
+    "productId": "demo-product-080",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Keepsake Charm Bracelet — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-080-04",
+    "productId": "demo-product-080",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Keepsake Charm Bracelet — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-080-05",
+    "productId": "demo-product-080",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Keepsake Charm Bracelet — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-080-06",
+    "productId": "demo-product-080",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Keepsake Charm Bracelet — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-080-07",
+    "productId": "demo-product-080",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Keepsake Charm Bracelet — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-080-08",
+    "productId": "demo-product-080",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Keepsake Charm Bracelet — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-082-01",
+    "productId": "demo-product-082",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Resin Ring — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-083-01",
+    "productId": "demo-product-083",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Charm Keychain — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-083-02",
+    "productId": "demo-product-083",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Charm Keychain — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-083-03",
+    "productId": "demo-product-083",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Charm Keychain — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-083-04",
+    "productId": "demo-product-083",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Charm Keychain — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-083-05",
+    "productId": "demo-product-083",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Charm Keychain — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-083-06",
+    "productId": "demo-product-083",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Charm Keychain — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-083-07",
+    "productId": "demo-product-083",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Charm Keychain — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-083-08",
+    "productId": "demo-product-083",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Charm Keychain — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-085-01",
+    "productId": "demo-product-085",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Varmala Preservation Frame — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-086-01",
+    "productId": "demo-product-086",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Wedding Garland Shadow Box — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-086-02",
+    "productId": "demo-product-086",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Wedding Garland Shadow Box — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-086-03",
+    "productId": "demo-product-086",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Wedding Garland Shadow Box — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-086-04",
+    "productId": "demo-product-086",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Wedding Garland Shadow Box — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-086-05",
+    "productId": "demo-product-086",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Wedding Garland Shadow Box — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-086-06",
+    "productId": "demo-product-086",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Wedding Garland Shadow Box — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-086-07",
+    "productId": "demo-product-086",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Wedding Garland Shadow Box — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-086-08",
+    "productId": "demo-product-086",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Wedding Garland Shadow Box — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-088-01",
+    "productId": "demo-product-088",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "LED Wedding Photo Frame — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-089-01",
+    "productId": "demo-product-089",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Twin Varmala Preservation Frame — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-089-02",
+    "productId": "demo-product-089",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Twin Varmala Preservation Frame — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-089-03",
+    "productId": "demo-product-089",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Twin Varmala Preservation Frame — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-089-04",
+    "productId": "demo-product-089",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Twin Varmala Preservation Frame — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-089-05",
+    "productId": "demo-product-089",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Twin Varmala Preservation Frame — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-089-06",
+    "productId": "demo-product-089",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Twin Varmala Preservation Frame — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-089-07",
+    "productId": "demo-product-089",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Twin Varmala Preservation Frame — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-089-08",
+    "productId": "demo-product-089",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Twin Varmala Preservation Frame — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-091-01",
+    "productId": "demo-product-091",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Resin-Embellished Vanity Mirror — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-092-01",
+    "productId": "demo-product-092",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Monogram Letter Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-092-02",
+    "productId": "demo-product-092",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Monogram Letter Set — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-092-03",
+    "productId": "demo-product-092",
+    "url": "/media/v3/bespoke-petals.avif",
+    "alt": "Monogram Letter Set — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-092-04",
+    "productId": "demo-product-092",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Monogram Letter Set — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-092-05",
+    "productId": "demo-product-092",
+    "url": "/media/v3/login-backdrop.avif",
+    "alt": "Monogram Letter Set — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-092-06",
+    "productId": "demo-product-092",
+    "url": "/media/v3/macro-epoxy.avif",
+    "alt": "Monogram Letter Set — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-092-07",
+    "productId": "demo-product-092",
+    "url": "/media/v3/macro-flower.avif",
+    "alt": "Monogram Letter Set — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-092-08",
+    "productId": "demo-product-092",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Monogram Letter Set — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-094-01",
+    "productId": "demo-product-094",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Resin Coaster & Tumbler Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-095-01",
+    "productId": "demo-product-095",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Diwali Diya Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-095-02",
+    "productId": "demo-product-095",
+    "url": "/media/v3/texture-band.avif",
+    "alt": "Diwali Diya Set — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-095-03",
+    "productId": "demo-product-095",
+    "url": "/media/v3/tile-create.avif",
+    "alt": "Diwali Diya Set — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-095-04",
+    "productId": "demo-product-095",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Diwali Diya Set — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-095-05",
+    "productId": "demo-product-095",
+    "url": "/media/v3/tile-live.avif",
+    "alt": "Diwali Diya Set — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-095-06",
+    "productId": "demo-product-095",
+    "url": "/media/v3/tile-preserve.avif",
+    "alt": "Diwali Diya Set — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-095-07",
+    "productId": "demo-product-095",
+    "url": "/media/v3/tile-print.avif",
+    "alt": "Diwali Diya Set — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-095-08",
+    "productId": "demo-product-095",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Diwali Diya Set — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-097-01",
+    "productId": "demo-product-097",
+    "url": "/media/v3/hero-pour.avif",
+    "alt": "Coaster Set — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-098-01",
+    "productId": "demo-product-098",
+    "url": "/media/v3/macro-teak.avif",
+    "alt": "Wall Art Panel — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  },
+  {
+    "id": "demo-product-image-098-02",
+    "productId": "demo-product-098",
+    "url": "/media/v3/print-head.avif",
+    "alt": "Wall Art Panel — view 2 (Content Lab demo photograph)",
+    "order": 1,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-098-03",
+    "productId": "demo-product-098",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Wall Art Panel — view 3 (Content Lab demo photograph)",
+    "order": 2,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-098-04",
+    "productId": "demo-product-098",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Wall Art Panel — view 4 (Content Lab demo photograph)",
+    "order": 3,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-098-05",
+    "productId": "demo-product-098",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Wall Art Panel — view 5 (Content Lab demo photograph)",
+    "order": 4,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-098-06",
+    "productId": "demo-product-098",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Wall Art Panel — view 6 (Content Lab demo photograph)",
+    "order": 5,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-098-07",
+    "productId": "demo-product-098",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Wall Art Panel — view 7 (Content Lab demo photograph)",
+    "order": 6,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-098-08",
+    "productId": "demo-product-098",
+    "url": "/media/v3/studio-interior.avif",
+    "alt": "Wall Art Panel — view 8 (Content Lab demo photograph)",
+    "order": 7,
+    "role": null
+  },
+  {
+    "id": "demo-product-image-100-01",
+    "productId": "demo-product-100",
+    "url": "/media/v3/tile-gift.avif",
+    "alt": "Marble Pattern Wall Clock — view 1 (Content Lab demo photograph)",
+    "order": 0,
+    "role": "HERO"
+  }
+]
