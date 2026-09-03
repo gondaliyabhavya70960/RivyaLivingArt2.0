@@ -395,15 +395,25 @@ export default async function BlogPostPage({ params }: PageProps) {
     mainEntityOfPage: postUrl,
   };
 
+  // The names MIRROR the visible breadcrumb below, deliberately: structured
+  // data is supposed to describe what the page shows, and these were
+  // hardcoded English on a site that renders in nine languages — so every
+  // non-English page was telling search engines something its own markup
+  // contradicted.
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: tCommon("home"),
+        item: SITE.url,
+      },
       {
         "@type": "ListItem",
         position: 2,
-        name: "Blog",
+        name: tNav("blog"),
         item: `${SITE.url}/blog`,
       },
       { "@type": "ListItem", position: 3, name: lp.title, item: postUrl },
