@@ -48,7 +48,7 @@ export function StudioMobileNav({
   return (
     <div
       data-theme="navy"
-      className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-hairline-dk bg-obsidian px-3 lg:hidden [--background:var(--obsidian)] [--ring:var(--focus)]"
+      className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-hairline-dk bg-obsidian px-3 sm:hidden [--background:var(--obsidian)] [--ring:var(--focus)]"
     >
       <Logo href="/studio" className="h-6 text-mineral" />
       <div className="flex items-center gap-0.5">

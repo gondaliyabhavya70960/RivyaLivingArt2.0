@@ -5,6 +5,49 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — the tablet rail, badge tones and the toaster (2026-09-03, second batch)
+
+### Added
+- **The Studio has a sidebar between 640 and 1024 px.** It was `lg:flex` alone, so a tablet — the
+  device an owner actually reviews commissions on — got the PHONE chrome: no persistent nav, every
+  navigation a drawer open. From 640 px the sidebar is now an 80 px icon rail carrying the same nav
+  with its labels dropped (each link already had a `title`), and the topbar comes with it, so search,
+  notifications and profile arrive at the same breakpoint. The full 256 px panel still starts at
+  1024 px. The owner's collapse toggle is scoped to `lg` and up — below that there is no room for
+  the panel, so there is nothing to collapse.
+- **`success`, `warning` and `alert` Badge variants.** Eight call sites hand-rolled these as
+  `variant="outline"` plus `border-<tone>/40 text-<tone>` — and had drifted: the same "this is fine"
+  green was `/40` in the scraper and `/50` on the commission board, so two screens an owner moves
+  between all day drew the same state at two different weights.
+
+### Fixed
+- **Every toast in the Studio came out in a colour the design system does not contain.** Sonner's
+  `richColors` paints its own palette — success is a hardcoded `hsl(143, 85%, 96%)`, nowhere near
+  this repo's `--success` (`#2c6b5b`). The flag stays on, because it is what gives success, error and
+  warning distinct treatments at all; its CSS variables are repointed at the tokens instead.
+
+### The bug this caught in its own first draft
+The first version repointed them at `var(--card)` and `var(--foreground)` — the shadcn aliases. Those
+do not exist in this repo: the `.studio-v2` scope's names are `--surface`, `--text` and `--border`.
+An undefined custom property makes the whole `color-mix()` **invalid at computed-value time and the
+declaration is dropped silently**, so the toasts came out with the right text colour and a fully
+transparent background, which looks close enough to correct to ship. It was caught only by measuring
+`getComputedStyle` on a real rendered toast — `background: rgba(0, 0, 0, 0)`. Sonner portals its list
+to `document.body` and `.studio-v2` sits on `<html>`, so the scope does reach it; the names were
+simply wrong.
+
+### Verified rather than assumed
+- The rail measured at five widths on a production build: 390 (mobile bar, sidebar hidden), 640 and
+  768 (rail 80 px, `margin-inline-start: 80px`, labels hidden), 1024 and 1440 (panel 256 px, labels
+  shown). No horizontal page overflow at any of them.
+- Toast colours measured on real toasts fired from a scratch-build probe route: success text
+  `rgb(44, 107, 91)` = `--success`, error `rgb(155, 58, 46)` = `--alert`, warning `rgb(138, 106, 30)`
+  = `--warning`, each on its own 8% tint with a 40% border. The probe route was deleted before the
+  commit and is absent from the final build.
+- `studio-audit.mjs` clean across 30 routes at 1440, 768, 640 and 390 px.
+
+---
+
 ## Transformation Phase 10 — the Studio's three route boundaries (2026-09-03)
 
 The first slice of Phase 10. All three boundaries already existed; each was wrong in a way no gate

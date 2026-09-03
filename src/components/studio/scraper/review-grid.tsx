@@ -83,10 +83,10 @@ const STATUS_LABELS: Record<ReviewStatus, string> = {
 
 const STATUS_BADGE: Record<
   ReviewStatus,
-  { variant: "default" | "secondary" | "outline"; className?: string }
+  { variant: "default" | "secondary" | "outline" | "success"; className?: string }
 > = {
   PENDING: { variant: "outline" },
-  APPROVED: { variant: "outline", className: "border-success/40 text-success" },
+  APPROVED: { variant: "success" },
   REJECTED: { variant: "secondary", className: "text-muted-foreground" },
   IMPORTED: { variant: "default" },
 };

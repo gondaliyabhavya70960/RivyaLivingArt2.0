@@ -518,7 +518,7 @@ export function ProductList({
                         <Badge variant="outline">DEMO</Badge>
                       )}
                       {product.needsRewrite && (
-                        <Badge variant="outline" className="border-warning/40 text-warning">needs rewrite</Badge>
+                        <Badge variant="warning">needs rewrite</Badge>
                       )}
                       {product.demoted && (
                         <Badge
@@ -543,12 +543,7 @@ export function ProductList({
                         outline; Draft keeps the neutral chip. */}
                     <Badge
                       variant={
-                        product.status === "PUBLISHED" ? "outline" : "secondary"
-                      }
-                      className={
-                        product.status === "PUBLISHED"
-                          ? "border-success/40 text-success"
-                          : undefined
+                        product.status === "PUBLISHED" ? "success" : "secondary"
                       }
                     >
                       {product.status === "PUBLISHED" ? "Published" : "Draft"}

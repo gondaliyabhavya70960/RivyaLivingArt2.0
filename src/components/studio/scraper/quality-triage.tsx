@@ -86,7 +86,7 @@ export function QualityTriage({
               <h2 className="flex items-center gap-2 font-medium text-foreground">
                 {group.field}
                 {group.severity === "ERROR" && (
-                  <Badge variant="outline" className="border-alert/50 text-alert">
+                  <Badge variant="alert">
                     unusable
                   </Badge>
                 )}

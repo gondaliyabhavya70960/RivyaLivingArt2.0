@@ -306,7 +306,7 @@ export default async function SheetImportPage() {
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums">
                     {(noImage.get(tier) ?? 0) > 0 ? (
-                      <Badge variant="outline" className="border-warning/40 text-warning">{noImage.get(tier)}</Badge>
+                      <Badge variant="warning">{noImage.get(tier)}</Badge>
                     ) : (
                       <span className="text-muted-foreground">0</span>
                     )}

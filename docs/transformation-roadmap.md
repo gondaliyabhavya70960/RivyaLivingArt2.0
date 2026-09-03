@@ -179,9 +179,9 @@ Touches: `prisma/schema.prisma`, one migration, `src/lib/testimonials.ts`, `src/
 
 ### Phase 10 — Studio shell
 
-- Tablet sidebar (collapsible rail between 640 and 1024 px); command-palette verbs (Create product, Run scraper, Import sheet as navigation shortcuts) and testimonial/media items; `⌘K` hint and flat loading row (shortlist 17).
+- ~~Tablet sidebar (collapsible rail between 640 and 1024 px)~~ **DONE 2026-09-03** — 80 px icon rail from 640, full panel from 1024, topbar moved to match; measured at five widths. Still open: command-palette verbs (Create product, Run scraper, Import sheet as navigation shortcuts) and testimonial/media items; `⌘K` hint and flat loading row (shortlist 17).
 - ~~Studio `error.tsx` with a reference code; `not-found.tsx` in v3 vocabulary; the shared `loading.tsx` flat, no shimmer~~ **DONE 2026-09-03** — all three retokened and driven against a production build (the audit sweeps 30 routes and none of them is an error). Still open here: PER-ROUTE `loading.tsx` skeletons at final dimensions (today one shared skeleton serves every screen) and the auth-tree boundary.
-- Sonner styled by tokens; badge semantic tones; a `Tabs` primitive; sticky header row and pinned first column on wide tables (shortlist 16); row-enter for appended activity rows (shortlist 15).
+- ~~Sonner styled by tokens; badge semantic tones~~ **DONE 2026-09-03**. Still open: a `Tabs` primitive (`translations-section.tsx` hand-rolls one and is the real consumer — `storefront/tabs.tsx` is storefront-tokened, so the Studio needs its own rather than a shared import); sticky header row and pinned first column on wide tables (shortlist 16 — products already goes sticky at `xl`, so this is widening the breakpoint and covering the other tables); row-enter for appended activity rows (shortlist 15).
 - Dashboard tiles for testimonials, portfolio, media, scraper records, import jobs; "Demo products" reads the D8 marker; `—` when unknown.
 - Drift sweep: `shadow-sm` → `shadow-e1`, `rounded-xl/2xl` → `rounded-card`, `form-section.tsx`. **47 `shadow-sm` and 63 `rounded-xl`/`rounded-2xl` sites remain** (the three route boundaries are done). The radius half is a visible restyle — 12–16 px to 4 px on every card in the panel — so it wants its own PR with screenshots rather than being folded into unrelated work.
 - D17 design lab.
