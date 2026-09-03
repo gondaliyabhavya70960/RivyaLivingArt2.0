@@ -15,6 +15,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { DraftPreview } from "@/components/studio/draft-preview";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import {
   buildDefaultValues,
@@ -230,17 +231,10 @@ export function ProductForm({
           </div>
           <div className="flex items-center gap-2">
             {product && (
-              <Button asChild variant="link" size="sm">
-                <a
-                  // Enables Next draft mode via the staff-gated route handler,
-                  // then lands on the public page (audit C2).
-                  href={`/api/draft?redirect=${encodeURIComponent(`/product/${product.slug}`)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View draft preview ↗
-                </a>
-              </Button>
+              // Enables Next draft mode via the staff-gated route handler and
+              // frames the public page (audit C2). The dialog keeps the
+              // new-tab link inside it, so nothing is lost.
+              <DraftPreview path={`/product/${product.slug}`} />
             )}
             <Button type="submit" disabled={saving || uploading}>
               {saving ? "Saving…" : "Save"}

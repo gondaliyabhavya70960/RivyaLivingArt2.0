@@ -51,6 +51,28 @@ only place the change can be confirmed.
 
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
+### Added: the draft in a device frame, without leaving the editor
+Every editing screen already linked to `/api/draft?redirect=…` in a new tab. That answers "how does
+this read" but not "how does this read ON A PHONE" — the question that actually bites, since the
+repo's own definition of done names 360px and 1280px and checking the small end meant a new tab plus
+devtools plus a device-toolbar toggle. Most people do not, so long headlines and wrapped buttons
+ship.
+
+`DraftPreview` frames the public page at 390 / 768 / 1280 inside the editor, and keeps the new-tab
+link inside the dialog so nothing is lost. Wired into the product and journal forms.
+
+**Not scaled, on purpose.** A shrunk desktop preview reads as "roughly right" and hides exactly the
+crowding it exists to reveal, so each width renders 1:1 and the desktop frame scrolls if the dialog
+is narrower.
+
+Framing is safe here and deliberately narrow: the storefront carries `X-Frame-Options: SAMEORIGIN`
+and `frame-ancestors 'self'`, while **`/studio/*` is `DENY`** and stays that way — this frames public
+pages only, never an admin screen.
+
+Verified against a production build on a real product: the frame renders 390×700 by default, the
+framed document's `h1` is the product's own title (so the draft cookie is minted and the storefront
+really renders inside it), and switching to Tablet resizes it to 768.
+
 ### Fixed: the undo that existed and could not be reached
 `restoreRevision` shipped with publishing and works — ADMIN-only, restoring **into the draft** rather
 than straight to live, so a mis-clicked restore is itself recoverable. It was **unreachable**. Every
