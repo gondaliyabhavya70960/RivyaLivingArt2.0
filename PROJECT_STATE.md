@@ -13,8 +13,8 @@ Updated at the end of every transformation phase. The narrative sections below i
 ```text
 Current Phase:            Transformation wave 1 — A1 and B merged; C1, D, E, F1 in flight; G early
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 COMPLETE · A1 COMPLETE · B COMPLETE (2026-09-03); PR #42 draft,
-                          30 commits beyond main; CI green on every head so far
+Phase Status:             B0 · A1 · B · G COMPLETE (2026-09-03); PR #42 draft; CI green on every
+                          head; Vercel preview green after the P2037 pool/retry fix (f91c02a)
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
                           demo gate on every public reader + DEMO prefix retired · Faq.status ·
@@ -22,8 +22,7 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
 In Progress:              C1 (Studio content) and D (media) building in /home/user/wt-c1 and
-                          wt-d; E and F1 queued behind the two-agent cap; G (Content Lab)
-                          building in wt-g on its own workflow
+                          wt-d; E and F1 queued behind the two-agent cap
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
@@ -45,7 +44,9 @@ Database Changes:         11 additive migrations (44 → 55). One data statement
                           Testimonial rows back-filled to PUBLISHED (they were live). Product
                           isDemo ADD COLUMN takes a brief ACCESS EXCLUSIVE lock — deploy off-peak.
 Content Changes:          none
-Demo Data:                marker + gate only; fixtures come with batch G (Content Lab)
+Demo Data:                prisma/fixtures/demo/* (100 products, 30 posts, 40 testimonials, …)
+                          seeded into the LOCAL database only via npm run seed:demo; the loader
+                          refuses production hosts; bootstrap.ts never references it
 Assets Added:             none
 Tests Run:                typecheck · lint · test (40 files / 391) · test:db (4 files / 13) ·
                           copy:check (1,185) · migrate deploy + migrate diff after every migration ·

@@ -5,6 +5,55 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation batch G — Content Lab (2026-09-03)
+
+Merged `b642f17`, built in its own worktree against its own database copy; it depends only on B0,
+so it ran ahead of wave 1's queue.
+
+### Added: demo fixtures the owner can seed into any database, on demand
+The plan's Content Lab (§15): a full, deterministic content set — 100 products across the 16
+seeded categories (edge-matrix by construction: title lengths 8–220 chars, 0/1/8 images, every
+`ContentStatus`, `needsRewrite`, `ownerTouched`, every tier, `ar`/`hi` translations on ten rows,
+every `FieldType` on `demo-product-001` for the E2E order path), 10 journal categories + 30 posts,
+12 portfolio cases (one carrying `beforeImageUrl`/`afterImageUrl`, so `BeforeAfter` finally has
+data), 40 testimonials across 10 categories (every `TestimonialStatus`; a PUBLISHED + GRANTED row so
+the wall renders), 30 FAQs, 5 landing pages exercising every block type, 40 media rows, 30
+inquiries, 30 research notes, 3 scrape jobs (DONE / FAILED / a deliberately stale RUNNING row) with
+40 staged products, and 5 import runs. `isDemo: true` throughout; image paths restricted to files
+this repo already ships (a test asserts each is on disk).
+
+`src/lib/demo/{fixtures,apply,guard}.ts`: zod-validated loaders, a dependency-ordered
+`seedDemo` / `removeDemo` / `demoStatus` engine (upsert by id — safe to run twice), and
+`describeDemoHost()`, the host allow-list every write path checks. `npm run seed:demo` is the CLI
+(`--status`, `--remove`, `--allow-production` plus a typed "DEMO INTO PRODUCTION" confirmation a
+non-interactive shell can never satisfy). `prisma/bootstrap.ts` never references it; a test greps
+to make sure.
+
+`/studio/content-lab` (ADMIN): host card, mono counts, last seed/remove, the public-visibility
+switch, Seed (disabled with a reason when the host is not allow-listed) and Remove (typed confirm).
+The switch is also on Site Settings; the dashboard gained a "Demo records" tile. A demo product's
+Place Order still works — its Inquiry saves `isDemo: true` and its WhatsApp message is prefixed
+`[DEMO] ` (`withDemoPrefix` in `whatsapp.ts`); the commissions board shows a badge and a `?demo=1`
+filter.
+
+### Verified
+typecheck · lint · vitest 418 · test:db 18 (seed twice → same counts, gate both ways, sitemap
+excludes, remove → zero rows, real rows untouched) · copy:check · a production build ·
+`redesign-audit` / `a11y-audit` on the six demo routes at 1440/390/360 + `/ar` · motion 48.2 KB ·
+keyboard · E2E 10/10 · `studio-audit` on Content Lab and four demo screens · sitemap excludes
+every `demo-` id · `noindex` on demo detail routes · production-mode hiding proven against
+`showDemoContent()`. The local main database now carries the demo set (`seed:demo --status`),
+which is what the later audits and the F2 CI step build on.
+
+### Two things found, not fixed here
+- `order-panel.tsx`'s empty-engraving preview (`text-graphite/60` at `text-h3`) fails AA contrast
+  — pre-existing, surfaced because `demo-product-001` is the first audited route with a TEXT
+  customisation field. Routed to A3.
+- The blog post form's Tiptap editor has no accessible name (`aria-input-field-name`) — reproduced
+  on a real post, unrelated to fixtures. Routed to C1's merge.
+
+---
+
 ## Wave 1 · batches A1 and B — design-system hygiene, chrome, and the testimonial system (2026-09-03)
 
 Two of wave 1's six batches merged (`39c10dd`, `df8fc64`) after each was built and verified in
