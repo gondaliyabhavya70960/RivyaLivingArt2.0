@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
 import { useRouter } from "next/navigation";
@@ -14,11 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import {
-  continueScrapeJob,
-  createScrapeJob,
-  type ScrapeJobSnapshot,
-} from "@/actions/scraper-jobs";
+import { createScrapeJob } from "@/actions/scraper-jobs";
 import { sendScrapedToSheet1 } from "@/actions/scraper-review";
 import {
   resumeScrapeSource,
@@ -27,7 +23,11 @@ import {
 } from "@/actions/scraper-sources";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
-import { Pagination, PAGE_SIZE, usePagination } from "@/components/studio/pagination";
+import {
+  Pagination,
+  PAGE_SIZE,
+  usePagination,
+} from "@/components/studio/pagination";
 import {
   AddToCatalogDialog,
   type AddToCatalogItem,
@@ -48,10 +48,12 @@ import type {
   ReviewStatus,
   ScrapeJobStatus,
   ScrapePlatform,
+  ScrapeScope,
   ScrapeTier,
   SheetSyncPolicy,
 } from "@/generated/prisma/enums";
 import { useSelection } from "@/hooks/use-selection";
+import { useScrapeRunner } from "@/hooks/use-scrape-runner";
 import { HEALTH_META, type SourceHealth } from "@/lib/scraper/health";
 import { SHEET_POLICY_LABEL } from "@/lib/scraper/sheet-policy";
 import { cn } from "@/lib/utils";
@@ -142,7 +144,10 @@ function JobStatusBadge({ status }: { status: ScrapeJobStatus }) {
       return <Badge variant="secondary">Done</Badge>;
     case "FAILED":
       return (
-        <Badge variant="outline" className="border-destructive/40 text-destructive">
+        <Badge
+          variant="outline"
+          className="border-destructive/40 text-destructive"
+        >
           Failed
         </Badge>
       );
@@ -151,7 +156,10 @@ function JobStatusBadge({ status }: { status: ScrapeJobStatus }) {
 
 const REVIEW_BADGE: Record<
   ReviewStatus,
-  { variant: "default" | "secondary" | "outline" | "success"; className?: string }
+  {
+    variant: "default" | "secondary" | "outline" | "success";
+    className?: string;
+  }
 > = {
   PENDING: { variant: "outline" },
   APPROVED: { variant: "success" },
@@ -183,25 +191,32 @@ export function SourceDetail({
   categories: { id: string; name: string }[];
 }) {
   const router = useRouter();
-  const [running, setRunning] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const [progress, setProgress] = useState<ScrapeJobSnapshot | null>(null);
+  const [starting, setStarting] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [sendingSheet, setSendingSheet] = useState(false);
   // Per-row catalog category overrides (row id → category id). Defaults fall
   // back to each row's auto-mapped category until the operator changes it.
   const [catOverrides, setCatOverrides] = useState<Record<string, string>>({});
 
-  // Guards the poll loop against a component unmount mid-scrape — without it
-  // the detached loop keeps polling and calling router.refresh on whatever
-  // page the operator navigated to.
-  const aliveRef = useRef(true);
-  useEffect(() => {
-    aliveRef.current = true;
-    return () => {
-      aliveRef.current = false;
-    };
-  }, []);
+  // Run scope: the whole source (its registry baseUrl), one listing/category
+  // page (paginated), or one product page (a single JSON-LD fetch). CATEGORY
+  // and URL need the operator to paste the specific page.
+  const [scope, setScope] = useState<ScrapeScope>("SOURCE");
+  const [scopeUrl, setScopeUrl] = useState("");
+
+  // Runner: shared with every /studio/scraper screen (use-scrape-runner.ts),
+  // mounted once by scraper/layout.tsx so a run survives navigating away from
+  // this page and back. `runJobId` is the job THIS component started, so its
+  // progress line reads that job's snapshot rather than whatever else the
+  // shared queue may be polling.
+  const { snapshots, enqueue } = useScrapeRunner();
+  const [runJobId, setRunJobId] = useState<string | null>(null);
+  const progress = runJobId ? (snapshots[runJobId] ?? null) : null;
+  const running =
+    runJobId !== null &&
+    progress?.status !== "DONE" &&
+    progress?.status !== "FAILED";
 
   const [policy, setPolicy] = useState<SheetSyncPolicy>(source.sheetSyncPolicy);
   const [policyBusy, setPolicyBusy] = useState(false);
@@ -241,43 +256,37 @@ export function SourceDetail({
   }
 
   async function handleRun() {
-    setRunning(true);
-    setProgress(null);
-    const res = await createScrapeJob({ sourceId: source.id, tier: source.tier });
-    if (!aliveRef.current) return;
+    if (scope !== "SOURCE" && !scopeUrl.trim()) {
+      toast.error(
+        scope === "URL"
+          ? "Paste the product page URL to scrape."
+          : "Paste the category or listing page URL to scrape.",
+      );
+      return;
+    }
+    setStarting(true);
+    const res = await createScrapeJob({
+      sourceId: source.id,
+      tier: source.tier,
+      scope,
+      ...(scope !== "SOURCE" ? { inputUrl: scopeUrl.trim() } : {}),
+    });
+    setStarting(false);
     if (!res.ok || !res.data) {
       toast.error(!res.ok ? res.error : "Could not start the scrape.");
-      setRunning(false);
       return;
     }
     const jobId = res.data.jobId;
     if (res.data.alreadyRunning) {
       // Not an error — the guard handed us the run already in flight, and the
-      // loop below picks it up from wherever it had got to.
-      toast.info(`${source.name} was already being scraped — showing that run.`);
+      // shared runner picks it up from wherever it had got to.
+      toast.info(
+        `${source.name} was already being scraped — showing that run.`,
+      );
     }
-    for (;;) {
-      const step = await continueScrapeJob(jobId);
-      if (!aliveRef.current) return; // unmounted — stop polling
-      if (!step.ok || !step.data) {
-        toast.error(!step.ok ? step.error : "Scrape run failed.");
-        break;
-      }
-      setProgress(step.data);
-      if (step.data.status === "DONE") {
-        toast.success(
-          `Scrape finished — ${step.data.totalScraped} products (${step.data.newCount} new).`,
-        );
-        break;
-      }
-      if (step.data.status === "FAILED") {
-        toast.error(step.data.error ?? "Scrape failed.");
-        break;
-      }
-      await new Promise((r) => setTimeout(r, 800));
-    }
-    setRunning(false);
+    setRunJobId(jobId);
     router.refresh();
+    enqueue([jobId]);
   }
 
   async function handleVerify() {
@@ -303,7 +312,8 @@ export function SourceDetail({
   const filteredProducts = useMemo(() => {
     const q = query.trim().toLowerCase();
     return products.filter((p) => {
-      if (reviewFilter !== "ALL" && p.reviewStatus !== reviewFilter) return false;
+      if (reviewFilter !== "ALL" && p.reviewStatus !== reviewFilter)
+        return false;
       if (q && !p.title.toLowerCase().includes(q)) return false;
       return true;
     });
@@ -330,7 +340,10 @@ export function SourceDetail({
     sorted: sortedProducts,
     sort: productSort,
     toggle: toggleProduct,
-  } = useSort(filteredProducts, getProductValue, { key: "lastSeen", dir: "desc" });
+  } = useSort(filteredProducts, getProductValue, {
+    key: "lastSeen",
+    dir: "desc",
+  });
 
   const {
     pageRows: productPage,
@@ -435,8 +448,14 @@ export function SourceDetail({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className={cn("gap-1.5", meta.className)}>
-                <span aria-hidden className={cn("size-1.5 rounded-full", meta.dot)} />
+              <Badge
+                variant="outline"
+                className={cn("gap-1.5", meta.className)}
+              >
+                <span
+                  aria-hidden
+                  className={cn("size-1.5 rounded-full", meta.dot)}
+                />
                 {meta.label}
               </Badge>
               <Badge variant={PLATFORM_BADGE[source.platform]}>
@@ -444,7 +463,9 @@ export function SourceDetail({
               </Badge>
               <Badge variant="outline">{TIER_LABELS[source.tier]}</Badge>
               {source.supply && <Badge variant="outline">Supply</Badge>}
-              <span className="text-xs text-muted-foreground">{source.country}</span>
+              <span className="text-xs text-muted-foreground">
+                {source.country}
+              </span>
             </div>
             <a
               href={source.baseUrl}
@@ -456,7 +477,9 @@ export function SourceDetail({
               <ExternalLink aria-hidden className="size-3.5" />
             </a>
             {source.notes && (
-              <p className="max-w-prose text-sm text-muted-foreground">{source.notes}</p>
+              <p className="max-w-prose text-sm text-muted-foreground">
+                {source.notes}
+              </p>
             )}
             <p className="text-xs text-muted-foreground">
               {source.verifiedAt
@@ -483,8 +506,50 @@ export function SourceDetail({
             </div>
           )}
           <div className="flex flex-wrap items-center gap-2">
-            <Button size="sm" onClick={handleRun} disabled={running}>
-              {running ? (
+            {/* Scope: the whole source, one category/listing page (paginated),
+                or one product page (a single JSON-LD fetch) — SC-13's
+                three-way choice. CATEGORY/URL need the target page pasted in,
+                since the registry only knows the source's base URL. */}
+            <Select
+              value={scope}
+              disabled={running || starting}
+              onValueChange={(v) => setScope(v as ScrapeScope)}
+            >
+              <SelectTrigger
+                size="sm"
+                className="w-[150px]"
+                aria-label={`What to scrape from ${source.name}`}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SOURCE">Whole source</SelectItem>
+                <SelectItem value="CATEGORY">One category</SelectItem>
+                <SelectItem value="URL">One product</SelectItem>
+              </SelectContent>
+            </Select>
+            {scope !== "SOURCE" && (
+              <Input
+                value={scopeUrl}
+                onChange={(e) => setScopeUrl(e.target.value)}
+                placeholder={
+                  scope === "URL"
+                    ? "https://…/products/example"
+                    : "https://…/collections/example"
+                }
+                aria-label={
+                  scope === "URL" ? "Product page URL" : "Category page URL"
+                }
+                disabled={running || starting}
+                className="h-9 w-64"
+              />
+            )}
+            <Button
+              size="sm"
+              onClick={handleRun}
+              disabled={running || starting}
+            >
+              {running || starting ? (
                 <>
                   <Loader2 className="animate-spin" aria-hidden /> Scraping…
                 </>
@@ -516,13 +581,13 @@ export function SourceDetail({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {(
-                    Object.keys(SHEET_POLICY_LABEL) as SheetSyncPolicy[]
-                  ).map((value) => (
-                    <SelectItem key={value} value={value}>
-                      {SHEET_POLICY_LABEL[value]}
-                    </SelectItem>
-                  ))}
+                  {(Object.keys(SHEET_POLICY_LABEL) as SheetSyncPolicy[]).map(
+                    (value) => (
+                      <SelectItem key={value} value={value}>
+                        {SHEET_POLICY_LABEL[value]}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -532,7 +597,8 @@ export function SourceDetail({
               onClick={handleVerify}
               disabled={verifying}
             >
-              <RefreshCw className={verifying ? "animate-spin" : undefined} /> Verify
+              <RefreshCw className={verifying ? "animate-spin" : undefined} />{" "}
+              Verify
             </Button>
             <Button asChild variant="outline" size="sm">
               <a href={`/api/scraper/export?source=${source.key}`}>
@@ -547,7 +613,8 @@ export function SourceDetail({
             className="mt-4 flex items-center gap-2 rounded-card border border-sand bg-sand px-3 py-2 text-sm text-sapphire-ink"
           >
             <Loader2 className="size-4 animate-spin" aria-hidden />
-            Page {progress.cursorPage} · {progress.totalScraped} products so far…
+            Page {progress.cursorPage} · {progress.totalScraped} products so
+            far…
           </div>
         )}
       </section>
@@ -557,7 +624,9 @@ export function SourceDetail({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-display text-lg text-foreground">
             Scraped products{" "}
-            <span className="text-sm text-muted-foreground">({totalProducts})</span>
+            <span className="text-sm text-muted-foreground">
+              ({totalProducts})
+            </span>
             {products.length < totalProducts && (
               <span className="ml-2 text-xs font-normal text-muted-foreground">
                 showing latest {products.length}
@@ -569,7 +638,11 @@ export function SourceDetail({
               value={reviewFilter}
               onValueChange={(v) => setReviewFilter(v as ReviewStatus | "ALL")}
             >
-              <SelectTrigger size="sm" aria-label="Filter by review status" className="w-40">
+              <SelectTrigger
+                size="sm"
+                aria-label="Filter by review status"
+                className="w-40"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -602,11 +675,11 @@ export function SourceDetail({
           />
         ) : (
           <div
-              tabIndex={0}
-              role="region"
-              aria-label="Scraped products"
-              className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-            >
+            tabIndex={0}
+            role="region"
+            aria-label="Scraped products"
+            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
             <table className="w-full text-sm">
               <thead>
                 <StudioTableHead>
@@ -620,23 +693,47 @@ export function SourceDetail({
                   <th scope="col" className="w-14 px-4 py-3">
                     <span className="sr-only">Image</span>
                   </th>
-                  <SortHead label="Title" sortKey="title" sort={productSort} onSort={toggleProduct} />
-                  <SortHead label="Source category" sortKey="category" sort={productSort} onSort={toggleProduct} />
+                  <SortHead
+                    label="Title"
+                    sortKey="title"
+                    sort={productSort}
+                    onSort={toggleProduct}
+                  />
+                  <SortHead
+                    label="Source category"
+                    sortKey="category"
+                    sort={productSort}
+                    onSort={toggleProduct}
+                  />
                   <th scope="col" className="px-4 py-3 font-medium">
                     Catalog category
                   </th>
-                  <SortHead label="Price" sortKey="price" sort={productSort} onSort={toggleProduct} numeric />
-                  <SortHead label="Review" sortKey="review" sort={productSort} onSort={toggleProduct} />
-                  <SortHead label="Last seen" sortKey="lastSeen" sort={productSort} onSort={toggleProduct} />
+                  <SortHead
+                    label="Price"
+                    sortKey="price"
+                    sort={productSort}
+                    onSort={toggleProduct}
+                    numeric
+                  />
+                  <SortHead
+                    label="Review"
+                    sortKey="review"
+                    sort={productSort}
+                    onSort={toggleProduct}
+                  />
+                  <SortHead
+                    label="Last seen"
+                    sortKey="lastSeen"
+                    sort={productSort}
+                    onSort={toggleProduct}
+                  />
                 </StudioTableHead>
               </thead>
               <tbody>
                 {productPage.map((p) => {
                   const badge = REVIEW_BADGE[p.reviewStatus];
                   return (
-                    <StudioRow
-                      key={p.id}
-                    >
+                    <StudioRow key={p.id}>
                       <td className="px-4 py-2">
                         <Checkbox
                           checked={selection.selected.has(p.id)}
@@ -655,7 +752,10 @@ export function SourceDetail({
                             className="size-10 rounded-md bg-muted object-cover"
                           />
                         ) : (
-                          <div aria-hidden className="size-10 rounded-md bg-muted" />
+                          <div
+                            aria-hidden
+                            className="size-10 rounded-md bg-muted"
+                          />
                         )}
                       </td>
                       <td className="max-w-[22rem] px-4 py-2">
@@ -708,7 +808,10 @@ export function SourceDetail({
                         )}
                       </td>
                       <td className="px-4 py-2">
-                        <Badge variant={badge.variant} className={badge.className}>
+                        <Badge
+                          variant={badge.variant}
+                          className={badge.className}
+                        >
                           {p.reviewStatus.toLowerCase()}
                         </Badge>
                       </td>
@@ -745,20 +848,36 @@ export function SourceDetail({
           />
         ) : (
           <div
-              tabIndex={0}
-              role="region"
-              aria-label="Scrape run history"
-              className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-            >
+            tabIndex={0}
+            role="region"
+            aria-label="Scrape run history"
+            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
             <table className="w-full text-sm">
               <thead>
                 <StudioTableHead>
-                  <SortHead label="Status" sortKey="status" sort={jobSort} onSort={toggleJob} />
-                  <SortHead label="Pages" sortKey="pages" sort={jobSort} onSort={toggleJob} numeric />
+                  <SortHead
+                    label="Status"
+                    sortKey="status"
+                    sort={jobSort}
+                    onSort={toggleJob}
+                  />
+                  <SortHead
+                    label="Pages"
+                    sortKey="pages"
+                    sort={jobSort}
+                    onSort={toggleJob}
+                    numeric
+                  />
                   <th scope="col" className="px-4 py-3 text-right font-medium">
                     Total / new / upd
                   </th>
-                  <SortHead label="Started" sortKey="created" sort={jobSort} onSort={toggleJob} />
+                  <SortHead
+                    label="Started"
+                    sortKey="created"
+                    sort={jobSort}
+                    onSort={toggleJob}
+                  />
                   <th scope="col" className="px-4 py-3 font-medium">
                     Error
                   </th>
@@ -766,13 +885,13 @@ export function SourceDetail({
               </thead>
               <tbody>
                 {jobPage.map((job) => (
-                  <StudioRow
-                    key={job.id}
-                  >
+                  <StudioRow key={job.id}>
                     <td className="px-4 py-3">
                       <JobStatusBadge status={job.status} />
                     </td>
-                    <td className="px-4 py-3 text-right tabular-nums">{job.cursorPage}</td>
+                    <td className="px-4 py-3 text-right tabular-nums">
+                      {job.cursorPage}
+                    </td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       {job.totalScraped} / {job.newCount} / {job.updatedCount}
                     </td>

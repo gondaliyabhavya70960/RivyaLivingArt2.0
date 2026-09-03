@@ -10,7 +10,10 @@ import {
   enrichScrapedFields,
   scrapedRowToProductSheetRow,
 } from "@/lib/scraper/product-sheet";
-import { isSheetSyncConfigured, syncProductsToSheet1 } from "@/lib/scraper/sheets";
+import {
+  isSheetSyncConfigured,
+  syncProductsToSheet1,
+} from "@/lib/scraper/sheets";
 import { decideMerge } from "@/lib/scraper/merge-policy";
 import { SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
@@ -116,6 +119,50 @@ export async function updateStagedProduct(
     await logActivity({
       userId: session.user.id,
       action: "edit",
+      entity: "ScrapedProduct",
+      entityId: p.id,
+    });
+    revalidatePath(REVIEW_PATH);
+  });
+}
+
+// ————————————————————— Reviewer notes —————————————————————
+
+const notesSchema = z.object({
+  id: z.string().min(1),
+  notes: z.string().trim().max(4000).nullable(),
+});
+
+/**
+ * Set a staged row's reviewer note. `ScrapedProduct.notes` is, by design,
+ * the one field this immutable row may change after it lands: a scrape is
+ * what the source site said, and every other field stays exactly that so a
+ * normalization fix never needs a re-scrape — but a reviewer's own comment
+ * ("check this dimension, looks like cm not mm") is not the source's data at
+ * all, so protecting it from edits would protect nothing. Allowed even on an
+ * IMPORTED row: the note is about the source listing, not the promotion.
+ */
+export async function setScrapedNotes(
+  id: string,
+  notes: string | null,
+): Promise<ActionResult<void>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const p = notesSchema.parse({ id, notes });
+
+    const row = await db.scrapedProduct.findUnique({
+      where: { id: p.id },
+      select: { id: true },
+    });
+    if (!row) throw new Error("That staged product no longer exists.");
+
+    await db.scrapedProduct.update({
+      where: { id: p.id },
+      data: { notes: p.notes || null },
+    });
+    await logActivity({
+      userId: session.user.id,
+      action: "note",
       entity: "ScrapedProduct",
       entityId: p.id,
     });
@@ -408,7 +455,9 @@ export async function importApprovedScraped({
       select: { id: true },
     });
     if (!category) {
-      return { userError: "That category no longer exists — refresh and pick another." };
+      return {
+        userError: "That category no longer exists — refresh and pick another.",
+      };
     }
 
     const rows = await db.scrapedProduct.findMany({
@@ -437,7 +486,9 @@ export async function importApprovedScraped({
         errors.push({
           title: row.title,
           message:
-            error instanceof Error ? error.message : "Import failed unexpectedly.",
+            error instanceof Error
+              ? error.message
+              : "Import failed unexpectedly.",
         });
       }
     }
@@ -452,7 +503,9 @@ export async function importApprovedScraped({
     revalidatePath(REVIEW_PATH);
     revalidatePath(PRODUCTS_PATH);
 
-    return { report: { imported, updated, skipped, protected: protectedCount, errors } };
+    return {
+      report: { imported, updated, skipped, protected: protectedCount, errors },
+    };
   });
 
   if (!result.ok) return result;
@@ -542,7 +595,9 @@ export async function addScrapedToCatalog(
         errors.push({
           title: row.title,
           message:
-            error instanceof Error ? error.message : "Import failed unexpectedly.",
+            error instanceof Error
+              ? error.message
+              : "Import failed unexpectedly.",
         });
       }
     }
@@ -569,7 +624,14 @@ export async function addScrapedToCatalog(
     revalidatePath(REVIEW_PATH);
     revalidatePath(PRODUCTS_PATH);
 
-    return { imported, updated, skipped, protected: protectedCount, synced, errors };
+    return {
+      imported,
+      updated,
+      skipped,
+      protected: protectedCount,
+      synced,
+      errors,
+    };
   });
 }
 

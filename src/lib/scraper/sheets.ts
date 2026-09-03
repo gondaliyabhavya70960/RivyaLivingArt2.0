@@ -51,9 +51,19 @@ function readServiceAccountJson(): string | null {
   return null;
 }
 
-/** Designated sheet id from either SCRAPE_SHEET_ID or SHEET_ID. */
-function readSheetId(): string | undefined {
+/** The owner's chosen sheet, when they've set one in Settings → Sheets. */
+export type SheetIdSettings = { sheetId?: string | null } | null | undefined;
+
+/**
+ * Designated sheet id: `settings.sheetId` first (the owner's own choice,
+ * `/studio/settings`), then SCRAPE_SHEET_ID or SHEET_ID from the deploy
+ * environment. `settings` is optional and defaults to none, so every
+ * existing call site that has not been threaded a settings row yet keeps
+ * today's env-only behaviour exactly.
+ */
+export function readSheetId(settings?: SheetIdSettings): string | undefined {
   return (
+    settings?.sheetId?.trim() ||
     process.env.SCRAPE_SHEET_ID?.trim() ||
     process.env.SHEET_ID?.trim() ||
     undefined
@@ -61,8 +71,25 @@ function readSheetId(): string | undefined {
 }
 
 /** Sheet sync is on only when both a service account and a sheet id resolve. */
-export function isSheetSyncConfigured(): boolean {
-  return Boolean(readServiceAccountJson() && readSheetId());
+export function isSheetSyncConfigured(settings?: SheetIdSettings): boolean {
+  return Boolean(readServiceAccountJson() && readSheetId(settings));
+}
+
+/**
+ * A tab's numeric sheet id from `SiteSettings.sheetTabIds` (Json: tab name →
+ * numeric id, recorded from `/studio/settings`), or undefined when unset or
+ * shaped wrong — never throws on a malformed Json value, since a settings
+ * row nobody has touched holds the schema default `{}`.
+ */
+function tabIdFromSettings(
+  sheetTabIds: unknown,
+  tab: string,
+): number | undefined {
+  if (!sheetTabIds || typeof sheetTabIds !== "object") return undefined;
+  const value = (sheetTabIds as Record<string, unknown>)[tab];
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : undefined;
 }
 
 /** Module-level clock helper — epoch seconds for JWT iat/exp. */
@@ -212,8 +239,11 @@ export async function upsertRowsToTab(opts: {
   header: readonly string[];
   rows: string[][];
   keyOf: (row: string[]) => string;
+  /** The owner's chosen sheet, when the caller has one to hand — see
+   *  `readSheetId`. Omitted keeps the env-only fallback. */
+  settings?: SheetIdSettings;
 }): Promise<{ updated: number; appended: number }> {
-  const spreadsheetId = readSheetId();
+  const spreadsheetId = readSheetId(opts.settings);
   if (!spreadsheetId) throw new Error("Set SCRAPE_SHEET_ID or SHEET_ID");
 
   const { tab, header, rows, keyOf } = opts;
@@ -281,19 +311,30 @@ export async function deleteRowsFromTab(opts: {
   keys: readonly string[];
   keyOf: (row: string[]) => string;
   columns: number;
+  /** The owner's chosen sheet + tab-id map, when the caller has them — see
+   *  `readSheetId`. Omitted keeps the env-only sheet id and always looks
+   *  the tab's numeric id up from the API (the pre-existing behaviour). */
+  settings?: SheetIdSettings & { sheetTabIds?: unknown };
 }): Promise<{ deleted: number }> {
-  const spreadsheetId = readSheetId();
+  const spreadsheetId = readSheetId(opts.settings);
   if (!spreadsheetId) throw new Error("Set SCRAPE_SHEET_ID or SHEET_ID");
   const { tab, keys, keyOf, columns } = opts;
   if (keys.length === 0) return { deleted: 0 };
 
   const token = await getAccessToken();
-  const meta = await sheetsApi<{
-    sheets?: { properties?: { title?: string; sheetId?: number } }[];
-  }>(token, `${spreadsheetId}?fields=sheets.properties(title,sheetId)`);
-  const sheetId = (meta.sheets ?? []).find(
-    (s) => s.properties?.title === tab,
-  )?.properties?.sheetId;
+
+  // The owner's recorded tab id skips a metadata round trip entirely — the
+  // existing lookup below is the fallback for a tab that hasn't been
+  // recorded yet, not the only path.
+  const knownId = tabIdFromSettings(opts.settings?.sheetTabIds, tab);
+  let sheetId = knownId;
+  if (sheetId === undefined) {
+    const meta = await sheetsApi<{
+      sheets?: { properties?: { title?: string; sheetId?: number } }[];
+    }>(token, `${spreadsheetId}?fields=sheets.properties(title,sheetId)`);
+    sheetId = (meta.sheets ?? []).find((s) => s.properties?.title === tab)
+      ?.properties?.sheetId;
+  }
   // No tab means nothing was ever written there — not an error.
   if (sheetId === undefined) return { deleted: 0 };
 
@@ -329,12 +370,14 @@ export async function deleteRowsFromTab(opts: {
 export async function syncRowsToSheet(
   tier: ScrapeTier,
   rows: string[][],
+  settings?: SheetIdSettings,
 ): Promise<{ updated: number; appended: number }> {
   return upsertRowsToTab({
     tab: TAB_BY_TIER[tier],
     header: SCRAPEDECK_COLUMNS,
     rows,
     keyOf: (row) => (row[0] && row[2] ? `${row[0]}|${row[2]}` : ""),
+    settings,
   });
 }
 
@@ -345,11 +388,13 @@ export async function syncRowsToSheet(
  */
 export async function syncProductsToSheet1(
   rows: string[][],
+  settings?: SheetIdSettings,
 ): Promise<{ updated: number; appended: number }> {
   return upsertRowsToTab({
     tab: PRODUCT_SHEET_TAB,
     header: PRODUCT_SHEET_COLUMNS,
     rows,
     keyOf: (row) => row[1] ?? "",
+    settings,
   });
 }

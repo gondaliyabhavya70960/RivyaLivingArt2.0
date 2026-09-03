@@ -63,7 +63,10 @@ type WooProduct = {
   attributes?: WooAttribute[];
 };
 
-function toMajorUnits(amount: string | undefined, minorUnit: number): number | undefined {
+function toMajorUnits(
+  amount: string | undefined,
+  minorUnit: number,
+): number | undefined {
   const n = Number.parseFloat(String(amount));
   if (!Number.isFinite(n)) return undefined;
   return Math.round(n / 10 ** minorUnit);
@@ -95,12 +98,17 @@ function mapProduct(item: WooProduct, ctx: AdapterContext): RichProduct | null {
   }
 
   const images = (Array.isArray(item.images) ? item.images : []).filter(
-    (i): i is WooImage & { src: string } => typeof i?.src === "string" && i.src.length > 0,
+    (i): i is WooImage & { src: string } =>
+      typeof i?.src === "string" && i.src.length > 0,
   );
 
   const attributes = Array.isArray(item.attributes) ? item.attributes : [];
-  const dimensionAttr = attributes.find((a) => /dimension|size/i.test(a?.name ?? ""));
-  const dimensions = dimensionAttr ? termNames(dimensionAttr.terms).join(", ") : "";
+  const dimensionAttr = attributes.find((a) =>
+    /dimension|size/i.test(a?.name ?? ""),
+  );
+  const dimensions = dimensionAttr
+    ? termNames(dimensionAttr.terms).join(", ")
+    : "";
 
   const attributeMap: Record<string, string[]> = {};
   for (const a of attributes) {
@@ -119,7 +127,10 @@ function mapProduct(item: WooProduct, ctx: AdapterContext): RichProduct | null {
     slug,
     category: item.categories?.[0]?.name || undefined,
     description:
-      stripHtml(item.short_description || item.description).slice(0, DESCRIPTION_MAX) || undefined,
+      stripHtml(item.short_description || item.description).slice(
+        0,
+        DESCRIPTION_MAX,
+      ) || undefined,
     priceMin,
     priceMax,
     showPrice: true,
@@ -140,7 +151,30 @@ export const wooAdapter: Adapter = async (ctx) => {
     await sleep(resolveDelayMs(ctx.requestDelayMs, POLITENESS_DELAY_MS));
   }
 
-  const url = `${ctx.baseUrl}/wp-json/wc/store/v1/products?per_page=${PAGE_SIZE}&page=${ctx.page}`;
+  // The Store API lives at the site root regardless of scope, so a CATEGORY
+  // job (ctx.baseUrl = the listing page the operator pasted, e.g.
+  // "https://store.tld/product-category/vases/") derives the origin to call
+  // it at and passes the listing's last path segment as the `category`
+  // filter — best-effort (it assumes WooCommerce's own permalink shape), and
+  // if the site names categories differently the request simply returns an
+  // empty page rather than throwing, so a bad guess demotes to STRUCTURAL /
+  // empty output instead of failing the job.
+  let origin = ctx.baseUrl;
+  let categoryParam = "";
+  if (ctx.scope === "CATEGORY") {
+    try {
+      const listing = new URL(ctx.baseUrl);
+      origin = listing.origin;
+      const slug = listing.pathname.split("/").filter(Boolean).pop();
+      if (slug) categoryParam = `&category=${encodeURIComponent(slug)}`;
+    } catch {
+      // Malformed listing URL — fall through with the raw baseUrl as origin;
+      // the request below then 404s and falls back to JSON-LD like any other
+      // structural failure.
+    }
+  }
+
+  const url = `${origin}/wp-json/wc/store/v1/products?per_page=${PAGE_SIZE}&page=${ctx.page}${categoryParam}`;
   // Validate the host + any redirect hop before the request (SEC-107) — raw
   // fetch's default redirect:"follow" bypassed the SSRF guard.
   const res = await safeFetch(url, {
@@ -149,7 +183,9 @@ export const wooAdapter: Adapter = async (ctx) => {
   });
   if (!res.ok) {
     if (STRUCTURAL_STATUS.has(res.status)) return jsonldAdapter(ctx);
-    throw new Error(`WooCommerce Store API request failed with HTTP ${res.status} (${url})`);
+    throw new Error(
+      `WooCommerce Store API request failed with HTTP ${res.status} (${url})`,
+    );
   }
 
   let body: unknown;

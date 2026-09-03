@@ -14,11 +14,8 @@ import {
   TAB_BY_TIER,
   upsertRowsToTab,
 } from "@/lib/scraper/sheets";
-import { pushJobToSheet } from "@/lib/scraper/sheet-push";
-import {
-  CONFIRMED_COLUMNS,
-  CONFIRMED_SHEET_TAB,
-} from "@/lib/scraper/confirm";
+import { pushJobToSheet, recordSheetSyncRun } from "@/lib/scraper/sheet-push";
+import { CONFIRMED_COLUMNS, CONFIRMED_SHEET_TAB } from "@/lib/scraper/confirm";
 import { pushWebsiteProducts } from "@/lib/scraper/product-sheet-sync";
 import { WEBSITE_SHEET_TAB } from "@/lib/scraper/website-sheet";
 
@@ -26,6 +23,17 @@ const STUDIO_PATH = "/studio/scraper";
 
 const NOT_CONFIGURED_ERROR =
   "Sheet sync not configured — set GOOGLE_SERVICE_ACCOUNT_JSON (or GOOGLE_SERVICE_ACCOUNT_KEY_B64) and SCRAPE_SHEET_ID (or SHEET_ID). Optional; the CSV export covers the full workflow without them.";
+
+/** The owner's sheet id + tab-id map (`/studio/settings` → Sheets), fetched
+ *  once per action so every push in this file resolves the SAME sheet the
+ *  owner chose rather than each call re-deciding independently. */
+async function getSheetIdSettings() {
+  const settings = await db.siteSettings.findUnique({
+    where: { id: "main" },
+    select: { sheetId: true, sheetTabIds: true },
+  });
+  return settings ?? undefined;
+}
 
 export type SheetSyncCounts = {
   updated: number;
@@ -72,7 +80,8 @@ export async function syncJobToSheet(
 ): Promise<ActionResult<SheetSyncCounts>> {
   const result = await runAction<SyncOutcome>(async () => {
     const session = await requireStaff();
-    if (!isSheetSyncConfigured()) return { outcome: "unconfigured" };
+    const settings = await getSheetIdSettings();
+    if (!isSheetSyncConfigured(settings)) return { outcome: "unconfigured" };
     const id = z.string().min(1).parse(jobId);
 
     const job = await db.scrapeJob.findUnique({
@@ -87,7 +96,7 @@ export async function syncJobToSheet(
     // Same engine the ON_COMPLETE hook uses — this action is the trigger, not
     // a second writer.
     const tier: ScrapeTier = job.source?.tier ?? "RESIN_GOODS";
-    const outcome = await pushJobToSheet(job.id);
+    const outcome = await pushJobToSheet(job.id, settings);
     if (outcome.status === "unconfigured") return { outcome: "unconfigured" };
     if (outcome.status === "empty") {
       return { outcome: "synced", updated: 0, appended: 0, total: 0 };
@@ -95,7 +104,11 @@ export async function syncJobToSheet(
     if (outcome.status === "failed") {
       // The rows are marked SYNC_PENDING and safe; say so rather than
       // pretending the push worked.
-      return { outcome: "pending", error: outcome.error, pending: outcome.pending };
+      return {
+        outcome: "pending",
+        error: outcome.error,
+        pending: outcome.pending,
+      };
     }
     const { updated, appended } = outcome;
     const total = outcome.total;
@@ -134,8 +147,21 @@ export async function syncWebsiteProductsToSheet(): Promise<
 > {
   const result = await runAction<SyncOutcome>(async () => {
     const session = await requireStaff();
+    const startedAt = new Date();
+    // pushWebsiteProducts (product-sheet-sync.ts) resolves its sheet id from
+    // the deploy environment only — the owner's Settings → Sheets id is not
+    // threaded into that module, so this push (unlike the ones below) does
+    // not yet honour it.
     const pushed = await pushWebsiteProducts();
-    if (pushed === null) return { outcome: "unconfigured" };
+    if (pushed === null) {
+      await recordSheetSyncRun({
+        tab: WEBSITE_SHEET_TAB,
+        rows: 0,
+        status: "UNCONFIGURED",
+        startedAt,
+      });
+      return { outcome: "unconfigured" };
+    }
 
     await logActivity({
       userId: session.user.id,
@@ -147,6 +173,12 @@ export async function syncWebsiteProductsToSheet(): Promise<
         appended: pushed.appended,
         total: pushed.total,
       },
+    });
+    await recordSheetSyncRun({
+      tab: WEBSITE_SHEET_TAB,
+      rows: pushed.total,
+      status: "SYNCED",
+      startedAt,
     });
     revalidatePath(STUDIO_PATH);
     return {
@@ -179,7 +211,9 @@ export async function syncConfirmedToSheet(): Promise<
 > {
   const result = await runAction<SyncOutcome>(async () => {
     const session = await requireStaff();
-    if (!isSheetSyncConfigured()) return { outcome: "unconfigured" };
+    const settings = await getSheetIdSettings();
+    if (!isSheetSyncConfigured(settings)) return { outcome: "unconfigured" };
+    const startedAt = new Date();
 
     const products = await db.product.findMany({
       where: { confirmedAt: { not: null } },
@@ -213,18 +247,37 @@ export async function syncConfirmedToSheet(): Promise<
       p.confirmedById ?? "",
     ]);
 
-    const { updated, appended } = await upsertRowsToTab({
-      tab: CONFIRMED_SHEET_TAB,
-      header: CONFIRMED_COLUMNS,
-      rows,
-      keyOf: (row) => row[0] ?? "",
-    });
+    let updated: number, appended: number;
+    try {
+      ({ updated, appended } = await upsertRowsToTab({
+        tab: CONFIRMED_SHEET_TAB,
+        header: CONFIRMED_COLUMNS,
+        rows,
+        keyOf: (row) => row[0] ?? "",
+        settings,
+      }));
+    } catch (err) {
+      await recordSheetSyncRun({
+        tab: CONFIRMED_SHEET_TAB,
+        rows: rows.length,
+        status: "FAILED",
+        error: err instanceof Error ? err.message : "Sheet write failed.",
+        startedAt,
+      });
+      throw err;
+    }
 
     await logActivity({
       userId: session.user.id,
       action: "sheet-sync-confirmed",
       entity: "Product",
       meta: { tab: CONFIRMED_SHEET_TAB, updated, appended, total: rows.length },
+    });
+    await recordSheetSyncRun({
+      tab: CONFIRMED_SHEET_TAB,
+      rows: rows.length,
+      status: "SYNCED",
+      startedAt,
     });
     revalidatePath(STUDIO_PATH);
     return { outcome: "synced", updated, appended, total: rows.length };
@@ -248,7 +301,8 @@ export async function retryPendingSheetSync(): Promise<
 > {
   return runAction(async () => {
     const session = await requireStaff();
-    if (!isSheetSyncConfigured()) {
+    const settings = await getSheetIdSettings();
+    if (!isSheetSyncConfigured(settings)) {
       throw new Error(NOT_CONFIGURED_ERROR);
     }
 
@@ -262,7 +316,7 @@ export async function retryPendingSheetSync(): Promise<
     let rows = 0;
     let failed = 0;
     for (const group of pending) {
-      const outcome = await pushJobToSheet(group.jobId);
+      const outcome = await pushJobToSheet(group.jobId, settings);
       if (outcome.status === "synced") rows += outcome.total;
       else failed += group._count._all;
     }
@@ -289,8 +343,11 @@ export async function syncTierToSheet(
 ): Promise<ActionResult<SheetSyncCounts>> {
   const result = await runAction<SyncOutcome>(async () => {
     const session = await requireStaff();
-    if (!isSheetSyncConfigured()) return { outcome: "unconfigured" };
+    const settings = await getSheetIdSettings();
+    if (!isSheetSyncConfigured(settings)) return { outcome: "unconfigured" };
     const parsedTier = tierSchema.parse(tier);
+    const startedAt = new Date();
+    const tab = TAB_BY_TIER[parsedTier];
 
     const sources = await db.scrapeSource.findMany({
       where: { tier: parsedTier },
@@ -307,7 +364,23 @@ export async function syncTierToSheet(
         : [];
 
     const rows = products.map(rowToScrapeDeck);
-    const { updated, appended } = await syncRowsToSheet(parsedTier, rows);
+    let updated: number, appended: number;
+    try {
+      ({ updated, appended } = await syncRowsToSheet(
+        parsedTier,
+        rows,
+        settings,
+      ));
+    } catch (err) {
+      await recordSheetSyncRun({
+        tab,
+        rows: rows.length,
+        status: "FAILED",
+        error: err instanceof Error ? err.message : "Sheet write failed.",
+        startedAt,
+      });
+      throw err;
+    }
 
     await logActivity({
       userId: session.user.id,
@@ -315,12 +388,18 @@ export async function syncTierToSheet(
       entity: "ScrapedProduct",
       meta: {
         tier: parsedTier,
-        tab: TAB_BY_TIER[parsedTier],
+        tab,
         sources: keys.length,
         updated,
         appended,
         total: rows.length,
       },
+    });
+    await recordSheetSyncRun({
+      tab,
+      rows: rows.length,
+      status: "SYNCED",
+      startedAt,
     });
     revalidatePath(STUDIO_PATH);
     return { outcome: "synced", updated, appended, total: rows.length };

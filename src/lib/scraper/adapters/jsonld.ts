@@ -98,11 +98,19 @@ function pathnameSlug(url: string): string {
   }
 }
 
-function mapProduct(node: JsonLdNode, pageUrl: string, ctx: AdapterContext): RichProduct | null {
+function mapProduct(
+  node: JsonLdNode,
+  pageUrl: string,
+  ctx: AdapterContext,
+): RichProduct | null {
   const title = typeof node.name === "string" ? node.name.trim() : "";
   if (!title) return null;
 
-  const offers = Array.isArray(node.offers) ? node.offers : node.offers ? [node.offers] : [];
+  const offers = Array.isArray(node.offers)
+    ? node.offers
+    : node.offers
+      ? [node.offers]
+      : [];
   const prices: number[] = [];
   let currency: string | undefined;
   let availability: string | undefined;
@@ -123,14 +131,19 @@ function mapProduct(node: JsonLdNode, pageUrl: string, ctx: AdapterContext): Ric
 
   const { srcs, alts } = normalizeImages(node.image);
   const sku = typeof node.sku === "string" ? node.sku.trim() : "";
-  const productID = typeof node.productID === "string" ? node.productID.trim() : "";
+  const productID =
+    typeof node.productID === "string" ? node.productID.trim() : "";
   const urlSlug = pathnameSlug(pageUrl);
   const externalId = sku || productID || urlSlug;
   if (!externalId) return null;
 
   const brand = node.brand as JsonLdNode | string | undefined;
   const brandName =
-    typeof brand === "string" ? brand : typeof brand?.name === "string" ? brand.name : undefined;
+    typeof brand === "string"
+      ? brand
+      : typeof brand?.name === "string"
+        ? brand.name
+        : undefined;
 
   return {
     externalId,
@@ -159,30 +172,102 @@ function mapProduct(node: JsonLdNode, pageUrl: string, ctx: AdapterContext): Ric
   };
 }
 
+/**
+ * Product links found on one listing page — a category/collection archive,
+ * NOT a sitemap. Used only for `scope: "CATEGORY"`, where `ctx.baseUrl` is
+ * the one listing page the operator pasted rather than the site root: a
+ * sitemap crawl (`discoverProductUrls`) would cover the whole catalogue,
+ * defeating the point of scoping to one category. Same-origin anchors only;
+ * `findProductNode` below is what actually filters out the non-product ones
+ * (a link to another listing page 404s no Product node and is skipped).
+ */
+async function discoverProductUrlsFromListing(
+  listingUrl: string,
+  cap: number,
+): Promise<string[]> {
+  let origin: string;
+  try {
+    origin = new URL(listingUrl).origin;
+  } catch {
+    return [];
+  }
+  try {
+    const res = await safeFetch(listingUrl, {
+      headers: { "User-Agent": SCRAPER_UA, Accept: "text/html" },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const found = new Set<string>();
+    for (const m of html.matchAll(/<a[^>]+href=["']([^"'#]+)["']/gi)) {
+      const href = m[1];
+      if (!href) continue;
+      try {
+        const abs = new URL(href, listingUrl);
+        if (abs.origin !== origin) continue;
+        abs.hash = "";
+        found.add(abs.toString());
+        if (found.size >= cap) break;
+      } catch {
+        // relative/malformed href — skip
+      }
+    }
+    return [...found].sort();
+  } catch {
+    return [];
+  }
+}
+
+/** Fetch one page and pull its schema.org Product node, or null (dead link,
+ *  timeout, or a page that simply isn't a product page — never thrown). */
+async function fetchProductAt(
+  pageUrl: string,
+  ctx: AdapterContext,
+): Promise<RichProduct | null> {
+  try {
+    // Product URLs come from attacker-controllable discovery (a sitemap or a
+    // listing page), so each fetch — and its redirects — must clear the SSRF
+    // guard (SEC-107).
+    const res = await safeFetch(pageUrl, {
+      headers: { "User-Agent": SCRAPER_UA, Accept: "text/html" },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!res.ok) return null; // one dead product page must not fail the run
+    const node = findProductNode(await res.text());
+    if (!node) return null; // page without a Product node — skip, do not fail
+    return mapProduct(node, pageUrl, ctx);
+  } catch {
+    return null; // timeout / parse issue on a single page — skip and continue
+  }
+}
+
 /* ---------------------------------------------------------------- adapter */
 
 export const jsonldAdapter: Adapter = async (ctx) => {
-  const collected = await discoverProductUrls(ctx.baseUrl, MAX_JSONLD_PRODUCTS_PER_RUN);
-  const slice = collected.slice((ctx.page - 1) * PAGE_SIZE, ctx.page * PAGE_SIZE);
+  // URL scope: ctx.baseUrl IS the one product page (createScrapeJob stored
+  // the operator's pasted URL there) — one fetch, no discovery, done.
+  if (ctx.scope === "URL") {
+    const product = await fetchProductAt(ctx.baseUrl, ctx);
+    return { products: product ? [product] : [], hasMore: false };
+  }
+
+  const collected =
+    ctx.scope === "CATEGORY"
+      ? await discoverProductUrlsFromListing(
+          ctx.baseUrl,
+          MAX_JSONLD_PRODUCTS_PER_RUN,
+        )
+      : await discoverProductUrls(ctx.baseUrl, MAX_JSONLD_PRODUCTS_PER_RUN);
+  const slice = collected.slice(
+    (ctx.page - 1) * PAGE_SIZE,
+    ctx.page * PAGE_SIZE,
+  );
 
   const products: RichProduct[] = [];
   for (const pageUrl of slice) {
     await sleep(resolveDelayMs(ctx.requestDelayMs, JSONLD_DELAY_MS));
-    try {
-      // Product URLs come from the (attacker-controllable) sitemap, so each
-      // page fetch — and its redirects — must clear the SSRF guard (SEC-107).
-      const res = await safeFetch(pageUrl, {
-        headers: { "User-Agent": SCRAPER_UA, Accept: "text/html" },
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!res.ok) continue; // one dead product page must not fail the run
-      const node = findProductNode(await res.text());
-      if (!node) continue; // page without a Product node — skip, do not fail
-      const mapped = mapProduct(node, pageUrl, ctx);
-      if (mapped) products.push(mapped);
-    } catch {
-      // Timeout / parse issue on a single page — skip and continue.
-    }
+    const mapped = await fetchProductAt(pageUrl, ctx);
+    if (mapped) products.push(mapped);
   }
 
   return { products, hasMore: ctx.page * PAGE_SIZE < collected.length };

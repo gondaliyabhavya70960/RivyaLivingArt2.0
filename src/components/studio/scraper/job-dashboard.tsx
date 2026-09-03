@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
 import Link from "next/link";
@@ -9,11 +9,9 @@ import { Download, Globe, Layers, Loader2, Play, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import {
-  continueScrapeJob,
   createScrapeJob,
   createTierJobs,
   deleteScrapeJobs,
-  type ScrapeJobSnapshot,
 } from "@/actions/scraper-jobs";
 import type {
   ScrapeJobStatus,
@@ -31,7 +29,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/studio/page-header";
-import { Pagination, PAGE_SIZE, usePagination } from "@/components/studio/pagination";
+import {
+  Pagination,
+  PAGE_SIZE,
+  usePagination,
+} from "@/components/studio/pagination";
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,6 +49,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSelection } from "@/hooks/use-selection";
+import { useScrapeRunner } from "@/hooks/use-scrape-runner";
 
 export type JobRow = {
   id: string;
@@ -78,7 +81,9 @@ const TIERS: { value: ScrapeTier; label: string }[] = [
 
 function hostLabel(input: string): string {
   try {
-    const url = new URL(/^https?:\/\//i.test(input) ? input : `https://${input}`);
+    const url = new URL(
+      /^https?:\/\//i.test(input) ? input : `https://${input}`,
+    );
     return url.hostname.replace(/^www\./, "");
   } catch {
     return input;
@@ -100,7 +105,10 @@ function StatusBadge({ status }: { status: ScrapeJobStatus }) {
       return <Badge variant="secondary">Done</Badge>;
     case "FAILED":
       return (
-        <Badge variant="outline" className="border-destructive/40 text-destructive">
+        <Badge
+          variant="outline"
+          className="border-destructive/40 text-destructive"
+        >
           Failed
         </Badge>
       );
@@ -130,86 +138,14 @@ export function JobDashboard({
     null,
   );
 
-  // ————— Runner (concurrency 1) —————
-  // The queue lives in refs so in-flight loops never re-run on render;
-  // enqueuedRef guarantees a jobId is never queued twice.
-  const queueRef = useRef<string[]>([]);
-  const enqueuedRef = useRef<Set<string>>(new Set());
-  const runningRef = useRef(false);
-  const aliveRef = useRef(true);
-  const [activeJobId, setActiveJobId] = useState<string | null>(null);
-  const [queueSize, setQueueSize] = useState(0);
-  const [snapshots, setSnapshots] = useState<Record<string, ScrapeJobSnapshot>>({});
+  // ————— Runner (concurrency 1, shared with every /studio/scraper screen) —————
+  // The queue, active job and snapshots live in a module store
+  // (use-scrape-runner.ts) mounted once by scraper/layout.tsx, so the loop
+  // survives navigating to a source's page and back rather than dying with
+  // this component.
+  const { activeJobId, queueSize, snapshots, enqueue } = useScrapeRunner();
   /** Labels for jobs created this session, before router.refresh lands. */
   const [names, setNames] = useState<Record<string, string>>({});
-
-  // Stop the detached runner loop on unmount so it never keeps polling or
-  // calls router.refresh against whatever page the operator navigated to.
-  useEffect(() => {
-    aliveRef.current = true;
-    return () => {
-      aliveRef.current = false;
-      queueRef.current = [];
-    };
-  }, []);
-
-  async function runJob(jobId: string) {
-    for (;;) {
-      const res = await continueScrapeJob(jobId);
-      if (!aliveRef.current) return; // unmounted — stop polling
-      if (!res.ok || !res.data) {
-        toast.error(!res.ok ? res.error : "Scrape run failed.");
-        return;
-      }
-      const snap = res.data;
-      setSnapshots((prev) => ({ ...prev, [jobId]: snap }));
-      if (snap.status === "DONE") {
-        toast.success(
-          `Scrape finished — ${snap.totalScraped} products (${snap.newCount} new, ${snap.updatedCount} updated).`,
-        );
-        return;
-      }
-      if (snap.status === "FAILED") {
-        toast.error(snap.error ?? "Scrape failed.");
-        return;
-      }
-      await new Promise((r) => setTimeout(r, 800));
-    }
-  }
-
-  async function pump() {
-    if (runningRef.current) return;
-    runningRef.current = true;
-    try {
-      let next = queueRef.current.shift();
-      while (next !== undefined) {
-        const jobId = next;
-        setActiveJobId(jobId);
-        setQueueSize(queueRef.current.length);
-        await runJob(jobId);
-        enqueuedRef.current.delete(jobId);
-        if (!aliveRef.current) break; // unmounted — don't refresh another page
-        router.refresh();
-        next = queueRef.current.shift();
-      }
-    } finally {
-      runningRef.current = false;
-      setActiveJobId(null);
-      setQueueSize(0);
-    }
-  }
-
-  function enqueue(jobIds: string[]) {
-    let added = false;
-    for (const id of jobIds) {
-      if (enqueuedRef.current.has(id)) continue;
-      enqueuedRef.current.add(id);
-      queueRef.current.push(id);
-      added = true;
-    }
-    setQueueSize(queueRef.current.length);
-    if (added) void pump();
-  }
 
   async function handleStart() {
     const trimmed = url.trim();
@@ -391,8 +327,8 @@ export function JobDashboard({
             Batch runs
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Queue every enabled source in a tier. Jobs run one at a time to
-            stay polite to the upstream stores.
+            Queue every enabled source in a tier. Jobs run one at a time to stay
+            polite to the upstream stores.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {TIERS.map((t) => (
@@ -453,11 +389,11 @@ export function JobDashboard({
         />
       ) : (
         <div
-            tabIndex={0}
-            role="region"
-            aria-label="Scrape jobs"
-            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
+          tabIndex={0}
+          role="region"
+          aria-label="Scrape jobs"
+          className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        >
           <table className="w-full text-sm">
             <thead>
               <StudioTableHead>
@@ -468,10 +404,31 @@ export function JobDashboard({
                     aria-label="Select all jobs"
                   />
                 </th>
-                <SortHead label="Source" sortKey="sourceName" sort={jobSort} onSort={toggleJob} />
-                <SortHead label="Platform" sortKey="platform" sort={jobSort} onSort={toggleJob} />
-                <SortHead label="Status" sortKey="status" sort={jobSort} onSort={toggleJob} />
-                <SortHead label="Pages" sortKey="pages" sort={jobSort} onSort={toggleJob} numeric />
+                <SortHead
+                  label="Source"
+                  sortKey="sourceName"
+                  sort={jobSort}
+                  onSort={toggleJob}
+                />
+                <SortHead
+                  label="Platform"
+                  sortKey="platform"
+                  sort={jobSort}
+                  onSort={toggleJob}
+                />
+                <SortHead
+                  label="Status"
+                  sortKey="status"
+                  sort={jobSort}
+                  onSort={toggleJob}
+                />
+                <SortHead
+                  label="Pages"
+                  sortKey="pages"
+                  sort={jobSort}
+                  onSort={toggleJob}
+                  numeric
+                />
                 <SortHead
                   label="Total / new / upd"
                   sortKey="total"
@@ -482,7 +439,12 @@ export function JobDashboard({
                 <th scope="col" className="px-4 py-3 font-medium">
                   Error
                 </th>
-                <SortHead label="Created" sortKey="created" sort={jobSort} onSort={toggleJob} />
+                <SortHead
+                  label="Created"
+                  sortKey="created"
+                  sort={jobSort}
+                  onSort={toggleJob}
+                />
                 <th scope="col" className="px-4 py-3 font-medium">
                   Finished
                 </th>
@@ -502,9 +464,7 @@ export function JobDashboard({
                 const error = snap ? snap.error : job.error;
                 const resumable = status === "QUEUED" || status === "RUNNING";
                 return (
-                  <StudioRow
-                    key={job.id}
-                  >
+                  <StudioRow key={job.id}>
                     <td className="px-4 py-3">
                       <Checkbox
                         checked={selection.selected.has(job.id)}

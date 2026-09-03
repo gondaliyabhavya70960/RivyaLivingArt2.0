@@ -52,6 +52,16 @@ export type AdapterContext = {
    * anything read it (Phase 0 audit §8).
    */
   requestDelayMs?: number | null;
+  /**
+   * What this job was asked to cover (`ScrapeJob.scope`): the whole source
+   * (default, every adapter's ordinary behaviour), one category/listing page
+   * (`baseUrl` IS that listing, paginated — a platform adapter that already
+   * derives its endpoint from `baseUrl` needs no change), or one product page
+   * (`baseUrl` IS that page — routed to the JSON-LD path centrally in
+   * `continueScrapeJob` regardless of platform, since a store's product API
+   * has no "just this one" request the way a JSON-LD fetch does).
+   */
+  scope?: "SOURCE" | "CATEGORY" | "URL";
 };
 
 export type Adapter = (ctx: AdapterContext) => Promise<AdapterPage>;

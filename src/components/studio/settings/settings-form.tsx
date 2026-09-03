@@ -11,6 +11,7 @@ import {
   updateSiteSettings,
   type UpdateSiteSettingsInput,
 } from "@/actions/settings";
+import { SheetIdsSection } from "@/components/studio/settings/sheet-ids-section";
 import { UploadUrlField } from "@/components/studio/settings/upload-url-field";
 import { DemoContentSection } from "@/components/studio/settings/demo-content-section";
 import type { SiteSettingsValues } from "@/components/studio/settings/site-settings-values";
@@ -69,7 +70,18 @@ type FormValues = z.infer<typeof formSchema>;
 
 // ————————————————————— The form —————————————————————
 
-export function SettingsForm({ settings }: { settings: SiteSettingsValues }) {
+export function SettingsForm({
+  settings,
+  sheetId,
+  sheetTabIds,
+}: {
+  settings: SiteSettingsValues;
+  /** Raw SiteSettings.sheetId/sheetTabIds — outside SiteSettingsValues on
+   *  purpose: SheetIdsSection below saves through its own Server Action,
+   *  never through this form's submit. */
+  sheetId: string | null;
+  sheetTabIds: unknown;
+}) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
 
@@ -582,6 +594,11 @@ export function SettingsForm({ settings }: { settings: SiteSettingsValues }) {
         settings being valid. See src/components/studio/settings/demo-content-section.tsx. */}
       <div className="mt-6">
         <DemoContentSection />
+      </div>
+
+      {/* Standalone, own save action — see SettingsForm's prop comment. */}
+      <div className="mt-6">
+        <SheetIdsSection sheetId={sheetId} sheetTabIds={sheetTabIds} />
       </div>
     </>
   );

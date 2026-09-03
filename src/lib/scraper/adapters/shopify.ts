@@ -49,7 +49,10 @@ type ShopifyProduct = {
   images?: ShopifyImage[];
 };
 
-function mapProduct(p: ShopifyProduct, ctx: AdapterContext): RichProduct | null {
+function mapProduct(
+  p: ShopifyProduct,
+  ctx: AdapterContext,
+): RichProduct | null {
   if (p?.id === undefined || p.id === null) return null;
   const title = (p.title ?? "").trim();
   const handle = (p.handle ?? "").trim();
@@ -62,7 +65,8 @@ function mapProduct(p: ShopifyProduct, ctx: AdapterContext): RichProduct | null 
     .filter((n) => Number.isFinite(n));
 
   const images = (Array.isArray(p.images) ? p.images : []).filter(
-    (i): i is ShopifyImage & { src: string } => typeof i?.src === "string" && i.src.length > 0,
+    (i): i is ShopifyImage & { src: string } =>
+      typeof i?.src === "string" && i.src.length > 0,
   );
 
   return {
@@ -94,6 +98,10 @@ export const shopifyAdapter: Adapter = async (ctx) => {
     await sleep(resolveDelayMs(ctx.requestDelayMs, POLITENESS_DELAY_MS));
   }
 
+  // CATEGORY scope needs no branch here: `ctx.baseUrl` is then the
+  // collection page the operator pasted (e.g. ".../collections/vases"), and
+  // Shopify serves that exact URL's own `/products.json` — the same request
+  // this line always made, just scoped by which URL it was handed.
   const url = `${ctx.baseUrl}/products.json?limit=${PAGE_SIZE}&page=${ctx.page}`;
   // Validate the host + any redirect hop before the request — a source whose
   // /products.json 30x-redirects to an internal address must not be followed
@@ -104,7 +112,9 @@ export const shopifyAdapter: Adapter = async (ctx) => {
   });
   if (!res.ok) {
     if (STRUCTURAL_STATUS.has(res.status)) return jsonldAdapter(ctx);
-    throw new Error(`Shopify products.json request failed with HTTP ${res.status} (${url})`);
+    throw new Error(
+      `Shopify products.json request failed with HTTP ${res.status} (${url})`,
+    );
   }
 
   let body: { products?: ShopifyProduct[] };
