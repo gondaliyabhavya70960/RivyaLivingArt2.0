@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import { Pagination } from "@/components/studio/pagination";
 import {
@@ -44,6 +45,8 @@ export type InquiryRow = {
   status: InquiryStatus;
   /** Pre-formatted on the server to keep hydration deterministic. */
   createdAt: string;
+  /** Content Lab fixture (batch G) — never a real commission. */
+  isDemo?: boolean;
 };
 
 export function InquiryList({
@@ -198,162 +201,172 @@ export function InquiryList({
         />
       ) : (
         <>
-        {/* §12.6 — on a phone the table becomes cards. Both views are rendered
+          {/* §12.6 — on a phone the table becomes cards. Both views are rendered
             and one is `display:none` per breakpoint, which also removes it
             from the accessibility tree, so nothing is announced twice. */}
-        <label className="mb-3 flex min-h-11 cursor-pointer items-center gap-3 text-small text-graphite md:hidden">
-          <Checkbox
-            aria-label="Select all"
-            checked={selection.allSelected}
-            onCheckedChange={selection.toggleAll}
-          />
-          Select all on this page
-        </label>
-        <ul className="space-y-3 md:hidden">
-          {pageRows.map((inquiry) => (
-            <li
-              key={inquiry.id}
-              className="rounded-card border border-border bg-card p-4 shadow-e1"
-            >
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  aria-label={`Select inquiry from ${inquiry.customerName}`}
-                  checked={selection.selected.has(inquiry.id)}
-                  onCheckedChange={() => selection.toggle(inquiry.id)}
-                  className="mt-1"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="u-micro">{inquiry.number}</p>
-                  <h3 className="mt-0.5 text-small font-medium text-foreground">
-                    <Link
-                      href={`/studio/inquiries/${inquiry.id}`}
-                      className="rounded-input underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+          <label className="mb-3 flex min-h-11 cursor-pointer items-center gap-3 text-small text-graphite md:hidden">
+            <Checkbox
+              aria-label="Select all"
+              checked={selection.allSelected}
+              onCheckedChange={selection.toggleAll}
+            />
+            Select all on this page
+          </label>
+          <ul className="space-y-3 md:hidden">
+            {pageRows.map((inquiry) => (
+              <li
+                key={inquiry.id}
+                className="rounded-card border border-border bg-card p-4 shadow-e1"
+              >
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    aria-label={`Select inquiry from ${inquiry.customerName}`}
+                    checked={selection.selected.has(inquiry.id)}
+                    onCheckedChange={() => selection.toggle(inquiry.id)}
+                    className="mt-1"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-1.5 u-micro">
+                      {inquiry.number}
+                      {inquiry.isDemo && <DemoBadge />}
+                    </p>
+                    <h3 className="mt-0.5 text-small font-medium text-foreground">
+                      <Link
+                        href={`/studio/inquiries/${inquiry.id}`}
+                        className="rounded-input underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                      >
+                        {inquiry.customerName}
+                      </Link>
+                    </h3>
+                    <p className="u-num text-12 text-graphite">
+                      {inquiry.phone}
+                    </p>
+                    <p
+                      className="mt-2 line-clamp-2 text-small text-graphite"
+                      title={inquiry.productTitle ?? undefined}
                     >
-                      {inquiry.customerName}
-                    </Link>
-                  </h3>
-                  <p className="u-num text-12 text-graphite">{inquiry.phone}</p>
-                  <p
-                    className="mt-2 line-clamp-2 text-small text-graphite"
-                    title={inquiry.productTitle ?? undefined}
-                  >
-                    {inquiry.productTitle ?? "—"}
-                  </p>
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <Badge variant={STATUS_BADGE_VARIANTS[inquiry.status]}>
-                      {STATUS_LABELS[inquiry.status]}
-                    </Badge>
-                    <Badge variant={SOURCE_BADGE_VARIANTS[inquiry.source]}>
-                      {SOURCE_LABELS[inquiry.source]}
-                    </Badge>
-                    <span className="u-micro ms-auto">{inquiry.createdAt}</span>
+                      {inquiry.productTitle ?? "—"}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <Badge variant={STATUS_BADGE_VARIANTS[inquiry.status]}>
+                        {STATUS_LABELS[inquiry.status]}
+                      </Badge>
+                      <Badge variant={SOURCE_BADGE_VARIANTS[inquiry.source]}>
+                        {SOURCE_LABELS[inquiry.source]}
+                      </Badge>
+                      <span className="u-micro ms-auto">
+                        {inquiry.createdAt}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
 
-        <div
+          <div
             tabIndex={0}
             role="region"
             aria-label="Commissions"
             className="relative hidden overflow-x-auto rounded-card border border-border bg-card shadow-e1 md:block xl:overflow-x-visible [contain:paint] xl:[contain:none] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
-          <table className="w-full min-w-[52rem] text-small xl:min-w-0">
-            <thead className="xl:sticky xl:top-16 xl:z-20 xl:bg-card">
-              <StudioTableHead>
-                <th className="w-10 py-3 pe-2 ps-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
-                  <Checkbox
-                    aria-label="Select all"
-                    checked={selection.allSelected}
-                    onCheckedChange={selection.toggleAll}
-                  />
-                </th>
-                {/* Fixed width so the pinned Customer column's offset stays
+            <table className="w-full min-w-[52rem] text-small xl:min-w-0">
+              <thead className="xl:sticky xl:top-16 xl:z-20 xl:bg-card">
+                <StudioTableHead>
+                  <th className="w-10 py-3 pe-2 ps-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
+                    <Checkbox
+                      aria-label="Select all"
+                      checked={selection.allSelected}
+                      onCheckedChange={selection.toggleAll}
+                    />
+                  </th>
+                  {/* Fixed width so the pinned Customer column's offset stays
                     arithmetic: a content-sized reference column would shift it
                     the moment the numbers gain a digit. */}
-                <th className="w-20 py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
-                  <span aria-hidden>#</span>
-                  <span className="sr-only">Reference</span>
-                </th>
-                <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">Customer</th>
-                <th className="py-3 pe-4">Source</th>
-                <th className="py-3 pe-4">Product</th>
-                <th className="py-3 pe-4">Status</th>
-                <th className="py-3 pe-4">Received</th>
-                <th className="py-3 pe-4">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </StudioTableHead>
-            </thead>
-            <tbody>
-              {pageRows.map((inquiry) => (
-                <StudioRow
-                  key={inquiry.id}
-                  selected={selection.selected.has(inquiry.id)}
-                >
-                  <td className="py-3 pe-2 ps-4 align-middle max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
-                    <Checkbox
-                      aria-label={`Select inquiry from ${inquiry.customerName}`}
-                      checked={selection.selected.has(inquiry.id)}
-                      onCheckedChange={() => selection.toggle(inquiry.id)}
-                    />
-                  </td>
-                  <td className="w-20 py-3 pe-4 whitespace-nowrap max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
-                    <span className="u-num text-12 text-graphite">
-                      {inquiry.number}
-                    </span>
-                  </td>
-                  <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
-                    <Link
-                      href={`/studio/inquiries/${inquiry.id}`}
-                      className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
-                    >
-                      {inquiry.customerName}
-                    </Link>
-                    <p className="u-num text-12 text-graphite">
-                      {inquiry.phone}
-                    </p>
-                  </td>
-                  <td className="py-3 pe-4">
-                    <Badge variant={SOURCE_BADGE_VARIANTS[inquiry.source]}>
-                      {SOURCE_LABELS[inquiry.source]}
-                    </Badge>
-                  </td>
-                  {/* The catalogue's titles run long (SEO-fed). One clamped
+                  <th className="w-20 py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
+                    <span aria-hidden>#</span>
+                    <span className="sr-only">Reference</span>
+                  </th>
+                  <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
+                    Customer
+                  </th>
+                  <th className="py-3 pe-4">Source</th>
+                  <th className="py-3 pe-4">Product</th>
+                  <th className="py-3 pe-4">Status</th>
+                  <th className="py-3 pe-4">Received</th>
+                  <th className="py-3 pe-4">
+                    <span className="sr-only">Actions</span>
+                  </th>
+                </StudioTableHead>
+              </thead>
+              <tbody>
+                {pageRows.map((inquiry) => (
+                  <StudioRow
+                    key={inquiry.id}
+                    selected={selection.selected.has(inquiry.id)}
+                  >
+                    <td className="py-3 pe-2 ps-4 align-middle max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
+                      <Checkbox
+                        aria-label={`Select inquiry from ${inquiry.customerName}`}
+                        checked={selection.selected.has(inquiry.id)}
+                        onCheckedChange={() => selection.toggle(inquiry.id)}
+                      />
+                    </td>
+                    <td className="w-20 py-3 pe-4 whitespace-nowrap max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
+                      <span className="flex items-center gap-1.5 u-num text-12 text-graphite">
+                        {inquiry.number}
+                        {inquiry.isDemo && <DemoBadge />}
+                      </span>
+                    </td>
+                    <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
+                      <Link
+                        href={`/studio/inquiries/${inquiry.id}`}
+                        className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                      >
+                        {inquiry.customerName}
+                      </Link>
+                      <p className="u-num text-12 text-graphite">
+                        {inquiry.phone}
+                      </p>
+                    </td>
+                    <td className="py-3 pe-4">
+                      <Badge variant={SOURCE_BADGE_VARIANTS[inquiry.source]}>
+                        {SOURCE_LABELS[inquiry.source]}
+                      </Badge>
+                    </td>
+                    {/* The catalogue's titles run long (SEO-fed). One clamped
                       line keeps the row scannable; the full title stays in the
                       tooltip and on the detail page. */}
-                  <td className="max-w-[34ch] py-3 pe-4">
-                    <span
-                      className="block truncate text-graphite"
-                      title={inquiry.productTitle ?? undefined}
-                    >
-                      {inquiry.productTitle ?? "—"}
-                    </span>
-                  </td>
-                  <td className="py-3 pe-4">
-                    <Badge variant={STATUS_BADGE_VARIANTS[inquiry.status]}>
-                      {STATUS_LABELS[inquiry.status]}
-                    </Badge>
-                  </td>
-                  <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
-                    {inquiry.createdAt}
-                  </td>
-                  <td className="py-3 pe-4 text-end">
-                    <Link
-                      href={`/studio/inquiries/${inquiry.id}`}
-                      className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
-                    >
-                      View
-                      <span className="sr-only"> {inquiry.customerName}</span>
-                    </Link>
-                  </td>
-                </StudioRow>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    <td className="max-w-[34ch] py-3 pe-4">
+                      <span
+                        className="block truncate text-graphite"
+                        title={inquiry.productTitle ?? undefined}
+                      >
+                        {inquiry.productTitle ?? "—"}
+                      </span>
+                    </td>
+                    <td className="py-3 pe-4">
+                      <Badge variant={STATUS_BADGE_VARIANTS[inquiry.status]}>
+                        {STATUS_LABELS[inquiry.status]}
+                      </Badge>
+                    </td>
+                    <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
+                      {inquiry.createdAt}
+                    </td>
+                    <td className="py-3 pe-4 text-end">
+                      <Link
+                        href={`/studio/inquiries/${inquiry.id}`}
+                        className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                      >
+                        View
+                        <span className="sr-only"> {inquiry.customerName}</span>
+                      </Link>
+                    </td>
+                  </StudioRow>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
 

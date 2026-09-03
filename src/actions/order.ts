@@ -19,6 +19,7 @@ import {
   ENGLISH_ORDER_LABELS,
   formatInquiryNumber,
   localizedOrderLabels,
+  withDemoPrefix,
   type OrderMessageLabels,
 } from "@/lib/whatsapp";
 
@@ -285,7 +286,14 @@ export async function submitProductOrder(
       notes,
       customer: { name, phone, email: email || undefined },
     };
-    const whatsappMessage = buildOrderMessage(messageInput, messageLabels);
+    // Content Lab (batch G): a demo product's order button still has to
+    // work — a dead button on a live card is worse than a marked one — but
+    // both the saved row and the message the customer sends carry the mark,
+    // so nobody mistakes a fixture for a real commission.
+    const whatsappMessage = withDemoPrefix(
+      buildOrderMessage(messageInput, messageLabels),
+      product.isDemo,
+    );
 
     // One-time claim token: only the submitter can re-read this inquiry's PII
     // from the public /whatsapp-order fallback (ENG-811). We store its hash.
@@ -303,6 +311,7 @@ export async function submitProductOrder(
         whatsappMessage,
         claimTokenHash,
         attribution: attributionJson(parsed.data.attribution),
+        isDemo: product.isDemo,
       },
       select: { id: true, number: true },
     });
@@ -311,9 +320,12 @@ export async function submitProductOrder(
     // number only exists after insert, so rebuild with it and persist
     // best-effort — a failed stamp still leaves a complete message in the row
     // while the customer sends the numbered one.
-    const finalMessage = buildOrderMessage(
-      { ...messageInput, inquiryNumber: formatInquiryNumber(inquiry.number) },
-      messageLabels,
+    const finalMessage = withDemoPrefix(
+      buildOrderMessage(
+        { ...messageInput, inquiryNumber: formatInquiryNumber(inquiry.number) },
+        messageLabels,
+      ),
+      product.isDemo,
     );
     try {
       await db.inquiry.update({

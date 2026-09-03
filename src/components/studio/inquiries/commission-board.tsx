@@ -19,6 +19,7 @@ import {
   type StageTimer,
 } from "@/components/studio/inquiries/lead-time";
 import { StageTimerRing } from "@/components/studio/inquiries/stage-timer-ring";
+import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import type { InquirySource, InquiryStatus } from "@/generated/prisma/enums";
 import { isOptimizableImageSrc } from "@/lib/image-src";
@@ -40,6 +41,8 @@ export type CommissionCard = {
   createdAtIso: string;
   /** Pre-formatted on the server to keep hydration deterministic. */
   createdAt: string;
+  /** Content Lab fixture (batch G) — never a real commission. */
+  isDemo?: boolean;
 };
 
 /**
@@ -213,7 +216,10 @@ function CommissionCardBody({
         </span>
 
         <div className="min-w-0 flex-1">
-          <p className="u-micro">{card.number}</p>
+          <p className="flex items-center gap-1.5 u-micro">
+            {card.number}
+            {card.isDemo && <DemoBadge />}
+          </p>
           <h4 className="mt-0.5 truncate text-small font-medium text-foreground">
             <Link
               href={`/studio/inquiries/${card.id}`}

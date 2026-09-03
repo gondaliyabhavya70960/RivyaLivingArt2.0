@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { SITE } from "@/lib/constants";
-import { buildWaLink, formatInquiryNumber } from "@/lib/whatsapp";
+import {
+  buildWaLink,
+  formatInquiryNumber,
+  withDemoPrefix,
+} from "@/lib/whatsapp";
 
 describe("buildWaLink", () => {
   it("targets the house number by default (Part 0 hard rule)", () => {
@@ -24,6 +28,20 @@ describe("buildWaLink", () => {
 describe("formatInquiryNumber", () => {
   it("renders the customer-facing RR reference", () => {
     expect(formatInquiryNumber(42)).toBe("#RR-42");
+  });
+});
+
+describe("withDemoPrefix", () => {
+  it("leaves a real order's message untouched", () => {
+    expect(withDemoPrefix("Hello Rivya Living Art", false)).toBe(
+      "Hello Rivya Living Art",
+    );
+  });
+
+  it("prefixes a Content Lab demo order so the studio can tell it apart", () => {
+    expect(withDemoPrefix("Hello Rivya Living Art", true)).toBe(
+      "[DEMO] Hello Rivya Living Art",
+    );
   });
 });
 
