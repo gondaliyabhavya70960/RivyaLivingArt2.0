@@ -5,6 +5,73 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 2 · batch A2 — homepage bands and the large-format page (2026-09-03)
+
+Merged `40e0211`, built and gated in its own worktree; the merged head was built and audited here
+before the push. The only merge collision was `site-copy.generated.ts`, regenerated from the
+merged messages (1,282 slots). One merge follow-up: the sections board dimmed a hidden row with
+`opacity-60`, which put its graphite meta text under AA — nothing had shipped a hidden section
+until A2's off-by-default bands, so the studio audit met the treatment for the first time and
+failed `/studio/sections` with eight serious contrast findings; the row now carries a muted tint
+beside its existing "Hidden" badge and keeps full-contrast text. A2's one deferred item — the homepage "pieces" band could not mark
+demo fixtures because `CARD_SELECT` had no `isDemo` until A3 — closes by construction on this
+head: the band renders A3's `CatalogProductCard`, which carries the `DemoMark`.
+
+- **`page-sections.ts`**: `SectionDef.defaultVisible?` (default `true`) lets a section ship OFF
+  without a new mechanism; `page-sections-server.ts` resolves `row?.visible ?? def.defaultVisible
+  ?? true` on both the public and the Studio path, and the sections board shows an "Off by
+  default" hint. HOME gains **large-format** (after `pieces`), **furniture** (after `collections`,
+  off) and **rooms** (after `maker`, off) — still three dark bands, none adjacent. LARGE_FORMAT
+  gains **philosophy**, **materials**, **pieces** (off), **work**, **words** and **faq** between
+  `scope`/`how` and `brief`/`gallery` — still two dark. `page-sections.test.ts` now checks every
+  page's default arrangement against its own band-rhythm guardrail and resolves every
+  `cureLabelKey` against `messages/en.json`.
+- **`furniture-kinds.ts`** is the shared six-kind list (dining, coffee, side, console, chair,
+  bench) both furniture bands read — D9/D26 commission framing: concept tiles captioned as such,
+  a lead-time line that reuses `Process.timelines`' published figure, a WhatsApp CTA, **no prices
+  and no product rows**. Ten new `site-images.ts` slots (six 4:5 furniture tiles, four 4:3 room
+  tiles) fall back to existing §15.4 masters read as bench, formwork, surface and interior
+  atmosphere; `large-format.ts` adds `"art-craft-pieces"` to `LARGE_FORMAT_CATEGORY_SLUGS`, so
+  that page's gallery shows real published pieces instead of the empty-state invitation.
+- **`(v2)/page.tsx`**: the hero switches to the `poster` ref (mobile crop + focal point) with the
+  `sf-hero-rise` stagger on eyebrow / h1 / lede / CTA row — the poster stays the LCP and is never
+  animated; the primary CTA is `/custom-order`, the secondary `/shop`. New large-format teaser,
+  furniture and rooms bands; the collections band is a 12-column bento with a two-row lead tile;
+  the words band renders through `SnapRail` below `md`; the bespoke band's background is the first
+  `HeroParallax` mount since D18; manifesto, maker, print, process, why, journal and closing wrap
+  their text in `Reveal`.
+- **`large-resin-art/page.tsx`**: the same hero treatment and six new sections — `philosophy`,
+  `materials` (reusing `Process.materials.*`), `pieces` (off by default, the furniture tiles),
+  `work` / `words` / `faq` (conditional, rendering nothing when empty).
+- **`drift` is not mounted.** A1's `.sf-hero-drift` is a one-shot 6,000 ms animation and
+  `redesign-audit.mjs`'s duration rule exempts only infinite loops, so the prop fails Part 3.8's
+  four-value gate the moment it is used. Both heroes keep the rise stagger; reconciling the drift
+  token is an F2 item.
+- i18n ×9 (real translations): `Home.largeFormat.*`, `Home.furniture.*`, `Home.rooms.*`,
+  `Home.cure.{largeFormat,furniture,rooms}`, `LargeFormat.{philosophy,pieces,work,words,faq}.*`,
+  `LargeFormat.cure.*`, `Common.of`.
+- Measured in the worktree: 477 unit tests, 18 db tests, redesign/a11y audits clean on `/` and
+  `/large-resin-art` at 1440/390/360 (+ `/ar`), keyboard, E2E 10/10, motion 48.4 KB, Lighthouse
+  home perf 97–98 with LCP 1.1–1.3 s, screenshots with the off-by-default bands forced visible
+  through temporary `PageSection` rows (reverted).
+
+Verified on the merged head (`40e0211` plus the sections-board fix `909e28a`): typecheck · lint ·
+vitest 63 files / 620 · test:db 6 / 28 · copy:check 1,282 · i18n-missing and `--stale` clean ·
+`next build` · motion-budget 48.4 KB (unchanged) · redesign-audit 0 failing rules on the 13 CI
+routes plus the five demo detail routes at 1440 / 390 / 360 and eight `/ar` routes at 390 ·
+a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at 1440 and 390 · E2E
+10/10 · Lighthouse budgets met (perf ≥ 85, a11y ≥ 95) · studio-audit clean across 34 routes at
+1440 and 390 after the sections-board fix (the first pass failed `/studio/sections` with eight
+serious contrast findings, all on the dimmed hidden rows) · the demo detail routes re-audited
+clean at both widths after re-seeding the demo set that `test:db` had removed, with the proofs
+restored (no sitemap entry, `noindex, nofollow`, no Product JSON-LD, the DemoMark rendered) · on
+the running server the homepage carries the rise stagger and no drift, seven `/custom-order`
+links, the large-format teaser, a four-tile bento lead and no furniture or rooms band (both off by
+default — their headings occur only inside the serialised message payload), and `/large-resin-art`
+renders philosophy, materials, pieces, work, words and faq.
+
+---
+
 ## Wave 1 · batch E and wave 2 · batch A3 — scraper + Sheets, and the shop / PDP / category pass (2026-09-03)
 
 Merged `5d6a74c` (A3) and `817865e` (E), each built and gated in its own worktree against its own

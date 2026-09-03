@@ -11,10 +11,11 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation wave 2 — wave 1 complete (A1 B C1 D E F1 + G); A3 merged;
-                          A2, A4, C2 in flight; F2 after wave 2
+Current Phase:            Transformation wave 2 — wave 1 complete (A1 B C1 D E F1 + G); A3 and A2
+                          merged; A4 and C2 in flight; F2 after wave 2
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 COMPLETE (2026-09-03); PR #42 draft; CI green
+Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 COMPLETE (2026-09-03); PR #42 draft;
+                          CI green
                           on every head; Vercel preview green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
@@ -22,9 +23,9 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              wave 2 — A2 (homepage + large-format) in wt-a2, A4 (process/about/journal +
-                          Studio process/materials) in wt-a4, C2 (block catalogue) queued behind the
-                          two-agent cap; then F2 (CI demo seed + detail routes + e2e, audit flips, docs)
+In Progress:              wave 2 — A4 (process/about/journal + Studio process/materials) in wt-a4,
+                          C2 (block catalogue) in wt-c2; then F2 (CI demo seed + detail routes + e2e,
+                          audit flips, docs; reconcile the 6 s sf-hero-drift token with Part 3.8)
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
@@ -40,6 +41,7 @@ Files Created:            11 migration dirs (20260904100000 … 20260904110000) 
                           stages-server,normalize}.ts · hooks/use-scrape-runner.ts · scraper/layout.tsx
                           · actions/{research,sheet-fill}.ts · lib/import/tier-fill.ts · studio
                           research + sheet-import/conflicts routes · settings/sheet-ids-section.tsx
+                          · A2: src/lib/furniture-kinds.ts
 Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-usages,shop,
                           search-query,catalog-nav,catalog-mirror,custom-pages-server,
                           custom-page-data,large-format,site-settings,activity,order-visibility,
@@ -52,7 +54,10 @@ Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-us
                           pages · search page defaults · design-lab mock rows. E: scraper actions,
                           adapters, run-scope, breaker, sheets, sheet-push · import.ts preview +
                           overwriteOwnerEdited · import-wizard · settings form/page · sidebar ·
-                          prisma/import-tiers.ts (thin caller) · docs/{scraper,google-sheets}.md
+                          prisma/import-tiers.ts (thin caller) · docs/{scraper,google-sheets}.md.
+                          A2: page-sections{,-server,-studio}.ts · sections-board · site-images.ts
+                          (+10 slots) · large-format.ts · (v2)/page.tsx · large-resin-art/page.tsx ·
+                          nine message files (+75 keys) · site-copy.generated.ts (1,282 slots)
 Database Changes:         11 additive migrations (44 → 55). One data statement: existing
                           Testimonial rows back-filled to PUBLISHED (they were live). Product
                           isDemo ADD COLUMN takes a brief ACCESS EXCLUSIVE lock — deploy off-peak.
@@ -75,6 +80,9 @@ Tests Run:                typecheck · lint · test (40 files / 391) · test:db 
                           a11y-audit 1440/390/RTL · keyboard 1440/390 · e2e 10/10 · studio-audit 34
                           routes 1440/390 (one 390 overflow on /studio/sheet-import fixed) ·
                           Lighthouse budgets met · demo proofs incl. the IN_ROOM room-context band
+                          · A2 merged head (909e28a): the same set — test (63 / 620) · copy:check
+                          (1,282) · studio-audit 34 routes 1440/390 after the sections-board
+                          contrast fix · demo detail routes re-audited after re-seeding
 Tests Passing:            all of the above (motion 48.2 KB is in the 45–49 KB warn band as before)
 Known Issues:             Subagent API returned 529 for the whole batch, so B0 was implemented in
                           the main session rather than by the planned agent workflow; the
@@ -90,7 +98,10 @@ Known Issues:             Subagent API returned 529 for the whole batch, so B0 w
                           environment (its writer is outside E's files; documented in
                           docs/google-sheets.md). Bulk Import re-imports now skip untouched
                           matching rows unless "overwrite owner-edited products" is ticked.
-Next Session Instruction: Read this block, then /root/.claude/plans/…elegant-mango.md (the
+Next Session Instruction: `npm run test:db` seeds AND removes the demo set in the database it
+                          runs against — run `npm run seed:demo` again before any audit that
+                          needs /product/demo-product-001 (learned twice this session).
+                          Read this block, then /root/.claude/plans/…elegant-mango.md (the
                           approved plan) and CHANGELOG.md's B0 entry. Branch is
                           claude/rivya-website-redesign-dc3jz0 on PR #42. Wave scripts and
                           worktree prep live in the session scratchpad.
