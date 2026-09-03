@@ -192,6 +192,15 @@ export default async function SearchPage({
         ? { url: p.images[1].url, alt: p.images[1].alt || lp.title }
         : null,
       variantChips: [],
+      // D21 added these to ShopProductItem for the catalog card's mono meta
+      // line, hover video and demo mark. `search-query.ts`'s own select is
+      // B0-owned and unchanged by this batch, so the search results simply
+      // carry the same "nothing to show" defaults they always rendered —
+      // no card here loses anything it had before this type grew.
+      materials: null,
+      dimensions: null,
+      videoUrl: null,
+      isDemo: false,
     };
   });
 

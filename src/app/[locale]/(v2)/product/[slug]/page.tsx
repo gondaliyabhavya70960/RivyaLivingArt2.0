@@ -132,6 +132,12 @@ const RAIL_SELECT = {
   seoTitle: true,
   seoDescription: true,
   translations: true,
+  // D21: carried through so the rail's cards get the mono meta line, the
+  // hover clip and the demo mark same as every other catalog card.
+  materials: true,
+  dimensions: true,
+  videoUrl: true,
+  isDemo: true,
   category: {
     select: { slug: true, name: true, description: true, translations: true },
   },
@@ -414,6 +420,10 @@ export default async function ProductPage({ params }: PageProps) {
       tier: row.tier,
       inStock: row.inStock,
       featured: row.featured,
+      materials: row.materials?.trim() || null,
+      dimensions: row.dimensions?.trim() || null,
+      videoUrl: row.videoUrl?.trim() || null,
+      isDemo: row.isDemo,
     };
   };
 
