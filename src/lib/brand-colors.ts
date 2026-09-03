@@ -1,31 +1,39 @@
 /**
  * Brand color hex values for layers CSS custom properties can't reach —
- * inline style strings, Satori OG images, transactional email (DS-006/009).
- * v2.0 "Midnight Gild" (DESIGN.md A2 / Appendix A) plus the shared Satori/
- * email inks. The v7 Sapphire keys were retired by the md-sweep pass once
- * their last consumers (per-route OG cards, email, order-panel swatches)
- * migrated. Keep values in lockstep with src/styles/tokens.css.
+ * Satori OG images, the web-app manifest, the root error boundary (no
+ * stylesheet is guaranteed to have loaded) and transactional email HTML.
+ * v3 "Liquid Luxury" (REDESIGN.md Part 3.1 / `src/styles/tokens.css`): the
+ * thirteen storefront roles, restated as literal hex, because none of those
+ * four consumers can resolve a CSS custom property — Satori renders outside
+ * any DOM/stylesheet, the manifest and the email are read by a phone/inbox
+ * with no CSS context at all, and the error boundary replaces the entire
+ * root layout on purpose, so it cannot assume `globals.css` loaded either.
+ * `brand-colors.test.ts` reads `tokens.css` back and asserts every value
+ * here matches its token by name, so this file cannot drift from the design
+ * system's actual palette the way the v2.0 "Midnight Gild" set once did.
  */
 export const BRAND = {
-  /* ——— v2.0 Midnight Gild ——— */
-  royal: "#1e4fd8",
-  sapphireV2: "#142f86",
-  navyMidnight: "#0a1a2f",
-  ivory: "#f5f2ec",
-  canvas: "#faf9f5",
-  bronzeInk: "#8c6a1d",
-  gold: "#d4af37",
-  /* ——— shared Satori/email inks ——— */
-  /** Deep blue-black canvas base for Satori OG cards — bluer/darker than a
-   *  neutral black so the void→navy→royal gradient starts from true shadow. */
-  voidBlue: "#05080f",
-  /** Bright near-white for dark Satori/email surfaces (kept alongside ivory:
-   *  OG typography wants the extra contrast pop). */
-  porcelain: "#f8f9fa",
-  /** Muted body ink for transactional email (mirrors --muted-foreground). */
-  mutedInk: "#44586f",
-  /** WhatsApp brand green — wa.me actions only (Part 0 hard rule). */
-  whatsapp: "#25d366",
+  obsidian: "#080a0e",
+  deepOcean: "#08283a",
+  sapphire: "#164e6b",
+  sapphireHi: "#1d6389",
+  mineral: "#f4f1e9",
+  sand: "#e7e0d5",
+  champagne: "#b89b63",
+  ink: "#12141a",
+  graphite: "#5b6068",
+  mist: "#a9b4bc",
+  whatsapp: "#128c7e",
+  alert: "#9b3a2e",
+  success: "#2c6b5b",
+  /**
+   * @deprecated v2.0 "Midnight Gild" alias, kept ONLY because
+   * `order-panel.tsx` (owned by batch A3, not this one) still imports
+   * `BRAND.gold` for its swatch-colour table. Equal to `champagne` — the v3
+   * role gold's every prior use in this file (OG hairlines, eyebrows) was
+   * re-pointed to. Remove once A3 migrates that file to the named role.
+   */
+  gold: "#b89b63",
 } as const;
 
 /** `#rrggbb` → `"r, g, b"`, for composing rgba() strings from a brand hex. */
@@ -35,10 +43,13 @@ function rgbChannels(hex: string): string {
 }
 
 /**
- * Porcelain at an alpha — Satori OG typography dims through rgba so the
- * off-white stays sourced from the token layer instead of drifting to a
- * hand-typed value (DS-006).
+ * `mineral` at an alpha — Satori OG typography and the error boundary dim
+ * their secondary lines through rgba so the off-white stays sourced from the
+ * token layer instead of drifting to a hand-typed value. Replaces the v2.0
+ * `porcelainAlpha` (the v2 palette's separate near-white `porcelain` value
+ * is retired; `mineral` is the v3 role that plays the same part — light ink
+ * on a dark Satori/email surface).
  */
-export function porcelainAlpha(alpha: number): string {
-  return `rgba(${rgbChannels(BRAND.porcelain)}, ${alpha})`;
+export function mineralAlpha(alpha: number): string {
+  return `rgba(${rgbChannels(BRAND.mineral)}, ${alpha})`;
 }

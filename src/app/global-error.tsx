@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { BRAND, porcelainAlpha } from "@/lib/brand-colors";
+import { BRAND, mineralAlpha } from "@/lib/brand-colors";
 
 /**
  * Root-level error boundary. Replaces the entire root layout when it fails,
@@ -17,8 +17,8 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: BRAND.navyMidnight,
-    color: BRAND.ivory,
+    backgroundColor: BRAND.obsidian,
+    color: BRAND.mineral,
     fontFamily:
       "Georgia, 'Times New Roman', 'Iowan Old Style', 'Palatino Linotype', serif",
     textAlign: "center" as const,
@@ -29,8 +29,9 @@ const styles = {
     fontSize: "0.8125rem",
     letterSpacing: "0.18em",
     textTransform: "lowercase" as const,
-    // Gold on navy (A2 rule 3) — the v7 azure eyebrow reads off-brand now.
-    color: BRAND.gold,
+    // Champagne on obsidian (Part 3.1) — the one accent that clears 7.5:1
+    // there, so it is legible even without any stylesheet having loaded.
+    color: BRAND.champagne,
   },
   heading: {
     margin: "1rem auto 0",
@@ -45,13 +46,13 @@ const styles = {
     maxWidth: "26rem",
     fontSize: "1rem",
     lineHeight: 1.65,
-    color: porcelainAlpha(0.65),
+    color: mineralAlpha(0.65),
   },
   rule: {
     margin: "2rem auto 0",
     width: "7rem",
     height: "1px",
-    background: `linear-gradient(90deg, transparent, ${BRAND.gold} 30%, ${BRAND.gold} 70%, transparent)`,
+    background: `linear-gradient(90deg, transparent, ${BRAND.champagne} 30%, ${BRAND.champagne} 70%, transparent)`,
   },
   button: {
     marginTop: "2rem",
@@ -61,9 +62,9 @@ const styles = {
     height: "3rem",
     padding: "0 2rem",
     borderRadius: "9999px",
-    border: `1px solid ${porcelainAlpha(0.3)}`,
+    border: `1px solid ${mineralAlpha(0.3)}`,
     backgroundColor: "transparent",
-    color: BRAND.ivory,
+    color: BRAND.mineral,
     fontFamily: "inherit",
     fontSize: "0.9375rem",
     letterSpacing: "0.02em",

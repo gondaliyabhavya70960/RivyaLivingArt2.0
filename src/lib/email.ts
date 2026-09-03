@@ -89,7 +89,8 @@ export async function sendOrderNotification(
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { sent: false };
 
-  const label = input.source === "PRODUCT" ? "product order" : "custom commission";
+  const label =
+    input.source === "PRODUCT" ? "product order" : "custom commission";
   const replyWa = `https://wa.me/${input.phone.replace(/[^0-9]/g, "")}`;
   const text = [
     `New ${label} inquiry on Rivya Living Art.`,
@@ -182,16 +183,20 @@ export async function sendPasswordResetEmail(input: {
   ].join("\n");
 
   // Palette pulled from BRAND so a brand retune updates the token layer and this
-  // transactional email together instead of drifting (DS-706).
+  // transactional email together instead of drifting (DS-706). A light email
+  // on a white ground reads its roles differently than the dark OG cards do:
+  // `ink` is the v3 body-on-light role, `sapphire` is the primary-action
+  // colour, `graphite` is secondary text, and `champagne` (never below 16px
+  // on light — Part 3.1) appears only on the 22px wordmark full stop.
   const html = `
-  <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:${BRAND.navyMidnight}">
-    <p style="font-size:22px;font-weight:600;color:${BRAND.royal};margin:0 0 24px">Rivya Living Art<span style="color:${BRAND.gold}">.</span></p>
+  <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:${BRAND.ink}">
+    <p style="font-size:22px;font-weight:600;color:${BRAND.sapphire};margin:0 0 24px">Rivya Living Art<span style="color:${BRAND.champagne}">.</span></p>
     <p style="margin:0 0 12px">Hi ${greetingName},</p>
     <p style="margin:0 0 20px;line-height:1.6">We received a request to reset your Rivya Living Art Studio password. Choose a new one using the button below. This link expires in one hour.</p>
-    <p style="margin:0 0 28px"><a href="${input.resetUrl}" style="display:inline-block;background:${BRAND.royal};color:${BRAND.ivory};text-decoration:none;padding:12px 28px;border-radius:9999px;font-weight:500">Reset password</a></p>
-    <p style="margin:0 0 8px;font-size:13px;color:${BRAND.mutedInk};line-height:1.6">If the button doesn't work, paste this link into your browser:<br /><a href="${input.resetUrl}" style="color:${BRAND.royal};word-break:break-all">${input.resetUrl}</a></p>
-    <p style="margin:24px 0 0;font-size:13px;color:${BRAND.mutedInk};line-height:1.6">If you didn't request this, you can safely ignore this email — your password will stay the same.</p>
-    <p style="margin:24px 0 0;font-size:13px;color:${BRAND.mutedInk}">— Rivya Living Art Studio</p>
+    <p style="margin:0 0 28px"><a href="${input.resetUrl}" style="display:inline-block;background:${BRAND.sapphire};color:${BRAND.mineral};text-decoration:none;padding:12px 28px;border-radius:9999px;font-weight:500">Reset password</a></p>
+    <p style="margin:0 0 8px;font-size:13px;color:${BRAND.graphite};line-height:1.6">If the button doesn't work, paste this link into your browser:<br /><a href="${input.resetUrl}" style="color:${BRAND.sapphire};word-break:break-all">${input.resetUrl}</a></p>
+    <p style="margin:24px 0 0;font-size:13px;color:${BRAND.graphite};line-height:1.6">If you didn't request this, you can safely ignore this email — your password will stay the same.</p>
+    <p style="margin:24px 0 0;font-size:13px;color:${BRAND.graphite}">— Rivya Living Art Studio</p>
   </div>`;
 
   try {
