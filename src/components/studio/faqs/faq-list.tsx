@@ -3,7 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ArrowDown, ArrowUp, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -238,8 +238,21 @@ export function NewFaqButton() {
 
 export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   const router = useRouter();
-  const [search, setSearch] = useState("");
-  const [demoOnly, setDemoOnly] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("q") ?? "";
+  const demoOnly = searchParams.get("demo") === "1";
+  const [searchInput, setSearchInput] = useState(search);
+
+  function updateParams(next: Record<string, string | undefined>) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(next)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -346,7 +359,13 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   return (
     <>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <div className="relative">
+        <form
+          className="relative"
+          onSubmit={(e) => {
+            e.preventDefault();
+            updateParams({ q: searchInput.trim() || undefined });
+          }}
+        >
           <Search
             aria-hidden
             strokeWidth={1.5}
@@ -354,17 +373,17 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
           />
           <Input
             type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search FAQs…"
             aria-label="Search FAQs"
             className="h-10 w-64 ps-10"
           />
-        </div>
+        </form>
         <button
           type="button"
           aria-pressed={demoOnly}
-          onClick={() => setDemoOnly((v) => !v)}
+          onClick={() => updateParams({ demo: demoOnly ? undefined : "1" })}
           className={
             demoOnly
               ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
