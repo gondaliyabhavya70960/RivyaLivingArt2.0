@@ -5,6 +5,69 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation batch B0 — schema, demo gates, shared helpers (2026-09-03)
+
+The owner answered the roadmap's remaining gates (D7–D27) in one sitting and asked for the
+whole plan; B0 is the foundation every later batch builds on. Twelve commits, eleven
+additive migrations (44 → 55), zero data changes to any existing row.
+
+### Added
+- **Testimonial system schema** (`20260904100000`): `TestimonialStatus` (DRAFT · PENDING_REVIEW ·
+  VERIFIED · PUBLISHED · ARCHIVED) and `PermissionStatus`; status, featured, isDemo, designation,
+  category, givenAt, language, product/portfolio links (set-null), productTitle, purchaseType,
+  media pointers, installation image, film + poster, internal notes, permission, verification,
+  timestamps, indexes. **Every existing row is back-filled to PUBLISHED in the same migration**,
+  so the live site did not change on deploy. `getTestimonials()` is now gated (`status =
+  PUBLISHED` plus the demo gate), total (try/catch → `[]`), and takes either the old positional
+  form or `{ take, locale, productId, portfolioId, category, featured, includeDemo }`.
+  `revalidatePublic("testimonial")` finally purges the PDP, `/custom-order` and
+  `/large-resin-art`, not just `/` — a withdrawn testimonial used to linger on product pages for
+  a day. Shipped in PR #41 (merged); the rest of the batch is PR #42.
+- **`ContentStatus` REVIEW and ARCHIVED** (`20260904101000`, enum values only). Every public
+  reader already selects PUBLISHED; the eleven inline `z.enum(["DRAFT","PUBLISHED"])` schemas
+  now read `CONTENT_STATUSES` from `src/lib/content-status.ts`.
+- **The demo-content marker** (`20260904102000`): `isDemo` on Product, BlogPost, BlogCategory,
+  Portfolio, Faq, CustomPage, Media, Inquiry, ScrapeJob, ImportRun (Testimonial had it), and
+  `SiteSettings.demoContentPublic` (default off). One gate, `showDemoContent()` in
+  `src/lib/demo-content.ts`: fixtures show off production, or in production only while the
+  owner's switch is on. `demoWhere()` is spread into every public reader; the cached readers
+  (`fetchDefaultShopFirstPage`, `fetchDuplicateTitleCounts`, `readCatalogNav`) carry the
+  boolean in their cache key. The sitemap, `generateStaticParams`, the website→Sheet mirror and
+  the image mirror hard-code `isDemo: false` whatever the switch says. Detail routes 404 a
+  hidden fixture and mark a shown one `noindex`. **The "DEMO" title-prefix convention is
+  retired** — zero occurrences remain.
+- **`Faq.status`** (`20260904103000`, default PUBLISHED); every public FAQ reader selects it.
+- **`Category.seoTitle` / `seoDescription` / `visible`** (`20260904104000`); the mega-menu, shop
+  chips, search, sitemap, tiles, portfolio chips and sibling shelves honour `visible`; the
+  category page 404s a hidden shelf and prefers the owner's SEO fields.
+- **`Media.tags` / `caption` / `favourite` / `duration` / `posterUrl`** (`20260904105000`);
+  `posterUrl` joins the delete guard as "Video poster · <file>".
+- **Scraper** (`20260904106000`): `ScrapedProduct.notes`, `ScrapeScope` + `ScrapeJob.scope`,
+  `ScrapeJob.updatedAt` heartbeat.
+- **Sheets** (`20260904107000`): `SheetConflict`, `SheetSyncRun`, `SiteSettings.sheetId` /
+  `sheetTabIds`.
+- **`BlogPost.categoryId`** → Category (`20260904108000`), **`ProductImage.role`**
+  (`20260904109000`), **`ResearchRecord`** (`20260904110000`; its `images` array joins the
+  delete guard).
+- Helpers: `snapshotBefore()` for bounded before-pictures in the activity log;
+  `PROCESS_STEPS` (the owner-confirmed ten, written once).
+
+### Verified
+typecheck · lint · vitest 40 files / 391 tests (8 new) · test:db 4 files / 13 tests (5 new:
+testimonial gate, demo gate hidden/shown/never-in-sitemap, video poster guard, research
+picture guard) · `prisma migrate deploy` from scratch and `migrate diff` after every migration
+(only the five statements that pre-exist on `main` remain: three raw-SQL trigram indexes and
+two column defaults from the brand rename) · the production build and the browser audits are
+recorded in the PR body.
+
+### Two things learned the hard way
+- Prisma 7.9 removed `migrate diff --from-url`; the drift proof is
+  `--from-config-datasource --to-schema prisma/schema.prisma --script`.
+- `src/lib/tiptap-media.test.ts` mocks the database table by table, so every new reader in
+  `media-usages.ts` is also a new mock line — by design, not an oversight.
+
+---
+
 ## Deploys — cap the prerender's database fan-out (2026-09-03)
 
 Every Vercel deployment since 09:03 failed. The database was never the problem, and neither was any
