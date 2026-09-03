@@ -4,11 +4,18 @@ import { useMemo, useState, type FormEvent } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteFaqs, reorderFaq, upsertFaq } from "@/actions/faqs";
+import type { ContentStatus } from "@/generated/prisma/enums";
+import {
+  deleteFaqs,
+  reorderFaq,
+  setFaqStatus,
+  upsertFaq,
+} from "@/actions/faqs";
 import { BulkBar } from "@/components/studio/bulk-bar";
+import { DemoBadge } from "@/components/studio/demo-badge";
 import {
   TranslationsSection,
   type TranslationsValue,
@@ -21,6 +28,7 @@ import {
   PAGE_SIZE,
   usePagination,
 } from "@/components/studio/pagination";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -42,6 +50,8 @@ export type FaqRow = {
   question: string;
   answer: string;
   order: number;
+  status: ContentStatus;
+  isDemo: boolean;
   /** Raw per-locale overrides JSON from the database (`{ [locale]: {…} }`). */
   translations: unknown;
 };
@@ -205,9 +215,25 @@ export function NewFaqButton() {
 
 export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [demoOnly, setDemoOnly] = useState(false);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return faqs.filter((faq) => {
+      if (demoOnly && !faq.isDemo) return false;
+      if (!q) return true;
+      return (
+        faq.question.toLowerCase().includes(q) ||
+        faq.answer.toLowerCase().includes(q)
+      );
+    });
+  }, [faqs, search, demoOnly]);
+
   const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
-    faqs,
+    filtered,
     PAGE_SIZE,
+    `${search}|${demoOnly}`,
   );
   const rowIds = useMemo(() => pageRows.map((f) => f.id), [pageRows]);
   const selection = useSelection(rowIds);
@@ -215,6 +241,7 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [reordering, setReordering] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   async function handleDelete() {
     const count = selection.count;
@@ -239,6 +266,25 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
     else toast.error(res.error);
   }
 
+  async function handleToggleStatus(faq: FaqRow) {
+    setTogglingId(faq.id);
+    const next = faq.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+    const res = await setFaqStatus(faq.id, next);
+    setTogglingId(null);
+    if (res.ok) {
+      toast.success(
+        next === "PUBLISHED"
+          ? "FAQ published."
+          : "FAQ moved to draft — hidden from the public FAQ page.",
+      );
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
+  }
+
+  const filtering = search.trim() !== "" || demoOnly;
+
   if (faqs.length === 0) {
     return (
       <EmptyState
@@ -251,99 +297,174 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
 
   return (
     <>
-      <div
-            tabIndex={0}
-            role="region"
-            aria-label="FAQs"
-            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
-        <table className="w-full text-sm">
-          <thead>
-            <StudioTableHead>
-              <th scope="col" className="w-12 px-4 py-3">
-                <Checkbox
-                  checked={selection.allSelected}
-                  onCheckedChange={selection.toggleAll}
-                  aria-label="Select all"
-                />
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Question
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Answer
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Order
-              </th>
-              <th scope="col" className="w-16 px-4 py-3">
-                <span className="sr-only">Edit</span>
-              </th>
-            </StudioTableHead>
-          </thead>
-          <tbody>
-            {pageRows.map((faq, index) => (
-              <StudioRow
-                key={faq.id}
-              >
-                <td className="px-4 py-3">
-                  <Checkbox
-                    checked={selection.selected.has(faq.id)}
-                    onCheckedChange={() => selection.toggle(faq.id)}
-                    aria-label={`Select ${faq.question}`}
-                  />
-                </td>
-                <td className="max-w-xs px-4 py-3 font-medium text-foreground">
-                  {truncate(faq.question)}
-                </td>
-                <td className="max-w-sm px-4 py-3 text-muted-foreground">
-                  {truncate(faq.answer)}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      disabled={
-                        (page - 1) * pageSize + index === 0 || reordering
-                      }
-                      onClick={() => handleReorder(faq.id, "up")}
-                      aria-label={`Move "${faq.question}" up`}
-                    >
-                      <ArrowUp className="size-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      disabled={
-                        (page - 1) * pageSize + index === total - 1 ||
-                        reordering
-                      }
-                      onClick={() => handleReorder(faq.id, "down")}
-                      aria-label={`Move "${faq.question}" down`}
-                    >
-                      <ArrowDown className="size-4" />
-                    </Button>
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8"
-                    onClick={() => setEditing(faq)}
-                    aria-label={`Edit "${faq.question}"`}
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
-                </td>
-              </StudioRow>
-            ))}
-          </tbody>
-        </table>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <Search
+            aria-hidden
+            strokeWidth={1.5}
+            className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search FAQs…"
+            aria-label="Search FAQs"
+            className="h-10 w-64 ps-10"
+          />
+        </div>
+        <button
+          type="button"
+          aria-pressed={demoOnly}
+          onClick={() => setDemoOnly((v) => !v)}
+          className={
+            demoOnly
+              ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              : "inline-flex min-h-11 items-center rounded-full border border-border px-4 text-small text-graphite outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+          }
+        >
+          Demo only
+        </button>
       </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="No FAQs found"
+          description="Try clearing the search or the demo filter."
+        />
+      ) : (
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="FAQs"
+          className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        >
+          <table className="w-full text-sm">
+            <thead>
+              <StudioTableHead>
+                <th scope="col" className="w-12 px-4 py-3">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    onCheckedChange={selection.toggleAll}
+                    aria-label="Select all"
+                  />
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Question
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Answer
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Status
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Order
+                </th>
+                <th scope="col" className="w-16 px-4 py-3">
+                  <span className="sr-only">Edit</span>
+                </th>
+              </StudioTableHead>
+            </thead>
+            <tbody>
+              {pageRows.map((faq, index) => (
+                <StudioRow key={faq.id}>
+                  <td className="px-4 py-3">
+                    <Checkbox
+                      checked={selection.selected.has(faq.id)}
+                      onCheckedChange={() => selection.toggle(faq.id)}
+                      aria-label={`Select ${faq.question}`}
+                    />
+                  </td>
+                  <td className="max-w-xs px-4 py-3 font-medium text-foreground">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span>{truncate(faq.question)}</span>
+                      {faq.isDemo && <DemoBadge />}
+                    </div>
+                  </td>
+                  <td className="max-w-sm px-4 py-3 text-muted-foreground">
+                    {truncate(faq.answer)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStatus(faq)}
+                      disabled={togglingId === faq.id}
+                      aria-label={
+                        faq.status === "PUBLISHED"
+                          ? `Move "${faq.question}" to draft`
+                          : `Publish "${faq.question}"`
+                      }
+                      className="inline-flex min-h-8 items-center rounded-input outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                    >
+                      <Badge
+                        variant={
+                          faq.status === "PUBLISHED" ? "success" : "secondary"
+                        }
+                      >
+                        {faq.status === "PUBLISHED" ? "Published" : "Draft"}
+                      </Badge>
+                    </button>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        disabled={
+                          (page - 1) * pageSize + index === 0 ||
+                          reordering ||
+                          filtering
+                        }
+                        title={
+                          filtering
+                            ? "Clear the search and demo filter to reorder"
+                            : undefined
+                        }
+                        onClick={() => handleReorder(faq.id, "up")}
+                        aria-label={`Move "${faq.question}" up`}
+                      >
+                        <ArrowUp className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        disabled={
+                          (page - 1) * pageSize + index === total - 1 ||
+                          reordering ||
+                          filtering
+                        }
+                        title={
+                          filtering
+                            ? "Clear the search and demo filter to reorder"
+                            : undefined
+                        }
+                        onClick={() => handleReorder(faq.id, "down")}
+                        aria-label={`Move "${faq.question}" down`}
+                      >
+                        <ArrowDown className="size-4" />
+                      </Button>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8"
+                      onClick={() => setEditing(faq)}
+                      aria-label={`Edit "${faq.question}"`}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                  </td>
+                </StudioRow>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <Pagination
         page={page}

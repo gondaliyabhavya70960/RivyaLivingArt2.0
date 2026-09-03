@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {
   KeyRound,
   MoreHorizontal,
+  Search,
   ShieldCheck,
   ShieldOff,
   Trash2,
@@ -22,6 +23,7 @@ import {
 } from "@/actions/users";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { FieldError } from "@/components/studio/field-error";
 import { EmptyState } from "@/components/studio/page-header";
 import {
   Pagination,
@@ -101,17 +103,25 @@ function InviteUserBody({
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role>(Role.EDITOR);
   const [busy, setBusy] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    let hasError = false;
     if (!name.trim()) {
-      toast.error("Name is required.");
-      return;
+      setNameError("Name is required.");
+      hasError = true;
+    } else {
+      setNameError(null);
     }
     if (password.length < 8) {
-      toast.error("Password must be at least 8 characters.");
-      return;
+      setPasswordError("Password must be at least 8 characters.");
+      hasError = true;
+    } else {
+      setPasswordError(null);
     }
+    if (hasError) return;
     setBusy(true);
     const res = await createUser({
       name: name.trim(),
@@ -134,16 +144,12 @@ function InviteUserBody({
   const [dismissRef, dismissProps] = useDismissGuard(busy);
 
   return (
-    <DialogContent
-      className="max-w-md"
-      ref={dismissRef}
-      {...dismissProps}
-    >
+    <DialogContent className="max-w-md" ref={dismissRef} {...dismissProps}>
       <DialogHeader>
         <DialogTitle>Invite user</DialogTitle>
         <DialogDescription>
-          Create a staff account. Share the password with them privately —
-          it is never emailed.
+          Create a staff account. Share the password with them privately — it is
+          never emailed.
         </DialogDescription>
       </DialogHeader>
 
@@ -157,7 +163,10 @@ function InviteUserBody({
             placeholder="Aarti Sharma"
             required
             autoFocus
+            aria-invalid={!!nameError}
+            aria-describedby={nameError ? "invite-name-error" : undefined}
           />
+          <FieldError id="invite-name-error">{nameError}</FieldError>
         </div>
 
         <div className="space-y-1.5">
@@ -171,6 +180,9 @@ function InviteUserBody({
             autoComplete="off"
             required
           />
+          <p className="text-xs text-muted-foreground">
+            Their sign-in address — kept private, never shown on the site.
+          </p>
         </div>
 
         <div className="space-y-1.5">
@@ -184,7 +196,12 @@ function InviteUserBody({
             autoComplete="new-password"
             minLength={8}
             required
+            aria-invalid={!!passwordError}
+            aria-describedby={
+              passwordError ? "invite-password-error" : undefined
+            }
           />
+          <FieldError id="invite-password-error">{passwordError}</FieldError>
         </div>
 
         <div className="space-y-1.5">
@@ -231,13 +248,15 @@ function ResetPasswordBody({
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (password.length < 8) {
-      toast.error("Password must be at least 8 characters.");
+      setPasswordError("Password must be at least 8 characters.");
       return;
     }
+    setPasswordError(null);
     setBusy(true);
     const res = await resetUserPassword(user.id, password);
     setBusy(false);
@@ -255,11 +274,7 @@ function ResetPasswordBody({
   const [dismissRef, dismissProps] = useDismissGuard(busy);
 
   return (
-    <DialogContent
-      className="max-w-md"
-      ref={dismissRef}
-      {...dismissProps}
-    >
+    <DialogContent className="max-w-md" ref={dismissRef} {...dismissProps}>
       <DialogHeader>
         <DialogTitle>Reset password</DialogTitle>
         <DialogDescription>
@@ -281,7 +296,12 @@ function ResetPasswordBody({
             minLength={8}
             required
             autoFocus
+            aria-invalid={!!passwordError}
+            aria-describedby={
+              passwordError ? "reset-password-error" : undefined
+            }
           />
+          <FieldError id="reset-password-error">{passwordError}</FieldError>
         </div>
 
         <DialogFooter>
@@ -311,9 +331,20 @@ export function UserList({
   currentUserId: string;
 }) {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return users;
+    return users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(q) ||
+        user.email.toLowerCase().includes(q),
+    );
+  }, [users, search]);
   const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
-    users,
+    filtered,
     PAGE_SIZE,
+    search,
   );
   // Selection is scoped to the visible page (see useSelection docs).
   const rowIds = useMemo(() => pageRows.map((u) => u.id), [pageRows]);
@@ -374,117 +405,140 @@ export function UserList({
 
   return (
     <>
-      <div
-            tabIndex={0}
-            role="region"
-            aria-label="Staff users"
-            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
-        <table className="w-full text-sm">
-          <thead>
-            <StudioTableHead>
-              <th scope="col" className="w-12 px-4 py-3">
-                <Checkbox
-                  checked={selection.allSelected}
-                  onCheckedChange={selection.toggleAll}
-                  aria-label="Select all"
-                />
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Name
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Email
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Role
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Created
-              </th>
-              <th scope="col" className="w-16 px-4 py-3">
-                <span className="sr-only">Actions</span>
-              </th>
-            </StudioTableHead>
-          </thead>
-          <tbody>
-            {pageRows.map((user) => {
-              const isSelf = user.id === currentUserId;
-              return (
-                <StudioRow
-                  key={user.id}
-                >
-                  <td className="px-4 py-3">
-                    <Checkbox
-                      checked={selection.selected.has(user.id)}
-                      onCheckedChange={() => selection.toggle(user.id)}
-                      aria-label={`Select ${user.name}`}
-                    />
-                  </td>
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    <span className="flex items-center gap-2">
-                      {user.name}
-                      {isSelf && <Badge variant="outline">You</Badge>}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {user.email}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge variant={ROLE_BADGE[user.role]}>
-                      {user.role === Role.ADMIN ? "Admin" : "Editor"}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {user.createdAt}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-8"
-                          aria-label={`Actions for ${user.name}`}
-                        >
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          disabled={roleBusy}
-                          onSelect={() => handleRoleChange(user)}
-                        >
-                          {user.role === Role.ADMIN ? (
-                            <>
-                              <ShieldOff /> Make editor
-                            </>
-                          ) : (
-                            <>
-                              <ShieldCheck /> Make admin
-                            </>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setResetting(user)}>
-                          <KeyRound /> Reset password
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          variant="destructive"
-                          disabled={isSelf}
-                          onSelect={() => requestDelete([user.id])}
-                        >
-                          <Trash2 /> Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </StudioRow>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="mb-4">
+        <div className="relative w-64">
+          <Search
+            aria-hidden
+            strokeWidth={1.5}
+            className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search users…"
+            aria-label="Search users"
+            className="h-10 ps-10"
+          />
+        </div>
       </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="No users found"
+          description="Try a different search."
+        />
+      ) : (
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="Staff users"
+          className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        >
+          <table className="w-full text-sm">
+            <thead>
+              <StudioTableHead>
+                <th scope="col" className="w-12 px-4 py-3">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    onCheckedChange={selection.toggleAll}
+                    aria-label="Select all"
+                  />
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Name
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Email
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Role
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Created
+                </th>
+                <th scope="col" className="w-16 px-4 py-3">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </StudioTableHead>
+            </thead>
+            <tbody>
+              {pageRows.map((user) => {
+                const isSelf = user.id === currentUserId;
+                return (
+                  <StudioRow key={user.id}>
+                    <td className="px-4 py-3">
+                      <Checkbox
+                        checked={selection.selected.has(user.id)}
+                        onCheckedChange={() => selection.toggle(user.id)}
+                        aria-label={`Select ${user.name}`}
+                      />
+                    </td>
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      <span className="flex items-center gap-2">
+                        {user.name}
+                        {isSelf && <Badge variant="outline">You</Badge>}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {user.email}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={ROLE_BADGE[user.role]}>
+                        {user.role === Role.ADMIN ? "Admin" : "Editor"}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {user.createdAt}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            aria-label={`Actions for ${user.name}`}
+                          >
+                            <MoreHorizontal className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            disabled={roleBusy}
+                            onSelect={() => handleRoleChange(user)}
+                          >
+                            {user.role === Role.ADMIN ? (
+                              <>
+                                <ShieldOff /> Make editor
+                              </>
+                            ) : (
+                              <>
+                                <ShieldCheck /> Make admin
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => setResetting(user)}>
+                            <KeyRound /> Reset password
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            variant="destructive"
+                            disabled={isSelf}
+                            onSelect={() => requestDelete([user.id])}
+                          >
+                            <Trash2 /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </StudioRow>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <Pagination
         page={page}

@@ -10,9 +10,10 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
-import { logActivity } from "@/lib/activity";
+import { logActivity, snapshotBefore } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { normalizeTranslations, TRANSLATABLE_FIELDS } from "@/lib/localize";
+import { CONTENT_STATUSES } from "@/lib/content-status";
 
 const STUDIO_PATH = "/studio/faqs";
 
@@ -53,7 +54,15 @@ export async function upsertFaq(
     };
 
     let id: string;
+    let before: ReturnType<typeof snapshotBefore> | undefined;
     if (parsed.id) {
+      const existing = await db.faq.findUnique({
+        where: { id: parsed.id },
+        select: { question: true, answer: true, status: true },
+      });
+      if (existing) {
+        before = snapshotBefore(existing, ["question", "answer", "status"]);
+      }
       const updated = await db.faq.update({ where: { id: parsed.id }, data });
       id = updated.id;
     } else {
@@ -70,11 +79,44 @@ export async function upsertFaq(
       action: parsed.id ? "update" : "create",
       entity: "Faq",
       entityId: id,
-      meta: { question: parsed.question },
+      meta: { question: parsed.question, ...(before ? { before } : {}) },
     });
     revalidatePath(STUDIO_PATH);
     revalidatePublic("faq");
     return { id };
+  });
+}
+
+/**
+ * Publish/draft toggle for the list's status column (10 remnants). Public
+ * readers already select `status: "PUBLISHED"` only (B0) — this is the one
+ * place that value changes.
+ */
+export async function setFaqStatus(
+  id: string,
+  status: (typeof CONTENT_STATUSES)[number],
+): Promise<ActionResult> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = z
+      .object({ id: z.string().min(1), status: z.enum(CONTENT_STATUSES) })
+      .parse({ id, status });
+
+    await db.faq.update({
+      where: { id: parsed.id },
+      data: { status: parsed.status },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: parsed.status === "PUBLISHED" ? "publish" : "unpublish",
+      entity: "Faq",
+      entityId: parsed.id,
+      meta: { status: parsed.status },
+    });
+    revalidatePath(STUDIO_PATH);
+    revalidatePublic("faq");
+    return undefined;
   });
 }
 

@@ -20,6 +20,8 @@ export default async function FaqsPage() {
     question: faq.question,
     answer: faq.answer,
     order: faq.order,
+    status: faq.status,
+    isDemo: faq.isDemo,
     translations: faq.translations,
   }));
 
