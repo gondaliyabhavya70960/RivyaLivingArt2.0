@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -43,5 +45,46 @@ describe("shouldPushOnComplete", () => {
       "OFF",
       "ON_COMPLETE",
     ]);
+  });
+});
+
+/**
+ * D23's regression guard. `shouldPushOnComplete` above is only the policy's
+ * OPINION; what makes it authoritative is that nothing writes to the sheet
+ * behind its back. A second, un-gated `syncSourceToSheet` used to run after
+ * every finished job that staged anything — a FAILED one included — so a
+ * MANUAL source was pushed to the owner's shared document on every scrape
+ * while every doc and label said it would not be.
+ *
+ * The truth table cannot catch that: it passed the whole time the bug was
+ * live. Only the count of writers can, so it is asserted on the source.
+ */
+describe("the one-writer invariant (D23)", () => {
+  const source = readFileSync("src/actions/scraper-jobs.ts", "utf8");
+
+  it("routes every sheet write in the scrape action through the policy", () => {
+    // One call, and the line above it is the policy check.
+    const pushCalls = source.match(/\bpushJobToSheet\(/g) ?? [];
+    expect(pushCalls).toHaveLength(1);
+    expect(source).toMatch(
+      /if \(shouldPushOnComplete\(status, source\?\.sheetSyncPolicy\)\) \{\s*const outcome = await pushJobToSheet\(job\.id\);/,
+    );
+  });
+
+  it("never reaches the sheet transport directly", () => {
+    // `syncRowsToSheet` is the raw write; `sheet-push.ts` is the only module
+    // allowed to call it, because that is where the per-row state lives.
+    expect(source).not.toMatch(/\bsyncRowsToSheet\b/);
+    expect(source).not.toMatch(/\bsyncSourceToSheet\b/);
+  });
+
+  it("leaves the job-level synced flag to the gated push", () => {
+    // The removed path was the second writer of ScrapeJob.sheetSynced.
+    // sheet-push.ts sets it inside the same transaction as the row state, so
+    // the studio's "synced" indicator still lights — from one place.
+    expect(source).not.toMatch(/sheetSynced/);
+    expect(readFileSync("src/lib/scraper/sheet-push.ts", "utf8")).toMatch(
+      /data: \{ sheetSynced: true \}/,
+    );
   });
 });

@@ -38,8 +38,6 @@ import {
   normalizeBaseUrl,
 } from "@/lib/scraper/fingerprint";
 import { contentHash } from "@/lib/scraper/hash";
-import { rowToScrapeDeck } from "@/lib/scraper/export";
-import { isSheetSyncConfigured, syncRowsToSheet } from "@/lib/scraper/sheets";
 import {
   MAX_PAGES_PER_JOB,
   PAGES_PER_INVOCATION,
@@ -369,36 +367,6 @@ async function upsertPage(
   return { created, updated: changed.length };
 }
 
-/**
- * Best-effort push of a source's staged rows into its tier tab of the
- * configured Google Sheet, in ScrapeDeck column order. The sheet upserts by
- * `${sourceKey}|${externalId}`, so re-syncing the whole source is idempotent.
- * A no-op when sheet sync isn't configured; never throws — a sheet failure
- * must not fail the scrape job. Returns true only when rows reached the sheet.
- */
-async function syncSourceToSheet(
-  sourceKey: string,
-  tier: ScrapeTier,
-): Promise<boolean> {
-  if (!isSheetSyncConfigured()) return false;
-  try {
-    const staged = await db.scrapedProduct.findMany({
-      where: { sourceKey },
-      orderBy: { firstSeen: "asc" },
-    });
-    if (staged.length === 0) return false;
-    const rows = staged.map((p) => rowToScrapeDeck(p));
-    const result = await syncRowsToSheet(tier, rows);
-    console.info(
-      `Sheet sync ${sourceKey}: ${result.appended} appended, ${result.updated} updated`,
-    );
-    return true;
-  } catch (error) {
-    console.error(`Sheet sync failed for ${sourceKey}:`, error);
-    return false;
-  }
-}
-
 const createJobSchema = z
   .object({
     sourceId: z.string().min(1).optional(),
@@ -719,6 +687,12 @@ export async function continueScrapeJob(
           },
         });
       }
+      // THE ONLY SHEET WRITE IN THIS FILE. A second, un-gated push used to
+      // run below on every finished job that staged anything — including a
+      // FAILED one — which made the MANUAL default, "a FAILED job never
+      // auto-pushes" and the one-writer invariant in sheet-push.ts all false
+      // in code (D23). It is gone; `sheet-policy.test.ts` asserts both the
+      // policy truth table and that this file keeps exactly one writer.
       if (shouldPushOnComplete(status, source?.sheetSyncPolicy)) {
         const outcome = await pushJobToSheet(job.id);
         await logActivity({
@@ -746,22 +720,6 @@ export async function continueScrapeJob(
           ...(error ? { error } : {}),
         },
       });
-
-      // Push this source's staged rows into its tier tab of the configured
-      // Google Sheet. Best-effort and gated on env — a no-op when sheet sync
-      // isn't set up, and never allowed to fail the scrape.
-      if (newCount > 0 || updatedCount > 0) {
-        const synced = await syncSourceToSheet(
-          job.sourceKey,
-          job.source?.tier ?? "RESIN_GOODS",
-        );
-        if (synced) {
-          await db.scrapeJob.update({
-            where: { id: job.id },
-            data: { sheetSynced: true },
-          });
-        }
-      }
       revalidatePath(STUDIO_PATH);
     }
 
