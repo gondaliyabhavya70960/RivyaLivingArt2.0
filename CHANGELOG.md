@@ -51,6 +51,24 @@ only place the change can be confirmed.
 
 ## Transformation Phase 11 — the guard that was not guarding, and the browser prompts (2026-09-03)
 
+### Fixed: the undo that existed and could not be reached
+`restoreRevision` shipped with publishing and works — ADMIN-only, restoring **into the draft** rather
+than straight to live, so a mis-clicked restore is itself recoverable. It was **unreachable**. Every
+publish wrote a `ContentRevision`, and nothing anywhere listed them, so no owner could ever hold a
+revision id. The history was being recorded faithfully and could only be read with a database
+client.
+
+`listSurfaceRevisions` is the missing half, and `RevisionHistory` is the dialog that renders it:
+summary, timestamp, author, and how many copy slots and images each snapshot holds. Reading history
+needs only staff; putting a version back still needs ADMIN, which is `restoreRevision`'s own check
+and stays there. Capped at 50 — this is "undo what I just broke", not an audit ledger, and
+`/studio/activity` already keeps the long record.
+
+**Deliberately not inside `PublishBar`.** That bar renders nothing when there is nothing staged,
+which is exactly the moment history is wanted: you published something wrong, so there is no draft
+and no bar. Putting it there would have hidden the feature behind the one state where it is useless.
+It lives in the page header instead.
+
 ### Added: the product form is five tabs
 Twelve stacked sections were the longest scroll in the Studio. They are now **General · Images ·
 Customization · Details · SEO**.
