@@ -15,6 +15,7 @@ import {
   ScraperKpis,
   type ScraperKpiData,
 } from "@/components/studio/scraper/scraper-kpis";
+import { ScraperStageRail } from "@/components/studio/scraper/stage-rail";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { deriveHealth } from "@/lib/scraper/health";
@@ -41,7 +42,10 @@ export default async function ScraperPage() {
     latestJobs,
   ] = await Promise.all([
     db.scrapeSource.findMany({ orderBy: [{ tier: "asc" }, { name: "asc" }] }),
-    db.scrapeJob.findMany({ orderBy: { createdAt: "desc" }, take: RECENT_JOBS }),
+    db.scrapeJob.findMany({
+      orderBy: { createdAt: "desc" },
+      take: RECENT_JOBS,
+    }),
     db.scrapeSource.groupBy({
       by: ["tier"],
       where: { enabled: true, platform: { not: "UNKNOWN" } },
@@ -60,7 +64,12 @@ export default async function ScraperPage() {
     db.scrapeJob.findMany({
       distinct: ["sourceKey"],
       orderBy: { createdAt: "desc" },
-      select: { sourceKey: true, status: true, createdAt: true, finishedAt: true },
+      select: {
+        sourceKey: true,
+        status: true,
+        createdAt: true,
+        finishedAt: true,
+      },
     }),
   ]);
 
@@ -80,12 +89,18 @@ export default async function ScraperPage() {
     if (s.enabled) enabled += 1;
     const lastJob = jobByKey.get(s.key) ?? null;
     const productCount = productByKey.get(s.key) ?? 0;
-    const health = deriveHealth(s.enabled, lastJob?.status ?? null, productCount);
+    const health = deriveHealth(
+      s.enabled,
+      lastJob?.status ?? null,
+      productCount,
+    );
     if (health === "OK") scraped += 1;
     else if (health === "FAILED") failed += 1;
     else if (health === "NEVER") notRun += 1;
     else if (health === "EMPTY") empty += 1;
-    const lastRunDate = lastJob ? (lastJob.finishedAt ?? lastJob.createdAt) : null;
+    const lastRunDate = lastJob
+      ? (lastJob.finishedAt ?? lastJob.createdAt)
+      : null;
     overview.push({
       id: s.id,
       key: s.key,
@@ -185,6 +200,7 @@ export default async function ScraperPage() {
         </div>
       )}
       <div className="space-y-6">
+        <ScraperStageRail />
         <ScraperKpis kpis={kpis} />
         <JobDashboard jobs={jobRows} tierCounts={tierCounts} />
         <AllWebsites sources={overview} />
