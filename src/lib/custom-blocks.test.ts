@@ -31,10 +31,12 @@ describe("the block catalogue", () => {
     // across the journal or filtered to one category.
     // 10, not 9 (2026-09-03): `testimonial` — one customer's words, alone;
     // must be PUBLISHED and pass the demo gate at render time or it shows
-    // nothing. The roadmap's Phase 11 block-catalogue growth adds ten types
-    // in total, one per commit; this count keeps climbing through the rest
-    // of the file's history.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(10);
+    // nothing.
+    // 11, not 10 (2026-09-03): `testimonialGrid` — a TestimonialWall of the
+    // featured rows, or up to six the owner chose. The roadmap's Phase 11
+    // block-catalogue growth adds ten types in total, one per commit; this
+    // count keeps climbing through the rest of the file's history.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(11);
   });
 
   it("declares every type it lists", () => {

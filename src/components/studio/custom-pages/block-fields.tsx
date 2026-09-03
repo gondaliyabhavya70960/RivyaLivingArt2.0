@@ -500,6 +500,56 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "testimonialGrid" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <div className="space-y-2">
+            <Label htmlFor={id("mode")}>Which testimonials</Label>
+            <select
+              id={id("mode")}
+              value={String(data.mode ?? "featured")}
+              onChange={(e) => set("mode", e.target.value)}
+              className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
+            >
+              <option value="featured">The ones marked featured</option>
+              <option value="manual">Ones I choose</option>
+            </select>
+          </div>
+          {data.mode === "manual" && (
+            <SlugListField
+              id={id("ids")}
+              label="Testimonial ids"
+              hint="One per line — the last segment of each row's edit link, /studio/testimonials/<this>. Up to six, shown in this order where the layout allows it."
+              value={Array.isArray(data.ids) ? (data.ids as string[]) : []}
+              onChange={(next) => set("ids", next)}
+              max={6}
+            />
+          )}
+          <div className="space-y-2">
+            <Label htmlFor={id("limit")}>How many</Label>
+            <Input
+              id={id("limit")}
+              type="number"
+              min={2}
+              max={6}
+              value={Number(data.limit ?? 4)}
+              onChange={(e) => set("limit", Number(e.target.value))}
+              className="w-28"
+            />
+          </div>
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {def.translatable.length > 0 && (
         <TranslationsSection
           idPrefix={`blk-${block.id}`}

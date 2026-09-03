@@ -19,6 +19,7 @@ import {
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import { TestimonialCard } from "@/components/storefront/testimonial-card";
+import { TestimonialWall } from "@/components/storefront/testimonial-wall";
 import type {
   CollectionGridData,
   FaqPickerData,
@@ -30,6 +31,7 @@ import type {
   ProductGridData,
   RichTextData,
   TestimonialBlockData,
+  TestimonialGridData,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
@@ -687,6 +689,66 @@ async function TestimonialBlock({
   );
 }
 
+/** The testimonials a `testimonialGrid` block shows. */
+async function fetchTestimonialsForGrid(
+  data: TestimonialGridData,
+  locale: string,
+) {
+  if (data.mode === "manual") {
+    if (data.ids.length === 0) return [];
+    // Same reasoning as the single `testimonial` block: one generous lookup
+    // through the public gate rather than a second hand-rolled query.
+    const pool = await getTestimonials({ take: 500, locale });
+    const byId = new Map(pool.map((t) => [t.id, t]));
+    return data.ids
+      .flatMap((testimonialId) => {
+        const t = byId.get(testimonialId);
+        return t ? [t] : [];
+      })
+      .slice(0, data.limit);
+  }
+  return getTestimonials({ featured: true, take: data.limit, locale });
+}
+
+async function TestimonialGridBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: TestimonialGridData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const locale = await getLocale();
+  const testimonials = await fetchTestimonialsForGrid(data, locale);
+  if (testimonials.length === 0) return null;
+  const headingId = `${id}-heading`;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      <div className="flex flex-col gap-10">
+        {data.heading ? (
+          <SectionHeading
+            id={headingId}
+            as={heading}
+            title={data.heading}
+            size={heading === "h1" ? "h1" : "h2"}
+          />
+        ) : null}
+        <TestimonialWall testimonials={testimonials} />
+      </div>
+    </Band>
+  );
+}
+
 function ImageCtaBlock({
   id,
   data,
@@ -985,6 +1047,18 @@ export function CustomPageBlock({
           data={data}
           ground={ground}
           spacing={data.spacing}
+        />
+      );
+    }
+    case "testimonialGrid": {
+      const data = block.data as TestimonialGridData;
+      return (
+        <TestimonialGridBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
         />
       );
     }

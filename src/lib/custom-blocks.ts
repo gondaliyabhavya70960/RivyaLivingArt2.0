@@ -162,6 +162,16 @@ export const testimonialSchema = z.object({
   spacing,
 });
 
+export const testimonialGridSchema = z.object({
+  heading: text(160),
+  /** `featured` is the catalogue's own curated flag; `manual` is up to six
+   *  ids the owner chose. No mode invents a review (HARD RULES §1.1). */
+  mode: z.enum(["featured", "manual"]).default("featured"),
+  ids: z.array(z.string().trim().max(40)).max(6).default([]),
+  limit: z.number().int().min(2).max(6).default(4),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -188,6 +198,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "portfolioGrid",
   "journalGrid",
   "testimonial",
+  "testimonialGrid",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -202,6 +213,7 @@ export type CollectionGridData = z.infer<typeof collectionGridSchema>;
 export type PortfolioGridData = z.infer<typeof portfolioGridSchema>;
 export type JournalGridData = z.infer<typeof journalGridSchema>;
 export type TestimonialBlockData = z.infer<typeof testimonialSchema>;
+export type TestimonialGridData = z.infer<typeof testimonialGridSchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -348,6 +360,14 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     // Nothing here is text an owner types — the words live on the
     // Testimonial row and are translated there, in the testimonials Studio.
     translatable: [],
+    ground: "alternating",
+  },
+  testimonialGrid: {
+    type: "testimonialGrid",
+    label: "Testimonials",
+    description: "A wall of words — the featured ones, or ones you choose.",
+    schema: testimonialGridSchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
     ground: "alternating",
   },
 };
