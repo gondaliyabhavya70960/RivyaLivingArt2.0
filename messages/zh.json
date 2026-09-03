@@ -875,7 +875,9 @@
       "wishlistRemove": "将 {title} 移出心愿单",
       "madeToOrder": "接单制作",
       "viewPiece": "查看作品",
-      "shipsIn": "7–10 天发货"
+      "shipsIn": "7–10 天发货",
+      "askOnWhatsApp": "通过 WhatsApp 咨询",
+      "materialsDimensions": "材质与尺寸"
     },
     "collection": {
       "count": "{count, plural, =0 {暂无作品} one {# 件作品} other {# 件作品}}",
@@ -944,7 +946,8 @@
       "cta": "看看它如何诞生",
       "imageAlt": "一次树脂浇铸正在工作室灯光下固化，表面仍在缓缓沉静。"
     },
-    "sortName": "名称"
+    "sortName": "名称",
+    "quickViewLabel": "快速查看"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "细节",
       "detailsHeading": "如何制作、养护与送达",
       "viewCollection": "查看该系列"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "置于房间中",
+      "heading": "看它融入空间的样子",
+      "caption": "在真实房间中按实际尺寸拍摄——并非工作室渲染图。"
+    },
+    "demoOrderNote": "这是内容实验室的演示商品——订单仍会提交，在 WhatsApp 上会带有 [DEMO] 前缀。",
+    "dimensionsLabel": "尺寸"
   },
   "Consent": {
     "label": "Cookie 与分析同意",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "已验证客户",
     "givenOn": "于{date}给出",
     "wallHeading": "客户的话"
+  },
+  "Lightbox": {
+    "prev": "上一个",
+    "next": "下一个",
+    "close": "关闭",
+    "of": "之"
   }
 }

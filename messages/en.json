@@ -876,7 +876,9 @@
       "wishlistRemove": "Remove {title} from your wishlist",
       "madeToOrder": "Made to order",
       "viewPiece": "View piece",
-      "shipsIn": "Ships in 7–10 days"
+      "shipsIn": "Ships in 7–10 days",
+      "askOnWhatsApp": "Ask on WhatsApp",
+      "materialsDimensions": "Materials and dimensions"
     },
     "collection": {
       "count": "{count, plural, =0 {No pieces yet} one {# piece} other {# pieces}}",
@@ -944,7 +946,8 @@
       "body": "Every piece here waits out its own cure before anyone touches it. That is why the catalogue moves at the speed it does.",
       "cta": "See how it is made",
       "imageAlt": "A resin pour curing under studio light, its surface still settling."
-    }
+    },
+    "quickViewLabel": "Quick view"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "the details",
       "detailsHeading": "How it is made, kept and delivered",
       "viewCollection": "View the collection"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "In a room",
+      "heading": "See it in its setting",
+      "caption": "Photographed in a real room, at true scale — not a studio render."
+    },
+    "demoOrderNote": "This is a Content Lab demo piece — the order still submits, prefixed [DEMO] on WhatsApp.",
+    "dimensionsLabel": "Dimensions"
   },
   "Upload": {
     "add": "+ Add references",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "Verified customer",
     "givenOn": "Given on {date}",
     "wallHeading": "In their words"
+  },
+  "Lightbox": {
+    "prev": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "of": "of"
   }
 }

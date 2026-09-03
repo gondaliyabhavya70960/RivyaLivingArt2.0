@@ -875,7 +875,9 @@
       "wishlistRemove": "{title} को अपनी विशलिस्ट से हटाएँ",
       "madeToOrder": "ऑर्डर पर बनाया जाता है",
       "viewPiece": "कृति देखें",
-      "shipsIn": "7–10 दिनों में रवाना"
+      "shipsIn": "7–10 दिनों में रवाना",
+      "askOnWhatsApp": "WhatsApp पर पूछें",
+      "materialsDimensions": "सामग्री और आयाम"
     },
     "collection": {
       "count": "{count, plural, =0 {अभी कोई कृति नहीं} one {# कृति} other {# कृतियाँ}}",
@@ -944,7 +946,8 @@
       "cta": "यह कैसे बनती है, देखें",
       "imageAlt": "स्टूडियो की रोशनी में जमती रेज़िन की ढलाई, जिसकी सतह अब भी थम रही है।"
     },
-    "sortName": "नाम से"
+    "sortName": "नाम से",
+    "quickViewLabel": "त्वरित झलक"
   },
   "Search": {
     "meta": {
@@ -1349,7 +1352,14 @@
       "detailsEyebrow": "विवरण",
       "detailsHeading": "यह कैसे बनती है, कैसे सँभालें और कैसे पहुँचती है",
       "viewCollection": "संग्रह देखें"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "कमरे में",
+      "heading": "इसे इसकी जगह पर देखें",
+      "caption": "असली कमरे में, वास्तविक आकार में फोटो खींची गई — स्टूडियो रेंडर नहीं।"
+    },
+    "demoOrderNote": "यह Content Lab की डेमो वस्तु है — ऑर्डर फिर भी भेजा जाएगा, WhatsApp पर [DEMO] प्रीफ़िक्स के साथ।",
+    "dimensionsLabel": "आयाम"
   },
   "Consent": {
     "label": "कुकी और एनालिटिक्स के लिए सहमति",
@@ -1507,5 +1517,11 @@
     "verifiedBy": "सत्यापित ग्राहक",
     "givenOn": "{date} को दिया गया",
     "wallHeading": "उनके शब्दों में"
+  },
+  "Lightbox": {
+    "prev": "पिछला",
+    "next": "अगला",
+    "close": "बंद करें",
+    "of": "में से"
   }
 }
