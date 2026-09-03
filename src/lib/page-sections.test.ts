@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -64,6 +67,69 @@ describe("the section manifest", () => {
   it("recognises only the pages it declares", () => {
     expect(isSectionPageKey("home")).toBe(true);
     expect(isSectionPageKey("checkout")).toBe(false);
+  });
+});
+
+/**
+ * Every page's DEFAULT arrangement — `defaultVisible` applied, everything
+ * else at its registry order — is what a fresh install and an empty
+ * `PageSection` table both render (`page-sections-server.ts`). It has to
+ * clear the same guardrail a hand-edited row would, or the page the repo
+ * ships with is already the violation the studio exists to prevent.
+ */
+function defaultShipped(page: (typeof SECTION_PAGES)[number]) {
+  return PAGE_SECTIONS[page].map((s) => ({
+    ...s,
+    visible: s.hideable ? (s.defaultVisible ?? true) : true,
+  }));
+}
+
+describe("registry-wide, across every page", () => {
+  it("keeps every page's default arrangement inside its own band rhythm", () => {
+    // A generic form of "allows the shipped homepage" above, run over every
+    // page rather than just home — new pages and new off-by-default sections
+    // inherit the check rather than needing their own copy of it.
+    for (const page of SECTION_PAGES) {
+      expect(describeArrangementProblem(defaultShipped(page)), page).toBeNull();
+    }
+  });
+
+  it("resolves every cureLabelKey against messages/en.json", () => {
+    const en = JSON.parse(
+      readFileSync(join(process.cwd(), "messages/en.json"), "utf8"),
+    ) as Record<string, unknown>;
+    // "large-format" → "LargeFormat", "custom-order" → "CustomOrder" — the
+    // same PascalCase join `t()` already uses to key its own namespace on
+    // each of these pages.
+    const namespaceFor = (page: string) =>
+      page
+        .split("-")
+        .map((word) => word[0]!.toUpperCase() + word.slice(1))
+        .join("");
+
+    let checked = 0;
+    for (const page of SECTION_PAGES) {
+      const namespace = namespaceFor(page);
+      for (const section of PAGE_SECTIONS[page]) {
+        if (!section.cureLabelKey) continue;
+        checked += 1;
+        const path = `${namespace}.${section.cureLabelKey}`;
+        const value = path
+          .split(".")
+          .reduce<unknown>(
+            (node, key) =>
+              node && typeof node === "object"
+                ? (node as Record<string, unknown>)[key]
+                : undefined,
+            en,
+          );
+        expect(typeof value, `${page} → ${path}`).toBe("string");
+      }
+    }
+    // A registry with no cureLabelKey anywhere would pass this test having
+    // checked nothing — make sure it is actually exercising the pages that
+    // declare one (home and large-format, at minimum).
+    expect(checked).toBeGreaterThan(0);
   });
 });
 

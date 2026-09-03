@@ -21,6 +21,7 @@ import { demoWhere } from "@/lib/demo-content";
 export const LARGE_FORMAT_CATEGORY_SLUGS = [
   "resin-furniture-surfaces",
   "sculptures-objets",
+  "art-craft-pieces",
 ] as const;
 
 export type LargeFormatPiece = {

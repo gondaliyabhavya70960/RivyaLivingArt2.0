@@ -48,6 +48,21 @@ export type SectionDef = {
   hideable: boolean;
   /** false for a section pinned in place — the hero is always first. */
   movable: boolean;
+  /**
+   * Whether a fresh install ships this section turned on. Defaults to `true`
+   * when absent, so every section written before this field existed keeps
+   * behaving exactly as it always has.
+   *
+   * For a section the owner has to opt INTO rather than one the page ships
+   * with — concept imagery standing in for photography the studio does not
+   * have yet (§15.2), or a band that only reads well once real content backs
+   * it. `false` here does not hide the section from the studio board or the
+   * registry; it only changes what an UNSET row resolves to, so the owner
+   * still sees it, still can turn it on, and a database with no row for it
+   * renders the page without it rather than with a concept card nobody chose
+   * to show.
+   */
+  defaultVisible?: boolean;
   /** True when the section carries the page's single `h1`. */
   ownsH1?: boolean;
   /** Copy slots this section owns, as key prefixes. */
@@ -108,6 +123,21 @@ const HOME: readonly SectionDef[] = [
     cureLabelKey: "cure.pieces",
   },
   {
+    key: "large-format",
+    label: "Large format",
+    description: "Four tiles pointing at work commissioned at scale.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Home.largeFormat"],
+    imageKeys: [
+      "largeFormat.k1",
+      "largeFormat.k2",
+      "largeFormat.k3",
+      "largeFormat.k4",
+    ],
+    cureLabelKey: "cure.largeFormat",
+  },
+  {
     key: "material",
     label: "The material story",
     description: "The pinned pour scrub and its four stages.",
@@ -131,6 +161,30 @@ const HOME: readonly SectionDef[] = [
     cureLabelKey: "cure.collections",
   },
   {
+    /* Concept imagery, not the catalogue: the studio takes furniture on
+       commission but carries none in stock, so these six tiles are captioned
+       as concepts (D5) rather than presented as products. Off by default —
+       an owner turns it on once real installed work exists to back it, or
+       leaves the concept framing on deliberately; either is a choice, not
+       the page's own opinion. */
+    key: "furniture",
+    label: "What we commission",
+    description: "Six kinds of furniture the studio takes on, as concepts.",
+    hideable: true,
+    movable: true,
+    defaultVisible: false,
+    copyPrefixes: ["Home.furniture"],
+    imageKeys: [
+      "home.furniture.dining",
+      "home.furniture.coffee",
+      "home.furniture.side",
+      "home.furniture.console",
+      "home.furniture.chair",
+      "home.furniture.bench",
+    ],
+    cureLabelKey: "cure.furniture",
+  },
+  {
     key: "maker",
     label: "The maker",
     description: "The portrait and the paragraph beside it.",
@@ -139,6 +193,25 @@ const HOME: readonly SectionDef[] = [
     copyPrefixes: ["Home.maker"],
     imageKeys: ["home.maker"],
     cureLabelKey: "cure.maker",
+  },
+  {
+    /* Also concept imagery (D5) — four rooms furnished with the kind of
+       piece the studio commissions, captioned as a concept on the page.
+       Off by default for the same reason `furniture` is. */
+    key: "rooms",
+    label: "In the room",
+    description: "Four rooms shown with a commissioned piece in place.",
+    hideable: true,
+    movable: true,
+    defaultVisible: false,
+    copyPrefixes: ["Home.rooms"],
+    imageKeys: [
+      "home.rooms.living",
+      "home.rooms.dining",
+      "home.rooms.study",
+      "home.rooms.bedroom",
+    ],
+    cureLabelKey: "cure.rooms",
   },
   {
     key: "work",
@@ -582,9 +655,10 @@ const WORKSHOPS: readonly SectionDef[] = [
  * and shows real pieces only in the one section that can be empty without
  * leaving a hole.
  *
- * Bands: obsidian · mineral · obsidian · sand · sand · mineral · sand(major).
- * Two dark, never adjacent, and the last band is light so it does not run
- * into the obsidian footer (Part 19.1).
+ * Bands: obsidian · mineral · mineral · obsidian · sand · mineral · mineral ·
+ * mineral · sand · sand · sand · sand(major). Two dark, never adjacent, and
+ * the last band is light so it does not run into the obsidian footer
+ * (Part 19.1).
  */
 const LARGE_FORMAT: readonly SectionDef[] = [
   {
@@ -602,7 +676,8 @@ const LARGE_FORMAT: readonly SectionDef[] = [
   {
     key: "scope",
     label: "Four kinds of large work",
-    description: "The shapes a large brief usually takes, with one picture each.",
+    description:
+      "The shapes a large brief usually takes, with one picture each.",
     hideable: true,
     movable: true,
     copyPrefixes: ["LargeFormat.scope"],
@@ -613,6 +688,16 @@ const LARGE_FORMAT: readonly SectionDef[] = [
       "largeFormat.k4",
     ],
     cureLabelKey: "cure.scope",
+  },
+  {
+    key: "philosophy",
+    label: "Philosophy",
+    description: "Why large work is planned before it is priced.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["LargeFormat.philosophy"],
+    imageKeys: [],
+    cureLabelKey: "cure.philosophy",
   },
   {
     key: "how",
@@ -628,12 +713,87 @@ const LARGE_FORMAT: readonly SectionDef[] = [
   {
     key: "brief",
     label: "What to send",
-    description: "What makes a quote quick — the room, the measurements, the use.",
+    description:
+      "What makes a quote quick — the room, the measurements, the use.",
     hideable: true,
     movable: true,
     copyPrefixes: ["LargeFormat.brief"],
     imageKeys: [],
     cureLabelKey: "cure.brief",
+  },
+  {
+    /* Reuses the Process namespace's four materials rather than duplicating
+       the copy for a second page — About and Process already describe the
+       same four materials this way (see `about.material1.image`'s note). */
+    key: "materials",
+    label: "Materials",
+    description:
+      "The same four materials the small work is made of, in more of it.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.materials"],
+    imageKeys: [
+      "process.material1",
+      "process.material2",
+      "process.material3",
+      "process.material4",
+    ],
+    cureLabelKey: "cure.materials",
+  },
+  {
+    /* Reuses the homepage's furniture tiles rather than a second set of
+       concept photography — same six slots, same D5 concept framing. Off by
+       default for the same reason `home.furniture` is. */
+    key: "pieces",
+    label: "Pieces we commission",
+    description:
+      "The six furniture tiles, shown again for a visitor who came in here.",
+    hideable: true,
+    movable: true,
+    defaultVisible: false,
+    copyPrefixes: ["LargeFormat.pieces", "Home.furniture"],
+    imageKeys: [
+      "home.furniture.dining",
+      "home.furniture.coffee",
+      "home.furniture.side",
+      "home.furniture.console",
+      "home.furniture.chair",
+      "home.furniture.bench",
+    ],
+    cureLabelKey: "cure.pieces",
+  },
+  {
+    key: "work",
+    label: "Commissioned before",
+    description: "Published portfolio cases, when there are any to show.",
+    hideable: true,
+    movable: true,
+    conditional: true,
+    copyPrefixes: ["LargeFormat.work"],
+    imageKeys: [],
+    cureLabelKey: "cure.work",
+  },
+  {
+    key: "words",
+    label: "In their words",
+    description: "Testimonials given about large-format work.",
+    hideable: true,
+    movable: true,
+    conditional: true,
+    copyPrefixes: ["LargeFormat.words"],
+    imageKeys: [],
+    cureLabelKey: "cure.words",
+  },
+  {
+    key: "faq",
+    label: "Questions",
+    description: "Large-format questions answered on the FAQ, shown here too.",
+    hideable: true,
+    movable: true,
+    conditional: true,
+    copyPrefixes: ["LargeFormat.faq"],
+    imageKeys: [],
+    cureLabelKey: "cure.faq",
   },
   {
     key: "gallery",

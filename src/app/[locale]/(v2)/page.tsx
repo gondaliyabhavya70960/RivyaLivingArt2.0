@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fragment, type ReactNode } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
@@ -7,16 +7,21 @@ import { localeAlternates } from "@/i18n/seo";
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { CollectionCard } from "@/components/storefront/collection-card";
+import { DemoMark } from "@/components/storefront/demo-mark";
 import { TestimonialCard } from "@/components/storefront/testimonial-card";
+import { SnapRail } from "@/components/storefront/snap-rail";
 import { CureLine, type CureMark } from "@/components/storefront/cure-line";
 import {
   Eyebrow,
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import { HeroMedia } from "@/components/storefront/hero-media";
+import { HeroParallax } from "@/components/motion/hero-parallax";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import { PourCureShowcase } from "@/components/storefront/pour-cure-showcase";
+import { Reveal } from "@/components/motion/reveal";
 import { db } from "@/lib/db";
+import { FURNITURE_KINDS } from "@/lib/furniture-kinds";
 import {
   isOptimizableImageSrc,
   isRenderableSrc,
@@ -28,6 +33,7 @@ import {
   DEFAULT_ECOSYSTEM,
   fetchProductsPage,
 } from "@/lib/shop";
+import type { SiteImageKey } from "@/lib/site-images";
 import { getSiteImageRefs, getSiteImages } from "@/lib/site-images-server";
 import { getPageSections } from "@/lib/page-sections-server";
 import { SlotImage } from "@/components/storefront/slot-image";
@@ -86,6 +92,25 @@ const TILE_CATEGORY_SLUGS: string[] = COLLECTION_TILES.map(
 ).filter((slug): slug is NonNullable<typeof slug> => slug !== null);
 
 /**
+ * The homepage's large-format teaser, reusing `/large-resin-art`'s own
+ * "scope" tiles and alt text (`LargeFormat.scope.k1Alt`…) rather than a
+ * second, drifting copy of the same four pictures.
+ */
+const LARGE_FORMAT_TILES = [
+  { key: "k1", slot: "largeFormat.k1", altKey: "scope.k1Alt" },
+  { key: "k2", slot: "largeFormat.k2", altKey: "scope.k2Alt" },
+  { key: "k3", slot: "largeFormat.k3", altKey: "scope.k3Alt" },
+  { key: "k4", slot: "largeFormat.k4", altKey: "scope.k4Alt" },
+] as const satisfies readonly {
+  key: string;
+  slot: SiteImageKey;
+  altKey: string;
+}[];
+
+/** The four rooms band's captioned cards. */
+const ROOM_KEYS = ["living", "dining", "study", "bedroom"] as const;
+
+/**
  * The v3 homepage — REDESIGN.md Part 6.
  *
  * Thirteen sections, two of them `major`. The content the old page carried is
@@ -119,6 +144,10 @@ export default async function Home({
   const t = await getTranslations("Home");
   const tCommon = await getTranslations("Common");
   const tWa = await getTranslations("WhatsApp");
+  // The large-format teaser and the furniture/rooms bands read alt text and
+  // wording that already lives on the pages the tiles link to, rather than a
+  // second, drifting copy of the same words.
+  const tLargeFormat = await getTranslations("LargeFormat");
 
   const demo = await demoWhere();
   const [
@@ -296,7 +325,7 @@ export default async function Home({
         <div className="absolute inset-0">
           <HeroMedia
             videoUrl={settings.heroVideoUrl ?? undefined}
-            posterSrc={images["home.hero"]}
+            poster={imageRefs["home.hero"]}
           />
           {/* §6 01 specifies a flat rgba(8,10,14,.6) overlay. A gradient
               weighted to the text block does the same job with less of the
@@ -310,27 +339,45 @@ export default async function Home({
         </div>
 
         <div className="u-shell relative flex flex-col gap-8 pt-32 pb-24">
-          <Eyebrow rule={false} className="text-champagne">
-            {t("hero.eyebrow")}
-          </Eyebrow>
+          {/* Text entrance only — the poster above is the LCP and is never
+              animated or delayed (Part 14). `--i` staggers each line 80ms
+              apart (roadmap Phase 1b `sf-hero-rise`, globals.css). */}
+          <div
+            className="sf-hero-rise w-fit"
+            style={{ "--i": 0 } as CSSProperties}
+          >
+            <Eyebrow rule={false} className="text-champagne">
+              {t("hero.eyebrow")}
+            </Eyebrow>
+          </div>
 
           <h1
             id="hero-heading"
-            className="max-w-[14ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="sf-hero-rise max-w-[14ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            style={{ "--i": 1 } as CSSProperties}
           >
             {t("hero.headline")}
           </h1>
 
-          <p className="u-prose font-body text-body leading-relaxed text-mist">
+          <p
+            className="sf-hero-rise u-prose font-body text-body leading-relaxed text-mist"
+            style={{ "--i": 2 } as CSSProperties}
+          >
             {t("hero.lead")}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div
+            className="sf-hero-rise flex flex-wrap items-center gap-4"
+            style={{ "--i": 3 } as CSSProperties}
+          >
+            {/* Bespoke is the studio's primary ask; browsing the shop is the
+                secondary path. Both buttons already existed — only their
+                weight and href swap. */}
             <Button asChild variant="primary" size="lg">
-              <Link href="/shop">{t("hero.ctaExplore")}</Link>
+              <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
             </Button>
             <Button asChild variant="premium" size="lg">
-              <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
+              <Link href="/shop">{t("hero.ctaExplore")}</Link>
             </Button>
           </div>
 
@@ -369,19 +416,24 @@ export default async function Home({
         aria-labelledby="manifesto-heading"
         className="section-standard bg-mineral"
       >
-        <div className="u-shell flex flex-col items-center gap-8 text-center">
+        <Reveal className="u-shell flex flex-col items-center gap-8 text-center">
+          {/* The manifesto's own scroll-linked brighten (§14, view-timeline —
+              no JS) layers under Reveal's one-time entrance: Reveal fades the
+              whole block in once, then each line keeps dimming and
+              brightening with the band's own position as the visitor
+              continues past it. */}
           <h2
             id="manifesto-heading"
-            className="max-w-[18ch] font-display text-h1 leading-[1.05] tracking-display text-balance"
+            className="sf-manifesto-brighten max-w-[18ch] font-display text-h1 leading-[1.05] tracking-display text-balance"
           >
             {t("manifesto.line1")}
             <br />
             {t("manifesto.line2")}
           </h2>
-          <p className="u-lede font-body text-body text-graphite">
+          <p className="sf-manifesto-brighten u-lede font-body text-body text-graphite">
             {t("manifesto.body")}
           </p>
-        </div>
+        </Reveal>
       </section>
     ),
     /* ════════ 03 · Featured pieces — standard ════════
@@ -424,6 +476,63 @@ export default async function Home({
         </div>
       </section>
     ) : null,
+    /* ════════ new · Large format — standard ════════
+    A teaser for /large-resin-art, reusing that page's own four "scope"
+    tiles and alt text rather than a second set — the studio still only has
+    the one page to send a large-format visitor to. */
+    "large-format": (
+      <section
+        id="large-format"
+        aria-labelledby="large-format-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="large-format-heading"
+            eyebrow={t("largeFormat.eyebrow")}
+            title={t("largeFormat.heading")}
+            intro={t("largeFormat.intro")}
+            action={
+              <Button asChild variant="secondary" size="sm">
+                <Link href="/large-resin-art">{t("largeFormat.cta")}</Link>
+              </Button>
+            }
+          />
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {LARGE_FORMAT_TILES.map((tile, index) => (
+              <li key={tile.key} className="flex flex-col gap-3">
+                <Link
+                  href="/large-resin-art"
+                  className="group relative block outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-sand">
+                    <MeniscusImage
+                      src={images[tile.slot]}
+                      alt={tLargeFormat(tile.altKey)}
+                      fill
+                      sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
+                      className="absolute inset-0"
+                      imageClassName="object-cover transition-transform duration-(--dur-slow) ease-(--ease-luxury) group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                    />
+                  </div>
+                  <p className="mt-3 flex items-center gap-2">
+                    <span className="u-num text-graphite" aria-hidden>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="sr-only">
+                      {t("largeFormat.index", {
+                        number: index + 1,
+                        total: LARGE_FORMAT_TILES.length,
+                      })}
+                    </span>
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ),
     /* ════════ 04 · Material story — major ════════
     The climax. Sticky visual, four steps scrubbing beside it. Rendered
     exactly once — the old page shipped this block twice. */
@@ -473,8 +582,11 @@ export default async function Home({
             title={t("collections.heading")}
             intro={t("collections.intro")}
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {COLLECTION_TILES.map((tile) => (
+          {/* Bento: the lead tile runs two rows tall at desktop widths, the
+              other five share the remaining cells — a doorway with more
+              weight than the others, not six equal boxes. */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-12">
+            {COLLECTION_TILES.map((tile, index) => (
               <CollectionCard
                 key={tile.key}
                 href={tile.href}
@@ -482,9 +594,74 @@ export default async function Home({
                 promise={t(`collections.tiles.${tile.key}.promise`)}
                 image={tile.slug ? tileImages.get(tile.slug) : null}
                 imageAlt={t(`collections.tiles.${tile.key}.alt`)}
+                ratio={index === 0 ? "4/5" : "3/4"}
+                className={
+                  index === 0 ? "lg:col-span-8 lg:row-span-2" : "lg:col-span-4"
+                }
               />
             ))}
           </div>
+        </div>
+      </section>
+    ),
+    /* ════════ new · Furniture — standard, off by default ════════
+    Concept imagery only — the studio takes furniture on commission but
+    carries none in stock (D5). Every tile is captioned CONCEPT through
+    `DemoMark`'s own styling, and the lead-time line reuses the exact figure
+    `Process.timelines` already publishes for statement-scale work rather
+    than inventing a new one. No prices, no product rows. */
+    furniture: (
+      <section
+        id="furniture"
+        aria-labelledby="furniture-heading"
+        className="section-standard bg-sand"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="furniture-heading"
+            eyebrow={t("furniture.eyebrow")}
+            title={t("furniture.heading")}
+            intro={t("furniture.intro")}
+            action={
+              <Button asChild variant="secondary" size="sm">
+                <Link href="/custom-order">{t("furniture.cta")}</Link>
+              </Button>
+            }
+          />
+          <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {FURNITURE_KINDS.map((kind) => (
+              <li key={kind.key} className="flex flex-col gap-4">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-mineral">
+                  <MeniscusImage
+                    src={images[kind.slot]}
+                    alt={t(
+                      `furniture.kinds.${kind.key}.alt` as "furniture.kinds.dining.alt",
+                    )}
+                    fill
+                    sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 90vw"
+                    className="absolute inset-0"
+                    imageClassName="object-cover"
+                  />
+                </div>
+                <DemoMark label={t("furniture.conceptLabel")} />
+                <h3 className="font-body text-16 font-medium text-ink">
+                  {t(
+                    `furniture.kinds.${kind.key}.title` as "furniture.kinds.dining.title",
+                  )}
+                </h3>
+                <p className="font-body text-14 leading-relaxed text-graphite">
+                  {t(
+                    `furniture.kinds.${kind.key}.lead` as "furniture.kinds.dining.lead",
+                  )}
+                </p>
+                <p className="u-micro border-t border-hairline pt-3">
+                  {t(
+                    `furniture.kinds.${kind.key}.leadTime` as "furniture.kinds.dining.leadTime",
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     ),
@@ -506,7 +683,7 @@ export default async function Home({
             className="aspect-[4/5] lg:col-span-5"
             imageClassName="object-cover"
           />
-          <div className="flex flex-col gap-6 lg:col-span-6 lg:col-start-7">
+          <Reveal className="flex flex-col gap-6 lg:col-span-6 lg:col-start-7">
             <Eyebrow>{t("maker.eyebrow")}</Eyebrow>
             <h2
               id="maker-heading"
@@ -520,7 +697,49 @@ export default async function Home({
             <Button asChild variant="secondary" size="md" className="w-fit">
               <Link href="/about">{t("maker.cta")}</Link>
             </Button>
-          </div>
+          </Reveal>
+        </div>
+      </section>
+    ),
+    /* ════════ new · Rooms — standard, off by default ════════
+    Also concept imagery (D5) — four rooms shown with a commissioned piece
+    in place, captioned as a concept exactly like the furniture band above. */
+    rooms: (
+      <section
+        id="rooms"
+        aria-labelledby="rooms-heading"
+        className="section-standard bg-mineral"
+      >
+        <div className="u-shell flex flex-col gap-12">
+          <SectionHeading
+            id="rooms-heading"
+            eyebrow={t("rooms.eyebrow")}
+            title={t("rooms.heading")}
+            intro={t("rooms.intro")}
+          />
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {ROOM_KEYS.map((room) => (
+              <li key={room} className="flex flex-col gap-3">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-image bg-sand">
+                  <MeniscusImage
+                    src={images[`home.rooms.${room}` as "home.rooms.living"]}
+                    alt={t(`rooms.${room}.alt` as "rooms.living.alt")}
+                    fill
+                    sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
+                    className="absolute inset-0"
+                    imageClassName="object-cover"
+                  />
+                </div>
+                <DemoMark label={t("rooms.conceptLabel")} />
+                <h3 className="font-body text-16 font-medium text-ink">
+                  {t(`rooms.${room}.title` as "rooms.living.title")}
+                </h3>
+                <p className="font-body text-14 text-graphite">
+                  {t(`rooms.${room}.caption` as "rooms.living.caption")}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     ),
@@ -625,7 +844,31 @@ export default async function Home({
               eyebrow={t("testimonials.eyebrow")}
               title={t("testimonials.heading")}
             />
-            <div className="grid gap-6 md:grid-cols-3">
+            {/* A rail below md (three cards do not fit a phone width without
+                crowding), the original grid at md and above. */}
+            <div className="md:hidden">
+              <SnapRail
+                items={testimonials.map((item) => (
+                  <TestimonialCard
+                    key={item.id}
+                    quote={item.quote}
+                    name={item.name}
+                    location={item.location ?? undefined}
+                    rating={item.rating}
+                    avatarUrl={item.avatarUrl}
+                    demo={item.isDemo}
+                  />
+                ))}
+                itemClassName="w-[85vw] max-w-sm"
+                ariaLabel={t("testimonials.heading")}
+                labels={{
+                  prev: t("testimonials.previous"),
+                  next: t("testimonials.next"),
+                  of: tCommon("of"),
+                }}
+              />
+            </div>
+            <div className="hidden gap-6 md:grid md:grid-cols-3">
               {testimonials.map((item) => (
                 <TestimonialCard
                   key={item.id}
@@ -634,6 +877,7 @@ export default async function Home({
                   location={item.location ?? undefined}
                   rating={item.rating}
                   avatarUrl={item.avatarUrl}
+                  demo={item.isDemo}
                 />
               ))}
             </div>
@@ -648,13 +892,17 @@ export default async function Home({
         aria-labelledby="bespoke-heading"
         className="relative section-major overflow-hidden bg-obsidian text-mineral"
       >
-        <SlotImage
-          slot={imageRefs["home.bespoke"]}
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover opacity-35"
-        />
+        {/* Part 14 parallax, capped at 40px — wraps only the image layer,
+            never the text above it. */}
+        <HeroParallax className="absolute inset-0 z-0">
+          <SlotImage
+            slot={imageRefs["home.bespoke"]}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover opacity-35"
+          />
+        </HeroParallax>
         <span
           aria-hidden
           className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-obsidian/30"
@@ -695,7 +943,7 @@ export default async function Home({
         className="section-standard bg-mineral"
       >
         <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
-          <div className="flex flex-col gap-6 lg:col-span-5">
+          <Reveal className="flex flex-col gap-6 lg:col-span-5">
             <Eyebrow>{t("printStudio.eyebrow")}</Eyebrow>
             <h2
               id="print-heading"
@@ -723,7 +971,7 @@ export default async function Home({
             <Button asChild variant="secondary" size="md" className="w-fit">
               <Link href="/shop?type=print">{t("printStudio.cta")}</Link>
             </Button>
-          </div>
+          </Reveal>
           <MeniscusImage
             src={images["home.print"]}
             alt={t("printStudio.imageAlt")}
@@ -746,11 +994,13 @@ export default async function Home({
         className="section-standard bg-sand"
       >
         <div className="u-shell flex flex-col gap-12">
-          <SectionHeading
-            id="how-heading"
-            eyebrow={t("how.eyebrow")}
-            title={t("how.heading")}
-          />
+          <Reveal>
+            <SectionHeading
+              id="how-heading"
+              eyebrow={t("how.eyebrow")}
+              title={t("how.heading")}
+            />
+          </Reveal>
           <div className="relative">
             {/* The connecting rule. Decorative — the ordered list already
                 carries the sequence — and a sibling of the <ol> rather than a
@@ -800,11 +1050,13 @@ export default async function Home({
         className="section-standard bg-mineral"
       >
         <div className="u-shell flex flex-col gap-12">
-          <SectionHeading
-            id="why-heading"
-            eyebrow={t("why.eyebrow")}
-            title={t("why.heading")}
-          />
+          <Reveal>
+            <SectionHeading
+              id="why-heading"
+              eyebrow={t("why.eyebrow")}
+              title={t("why.heading")}
+            />
+          </Reveal>
           <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {(
               [
@@ -853,16 +1105,18 @@ export default async function Home({
         className="section-standard bg-sand"
       >
         <div className="u-shell flex flex-col gap-12">
-          <SectionHeading
-            id="journal-heading"
-            eyebrow={t("journal.eyebrow")}
-            title={t("journal.heading")}
-            action={
-              <Button asChild variant="secondary" size="sm">
-                <Link href="/blog">{t("journal.cta")}</Link>
-              </Button>
-            }
-          />
+          <Reveal>
+            <SectionHeading
+              id="journal-heading"
+              eyebrow={t("journal.eyebrow")}
+              title={t("journal.heading")}
+              action={
+                <Button asChild variant="secondary" size="sm">
+                  <Link href="/blog">{t("journal.cta")}</Link>
+                </Button>
+              }
+            />
+          </Reveal>
           <div className="grid gap-10 lg:grid-cols-12">
             <article className="group relative flex flex-col gap-4 lg:col-span-7">
               {featuredPost.cover ? (
@@ -946,14 +1200,16 @@ export default async function Home({
         className="section-standard bg-mineral"
       >
         <div className="u-shell flex flex-col gap-8">
-          <h2
-            id="closing-heading"
-            className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
-          >
-            {t("cta.headingLine1")}
-            <br />
-            {t("cta.headingLine2")}
-          </h2>
+          <Reveal>
+            <h2
+              id="closing-heading"
+              className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
+            >
+              {t("cta.headingLine1")}
+              <br />
+              {t("cta.headingLine2")}
+            </h2>
+          </Reveal>
           <div className="flex flex-wrap items-center gap-4">
             <Button asChild variant="primary" size="lg">
               <Link href="/custom-order">{t("cta.primary")}</Link>

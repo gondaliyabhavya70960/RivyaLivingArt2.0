@@ -61,7 +61,8 @@
     "announcementDefault": "Current lead time · Small pieces 7–10 days · Statement pieces 3–6 weeks",
     "ratedOutOf": "Rated {rating} out of {outOf} stars",
     "demoMark": "Demo content",
-    "demoDetail": "Demo content — not a real listing"
+    "demoDetail": "Demo content — not a real listing",
+    "of": "of"
   },
   "Header": {
     "search": "Search",
@@ -300,7 +301,10 @@
       "print": "3d printing",
       "process": "process",
       "journal": "journal",
-      "words": "kind words"
+      "words": "kind words",
+      "largeFormat": "large format",
+      "furniture": "furniture",
+      "rooms": "in the room"
     },
     "manifesto": {
       "line1": "Objects made slowly.",
@@ -313,6 +317,84 @@
       "body": "Every Rivya Living Art piece passes through the same hands, from the first pour to the last pass of 3000 grit. There is no production line here — only a bench, a set of moulds, and the time a piece needs.",
       "cta": "Meet the maker",
       "imageAlt": "Hands polishing a cured resin surface at the studio bench"
+    },
+    "largeFormat": {
+      "eyebrow": "large-format work",
+      "heading": "Made at scale, too",
+      "intro": "Tables, wall panels, sculptural pieces and preservation work planned to fit a room rather than a shelf.",
+      "cta": "See large-format work",
+      "index": "{number} of {total}"
+    },
+    "furniture": {
+      "eyebrow": "what we commission",
+      "heading": "What we commission",
+      "intro": "The studio does not keep furniture in stock. Send the room and the piece you are picturing, and we plan it around both.",
+      "cta": "Start a furniture commission",
+      "conceptLabel": "Concept",
+      "kinds": {
+        "dining": {
+          "title": "Dining table",
+          "lead": "Poured to your table's footprint, not a standard size.",
+          "leadTime": "3–6 weeks",
+          "alt": "A large wooden workbench in the studio, standing in as a concept image for a dining table."
+        },
+        "coffee": {
+          "title": "Coffee table",
+          "lead": "A low table built around how you actually sit.",
+          "leadTime": "3–6 weeks",
+          "alt": "A finished resin-and-teak board and bowl on the studio table, standing in as a concept image for a coffee table."
+        },
+        "side": {
+          "title": "Side table",
+          "lead": "A single surface, sized for the corner it lives in.",
+          "leadTime": "3–6 weeks",
+          "alt": "A close macro of sealed teak wood grain, standing in as a concept image for a side table."
+        },
+        "console": {
+          "title": "Console",
+          "lead": "A hallway piece, cast to the wall it stands against.",
+          "leadTime": "3–6 weeks",
+          "alt": "The studio at night — poured moulds curing under a warm work lamp, standing in as a concept image for a console."
+        },
+        "chair": {
+          "title": "Chair",
+          "lead": "A seat shaped and finished by hand, one at a time.",
+          "leadTime": "3–6 weeks",
+          "alt": "Hands arranging petals inside an empty mould, standing in as a concept image for a chair."
+        },
+        "bench": {
+          "title": "Bench",
+          "lead": "A long seat for an entryway or a table.",
+          "leadTime": "3–6 weeks",
+          "alt": "Deep blue resin catching the light across a finished surface, standing in as a concept image for a bench."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "in the room",
+      "heading": "In the room",
+      "intro": "A commissioned piece rarely stands alone — here is the kind of room it goes into.",
+      "conceptLabel": "Concept",
+      "living": {
+        "title": "Living room",
+        "caption": "A commissioned piece, pictured in a living room setting.",
+        "alt": "Resin being poured in a slow, steady stream, standing in as a concept image for a living room."
+      },
+      "dining": {
+        "title": "Dining room",
+        "caption": "A commissioned piece, pictured in a dining room setting.",
+        "alt": "A macro band of layered resin texture, standing in as a concept image for a dining room."
+      },
+      "study": {
+        "title": "Study",
+        "caption": "A commissioned piece, pictured in a study.",
+        "alt": "Filled moulds curing overnight under a warm work lamp, standing in as a concept image for a study."
+      },
+      "bedroom": {
+        "title": "Bedroom",
+        "caption": "A commissioned piece, pictured in a bedroom.",
+        "alt": "Gold leaf flakes drifting inside settling translucent blue resin, standing in as a concept image for a bedroom."
+      }
     }
   },
   "Process": {
@@ -1435,7 +1517,13 @@
       "scope": "large work",
       "how": "how it runs",
       "brief": "your brief",
-      "gallery": "pieces"
+      "gallery": "pieces",
+      "philosophy": "philosophy",
+      "materials": "materials",
+      "pieces": "furniture",
+      "work": "past work",
+      "words": "words",
+      "faq": "questions"
     },
     "hero": {
       "eyebrow": "large-format commissions",
@@ -1504,6 +1592,31 @@
       "heading": "Tell us about the room",
       "body": "Send the space, the use and the date that matters. Design, materials and price are settled with you on WhatsApp before a single layer is poured.",
       "formCta": "Plan a custom order"
+    },
+    "philosophy": {
+      "eyebrow": "why plan first",
+      "heading": "Planned before it is priced",
+      "p1": "A large piece lives with a room for years, so it is designed for that room specifically — never sized to a standard sheet and shipped out.",
+      "p2": "The studio takes on a small number of large commissions at a time, for the same reason each one takes weeks rather than days: layered resin work at this scale cannot be rushed without it showing later.",
+      "p3": "Nothing is poured until the design, the finish and the size are agreed in writing — the room gets one chance to be measured correctly, and the studio does not guess."
+    },
+    "pieces": {
+      "eyebrow": "furniture at this scale",
+      "heading": "The furniture side of large work",
+      "intro": "The same six kinds shown on the homepage — a table, a console, a bench — planned and poured to a specific room."
+    },
+    "work": {
+      "eyebrow": "commissioned before",
+      "heading": "Large work, delivered",
+      "cta": "See all commissions"
+    },
+    "words": {
+      "eyebrow": "in their words",
+      "heading": "What clients of large work say"
+    },
+    "faq": {
+      "eyebrow": "asked often",
+      "heading": "Questions about large work"
     }
   },
   "CureLine": {

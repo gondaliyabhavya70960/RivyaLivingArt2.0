@@ -61,7 +61,8 @@
     "announcementDefault": "Aktuelle Lieferzeit · Kleine Stücke 7–10 Tage · Große Stücke 3–6 Wochen",
     "ratedOutOf": "Bewertet mit {rating} von {outOf} Sternen",
     "demoMark": "Demo-Inhalt",
-    "demoDetail": "Demo-Inhalt — kein echtes Angebot"
+    "demoDetail": "Demo-Inhalt — kein echtes Angebot",
+    "of": "von"
   },
   "Header": {
     "search": "Suche",
@@ -300,7 +301,10 @@
       "print": "3d-druck",
       "process": "prozess",
       "journal": "journal",
-      "words": "freundliche worte"
+      "words": "freundliche worte",
+      "largeFormat": "großformat",
+      "furniture": "möbel",
+      "rooms": "im raum"
     },
     "manifesto": {
       "line1": "Langsam gemachte Objekte.",
@@ -313,6 +317,84 @@
       "body": "Jedes Rivya Living Art-Stück geht durch dieselben Hände, vom ersten Guss bis zum letzten Zug mit Körnung 3000. Es gibt hier keine Fertigungsstraße — nur eine Werkbank, ein paar Gussformen und die Zeit, die ein Stück braucht.",
       "cta": "Zur Person dahinter",
       "imageAlt": "Hände polieren eine ausgehärtete Resin-Oberfläche an der Werkbank"
+    },
+    "largeFormat": {
+      "eyebrow": "arbeiten im großformat",
+      "heading": "Auch im großen Maßstab gefertigt",
+      "intro": "Tische, Wandpaneele, skulpturale Stücke und Konservierungsarbeiten, geplant für einen Raum statt für ein Regal.",
+      "cta": "Großformatige Arbeiten ansehen",
+      "index": "{number} von {total}"
+    },
+    "furniture": {
+      "eyebrow": "was wir in auftrag nehmen",
+      "heading": "Was wir in Auftrag nehmen",
+      "intro": "Das Atelier hält keine Möbel auf Lager. Schicken Sie uns den Raum und das Stück, das Sie sich vorstellen — wir planen beides gemeinsam.",
+      "cta": "Eine Möbel-Anfertigung beginnen",
+      "conceptLabel": "Konzept",
+      "kinds": {
+        "dining": {
+          "title": "Esstisch",
+          "lead": "Gegossen auf die Grundfläche Ihres Tisches, nicht auf eine Standardgröße.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Eine große Holzwerkbank im Atelier, hier als Konzeptbild für einen Esstisch."
+        },
+        "coffee": {
+          "title": "Couchtisch",
+          "lead": "Ein niedriger Tisch, gestaltet danach, wie Sie tatsächlich sitzen.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Ein fertiges Brett aus Harz und Teakholz mit einer Schale auf dem Atelier-Tisch, hier als Konzeptbild für einen Couchtisch."
+        },
+        "side": {
+          "title": "Beistelltisch",
+          "lead": "Eine einzelne Fläche, passend für die Ecke, in der sie steht.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Eine Nahaufnahme von versiegelter Teakholzmaserung, hier als Konzeptbild für einen Beistelltisch."
+        },
+        "console": {
+          "title": "Konsole",
+          "lead": "Ein Flurstück, gegossen für die Wand, an der es steht.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Das Atelier bei Nacht — gefüllte Gussformen härten unter einer warmen Arbeitsleuchte, hier als Konzeptbild für eine Konsole."
+        },
+        "chair": {
+          "title": "Stuhl",
+          "lead": "Ein Sitz, von Hand geformt und veredelt, einer nach dem anderen.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Hände, die Blütenblätter in einer leeren Gussform anordnen, hier als Konzeptbild für einen Stuhl."
+        },
+        "bench": {
+          "title": "Bank",
+          "lead": "Ein langer Sitzplatz für einen Eingang oder einen Tisch.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Tiefblaues Harz, das das Licht über eine fertige Oberfläche einfängt, hier als Konzeptbild für eine Bank."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "im raum",
+      "heading": "Im Raum",
+      "intro": "Ein in Auftrag gegebenes Stück steht selten allein — hier die Art von Raum, in dem es steht.",
+      "conceptLabel": "Konzept",
+      "living": {
+        "title": "Wohnzimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Wohnzimmer.",
+        "alt": "Harz, das in einem langsamen, gleichmäßigen Strahl gegossen wird, hier als Konzeptbild für ein Wohnzimmer."
+      },
+      "dining": {
+        "title": "Esszimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Esszimmer.",
+        "alt": "Ein Makroband aus geschichteter Harzstruktur, hier als Konzeptbild für ein Esszimmer."
+      },
+      "study": {
+        "title": "Arbeitszimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Arbeitszimmer.",
+        "alt": "Gefüllte Gussformen härten über Nacht unter einer warmen Arbeitsleuchte, hier als Konzeptbild für ein Arbeitszimmer."
+      },
+      "bedroom": {
+        "title": "Schlafzimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Schlafzimmer.",
+        "alt": "Goldflocken treiben in sich setzendem, durchscheinendem blauem Harz, hier als Konzeptbild für ein Schlafzimmer."
+      }
     }
   },
   "Process": {
@@ -1435,7 +1517,13 @@
       "scope": "große arbeiten",
       "how": "ablauf",
       "brief": "ihr briefing",
-      "gallery": "stücke"
+      "gallery": "stücke",
+      "philosophy": "philosophie",
+      "materials": "materialien",
+      "pieces": "möbel",
+      "work": "frühere arbeiten",
+      "words": "worte",
+      "faq": "fragen"
     },
     "hero": {
       "eyebrow": "großformatige auftragsarbeiten",
@@ -1504,6 +1592,31 @@
       "heading": "Erzählen Sie uns vom Raum",
       "body": "Schicken Sie den Raum, die Nutzung und das Datum, auf das es ankommt. Entwurf, Materialien und Preis werden mit Ihnen auf WhatsApp geklärt, bevor eine einzige Schicht gegossen wird.",
       "formCta": "Sonderanfertigung planen"
+    },
+    "philosophy": {
+      "eyebrow": "warum zuerst planen",
+      "heading": "Geplant, bevor es bepreist wird",
+      "p1": "Ein großes Stück lebt über Jahre mit einem Raum, deshalb wird es genau für diesen Raum entworfen — nie auf eine Standardgröße zugeschnitten und verschickt.",
+      "p2": "Das Atelier übernimmt jeweils nur wenige große Aufträge — aus demselben Grund, warum jeder Auftrag Wochen statt Tage dauert: geschichtete Harzarbeit in diesem Maßstab lässt sich nicht beschleunigen, ohne dass man es später sieht.",
+      "p3": "Es wird nichts gegossen, bevor Entwurf, Oberfläche und Größe schriftlich vereinbart sind — der Raum bekommt nur eine Chance, richtig vermessen zu werden, und das Atelier rät nicht."
+    },
+    "pieces": {
+      "eyebrow": "möbel in diesem maßstab",
+      "heading": "Die Möbelseite der großformatigen Arbeit",
+      "intro": "Dieselben sechs Arten wie auf der Startseite — ein Tisch, eine Konsole, eine Bank — geplant und gegossen für einen bestimmten Raum."
+    },
+    "work": {
+      "eyebrow": "bereits in auftrag gegeben",
+      "heading": "Großformatige Arbeit, ausgeliefert",
+      "cta": "Alle Auftragsarbeiten ansehen"
+    },
+    "words": {
+      "eyebrow": "in ihren worten",
+      "heading": "Was Kunden großformatiger Arbeiten sagen"
+    },
+    "faq": {
+      "eyebrow": "oft gefragt",
+      "heading": "Fragen zu großformatiger Arbeit"
     }
   },
   "CureLine": {
