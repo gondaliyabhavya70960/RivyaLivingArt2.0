@@ -34,6 +34,12 @@ import { shouldPushOnComplete } from "@/lib/scraper/sheet-policy";
 import { pushJobToSheet } from "@/lib/scraper/sheet-push";
 import { getAdapter } from "@/lib/scraper/adapters";
 import { jsonldAdapter } from "@/lib/scraper/adapters/jsonld";
+import {
+  canonicalizeUrl,
+  normalizeColour,
+  normalizeMaterial,
+  normalizeUnit,
+} from "@/lib/scraper/normalize";
 import { isPathAllowed } from "@/lib/scraper/robots";
 import {
   fingerprint,
@@ -94,6 +100,35 @@ function toSnapshot(job: {
     newCount: job.newCount,
     updatedCount: job.updatedCount,
     error: job.error,
+  };
+}
+
+/**
+ * Free-text cleanup, applied once at staging — BEFORE `contentHash` is
+ * computed from the result, though `contentHash` reads none of the fields
+ * touched here (title/price/status/images only; see normalize.ts's header
+ * for why that means no NORMALIZER_VERSION bump is needed for this change).
+ * `materials`/`dimensions` fall back to the raw value when normalization
+ * yields nothing (an empty string stays an empty string, not a lost field).
+ */
+function normalizeStagedProduct(p: RichProduct): RichProduct {
+  let fields = p.fields;
+  for (const key of Object.keys(p.fields)) {
+    if (/^colou?r$/i.test(key) && typeof p.fields[key] === "string") {
+      const normalized = normalizeColour(p.fields[key] as string);
+      if (normalized) fields = { ...fields, [key]: normalized };
+    }
+  }
+  return {
+    ...p,
+    url: canonicalizeUrl(p.url),
+    materials: p.materials
+      ? (normalizeMaterial(p.materials) ?? p.materials)
+      : p.materials,
+    dimensions: p.dimensions
+      ? (normalizeUnit(p.dimensions) ?? p.dimensions)
+      : p.dimensions,
+    fields,
   };
 }
 
@@ -288,7 +323,8 @@ async function upsertPage(
   for (const p of products) {
     if (!byExternalId.has(p.externalId)) byExternalId.set(p.externalId, p);
   }
-  const unique = [...byExternalId.values()];
+  // Normalized BEFORE contentHash is computed from these rows below.
+  const unique = [...byExternalId.values()].map(normalizeStagedProduct);
 
   const existing = await db.scrapedProduct.findMany({
     where: { sourceKey, externalId: { in: unique.map((p) => p.externalId) } },
