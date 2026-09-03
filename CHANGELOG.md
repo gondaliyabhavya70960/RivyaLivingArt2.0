@@ -5,6 +5,50 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — tiles, skeletons and palette verbs (2026-09-03, fourth batch)
+
+### Added
+- **Five dashboard tiles: testimonials, portfolio pieces, media files, scraped records, import runs.**
+  Each has a screen in the sidebar and reported nothing on the Overview, so "is there anything in the
+  portfolio yet?" could only be answered by navigating there. Counts, not judgements — an empty
+  surface reads 0 rather than being hidden, because 0 is the answer.
+- **Twelve per-route `loading.tsx` skeletons** at final dimensions, composed from a new
+  `studio/skeleton.tsx`: the header footprint, a filter bar, a table at real row height, a media
+  grid. Flat, never a shimmer — a pulse says "still waiting", which the shape already says. The
+  point of a skeleton is that nothing MOVES when the data lands; a generic stack of grey bars that
+  then reflows into a table is worse than a blank frame, because it promises a layout and breaks it.
+- **A `Do` group in the ⌘K palette** — create a product, write a journal post, add a portfolio piece,
+  run the scraper, import from the sheet, bulk import, upload media. They carry `keywords`, so typing
+  "add" finds "Create a product", which the label alone does not contain.
+  The verbs **navigate, they do not execute**: "Run the scraper" opens the sources screen where the
+  run button and its confirmation live. Firing a scrape from a fuzzy-matched keystroke would be a
+  side effect nobody asked for twice.
+
+### Fixed
+- **The palette claimed "Nothing matches." while it was still looking.** Two characters start a
+  debounced product search; until it returned, the empty state asserted an answer the palette did not
+  have, so a wrong result flashed before the right one. It now says "Searching products…" while the
+  results in hand belong to an older query. Flat, no spinner — the wait is ~180 ms plus a query.
+
+### What measuring changed about the sticky-header item
+The roadmap asks for a sticky header row on wide tables. Driving it in a browser found the work
+mostly done and the remaining half blocked on something else:
+
+- Only **2 of 21** studio tables carry a `min-w` — products and inquiries. Those are the wide ones,
+  and both already go `xl:sticky`. Confirmed working: at 1440 the products `<thead>` pins at 64 px
+  under the topbar while the page scrolls past it.
+- The other 19 sit in `overflow-x-auto` wrappers, which compute `overflow-y: auto` and become their
+  own scroll container. Sticky inside one of those has nothing to stick against, so adding it would
+  be a **silent no-op**. Products only works because `xl:overflow-x-visible` hands the sticky back to
+  the page.
+- **The pinned first column is genuinely not done, and it needs one thing first.** `StudioRow`'s
+  hover and selected tints are semi-transparent, so a pinned cell would let the scrolled-under
+  content show through it. Doing it properly means giving the row an opaque composite
+  (`color-mix` against the card) so a pinned cell can inherit it. Left for its own change rather
+  than half-built.
+
+---
+
 ## Transformation Phase 10 — the Studio drift sweep (2026-09-03, third batch)
 
 108 substitutions across 42 files: `shadow-sm` → `shadow-e1`, and the card radii onto the

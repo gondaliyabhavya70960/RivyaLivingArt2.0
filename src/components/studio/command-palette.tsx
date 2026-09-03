@@ -3,7 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
-import { Package, Search } from "lucide-react";
+import {
+  FileText,
+  Image as ImageIcon,
+  Import,
+  Package,
+  Plus,
+  Radar,
+  Search,
+  Table,
+} from "lucide-react";
 
 import { searchProductsForLink } from "@/actions/products";
 import { SECTIONS } from "@/components/studio/sidebar";
@@ -19,9 +28,13 @@ import { studioPaletteSignal } from "@/lib/studio-palette-signal";
  * because the two search different things behind different auth — see
  * `lib/studio-palette-signal.ts`.
  *
- * Two layers: every sidebar destination (role-filtered, same source of truth
- * as the nav), and a live product jump backed by the staff-only
- * `searchProductsForLink` action. cmdk's own Dialog handles the portal, the
+ * Three layers: the VERBS an owner actually arrives wanting to do, every
+ * sidebar destination (role-filtered, same source of truth as the nav), and a
+ * live product jump backed by the staff-only `searchProductsForLink` action.
+ *
+ * The verbs NAVIGATE, they do not execute. "Run the scraper" opens the sources
+ * screen where the run button and its confirmation live; firing a scrape from
+ * a fuzzy-matched keystroke would be a side effect nobody asked for twice. cmdk's own Dialog handles the portal, the
  * focus trap and `Esc`; product results bypass cmdk filtering (they're already
  * server-filtered).
  *
@@ -71,12 +84,37 @@ export function CommandPalette({ role }: { role: Role }) {
   const term = query.trim();
   const products =
     open && term.length >= 2 && results.q === term ? results.items : [];
+  /* Long enough to trigger a search, but the results in hand belong to an
+     older query — so the product list is unknown, not empty. */
+  const searching = open && term.length >= 2 && results.q !== term;
 
   const go = (href: string) => {
     studioPaletteSignal.close();
     setQuery("");
     router.push(href);
   };
+
+  /**
+   * §12.2's verbs. Each is a destination, so the palette stays a navigator —
+   * the doing happens on the screen that owns the confirmation. `keywords`
+   * carries the words an owner would actually type ("add", "new", "csv"),
+   * because cmdk matches the value string and "Create product" does not
+   * contain "add".
+   */
+  const ACTIONS: {
+    label: string;
+    href: string;
+    keywords: string;
+    icon: typeof Plus;
+  }[] = [
+    { label: "Create a product", href: "/studio/products/new", keywords: "add new create product item", icon: Plus },
+    { label: "Write a journal post", href: "/studio/blog/new", keywords: "add new write blog journal post article", icon: FileText },
+    { label: "Add a portfolio piece", href: "/studio/portfolio/new", keywords: "add new portfolio case study piece", icon: ImageIcon },
+    { label: "Run the scraper", href: "/studio/scraper/sources", keywords: "run scrape scraper sources fetch", icon: Radar },
+    { label: "Import from the sheet", href: "/studio/sheet-import", keywords: "import sheet google tiers sync", icon: Table },
+    { label: "Bulk import products", href: "/studio/import", keywords: "import bulk csv upload", icon: Import },
+    { label: "Upload media", href: "/studio/media", keywords: "upload media image file library", icon: ImageIcon },
+  ];
 
   const navItems = SECTIONS.flatMap((section) =>
     section.items.filter(
@@ -118,9 +156,33 @@ export function CommandPalette({ role }: { role: Role }) {
         </kbd>
       </div>
       <Command.List className="max-h-80 overflow-y-auto p-2">
+        {/* "Nothing matches" is a claim, and while the debounced product
+            search is still in flight the palette does not yet have grounds for
+            it — it used to make it anyway, so a two-character query flashed a
+            wrong answer before the right one arrived. The row below is flat on
+            purpose: a spinner here would be motion for a wait measured in
+            ~180ms plus a query. */}
         <Command.Empty className="px-3 py-8 text-center text-small text-graphite">
-          Nothing matches.
+          {searching ? "Searching products…" : "Nothing matches."}
         </Command.Empty>
+
+        <Command.Group heading="Do" className={GROUP_HEADING}>
+          {ACTIONS.map((action) => (
+            <Command.Item
+              key={action.href}
+              value={`do ${action.label} ${action.keywords}`}
+              onSelect={() => go(action.href)}
+              className={ITEM}
+            >
+              <action.icon
+                aria-hidden
+                strokeWidth={1.5}
+                className="size-4 shrink-0"
+              />
+              {action.label}
+            </Command.Item>
+          ))}
+        </Command.Group>
 
         <Command.Group heading="Go to" className={GROUP_HEADING}>
           {navItems.map((item) => (
