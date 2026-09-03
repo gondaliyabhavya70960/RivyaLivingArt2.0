@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CharCounter } from "@/components/ui/char-counter";
-import { BRAND } from "@/lib/brand-colors";
+import { swatchColor } from "@/lib/swatch-colors";
 import { uploadReferenceImages } from "@/lib/upload-client";
 import { cn, formatPriceBand } from "@/lib/utils";
 import { buildOrderMessage, localizedOrderLabels } from "@/lib/whatsapp";
@@ -53,6 +53,9 @@ export type OrderPanelProduct = {
   showPrice: boolean;
   inStock: boolean;
   timeline: string | null;
+  /** Synthetic Content Lab row (owner decision 9 — a dead button on a live
+   *  card is worse). The flow still submits; the note beneath the CTA says so. */
+  isDemo: boolean;
   customFields: {
     id: string;
     label: string;
@@ -81,66 +84,9 @@ export type OrderPanelOosCopy = {
   waIntro: string;
 };
 
-/* ————————————————— swatch colour names → css —————————————————
-   Product DATA, not design tokens: these are the owner's own colour option
-   strings mapped to something paintable, which is why the literals live here
-   and never leak into a token-only component (§9.3's `ColourSwatches` takes
-   the resolver as a prop). */
-
-const SWATCH_COLORS: Record<string, string> = {
-  white: "#f4f4f1",
-  ivory: "#f3ecd8",
-  cream: "#f2e8cf",
-  beige: "#d9c7a7",
-  sand: "#d8c39a",
-  black: "#15181d",
-  charcoal: "#33383f",
-  grey: "#8a8f98",
-  gray: "#8a8f98",
-  silver: "#c0c5cc",
-  blue: "#0f52ba",
-  navy: "#0a1a2f",
-  sky: "#7db8ea",
-  azure: "#3b82f6",
-  teal: "#0f766e",
-  turquoise: "#2dd4bf",
-  aqua: "#67d5d0",
-  mint: "#a7e3c4",
-  ocean: "#0e3a53",
-  green: "#2f7d4f",
-  emerald: "#0f9d63",
-  olive: "#6b7233",
-  yellow: "#eac54f",
-  mustard: "#d9a521",
-  gold: BRAND.gold,
-  amber: "#e8a33d",
-  orange: "#e07b39",
-  peach: "#f3b192",
-  coral: "#e8705f",
-  red: "#b3382c",
-  maroon: "#6d2430",
-  burgundy: "#712f3e",
-  wine: "#7b3045",
-  pink: "#e88aa8",
-  rose: "#d76c86",
-  blush: "#eebbc3",
-  magenta: "#b53389",
-  purple: "#6d4a9e",
-  violet: "#7c5cbf",
-  lavender: "#b9a7dd",
-  lilac: "#c8a2c8",
-  brown: "#6f4a2f",
-  copper: "#b06f45",
-  bronze: "#9c6b30",
-};
-
-/** Colour name → dot colour; unknown names fall back to sapphire. */
-function swatchColor(name: string): string {
-  const key = name.trim().toLowerCase();
-  if (SWATCH_COLORS[key]) return SWATCH_COLORS[key];
-  const lastWord = key.split(/[\s/-]+/).pop();
-  return (lastWord && SWATCH_COLORS[lastWord]) || "#0f52ba";
-}
+/* Swatch colour names → css moved to `src/lib/swatch-colors.ts` (A3): the
+   table and `swatchColor()` are byte-identical, only the import site moved
+   so the resolver can be unit-tested apart from this client component. */
 
 const PHONE_PATTERN = /^[0-9+\-() ]{8,17}$/;
 
@@ -227,6 +173,8 @@ export function ProductOrderPanel({
   const locale = useLocale();
   const tWa = useTranslations("WhatsApp");
   const t = useTranslations("Product.order");
+  // Product.demoOrderNote lives at the namespace root, not under `.order`.
+  const tProduct = useTranslations("Product");
 
   // Spam-check inputs — same pattern as the contact form: the effect only
   // writes refs, never state.
@@ -697,6 +645,11 @@ export function ProductOrderPanel({
           <p className="mt-4 font-body text-12 leading-relaxed text-graphite">
             {t("noPayment")}
           </p>
+          {product.isDemo ? (
+            <p className="u-num mt-2 text-12 text-graphite">
+              {tProduct("demoOrderNote")}
+            </p>
+          ) : null}
         </div>
       </div>
 
