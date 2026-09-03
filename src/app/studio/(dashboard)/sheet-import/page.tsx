@@ -244,7 +244,7 @@ export default async function SheetImportPage() {
               {importRuns.map((run) => (
                 <li
                   key={run.id}
-                  className="flex items-baseline justify-between gap-3 border-b border-border pb-2 last:border-0"
+                  className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b border-border pb-2 last:border-0"
                 >
                   <span className="text-muted-foreground">
                     {dateFormatter.format(run.startedAt)}
@@ -257,7 +257,7 @@ export default async function SheetImportPage() {
                       {run.abortedReason}
                     </span>
                   ) : (
-                    <span className="shrink-0 tabular-nums">
+                    <span className="ms-auto text-end tabular-nums">
                       +{run.created} new · {run.updated} updated ·{" "}
                       {run.unchanged} unchanged
                       {run.failed > 0 ? ` · ${run.failed} failed` : ""}
