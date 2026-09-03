@@ -11,7 +11,7 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation Phase 16 — SEO, accessibility, performance (first batch)
+Current Phase:            Transformation Phase 16 — SEO, accessibility, performance (batches 1-2)
 Phase Status:             COMPLETE (2026-09-03; base 2757692 = origin/main after PR #31; branch
                           claude/session-6h1a70). All five gates the owner answered are now either
                           recorded (D28) or built (D23, D18, D22, D24).
@@ -45,10 +45,12 @@ Demo Data:                none — HARD RULE 3, now structurally enforced for th
 Assets Added:             none
 Tests Run:                typecheck · lint · test (383) · copy:check (1,185) · i18n plain and --stale ·
                           npm run build against local Postgres 16 with PORTFOLIO_SEED=1 · test:db ·
-                          redesign-audit 1440/390 over the 13 CI routes and 6 RTL routes ·
-                          a11y-audit 1440/390 + RTL · test:e2e · motion-budget · the D22 gate proven
-                          on a live database in all three states · the D23 guard proven by
-                          reintroducing a second writer and watching it fail
+                          redesign-audit at 1440/1280/390/360 over the 13 CI routes plus RTL ·
+                          a11y-audit + RTL · keyboard-audit at 1440 and 390 (NEW — the overlays'
+                          open/focus/Escape/return contract, which axe cannot check) · test:e2e ·
+                          motion-budget · the D22 gate proven on a live database in all three states ·
+                          the D23 guard proven by reintroducing a second writer and watching it fail ·
+                          the keyboard gate proven by swapping Escape for a key that does not dismiss
 Tests Passing:            all of the above
 Known Issues:             Motion payload 48.2 KB gzipped against Part 14's 45 KB budget (was 51.1
                           before the orphaned SplitText registration went) — the gate now ratchets at

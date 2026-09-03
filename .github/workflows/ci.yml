@@ -218,6 +218,16 @@ jobs:
       # The credentials are literals for the same reason AUTH_SECRET above is:
       # the database is a throwaway container the runner destroys, and the
       # script that creates the row refuses any non-local DATABASE_URL.
+      # Axe cannot press a key, so the overlays' keyboard contract — open,
+      # take focus if modal, close on Escape, hand focus back — was checked by
+      # nobody. Both widths: the drawer and search exist at each, the mega menu
+      # only on desktop, and the script skips a control the width does not
+      # offer rather than failing on it.
+      - name: Keyboard paths
+        run: |
+          node scripts/keyboard-audit.mjs
+          node scripts/keyboard-audit.mjs --w 390
+
       - name: Studio audit
         env:
           STUDIO_EMAIL: studio-audit@example.com
