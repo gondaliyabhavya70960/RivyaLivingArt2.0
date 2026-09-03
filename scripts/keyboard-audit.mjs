@@ -107,6 +107,23 @@ for (const overlay of OVERLAYS) {
     timeout: 120_000,
   });
   await page.evaluate(() => document.fonts.ready);
+  /* WAIT FOR THE PAGE TO BE INTERACTIVE, not merely parsed. This check drives
+     real key presses, and `domcontentloaded` is reached long before React has
+     run the effect that moves focus into an opened overlay. Pressing then
+     opens the drawer — its onClick is live — but the focus effect has not run,
+     so the assertion reads a page mid-hydration and calls correct code broken.
+
+     That is not hypothetical: it shipped. The gate went green locally at
+     1440px, where the timing happened to work, and red in CI at 390px on a
+     cold context. Measured on a fresh context at 390: pressing immediately
+     never settles focus (8s), while waiting for idle settles it in 1-2ms.
+     The overlays were right; the harness was early. */
+  try {
+    await page.waitForLoadState("networkidle", { timeout: 15_000 });
+  } catch {
+    // A page that never goes idle is not a keyboard failure — carry on and
+    // let the assertions below speak for themselves.
+  }
 
   const trigger = page.locator(overlay.trigger).first();
   if ((await trigger.count()) === 0 || !(await trigger.isVisible())) {
