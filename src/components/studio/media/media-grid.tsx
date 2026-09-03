@@ -91,13 +91,11 @@ const ACCEPT = [
  *
  * `Video` is not a folder at all; it is `MediaType`, so it filters on type.
  *
- * **`AI Generated` is not built.** There is no column on `Media`
- * (prisma/schema.prisma: id · url · pathname · type · folder · bytes · width ·
- * height · createdAt) that records provenance, and nothing anywhere else in
- * the app writes one. A chip that filtered nothing, or a badge that guessed
- * from a filename, would both be worse than its absence. Lighting it up needs
- * a schema field — e.g. `aiGenerated Boolean @default(false)` — set at upload
- * time, which is a data change and outside this redesign's scope.
+ * **`AI Generated` IS built** — migration `20260824110000` added
+ * `Media.provenance` (`UPLOAD` · `BUNDLED` · `AI`), this grid filters on it,
+ * and `markProvenance` below sets it. This comment used to say the opposite,
+ * two hundred lines above the action that disproved it (corrected 2026-09-03,
+ * D24). It stayed wrong because a comment has no test.
  */
 const FOLDER_LABELS: Record<MediaFolder, string> = {
   products: "Products",

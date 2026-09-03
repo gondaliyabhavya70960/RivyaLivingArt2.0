@@ -5,6 +5,63 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## The gated decisions — D23, D18, D22, D24 (2026-09-03)
+
+The owner answered D28, D23, D18, D22 and D24 against the repository's current state — after
+Phase 0, 1a and 1b had merged — and all five are YES. D28 sets the rule the others depend on:
+the rewind stands, current `main` is authoritative, and a discarded-layer change is recovered
+only as an individually reviewed PR, never a bulk cherry-pick. The four code decisions land here
+as one commit each.
+
+### Removed
+- **The legacy un-gated sheet push (D23).** `continueScrapeJob` called the policy-gated
+  `pushJobToSheet` and then, separately, `syncSourceToSheet`, which checked only
+  `isSheetSyncConfigured()` and pushed every staged row whenever a job staged anything —
+  including a FAILED one. While that stood, the MANUAL default, "a FAILED job never auto-pushes"
+  and the one-writer invariant were all false in code. The docs needed no correction: they
+  already described the gated behaviour. `sheet-policy.test.ts` now asserts the invariant on the
+  source itself — one `pushJobToSheet` call under the policy check, no direct transport use, no
+  second writer of `sheetSynced` — because the policy truth table passed the entire time the bug
+  was live. Verified by reintroducing a second writer and watching the suite go red.
+- **The dormant v2 motion layer (D18)** — nine files, 978 lines: `Preloader`,
+  `preloader-signal`, `CursorFollower`, `Magnetic`, `HeroParallax`, `KineticHeading`,
+  `SplitTextHeading`, `MobileWhatsappBar`, `WishlistCount`. Zero symbol references outside the
+  set; the compiler, the linter and 383 tests are the proof. Three names on the audit's D18 list
+  were **not** dormant and stay: `product-card` and `order-summary-preview` are imported by
+  `/design-lab`, whose fate is D17 and undecided, and `tabs` has 19 live references.
+- **Four obsolete workflows and two tracked artifact sets (D24)** — `mirror-images`,
+  `mirror-v3-media`, `mirror-v6-media`, `fetch-assets`, `.playwright-mcp/` and the two
+  regenerable `audit/*.json`, now gitignored.
+
+### Changed
+- **The portfolio seed is gated twice (D22).** It ran on every deploy, and its update branch
+  rebuilt each gallery with `images: { deleteMany: {}, create: [...] }` while writing
+  `status: PUBLISHED` — so an owner's replaced photograph came back, and an unpublished case
+  republished itself. Idempotent against the seed's own input is not idempotent against the
+  owner's edits. It now needs `PORTFOLIO_SEED=1` **and** an archive with no `case-*` row. CI opts
+  in explicitly because its database is a throwaway and `/portfolio` is an audited route.
+- **Superseded docs are bannered, not moved.** `DESIGN.md` alone has 164 inbound references, many
+  in dated records where rewriting the path would falsify what those documents said at the time.
+  Five of the nine already carried a banner; `DESIGN.md`, `CONTEXT.md` and `docs/audit-uiux.md`
+  now do.
+- **Stale text**, each verified against the thing it describes: `media-grid.tsx` claimed the
+  `AI Generated` filter had no column, 250 lines above the action that sets it; `docs/studio-cms`
+  said 1,115 slots and six manifest pages (1,185 and seven — Large Format was the missing one);
+  README's build-phase log is marked as v1 history and its "production deployment is the owner's
+  remaining step" corrected, the site having been live for some time.
+
+### Found, and not done as asked
+- **The audit said six obsolete workflows. Four are.** `fetch-media-v3`, `fetch-media-v3-video`
+  and `fetch-tiers` are named by CLAUDE.md, `data/tiers/README.md`, `docs/google-sheets.md` and
+  `scripts/media-v3-video-fetch.mjs` as the documented way to rebuild the Part 15 masters or
+  refresh the tier snapshot — operations no sandbox can perform, because the CDN and
+  docs.google.com are both blocked. Deleting them would have removed the only remaining route to
+  two real jobs.
+- **`.env.example` is untouched and unverified.** `.env*` is denied in this environment for
+  reading as well as writing, so the audit's specific claims about its contents could not be
+  checked. The complete list of variables the code actually reads is in the PR body for the owner
+  to diff against.
+
 ## Transformation Phase 1b — tokens, budgets and the contract's last corners (2026-09-03)
 
 The ungated half of roadmap Phase 1b, plus the two Phase 1a gate items that needed no decision. No

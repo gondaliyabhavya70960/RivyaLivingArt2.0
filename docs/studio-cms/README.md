@@ -12,12 +12,12 @@ editable from `/studio`, with no deploy.
 > | Phase | Shipped as | Notes |
 > |---|---|---|
 > | 0 | groundwork | `revalidatePath("/", "layout")` removed; the champagne check fixed so it can fire at all; 34 orphaned strings per locale deleted |
-> | A | `/studio/site-copy` | 1,115 slots, generated + `npm run copy:check` in CI |
+> | A | `/studio/site-copy` | 1,185 slots, generated + `npm run copy:check` in CI |
 > | B | `/studio/site-images` | 57 slots, mobile crops, focal points |
 > | C | `/studio/forms` | `FormOption`, plus business hours and announcement scheduling |
 > | D | `/studio/navigation` | header · drawer · footer |
 > | E | draft → preview → publish | staged per SURFACE, with `ContentRevision` history |
-> | F | `/studio/sections` | **six pages**, not one — see below |
+> | F | `/studio/sections` | **seven pages**, not one — see below |
 > | G | `/studio/custom-pages` | `/p/<slug>`, six block types, read-time scheduling |
 > | H | media depth | ingest, dedupe, alt, "unused" and "no description" filters |
 > | I | close the content gaps | taxonomy names in 9 languages, frame captions, asset provenance + the AI filter |
@@ -31,7 +31,7 @@ editable from `/studio`, with no deploy.
 > - **Scheduling is resolved at read time, not by a cron** (planned in `07`).
 >   A launch that depends on a job having fired is the one thing nobody can
 >   check on the morning of a campaign.
-> - **The section manifest covers six pages, not all of them.** `/shop`,
+> - **The section manifest covers seven pages, not all of them.** `/shop`,
 >   `/blog`, `/portfolio` and `/faq` are a hero plus their listing; hiding the
 >   listing makes the page pointless.
 > - **The landing-page closing band has no dark option.** It had one until

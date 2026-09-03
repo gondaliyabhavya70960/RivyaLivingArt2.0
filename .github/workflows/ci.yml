@@ -107,6 +107,11 @@ jobs:
       # /portfolio/…) are still absent because their slugs are content, not
       # code; sweeping them with deterministic slugs is roadmap Phase 16.
       # /search is a query-only noindex route with nothing to audit empty.
+      # D22 gates the portfolio case seed behind an explicit opt-in, so an
+      # unset environment gets an empty archive. CI opts in on purpose: the
+      # database is a throwaway container and /portfolio below is only worth
+      # auditing with cases in it. Production leaves this unset.
+      PORTFOLIO_SEED: "1"
       AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms"
       # Arabic is a shipped locale and nothing in CI ever loaded one. The repo
       # carries 29 `rtl:` variants across 19 files and four JS direction

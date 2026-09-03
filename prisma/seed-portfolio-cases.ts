@@ -9,8 +9,29 @@ import { PrismaClient } from "../src/generated/prisma/client";
  * prose describes the studio's standard resin practice and never invents
  * measurements, materials or claims the source data does not support.
  *
- * Idempotent upsert-by-slug, and every slug is prefixed `case-` — the seed
- * never touches portfolio entries the owner authored in the studio.
+ * Slugs are prefixed `case-`, so the seed never touches a portfolio entry the
+ * owner authored in the studio.
+ *
+ * ── TWO BARRIERS (owner decision D22, 2026-09-03) ──────────────────────────
+ *
+ * This ran on EVERY deploy, and "idempotent upsert-by-slug" was not as safe
+ * as it sounds: the update branch rebuilds the gallery with
+ * `images: { deleteMany: {}, create: [...] }`, so an owner who replaced a
+ * photograph on a seeded case lost it again on the next deploy, and any case
+ * they had unpublished came back PUBLISHED. Idempotent against the SEED's own
+ * input is not idempotent against the OWNER's edits.
+ *
+ * So it now needs both:
+ *
+ *   1. `PORTFOLIO_SEED=1` — an explicit opt-in. Unset means do nothing, which
+ *      is what production gets. Nobody has to remember a convention.
+ *   2. No existing `case-*` row. The seed populates an empty archive; it
+ *      never re-asserts itself over one that exists.
+ *
+ * Either barrier alone would be enough to stop the damage; both are here
+ * because HARD RULE 3 (never invent portfolio content) deserves to be
+ * structurally difficult to violate rather than merely documented. Re-running
+ * deliberately means opting in AND clearing the `case-*` rows first.
  */
 
 type Case = {
@@ -463,15 +484,42 @@ const CASES: Case[] = [
   },
 ];
 
+/** Barrier 1 — the opt-in. Anything but "1" is off, including unset. */
+function seedingEnabled(): boolean {
+  return process.env.PORTFOLIO_SEED === "1";
+}
+
 async function main() {
   if (!process.env.DATABASE_URL) {
     console.warn("seed-portfolio-cases: DATABASE_URL not set — skipping.");
+    return;
+  }
+  if (!seedingEnabled()) {
+    // Name the environment for the same reason the site-image import does:
+    // "skipped" and "ran and found nothing" must not read alike in a log.
+    console.log(
+      `seed-portfolio-cases: PORTFOLIO_SEED not set in ${process.env.VERCEL_ENV ?? "local"} — skipping (D22).`,
+    );
     return;
   }
   const db = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
   });
   try {
+    // Barrier 2 — never re-assert over an archive that already exists. The
+    // check is on `case-*` specifically: an owner's own portfolio entries are
+    // not this seed's business either way, and counting them would make the
+    // seed skip on a database it was meant to populate.
+    const existing = await db.portfolio.count({
+      where: { slug: { startsWith: "case-" } },
+    });
+    if (existing > 0) {
+      console.log(
+        `seed-portfolio-cases: ${existing} case-* row(s) already present — skipping (D22).`,
+      );
+      return;
+    }
+
     const categories = await db.category.findMany({
       select: { id: true, slug: true },
     });

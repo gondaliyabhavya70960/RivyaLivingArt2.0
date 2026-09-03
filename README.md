@@ -94,6 +94,13 @@ The storefront is localized: a 9-locale next-intl tree (English, Hindi, Gujarati
 
 ## Build Phases
 
+> **Historical — the v1 build log.** These twelve phases record how the site was first
+> built, in the vocabulary of the time; several describe implementations since replaced
+> (the R3F WebGL hero, the cursor glow) and none of them describes the current tree. The
+> live record is `PROJECT_STATE.md`'s SESSION CHECKPOINT and `CHANGELOG.md`; the current
+> plan is `docs/transformation-roadmap.md`. Kept because it is the only account of the
+> original decisions, and rewriting it would falsify what those sessions actually did.
+
 One phase per session; each phase ends by updating CONTEXT.md and **stopping** for explicit permission to continue.
 
 - [x] **Phase 1** — Repo + Documentation
@@ -109,7 +116,7 @@ One phase per session; each phase ends by updating CONTEXT.md and **stopping** f
 - [x] **Phase 10** — SEO + Deploy (Metadata API + canonicals everywhere, JSON-LD Organization/LocalBusiness/Product/Article/Breadcrumb/FAQPage, dynamic sitemap + robots + manifest, next/og branded OG images, favicon set, DEMO-product cleanup — deploy is owner-run via Vercel dashboard, see DEPLOYMENT.md)
 - [x] **Phase 11** — Competitor Research + Blog Seeding + Catalog Channels (COMPETITOR.md: 17 entries + 39 source candidates; 55 original blog posts seeded across 6 categories; per-category customization-field templates in the product form — catalog remains 100% owner-fed, zero auto-generated products)
 
-**All 12 build phases complete.** The catalog is auto-populated at deploy from the owner's four-tier product sheet (`data/tiers/*.csv.gz` via `prisma/import-tiers.ts`, run by the build's bootstrap step); the owner's intake paths (Product Scraper, Bulk Import, manual studio adds) remain the only other doors. Production deployment (Vercel import + Neon/Blob + custom domain) is the owner's remaining step; see [DEPLOYMENT.md](./DEPLOYMENT.md).
+**All 12 build phases complete.** The catalog is auto-populated at deploy from the owner's four-tier product sheet (`data/tiers/*.csv.gz` via `prisma/import-tiers.ts`, run by the build's bootstrap step); the owner's intake paths (Product Scraper, Bulk Import, manual studio adds) remain the only other doors. Production deployment is **done** — the site is live at www.rivyalivingart.com on Vercel with Neon and Blob (this sentence claimed it was still the owner's remaining step until 2026-09-03); see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 **Studio auth pages** — the `/studio` sign-in is a blue-led luxury card (void background + gradient mesh, show/hide password) with three companion flows, all staff-only and consistent with the no-customer-accounts rule:
 

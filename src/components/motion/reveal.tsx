@@ -32,10 +32,11 @@ export interface RevealProps {
  * plain, fully visible markup — the hidden state only applies once the
  * dynamically imported runtime lands, so content is never hidden without JS.
  * Under reduced motion the effect bails before the import (static render).
- * v7 pages keep using ScrollReveal; 2.0 sections use this. For BELOW-the-fold
- * sections only: the from-state applies when the runtime lands, so an
- * above-the-fold Reveal would flash on slow connections — the hero reveals
- * through SplitTextHeading instead (B2).
+ * For BELOW-the-fold sections only: the from-state applies when the runtime
+ * lands, so an above-the-fold Reveal would flash on slow connections. The
+ * hero used to reveal through `SplitTextHeading`, which D18 deleted with the
+ * rest of the dormant v2 motion layer; giving the hero its own entrance is
+ * roadmap Phase 1b's `sf-hero-rise`, gated on owner decision D20.
  */
 export function Reveal({
   children,

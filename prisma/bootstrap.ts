@@ -299,8 +299,12 @@ async function main() {
     );
   }
 
-  // Curated portfolio case studies built from the owner's Tier-1 rows
-  // (idempotent upsert-by-slug; never touches owner-authored entries).
+  // Curated portfolio case studies built from the owner's Tier-1 rows.
+  // Gated twice inside the script itself (owner decision D22): it needs
+  // PORTFOLIO_SEED=1 and an archive with no `case-*` rows, so an unset
+  // production environment is a no-op and an owner's edits to a seeded case
+  // survive the next deploy. The gate lives in the seed rather than here so
+  // that running it by hand is gated too.
   try {
     execSync("tsx prisma/seed-portfolio-cases.ts", { stdio: "inherit" });
   } catch (error) {

@@ -11,58 +11,53 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation Phase 1b — tokens, budgets and the contract's last corners
-Phase Status:             COMPLETE for every item that needed no owner decision (2026-09-03; base 08959cd =
-                          origin/main after PR #30; branch claude/session-6h1a70). Phase 1a's ungated half
-                          shipped in PR #30, Phase 0 in PR #29. Gates still open: D10 · D17 · D18 · D19 ·
-                          D20 · D22 · D23 · D24 · D28.
-Completed:                the --z-* stacking ladder (17 named rungs; 26 call sites migrated, values
-                          unchanged and verified in the browser); the legacy motion aliases retired onto
-                          Part 3.8 (34 sites, three aliases deleted, four bespoke durations folded in);
-                          rating-stars and model-viewer through next-intl; model-viewer auto-rotate gated
-                          on reduced motion and its failed import given a retry; scripts/motion-budget.mjs
-                          + its CI step; three more redesign-audit rules (non-token duration, hover lift,
-                          champagne promoted from note to rule)
-In Progress:              nothing — what remains of Phase 1b is gated
-Next Exact Task:          Owner answers the gates in docs/transformation-roadmap.md §2. D28 (the rewind of
-                          main) is still first; D10 now also blocks the motion budget (below) as well as
-                          Phases 1b-motion, 2 and 3. Ungated work still available without any decision:
-                          Phase 10 (Studio shell, minus the D8 demo tile and D17 design lab) and Phase 16
-                          (SEO/a11y/perf, minus CSP).
-Files Created:            scripts/motion-budget.mjs
-Files Modified:           src/styles/tokens.css · src/app/globals.css · .github/workflows/ci.yml ·
-                          scripts/redesign-audit.mjs · 20 components across storefront/motion/studio/ui ·
-                          messages/*.json ×9 · src/lib/site-copy.generated.ts · CLAUDE.md · CHANGELOG.md ·
-                          this file
-Database Changes:         none. 44 migrations at HEAD, unchanged.
-Content Changes:          four new interface strings (3D viewer loading/failed/retry, the rating label),
-                          written in all nine locales. No editorial copy invented.
-Demo Data:                none — HARD RULE 3.
+Current Phase:            The gated decisions — D23, D18, D22, D24 implemented
+Phase Status:             COMPLETE (2026-09-03; base 2757692 = origin/main after PR #31; branch
+                          claude/session-6h1a70). All five gates the owner answered are now either
+                          recorded (D28) or built (D23, D18, D22, D24).
+Completed:                D23 legacy un-gated sheet push removed + one-writer invariant test;
+                          D18 nine dormant v2 motion files deleted (978 lines); D22 portfolio seed
+                          gated on PORTFOLIO_SEED=1 AND an empty case-* archive; D24 four obsolete
+                          workflows, .playwright-mcp/ and two regenerable audit artifacts deleted
+                          and gitignored, nine superseded docs bannered, stale text corrected
+In Progress:              nothing
+Next Exact Task:          Owner answers the remaining gates — D7-D17, D19-D21, D25-D27
+                          (docs/transformation-roadmap.md §2). Unblocked without any decision:
+                          Phase 10 (Studio shell, minus the D8 demo tile and D17 design lab) and
+                          Phase 16 (SEO/a11y/perf, minus CSP). Phase 1b's remaining half needs D10,
+                          D19 and D20. .env.example is the owner's own edit.
+Files Created:            none
+Files Modified/Deleted:   src/actions/scraper-jobs.ts · src/lib/scraper/sheet-policy.test.ts ·
+                          prisma/seed-portfolio-cases.ts · prisma/bootstrap.ts · .github/workflows/ci.yml ·
+                          .gitignore · CLAUDE.md · AGENTS.md · README.md · DESIGN.md · CONTEXT.md ·
+                          docs/audit-uiux.md · docs/studio-cms/{README,08-owner-handbook}.md ·
+                          docs/transformation-audit.md · src/components/motion/reveal.tsx ·
+                          src/components/studio/media/media-grid.tsx · CHANGELOG.md · this file.
+                          DELETED: 9 dormant v2 files, 4 workflows, .playwright-mcp/ (6),
+                          audit/{crawl-report,lh-summary}.json
+Database Changes:         none. 44 migrations at HEAD, unchanged. No schema, no column, no data.
+Content Changes:          none. The portfolio seed writes strictly less than before.
+Demo Data:                none — HARD RULE 3, now structurally enforced for the portfolio archive.
 Assets Added:             none
-Tests Run:                typecheck · lint · test · copy:check · i18n-missing (plain and --stale) ·
-                          npm run build against a local Postgres 16 · test:db · next start, then
-                          redesign-audit at 1440 and 390 over the 13 CI routes and the 6 RTL routes ·
-                          a11y-audit at both widths plus RTL · test:e2e · motion-budget · a synthetic
-                          negative control proving the hover rule fires · computed z-index read back
-                          from the rendered page to prove the ladder did not re-order the stack
-Tests Passing:            all of it: typecheck ✓ · lint ✓ · test ✓ 37 files / 380 · copy:check ✓ 1,185
-                          slots · i18n ✓ 0 missing, 0 stale · build ✓ · test:db ✓ 6 · redesign-audit ✓ 38
-                          route-widths clean WITH the three new rules · a11y ✓ 0 critical/serious on 32 ·
-                          e2e ✓ 10/10 · motion-budget warns (see below), exits 0. Not run locally:
-                          studio-audit (needs the CI studio user) and lighthouse.
-Known Issues:             NEW — the Part 14 motion budget is EXCEEDED: 51.1 KB gzipped against a 45 KB
-                          spec (GSAP+ScrollTrigger+SplitText 45.8, Lenis 5.2). The gate enforces a ceiling
-                          at the shipped size and warns about the gap; closing it means dropping a plugin
-                          or Lenis, which is D10. Still open from before: the DISCARDED HISTORY LAYER
-                          (D28); the legacy un-gated sheet push (D23); OG cards on the v2 palette (D19);
-                          dormant v2 files and the design lab (D18, D17); housekeeping (D24); test:e2e
-                          still not in CI. Note /design-lab 404s in a production build, so CI can never
-                          audit it.
-Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. Every remaining Phase 1
-                          item is gated; do not start 1b's motion patterns, Phase 2 or Phase 3 without
-                          D10. Phase 10 and Phase 16 need no decision. Branch from origin/main, never
-                          local main. CI runs and is the gate of record; still run locally what ci.yml
-                          does not sweep (detail routes, E2E, extra widths) and say so.
+Tests Run:                typecheck · lint · test (383) · copy:check (1,185) · i18n plain and --stale ·
+                          npm run build against local Postgres 16 with PORTFOLIO_SEED=1 · test:db ·
+                          redesign-audit 1440/390 over the 13 CI routes and 6 RTL routes ·
+                          a11y-audit 1440/390 + RTL · test:e2e · motion-budget · the D22 gate proven
+                          on a live database in all three states · the D23 guard proven by
+                          reintroducing a second writer and watching it fail
+Tests Passing:            all of the above
+Known Issues:             Motion payload 51.1 KB gzipped against Part 14's 45 KB budget — the gate
+                          ratchets at 52 KB and closing the gap is D10. .env.example unverified:
+                          `.env*` is denied for READING as well as writing in this environment, so
+                          the audit's claims about its contents could not be checked; the complete
+                          list of variables the code reads is in PR #32's body. test:e2e still not
+                          in CI. The audit's "six obsolete workflows" was wrong — four are; the
+                          other three are the documented rebuild/refresh path and stay.
+Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. D28's rule governs
+                          any use of the discarded layer: individually reviewed PRs only, never a
+                          bulk cherry-pick. Branch from origin/main, never local main. CI runs; run
+                          locally what ci.yml does not sweep (detail routes, E2E, extra widths) and
+                          say so.
 ```
 
 ---
@@ -426,6 +421,47 @@ when convenient; no work is blocked on it.
 *(2026-09-02: the premise is gone — Actions executes, run #71 on PR #29. The evidence habit stays for
 what `ci.yml` deliberately cannot reach: detail routes, the E2E smoke, widths other than 1440/390.
 Formal retirement is owner decision D27 in `docs/transformation-audit.md`.)*
+
+---
+
+## DECISIONS (answered 2026-09-03 — the transformation gates; also settled, do not re-litigate)
+
+The owner answered these against the repository's **current** state, after Phase 0 (PR #29), Phase 1a
+(PR #30) and Phase 1b (PR #31) had merged — not against the older checkpoint. All five are YES.
+
+### D28 — The rewind of `main`: **YES, it stands**
+Current `main` is the authoritative baseline. The discarded layer is **not** restored wholesale: it was
+never one coherent feature — LQIP wiring, CSP, uploads hardening, search and breadcrumb behaviour, docs —
+and current `main` has already moved past it (20 commits beyond `f1cfd95`; `950d9ac` is 39 behind and
+diverged). Several of those changes have since been re-derived by the Phase 1a and 1b work.
+
+**The rule this sets: recover a discarded change only as an individually reviewed, individually justified
+PR, never as a bulk cherry-pick.** `refs/pull/<n>/head` stays readable for reference. A discarded PR is
+evidence that a problem was once solved, not evidence that its patch still applies.
+
+### D23 — The legacy un-gated sheet push: **YES, remove it**
+`SheetSyncPolicy` becomes the sole authority for sheet writes. `syncSourceToSheet` and its call site come
+out of `src/actions/scraper-jobs.ts`, with a regression test proving MANUAL + DONE performs zero sheet
+writes. Two write paths into one shared document is how rows get duplicated, and the legacy path ran even
+on FAILED jobs. **First code change of the batch, in its own commit.**
+
+### D18 — Dormant v2 files: **YES, delete — but only the audited, proven-unreferenced ones**
+By exact path, after proving no import, no dynamic reference, no barrel re-export, no build or CI entry
+point. Explicitly NOT a broad "delete anything that looks old" sweep. Dead v2 files are dangerous in this
+repository specifically because it already carries several historical transformation layers: a future
+reader — or agent — mistakes one for live architecture.
+
+### D22 — The portfolio seed: **YES, keep it, but gate it twice**
+The seed stays; it is useful for fresh databases and development. What goes is its ability to behave like
+production content initialisation. **Two independent barriers**: an explicit opt-in flag, AND a refusal to
+seed when portfolio case data already exists. Production defaults to off. HARD RULE 3 must be structurally
+difficult to violate, not a convention someone has to remember.
+
+### D24 — Housekeeping: **YES, with `.env.example` carved out**
+Obsolete workflows, tracked artifacts and reports, superseded documentation and stale counts all go, after
+reference verification. **`.env.example` is a separate owner change**: the historical PR that fixed it was
+dropped in the rewind (D28), so its current state must be verified rather than assumed — and `.env*` edits
+are denied in-session regardless.
 
 ---
 

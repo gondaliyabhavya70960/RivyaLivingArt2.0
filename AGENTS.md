@@ -174,8 +174,11 @@ reproducing the failure first, then showing it gone.
 - **`prisma/reconcile-blog-covers.ts` is one-way.** It flips 55 blog cover rows to local
   paths, matching only `NULL` or the old remote URL. Once flipped it cannot re-run to
   repair, so anything that removes `public/images/blog/` 404s them permanently.
-- **`mirror-images.yml` (a workflow) and `src/app/api/cron/mirror-images/route.ts` (a LIVE
-  production cron) have almost the same name.** Do not delete by grep.
+- **`src/app/api/cron/mirror-images/route.ts` is a LIVE production cron** (daily at
+  02:30 UTC, `vercel.json`). The near-identically-named `mirror-images.yml` workflow was
+  deleted under D24 once `public/` was committed — which is exactly the trap that note
+  warned about, so it was deleted by path after reading both, never by grep. The route
+  stays.
 - **`public/` is load-bearing and was once missing entirely** — 242 files, 62 image slots.
   Three guards now fail loudly if it goes away: `site-images.test.ts`,
   `bundled-media.test.ts`, and a broken-image rule in `redesign-audit.mjs`.

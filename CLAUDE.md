@@ -278,10 +278,17 @@ ScrollTrigger for the two pinned scrubs.
   the search overlay are opened through module signals
   (`src/lib/search-signal.ts`), because their triggers are not descendants of
   the components that own them.
-- Two ornaments are deliberately unmounted: the first-visit `Preloader` and
-  the `CursorFollower`. Part 14 forbids anything that delays the LCP and opens
-  by rejecting motion that is a technology demo. Both files remain — remounting
-  either is one line in the layout.
+- **The dormant v2 motion layer is gone** (owner decision D18, 2026-09-03).
+  `Preloader`, `preloader-signal`, `CursorFollower`, `Magnetic`,
+  `HeroParallax`, `KineticHeading`, `SplitTextHeading`, `MobileWhatsappBar`
+  and `WishlistCount` were deleted: nine files, zero imports between them and
+  anything mounted, all carrying v2.0/v7 headers from a superseded system.
+  They were kept for a while as "remounting is one line", which is exactly the
+  ambiguity D18 removes — a reader, human or agent, could not tell dead
+  architecture from live. Part 14 forbids the first two on their own terms
+  (nothing may delay the LCP; motion that is a technology demo is rejected).
+  `git log --diff-filter=D` finds them if one is ever wanted back.
+  `src/components/motion/` is now `Reveal` and `PageTransition`.
 - The Studio is English-only by design and consumes the shadcn semantic layer,
   re-pointed under the `.studio-v2` scope in globals.css (with its own
   `prefers-color-scheme: dark` block). The commission board is built on the

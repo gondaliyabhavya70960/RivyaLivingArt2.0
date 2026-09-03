@@ -1,8 +1,12 @@
 # Transformation roadmap
 
-Companion to `docs/transformation-audit.md` (Phase 0). This is the plan for the master prompt's Phases 1–17, re-sequenced to what the repository actually has at `HEAD f1cfd95`. Read the audit first; this document assumes its vocabulary, its decision numbers (D7–D28) and its risk register.
+Companion to `docs/transformation-audit.md` (Phase 0). This is the plan for the master prompt's Phases 1–17, re-sequenced to what the repository had at `HEAD f1cfd95` (three phases have merged since; see the status line below). Read the audit first; this document assumes its vocabulary, its decision numbers (D7–D28) and its risk register.
 
-**Status: Phase 0 complete. Nothing below has started. Phase 1 does not begin until the owner has answered the gate decisions in §2.**
+**Status (2026-09-03): Phase 0 merged (PR #29). Phase 1a's ungated half merged (PR #30). Phase 1b's
+ungated half merged (PR #31). The owner has answered D28, D23, D18, D22 and D24 — all YES; the answers and
+their reasoning are recorded in `PROJECT_STATE.md` under "DECISIONS (answered 2026-09-03)", and D28 sets
+the standing rule that a discarded-layer change is recovered only as an individually reviewed PR, never as
+a bulk cherry-pick. The remaining gates are D7-D17, D19-D21 and D25-D27.**
 
 ---
 
@@ -32,7 +36,7 @@ The owner answers these before the phase that depends on them starts. Recorded a
 
 | Decision | Question (short form; full text in audit §15) | Blocks |
 |---|---|---|
-| D28 | Does the rewind of `main` to `f1cfd95` stand? Twelve merged PRs (#15–#20, #22–#27: LQIP wiring, `.env.example`, doc corrections, uploads hardening, CSP enforcement, the four Phase 2e answers, slot counts, `mirror-images.yml` retirement) are reachable only at `refs/pull/<n>/head`; PR #28 was closed unmerged. If it stands, Phase 1a re-opens them one at a time with review; if not, `main` is restored to `950d9ac` and this branch rebased | 1a, and everything after |
+| D28 ✅ **YES (2026-09-03)** — the rewind stands; current `main` is authoritative and a discarded change is recovered only as its own reviewed PR | Does the rewind of `main` to `f1cfd95` stand? Twelve merged PRs (#15–#20, #22–#27: LQIP wiring, `.env.example`, doc corrections, uploads hardening, CSP enforcement, the four Phase 2e answers, slot counts, `mirror-images.yml` retirement) are reachable only at `refs/pull/<n>/head`; PR #28 was closed unmerged. If it stands, Phase 1a re-opens them one at a time with review; if not, `main` is restored to `950d9ac` and this branch rebased | 1a, and everything after |
 | D7 | May schema changes proceed as their own additive PRs under this transformation? | 9, 11, 12, 13, 14 |
 | D8 | Demo data: guarded non-production fixtures + additive `isDemo` marker, never in the production database? Is a Neon branch acceptable as the Content Lab environment? | 15, the "Demo products" tile in 10 |
 | D9 | Furniture: commission-capability framing with bench/formwork concept imagery only? Are chairs and benches in scope at all? | 3 (§9 band), 4 (§21.3–8), SET A/F imagery |
@@ -44,13 +48,13 @@ The owner answers these before the phase that depends on them starts. Recorded a
 | D15 | Which blocks join the six-type catalogue, one at a time? | 11 |
 | D16 | Process and Materials stay fixed-arity slots, or become registry-pattern entities? | 8, 11 |
 | D17 | Design lab: rebuild small or retire? | 10 |
-| D18 | Delete the dormant v2 files? | 1 |
+| D18 ✅ **YES (2026-09-03)** — by exact path, only the proven-unreferenced ones | Delete the dormant v2 files? | 1 |
 | D19 | Re-skin OG cards, manifest and email to the v3 palette via `brand-colors.ts`? | 2 |
 | D20 | Hero motion: text and video layer only, poster still? | 3 |
 | D21 | Project `materials`, `dimensions`, `videoUrl` into `ShopProductItem` for the card? | 5 |
-| D22 | Portfolio seed provenance confirmed; gate the seed on an empty table? | 1 (hygiene) |
-| D23 | Remove the legacy un-gated `syncSourceToSheet`? | 1 (hygiene), 13 |
-| D24 | Housekeeping: delete six workflows, tracked `.playwright-mcp/`, `audit/crawl-report.json`; archive superseded docs; owner edits `.env.example`? | 1 (hygiene) |
+| D22 ✅ **YES (2026-09-03)** — keep the seed behind TWO barriers: an explicit opt-in flag AND an empty-data refusal | Portfolio seed provenance confirmed; gate the seed on an empty table? | 1 (hygiene) |
+| D23 ✅ **YES (2026-09-03)** — remove it, with a regression test proving MANUAL + DONE writes nothing | Remove the legacy un-gated `syncSourceToSheet`? | 1 (hygiene), 13 |
+| D24 ✅ **YES (2026-09-03)** — housekeeping approved; `.env.example` stays a separate owner change, its current state verified not assumed | Housekeeping: delete six workflows, tracked `.playwright-mcp/`, `audit/crawl-report.json`; archive superseded docs; owner edits `.env.example`? | 1 (hygiene) |
 | D25 | Which of the ten process steps does the studio actually perform? | 8 |
 | D26 | Room context: real delivered-piece photography, captioned concept rooms, or not at all? | 3, 12 |
 | D27 | Retire D4's "CI cannot run" premise: Actions executes (run #71 on PR #29); make CI the gate of record and keep local runs for detail routes, E2E and extra widths; correct `AGENTS.md:188-190` and `PROJECT_STATE.md` | every phase's evidence |

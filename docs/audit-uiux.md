@@ -1,3 +1,12 @@
+> **ARCHIVED — superseded, kept for history.** This document does not describe the
+> repository as it stands. The live reference is **docs/transformation-audit.md**.
+>
+> Owner decision D24 (2026-09-03) approved archiving the superseded documents. They
+> are bannered in place rather than moved under `docs/archive/`: `DESIGN.md` alone has
+> 164 inbound references, and many of them sit in dated records — CHANGELOG entries,
+> PROJECT_STATE history, prior audits — where rewriting the path would falsify what
+> those documents said at the time. A banner marks the file without editing history.
+
 # ResinRiva Public Site — UI/UX Findings Report (ui-ux-pro-max)
 
 **Scope & method.** Five public pages (home `/`, `/shop`, `/product/[slug]` — primarily `boho-night-lights`, `/custom-order`, `/contact`) were reviewed at two viewports (1440×900 desktop, 390×844 mobile / iPhone-13 touch emulation) against the ui-ux-pro-max rule database (touch targets, WCAG contrast, forms, focus management, fixed-element offsets, etc.). All measurements were taken live with Playwright — `getBoundingClientRect`, computed styles, alpha-blended WCAG contrast math, real keyboard Tab sequences, `(hover:none)/(pointer:coarse)` emulation, and pixel-level screenshot comparison. Every finding was then adversarially re-verified in a second pass: all 37 findings below reproduced and carry **Status: CONFIRMED**. One severity was adjusted during verification (UIUX-P25, Major→Minor: WCAG 2.2 SC 2.5.8's spacing exception passes, leaving a best-practice rather than normative failure); two evidence details were corrected without affecting verdicts (noted inline in P08 and P22).

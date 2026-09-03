@@ -1,3 +1,12 @@
+> **ARCHIVED — superseded, kept for history.** This document does not describe the
+> repository as it stands. The live reference is **PROJECT_STATE.md and CLAUDE.md**.
+>
+> Owner decision D24 (2026-09-03) approved archiving the superseded documents. They
+> are bannered in place rather than moved under `docs/archive/`: `DESIGN.md` alone has
+> 164 inbound references, and many of them sit in dated records — CHANGELOG entries,
+> PROJECT_STATE history, prior audits — where rewriting the path would falsify what
+> those documents said at the time. A banner marks the file without editing history.
+
 > **HISTORICAL — v1 build memory, superseded.** This file records the original
 > v1 "Midnight Sapphire" build and is no longer the source of truth: **CLAUDE.md**
 > (project instructions, "Current repo reality") + **DESIGN.md** (v2.0 spec) are

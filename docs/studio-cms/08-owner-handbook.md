@@ -66,7 +66,7 @@ always brings it back. You cannot break the site by choosing the wrong picture.
 |---|---|---|
 | Hide a section you do not want right now | Page Sections → the page → **Hide** | ✅ |
 | Move a section up or down | Page Sections → the ↑ ↓ buttons | ✅ |
-| Rearrange a page that is not listed there | **Not possible** — six pages carry a manifest | — |
+| Rearrange a page that is not listed there | **Not possible** — seven pages carry a manifest | — |
 | Add a fifth material to a row of four | **Not possible, by design** — see below | — |
 | Build a Diwali landing page | Landing Pages → New landing page | ✅ |
 | Show 6 products on that page instead of 4 | Landing Pages → the Products block → How many | ✅ |
@@ -83,9 +83,10 @@ Two things worth knowing before you rearrange a page:
   you which two sections are the problem. Dark bands may not sit against each
   other, and a page may not have more than three.
 
-**Which six pages** carry a manifest: the homepage, About, Process, Bespoke,
-Contact and Workshops. Shop, Journal, Portfolio and the FAQ do not — each is an
-opening band plus its listing, and hiding the listing would leave nothing.
+**Which seven pages** carry a manifest: the homepage, About, Process, Large
+Format, Bespoke, Contact and Workshops. Shop, Journal, Portfolio and the FAQ do
+not — each is an opening band plus its listing, and hiding the listing would
+leave nothing.
 
 ### Why you cannot add a fifth material
 
@@ -143,7 +144,7 @@ of after.
 | | Admin | Editor |
 |---|:-:|:-:|
 | Change words and pictures | ✅ | ✅ |
-| Reorder and hide sections (six pages) | ✅ | ✅ |
+| Reorder and hide sections (seven pages) | ✅ | ✅ |
 | Products, categories, portfolio, journal, FAQs | ✅ | ✅ |
 | Build and publish a custom page | ✅ | ✅ |
 | Reset a whole page's copy back to default | ✅ | — |
