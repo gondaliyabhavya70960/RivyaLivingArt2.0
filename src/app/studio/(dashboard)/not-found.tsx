@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 export default function StudioNotFound() {
   return (
     <div className="mx-auto flex min-h-[60svh] max-w-lg flex-col items-center justify-center text-center">
-      <div className="w-full rounded-2xl border border-border bg-card p-8 shadow-sm">
+      <div className="w-full rounded-card border border-border bg-card p-8 shadow-e1">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
           Studio
         </p>

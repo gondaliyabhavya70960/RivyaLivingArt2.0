@@ -180,10 +180,10 @@ Touches: `prisma/schema.prisma`, one migration, `src/lib/testimonials.ts`, `src/
 ### Phase 10 — Studio shell
 
 - Tablet sidebar (collapsible rail between 640 and 1024 px); command-palette verbs (Create product, Run scraper, Import sheet as navigation shortcuts) and testimonial/media items; `⌘K` hint and flat loading row (shortlist 17).
-- Per-route `loading.tsx` skeletons at final dimensions (flat, no shimmer); Studio `error.tsx` with a reference code and an auth-tree boundary; `not-found.tsx` in v3 vocabulary.
+- ~~Studio `error.tsx` with a reference code; `not-found.tsx` in v3 vocabulary; the shared `loading.tsx` flat, no shimmer~~ **DONE 2026-09-03** — all three retokened and driven against a production build (the audit sweeps 30 routes and none of them is an error). Still open here: PER-ROUTE `loading.tsx` skeletons at final dimensions (today one shared skeleton serves every screen) and the auth-tree boundary.
 - Sonner styled by tokens; badge semantic tones; a `Tabs` primitive; sticky header row and pinned first column on wide tables (shortlist 16); row-enter for appended activity rows (shortlist 15).
 - Dashboard tiles for testimonials, portfolio, media, scraper records, import jobs; "Demo products" reads the D8 marker; `—` when unknown.
-- Drift sweep: `shadow-sm` → `shadow-e1`, `rounded-xl/2xl` → `rounded-card`, `form-section.tsx`.
+- Drift sweep: `shadow-sm` → `shadow-e1`, `rounded-xl/2xl` → `rounded-card`, `form-section.tsx`. **47 `shadow-sm` and 63 `rounded-xl`/`rounded-2xl` sites remain** (the three route boundaries are done). The radius half is a visible restyle — 12–16 px to 4 px on every card in the panel — so it wants its own PR with screenshots rather than being folded into unrelated work.
 - D17 design lab.
 
 Touches: `src/app/studio/(dashboard)/layout.tsx`, `loading.tsx`, `error.tsx`, `sidebar.tsx`, `topbar.tsx`, `command-palette.tsx`, `studio-table-head.tsx`, `studio-row.tsx`, `ui/badge.tsx`, `globals.css` (`.studio-v2`), `design-lab/*`. Effort: M. Gates: D17 (the rest is open).
