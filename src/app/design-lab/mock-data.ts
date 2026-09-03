@@ -38,6 +38,10 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     tier: 1,
     inStock: true,
     featured: true,
+    materials: "Epoxy resin, 24k gold leaf",
+    dimensions: "10 cm Ø · set of 4",
+    videoUrl: null,
+    isDemo: false,
   },
   {
     id: "mock-2",
@@ -61,6 +65,10 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     tier: 1,
     inStock: true,
     featured: false,
+    materials: "Resin, quartz, gold leaf",
+    dimensions: "38 × 24 cm",
+    videoUrl: null,
+    isDemo: false,
   },
   {
     id: "mock-3",
@@ -82,6 +90,10 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     inStock: true,
     featured: false,
     duplicateCount: 3,
+    materials: "Crystal-clear resin, preserved garland",
+    dimensions: null,
+    videoUrl: null,
+    isDemo: false,
   },
   {
     id: "mock-4",
@@ -102,6 +114,10 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     tier: null,
     inStock: false,
     featured: false,
+    materials: null,
+    dimensions: null,
+    videoUrl: null,
+    isDemo: true,
   },
 ];
 
