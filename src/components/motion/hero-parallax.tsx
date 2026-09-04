@@ -24,8 +24,8 @@ const PARALLAX_SHIFT_RATIO = 0.12;
 
 /**
  * Hero media parallax (DESIGN.md B4 "Hero: SplitText line reveal +
- * parallax"; roadmap Phase 1b/3 — currently unmounted, see below): as the
- * hero scrolls away, the wrapped media layer translates down by
+ * parallax"; roadmap Phase 1b refit, Phase 3 mount — mounted on the
+ * homepage bespoke band since A2, see below): as the hero scrolls away, the wrapped media layer translates down by
  * `min(40px, 12% of its own height)` (`scrub: 0.5`, linear — the smoothing
  * lives in the scrub), so it reads as sitting one plane behind the page.
  *
@@ -50,10 +50,11 @@ const PARALLAX_SHIFT_RATIO = 0.12;
  * touch and under reduced motion, before the GSAP import (H12). SSR and the
  * initial client render emit the children plain and fully visible.
  *
- * Zero importers on purpose (roadmap Phase 1b/3, motion shortlist entry 9):
- * this is the reviewed, capped destination for the effect, mounted on the
- * homepage bespoke band by the batch that owns `(v2)/page.tsx`. Unimported
- * is not unwanted — deleting this file would destroy approved work.
+ * Mounted in exactly one place: the homepage bespoke band's image layer
+ * (`(v2)/page.tsx`, batch A2; motion shortlist entry 9). It sat unimported
+ * between its D18 refit and that mount, and was once deleted as "dormant" in
+ * that window — unimported is not unwanted, and a second mount should be
+ * argued for against Part 14 rather than copied.
  */
 export function HeroParallax({ children, className }: HeroParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);

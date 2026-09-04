@@ -129,7 +129,7 @@ npm run lint -- --fix       # eslint
 npm run test                # vitest, pure src/lib functions
 npm run build               # migrate deploy + bootstrap + next build — NEEDS a database
 npm run copy:check          # the copy registry must match messages/en.json
-BASE_URL=http://127.0.0.1:3000 npm run test:e2e   # 10 smoke checks incl. the WhatsApp rule
+BASE_URL=http://127.0.0.1:3000 npm run test:e2e   # the E2E smoke (storefront contract, order flow, Studio paths)
 
 node scripts/i18n-missing.mjs                     # keys missing or untranslated
 node scripts/redesign-audit.mjs "/,/shop" [--w 390]

@@ -5,6 +5,63 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Follow-up · the plan-completion audit and what it found (2026-09-04)
+
+Sixteen read-only verifiers checked the merged `main` against every bullet of the approved plan
+(508 items; 34 not marked done), then adversarial refuters voted on each. What the audit found,
+and what this branch does about it:
+
+**Behaviour that was wrong, now fixed**
+
+- **A scoped scrape never reached its page.** `continueScrapeJob` ran the pasted CATEGORY/URL
+  through `normalizeBaseUrl`, which reduces any URL to its origin — so a category job crawled the
+  whole store. New `normalizePageUrl` keeps the path and query; the origin still gates robots.
+  The Shopify adapter builds its CATEGORY endpoint from origin + collection path.
+- **Two sheet writers ignored the owner's Sheet ID.** The ON_COMPLETE auto-push and the website
+  mirror called the helpers with no settings, so only `SCRAPE_SHEET_ID` applied there.
+  `readSheetSettings()` is now threaded into both.
+- **A site-copy slot's FIRST edit went live immediately**, bypassing Publish: the create branch
+  wrote the owner's words to `value` and `draftValue` alike. It now stages the draft against the
+  shipped wording (`shippedCopy`), so a save is a draft for the first edit as much as the fortieth;
+  Discard removes a row that was never published rather than leaving a "Changed" one equal to the
+  default. Found by the new smoke check, not by review.
+- **Demo landers were indexable and unmarked** when demo content shows. `/p/[slug]` now returns
+  `noindex` for a fixture whatever the row's own flag says, and renders `<DemoMark/>`.
+- **The design-lab isolation guard could not see a multi-line import** — the shape the lab's own
+  sections file has. It reads whole files now, allows `src/components/design-lab/`, and asserts
+  that folder is imported only from inside the lab.
+
+**Promised work that was missing**
+
+- **Four smoke checks the plan named**: a product's create → edit → delete through its form, a
+  page-builder block save that the lander then renders, a site-copy draft → Publish → Reset round
+  trip, and the scraper's refusal of an undetectable platform (an RFC 2606 `.invalid` host, so the
+  one probe never leaves the machine). 36 checks, each Studio path guarded so one surprise fails
+  its own check rather than the run. Rows they create are removed again.
+- **The VIDEO media picker** in the three film fields written before batch D landed it (the
+  testimonial form, the videoHero and videoStory block editors).
+- **The hero poster's LQIP**: `HeroMedia` received a ref carrying `blurDataUrl` and ignored it.
+- **Demo badge and `?demo=1`** on the testimonial and landing-page lists.
+- **`ProductImage.role` on the card row**: fetched, then dropped before it reached the card type.
+- **`kids-room-decor` and `workshops` had no demo products**: four fixture rows move there
+  (a name plaque, wall hooks, a beginner session, a private day). Still 100 rows.
+- **One lead-time key**: the furniture tiles quoted six per-locale copies of
+  `Process.timelines.e2Value`; they read that key now and the 54 duplicates are gone.
+- **The sheet status vocabulary** promised as "a code-side enum" is written once in
+  `src/lib/sheet-status.ts` and used at every site.
+
+**Documentation corrected**: the CSP header comment (it says UNCHANGED; `frame-src` was added at
+the flip), the hero-parallax JSDoc (mounted since A2, not "zero importers"), AGENTS.md's smoke
+count, CLAUDE.md's slot count and `registerEase` rationale, and three PROJECT_STATE checkpoint keys
+that still described pre-wave-1 state.
+
+**Left for the owner's machine**: the planned Higgsfield sets (the CDN refuses this sandbox, and
+`media-v3-fetch.mjs` iterates `assets` only — promote a planned entry first), the real maker
+photograph, `.env.example` (`.env*` edits are denied here), and a by-eye reduced-motion pass over
+the A2/A3/C2 mounts.
+
+---
+
 ## Follow-up · the E2E smoke meets a runner with real internet (2026-09-04)
 
 - **CI runs #136 (the PR #42 head) and #137 (`main`) were red at the new "E2E smoke" step**, 25/27:

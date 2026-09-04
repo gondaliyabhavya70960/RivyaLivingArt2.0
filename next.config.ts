@@ -7,8 +7,11 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  * Content-Security-Policy for the app (SEC-001). ENFORCED as of the F1
  * hygiene pass — the report-only period (below) ran clean, so the header key
  * is `Content-Security-Policy` rather than `Content-Security-Policy-Report-Only`.
- * The directive string is UNCHANGED from the report-only phase: nothing here
- * was tightened or loosened, only the enforcement switch was flipped.
+ * The directive string is the report-only phase's plus ONE addition made at
+ * the flip: `frame-src 'self' https://www.google.com`, because StudioMap on
+ * /contact embeds a click-to-activate Google Maps iframe that report-only
+ * mode never exercised as a blocking rule (commit 920e07f, CHANGELOG F1).
+ * Nothing else was tightened or loosened.
  *
  * Rollback: rename the header key below back to
  * `Content-Security-Policy-Report-Only` — the directive string, report-uri
