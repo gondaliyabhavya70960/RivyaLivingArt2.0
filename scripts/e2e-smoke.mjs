@@ -80,11 +80,39 @@ async function query(sql, params = []) {
   }
 }
 
-/** A 1×1 transparent PNG, built in code so the smoke ships no binary. */
-const ONE_PIXEL_PNG = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-  "base64",
-);
+/**
+ * The file the media-upload check sends: a 64×64 PNG rendered by `sharp`
+ * (a dependency the ingest pipeline itself uses) in a colour derived from
+ * the run's timestamp, so its checksum is new every time — the library
+ * dedupes uploads by checksum, and re-sending a bundled master would only
+ * ever return the row that already holds it. Falls back to a 1×1 PNG built
+ * in code where sharp cannot load.
+ */
+async function uploadSample(stamp) {
+  try {
+    const { default: sharp } = await import("sharp");
+    const buffer = await sharp({
+      create: {
+        width: 64,
+        height: 64,
+        channels: 3,
+        background: { r: (stamp % 200) + 20, g: (stamp % 97) + 60, b: 140 },
+      },
+    })
+      .png()
+      .toBuffer();
+    return { ext: "png", mimeType: "image/png", buffer };
+  } catch {
+    return {
+      ext: "png",
+      mimeType: "image/png",
+      buffer: Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+        "base64",
+      ),
+    };
+  }
+}
 
 const browser = await chromium.launch({
   executablePath: chromiumPath(),
@@ -213,25 +241,54 @@ try {
     check("the demo PDP renders its order panel", demoUp, `HTTP ${resp?.status()}`);
     if (demoUp) {
       const panel = p.locator("#order-panel");
-      const comboboxes = panel.getByRole("combobox");
-      await comboboxes.nth(0).click();
-      await p.getByRole("option", { name: "16 inch" }).click();
-      await panel.getByRole("button", { name: /Ivory/ }).first().click();
-      await panel.getByLabel(/engraving/i).first().fill("E2E smoke · A & R");
-      if ((await comboboxes.count()) > 1) {
-        await comboboxes.nth(1).click();
-        await p.getByRole("option", { name: "Gloss" }).click();
-      }
-      await panel.getByRole("textbox", { name: /^Name/ }).fill("E2E smoke");
-      await panel.getByRole("textbox", { name: /^Phone/ }).fill("+91 90000 00001");
-      const notes = panel.getByRole("textbox", { name: /notes/i });
-      if ((await notes.count()) > 0) await notes.first().fill("E2E smoke — safe to close.");
+      // Every option field is a row of chip buttons (Part 9's customization
+      // controls): SIZE, SWATCH and the SELECT finish alike. TEXT is the one
+      // free input under the order-field- prefix that is not a number or a
+      // file; the contact fields carry stable ids.
+      await panel.getByRole("button", { name: "16 inch" }).first().click();
+      await panel.getByRole("button", { name: "Ivory" }).first().click();
+      await panel
+        .locator('input[id^="order-field-"]:not([type="number"]):not([type="file"])')
+        .first()
+        .fill("E2E smoke · A & R");
+      await panel.getByRole("button", { name: "Gloss" }).first().click();
+      await panel.locator("#order-name").fill("E2E smoke");
+      await panel.locator("#order-phone").fill("+91 90000 00001");
+      await panel.locator("#order-notes").fill("E2E smoke — safe to close.");
       await p.waitForTimeout(3200);
-      const popupPromise = p.waitForEvent("popup", { timeout: 30000 }).catch(() => null);
+      const since = DATABASE_URL ? (await query("select now() as t"))?.rows?.[0]?.t : null;
+      // The panel opens wa.me with `noopener` (no opener relationship, so
+      // Playwright's `popup` event never fires) and then pushes the
+      // /whatsapp-order fallback, which renders the same link. Watch the
+      // context for the new tab AND read the fallback's own anchor, and
+      // accept whichever carries the wa.me URL.
+      const newPagePromise = p
+        .context()
+        .waitForEvent("page", { timeout: 20000 })
+        .catch(() => null);
       await p.getByRole("button", { name: /place order/i }).click();
-      const popup = await popupPromise;
-      const waUrl = popup ? popup.url() : "";
-      if (popup) await popup.close();
+      const newPage = await newPagePromise;
+      let waUrl = "";
+      if (newPage) {
+        await newPage.waitForURL(/wa\.me/, { timeout: 10000 }).catch(() => {});
+        waUrl = newPage.url();
+        await newPage.close().catch(() => {});
+      }
+      const fell = await p
+        .waitForURL(/whatsapp-order/, { timeout: 30000 })
+        .then(() => true)
+        .catch(() => false);
+      if (!decodeURIComponent(waUrl).includes("[DEMO]") && fell) {
+        // The fallback page renders the order's own wa.me link beside the
+        // chrome's generic ones; the order link is the long one.
+        await p.waitForLoadState("networkidle").catch(() => {});
+        waUrl =
+          (await p.evaluate(() =>
+            [...document.querySelectorAll('a[href^="https://wa.me/"]')]
+              .map((a) => a.getAttribute("href") ?? "")
+              .sort((x, y) => y.length - x.length)[0] ?? "",
+          )) || waUrl;
+      }
       const decoded = decodeURIComponent(waUrl);
       check(
         "Place Order opens wa.me with the house number",
@@ -242,22 +299,20 @@ try {
         'the demo order message carries the "[DEMO] " prefix and the chosen size',
         decoded.includes("[DEMO]") && decoded.includes("16 inch"),
       );
-      const fell = await p
-        .waitForURL(/whatsapp-order/, { timeout: 30000 })
-        .then(() => true)
-        .catch(() => false);
       check("the /whatsapp-order fallback follows the popup", fell, p.url());
       check("no page errors during the order flow", pageErrors.length === 0, pageErrors[0] ?? "");
       if (DATABASE_URL) {
         const row = await query(
-          'select "isDemo" from "Inquiry" order by "createdAt" desc limit 1',
+          'select "isDemo" from "Inquiry" where "createdAt" >= $1 order by "createdAt" desc limit 1',
+          [since],
         );
         check(
-          "the newest Inquiry row is the demo one (isDemo = true)",
+          "Place Order saved an Inquiry row marked isDemo",
           row?.rows?.[0]?.isDemo === true,
+          row?.rows?.length ? "" : "no Inquiry row created by this order",
         );
       } else {
-        skip("the newest Inquiry row is the demo one", "no DATABASE_URL");
+        skip("Place Order saved an Inquiry row marked isDemo", "no DATABASE_URL");
       }
     }
     await p.close();
@@ -338,20 +393,23 @@ try {
     const uploadInput = studio.locator("#media-upload-input");
     if ((await uploadInput.count()) > 0) {
       const stamp = Date.now();
-      const name = `e2e-smoke-${stamp}.png`;
-      await uploadInput.setInputFiles({ name, mimeType: "image/png", buffer: ONE_PIXEL_PNG });
+      const sample = await uploadSample(stamp);
+      const name = `e2e-smoke-${stamp}.${sample.ext}`;
+      await uploadInput.setInputFiles({ name, mimeType: sample.mimeType, buffer: sample.buffer });
       let listed = false;
       for (let i = 0; i < 20 && !listed; i += 1) {
         await studio.waitForTimeout(1500);
-        listed = await studio.evaluate((n) => document.body.innerText.includes(n), name);
+        // The library shows the stored name, which carries a hash before the
+        // extension — match on the stem only.
+        listed = await studio.evaluate((n) => document.body.innerText.includes(n), `e2e-smoke-${stamp}`);
         if (!listed && i % 4 === 3) await studio.reload(NAV);
       }
-      check("a 1×1 PNG uploads into the media library", listed, name);
+      check("a picture uploads into the media library", listed, name);
       if (DATABASE_URL) {
-        await query('delete from "Media" where url like $1 or pathname like $1', [`%${name.replace(".png", "")}%`]);
+        await query('delete from "Media" where url like $1 or pathname like $1', [`%e2e-smoke-${stamp}%`]);
       }
     } else {
-      check("a 1×1 PNG uploads into the media library", false, "no #media-upload-input");
+      check("a picture uploads into the media library", false, "no #media-upload-input");
     }
 
     // The sheet-fill Preview answers (a dry run — nothing written).
@@ -376,9 +434,18 @@ try {
     await studio.goto(`${BASE}/studio/testimonials/new`, NAV);
     const nameField = studio.locator("#testimonial-name");
     if ((await nameField.count()) > 0) {
+      // The form is tabbed (Quote · Attribution · Links · Media · Review) with
+      // every panel mounted but hidden, so each field's tab is opened first.
+      const tab = async (name) => {
+        await studio.getByRole("tab", { name }).first().click();
+        await studio.waitForTimeout(200);
+      };
       const marker = `E2E smoke customer ${Date.now()}`;
-      await nameField.fill(marker);
+      await tab(/quote/i);
       await studio.locator("#testimonial-quote").fill("E2E smoke quote — safe to delete.");
+      await tab(/attribution/i);
+      await nameField.fill(marker);
+      await tab(/review/i);
       await studio.locator('[aria-label="Status"]').first().click();
       await studio.getByRole("option", { name: /^Published$/ }).click();
       await studio.getByRole("button", { name: /^(Save|Create|Publish)/ }).first().click();
@@ -389,6 +456,7 @@ try {
         .then(() => true)
         .catch(() => false);
       check("a testimonial is refused PUBLISHED without permission GRANTED", refused);
+      await tab(/review/i);
       await studio.locator('[aria-label="Permission"]').first().click();
       await studio.getByRole("option", { name: /^Granted$/ }).click();
       await studio.getByRole("button", { name: /^(Save|Create|Publish)/ }).first().click();
