@@ -141,7 +141,7 @@ const RAIL_SELECT = {
     select: { slug: true, name: true, description: true, translations: true },
   },
   images: {
-    select: { url: true, alt: true },
+    select: { url: true, alt: true, role: true },
     orderBy: { order: "asc" },
     take: 2,
   },
@@ -433,9 +433,15 @@ export default async function ProductPage({ params }: PageProps) {
       priceMax: row.priceMax,
       showPrice: row.showPrice,
       categoryName: lc.name,
-      image: image ? { url: image.url, alt: image.alt || lp.title } : null,
+      image: image
+        ? { url: image.url, alt: image.alt || lp.title, role: image.role ?? null }
+        : null,
       hoverImage: hoverImage
-        ? { url: hoverImage.url, alt: hoverImage.alt || lp.title }
+        ? {
+            url: hoverImage.url,
+            alt: hoverImage.alt || lp.title,
+            role: hoverImage.role ?? null,
+          }
         : null,
       variantChips: [],
       tier: row.tier,

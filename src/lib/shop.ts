@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 
+import type { ProductImageRole } from "@/generated/prisma/enums";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
@@ -114,7 +115,13 @@ export function buildProductWhere(
 
 /* ————————————————— paged fetch ————————————————— */
 
-export type ShopProductImage = { url: string; alt: string };
+/** A card image with the role the owner gave it (D21) — `IN_ROOM` lets a
+ *  consumer prefer the room shot; `null` is an unlabelled gallery picture. */
+export type ShopProductImage = {
+  url: string;
+  alt: string;
+  role: ProductImageRole | null;
+};
 
 /** Serialized, client-safe product card data. */
 export type ShopProductItem = {
@@ -238,9 +245,11 @@ function buildVariantChips(
 }
 
 function toImage(
-  image: { url: string; alt: string } | undefined,
+  image: { url: string; alt: string; role?: ProductImageRole | null } | undefined,
 ): ShopProductImage | null {
-  return image ? { url: image.url, alt: image.alt } : null;
+  return image
+    ? { url: image.url, alt: image.alt, role: image.role ?? null }
+    : null;
 }
 
 /** Row select shared by the paged fetch and the wishlist slug fetch. */
