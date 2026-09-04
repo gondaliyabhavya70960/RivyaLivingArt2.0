@@ -269,7 +269,19 @@ export function BlockBoard({
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {CUSTOM_BLOCK_TYPES.map((type) => {
               const def = CUSTOM_BLOCKS[type];
-              const used = def.once && blocks.some((b) => b.type === type);
+              // A slot conflict is not always the SAME type already on the
+              // page — `videoHero` is blocked by an existing `hero` and vice
+              // versa, since the two share the `"hero"` slot.
+              const conflict = def.slot
+                ? blocks.find((b) => CUSTOM_BLOCKS[b.type].slot === def.slot)
+                : undefined;
+              const used = Boolean(conflict);
+              const reason =
+                conflict && conflict.type !== type
+                  ? ` — the page already has ${CUSTOM_BLOCKS[conflict.type].label.toLowerCase()} in that spot`
+                  : used
+                    ? " — already on this page"
+                    : "";
               return (
                 <li key={type}>
                   <button
@@ -285,7 +297,7 @@ export function BlockBoard({
                   >
                     <span className="block text-small font-medium text-foreground">
                       {def.label}
-                      {used ? " — already on this page" : ""}
+                      {reason}
                     </span>
                     <span className="block text-xs text-graphite">
                       {def.description}

@@ -6,6 +6,15 @@
  * every time someone presses Scrape is both useless and the fastest way to
  * turn a soft block into a hard one.
  *
+ * State is recorded against the `ScrapeSource` found by its stable `key`
+ * (== `ScrapeJob.sourceKey`), not by the job's `sourceId` foreign key.
+ * `sourceId` is nullable (`onDelete: SetNull`) — a source row can be deleted
+ * out from under jobs that already reference it — while `sourceKey` is a
+ * plain string column that survives that. Looking up by key means a source
+ * re-registered under the same key (the common case: delete and re-add while
+ * fixing a broken adapter) keeps its failure history instead of restarting
+ * silently disconnected from the jobs that were failing.
+ *
  * Pure module. The decision is the feature; the wiring around it needs a
  * database and a real failing site before a test could reach it.
  */
@@ -42,10 +51,7 @@ export function shouldTrip(
 }
 
 /** The reason recorded on the source, in the operator's words. */
-export function describeTrip(
-  sourceName: string,
-  failures: number,
-): string {
+export function describeTrip(sourceName: string, failures: number): string {
   return `Paused after ${failures} consecutive failed scrapes. Check the site is reachable and the adapter still matches, then resume ${sourceName}.`;
 }
 
@@ -78,4 +84,15 @@ export function resolveDelayMs(
   // Never faster than the shared default — the per-source knob exists to slow
   // down for a site that rate-limits us, not to speed up past our own floor.
   return Math.max(fallback, Math.min(sourceDelayMs, 60_000));
+}
+
+/**
+ * Log line for when a finished job's breaker bookkeeping has nowhere to go —
+ * no `ScrapeSource` is registered under its `sourceKey` any more (deleted,
+ * and never re-added). Not an error: the job's own row — its counts, its
+ * staged products — is unaffected either way; there is simply no source row
+ * left to trip or reset.
+ */
+export function describeBreakerSkip(sourceKey: string): string {
+  return `breaker: no ScrapeSource registered under "${sourceKey}" — skipping consecutive-failure bookkeeping for this job.`;
 }

@@ -24,6 +24,7 @@ import { normalizeTranslations } from "@/lib/localize";
 import { nullIfEmpty } from "@/lib/utils";
 import { slugify, uniqueSlug } from "@/lib/slug";
 import { Prisma } from "@/generated/prisma/client";
+import { CONTENT_STATUSES } from "@/lib/content-status";
 
 /**
  * Custom landing pages — the write half of /studio/custom-pages.
@@ -53,7 +54,7 @@ const pageSchema = z.object({
   /** Read on create only — a live URL must not move under a customer. */
   slug: z.string().trim().max(120).optional(),
   title: z.string().trim().min(2, "Give the page a title.").max(200),
-  status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
+  status: z.enum(CONTENT_STATUSES).default("DRAFT"),
   /** ISO string from the form's datetime-local input, or empty for "now". */
   publishAt: z.string().trim().max(40).optional(),
   noindex: z.boolean().default(false),

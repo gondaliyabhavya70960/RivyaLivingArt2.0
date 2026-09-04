@@ -23,6 +23,7 @@ import {
 } from "@/actions/import";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -128,7 +129,9 @@ function StatusBadge({ status }: { status: "create" | "update" | "error" }) {
 function CountChip({ label, value }: { label: string; value: number }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm shadow-e1">
-      <span className="font-semibold tabular-nums text-foreground">{value}</span>
+      <span className="font-semibold tabular-nums text-foreground">
+        {value}
+      </span>
       <span className="text-muted-foreground">{label}</span>
     </span>
   );
@@ -145,6 +148,10 @@ export function ImportWizard() {
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [importing, setImporting] = useState(false);
   const [report, setReport] = useState<ImportReport | null>(null);
+  // products only: the operator's explicit opt-in to overwrite rows the
+  // owner has edited in the studio — off by default, so a stale export
+  // re-run through this screen never silently clobbers a hand-edited product.
+  const [overwriteOwnerEdited, setOverwriteOwnerEdited] = useState(false);
 
   const template = IMPORT_TEMPLATES.find((t) => t.key === typeKey) ?? null;
 
@@ -204,6 +211,7 @@ export function ImportWizard() {
     if (res.ok && res.data) {
       setPreview(res.data);
       setReport(null);
+      setOverwriteOwnerEdited(false);
       setStep(3);
       if (res.data.truncated) {
         toast.warning(
@@ -223,6 +231,7 @@ export function ImportWizard() {
     const res = await runImport({
       typeKey,
       rows: validRows.map((row) => row.data),
+      overwriteOwnerEdited,
     });
     setImporting(false);
     if (res.ok && res.data) {
@@ -230,7 +239,10 @@ export function ImportWizard() {
       const imported = res.data.created + res.data.updated;
       if (imported > 0) {
         toast.success(
-          `Imported ${imported} ${imported === 1 ? "row" : "rows"}.`,
+          `Imported ${imported} ${imported === 1 ? "row" : "rows"}.` +
+            (res.data.protectedCount > 0
+              ? ` ${res.data.protectedCount} owner-edited ${res.data.protectedCount === 1 ? "row was" : "rows were"} left as edited.`
+              : ""),
         );
       } else {
         toast.error("Nothing was imported — check the error list.");
@@ -267,7 +279,9 @@ export function ImportWizard() {
                       : "border-border hover:border-sapphire-ink/40",
                   )}
                 >
-                  <p className="font-display text-lg text-foreground">{t.label}</p>
+                  <p className="font-display text-lg text-foreground">
+                    {t.label}
+                  </p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
                     {t.docs}
                   </p>
@@ -299,12 +313,18 @@ export function ImportWizard() {
         <div className="space-y-6">
           <div className="rounded-card border border-border bg-card p-6 shadow-e1">
             <p className="mb-4 text-sm text-muted-foreground">
-              Importing <span className="font-medium text-foreground">{template.label}</span> —
-              up to {MAX_IMPORT_ROWS} rows per run.
+              Importing{" "}
+              <span className="font-medium text-foreground">
+                {template.label}
+              </span>{" "}
+              — up to {MAX_IMPORT_ROWS} rows per run.
             </p>
 
             <div className="space-y-1.5">
-              <Label htmlFor="import-sheet-url" className="flex items-center gap-1.5">
+              <Label
+                htmlFor="import-sheet-url"
+                className="flex items-center gap-1.5"
+              >
                 <Link2 className="size-4" /> Google Sheet link
               </Label>
               <Input
@@ -318,8 +338,8 @@ export function ImportWizard() {
                 placeholder="https://docs.google.com/spreadsheets/d/…"
               />
               <p className="text-xs text-muted-foreground">
-                The sheet must be shared as “Anyone with the link can view”.
-                The first tab is used unless the link has a #gid.
+                The sheet must be shared as “Anyone with the link can view”. The
+                first tab is used unless the link has a #gid.
               </p>
             </div>
 
@@ -339,8 +359,14 @@ export function ImportWizard() {
               {file ? (
                 <>
                   <FileSpreadsheet className="size-6 text-sapphire-ink" />
-                  <p className="text-sm font-medium text-foreground">{file.name}</p>
-                  <Button variant="ghost" size="sm" onClick={() => setFile(null)}>
+                  <p className="text-sm font-medium text-foreground">
+                    {file.name}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFile(null)}
+                  >
                     Remove file
                   </Button>
                 </>
@@ -394,6 +420,35 @@ export function ImportWizard() {
             <CountChip label="errors" value={preview.counts.error} />
           </div>
 
+          {preview.productMerge &&
+            preview.productMerge.ownerEditedCount > 0 && (
+              <div className="flex flex-wrap items-start gap-3 rounded-card border border-alert/40 bg-alert/5 p-4 text-sm">
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">
+                    Will overwrite {preview.productMerge.ownerEditedCount}{" "}
+                    owner-edited{" "}
+                    {preview.productMerge.ownerEditedCount === 1
+                      ? "product"
+                      : "products"}
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    These rows were edited in the studio since they were last
+                    imported. By default this run only refreshes their stock
+                    status — check the box to replace their content instead.
+                  </p>
+                  <label className="mt-3 flex min-h-11 cursor-pointer items-center gap-2">
+                    <Checkbox
+                      checked={overwriteOwnerEdited}
+                      onCheckedChange={(checked) =>
+                        setOverwriteOwnerEdited(checked === true)
+                      }
+                    />
+                    Overwrite owner-edited products with this file
+                  </label>
+                </div>
+              </div>
+            )}
+
           <div
             tabIndex={0}
             role="region"
@@ -419,9 +474,7 @@ export function ImportWizard() {
               </thead>
               <tbody>
                 {preview.rows.map((row) => (
-                  <StudioRow
-                    key={row.index}
-                  >
+                  <StudioRow key={row.index}>
                     <td className="px-4 py-3 tabular-nums text-muted-foreground">
                       {row.index}
                     </td>
@@ -493,6 +546,12 @@ export function ImportWizard() {
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <CountChip label="created" value={report.created} />
               <CountChip label="updated" value={report.updated} />
+              {report.protectedCount > 0 && (
+                <CountChip
+                  label="owner-edited, left alone"
+                  value={report.protectedCount}
+                />
+              )}
               <CountChip label="skipped" value={report.skipped} />
               <CountChip label="failed" value={report.errors.length} />
             </div>

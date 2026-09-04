@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { routing } from "@/i18n/routing";
-import { getDir } from "@/i18n/config";
+import { getDir, locales } from "@/i18n/config";
 import { instrumentSerif, inter, jetbrainsMono } from "@/app/fonts";
 import { scriptFontClass } from "@/app/fonts-scripts";
 import { OG_LOCALES, SHARED_METADATA } from "@/app/shared-metadata";
@@ -42,7 +42,10 @@ const BUSINESS_JSONLD = {
         telephone: SITE.phoneTel,
         email: SITE.email,
         areaServed: "IN",
-        availableLanguage: ["en", "hi"],
+        // Every locale the site actually ships (`src/i18n/config.ts`), not a
+        // hardcoded pair — 9 locales are prerendered and this schema node
+        // used to claim the storefront answered in two.
+        availableLanguage: [...locales],
       },
       sameAs: [] as string[], // populated from Site Settings socials below (ENG-001)
     },
@@ -56,7 +59,9 @@ const BUSINESS_JSONLD = {
       email: SITE.email,
       address: { "@type": "PostalAddress", addressCountry: "IN" },
       areaServed: "IN",
-      priceRange: "₹₹–₹₹₹",
+      // No `priceRange`: it was a literal "₹₹–₹₹₹" with nothing behind it —
+      // there is no settings column for it and §1.1 forbids adding one just
+      // to back a schema field. Omitted rather than invented.
       hasMap: SITE.mapsUrl,
     },
     // WebSite node so Google resolves the SERP "site name" and the site is

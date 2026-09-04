@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -5,10 +8,12 @@ import {
   applyReorder,
   PAGE_SECTION_LABELS,
   SECTION_PAGES,
+  SUBLIST_PAGES,
   describeArrangementProblem,
   isSectionPageKey,
   sectionDef,
 } from "./page-sections";
+import { PROCESS_STEP_COUNT } from "./process-steps";
 
 /** The shipped homepage, in registry order, with everything showing. */
 function shipped() {
@@ -30,21 +35,28 @@ describe("the section manifest", () => {
     }
   });
 
-  it("gives every page exactly one section carrying the h1", () => {
+  it("gives every routable page exactly one section carrying the h1", () => {
     // REDESIGN.md Part 19.1, and `scripts/redesign-audit.mjs` fails on it. Two
     // sections claiming the heading would let an owner hide the wrong one.
+    // `SUBLIST_PAGES` are arrangements INSIDE a page, not a page of their
+    // own — the page around them already has an h1, so they carry none.
     for (const page of SECTION_PAGES) {
       const owners = PAGE_SECTIONS[page].filter((s) => s.ownsH1);
-      expect(owners.length, page).toBe(1);
+      expect(owners.length, page).toBe(SUBLIST_PAGES.has(page) ? 0 : 1);
     }
   });
 
   it("never lets the h1 section be hidden or moved", () => {
     for (const page of SECTION_PAGES) {
+      if (SUBLIST_PAGES.has(page)) continue;
       const owner = PAGE_SECTIONS[page].find((s) => s.ownsH1);
       expect(owner?.hideable).toBe(false);
       expect(owner?.movable).toBe(false);
     }
+  });
+
+  it("keeps the process-steps registry in step with PROCESS_STEPS", () => {
+    expect(PAGE_SECTIONS["process-steps"].length).toBe(PROCESS_STEP_COUNT);
   });
 
   it("ships an arrangement its own validator accepts", () => {
@@ -64,6 +76,69 @@ describe("the section manifest", () => {
   it("recognises only the pages it declares", () => {
     expect(isSectionPageKey("home")).toBe(true);
     expect(isSectionPageKey("checkout")).toBe(false);
+  });
+});
+
+/**
+ * Every page's DEFAULT arrangement — `defaultVisible` applied, everything
+ * else at its registry order — is what a fresh install and an empty
+ * `PageSection` table both render (`page-sections-server.ts`). It has to
+ * clear the same guardrail a hand-edited row would, or the page the repo
+ * ships with is already the violation the studio exists to prevent.
+ */
+function defaultShipped(page: (typeof SECTION_PAGES)[number]) {
+  return PAGE_SECTIONS[page].map((s) => ({
+    ...s,
+    visible: s.hideable ? (s.defaultVisible ?? true) : true,
+  }));
+}
+
+describe("registry-wide, across every page", () => {
+  it("keeps every page's default arrangement inside its own band rhythm", () => {
+    // A generic form of "allows the shipped homepage" above, run over every
+    // page rather than just home — new pages and new off-by-default sections
+    // inherit the check rather than needing their own copy of it.
+    for (const page of SECTION_PAGES) {
+      expect(describeArrangementProblem(defaultShipped(page)), page).toBeNull();
+    }
+  });
+
+  it("resolves every cureLabelKey against messages/en.json", () => {
+    const en = JSON.parse(
+      readFileSync(join(process.cwd(), "messages/en.json"), "utf8"),
+    ) as Record<string, unknown>;
+    // "large-format" → "LargeFormat", "custom-order" → "CustomOrder" — the
+    // same PascalCase join `t()` already uses to key its own namespace on
+    // each of these pages.
+    const namespaceFor = (page: string) =>
+      page
+        .split("-")
+        .map((word) => word[0]!.toUpperCase() + word.slice(1))
+        .join("");
+
+    let checked = 0;
+    for (const page of SECTION_PAGES) {
+      const namespace = namespaceFor(page);
+      for (const section of PAGE_SECTIONS[page]) {
+        if (!section.cureLabelKey) continue;
+        checked += 1;
+        const path = `${namespace}.${section.cureLabelKey}`;
+        const value = path
+          .split(".")
+          .reduce<unknown>(
+            (node, key) =>
+              node && typeof node === "object"
+                ? (node as Record<string, unknown>)[key]
+                : undefined,
+            en,
+          );
+        expect(typeof value, `${page} → ${path}`).toBe("string");
+      }
+    }
+    // A registry with no cureLabelKey anywhere would pass this test having
+    // checked nothing — make sure it is actually exercising the pages that
+    // declare one (home and large-format, at minimum).
+    expect(checked).toBeGreaterThan(0);
   });
 });
 
@@ -159,6 +234,23 @@ describe("the arrangement guardrails", () => {
 
   it("allows an empty page rather than throwing on one", () => {
     expect(describeArrangementProblem([])).toBeNull();
+  });
+
+  it("refuses to hide every one of the ten process steps", () => {
+    const allHidden = PAGE_SECTIONS["process-steps"].map((s) => ({
+      ...s,
+      visible: false,
+    }));
+    expect(describeArrangementProblem(allHidden)).toMatch(/cannot lose all/);
+  });
+
+  it("still refuses a fourth dark band once the sections list is long", () => {
+    // The "hide everything" guard above must not fire just because SOME
+    // sections are hidden — only when NONE are left showing.
+    const sections = shipped().map((s) =>
+      s.key === "why" ? { ...s, visible: false } : s,
+    );
+    expect(describeArrangementProblem(sections)).toBeNull();
   });
 });
 

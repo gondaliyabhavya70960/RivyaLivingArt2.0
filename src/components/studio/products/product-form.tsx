@@ -8,14 +8,11 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteProducts, upsertProduct } from "@/actions/products";
 import { Button } from "@/components/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DraftPreview } from "@/components/studio/draft-preview";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import {
   buildDefaultValues,
@@ -56,9 +53,22 @@ const TABS = [
     value: "general",
     label: "General",
     fields: [
-      "title", "displayName", "shortTagline", "description", "categoryId",
-      "featured", "status", "priceMin", "priceMax", "showPrice", "inStock",
-      "tier", "timeline", "materials", "dimensions", "occasions",
+      "title",
+      "displayName",
+      "shortTagline",
+      "description",
+      "categoryId",
+      "featured",
+      "status",
+      "priceMin",
+      "priceMax",
+      "showPrice",
+      "inStock",
+      "tier",
+      "timeline",
+      "materials",
+      "dimensions",
+      "occasions",
       "confirmRewrite",
     ],
   },
@@ -69,7 +79,11 @@ const TABS = [
     label: "Details",
     fields: ["lexical", "madeWith", "careNotes", "translations"],
   },
-  { value: "seo", label: "SEO", fields: ["seoTitle", "seoDescription", "ogImage"] },
+  {
+    value: "seo",
+    label: "SEO",
+    fields: ["seoTitle", "seoDescription", "ogImage"],
+  },
 ] as const;
 
 /** The tab a field belongs to, or undefined for a field no tab claims. */
@@ -100,6 +114,14 @@ export function ProductForm({
 
   useUnsavedChangesGuard(methods.formState.isDirty && !saving);
 
+  const draft = useLocalDraft<FormValues>({
+    key: "product",
+    id: product?.id,
+    watch: methods.watch,
+    reset: methods.reset,
+    enabled: !saving,
+  });
+
   const [tab, setTab] = useState<string>(TABS[0].value);
 
   /* Which tabs are holding an error right now, so the strip can say so
@@ -126,6 +148,7 @@ export function ProductForm({
       toast.error(result.error);
       return;
     }
+    draft.discard();
     toast.success(product ? "Product saved." : "Product created.");
     if (!product && result.data) {
       router.push(`/studio/products/${result.data.id}`);
@@ -156,6 +179,12 @@ export function ProductForm({
         onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
         className="space-y-6"
       >
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+        />
+
         {product?.needsRewrite && <RewriteWarning />}
         {product?.importSource && <ProvenanceSection product={product} />}
 

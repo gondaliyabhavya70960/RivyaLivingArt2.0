@@ -148,15 +148,42 @@ export async function findMediaUsageDetails(
     siteImages: db.siteImage.findMany({
       select: { url: true, mobileUrl: true, key: true, draft: true },
     }),
+    // A film's poster frame is a second URL on the Media row itself (B0 ·
+    // media metadata): deleting the poster would leave the film blank.
+    mediaPosters: db.media.findMany({
+      where: { posterUrl: { in: urls } },
+      select: { posterUrl: true, originalName: true, pathname: true },
+    }),
+    // Research records keep a Json array of picture URLs (B0 · research
+    // library); read unfiltered and matched in JS like the block bodies.
+    researchRecords: db.researchRecord.findMany({
+      select: { title: true, images: true },
+    }),
     // Landing-page social images (Phase G).
     customPages: db.customPage.findMany({
       where: { ogImage: { in: urls } },
       select: { ogImage: true, title: true },
     }),
     // Landing-page block pictures and richText bodies live inside Json blobs.
-    // hero/imageCta hold single images; richText holds Tiptap trees.
+    // hero/imageCta hold single images; richText holds Tiptap trees;
+    // videoHero holds a video and its poster (C2 · block-catalogue growth —
+    // every URL-bearing block joins this `in` list in the same commit that
+    // adds it, per this file's own header rule).
     customBlocks: db.customBlock.findMany({
-      where: { type: { in: ["hero", "imageCta", "richText"] } },
+      where: {
+        type: {
+          in: [
+            "hero",
+            "imageCta",
+            "richText",
+            "videoHero",
+            "videoStory",
+            "masonryGallery",
+            "bentoGallery",
+            "fullscreenGallery",
+          ],
+        },
+      },
       select: {
         type: true,
         data: true,
@@ -183,6 +210,8 @@ export async function findMediaUsageDetails(
   const seoSettings = await pending.seoSettings;
   const testimonials = await pending.testimonials;
   const siteImages = await pending.siteImages;
+  const mediaPosters = await pending.mediaPosters;
+  const researchRecords = await pending.researchRecords;
   const customPages = await pending.customPages;
   const customBlocks = await pending.customBlocks;
   const blogPostsContent = await pending.blogPostsContent;
@@ -247,19 +276,56 @@ export async function findMediaUsageDetails(
       add(staged.mobileUrl, `Site image · ${r.key} (staged, mobile)`);
     }
   });
+  mediaPosters.forEach((r) =>
+    add(r.posterUrl, `Video poster · ${r.originalName ?? r.pathname}`),
+  );
+  researchRecords.forEach((r) => {
+    if (!Array.isArray(r.images)) return;
+    for (const u of r.images) {
+      if (typeof u === "string") add(u, `Research · ${r.title}`);
+    }
+  });
   customPages.forEach((r) => add(r.ogImage, `Landing page · ${r.title}`));
   customBlocks.forEach((block) => {
+    const label = `Landing page · ${block.page.title}`;
     if (block.type === "richText") {
       const urls = extractTiptapImageUrls([block.data, block.translations]);
-      for (const u of urls) {
-        add(u, `Landing page · ${block.page.title}`);
-      }
-    } else {
-      const data = block.data as { image?: unknown } | null;
-      if (typeof data?.image === "string") {
-        add(data.image, `Landing page · ${block.page.title}`);
-      }
+      for (const u of urls) add(u, label);
+      return;
     }
+    if (block.type === "videoHero" || block.type === "videoStory") {
+      // videoStory (C2) carries the same two URLs as videoHero — the film
+      // and its poster — on a light band instead of the opening one.
+      const data = block.data as {
+        videoUrl?: unknown;
+        posterUrl?: unknown;
+      } | null;
+      if (typeof data?.videoUrl === "string") {
+        add(data.videoUrl, `${label} (video)`);
+      }
+      if (typeof data?.posterUrl === "string") {
+        add(data.posterUrl, `${label} (poster)`);
+      }
+      return;
+    }
+    if (
+      block.type === "masonryGallery" ||
+      block.type === "bentoGallery" ||
+      block.type === "fullscreenGallery"
+    ) {
+      // The gallery blocks (C2) carry an array of pictures; each URL is
+      // guarded under the page label, numbered so the drawer can say which.
+      const data = block.data as { images?: unknown } | null;
+      if (Array.isArray(data?.images)) {
+        data.images.forEach((item, index) => {
+          const url = (item as { url?: unknown } | null)?.url;
+          if (typeof url === "string") add(url, `${label} (picture ${index + 1})`);
+        });
+      }
+      return;
+    }
+    const data = block.data as { image?: unknown } | null;
+    if (typeof data?.image === "string") add(data.image, label);
   });
   blogPostsContent.forEach((post) => {
     const urls = extractTiptapImageUrls([post.content, post.translations]);

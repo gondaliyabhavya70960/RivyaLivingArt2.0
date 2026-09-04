@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 import { defaultLocale } from "@/i18n/config";
+import { demoWhere } from "@/lib/demo-content";
 import {
   EMPTY_RESULTS,
   MAX_QUERY,
@@ -73,11 +74,12 @@ export async function searchStudio(
       return { ok: true, results: { ...EMPTY_RESULTS, query } };
     }
 
+    const demo = await demoWhere();
     const [products, collections, portfolio, journal] = await Promise.all([
-      searchProducts(query, TAKE.products, { withTotal: false }),
-      searchCategories(query, TAKE.collections),
-      searchPortfolios(query, TAKE.portfolio, { withTotal: false }),
-      searchPosts(query, TAKE.journal, { withTotal: false }),
+      searchProducts(query, TAKE.products, { withTotal: false, demo }),
+      searchCategories(query, TAKE.collections, demo),
+      searchPortfolios(query, TAKE.portfolio, { withTotal: false, demo }),
+      searchPosts(query, TAKE.journal, { withTotal: false, demo }),
     ]);
 
     const results: SearchResults = {

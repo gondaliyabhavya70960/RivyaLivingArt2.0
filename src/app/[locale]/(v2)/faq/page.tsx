@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { getSiteSettings } from "@/lib/site-settings";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
+import { demoWhere } from "@/lib/demo-content";
 
 export async function generateMetadata({
   params,
@@ -68,7 +69,10 @@ export default async function FaqPage({
     getTranslations("Nav"),
     getTranslations("Common"),
     getTranslations("WhatsApp"),
-    db.faq.findMany({ orderBy: { order: "asc" } }),
+    db.faq.findMany({
+      where: { status: "PUBLISHED", ...(await demoWhere()) },
+      orderBy: { order: "asc" },
+    }),
     getSiteSettings(),
   ]);
 

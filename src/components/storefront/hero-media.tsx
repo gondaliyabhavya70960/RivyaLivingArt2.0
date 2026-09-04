@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 
 import { useIsTouch } from "@/hooks/use-is-touch";
 import { MotionPauseToggle, useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { isOptimizableImageSrc } from "@/lib/image-src";
+import type { SiteImageRef } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,14 +25,42 @@ import { cn } from "@/lib/utils";
  * across pages/tabs) is registered; pausing unmounts the video and holds the
  * poster. usePrefersReducedMotion defaults to true during SSR, so the
  * <video> never ships in server HTML.
+ *
+ * The poster is accepted two ways — both existing call sites (home, process)
+ * pass a plain `posterSrc` string from `getSiteImages()` and stay unchanged;
+ * a caller that already resolved the full slot (`getSiteImageRefs()`) can
+ * pass `poster` instead to get its mobile crop and focal point for free, the
+ * same technique `meniscus-image.tsx`/`slot-image.tsx` use — a `<picture>`
+ * choosing the file BEFORE the fetch, and `objectPosition` for the focal
+ * point. Exactly one of the two is required.
+ *
+ * `drift` (Part 14 / roadmap Phase 1b `sf-hero-drift`) puts the slow 6s
+ * scale-to-1.04 on a WRAPPER around the poster `<Image>`, never on the
+ * `<img>` itself — the poster stays the LCP element and Part 14 forbids
+ * animating or delaying it. `data-video-playing` on that same wrapper turns
+ * the drift off once the ambient loop takes over, so the two motions never
+ * compete for the same frame.
  */
+type HeroMediaPosterProps =
+  | { posterSrc: string; poster?: undefined }
+  | { poster: SiteImageRef; posterSrc?: undefined };
+
+export type HeroMediaProps = HeroMediaPosterProps & {
+  videoUrl?: string;
+  /** Part 14 ambient scale drift on the poster wrapper. Defaults to off — an
+   *  existing call site opts in explicitly rather than gaining motion. */
+  drift?: boolean;
+  /** Decorative by default (matches both existing call sites), since the
+   *  poster always sits behind a text band that carries the same content. */
+  posterAlt?: string;
+};
+
 export function HeroMedia({
   videoUrl,
-  posterSrc,
-}: {
-  videoUrl?: string;
-  posterSrc: string;
-}) {
+  drift = false,
+  posterAlt = "",
+  ...posterProps
+}: HeroMediaProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const isTouch = useIsTouch();
   const motionPaused = useMotionPaused();
@@ -49,18 +79,66 @@ export function HeroMedia({
   const eligible = Boolean(videoUrl) && !prefersReducedMotion && !isTouch;
   const playing = eligible && !motionPaused;
 
+  const posterUrl = posterProps.poster
+    ? posterProps.poster.url
+    : posterProps.posterSrc;
+  const mobileUrl = posterProps.poster?.mobileUrl ?? null;
+  const focalX = posterProps.poster?.focalX ?? 0.5;
+  const focalY = posterProps.poster?.focalY ?? 0.5;
+  // Centred is CSS's own default, so an untouched slot emits no inline style.
+  const focalMoved = focalX !== 0.5 || focalY !== 0.5;
+  const posterStyle = focalMoved
+    ? { objectPosition: `${focalX * 100}% ${focalY * 100}%` }
+    : undefined;
+
+  const posterImage = (
+    <Image
+      src={posterUrl}
+      alt={posterAlt}
+      fill
+      priority
+      fetchPriority="high"
+      quality={80}
+      sizes="100vw"
+      className="object-cover"
+      style={posterStyle}
+      unoptimized={
+        posterProps.poster ? !isOptimizableImageSrc(posterUrl) : undefined
+      }
+    />
+  );
+
+  const mobile = mobileUrl
+    ? getImageProps({
+        src: mobileUrl,
+        alt: posterAlt,
+        fill: true,
+        quality: 80,
+        sizes: "100vw",
+        unoptimized: !isOptimizableImageSrc(mobileUrl),
+      }).props
+    : null;
+
   return (
     <>
-      <Image
-        src={posterSrc}
-        alt=""
-        fill
-        priority
-        fetchPriority="high"
-        quality={80}
-        sizes="100vw"
-        className="object-cover"
-      />
+      <div
+        data-slot="sf-hero"
+        data-video-playing={playing ? "true" : "false"}
+        className={cn("absolute inset-0", drift && "sf-hero-drift")}
+      >
+        {mobile?.srcSet ? (
+          <picture className="block h-full w-full">
+            <source
+              media="(max-width: 767px)"
+              srcSet={mobile.srcSet}
+              sizes={mobile.sizes}
+            />
+            {posterImage}
+          </picture>
+        ) : (
+          posterImage
+        )}
+      </div>
       {playing ? (
         <video
           /* No `src` — the sources below are offered in order, and a browser

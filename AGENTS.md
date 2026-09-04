@@ -148,7 +148,8 @@ Every task, not just the big ones:
 
 typecheck ✓ · lint ✓ · tests ✓ · build ✓ · `copy:check` ✓ · 0 missing translations ·
 works at **360px and 1280px** · keyboard reachable · reduced-motion checked ·
-`redesign-audit` and `a11y-audit` clean at both widths (and RTL for layout changes) ·
+`redesign-audit` and `a11y-audit` clean at every CI width (and RTL for layout changes) ·
+`keyboard-audit` and `npm run test:e2e` green against the built server ·
 **HARD RULES respected** · the order flow still opens `wa.me/917096036250` with the
 correct pre-filled message.
 
@@ -188,12 +189,22 @@ reproducing the failure first, then showing it gone.
 - **Sheet row deletion is not upsert-in-reverse.** It needs the tab's numeric id and rows
   must be removed in *descending* index order; an ascending pass deletes the wrong rows and
   succeeds while doing it.
-- **CI runs now — but it cannot reach everything.** Until 2026-08-31 GitHub Actions was blocked by
-  an account-level billing condition (jobs failed in ~2s with `runner_id: 0`) and every gate that
-  passed was run locally. On 2026-09-02 run #71 executed both `ci.yml` jobs on PR #29 on a real
-  runner. A green PR is now evidence for what `ci.yml` covers; it is still not evidence for the
-  detail routes (`/product`, `/blog`, `/portfolio`, `/p`), the E2E smoke, or widths other than
-  1440/390 — run those yourself and say so.
+- **CI runs now, and it reaches almost everything.** Until 2026-08-31 GitHub Actions was blocked
+  by an account-level billing condition (jobs failed in ~2s with `runner_id: 0`) and every gate
+  that passed was run locally. On 2026-09-02 run #71 executed both `ci.yml` jobs on PR #29 on a
+  real runner. Since F2 (2026-09-04) the build job seeds the Content Lab demo set and sweeps the
+  detail routes on deterministic slugs, runs the E2E smoke against the started server, audits at
+  1440 · 1280 · 390 · 360 (touch contexts and a failing 44px floor at phone widths), the RTL set,
+  the keyboard paths including the lightboxes, the Studio at both widths and Lighthouse. A green
+  PR is evidence for all of that. It is still not evidence for screenshots looked at by a person,
+  reduced motion by eye, or a route with content only your database has — run those yourself
+  and say so.
+- **The session container restarts after idle stretches.** Running subagents' shells freeze
+  (their last tool call never returns) and the local Postgres cluster is down until restarted
+  (`pg_ctl … start` per PROJECT_STATE's environment recipe). Keep long work inside active turns,
+  and check `uptime` before blaming a script.
+- **`npm run test:db` seeds and REMOVES a demo set of its own** in whatever database it points
+  at. Re-seed (`npm run seed:demo`) before any audit or smoke that needs `/product/demo-product-001`.
 
 ---
 

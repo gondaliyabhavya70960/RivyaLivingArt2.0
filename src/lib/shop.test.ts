@@ -1,13 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { CATALOG_GROUPS } from "@/lib/catalog-taxonomy";
+import { demoClause } from "@/lib/demo-clause";
 import { buildProductWhere } from "./shop";
 
 describe("buildProductWhere (Prompt 07)", () => {
   it("builds baseline published non-demo clause with empty filters", () => {
     const where = buildProductWhere({});
     expect(where.status).toBe("PUBLISHED");
-    expect(where.NOT).toEqual({ title: { startsWith: "DEMO" } });
+    expect(where.isDemo).toBe(false);
+    expect(where.NOT).toBeUndefined();
     expect(where.AND).toBeUndefined();
+  });
+
+  it("drops the demo gate only when the caller shows demo content", () => {
+    expect(buildProductWhere({}, demoClause(true)).isDemo).toBeUndefined();
+    expect(buildProductWhere({}, demoClause(false)).isDemo).toBe(false);
   });
 
   it("builds case-insensitive search clause on title and shortTagline", () => {

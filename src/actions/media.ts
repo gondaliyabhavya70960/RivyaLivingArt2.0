@@ -1,15 +1,18 @@
 "use server";
 
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
 import { MEDIA_FOLDERS } from "@/components/studio/media/folders";
-import { logActivity } from "@/lib/activity";
+import { logActivity, snapshotBefore } from "@/lib/activity";
 import { findMediaUsages } from "@/lib/media-usages";
 import { db } from "@/lib/db";
 import { seoFilename, splitFilename } from "@/lib/media-filename";
-import { finalizeAsset } from "@/lib/media-ingest";
+import { finalizeAsset, MediaTypeMismatchError } from "@/lib/media-ingest";
 import {
   ACCEPTED_UPLOAD_TYPES,
   deleteFile,
@@ -23,6 +26,11 @@ const MAX_BYTES = 8 * 1024 * 1024; // 8 MB default
 const MAX_BYTES_LARGE = 16 * 1024 * 1024; // 16 MB for videos and GLB models
 
 const folderSchema = z.enum(MEDIA_FOLDERS).catch("other");
+// A caller ASKING to move or organize into a folder gets no silent fallback —
+// `folderSchema` above is lenient because an upload must never be blocked by
+// a bad folder value; a deliberate move/replace has no such excuse, and a
+// typo'd folder should be refused rather than quietly filed under "other".
+const strictFolderSchema = z.enum(MEDIA_FOLDERS);
 
 export type UploadedMedia = {
   id: string;
@@ -37,6 +45,41 @@ function maxBytesFor(contentType: string): number {
   return contentType.startsWith("video/") || contentType === "model/gltf-binary"
     ? MAX_BYTES_LARGE
     : MAX_BYTES;
+}
+
+const blobEnabled = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+const LOCAL_ROOT = path.join(process.cwd(), "public", "uploads");
+
+/**
+ * "Replace file" needs the SAME pathname semantics `putFile` (`@/lib/
+ * storage.ts`) already has — same two-driver split, same local root — but the
+ * opposite uniqueness rule: `putFile` always mints a fresh pathname (Blob's
+ * `addRandomSuffix`, local's `-<uuid>` suffix) so two uploads never collide,
+ * while a replace must land at the row's EXISTING pathname so every place
+ * that already points at this file's url keeps working without being found
+ * and rewritten. `storage.ts` has no "overwrite in place" mode to import —
+ * this repo's other exact precedent for one is `catalog-mirror.ts`'s
+ * `storeCatalogImage`, which the same driver split for the same reason.
+ */
+async function overwriteAtPathname(
+  data: Buffer,
+  pathname: string,
+  contentType: string,
+): Promise<string> {
+  if (blobEnabled()) {
+    const { put } = await import("@vercel/blob");
+    const blob = await put(pathname, data, {
+      access: "public",
+      contentType,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
+    return blob.url;
+  }
+  const target = path.join(LOCAL_ROOT, pathname);
+  await mkdir(path.dirname(target), { recursive: true });
+  await writeFile(target, data);
+  return `/uploads/${pathname}`;
 }
 
 /**
@@ -128,7 +171,13 @@ export async function uploadMediaFiles(
         });
       } catch (error) {
         console.error(`Media upload failed for ${file.name}:`, error);
-        failed.push(`${file.name} (storage error)`);
+        // A declared-type mismatch (F1's byte sniff) is the owner's to act on;
+        // name it instead of folding it into the generic storage message.
+        failed.push(
+          error instanceof MediaTypeMismatchError
+            ? `${file.name} (${error.message})`
+            : `${file.name} (storage error)`,
+        );
       }
     }
 
@@ -237,6 +286,12 @@ const listSchema = z.object({
   folder: z.string().optional(),
   q: z.string().max(120).optional(),
   cursor: z.string().optional(),
+  // Batch D · media system: the picker used to force IMAGE unconditionally
+  // (docs/transformation-audit.md §10.1's "no ... pickable" gap — a caller
+  // wanting a testimonial film or a video block had no way to reach one
+  // through this dialog). Default stays IMAGE so every existing call site,
+  // none of which passes `type`, is unaffected.
+  type: z.enum(["IMAGE", "VIDEO"]).default("IMAGE"),
 });
 
 export type PickerMediaItem = {
@@ -249,11 +304,16 @@ export type PickerMediaItem = {
   alt: string | null;
   width: number | null;
   height: number | null;
+  /** VIDEO only — the frame shown in place of a thumbnail. */
+  posterUrl: string | null;
+  /** VIDEO only — whole seconds, shown as mono m:ss beside the tile. */
+  duration: number | null;
 };
 
 /**
  * Paged listing for the media-picker dialog (audit §32): staff-only like
- * every media action, image-focused search by pathname. Cursor = last row id.
+ * every media action, search by pathname. Cursor = last row id. Image-only
+ * unless the caller opts into `type: "VIDEO"`.
  */
 export async function listMediaForPicker(
   input: z.input<typeof listSchema>,
@@ -276,7 +336,7 @@ export async function listMediaForPicker(
               ],
             }
           : {}),
-        type: "IMAGE",
+        type: parsed.type,
       },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       ...(parsed.cursor ? { cursor: { id: parsed.cursor }, skip: 1 } : {}),
@@ -290,6 +350,8 @@ export async function listMediaForPicker(
         alt: true,
         width: true,
         height: true,
+        posterUrl: true,
+        duration: true,
       },
     });
     const hasMore = rows.length > take;
@@ -318,7 +380,7 @@ export async function deleteMediaItems(
 
     const rows = await db.media.findMany({
       where: { id: { in: parsed } },
-      select: { id: true, url: true, pathname: true },
+      select: { id: true, url: true, pathname: true, isDemo: true },
     });
 
     const inUse = await findMediaUsages(rows.map((r) => r.url));
@@ -328,6 +390,13 @@ export async function deleteMediaItems(
       .map((r) => r.pathname.split("/").pop() ?? r.pathname);
 
     for (const row of deletable) {
+      // A Content Lab demo row's `pathname` was never written to storage —
+      // it names a fixture, not a blob — so calling deleteFile for it would
+      // either 404 harmlessly (best-effort, already swallowed below) or, on
+      // local disk, throw trying to unlink a path that was never a real
+      // file. Skipping it here is the accurate description of what happens,
+      // not just a safe no-op.
+      if (row.isDemo) continue;
       await deleteFile(row.pathname).catch((error) => {
         console.error(`Storage delete failed for ${row.pathname}:`, error);
       });
@@ -351,5 +420,329 @@ export async function deleteMediaItems(
     }
 
     return { deleted: deletable.length, skipped };
+  });
+}
+
+const TAG_MAX = 32;
+const TAGS_MAX = 20;
+const tagsSchema = z.array(z.string().trim().min(1).max(TAG_MAX)).max(TAGS_MAX);
+
+const updateMetaSchema = z.object({
+  id: z.string().min(1),
+  alt: z.string().trim().max(300).optional(),
+  caption: z.string().trim().max(500).optional(),
+  tags: tagsSchema.optional(),
+  favourite: z.boolean().optional(),
+});
+
+/**
+ * Full metadata edit for one file — the detail drawer's Save, and a bulk
+ * favourite toggle's one-call-per-id fan-out (there is no bulk-favourite
+ * action; the selection sizes this runs over are small enough that N calls
+ * costs nothing a dedicated endpoint would meaningfully improve on).
+ *
+ * Every field is a PARTIAL update: only a key the caller actually passed is
+ * written, checked on the raw input rather than the parsed one so an
+ * explicit `alt: ""` (clear the description) is distinguishable from `alt`
+ * simply not being part of this call.
+ */
+export async function updateMediaMeta(
+  input: z.input<typeof updateMetaSchema>,
+): Promise<ActionResult> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = updateMetaSchema.parse(input);
+    const raw = input as Record<string, unknown>;
+
+    const before = await db.media.findUnique({
+      where: { id: parsed.id },
+      select: { alt: true, caption: true, tags: true, favourite: true },
+    });
+    if (!before) throw new Error("That file no longer exists.");
+
+    const data: {
+      alt?: string | null;
+      caption?: string | null;
+      tags?: string[];
+      favourite?: boolean;
+    } = {};
+    if ("alt" in raw) data.alt = parsed.alt || null;
+    if ("caption" in raw) data.caption = parsed.caption || null;
+    if ("tags" in raw) data.tags = parsed.tags ?? [];
+    if ("favourite" in raw) data.favourite = parsed.favourite ?? false;
+
+    if (Object.keys(data).length === 0) return undefined;
+
+    await db.media.update({ where: { id: parsed.id }, data });
+    await logActivity({
+      userId: session.user.id,
+      action: "update",
+      entity: "Media",
+      entityId: parsed.id,
+      meta: {
+        fields: Object.keys(data),
+        before: snapshotBefore(before, ["alt", "caption", "favourite"]),
+      },
+    });
+    revalidatePath(STUDIO_PATH);
+    return undefined;
+  });
+}
+
+const moveSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1).max(500),
+  folder: strictFolderSchema,
+});
+
+/** Bulk re-file into a different one of the six fixed folders. */
+export async function moveMedia(
+  ids: string[],
+  folder: string,
+): Promise<ActionResult<{ moved: number }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = moveSchema.parse({ ids, folder });
+    const { count } = await db.media.updateMany({
+      where: { id: { in: parsed.ids } },
+      data: { folder: parsed.folder },
+    });
+    await logActivity({
+      userId: session.user.id,
+      action: "move",
+      entity: "Media",
+      meta: { count, folder: parsed.folder, ids: parsed.ids },
+    });
+    if (count > 0) revalidatePath(STUDIO_PATH);
+    return { moved: count };
+  });
+}
+
+const bulkAltSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1).max(500),
+  alt: z.string().trim().max(300),
+});
+
+/**
+ * The SAME description on every selected picture — the sweep tool for a
+ * batch that is genuinely one subject shot several times (a set of angle
+ * shots of one commission, say), not a substitute for per-picture alt text.
+ */
+export async function bulkUpdateAlt(
+  ids: string[],
+  alt: string,
+): Promise<ActionResult<{ updated: number }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = bulkAltSchema.parse({ ids, alt });
+    const { count } = await db.media.updateMany({
+      where: { id: { in: parsed.ids }, type: "IMAGE" },
+      data: { alt: parsed.alt || null },
+    });
+    await logActivity({
+      userId: session.user.id,
+      action: "bulk-update",
+      entity: "Media",
+      meta: { field: "alt", count, ids: parsed.ids },
+    });
+    if (count > 0) revalidatePath(STUDIO_PATH);
+    return { updated: count };
+  });
+}
+
+/**
+ * Swap the bytes behind an existing row WITHOUT changing its url — every
+ * place that already points at this file (a product gallery entry, a site-
+ * image slot override, a landing-page block) keeps working with no re-select
+ * needed. `overwriteAtPathname` above is what makes that possible: same
+ * pathname in, same pathname out, only the stored bytes change.
+ *
+ * Refuses a replacement that changes the asset's TYPE (an image cannot
+ * become a video in place) — everything downstream of `Media.type` assumes
+ * it is stable for a row's lifetime. A same-family extension mismatch (a
+ * .jpg replaced with .png bytes) is allowed: the URL's trailing extension is
+ * cosmetic, `Content-Type` on the stored object is what a browser and
+ * next/image actually trust.
+ */
+export async function replaceMediaFile(
+  id: string,
+  formData: FormData,
+): Promise<ActionResult<UploadedMedia>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsedId = z.string().min(1).parse(id);
+
+    const existing = await db.media.findUnique({ where: { id: parsedId } });
+    if (!existing) throw new Error("That file no longer exists.");
+
+    const file = formData.get("file");
+    if (!(file instanceof File))
+      throw new Error("No replacement file was received.");
+
+    const ext = ACCEPTED_UPLOAD_TYPES[file.type];
+    if (!ext)
+      throw new Error(`${file.name || "That file"} is not a supported type.`);
+
+    const newType = guessMediaType(file.type);
+    if (newType !== existing.type) {
+      throw new Error(
+        `The replacement must be the same kind of file — this row is ${existing.type.toLowerCase()}.`,
+      );
+    }
+
+    const limit = maxBytesFor(file.type);
+    if (file.size > limit) {
+      throw new Error(`File is over the ${limit / (1024 * 1024)} MB limit.`);
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const facts = await finalizeAsset(buffer, file.type);
+    const storedUrl = await overwriteAtPathname(
+      buffer,
+      existing.pathname,
+      file.type,
+    );
+
+    const before = snapshotBefore(existing, [
+      "bytes",
+      "width",
+      "height",
+      "checksum",
+      "blurDataUrl",
+      "dominantHex",
+    ]);
+    const updated = await db.media.update({
+      where: { id: parsedId },
+      data: {
+        url: storedUrl,
+        bytes: buffer.length,
+        width: facts.width,
+        height: facts.height,
+        checksum: facts.checksum,
+        blurDataUrl: facts.blurDataUrl,
+        dominantHex: facts.dominantHex,
+      },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "replace",
+      entity: "Media",
+      entityId: parsedId,
+      meta: { pathname: existing.pathname, before },
+    });
+    revalidatePath(STUDIO_PATH);
+    return {
+      id: updated.id,
+      url: updated.url,
+      pathname: updated.pathname,
+      type: updated.type,
+    };
+  });
+}
+
+/**
+ * Attach a poster frame to a VIDEO row. The JPEG itself is captured
+ * client-side — `media-detail-drawer.tsx` draws the current frame of a
+ * playing `<video>` onto a `<canvas>` at 1s and posts the result here — and
+ * is stored as its own IMAGE row in the video's folder, exactly like any
+ * other upload, rather than as a bare url on the video row: it belongs in the
+ * library (findable, deletable, usage-tracked) like every other picture.
+ * `Media.posterUrl` then points at that row's url.
+ */
+export async function setVideoPoster(
+  id: string,
+  formData: FormData,
+): Promise<ActionResult<{ posterUrl: string }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsedId = z.string().min(1).parse(id);
+
+    const video = await db.media.findUnique({ where: { id: parsedId } });
+    if (!video) throw new Error("That video no longer exists.");
+    if (video.type !== "VIDEO")
+      throw new Error("Only a video can have a poster.");
+
+    const file = formData.get("file");
+    if (!(file instanceof File))
+      throw new Error("No poster image was received.");
+    if (file.type !== "image/jpeg") {
+      throw new Error("The poster must be a JPEG frame capture.");
+    }
+    const buffer = Buffer.from(await file.arrayBuffer());
+    if (buffer.length > MAX_BYTES) {
+      throw new Error(
+        `Poster is over the ${MAX_BYTES / (1024 * 1024)} MB limit.`,
+      );
+    }
+
+    const facts = await finalizeAsset(buffer, "image/jpeg");
+
+    // Same dedupe discipline as a normal upload: a poster captured twice from
+    // the same clip at the same second has identical bytes, and `checksum`
+    // is unique — reuse the row rather than fail the whole action on it.
+    const existing = await db.media.findUnique({
+      where: { checksum: facts.checksum },
+      select: { id: true, url: true },
+    });
+
+    let posterUrl: string;
+    if (existing) {
+      posterUrl = existing.url;
+    } else {
+      const base = seoFilename(
+        `${video.originalName ?? "video"}-poster`,
+        video.folder,
+        0,
+      );
+      const stored = await putFile(buffer, {
+        pathname: `${video.folder}/${base}.jpg`,
+        contentType: "image/jpeg",
+      });
+      const posterMedia = await db.media.create({
+        data: {
+          url: stored.url,
+          pathname: stored.pathname,
+          type: "IMAGE",
+          folder: video.folder,
+          bytes: buffer.length,
+          originalName: splitFilename(
+            `${video.originalName ?? "video"}-poster`,
+          ).stem.slice(0, 200),
+          checksum: facts.checksum,
+          width: facts.width,
+          height: facts.height,
+          blurDataUrl: facts.blurDataUrl,
+          dominantHex: facts.dominantHex,
+          provenance: "UPLOAD",
+        },
+      });
+      posterUrl = posterMedia.url;
+    }
+
+    const durationRaw = formData.get("durationSeconds");
+    const durationSeconds =
+      typeof durationRaw === "string" && durationRaw.trim() !== ""
+        ? Math.round(Number(durationRaw))
+        : null;
+
+    await db.media.update({
+      where: { id: parsedId },
+      data: {
+        posterUrl,
+        ...(durationSeconds !== null && Number.isFinite(durationSeconds)
+          ? { duration: durationSeconds }
+          : {}),
+      },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "set-poster",
+      entity: "Media",
+      entityId: parsedId,
+      meta: { posterUrl, reused: Boolean(existing) },
+    });
+    revalidatePath(STUDIO_PATH);
+    return { posterUrl };
   });
 }

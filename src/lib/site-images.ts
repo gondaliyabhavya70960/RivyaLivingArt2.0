@@ -25,6 +25,8 @@
  *    category editor. Slotting them too would give one picture two owners.
  */
 
+import { blurFor } from "@/lib/lqip";
+
 export type SiteImageSlot = {
   key: string;
   /** Surface the slot belongs to — the studio screen groups by this. */
@@ -147,6 +149,115 @@ export const SITE_IMAGE_SLOTS = [
     ratio: "4:5",
     fallback: "/media/v3/story-polish.avif",
     altKey: "Home.why.proof.heirloom.alt",
+  },
+  /* Furniture and room tiles (Home.furniture / Home.rooms, off by default —
+     `page-sections.ts`). CONCEPT IMAGERY, not photographs of delivered
+     furniture: the studio takes furniture on commission but carries none in
+     stock (D5), and every one of these ten slots stands in for a piece that
+     does not exist yet. The fallbacks below are existing §15.4 masters that
+     read as bench, formwork, surface or interior atmosphere rather than a
+     finished object — the closest honest stand-in the asset set has — and
+     every place they render, the page captions them "Concept" (`DemoMark`
+     styling) so a visitor never mistakes one for a delivered commission. */
+  {
+    key: "home.furniture.dining",
+    group: "Homepage",
+    label: "Furniture · Dining table",
+    where: "Homepage · What we commission, first tile",
+    ratio: "4:5",
+    fallback: "/media/v3/workshop-table.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.dining.alt",
+  },
+  {
+    key: "home.furniture.coffee",
+    group: "Homepage",
+    label: "Furniture · Coffee table",
+    where: "Homepage · What we commission, second tile",
+    ratio: "4:5",
+    fallback: "/media/v3/tile-live.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.coffee.alt",
+  },
+  {
+    key: "home.furniture.side",
+    group: "Homepage",
+    label: "Furniture · Side table",
+    where: "Homepage · What we commission, third tile",
+    ratio: "4:5",
+    fallback: "/media/v3/macro-teak.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.side.alt",
+  },
+  {
+    key: "home.furniture.console",
+    group: "Homepage",
+    label: "Furniture · Console",
+    where: "Homepage · What we commission, fourth tile",
+    ratio: "4:5",
+    fallback: "/media/v3/story-cure.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.console.alt",
+  },
+  {
+    key: "home.furniture.chair",
+    group: "Homepage",
+    label: "Furniture · Chair",
+    where: "Homepage · What we commission, fifth tile",
+    ratio: "4:5",
+    fallback: "/media/v3/tile-create.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.chair.alt",
+  },
+  {
+    key: "home.furniture.bench",
+    group: "Homepage",
+    label: "Furniture · Bench",
+    where: "Homepage · What we commission, sixth tile",
+    ratio: "4:5",
+    fallback: "/media/v3/story-polish.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.furniture.kinds.bench.alt",
+  },
+  {
+    key: "home.rooms.living",
+    group: "Homepage",
+    label: "Rooms · Living room",
+    where: "Homepage · In the room, first tile",
+    ratio: "4:3",
+    fallback: "/media/v3/hero-pour.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.living.alt",
+  },
+  {
+    key: "home.rooms.dining",
+    group: "Homepage",
+    label: "Rooms · Dining room",
+    where: "Homepage · In the room, second tile",
+    ratio: "4:3",
+    fallback: "/media/v3/texture-band.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.dining.alt",
+  },
+  {
+    key: "home.rooms.study",
+    group: "Homepage",
+    label: "Rooms · Study",
+    where: "Homepage · In the room, third tile",
+    ratio: "4:3",
+    fallback: "/media/v3/studio-interior.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.study.alt",
+  },
+  {
+    key: "home.rooms.bedroom",
+    group: "Homepage",
+    label: "Rooms · Bedroom",
+    where: "Homepage · In the room, fourth tile",
+    ratio: "4:3",
+    fallback: "/media/v3/story-gild.avif",
+    note: "Concept imagery — captioned as a concept on the page (D5).",
+    altKey: "Home.rooms.bedroom.alt",
   },
 
   /* ————————————————— About ————————————————— */
@@ -379,7 +490,7 @@ export const SITE_IMAGE_SLOTS = [
     key: "process.step1",
     group: "Process",
     label: "Step 1",
-    where: "Process · the six stages",
+    where: "Process · the ten stages",
     ratio: "4:5",
     fallback: "/media/v3/workshop-table.avif",
     altKey: "Process.timeline.step1Alt",
@@ -388,7 +499,7 @@ export const SITE_IMAGE_SLOTS = [
     key: "process.step2",
     group: "Process",
     label: "Step 2",
-    where: "Process · the six stages",
+    where: "Process · the ten stages",
     ratio: "4:5",
     fallback: "/media/v3/print-head.avif",
     altKey: "Process.timeline.step2Alt",
@@ -397,7 +508,7 @@ export const SITE_IMAGE_SLOTS = [
     key: "process.step3",
     group: "Process",
     label: "Step 3",
-    where: "Process · the six stages",
+    where: "Process · the ten stages",
     ratio: "4:5",
     fallback: "/media/v3/story-gild.avif",
     altKey: "Process.timeline.step3Alt",
@@ -406,7 +517,7 @@ export const SITE_IMAGE_SLOTS = [
     key: "process.step4",
     group: "Process",
     label: "Step 4",
-    where: "Process · the six stages",
+    where: "Process · the ten stages",
     ratio: "4:5",
     fallback: "/media/v3/story-pour.avif",
     altKey: "Process.timeline.step4Alt",
@@ -415,7 +526,7 @@ export const SITE_IMAGE_SLOTS = [
     key: "process.step5",
     group: "Process",
     label: "Step 5",
-    where: "Process · the six stages",
+    where: "Process · the ten stages",
     ratio: "4:5",
     fallback: "/media/v3/studio-hands.avif",
     altKey: "Process.timeline.step5Alt",
@@ -424,10 +535,46 @@ export const SITE_IMAGE_SLOTS = [
     key: "process.step6",
     group: "Process",
     label: "Step 6",
-    where: "Process · the six stages",
+    where: "Process · the ten stages",
     ratio: "4:5",
     fallback: "/media/v3/tile-gift.avif",
     altKey: "Process.timeline.step6Alt",
+  },
+  {
+    key: "process.step7",
+    group: "Process",
+    label: "Step 7",
+    where: "Process · the ten stages",
+    ratio: "4:5",
+    fallback: "/media/v3/story-polish.avif",
+    altKey: "Process.timeline.step7Alt",
+  },
+  {
+    key: "process.step8",
+    group: "Process",
+    label: "Step 8",
+    where: "Process · the ten stages",
+    ratio: "4:5",
+    fallback: "/media/v3/texture-band.avif",
+    altKey: "Process.timeline.step8Alt",
+  },
+  {
+    key: "process.step9",
+    group: "Process",
+    label: "Step 9",
+    where: "Process · the ten stages",
+    ratio: "4:5",
+    fallback: "/media/v3/macro-epoxy.avif",
+    altKey: "Process.timeline.step9Alt",
+  },
+  {
+    key: "process.step10",
+    group: "Process",
+    label: "Step 10",
+    where: "Process · the ten stages",
+    ratio: "4:5",
+    fallback: "/media/v3/tile-live.avif",
+    altKey: "Process.timeline.step10Alt",
   },
   {
     key: "process.material1",
@@ -700,15 +847,31 @@ export type SiteImageRef = {
   /** object-position, 0–1. (0.5, 0.5) is CSS's own default. */
   focalX: number;
   focalY: number;
+  /**
+   * 20px LQIP data URI for `url` (batch D · media system), resolved on the
+   * slot's actual RESOLVED url — never on the slot's key — so a repointed
+   * slot never paints the bundled default's blur behind a picture it no
+   * longer shows. Null when no placeholder is known for this URL: an owner
+   * upload predating the metadata capture, or any file `finalizeAsset`
+   * could not read.
+   */
+  blurDataUrl: string | null;
 };
 
 export type SiteImageRefMap = Record<SiteImageKey, SiteImageRef>;
 
-/** Every slot's bundled default as a ref — centred, no mobile crop. */
+/** Every slot's bundled default as a ref — centred, no mobile crop, its
+ *  bundled LQIP when the master has one recorded. */
 export const SITE_IMAGE_DEFAULT_REFS: SiteImageRefMap = Object.fromEntries(
   SITE_IMAGE_SLOTS.map((slot) => [
     slot.key,
-    { url: slot.fallback, mobileUrl: null, focalX: 0.5, focalY: 0.5 },
+    {
+      url: slot.fallback,
+      mobileUrl: null,
+      focalX: 0.5,
+      focalY: 0.5,
+      blurDataUrl: blurFor(slot.fallback) ?? null,
+    },
   ]),
 ) as SiteImageRefMap;
 

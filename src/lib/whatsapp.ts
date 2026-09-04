@@ -219,3 +219,17 @@ export function buildOrderMessage(
   // encodes fine, just longer than ideal.
   return assemble(undefined);
 }
+
+/**
+ * Mark a WhatsApp order message as a Content Lab demo order (batch G).
+ *
+ * Demo products are a seeded fixture, never a real catalogue item — the "no
+ * invented products" hard rule means a demo product's order button must
+ * still work (a dead button on a live card is worse), but the message it
+ * sends has to say so up front, for both the customer's own record and the
+ * studio operator reading the inbox. Applied once, on the final message, so
+ * it survives the inquiry-number rebuild in `submitProductOrder` too.
+ */
+export function withDemoPrefix(message: string, isDemo: boolean): string {
+  return isDemo ? `[DEMO] ${message}` : message;
+}

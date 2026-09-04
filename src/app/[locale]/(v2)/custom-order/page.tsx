@@ -20,7 +20,7 @@ import {
   Eyebrow,
   SectionHeading,
 } from "@/components/storefront/section-heading";
-import { TestimonialCard } from "@/components/storefront/testimonial-card";
+import { TestimonialWall } from "@/components/storefront/testimonial-wall";
 import { db } from "@/lib/db";
 import { isOptimizableImageSrc, isRenderableSrc } from "@/lib/image-src";
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
@@ -28,6 +28,8 @@ import { getTestimonials } from "@/lib/testimonials";
 import { getPageSections } from "@/lib/page-sections-server";
 import { getSiteImages } from "@/lib/site-images-server";
 import { getFormOptions } from "@/lib/form-options-server";
+import { showDemoContent } from "@/lib/demo-content";
+import { demoClause } from "@/lib/demo-clause";
 
 export async function generateMetadata({
   params,
@@ -150,12 +152,18 @@ export default async function CustomOrderPage({
   // All empty-safe: a section renders nothing until real studio content
   // exists (no fabricated proof — Part 0). The Faq model has no draft state —
   // every row is live, same as /faq and the PDP (top 4 here).
+  const includeDemo = await showDemoContent();
+  const demo = demoClause(includeDemo);
   const [testimonials, faqRows, portfolios, tileCategories] = await Promise.all(
     [
-      getTestimonials(3, locale),
-      db.faq.findMany({ orderBy: { order: "asc" }, take: 4 }),
+      getTestimonials({ take: 6, locale, includeDemo }),
+      db.faq.findMany({
+        where: { status: "PUBLISHED", ...demo },
+        orderBy: { order: "asc" },
+        take: 4,
+      }),
       db.portfolio.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", ...demo },
         orderBy: { createdAt: "desc" },
         take: 6,
         select: {
@@ -172,7 +180,7 @@ export default async function CustomOrderPage({
         },
       }),
       db.category.findMany({
-        where: { slug: { in: TILE_SLUGS } },
+        where: { slug: { in: TILE_SLUGS }, visible: true },
         select: { slug: true, image: true },
       }),
     ],
@@ -482,18 +490,7 @@ export default async function CustomOrderPage({
               eyebrow={t("proofEyebrow")}
               title={t("proofHeading")}
             />
-            <div className="grid gap-6 md:grid-cols-3">
-              {testimonials.map((item) => (
-                <TestimonialCard
-                  key={item.id}
-                  quote={item.quote}
-                  name={item.name}
-                  location={item.location ?? undefined}
-                  rating={item.rating}
-                  avatarUrl={item.avatarUrl}
-                />
-              ))}
-            </div>
+            <TestimonialWall testimonials={testimonials} editorialFirst />
           </div>
         </section>
       ) : null,

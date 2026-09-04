@@ -59,7 +59,10 @@
     "logoHome": "Rivya Living Art — Startseite",
     "dismissAnnouncement": "Hinweis ausblenden",
     "announcementDefault": "Aktuelle Lieferzeit · Kleine Stücke 7–10 Tage · Große Stücke 3–6 Wochen",
-    "ratedOutOf": "Bewertet mit {rating} von {outOf} Sternen"
+    "ratedOutOf": "Bewertet mit {rating} von {outOf} Sternen",
+    "demoMark": "Demo-Inhalt",
+    "demoDetail": "Demo-Inhalt — kein echtes Angebot",
+    "of": "von"
   },
   "Header": {
     "search": "Suche",
@@ -298,7 +301,10 @@
       "print": "3d-druck",
       "process": "prozess",
       "journal": "journal",
-      "words": "freundliche worte"
+      "words": "freundliche worte",
+      "largeFormat": "großformat",
+      "furniture": "möbel",
+      "rooms": "im raum"
     },
     "manifesto": {
       "line1": "Langsam gemachte Objekte.",
@@ -311,6 +317,84 @@
       "body": "Jedes Rivya Living Art-Stück geht durch dieselben Hände, vom ersten Guss bis zum letzten Zug mit Körnung 3000. Es gibt hier keine Fertigungsstraße — nur eine Werkbank, ein paar Gussformen und die Zeit, die ein Stück braucht.",
       "cta": "Zur Person dahinter",
       "imageAlt": "Hände polieren eine ausgehärtete Resin-Oberfläche an der Werkbank"
+    },
+    "largeFormat": {
+      "eyebrow": "arbeiten im großformat",
+      "heading": "Auch im großen Maßstab gefertigt",
+      "intro": "Tische, Wandpaneele, skulpturale Stücke und Konservierungsarbeiten, geplant für einen Raum statt für ein Regal.",
+      "cta": "Großformatige Arbeiten ansehen",
+      "index": "{number} von {total}"
+    },
+    "furniture": {
+      "eyebrow": "was wir in auftrag nehmen",
+      "heading": "Was wir in Auftrag nehmen",
+      "intro": "Das Atelier hält keine Möbel auf Lager. Schicken Sie uns den Raum und das Stück, das Sie sich vorstellen — wir planen beides gemeinsam.",
+      "cta": "Eine Möbel-Anfertigung beginnen",
+      "conceptLabel": "Konzept",
+      "kinds": {
+        "dining": {
+          "title": "Esstisch",
+          "lead": "Gegossen auf die Grundfläche Ihres Tisches, nicht auf eine Standardgröße.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Eine große Holzwerkbank im Atelier, hier als Konzeptbild für einen Esstisch."
+        },
+        "coffee": {
+          "title": "Couchtisch",
+          "lead": "Ein niedriger Tisch, gestaltet danach, wie Sie tatsächlich sitzen.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Ein fertiges Brett aus Harz und Teakholz mit einer Schale auf dem Atelier-Tisch, hier als Konzeptbild für einen Couchtisch."
+        },
+        "side": {
+          "title": "Beistelltisch",
+          "lead": "Eine einzelne Fläche, passend für die Ecke, in der sie steht.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Eine Nahaufnahme von versiegelter Teakholzmaserung, hier als Konzeptbild für einen Beistelltisch."
+        },
+        "console": {
+          "title": "Konsole",
+          "lead": "Ein Flurstück, gegossen für die Wand, an der es steht.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Das Atelier bei Nacht — gefüllte Gussformen härten unter einer warmen Arbeitsleuchte, hier als Konzeptbild für eine Konsole."
+        },
+        "chair": {
+          "title": "Stuhl",
+          "lead": "Ein Sitz, von Hand geformt und veredelt, einer nach dem anderen.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Hände, die Blütenblätter in einer leeren Gussform anordnen, hier als Konzeptbild für einen Stuhl."
+        },
+        "bench": {
+          "title": "Bank",
+          "lead": "Ein langer Sitzplatz für einen Eingang oder einen Tisch.",
+          "leadTime": "3–6 Wochen",
+          "alt": "Tiefblaues Harz, das das Licht über eine fertige Oberfläche einfängt, hier als Konzeptbild für eine Bank."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "im raum",
+      "heading": "Im Raum",
+      "intro": "Ein in Auftrag gegebenes Stück steht selten allein — hier die Art von Raum, in dem es steht.",
+      "conceptLabel": "Konzept",
+      "living": {
+        "title": "Wohnzimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Wohnzimmer.",
+        "alt": "Harz, das in einem langsamen, gleichmäßigen Strahl gegossen wird, hier als Konzeptbild für ein Wohnzimmer."
+      },
+      "dining": {
+        "title": "Esszimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Esszimmer.",
+        "alt": "Ein Makroband aus geschichteter Harzstruktur, hier als Konzeptbild für ein Esszimmer."
+      },
+      "study": {
+        "title": "Arbeitszimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Arbeitszimmer.",
+        "alt": "Gefüllte Gussformen härten über Nacht unter einer warmen Arbeitsleuchte, hier als Konzeptbild für ein Arbeitszimmer."
+      },
+      "bedroom": {
+        "title": "Schlafzimmer",
+        "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Schlafzimmer.",
+        "alt": "Goldflocken treiben in sich setzendem, durchscheinendem blauem Harz, hier als Konzeptbild für ein Schlafzimmer."
+      }
     }
   },
   "Process": {
@@ -321,35 +405,51 @@
     "hero": {
       "eyebrow": "unser prozess",
       "headline": "Von der Idee zum Erbstück.",
-      "lead": "Sechs unaufgeregte Schritte zwischen Ihrer ersten Nachricht und dem Stück in Ihren Händen. So genau entsteht eine Rivya Living Art-Auftragsarbeit — und so lange dauert es, ehrlich gesagt."
+      "lead": "Zehn ruhige Schritte zwischen Ihrer ersten Nachricht und dem fertigen Stück in Ihren Händen. So entsteht eine Rivya-Living-Art-Auftragsarbeit – und so lange dauert es tatsächlich."
     },
     "timeline": {
-      "heading": "Sechs Schritte, keine Abkürzungen",
-      "step1Title": "Das Briefing",
-      "step1Copy": "Alles beginnt mit einem WhatsApp-Gespräch. Sie teilen die Idee, Referenzfotos, die Größen, die Ihnen vorschweben, und das Budget, mit dem Sie sich wohlfühlen — und wir stellen die Fragen, die das Design formen.",
-      "step2Title": "Entwurf & Vorschau",
-      "step2Copy": "Wir übersetzen das Briefing in Skizzen und, bei 3D-gedruckten Arbeiten, in digitale Vorschauen. Nichts wird gegossen, bevor Sie das Design freigegeben haben — jedes Detail ist abgestimmt, ehe Resin je die Gussform berührt.",
-      "step3Title": "Materialien",
-      "step3Copy": "Epoxidharz in Künstlerqualität, Mineralpigmente, konservierte Blüten und ausgewähltes Holz. Birgt das Stück Ihre eigenen Blumen oder Andenken, bereiten wir diese zuerst auf und konservieren sie — mit der Sorgfalt, die sie verdienen.",
-      "step4Title": "Der Guss",
-      "step4Copy": "Resin wird Schicht für Schicht eingebracht, jeder Guss härtet 24–72 Stunden aus, bevor der nächste folgt. Erst das Schichten verleiht einem Stück seine Tiefe — und genau deshalb lässt es sich niemals überstürzen.",
-      "step5Title": "Die Veredelung",
-      "step5Copy": "Nach dem vollständigen Aushärten wird das Stück von 400er bis 3000er Körnung geschliffen und anschließend poliert, bis es wie Glas wirkt. Beschläge, Haken oder Ständer werden von Hand angebracht und geprüft.",
-      "step6Title": "Qualität & Versand",
-      "step6Copy": "Sie erhalten Fotos des fertigen Stücks zur Freigabe, bevor es versandt wird. Anschließend wird es bruchsicher verpackt und mit nachverfolgbarem Versand überallhin in Indien geschickt.",
+      "heading": "Zehn Schritte, keine Abkürzungen",
+      "step1Title": "Konzept",
+      "step1Copy": "Es beginnt mit einem Gespräch per WhatsApp. Sie teilen die Idee, Referenzfotos, die Maße, die Ihnen vorschweben, und das Budget, mit dem Sie sich wohlfühlen – und wir stellen die Fragen, die das Design formen, und skizzieren es, bevor überhaupt etwas gegossen wird.",
+      "step2Title": "Materialauswahl",
+      "step2Copy": "Kunstharz in Galeriequalität, mineralische Pigmente, konservierte Blüten und abgelagertes Holz werden auf den Auftrag abgestimmt – und, für eine tragende Struktur, eine 3D-gedruckte Form. Enthält das Stück Ihre eigenen Blumen oder Erinnerungsstücke, bereiten und konservieren wir sie bereits in diesem Schritt.",
+      "step3Title": "Holzvorbereitung",
+      "step3Copy": "Abgelagertes Teakholz und Flussholz wird gehobelt, geschliffen und versiegelt, bevor es je mit Harz in Berührung kommt – so ist die Maserung bereit, einen Guss ohne Verzug oder Blasen an der Fügestelle aufzunehmen.",
+      "step4Title": "Harzkomposition",
+      "step4Copy": "Pigment wird in kleinen Chargen ins Harz eingemischt und gegen das Licht geprüft, bevor der eigentliche Guss beginnt – Blattgold und konservierte Pflanzen kommen erst hinein, wenn die Farbe stimmt.",
+      "step5Title": "Guss",
+      "step5Copy": "Das komponierte Harz wird Schicht für Schicht in die Form gegossen, jede Schicht wird geglättet und mit einem präzisen Heißluftgerät bearbeitet, um Luft zu entfernen, bevor sie zu binden beginnt.",
+      "step6Title": "Aushärtung",
+      "step6Copy": "Jede gegossene Schicht härtet 24–72 Stunden aus, bevor die nächste folgt, und das fertige Stück ruht unter kontrollierten Bedingungen, bis es vollständig ausgehärtet ist – Harz belohnt Geduld, nicht Eile.",
       "eyebrow": "wie ein stück entsteht",
-      "step1Meta": "Auf WhatsApp",
-      "step2Meta": "Kein Guss ohne Ihre Freigabe",
-      "step3Meta": "Epoxid in Künstlerqualität",
-      "step4Meta": "24–72 Stunden pro Schicht",
-      "step5Meta": "Körnung 400 → 3000",
-      "step6Meta": "Nachverfolgbar, überall in Indien",
+      "step1Meta": "Per WhatsApp",
+      "step2Meta": "Kunstharz in Galeriequalität",
+      "step3Meta": "Von Hand",
+      "step4Meta": "Nichts wird gegossen, bevor Sie zustimmen",
+      "step5Meta": "Schicht für Schicht",
+      "step6Meta": "24–72 Stunden pro Schicht",
       "step1Alt": "Die Werkbank zu Beginn einer Auftragsarbeit",
       "step2Alt": "Ein FDM-Druckkopf legt durchscheinendes blaues Filament auf die Druckplatte",
       "step3Alt": "Blattgoldflocken, schwebend in absetzendem blauem Harz",
       "step4Alt": "Tiefes Saphir-Resin mitten im Guss, das sich in einer runden Gussform ausbreitet",
       "step5Alt": "Behandschuhte Hände bearbeiten blaues Harz mit einem Präzisions-Heißluftgebläse",
-      "step6Alt": "Fertige Harzstücke, arrangiert in einer ausgekleideten Geschenkschachtel"
+      "step6Alt": "Fertige Harzstücke, arrangiert in einer ausgekleideten Geschenkschachtel",
+      "step7Title": "Oberflächenveredelung",
+      "step7Copy": "Ist das Stück vollständig ausgehärtet, wird es von Körnung 400 bis 3000 geschliffen und dann poliert, bis die Oberfläche wie Glas wirkt und die Tiefe darunter völlig klar hervortritt.",
+      "step7Meta": "Körnung 400 → 3000",
+      "step7Alt": "Wassertropfen auf einer spiegelglatt polierten Harzoberfläche, darunter schwebende Goldflocken",
+      "step8Title": "Handveredelung",
+      "step8Copy": "Beschläge, Haken oder Standfüße werden angebracht und von Hand geprüft, und jede Kante wird ein letztes Mal überarbeitet, bevor ein Stück als fertig gilt.",
+      "step8Meta": "Von Hand ausgestattet",
+      "step8Alt": "Eine champagnerfarbene Goldader zieht sich durch eine von Hand veredelte Harzoberfläche",
+      "step9Title": "Qualitätsprüfung",
+      "step9Copy": "Das fertige Stück wird Kante für Kante mit dem Auftrag abgeglichen, und Sie erhalten Fotos davon zur eigenen Freigabe, bevor irgendetwas verschickt wird.",
+      "step9Meta": "Fotos vor dem Versand",
+      "step9Alt": "Die abgeschrägte Kante einer ausgehärteten Epoxidplatte im Licht",
+      "step10Title": "Lieferung",
+      "step10Copy": "Nach Freigabe wird das Stück bruchsicher verpackt und mit nachverfolgbarem Versand überallhin in Indien verschickt. Das Studio bietet keine Montage an – mit der Lieferung endet der Auftrag.",
+      "step10Meta": "Nachverfolgbar, überallhin in Indien",
+      "step10Alt": "Ein fertiges Tablett und eine Schale aus Harz und Teakholz, bereit, das Studio zu verlassen"
     },
     "materials": {
       "heading": "Woraus Ihr Stück besteht",
@@ -873,7 +973,9 @@
       "wishlistRemove": "{title} von der Wunschliste entfernen",
       "madeToOrder": "Auf Bestellung gefertigt",
       "viewPiece": "Stück ansehen",
-      "shipsIn": "Versand in 7–10 Tagen"
+      "shipsIn": "Versand in 7–10 Tagen",
+      "askOnWhatsApp": "Auf WhatsApp fragen",
+      "materialsDimensions": "Materialien und Maße"
     },
     "collection": {
       "count": "{count, plural, =0 {Noch keine Stücke} one {# Stück} other {# Stücke}}",
@@ -942,7 +1044,8 @@
       "cta": "Sehen, wie es entsteht",
       "imageAlt": "Ein Resin-Guss härtet im Atelierlicht aus, seine Oberfläche beruhigt sich noch."
     },
-    "sortName": "Name"
+    "sortName": "Name",
+    "quickViewLabel": "Schnellansicht"
   },
   "Search": {
     "meta": {
@@ -1060,7 +1163,12 @@
     "emptyStatement": "Dazu ist noch nichts abgelegt.",
     "emptyDirection": "Das Journal entsteht zwischen den Güssen — versuchen Sie ein anderes Thema oder lesen Sie alles.",
     "emptyStatementUnfiltered": "Das Journal startet in Kürze.",
-    "emptyDirectionUnfiltered": "Wir schreiben die ersten Beiträge zwischen den Güssen. Schauen Sie bald wieder vorbei."
+    "emptyDirectionUnfiltered": "Wir schreiben die ersten Beiträge zwischen den Güssen. Schauen Sie bald wieder vorbei.",
+    "relatedCollections": {
+      "eyebrow": "weiter entdecken",
+      "heading": "Die Kollektion entdecken",
+      "cardEyebrow": "Kollektion"
+    }
   },
   "Portfolio": {
     "meta": {
@@ -1347,7 +1455,14 @@
       "detailsEyebrow": "die details",
       "detailsHeading": "Wie es entsteht, bewahrt und geliefert wird",
       "viewCollection": "Kollektion ansehen"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "Im Raum",
+      "heading": "So wirkt es im Raum",
+      "caption": "Fotografiert in einem echten Raum, in Originalgröße — kein Studio-Rendering."
+    },
+    "demoOrderNote": "Dies ist ein Content-Lab-Demostück — die Bestellung wird trotzdem gesendet, mit dem Präfix [DEMO] auf WhatsApp.",
+    "dimensionsLabel": "Abmessungen"
   },
   "Consent": {
     "label": "Einwilligung zu Cookies und Analyse",
@@ -1423,7 +1538,13 @@
       "scope": "große arbeiten",
       "how": "ablauf",
       "brief": "ihr briefing",
-      "gallery": "stücke"
+      "gallery": "stücke",
+      "philosophy": "philosophie",
+      "materials": "materialien",
+      "pieces": "möbel",
+      "work": "frühere arbeiten",
+      "words": "worte",
+      "faq": "fragen"
     },
     "hero": {
       "eyebrow": "großformatige auftragsarbeiten",
@@ -1492,6 +1613,53 @@
       "heading": "Erzählen Sie uns vom Raum",
       "body": "Schicken Sie den Raum, die Nutzung und das Datum, auf das es ankommt. Entwurf, Materialien und Preis werden mit Ihnen auf WhatsApp geklärt, bevor eine einzige Schicht gegossen wird.",
       "formCta": "Sonderanfertigung planen"
+    },
+    "philosophy": {
+      "eyebrow": "warum zuerst planen",
+      "heading": "Geplant, bevor es bepreist wird",
+      "p1": "Ein großes Stück lebt über Jahre mit einem Raum, deshalb wird es genau für diesen Raum entworfen — nie auf eine Standardgröße zugeschnitten und verschickt.",
+      "p2": "Das Atelier übernimmt jeweils nur wenige große Aufträge — aus demselben Grund, warum jeder Auftrag Wochen statt Tage dauert: geschichtete Harzarbeit in diesem Maßstab lässt sich nicht beschleunigen, ohne dass man es später sieht.",
+      "p3": "Es wird nichts gegossen, bevor Entwurf, Oberfläche und Größe schriftlich vereinbart sind — der Raum bekommt nur eine Chance, richtig vermessen zu werden, und das Atelier rät nicht."
+    },
+    "pieces": {
+      "eyebrow": "möbel in diesem maßstab",
+      "heading": "Die Möbelseite der großformatigen Arbeit",
+      "intro": "Dieselben sechs Arten wie auf der Startseite — ein Tisch, eine Konsole, eine Bank — geplant und gegossen für einen bestimmten Raum."
+    },
+    "work": {
+      "eyebrow": "bereits in auftrag gegeben",
+      "heading": "Großformatige Arbeit, ausgeliefert",
+      "cta": "Alle Auftragsarbeiten ansehen"
+    },
+    "words": {
+      "eyebrow": "in ihren worten",
+      "heading": "Was Kunden großformatiger Arbeiten sagen"
+    },
+    "faq": {
+      "eyebrow": "oft gefragt",
+      "heading": "Fragen zu großformatiger Arbeit"
     }
+  },
+  "CureLine": {
+    "pageSections": "Seitenabschnitte"
+  },
+  "Testimonials": {
+    "demoNotice": "Demo-Erfahrungsbericht — keine echte Kundenbewertung",
+    "linkedPiece": "Dieses Stück ansehen",
+    "linkedProject": "Dieses Projekt ansehen",
+    "watchFilm": "Film ansehen",
+    "verifiedBy": "Verifizierter Kunde",
+    "givenOn": "Abgegeben am {date}",
+    "wallHeading": "In ihren Worten"
+  },
+  "Lightbox": {
+    "prev": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen",
+    "of": "von"
+  },
+  "AccordionGallery": {
+    "expand": "Erweitern",
+    "collapse": "Einklappen"
   }
 }

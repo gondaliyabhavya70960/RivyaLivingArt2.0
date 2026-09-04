@@ -268,3 +268,74 @@ export async function setSheetFillPolicy(
     return { enabled: parsed.enabled };
   });
 }
+
+const TAB_NAMES = [
+  "Tier1_Owner",
+  "Tier2_ResinGoods",
+  "Tier3_Supplies",
+  "Tier4_3DPrint",
+  "Sheet1",
+] as const;
+
+const sheetIdsSchema = z.object({
+  /** The spreadsheet id (or a full URL — the id is extracted below), or
+   *  blank to fall back to SCRAPE_SHEET_ID/SHEET_ID (readSheetId). */
+  sheetId: z.string().trim().max(300),
+  /** Tab name → numeric sheet id, for the tabs `sheets.ts` actually writes
+   *  to. A blank field is simply omitted — deleteRowsFromTab's title lookup
+   *  covers it until the owner fills it in. */
+  sheetTabIds: z.record(z.enum(TAB_NAMES), z.string().trim()),
+});
+
+/** A pasted spreadsheet URL's id, or the id itself if that's what was pasted. */
+function extractSheetId(raw: string): string | null {
+  if (!raw) return null;
+  const fromUrl = /\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/.exec(raw);
+  return fromUrl ? fromUrl[1] : raw;
+}
+
+/**
+ * The owner's own spreadsheet, ADMIN-only like every other Settings write —
+ * it decides which document every scraper push and sheet-fill read talks
+ * to, so an EDITOR redirecting it is the same class of risk as changing the
+ * WhatsApp number above.
+ */
+export async function setSheetIds(input: unknown): Promise<ActionResult> {
+  return runAction(async () => {
+    const session = await requireStaff([Role.ADMIN]);
+    const parsed = sheetIdsSchema.parse(input);
+
+    const tabIds: Record<string, number> = {};
+    for (const [tab, raw] of Object.entries(parsed.sheetTabIds)) {
+      const trimmed = raw.trim();
+      if (!trimmed) continue;
+      const n = Number(trimmed);
+      if (Number.isFinite(n)) tabIds[tab] = n;
+    }
+
+    const sheetId = extractSheetId(parsed.sheetId);
+
+    await db.siteSettings.upsert({
+      where: { id: SETTINGS_ID },
+      create: {
+        id: SETTINGS_ID,
+        sheetId: nullIfEmpty(sheetId ?? ""),
+        sheetTabIds: tabIds as Prisma.InputJsonValue,
+      },
+      update: {
+        sheetId: nullIfEmpty(sheetId ?? ""),
+        sheetTabIds: tabIds as Prisma.InputJsonValue,
+      },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "sheet-ids",
+      entity: "SiteSettings",
+      meta: { sheetId: sheetId ?? null, tabs: Object.keys(tabIds).length },
+    });
+    revalidatePath(STUDIO_SETTINGS_PATH);
+    revalidatePath("/studio/sheet-import");
+    return undefined;
+  });
+}

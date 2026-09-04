@@ -10,6 +10,7 @@ import { Button } from "@/components/storefront/button";
 import { Link, usePathname } from "@/i18n/navigation";
 import type { CatalogGroup, CatalogNav } from "@/lib/catalog-taxonomy";
 import type { NavLink } from "@/lib/nav-menus";
+import { useHeroInk } from "@/hooks/use-hero-ink";
 import { useOverlayOpen } from "@/hooks/use-overlay-signal";
 import { menuSignal, openSearch } from "@/lib/search-signal";
 import { cn } from "@/lib/utils";
@@ -168,7 +169,13 @@ export function SiteHeader({
   const hasCatalog =
     !!catalog && (catalog.art.length > 0 || catalog.supplies.length > 0);
 
-  const overlayCapable = transparentRoutes?.includes(pathname) ?? false;
+  /* `seed` is the old static allowlist — used for SSR and the first client
+     paint; `useHeroInk` then watches the actual DOM (any dark band, or a
+     hero wrapper `hero-media.tsx` marks) so a route the allowlist never knew
+     about still gets the right header. */
+  const overlayCapable = useHeroInk(
+    transparentRoutes?.includes(pathname) ?? false,
+  );
   /* Transparent over the hero only until the first 80px. The mega panel is a
      mineral surface, so opening it also forces the bar solid — a transparent
      bar sitting on top of an opaque panel reads as a rendering bug. */
@@ -349,7 +356,7 @@ export function SiteHeader({
 
   const navRule = (active: boolean) =>
     cn(
-      "pointer-events-none absolute inset-x-1 -bottom-1.5 h-px origin-left scale-x-0 bg-sapphire",
+      "pointer-events-none absolute inset-x-1 -bottom-1.5 h-px origin-left rtl:origin-right scale-x-0 bg-sapphire",
       "transition-transform duration-(--dur-fast) ease-(--ease-luxury) group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transition-none",
       transparent && "bg-champagne",
       active && "scale-x-100",
@@ -360,6 +367,12 @@ export function SiteHeader({
       <header
         data-slot="sf-site-header"
         data-theme={transparent ? "navy" : undefined}
+        // Reads independently of `transparent`/`solid`: the audits key off
+        // this to confirm the header is actually tracking the hero beneath
+        // it, not just the scroll-solidify state — "mineral" (light ink,
+        // the header itself painted transparent) while over a dark hero,
+        // "ink" (dark text on the opaque bar) otherwise.
+        data-ink={overlayCapable ? "mineral" : "ink"}
         inert={menuOpen || undefined}
         /* A constant-height sticky slot: the bar inside it morphs 80 → 64px
            on scroll, but the slot never changes, so nothing below it can
@@ -375,6 +388,20 @@ export function SiteHeader({
             Blur lives here and nowhere else on the site (§3.5), and only
             while the surface is visible — an opacity-0 layer must never blur
             the hero behind it. */}
+        <div
+          aria-hidden
+          className={cn(
+            // Top scrim for the TRANSPARENT state (F2): the header floats
+            // over a photograph whose top edge the hero's own bottom-up
+            // gradient leaves lightest, and `redesign-audit.mjs` measured
+            // mineral text beside the logo at 2.7:1 over a bright frame.
+            // Obsidian at 85% fading out over 112px keeps every row of the
+            // chrome above 4.5:1 whatever the picture does; it is a scrim,
+            // not a box, and it is gone the moment the bar goes solid.
+            "pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-obsidian/85 via-obsidian/55 to-transparent transition-opacity duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
+            transparent ? "opacity-100" : "opacity-0",
+          )}
+        />
         <div
           aria-hidden
           className={cn(
@@ -540,8 +567,19 @@ export function SiteHeader({
                     .slice(0, 1)
                     .map(({ group }) => (
                       <ul key={group} className="flex flex-col gap-2.5">
-                        {catalog?.[group].slice(0, 8).map((item) => (
-                          <li key={item.slug}>
+                        {catalog?.[group].slice(0, 8).map((item, i) => (
+                          <li
+                            key={item.slug}
+                            className={cn(
+                              !megaPresence.closing &&
+                                "animate-in fade-in fill-mode-backwards duration-(--dur-fast) ease-(--ease-luxury) motion-reduce:animate-none",
+                            )}
+                            style={
+                              !megaPresence.closing
+                                ? { animationDelay: `${i * 40}ms` }
+                                : undefined
+                            }
+                          >
                             <Link
                               href={`/shop/${item.slug}`}
                               onClick={() => setMegaOpen(false)}
@@ -609,7 +647,7 @@ export function SiteHeader({
               "fixed inset-y-0 end-0 z-(--z-drawer) flex w-full max-w-md flex-col overflow-y-auto overscroll-contain bg-obsidian font-body text-mineral",
               menuPresence.closing
                 ? "translate-x-full rtl:-translate-x-full transition-transform duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none"
-                : "animate-in slide-in-from-right duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none",
+                : "animate-in slide-in-from-right rtl:slide-in-from-left duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none",
             )}
           >
             <div className="flex h-20 shrink-0 items-center justify-between ps-6 pe-4">

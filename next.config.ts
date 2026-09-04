@@ -4,20 +4,36 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /**
- * Content-Security-Policy for the app. Shipped in REPORT-ONLY first (SEC-001,
- * per the audit's rollback note) so a mis-scoped directive can't break
- * Cloudinary images, the Behold Instagram widget, or Vercel analytics in
- * production — violations are reported (browser console) without blocking.
- * Once the report stream is clean, rename the header key to
- * `Content-Security-Policy` to enforce.
+ * Content-Security-Policy for the app (SEC-001). ENFORCED as of the F1
+ * hygiene pass — the report-only period (below) ran clean, so the header key
+ * is `Content-Security-Policy` rather than `Content-Security-Policy-Report-Only`.
+ * The directive string is UNCHANGED from the report-only phase: nothing here
+ * was tightened or loosened, only the enforcement switch was flipped.
+ *
+ * Rollback: rename the header key below back to
+ * `Content-Security-Policy-Report-Only` — the directive string, report-uri
+ * and report-to stay exactly as they are, so a rollback is a one-line key
+ * rename, not a re-derivation of the policy.
+ *
+ * Nonces were considered and rejected: a per-request nonce would require
+ * every page that uses one to opt out of static generation (the nonce has to
+ * be minted per-request, which is exactly the boundary ISR exists to avoid),
+ * and the storefront's 13 routes × 9 locales are prerendered specifically to
+ * keep the database fan-out off the request path (see the `cpus: 4` note
+ * below). `'unsafe-inline'` stays for Next's hydration + JSON-LD instead.
  *
  * Allowed sources reflect what the site actually loads:
  *  - images: self, data/blob, Cloudinary, Vercel Blob, Instagram + Behold CDNs
- *  - scripts/connect: self + Behold widget + Vercel analytics/insights
+ *  - scripts/connect: self + Behold widget + Vercel analytics/insights +
+ *    Meta Pixel + GA4 (see MarketingScripts/ConsentGate — env-gated, off by
+ *    default, but the CSP has to allow the hosts for when the owner turns
+ *    them on)
+ *  - frame: self + Google Maps embed (StudioMap on /contact — the frame only
+ *    mounts on a visitor click, but the host still has to be allow-listed)
  *  ('unsafe-inline' remains for Next's hydration + JSON-LD; tighten to nonces
  *   as a follow-up).
  */
-const CSP_REPORT_ONLY = [
+const CSP_DIRECTIVES = [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
@@ -30,11 +46,15 @@ const CSP_REPORT_ONLY = [
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://connect.facebook.net https://www.googletagmanager.com",
   "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com",
-  "frame-src 'self'",
+  // Google Maps embed, StudioMap (src/components/sections/studio-map.tsx),
+  // click-to-activate on /contact — the only third-party frame the site
+  // mounts.
+  "frame-src 'self' https://www.google.com",
   "form-action 'self'",
-  // Stream violations to /api/csp-report so the report-only period can be
-  // observed before enforcing (SEC-103). report-uri is legacy-but-widely-
-  // supported; report-to pairs with the Reporting-Endpoints header below.
+  // Stream violations to /api/csp-report even while enforced, so a
+  // mis-scoped directive still surfaces instead of only silently blocking
+  // (SEC-103). report-uri is legacy-but-widely-supported; report-to pairs
+  // with the Reporting-Endpoints header below.
   "report-uri /api/csp-report",
   "report-to csp",
 ].join("; ");
@@ -54,7 +74,7 @@ const SECURITY_HEADERS = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   // Names the reporting group used by the CSP `report-to csp` directive.
   { key: "Reporting-Endpoints", value: 'csp="/api/csp-report"' },
-  { key: "Content-Security-Policy-Report-Only", value: CSP_REPORT_ONLY },
+  { key: "Content-Security-Policy", value: CSP_DIRECTIVES },
 ];
 
 const nextConfig: NextConfig = {

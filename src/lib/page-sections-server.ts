@@ -70,8 +70,8 @@ export const getPageSections = cache(
         ? (row?.draftOrder ?? row?.order ?? index)
         : (row?.order ?? index);
       const visibleRaw = draft
-        ? (row?.draftVisible ?? row?.visible ?? true)
-        : (row?.visible ?? true);
+        ? (row?.draftVisible ?? row?.visible ?? def.defaultVisible ?? true)
+        : (row?.visible ?? def.defaultVisible ?? true);
       return {
         ...def,
         order,
@@ -101,7 +101,8 @@ export async function readSectionsForStudio(pageKey: SectionPageKey) {
       // The studio shows the STAGED arrangement — that is what Publish will
       // release, and what Preview already shows.
       const order = row?.draftOrder ?? row?.order ?? index;
-      const visible = row?.draftVisible ?? row?.visible ?? true;
+      const visible =
+        row?.draftVisible ?? row?.visible ?? def.defaultVisible ?? true;
       return {
         ...def,
         order,

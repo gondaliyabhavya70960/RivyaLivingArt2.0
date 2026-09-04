@@ -156,8 +156,10 @@ export async function getTestimonials(
         quote: t.quote,
         rating: t.rating,
         avatarUrl: row.avatarUrl?.trim() || null,
-        designation: row.designation?.trim() || null,
-        productTitle: row.productTitle?.trim() || null,
+        // Localised like quote/location: TRANSLATABLE_FIELDS.testimonial names
+        // both, so an owner's per-locale override is served, not stored only.
+        designation: t.designation?.trim() || null,
+        productTitle: t.productTitle?.trim() || null,
         productSlug: row.product?.slug ?? null,
         portfolioSlug: row.portfolio?.slug ?? null,
         installationImageUrl: row.installationImageUrl?.trim() || null,

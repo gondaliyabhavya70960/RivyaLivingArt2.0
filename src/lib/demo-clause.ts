@@ -17,3 +17,6 @@ export type DemoClause = { isDemo: false } | Record<string, never>;
 export function demoClause(show: boolean): DemoClause {
   return show ? {} : { isDemo: false };
 }
+
+/** The default for readers that have no caller-supplied gate: hide every fixture. */
+export const NO_DEMO: DemoClause = { isDemo: false };

@@ -3,6 +3,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
 import { buildProductWhere } from "@/lib/shop";
+import { demoWhere } from "@/lib/demo-content";
 
 /**
  * The categories a piece has to sit in to count as large-format work.
@@ -20,6 +21,7 @@ import { buildProductWhere } from "@/lib/shop";
 export const LARGE_FORMAT_CATEGORY_SLUGS = [
   "resin-furniture-surfaces",
   "sculptures-objets",
+  "art-craft-pieces",
 ] as const;
 
 export type LargeFormatPiece = {
@@ -52,9 +54,9 @@ export async function fetchLargeFormatPieces(
 ): Promise<LargeFormatPiece[]> {
   const rows = await db.product.findMany({
     where: {
-      // buildProductWhere({}) is exactly { status: PUBLISHED, NOT: DEMO } with
+      // buildProductWhere({}) is exactly { status: PUBLISHED, demo gate } with
       // no `category` and no `AND` key, so this sibling cannot collide with it.
-      ...buildProductWhere({}),
+      ...buildProductWhere({}, await demoWhere()),
       category: { slug: { in: [...LARGE_FORMAT_CATEGORY_SLUGS] } },
     },
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }, { id: "desc" }],

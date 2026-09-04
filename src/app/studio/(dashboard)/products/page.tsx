@@ -33,14 +33,22 @@ export default async function ProductsPage({
     category?: string;
     tier?: string;
     stock?: string;
+    demo?: string;
     page?: string;
   }>;
 }) {
-  const { q, status, category, tier, stock, page } = await searchParams;
+  const { q, status, category, tier, stock, demo, page } = await searchParams;
 
   // One validated filter shape drives the where clause here AND the bulk
   // actions' select-all-matching path (audit L-AD1) — see product-filter.ts.
-  const filter = parseProductListFilter({ q, status, category, tier, stock });
+  const filter = parseProductListFilter({
+    q,
+    status,
+    category,
+    tier,
+    stock,
+    demo,
+  });
   const statusTab = filter.status ?? "PUBLISHED";
   const where = buildProductWhere(filter);
 
@@ -53,9 +61,13 @@ export default async function ProductsPage({
   });
   const publishedCount =
     statusGroups.find((g) => g.status === "PUBLISHED")?._count._all ?? 0;
+  const reviewCount =
+    statusGroups.find((g) => g.status === "REVIEW")?._count._all ?? 0;
   const draftCount =
     statusGroups.find((g) => g.status === "DRAFT")?._count._all ?? 0;
-  const allCount = publishedCount + draftCount;
+  const archivedCount =
+    statusGroups.find((g) => g.status === "ARCHIVED")?._count._all ?? 0;
+  const allCount = publishedCount + reviewCount + draftCount + archivedCount;
 
   // Server pagination (ENG-805 pattern, same as inquiries/activity): the
   // four-tier import put 4,000+ rows in this table — count → clamp a stale
@@ -66,7 +78,11 @@ export default async function ProductsPage({
       ? allCount
       : statusTab === "DRAFT"
         ? draftCount
-        : publishedCount;
+        : statusTab === "REVIEW"
+          ? reviewCount
+          : statusTab === "ARCHIVED"
+            ? archivedCount
+            : publishedCount;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const pageNum = Math.min(
     Math.max(1, Number.parseInt(page ?? "1", 10) || 1),
@@ -85,6 +101,7 @@ export default async function ProductsPage({
         priceMin: true,
         priceMax: true,
         status: true,
+        isDemo: true,
         featured: true,
         needsRewrite: true,
         tier: true,
@@ -114,6 +131,7 @@ export default async function ProductsPage({
       priceMin: product.priceMin,
       priceMax: product.priceMax,
       status: product.status,
+      isDemo: product.isDemo,
       featured: product.featured,
       needsRewrite: product.needsRewrite,
       tier: product.tier,
@@ -156,7 +174,9 @@ export default async function ProductsPage({
         statusTab={statusTab}
         statusCounts={{
           PUBLISHED: publishedCount,
+          REVIEW: reviewCount,
           DRAFT: draftCount,
+          ARCHIVED: archivedCount,
           ALL: allCount,
         }}
         initialQuery={filter.q ?? ""}

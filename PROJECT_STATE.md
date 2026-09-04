@@ -11,64 +11,130 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation Phase 16 — SEO, accessibility, performance (batches 1-2)
-Phase Status:             COMPLETE (2026-09-03; base 2757692 = origin/main after PR #31; branch
-                          claude/session-6h1a70). All five gates the owner answered are now either
-                          recorded (D28) or built (D23, D18, D22, D24).
-Completed:                D23 legacy un-gated sheet push removed + one-writer invariant test;
-                          D18 nine dormant v2 motion files deleted (978 lines); D22 portfolio seed
-                          gated on PORTFOLIO_SEED=1 AND an empty case-* archive; D24 four obsolete
-                          workflows, .playwright-mcp/ and two regenerable audit artifacts deleted
-                          and gitignored, nine superseded docs bannered, stale text corrected
-In Progress:              nothing
-Next Exact Task:          TWO OWNER CALLS FIRST: (1) the storefront is under its own 44px tap floor
-                          in shared chrome — buttons 40px, footer links 39px, announcement 32px,
-                          locale switcher and shop tabs 22-39px wide; raising them is a design-system
-                          change. (2) src/lib/flourish.ts is dead code not on D18's approved list.
-                          Then the remaining gates — D7-D17, D19-D21, D25-D27
-                          (docs/transformation-roadmap.md §2). Unblocked without any decision:
-                          Phase 10 (Studio shell, minus the D8 demo tile and D17 design lab) and
-                          Phase 16 (SEO/a11y/perf, minus CSP). Phase 1b's remaining half needs D10,
-                          D19 and D20. .env.example is the owner's own edit.
-Files Created:            none
-Files Modified/Deleted:   src/actions/scraper-jobs.ts · src/lib/scraper/sheet-policy.test.ts ·
-                          prisma/seed-portfolio-cases.ts · prisma/bootstrap.ts · .github/workflows/ci.yml ·
-                          .gitignore · CLAUDE.md · AGENTS.md · README.md · DESIGN.md · CONTEXT.md ·
-                          docs/audit-uiux.md · docs/studio-cms/{README,08-owner-handbook}.md ·
-                          docs/transformation-audit.md · src/components/motion/reveal.tsx ·
-                          src/components/studio/media/media-grid.tsx · CHANGELOG.md · this file.
-                          DELETED: 9 dormant v2 files, 4 workflows, .playwright-mcp/ (6),
-                          audit/{crawl-report,lh-summary}.json
-Database Changes:         none. 44 migrations at HEAD, unchanged. No schema, no column, no data.
-Content Changes:          none. The portfolio seed writes strictly less than before.
-Demo Data:                none — HARD RULE 3, now structurally enforced for the portfolio archive.
+Current Phase:            Transformation COMPLETE — Phases 1b–17 of the master prompt built on PR #42
+                          (B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 · C2 · F2); CI sweeps the
+                          demo detail routes, the E2E smoke, the lightboxes and the Studio
+                          (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
+Phase Status:             every batch COMPLETE (2026-09-04); PR #42 draft, ready for the owner's review;
+                          CI green on every pushed head
+                          on every head; Vercel preview green after the P2037 pool/retry fix
+Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
+                          ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
+                          demo gate on every public reader + DEMO prefix retired · Faq.status ·
+                          Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
+                          SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
+                          ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
+In Progress:              nothing in flight. Owner-machine follow-ups: fetch the planned Higgsfield
+                          sets in docs/media-v3-manifest.json (the CDN refuses the sandbox); replace
+                          the generated maker portrait with a photograph; turn
+                          SiteSettings.demoContentPublic on only as a deliberate act; review and
+                          merge PR #42
+Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
+                          Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
+                          (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
+                          2026-09-03: D9/D26 commission framing all six kinds; D10/D20 Part 14
+                          ceiling; D7/D8/D14 additive schema + isDemo, demo content public only
+                          behind SiteSettings.demoContentPublic or off production; D25 ten steps.
+Files Created:            11 migration dirs (20260904100000 … 20260904110000) · src/lib/
+                          {content-status,demo-clause,demo-content,activity-snapshot,
+                          process-steps}.ts (+ tests) · tests/db/{testimonials-gate,demo-gate}.test.ts
+                          · tests/stubs/server-only.ts · A3: src/lib/{card-meta,flip,swatch-colors}.ts
+                          (+ tests) · shop/{quick-view,quick-view-trigger,card-hover-video,
+                          card-ask-whatsapp}.tsx · storefront/lightbox.tsx · E: lib/scraper/{stages,
+                          stages-server,normalize}.ts · hooks/use-scrape-runner.ts · scraper/layout.tsx
+                          · actions/{research,sheet-fill}.ts · lib/import/tier-fill.ts · studio
+                          research + sheet-import/conflicts routes · settings/sheet-ids-section.tsx
+                          · A2: src/lib/furniture-kinds.ts · A4: storefront/accordion-gallery.tsx ·
+                          studio/(dashboard)/{process,materials}/{page,loading}.tsx · C2:
+                          storefront/fullscreen-gallery.tsx
+Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-usages,shop,
+                          search-query,catalog-nav,catalog-mirror,custom-pages-server,
+                          custom-page-data,large-format,site-settings,activity,order-visibility,
+                          scraper/product-sheet-sync}.ts · src/actions/{helpers,order,search,shop,
+                          blog,portfolio,products,custom-pages}.ts · src/app/sitemap.ts · every
+                          (v2) page that reads content · Studio product list/page · four Studio
+                          form schemas · vitest.db.config.mts · tests updated. Nothing deleted.
+                          A3: shop.ts D21 select · catalog-product-card · product page/gallery/
+                          order-panel/model-viewer · portfolio lightbox-gallery · shop + category
+                          pages · search page defaults · design-lab mock rows. E: scraper actions,
+                          adapters, run-scope, breaker, sheets, sheet-push · import.ts preview +
+                          overwriteOwnerEdited · import-wizard · settings form/page · sidebar ·
+                          prisma/import-tiers.ts (thin caller) · docs/{scraper,google-sheets}.md.
+                          A2: page-sections{,-server,-studio}.ts · sections-board · site-images.ts
+                          (+10 slots) · large-format.ts · (v2)/page.tsx · large-resin-art/page.tsx ·
+                          nine message files (+75 keys) · site-copy.generated.ts (1,282 slots).
+                          A4: process/about/blog pages · page-sections{,.test}.ts (process-steps,
+                          materials) · site-images.ts (+4 slots) · sidebar · studio-audit routes ·
+                          nine message files (+21 keys, 19 relabelled) · registry 1,303 slots.
+                          C2: custom-blocks.ts (+10 blocks, 16) · custom-page-blocks.tsx ·
+                          studio custom-pages block-fields/board · media-usages.ts · tests/db
+                          media-usages (+5 cases) · prisma/fixtures/demo/custom-blocks.json (+4
+                          lander blocks) · lib/demo/fixtures.ts enum · docs/studio-cms/04 ·
+                          vitest.db.config.mts (fileParallelism false)
+Database Changes:         11 additive migrations (44 → 55). One data statement: existing
+                          Testimonial rows back-filled to PUBLISHED (they were live). Product
+                          isDemo ADD COLUMN takes a brief ACCESS EXCLUSIVE lock — deploy off-peak.
+Content Changes:          none
+Demo Data:                prisma/fixtures/demo/* (100 products, 30 posts, 40 testimonials, …)
+                          seeded into the LOCAL database only via npm run seed:demo; the loader
+                          refuses production hosts; bootstrap.ts never references it
 Assets Added:             none
-Tests Run:                typecheck · lint · test (383) · copy:check (1,185) · i18n plain and --stale ·
-                          npm run build against local Postgres 16 with PORTFOLIO_SEED=1 · test:db ·
-                          redesign-audit at 1440/1280/390/360 over the 13 CI routes plus RTL ·
-                          a11y-audit + RTL · keyboard-audit at 1440 and 390 (NEW — the overlays'
-                          open/focus/Escape/return contract, which axe cannot check) · test:e2e ·
-                          motion-budget · the D22 gate proven on a live database in all three states ·
-                          the D23 guard proven by reintroducing a second writer and watching it fail ·
-                          the keyboard gate proven by swapping Escape for a key that does not dismiss
-Tests Passing:            all of the above
-Known Issues:             Motion payload 48.2 KB gzipped against Part 14's 45 KB budget (was 51.1
-                          before the orphaned SplitText registration went) — the gate now ratchets at
-                          49 KB and the remaining 3.2 KB is D10's to decide. Two mistakes reached main
-                          in PR #32 and are repaired in PR #33: the hero-parallax deletion and the
-                          D22 slug-prefix barrier. src/lib/flourish.ts is dead but unapproved for
-                          deletion (D18 addendum). Three .claude/ skills point at the archived
-                          DESIGN.md. .env.example unverified:
-                          `.env*` is denied for READING as well as writing in this environment, so
-                          the audit's claims about its contents could not be checked; the complete
-                          list of variables the code reads is in PR #32's body. test:e2e still not
-                          in CI. The audit's "six obsolete workflows" was wrong — four are; the
-                          other three are the documented rebuild/refresh path and stay.
-Next Session Instruction: Read this block, then docs/transformation-roadmap.md §2. D28's rule governs
-                          any use of the discarded layer: individually reviewed PRs only, never a
-                          bulk cherry-pick. Branch from origin/main, never local main. CI runs; run
-                          locally what ci.yml does not sweep (detail routes, E2E, extra widths) and
-                          say so.
+Tests Run:                typecheck · lint · test (40 files / 391) · test:db (4 files / 13) ·
+                          copy:check (1,185) · migrate deploy + migrate diff after every migration ·
+                          npm run build (local Postgres, bootstrap 4,385 products) · motion-budget ·
+                          redesign-audit 13 routes at 1440 + 390 + RTL 390 · a11y-audit 390 ·
+                          keyboard-audit · test:e2e (10/10) · studio-audit (30 routes) · behaviour
+                          proofs on a production-mode server: hidden demo PDP renders not-found with
+                          no Product JSON-LD and no sitemap entry; shown demo PDP renders in full
+                          with noindex; the demo title no longer leaks into the 404's <title>
+                          · E + A3 merged head (817865e): typecheck · lint · test (63 / 618) ·
+                          test:db (6 / 28) · copy:check (1,207) · i18n-missing + --stale · build ·
+                          motion 48.4 KB · redesign-audit 18 routes at 1440/390/360 + 8 RTL at 390 ·
+                          a11y-audit 1440/390/RTL · keyboard 1440/390 · e2e 10/10 · studio-audit 34
+                          routes 1440/390 (one 390 overflow on /studio/sheet-import fixed) ·
+                          Lighthouse budgets met · demo proofs incl. the IN_ROOM room-context band
+                          · A2 merged head (909e28a): the same set — test (63 / 620) · copy:check
+                          (1,282) · studio-audit 34 routes 1440/390 after the sections-board
+                          contrast fix · demo detail routes re-audited after re-seeding
+                          · A4 merged head (352ef9e): the same set — test (63 / 623) · copy:check
+                          (1,303) · --stale 19 relabelled values, all locales · studio-audit 36
+                          routes 1440/390 · blog demo proofs (DemoMark, no Article JSON-LD)
+                          · C2 merged head (cfa918e): the same set — test (63 / 628) · test:db
+                          (6 / 33, sequential files) · demo lander renders all four new blocks
+                          · F2 tree: smoke 27/27 · redesign-audit with touch contexts, the 44px
+                          FAIL and the header-contrast rule clean at 1440/390/360 + RTL 1440/390 ·
+                          a11y 1440/390/RTL · keyboard 1440/390 incl. three lightboxes · studio 36
+                          routes 1440/390 · Lighthouse home 98 / LCP 1.0 s with drift · 404s measured
+Tests Passing:            all of the above (motion 48.2 KB is in the 45–49 KB warn band as before)
+Known Issues:             Subagent API returned 529 for the whole batch, so B0 was implemented in
+                          the main session rather than by the planned agent workflow; the
+                          adversarial verifier pass is replaced by the grep sweep + db tests until
+                          capacity returns. Five pre-existing drift statements on main (trigram
+                          indexes, two defaults) — a separate chore. OG-image routes for detail
+                          pages are not demo-gated (they render a title only when the page is
+                          reachable). PRE-EXISTING soft-404: detail routes stream a 200 shell
+                          before notFound() resolves (loading boundary), so a missing slug
+                          answers 200 + the not-found UI + noindex — an SEO item for batch F2,
+                          not introduced here.
+                          The session container restarts after idle stretches: running agents'
+                          shells freeze (A4, C2, F2 were stopped and finished by hand) and
+                          Postgres must be restarted (pg_ctl start on /var/lib/postgresql/rivyadata).
+                          Pre-existing soft-404 CLOSED by F2 (route groups scope the list pages'
+                          loading boundaries). Search page, demo order flow (cuid validation), the
+                          chrome's coarse-pointer tap floor and the transparent header's contrast
+                          over bright frames were all fixed by F2 after its gates found them.
+                          E leaves syncWebsiteProductsToSheet reading its sheet id from the
+                          environment (its writer is outside E's files; documented in
+                          docs/google-sheets.md). Bulk Import re-imports now skip untouched
+                          matching rows unless "overwrite owner-edited products" is ticked.
+Next Session Instruction: The transformation is complete on PR #42; the next session starts from the
+                          owner's review. `npm run test:db` seeds AND removes the demo set in the database it
+                          runs against — run `npm run seed:demo` again before any audit that
+                          needs /product/demo-product-001 (learned twice this session).
+                          Read this block, then /root/.claude/plans/…elegant-mango.md (the
+                          approved plan) and CHANGELOG.md's B0 entry. Branch is
+                          claude/rivya-website-redesign-dc3jz0 on PR #42. Wave scripts and
+                          worktree prep live in the session scratchpad.
 ```
 
 ---

@@ -1,338 +1,89 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent } from "react";
-import { StudioTableHead } from "@/components/studio/studio-table-head";
-import { StudioRow } from "@/components/studio/studio-row";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2, Upload } from "lucide-react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ArrowDown, ArrowUp, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { uploadMediaFiles } from "@/actions/media";
-import { isOptimizableImageSrc, isRenderableSrc } from "@/lib/image-src";
 import {
   deleteTestimonials,
   reorderTestimonial,
-  upsertTestimonial,
+  setTestimonialStatus,
 } from "@/actions/testimonials";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
-import {
-  TranslationsSection,
-  type TranslationsValue,
-} from "@/components/studio/translations-section";
-import { toTranslationsRecord } from "@/lib/translations-form";
 import { EmptyState } from "@/components/studio/page-header";
 import {
   Pagination,
   PAGE_SIZE,
   usePagination,
 } from "@/components/studio/pagination";
+import {
+  SortHead,
+  useSort,
+  type SortState,
+} from "@/components/studio/sort-header";
+import { StudioRow } from "@/components/studio/studio-row";
+import { StudioTableHead } from "@/components/studio/studio-table-head";
+import {
+  PERMISSION_BADGE_VARIANTS,
+  PERMISSION_LABELS,
+  STATUS_BADGE_VARIANTS,
+  STATUS_LABELS,
+  STATUS_ORDER,
+} from "@/components/studio/testimonials/labels";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useSelection } from "@/hooks/use-selection";
-import { useDismissGuard } from "@/hooks/use-dismiss-guard";
+import type {
+  PermissionStatus,
+  TestimonialStatus,
+} from "@/generated/prisma/enums";
 
 export type TestimonialRow = {
   id: string;
   name: string;
-  location: string | null;
+  /** Not rendered as a column — searched against, alongside name and
+   *  `linkedLabel`. */
   quote: string;
+  status: TestimonialStatus;
+  featured: boolean;
   rating: number;
-  avatarUrl: string | null;
   order: number;
-  /** Raw per-locale overrides JSON from the database (`{ [locale]: {…} }`). */
-  translations: unknown;
+  permissionStatus: PermissionStatus;
+  /** The linked product or case study title, or the free-text
+   *  `productTitle`, in that priority — whatever a reader would recognise
+   *  the row by. Null when nothing was ever recorded. */
+  linkedLabel: string | null;
+  isDemo: boolean;
+  /** Pre-formatted on the server to keep hydration deterministic. */
+  updatedAt: string;
+  /** Raw timestamp for the "Updated" sort column. */
+  updatedAtSort: number;
 };
 
-const RATINGS = [1, 2, 3, 4, 5] as const;
+const STATUS_TABS: { value: TestimonialStatus | "ALL"; label: string }[] = [
+  { value: "ALL", label: "All" },
+  ...STATUS_ORDER.map((value) => ({ value, label: STATUS_LABELS[value] })),
+];
 
-function truncate(text: string, max = 80) {
-  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
-}
-
-/** Create/edit form dialog. */
-function TestimonialFormDialog({
-  open,
-  onOpenChange,
-  testimonial,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  testimonial?: TestimonialRow | null;
-}) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Radix unmounts content on close, so keying the body by testimonial
-          resets field state on every open without any effect. */}
-      <TestimonialFormBody
-        key={testimonial?.id ?? "new"}
-        testimonial={testimonial}
-        onOpenChange={onOpenChange}
-      />
-    </Dialog>
-  );
-}
-
-function TestimonialFormBody({
-  testimonial,
-  onOpenChange,
-}: {
-  testimonial?: TestimonialRow | null;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const router = useRouter();
-  const avatarInputRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState(testimonial?.name ?? "");
-  const [location, setLocation] = useState(testimonial?.location ?? "");
-  const [quote, setQuote] = useState(testimonial?.quote ?? "");
-  const [rating, setRating] = useState(testimonial?.rating ?? 5);
-  const [avatarUrl, setAvatarUrl] = useState(testimonial?.avatarUrl ?? "");
-  const [translations, setTranslations] = useState<TranslationsValue>(() =>
-    toTranslationsRecord(testimonial?.translations),
-  );
-  const [busy, setBusy] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const isEdit = Boolean(testimonial);
-
-  async function handleAvatarUpload(files: FileList | null) {
-    const file = files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("files", file);
-    formData.append("folder", "site");
-
-    setUploading(true);
-    const res = await uploadMediaFiles(formData);
-    setUploading(false);
-    if (avatarInputRef.current) avatarInputRef.current.value = "";
-
-    if (res.ok) {
-      const url = res.data?.[0]?.url;
-      if (url) {
-        setAvatarUrl(url);
-        toast.success("Avatar uploaded.");
-      }
-    } else {
-      toast.error(res.error);
-    }
+function getSortValue(row: TestimonialRow, key: string) {
+  switch (key) {
+    case "name":
+      return row.name;
+    case "status":
+      return STATUS_ORDER.indexOf(row.status);
+    case "rating":
+      return row.rating;
+    case "updated":
+      return row.updatedAtSort;
+    case "order":
+    default:
+      return row.order;
   }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!name.trim() || !quote.trim()) {
-      toast.error("Name and quote are required.");
-      return;
-    }
-    setBusy(true);
-    const res = await upsertTestimonial({
-      id: testimonial?.id,
-      name: name.trim(),
-      location: location.trim() || undefined,
-      quote: quote.trim(),
-      rating,
-      avatarUrl: avatarUrl.trim() || undefined,
-      translations,
-    });
-    setBusy(false);
-    if (res.ok) {
-      toast.success(isEdit ? "Testimonial updated." : "Testimonial created.");
-      onOpenChange(false);
-      router.refresh();
-    } else {
-      toast.error(res.error);
-    }
-  }
-
-  // Blocks Escape and outside-clicks while the dialog holds unsaved
-  // input, and unconditionally while a save is in flight.
-  const [dismissRef, dismissProps] = useDismissGuard(busy);
-
-  return (
-    <DialogContent
-      className="max-h-[85vh] max-w-md overflow-y-auto"
-      ref={dismissRef}
-      {...dismissProps}
-    >
-      <DialogHeader>
-        <DialogTitle>
-          {isEdit ? "Edit testimonial" : "New testimonial"}
-        </DialogTitle>
-        <DialogDescription>
-          {isEdit
-            ? "Update the customer's words, rating or avatar."
-            : "Add a customer quote to feature on the storefront."}
-        </DialogDescription>
-      </DialogHeader>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="testimonial-name">Name</Label>
-          <Input
-            id="testimonial-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Priya Sharma"
-            required
-            autoFocus
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="testimonial-location">Location</Label>
-          <Input
-            id="testimonial-location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Mumbai"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="testimonial-quote">Quote</Label>
-          <Textarea
-            id="testimonial-quote"
-            value={quote}
-            onChange={(e) => setQuote(e.target.value)}
-            placeholder="The resin tray turned out even more beautiful than I imagined…"
-            rows={4}
-            required
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="testimonial-rating">Rating</Label>
-          <Select
-            value={String(rating)}
-            onValueChange={(value) => setRating(Number(value))}
-          >
-            <SelectTrigger id="testimonial-rating" className="w-full">
-              <SelectValue placeholder="Rating" />
-            </SelectTrigger>
-            <SelectContent>
-              {RATINGS.map((value) => (
-                <SelectItem key={value} value={String(value)}>
-                  <span className="text-sapphire-ink">{"★".repeat(value)}</span>
-                  <span className="text-muted-foreground">({value})</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="testimonial-avatar">Photograph</Label>
-          <input
-            ref={avatarInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => handleAvatarUpload(e.target.files)}
-          />
-          <div className="flex gap-2">
-            <Input
-              id="testimonial-avatar"
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="https://…"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="shrink-0"
-              disabled={uploading || busy}
-              onClick={() => avatarInputRef.current?.click()}
-            >
-              <Upload /> {uploading ? "Uploading…" : "Upload"}
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Optional — the customer, or the piece they commissioned. It leads
-            the card at 4:5 wherever their words appear. Left empty, the card
-            is the quote alone; it is never given a stand-in face.
-          </p>
-          {/* The field took a URL long before anything rendered it, so a typo
-              was invisible until someone opened the storefront. */}
-          {isRenderableSrc(avatarUrl.trim()) ? (
-            <div className="relative mt-2 aspect-[4/5] w-24 overflow-hidden rounded-card border border-border bg-muted">
-              <Image
-                src={avatarUrl.trim()}
-                alt=""
-                fill
-                sizes="96px"
-                unoptimized={!isOptimizableImageSrc(avatarUrl.trim())}
-                className="object-cover"
-              />
-            </div>
-          ) : null}
-        </div>
-
-        {/* The customer's name is never translated — only their words and place. */}
-        <TranslationsSection
-          value={translations}
-          onChange={setTranslations}
-          idPrefix="testimonial"
-          fields={[
-            { name: "quote", label: "Quote", kind: "textarea", base: quote },
-            {
-              name: "location",
-              label: "Location",
-              kind: "text",
-              base: location,
-            },
-          ]}
-        />
-
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onOpenChange(false)}
-            disabled={busy}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" size="sm" disabled={busy || uploading}>
-            {busy ? "Saving…" : isEdit ? "Save changes" : "Create testimonial"}
-          </Button>
-        </DialogFooter>
-      </form>
-    </DialogContent>
-  );
-}
-
-/** Header action — owns its own create dialog instance. */
-export function NewTestimonialButton() {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <Button size="sm" onClick={() => setOpen(true)}>
-        <Plus /> New testimonial
-      </Button>
-      <TestimonialFormDialog open={open} onOpenChange={setOpen} />
-    </>
-  );
 }
 
 export function TestimonialList({
@@ -341,22 +92,65 @@ export function TestimonialList({
   testimonials: TestimonialRow[];
 }) {
   const router = useRouter();
-  const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
-    testimonials,
-    PAGE_SIZE,
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [reordering, setReordering] = useState(false);
+
+  const statusFilter =
+    (searchParams.get("status") as TestimonialStatus | null) ?? "ALL";
+
+  const filtered = useMemo(() => {
+    const byStatus =
+      statusFilter === "ALL"
+        ? testimonials
+        : testimonials.filter((t) => t.status === statusFilter);
+    const q = search.trim().toLowerCase();
+    if (!q) return byStatus;
+    return byStatus.filter(
+      (t) =>
+        t.name.toLowerCase().includes(q) ||
+        t.quote.toLowerCase().includes(q) ||
+        (t.linkedLabel ?? "").toLowerCase().includes(q),
+    );
+  }, [testimonials, statusFilter, search]);
+
+  const { sorted, sort, toggle } = useSort<TestimonialRow>(
+    filtered,
+    getSortValue,
+    { key: "order", dir: "asc" } satisfies SortState,
   );
+
+  const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
+    sorted,
+    PAGE_SIZE,
+    `${statusFilter}:${search}:${sort.key}:${sort.dir}`,
+  );
+
   const rowIds = useMemo(() => pageRows.map((t) => t.id), [pageRows]);
   const selection = useSelection(rowIds);
-  const [editing, setEditing] = useState<TestimonialRow | null>(null);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [reordering, setReordering] = useState(false);
+
+  // Reorder only makes sense against the natural (unsorted) order — moving a
+  // row "up" while the table reads by rating or name would move it somewhere
+  // the visible order does not show.
+  const naturalOrder = sort.key === "order" && sort.dir === "asc";
+
+  function updateStatusFilter(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "ALL") params.delete("status");
+    else params.set("status", value);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
 
   async function handleDelete() {
     const count = selection.count;
-    setDeleting(true);
+    setBusy(true);
     const res = await deleteTestimonials(selection.ids);
-    setDeleting(false);
+    setBusy(false);
     setConfirmOpen(false);
     if (res.ok) {
       toast.success(
@@ -367,6 +161,29 @@ export function TestimonialList({
     } else {
       toast.error(res.error);
     }
+  }
+
+  async function handleBulkStatus(status: TestimonialStatus) {
+    setBusy(true);
+    const res = await setTestimonialStatus(selection.ids, status);
+    setBusy(false);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    const { updated, refused } = res.data ?? { updated: 0, refused: [] };
+    if (updated > 0) {
+      toast.success(
+        `Marked ${updated} ${updated === 1 ? "testimonial" : "testimonials"} as ${STATUS_LABELS[status].toLowerCase()}.`,
+      );
+    }
+    if (refused.length > 0) {
+      toast.error(
+        `${refused.length} skipped: ${refused[0]?.reason ?? "not eligible"}${refused.length > 1 ? ` (and ${refused.length - 1} more)` : ""}`,
+      );
+    }
+    selection.clear();
+    router.refresh();
   }
 
   async function handleReorder(id: string, direction: "up" | "down") {
@@ -382,121 +199,272 @@ export function TestimonialList({
       <EmptyState
         title="No testimonials yet"
         description="Add your first customer quote to build trust on the storefront."
-        action={<NewTestimonialButton />}
       />
     );
   }
 
   return (
     <>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <Search
+            aria-hidden
+            strokeWidth={1.5}
+            className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-graphite"
+          />
+          <Input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, quote or linked piece…"
+            aria-label="Search testimonials"
+            className="w-72 ps-10"
+          />
+        </div>
+      </div>
+
       <div
+        role="group"
+        aria-label="Filter by status"
+        className="mb-4 flex w-fit flex-wrap items-center gap-1 rounded-full border border-border bg-card p-1"
+      >
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            aria-pressed={statusFilter === tab.value}
+            onClick={() => updateStatusFilter(tab.value)}
+            className={
+              statusFilter === tab.value
+                ? "inline-flex min-h-9 items-center rounded-full bg-foreground/6 px-4 text-sm font-medium text-foreground"
+                : "inline-flex min-h-9 items-center rounded-full px-4 text-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+            }
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="No testimonials match"
+          description="Try a different search or clear the status filter."
+        />
+      ) : (
+        <>
+          {/* Phone cards below md — same pattern as the commission board. */}
+          <label className="mb-3 flex min-h-11 cursor-pointer items-center gap-3 text-small text-graphite md:hidden">
+            <Checkbox
+              aria-label="Select all"
+              checked={selection.allSelected}
+              onCheckedChange={selection.toggleAll}
+            />
+            Select all on this page
+          </label>
+          <ul className="space-y-3 md:hidden">
+            {pageRows.map((row) => (
+              <li
+                key={row.id}
+                className="rounded-card border border-border bg-card p-4 shadow-e1"
+              >
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    aria-label={`Select ${row.name}`}
+                    checked={selection.selected.has(row.id)}
+                    onCheckedChange={() => selection.toggle(row.id)}
+                    className="mt-1"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-small font-medium text-foreground">
+                      <Link
+                        href={`/studio/testimonials/${row.id}`}
+                        className="rounded-input underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                      >
+                        {row.name}
+                      </Link>
+                      {row.isDemo && (
+                        <Badge variant="outline" className="ms-2">
+                          DEMO
+                        </Badge>
+                      )}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-small text-graphite">
+                      {row.quote}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <Badge variant={STATUS_BADGE_VARIANTS[row.status]}>
+                        {STATUS_LABELS[row.status]}
+                      </Badge>
+                      <Badge
+                        variant={
+                          PERMISSION_BADGE_VARIANTS[row.permissionStatus]
+                        }
+                      >
+                        {PERMISSION_LABELS[row.permissionStatus]}
+                      </Badge>
+                      <span className="u-num ms-auto text-graphite">
+                        {row.rating}★
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div
             tabIndex={0}
             role="region"
             aria-label="Testimonials"
-            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="hidden overflow-x-auto rounded-card border border-border bg-card shadow-e1 md:block [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
-        <table className="w-full text-sm">
-          <thead>
-            <StudioTableHead>
-              <th scope="col" className="w-12 px-4 py-3">
-                <Checkbox
-                  checked={selection.allSelected}
-                  onCheckedChange={selection.toggleAll}
-                  aria-label="Select all"
-                />
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Name
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Location
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Quote
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Rating
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Order
-              </th>
-              <th scope="col" className="w-16 px-4 py-3">
-                <span className="sr-only">Edit</span>
-              </th>
-            </StudioTableHead>
-          </thead>
-          <tbody>
-            {pageRows.map((testimonial, index) => {
-              // Reorder is global (see reorderTestimonial), so the up/down edge
-              // checks use the row's position in the full list, not the page.
-              const globalIndex = (page - 1) * pageSize + index;
-              return (
-                <StudioRow
-                  key={testimonial.id}
-                >
-                  <td className="px-4 py-3">
+            <table className="w-full text-sm">
+              <thead>
+                <StudioTableHead>
+                  <th scope="col" className="w-12 px-4 py-3">
                     <Checkbox
-                      checked={selection.selected.has(testimonial.id)}
-                      onCheckedChange={() => selection.toggle(testimonial.id)}
-                      aria-label={`Select ${testimonial.name}`}
+                      checked={selection.allSelected}
+                      onCheckedChange={selection.toggleAll}
+                      aria-label="Select all"
                     />
-                  </td>
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    {testimonial.name}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {testimonial.location ?? "—"}
-                  </td>
-                  <td className="max-w-xs px-4 py-3 text-muted-foreground">
-                    {truncate(testimonial.quote)}
-                  </td>
-                  <td
-                    className="px-4 py-3 whitespace-nowrap text-sapphire-ink"
-                    aria-label={`${testimonial.rating} out of 5 stars`}
-                  >
-                    {"★".repeat(testimonial.rating)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        disabled={globalIndex === 0 || reordering}
-                        onClick={() => handleReorder(testimonial.id, "up")}
-                        aria-label={`Move ${testimonial.name} up`}
-                      >
-                        <ArrowUp className="size-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        disabled={globalIndex === total - 1 || reordering}
-                        onClick={() => handleReorder(testimonial.id, "down")}
-                        aria-label={`Move ${testimonial.name} down`}
-                      >
-                        <ArrowDown className="size-4" />
-                      </Button>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      onClick={() => setEditing(testimonial)}
-                      aria-label={`Edit ${testimonial.name}`}
+                  </th>
+                  <SortHead
+                    label="Name"
+                    sortKey="name"
+                    sort={sort}
+                    onSort={toggle}
+                  />
+                  <SortHead
+                    label="Status"
+                    sortKey="status"
+                    sort={sort}
+                    onSort={toggle}
+                  />
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Featured
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Linked piece
+                  </th>
+                  <SortHead
+                    label="Rating"
+                    sortKey="rating"
+                    sort={sort}
+                    onSort={toggle}
+                    numeric
+                  />
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Permission
+                  </th>
+                  <SortHead
+                    label="Updated"
+                    sortKey="updated"
+                    sort={sort}
+                    onSort={toggle}
+                    numeric
+                  />
+                  <th scope="col" className="w-24 px-4 py-3">
+                    <span className="sr-only">Order</span>
+                  </th>
+                </StudioTableHead>
+              </thead>
+              <tbody>
+                {pageRows.map((row, index) => {
+                  const globalIndex = (page - 1) * pageSize + index;
+                  return (
+                    <StudioRow
+                      key={row.id}
+                      selected={selection.selected.has(row.id)}
                     >
-                      <Pencil className="size-4" />
-                    </Button>
-                  </td>
-                </StudioRow>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                      <td className="px-4 py-3">
+                        <Checkbox
+                          checked={selection.selected.has(row.id)}
+                          onCheckedChange={() => selection.toggle(row.id)}
+                          aria-label={`Select ${row.name}`}
+                        />
+                      </td>
+                      <td className="px-4 py-3 font-medium text-foreground">
+                        <Link
+                          href={`/studio/testimonials/${row.id}`}
+                          className="rounded-input underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                        >
+                          {row.name}
+                        </Link>
+                        {row.isDemo && (
+                          <Badge variant="outline" className="ms-2">
+                            DEMO
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant={STATUS_BADGE_VARIANTS[row.status]}>
+                          {STATUS_LABELS[row.status]}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-graphite">
+                        {row.featured ? "Yes" : "—"}
+                      </td>
+                      <td className="max-w-[24ch] px-4 py-3">
+                        <span
+                          className="block truncate text-graphite"
+                          title={row.linkedLabel ?? undefined}
+                        >
+                          {row.linkedLabel ?? "—"}
+                        </span>
+                      </td>
+                      <td className="u-num px-4 py-3 whitespace-nowrap text-graphite">
+                        {row.rating}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge
+                          variant={
+                            PERMISSION_BADGE_VARIANTS[row.permissionStatus]
+                          }
+                        >
+                          {PERMISSION_LABELS[row.permissionStatus]}
+                        </Badge>
+                      </td>
+                      <td className="u-num px-4 py-3 whitespace-nowrap text-graphite">
+                        {row.updatedAt}
+                      </td>
+                      <td className="px-4 py-3">
+                        {naturalOrder ? (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8"
+                              disabled={globalIndex === 0 || reordering}
+                              onClick={() => handleReorder(row.id, "up")}
+                              aria-label={`Move ${row.name} up`}
+                            >
+                              <ArrowUp className="size-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8"
+                              disabled={globalIndex === total - 1 || reordering}
+                              onClick={() => handleReorder(row.id, "down")}
+                              aria-label={`Move ${row.name} down`}
+                            >
+                              <ArrowDown className="size-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="sr-only">
+                            Sort by Order to reorder rows
+                          </span>
+                        )}
+                      </td>
+                    </StudioRow>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <Pagination
         page={page}
@@ -509,8 +477,37 @@ export function TestimonialList({
 
       <BulkBar count={selection.count} onClear={selection.clear}>
         <Button
+          variant="secondary"
+          size="sm"
+          className="min-h-11"
+          disabled={busy}
+          onClick={() => handleBulkStatus("PUBLISHED")}
+        >
+          Publish
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="min-h-11"
+          disabled={busy}
+          onClick={() => handleBulkStatus("VERIFIED")}
+        >
+          Mark verified
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="min-h-11"
+          disabled={busy}
+          onClick={() => handleBulkStatus("ARCHIVED")}
+        >
+          Archive
+        </Button>
+        <Button
           variant="destructive"
           size="sm"
+          className="min-h-11"
+          disabled={busy}
           onClick={() => setConfirmOpen(true)}
         >
           <Trash2 /> Delete
@@ -523,15 +520,7 @@ export function TestimonialList({
         count={selection.count}
         noun="testimonial"
         onConfirm={handleDelete}
-        busy={deleting}
-      />
-
-      <TestimonialFormDialog
-        open={editing !== null}
-        onOpenChange={(o) => {
-          if (!o) setEditing(null);
-        }}
-        testimonial={editing}
+        busy={busy}
       />
     </>
   );

@@ -27,6 +27,7 @@ export async function buildSectionRows(
     movable: section.movable,
     conditional: Boolean(section.conditional),
     ownsH1: Boolean(section.ownsH1),
+    defaultVisible: section.defaultVisible ?? true,
     visible: section.visible,
     unpublished: section.unpublished,
     notes: section.notes ?? "",

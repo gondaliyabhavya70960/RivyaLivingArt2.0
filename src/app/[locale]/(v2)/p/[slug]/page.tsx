@@ -39,7 +39,8 @@ export const dynamicParams = true;
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   try {
     const pages = await db.customPage.findMany({
-      where: liveWhere(),
+      // Never prerender a fixture; getCustomPage gates it at request time.
+      where: { ...liveWhere(), isDemo: false },
       orderBy: { updatedAt: "desc" },
       take: 12,
       select: { slug: true },

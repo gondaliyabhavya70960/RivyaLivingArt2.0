@@ -47,6 +47,26 @@ const href = z
     if (problem) ctx.addIssue({ code: "custom", message: problem });
   });
 
+/**
+ * A media-library URL for a video (or its poster), or empty. Same rule as
+ * `imageUrl` — site-root paths and absolute URLs only — with wording that
+ * does not tell an owner to "pick a picture" when they are pointing at a
+ * film.
+ */
+const mediaUrl = z
+  .string()
+  .trim()
+  .max(600)
+  .default("")
+  .superRefine((value, ctx) => {
+    if (!value) return;
+    if (value.startsWith("/") || /^https?:\/\//i.test(value)) return;
+    ctx.addIssue({
+      code: "custom",
+      message: "Pick a file from the library, or paste a full https:// URL.",
+    });
+  });
+
 /** A media-library URL, or empty. Site-root paths and absolute URLs only. */
 const imageUrl = z
   .string()
@@ -114,6 +134,142 @@ export const faqPickerSchema = z.object({
   faqIds: z.array(z.string().trim().max(40)).max(12).default([]),
 });
 
+/** Section spacing an owner may choose. Never `section-major` — a lander
+ *  assembled from a menu does not get to claim the page's two big moments,
+ *  those are reserved for pages a person actually designed. */
+const spacing = z.enum(["compact", "standard"]).default("standard");
+
+export const collectionGridSchema = z.object({
+  heading: text(160),
+  intro: text(400),
+  /** Up to six collections, in the order the owner picked them. */
+  slugs: z.array(z.string().trim().max(160)).max(6).default([]),
+  spacing,
+});
+
+export const portfolioGridSchema = z.object({
+  heading: text(160),
+  intro: text(400),
+  /** `recent` is the newest published case studies; `manual` is up to six the
+   *  owner chose by slug. No mode invents a case study (HARD RULES §1.1). */
+  mode: z.enum(["recent", "manual"]).default("recent"),
+  slugs: z.array(z.string().trim().max(160)).max(6).default([]),
+  limit: z.number().int().min(2).max(6).default(4),
+  spacing,
+});
+
+export const journalGridSchema = z.object({
+  heading: text(160),
+  intro: text(400),
+  /** One journal category's slug, or empty for the newest across all of
+   *  them. Always the newest published — a lander has no "manual" mode here
+   *  because the journal already has one page whose whole job is browsing by
+   *  hand (/blog); this block is a taste, not a second archive. */
+  categorySlug: text(160),
+  limit: z.number().int().min(2).max(6).default(4),
+  spacing,
+});
+
+export const testimonialSchema = z.object({
+  /** The Testimonial row's id. The row must be PUBLISHED and pass the demo
+   *  gate at RENDER time or the block shows nothing — an id an owner picked
+   *  while a quote was live is not a promise it stays live. */
+  testimonialId: text(40),
+  /** `editorial` is the pull-quote card; `featured` is the cinematic single-
+   *  quote treatment `FeaturedTestimonial` already builds for a homepage or
+   *  PDP moment. */
+  variant: z.enum(["editorial", "featured"]).default("editorial"),
+  spacing,
+});
+
+export const testimonialGridSchema = z.object({
+  heading: text(160),
+  /** `featured` is the catalogue's own curated flag; `manual` is up to six
+   *  ids the owner chose. No mode invents a review (HARD RULES §1.1). */
+  mode: z.enum(["featured", "manual"]).default("featured"),
+  ids: z.array(z.string().trim().max(40)).max(6).default([]),
+  limit: z.number().int().min(2).max(6).default(4),
+  spacing,
+});
+
+/**
+ * The same fields `heroSchema` carries, minus `spacing` (a dark, full-bleed
+ * opening band has no compact/standard choice, like the plain hero) — plus a
+ * video. Shares the `"hero"` slot with `hero` in `CUSTOM_BLOCKS` below: a
+ * page opens once, and this is the other way to do it.
+ */
+export const videoHeroSchema = z.object({
+  videoUrl: mediaUrl,
+  posterUrl: imageUrl,
+  imageAlt: text(200),
+  eyebrow: text(60),
+  headline: text(160),
+  body: text(600),
+  ctaLabel: text(40),
+  ctaHref: href,
+});
+
+/**
+ * A film beside a passage of text — the "video beside text" idiom, on a
+ * light ground rather than the hero's dark opening treatment. Uses the same
+ * `HeroMedia` component as `videoHero`, wrapped in an aspect-ratio box
+ * instead of a full-bleed one, so it inherits the same "poster is the LCP,
+ * film gated off reduced motion and touch" behaviour without re-deriving it.
+ */
+export const videoStorySchema = z.object({
+  videoUrl: mediaUrl,
+  posterUrl: imageUrl,
+  imageAlt: text(200),
+  heading: text(160),
+  body: text(800),
+  spacing,
+});
+
+/**
+ * One picture in a gallery block — the URL, what it shows, and an optional
+ * caption rendered as written. Captions and alt text live inside the array,
+ * so they are outside `TranslationsSection`'s flat-field reach; like a
+ * product's materials line they render beside translated chrome rather than
+ * inside a translated sentence, and the owner types them once.
+ */
+export const galleryImageSchema = z.object({
+  url: imageUrl,
+  alt: text(200),
+  caption: text(200),
+});
+
+/**
+ * `masonryGallery` — up to twelve pictures in CSS columns. The tiles cycle
+ * through four aspect ratios so the columns stagger without the block having
+ * to know each upload's real dimensions (Part 15: no image on this site
+ * fades in — every tile is a `MeniscusImage`).
+ */
+export const masonryGallerySchema = z.object({
+  heading: text(160),
+  images: z.array(galleryImageSchema).max(12).default([]),
+  spacing,
+});
+
+/**
+ * `bentoGallery` — up to six pictures in a 12-column bento: the first tile
+ * two rows tall, the rest 4:3. Same picture rows as the masonry.
+ */
+export const bentoGallerySchema = z.object({
+  heading: text(160),
+  images: z.array(galleryImageSchema).max(6).default([]),
+  spacing,
+});
+
+/**
+ * `fullscreenGallery` — up to twelve square thumbnails that open the shared
+ * storefront Lightbox (A3's `storefront/lightbox.tsx`): keyboard stepping,
+ * RTL-aware arrows, focus return and the FLIP entrance come with it.
+ */
+export const fullscreenGallerySchema = z.object({
+  heading: text(160),
+  images: z.array(galleryImageSchema).max(12).default([]),
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -136,6 +292,16 @@ export const CUSTOM_BLOCK_TYPES = [
   "imageCta",
   "faqPicker",
   "finalCta",
+  "collectionGrid",
+  "portfolioGrid",
+  "journalGrid",
+  "testimonial",
+  "testimonialGrid",
+  "videoHero",
+  "videoStory",
+  "masonryGallery",
+  "bentoGallery",
+  "fullscreenGallery",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -146,6 +312,17 @@ export type ProductGridData = z.infer<typeof productGridSchema>;
 export type ImageCtaData = z.infer<typeof imageCtaSchema>;
 export type FaqPickerData = z.infer<typeof faqPickerSchema>;
 export type FinalCtaData = z.infer<typeof finalCtaSchema>;
+export type CollectionGridData = z.infer<typeof collectionGridSchema>;
+export type PortfolioGridData = z.infer<typeof portfolioGridSchema>;
+export type JournalGridData = z.infer<typeof journalGridSchema>;
+export type TestimonialBlockData = z.infer<typeof testimonialSchema>;
+export type TestimonialGridData = z.infer<typeof testimonialGridSchema>;
+export type VideoHeroData = z.infer<typeof videoHeroSchema>;
+export type VideoStoryData = z.infer<typeof videoStorySchema>;
+export type GalleryImage = z.infer<typeof galleryImageSchema>;
+export type MasonryGalleryData = z.infer<typeof masonryGallerySchema>;
+export type BentoGalleryData = z.infer<typeof bentoGallerySchema>;
+export type FullscreenGalleryData = z.infer<typeof fullscreenGallerySchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -169,8 +346,17 @@ type BlockDef = {
    * rhythm by accident — the accident is not expressible.
    */
   ground: "dark" | "alternating";
-  /** At most one per page — a second hero is two `h1`s. */
-  once?: boolean;
+  /**
+   * A slot this block claims. At most one block occupying a given slot may
+   * appear on a page — the mechanism a plain "at most one of this exact
+   * type" boolean cannot express once two DIFFERENT types compete for the
+   * same opening: `hero` and `videoHero` are two ways to open a page, never
+   * both, so they share the `"hero"` slot. `finalCta` keeps a slot of its
+   * own (`"finalCta"`) for the same single-per-page rule it always had —
+   * nothing else may ever claim it, so it is still, in effect, "at most one
+   * of this type".
+   */
+  slot?: "hero" | "finalCta";
 };
 
 export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
@@ -187,7 +373,7 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
       { name: "imageAlt", label: "Picture description", kind: "text" },
     ],
     ground: "dark",
-    once: true,
+    slot: "hero",
   },
   richText: {
     type: "richText",
@@ -249,7 +435,109 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     // band is dark and runs straight into the obsidian footer". A toggle that
     // is wrong in every arrangement anyone builds is not a toggle.
     ground: "alternating",
-    once: true,
+    slot: "finalCta",
+  },
+  collectionGrid: {
+    type: "collectionGrid",
+    label: "Collections",
+    description: "A row of collections, picked by hand, doorway tiles.",
+    schema: collectionGridSchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "intro", label: "Intro", kind: "textarea" },
+    ],
+    ground: "alternating",
+  },
+  portfolioGrid: {
+    type: "portfolioGrid",
+    label: "Case studies",
+    description: "Real commissions — the newest ones, or ones you choose.",
+    schema: portfolioGridSchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "intro", label: "Intro", kind: "textarea" },
+    ],
+    ground: "alternating",
+  },
+  journalGrid: {
+    type: "journalGrid",
+    label: "Journal",
+    description: "The newest posts from the journal, or one category's.",
+    schema: journalGridSchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "intro", label: "Intro", kind: "textarea" },
+    ],
+    ground: "alternating",
+  },
+  testimonial: {
+    type: "testimonial",
+    label: "Testimonial",
+    description: "One customer's words, alone — a pull-quote or a moment.",
+    schema: testimonialSchema,
+    // Nothing here is text an owner types — the words live on the
+    // Testimonial row and are translated there, in the testimonials Studio.
+    translatable: [],
+    ground: "alternating",
+  },
+  testimonialGrid: {
+    type: "testimonialGrid",
+    label: "Testimonials",
+    description: "A wall of words — the featured ones, or ones you choose.",
+    schema: testimonialGridSchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
+    ground: "alternating",
+  },
+  videoHero: {
+    type: "videoHero",
+    label: "Video hero",
+    description: "The opening film, headline and one button.",
+    schema: videoHeroSchema,
+    translatable: [
+      { name: "eyebrow", label: "Eyebrow", kind: "text" },
+      { name: "headline", label: "Headline", kind: "text" },
+      { name: "body", label: "Body", kind: "textarea" },
+      { name: "ctaLabel", label: "Button label", kind: "text" },
+      { name: "imageAlt", label: "Poster description", kind: "text" },
+    ],
+    ground: "dark",
+    slot: "hero",
+  },
+  videoStory: {
+    type: "videoStory",
+    label: "Video and words",
+    description: "A film beside a heading and a passage of text.",
+    schema: videoStorySchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "body", label: "Body", kind: "textarea" },
+      { name: "imageAlt", label: "Poster description", kind: "text" },
+    ],
+    ground: "alternating",
+  },
+  masonryGallery: {
+    type: "masonryGallery",
+    label: "Masonry gallery",
+    description: "Up to twelve pictures in staggered columns, each with an optional caption.",
+    schema: masonryGallerySchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
+    ground: "alternating",
+  },
+  bentoGallery: {
+    type: "bentoGallery",
+    label: "Bento gallery",
+    description: "Up to six pictures in a bento grid — the first one large, the rest beside it.",
+    schema: bentoGallerySchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
+    ground: "alternating",
+  },
+  fullscreenGallery: {
+    type: "fullscreenGallery",
+    label: "Fullscreen gallery",
+    description: "Up to twelve thumbnails that open full-screen, with keyboard stepping.",
+    schema: fullscreenGallerySchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
+    ground: "alternating",
   },
 };
 
@@ -338,12 +626,24 @@ export function resolveBlockGrounds(
 export function describeBlockArrangementProblem(
   blocks: readonly { type: CustomBlockType; data?: unknown }[],
 ): string | null {
-  for (const type of CUSTOM_BLOCK_TYPES) {
-    if (!CUSTOM_BLOCKS[type].once) continue;
-    const count = blocks.filter((b) => b.type === type).length;
-    if (count > 1) {
-      return `A page has one ${CUSTOM_BLOCKS[type].label.toLowerCase()}, not ${count}.`;
+  // Group by SLOT, not by type — `hero` and `videoHero` are two different
+  // types that must never coexist, and a same-type-only check cannot see
+  // that. `Map` insertion order matches the blocks' own order, so the
+  // message always names the block that was already on the page first.
+  const bySlot = new Map<string, CustomBlockType[]>();
+  for (const block of blocks) {
+    const slot = CUSTOM_BLOCKS[block.type].slot;
+    if (!slot) continue;
+    const claimants = bySlot.get(slot) ?? [];
+    claimants.push(block.type);
+    bySlot.set(slot, claimants);
+  }
+  for (const [slot, claimants] of bySlot) {
+    if (claimants.length <= 1) continue;
+    if (slot === "hero" && new Set(claimants).size > 1) {
+      return `A page opens once — pick either ${CUSTOM_BLOCKS.hero.label.toLowerCase()} or ${CUSTOM_BLOCKS.videoHero.label.toLowerCase()}, not both.`;
     }
+    return `A page has one ${CUSTOM_BLOCKS[claimants[0]].label.toLowerCase()}, not ${claimants.length}.`;
   }
 
   const grounds = resolveBlockGrounds(blocks);
@@ -391,7 +691,9 @@ export function describeBlockArrangementNotice(
 export function resolveHeadingLevels(
   blocks: readonly { type: CustomBlockType }[],
 ): ("h1" | "h2")[] {
-  const heroAt = blocks.findIndex((b) => b.type === "hero");
+  // `videoHero` shares the `hero` slot: whichever of the two opens the page
+  // owns the h1, same as a plain hero always has.
+  const heroAt = blocks.findIndex((b) => CUSTOM_BLOCKS[b.type].slot === "hero");
   const ownerIndex = heroAt >= 0 ? heroAt : blocks.length > 0 ? 0 : -1;
   return blocks.map((_, index) => (index === ownerIndex ? "h1" : "h2"));
 }

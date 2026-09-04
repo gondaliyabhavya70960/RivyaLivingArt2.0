@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import Image from "next/image";
 import { useCallback, useState } from "react";
-import { ImageIcon, Loader2, Search } from "lucide-react";
+import { FileVideo, ImageIcon, Loader2, Search } from "lucide-react";
 
 import { listMediaForPicker, type PickerMediaItem } from "@/actions/media";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { MEDIA_FOLDERS } from "@/components/studio/media/folders";
 import { isOptimizableImageSrc } from "@/lib/image-src";
+import { formatDuration } from "@/lib/media";
 import { cn } from "@/lib/utils";
 
 /**
@@ -30,12 +31,16 @@ import { cn } from "@/lib/utils";
 export function MediaPicker({
   onSelect,
   defaultFolder,
-  triggerLabel = "From library",
+  accept = "IMAGE",
+  triggerLabel,
   trigger,
 }: {
   onSelect: (item: PickerMediaItem) => void;
   /** Pre-selected folder tab (e.g. "products" in the product form). */
   defaultFolder?: string;
+  /** What the picker lists. Defaults to IMAGE — every pre-existing call site
+   *  wants a picture and none passes this. */
+  accept?: "IMAGE" | "VIDEO";
   triggerLabel?: string;
   /**
    * Replaces the default outline button. The rich-text toolbar needs an icon
@@ -61,6 +66,7 @@ export function MediaPicker({
         folder: forFolder,
         q: q.trim() || undefined,
         cursor,
+        type: accept,
       });
       setLoading(false);
       if (!result.ok) {
@@ -71,7 +77,7 @@ export function MediaPicker({
       setItems((prev) => (cursor ? [...prev, ...data.items] : data.items));
       setNextCursor(data.nextCursor);
     },
-    [q],
+    [q, accept],
   );
 
   return (
@@ -85,8 +91,15 @@ export function MediaPicker({
     >
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button type="button" variant="outline" size="sm" className="min-h-11">
-            <ImageIcon /> {triggerLabel}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+          >
+            {accept === "VIDEO" ? <FileVideo /> : <ImageIcon />}{" "}
+            {triggerLabel ??
+              (accept === "VIDEO" ? "Choose video" : "From library")}
           </Button>
         )}
       </DialogTrigger>
@@ -94,8 +107,9 @@ export function MediaPicker({
         <DialogHeader>
           <DialogTitle>Media library</DialogTitle>
           <DialogDescription>
-            Pick an image already in the library — no re-upload, no duplicate
-            file.
+            {accept === "VIDEO"
+              ? "Pick a video already in the library — no re-upload, no duplicate file."
+              : "Pick an image already in the library — no re-upload, no duplicate file."}
           </DialogDescription>
         </DialogHeader>
 
@@ -161,33 +175,52 @@ export function MediaPicker({
         {error && <p className="text-sm text-alert">{error}</p>}
 
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
-          {items.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => {
-                onSelect(item);
-                setOpen(false);
-              }}
-              title={item.pathname}
-              className="group relative aspect-square overflow-hidden rounded-lg border border-border outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <Image
-                src={item.url}
-                alt=""
-                fill
-                sizes="140px"
-                unoptimized={!isOptimizableImageSrc(item.url)}
-                className="object-cover transition-transform duration-150 group-hover:scale-105 motion-reduce:transition-none"
-              />
-            </button>
-          ))}
+          {items.map((item) => {
+            const duration = formatDuration(item.duration);
+            const thumb = item.type === "VIDEO" ? item.posterUrl : item.url;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  onSelect(item);
+                  setOpen(false);
+                }}
+                title={item.pathname}
+                className="group relative aspect-square overflow-hidden rounded-lg border border-border outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {thumb ? (
+                  <Image
+                    src={thumb}
+                    alt=""
+                    fill
+                    sizes="140px"
+                    unoptimized={!isOptimizableImageSrc(thumb)}
+                    className="object-cover transition-transform duration-150 group-hover:scale-105 motion-reduce:transition-none"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-muted">
+                    <FileVideo
+                      className="size-6 text-muted-foreground"
+                      strokeWidth={1.5}
+                      aria-hidden
+                    />
+                  </div>
+                )}
+                {item.type === "VIDEO" && duration && (
+                  <span className="u-num absolute end-1 bottom-1 z-10 rounded-xs bg-obsidian/80 px-1.5 py-0.5 text-12 text-mineral">
+                    {duration}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {items.length === 0 && !loading && !error && (
           <p className="text-sm text-muted-foreground">
-            No images here yet — upload from the Media page or a form&apos;s upload
-            button.
+            No {accept === "VIDEO" ? "videos" : "images"} here yet — upload from
+            the Media page or a form&apos;s upload button.
           </p>
         )}
 

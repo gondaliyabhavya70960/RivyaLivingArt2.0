@@ -312,7 +312,13 @@ model CustomBlock {
 }
 ```
 
-Keep the block catalogue **small and boring** — six types, not twenty-four:
+Keep the block catalogue **small and boring** — it opened at six types, not
+twenty-four, and grew to sixteen in the Phase 11 block-catalogue batch (C2,
+2026-09-03/04), one block per commit with the reason recorded beside the count
+in `src/lib/custom-blocks.test.ts`. Every addition below is either a *reader*
+of content that already exists (collections, portfolio, journal, testimonials)
+or a *picture* block whose media rows join `media-usages.ts` in the same
+commit; none holds a price, a product, or a per-block theme.
 
 | Block | Fields |
 |---|---|
@@ -322,11 +328,22 @@ Keep the block catalogue **small and boring** — six types, not twenty-four:
 | `imageCta` | image, heading, body, CTA, image side |
 | `faqPicker` | heading, FAQ refs |
 | `finalCta` | heading, body, CTA (WhatsApp-aware) |
+| `collectionGrid` | heading, intro, up to six visible category slugs, spacing |
+| `portfolioGrid` | heading, intro, mode (`recent` \| `manual`), slugs, limit, spacing — PUBLISHED rows behind the demo gate |
+| `journalGrid` | heading, intro, optional category slug, limit, spacing — PUBLISHED posts behind the demo gate |
+| `testimonial` | one testimonial id, variant (`editorial` \| `featured`), spacing — renders nothing unless the row is PUBLISHED and passes the demo gate at render time |
+| `testimonialGrid` | heading, mode (`featured` \| `manual`), ids, limit, spacing → `TestimonialWall` |
+| `videoHero` | video, poster, alt, eyebrow, headline, body, CTA — dark ground; shares the hero *slot* (`BlockDef.once` became `slot`), so a page opens with a hero or a videoHero, never both |
+| `videoStory` | video, poster, alt, heading, body, spacing — the same `HeroMedia` idiom boxed 4:3 on a light ground |
+| `masonryGallery` | heading, up to twelve pictures (url, description, caption), spacing — CSS columns cycling four tile ratios |
+| `bentoGallery` | heading, up to six pictures, spacing — the homepage collections' 12-column bento, lead tile two rows tall |
+| `fullscreenGallery` | heading, up to twelve pictures — square thumbnails opening the shared storefront Lightbox |
 
 Route: `src/app/[locale]/(v2)/p/[slug]/page.tsx`, `dynamicParams` on, ISR 300s,
 `notFound()` for `DRAFT` outside draft mode. Scheduling piggybacks on the cron
 in `06-governance.md`.
 
-**Do not let this catalogue grow.** Every block added is a block that must
-survive the next redesign. Six blocks cover a festival lander; twenty-four
-recreate the layout rot the fixed registry exists to prevent.
+**Do not let this catalogue grow past sixteen.** Every block added is a block that must
+survive the next redesign. Sixteen blocks cover a festival lander, a portfolio
+showcase and a film page; twenty-four content-holding sections would recreate
+the layout rot the fixed registry exists to prevent.

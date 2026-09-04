@@ -152,6 +152,9 @@ vi.mock("@/lib/db", () => {
       portfolio: { findMany: vi.fn().mockResolvedValue([]) },
       siteSettings: { findMany: vi.fn().mockResolvedValue([]) },
       testimonial: { findMany: vi.fn().mockResolvedValue([]) },
+      // B0: two more guarded readers (video posters, research pictures).
+      media: { findMany: vi.fn().mockResolvedValue([]) },
+      researchRecord: { findMany: vi.fn().mockResolvedValue([]) },
       siteImage: { findMany: vi.fn().mockResolvedValue([]) },
       customPage: { findMany: vi.fn().mockResolvedValue([]) },
       page: {

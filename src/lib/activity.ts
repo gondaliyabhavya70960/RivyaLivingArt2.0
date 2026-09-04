@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 
+export { snapshotBefore, type Snapshot } from "@/lib/activity-snapshot";
+
 /**
  * Fire-and-forget audit trail. Logging must never break the mutation it
  * describes.

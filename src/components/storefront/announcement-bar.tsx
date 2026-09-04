@@ -148,7 +148,12 @@ export function AnnouncementBar({
         {href ? (
           <Link
             href={href}
-            className="underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian"
+            // The strip itself is a fixed 36px (§5.1) — too short to grow the
+            // link's own box to 44px without breaking that. Same expanded
+            // hit-area pseudo-element the pause/dismiss controls below use,
+            // gated to `pointer-coarse` only, so a mouse pointer's hover/
+            // click region still matches the visible underline exactly.
+            className="relative underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian pointer-coarse:after:absolute pointer-coarse:after:inset-x-0 pointer-coarse:after:-inset-y-4"
           >
             {message}
           </Link>

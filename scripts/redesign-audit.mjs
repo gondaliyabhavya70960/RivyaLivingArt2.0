@@ -23,6 +23,8 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
+import sharp from "sharp";
+
 import { launchChromium } from "./lib/browser.mjs";
 
 /**
@@ -46,11 +48,47 @@ const widthIndex = rest.indexOf("--w");
 const width = widthIndex === -1 ? 1440 : Number(rest[widthIndex + 1]);
 const base = process.env.BASE_URL ?? "http://localhost:3000";
 
+/* Touch-capable contexts at phone widths (F2). The 44px tap-floor rule below
+   used to be a NOTE because the browser context this script drove was always
+   mouse/fine-pointer, so every `pointer-coarse:min-h-11` utility the repo
+   ships (button.tsx, footer links, the announcement link, the locale
+   switcher, the shop tabs — A1) never applied and the count it reported was
+   never what a phone visitor actually gets. `hasTouch` (isMobile is NOT set — it widens innerWidth by a phantom scrollbar and fakes a 2px overflow;
+   which Chromium requires alongside it for `pointer: coarse` /
+   `any-pointer: coarse` to resolve in the media query) make those utilities
+   active only where a real phone would activate them too — ≤700px, the same
+   threshold the mobile-height branch below already uses. */
+const touchContext = width <= 700;
 const browser = await launchChromium();
 const context = await browser.newContext({
   viewport: { width, height: width < 700 ? 844 : 900 },
+  ...(touchContext ? { hasTouch: true } : {}),
 });
 const page = await context.newPage();
+
+/**
+ * WCAG relative-luminance contrast (F2, the header `data-ink` rule below).
+ * `sRgbToLinear` follows the spec's own piecewise definition; `contrastOf`
+ * is the standard `(L1+0.05)/(L2+0.05)` with the lighter channel first.
+ */
+function sRgbToLinear(channel) {
+  const c = channel / 255;
+  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+function relativeLuminance([r, g, b]) {
+  return 0.2126 * sRgbToLinear(r) + 0.7152 * sRgbToLinear(g) + 0.0722 * sRgbToLinear(b);
+}
+function contrastOf(rgbA, rgbB) {
+  const a = relativeLuminance(rgbA);
+  const b = relativeLuminance(rgbB);
+  const lighter = Math.max(a, b);
+  const darker = Math.min(a, b);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function parseRgbTriple(value) {
+  const m = String(value ?? "").match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
 
 let failures = 0;
 let routeFailures = 0;
@@ -489,8 +527,16 @@ for (const route of routesArg.split(",")) {
        - Anything inside the Studio scope, which is a dense desktop tool and
          not held to the storefront's tap floor.
 
-       Reported at NOTE while the count settles: the measurement is honest but
-       the exemption list is the part that decides whether it can ever fail. */
+       FAILS at touch widths (F2): the repo's own `pointer-coarse:min-h-11`
+       utilities (button.tsx, footer links, the announcement link, the locale
+       switcher, the shop tabs — A1) only grow a hit area under `pointer:
+       coarse`, so the rule is only honest where THIS SCRIPT'S OWN context is
+       touch-capable — `touchContext` above, ≤700px. Below that, this script
+       still counts and reports offenders (a design smell worth reading) but
+       does not fail the build on them: a fine-pointer viewport was never
+       promised 44px by a system that ties the expansion to coarse pointers
+       on purpose, and failing there would be enforcing a rule against a
+       viewport the rule never applied to. */
     const TAP_MIN = 44;
     const inRunningText = (el) => {
       const p = el.closest("p, li, blockquote, figcaption");
@@ -516,7 +562,9 @@ for (const route of routesArg.split(",")) {
       if (/after:-?inset|before:-?inset/.test(cls)) continue; // expanded hit area
       if (el.tagName === "A" && inRunningText(el)) continue;
       const r = el.getBoundingClientRect();
-      if (r.width < TAP_MIN || r.height < TAP_MIN) {
+      // Half a pixel of tolerance: a 44px floor met through `min-h-11` can
+      // measure 43.99 after subpixel layout, and that is not a small target.
+      if (r.width < TAP_MIN - 0.5 || r.height < TAP_MIN - 0.5) {
         smallTargets.push(
           `${describe(el)} ${Math.round(r.width)}×${Math.round(r.height)}`,
         );
@@ -622,7 +670,10 @@ for (const route of routesArg.split(",")) {
     report("FAIL", `lift or scale on a control's hover — ${audit.hoverLift.join(", ")} (Part 3.4: colour and underline only)`);
   }
   if (audit.smallTargetCount) {
-    report("NOTE", `${audit.smallTargetCount} interactive element(s) under the 44px tap floor — ${audit.smallTargets.join(", ")}`);
+    report(
+      touchContext ? "FAIL" : "NOTE",
+      `${audit.smallTargetCount} interactive element(s) under the 44px tap floor — ${audit.smallTargets.join(", ")}${touchContext ? "" : " (not failed — fine-pointer viewport, pointer-coarse: doesn't apply here)"}`,
+    );
   }
   // Promoted from NOTE in Phase 1b: every audited route passes it, so the
   // rule now holds the line instead of describing it. The count is of
@@ -631,6 +682,124 @@ for (const route of routesArg.split(",")) {
   if (audit.champagne > 2) {
     report("FAIL", `${audit.champagne} champagne-coloured elements in the first viewport (Part 3.1 caps visible ones at 2)`);
   }
+
+  /* Sticky header contrast (F2). `use-hero-ink.ts` / `site-header.tsx` set
+     `data-ink="mineral"` while the header floats transparent over a dark
+     hero and `data-ink="ink"` once it is solid — the audit's job is to check
+     that promise against the ACTUAL rendered pixels, not just trust the
+     attribute. Every other rule in this file reads computed style; this one
+     alone reads real pixels (via a Playwright screenshot decoded with
+     `sharp`), because "what is behind it" for a transparent header is
+     whatever photograph is mounted there — a gradient scrim's own computed
+     colour stops are not the same thing as what a visitor's eye contends
+     with over a bright frame of the pour.
+
+     Sample point: the header's own top-left corner, inside the `u-shell`
+     gutter and above the logo — empty in both LTR and RTL, at every width
+     the header renders at, and at the same y the logo's text sits behind
+     (the header's 64–80px band renders one background across its width, so
+     a few px away from a glyph is representative of what is directly behind
+     it). The colour compared is what the LOGO — the one header element whose
+     class is a literal `text-mineral`/`text-ink` toggle rather than an
+     opacity variant — actually computes to. */
+  const headerInfo = await page.evaluate(() => {
+    const header = document.querySelector('[data-slot="sf-site-header"]');
+    if (!header) return null;
+    const textEl =
+      header.querySelector("a[aria-label]") ??
+      header.querySelector("nav a, nav button") ??
+      header;
+    const r = header.getBoundingClientRect();
+    const t = textEl.getBoundingClientRect();
+    const nav = header.querySelector("nav")?.getBoundingClientRect() ?? null;
+    return {
+      ink: header.getAttribute("data-ink"),
+      color: getComputedStyle(textEl).color,
+      rect: { x: r.x, y: r.y, width: r.width, height: r.height },
+      text: { x: t.x, y: t.y, width: t.width, height: t.height },
+      nav: nav ? { x: nav.x, width: nav.width } : null,
+    };
+  });
+
+  if (!headerInfo) {
+    report("FAIL", 'no sticky header ([data-slot="sf-site-header"]) found — cannot verify header contrast');
+  } else if (!headerInfo.ink) {
+    report("FAIL", "sticky header has no data-ink attribute (use-hero-ink.ts)");
+  } else {
+    const textRgb = parseRgbTriple(headerInfo.color);
+    /* The pixels behind the header are a photograph: sample only once every
+       image in the first viewport has finished loading (bounded — a slow
+       host must not stall the audit), or the LQIP blur placeholder's grey is
+       what gets measured. Sample points sit in the GAPS beside the header's
+       text — just outside the logo on both sides, and just outside the nav
+       on both sides — at the text's vertical centre, never under a glyph (a
+       patch under the logo reads the logo's own pixels and reports a
+       contrast nobody sees). The worst of them is the ratio reported: the
+       scrim behind the row has to hold wherever a nav item lands. */
+    await page.evaluate(
+      () =>
+        Promise.race([
+          Promise.all(
+            [...document.images]
+              .filter((img) => !img.complete && img.getBoundingClientRect().top < innerHeight)
+              .map((img) => new Promise((done) => { img.onload = img.onerror = done; })),
+          ),
+          new Promise((done) => setTimeout(done, 4000)),
+        ]),
+    );
+    const patch = 10;
+    const midY = Math.round(headerInfo.text.y + headerInfo.text.height / 2 - patch / 2);
+    const xs = [
+      headerInfo.text.x - patch - 6,
+      headerInfo.text.x + headerInfo.text.width + 6,
+      ...(headerInfo.nav
+        ? [headerInfo.nav.x - patch - 6, headerInfo.nav.x + headerInfo.nav.width + 6]
+        : []),
+    ]
+      .map((x) => Math.round(x))
+      .filter((x) => x >= 0 && x + patch <= width);
+    let worst = null;
+    for (const sampleX of xs) {
+      try {
+        const shot = await page.screenshot({
+          clip: { x: sampleX, y: Math.max(0, midY), width: patch, height: patch },
+        });
+        const { data, info } = await sharp(shot)
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        let rSum = 0;
+        let gSum = 0;
+        let bSum = 0;
+        let n = 0;
+        for (let i = 0; i + 2 < data.length; i += info.channels) {
+          rSum += data[i];
+          gSum += data[i + 1];
+          bSum += data[i + 2];
+          n += 1;
+        }
+        if (n === 0 || !textRgb) continue;
+        const bgRgb = [rSum / n, gSum / n, bSum / n];
+        const ratio = contrastOf(textRgb, bgRgb);
+        if (!worst || ratio < worst.ratio) worst = { ratio, bgRgb, sampleX };
+      } catch {
+        // A screenshot can legitimately fail (a headless-Chromium quirk on
+        // one route) — the other sample points still speak.
+      }
+    }
+    if (!textRgb || !worst) {
+      report(
+        "FAIL",
+        `sticky header data-ink="${headerInfo.ink}" — could not measure its contrast (text colour ${headerInfo.color ?? "?"}, ${xs.length} sample point(s))`,
+      );
+    } else if (worst.ratio < 4.5) {
+      const rounded = (v) => Math.round(v);
+      report(
+        "FAIL",
+        `sticky header data-ink="${headerInfo.ink}" contrast ${worst.ratio.toFixed(2)}:1 against rgb(${worst.bgRgb.map(rounded).join(",")}) beside its text (x=${worst.sampleX}) — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))`,
+      );
+    }
+  }
+
   if (routeFailures === 0) console.log("  · clean");
 }
 

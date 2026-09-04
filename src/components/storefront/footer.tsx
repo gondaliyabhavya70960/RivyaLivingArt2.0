@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
    the padding box. ring-focus resolves champagne inside this band's
    data-theme="navy" scope. */
 const linkClass =
-  "inline-flex items-center rounded-[2px] py-3 -my-3 text-mist bg-origin-content bg-linear-to-r from-champagne/60 to-champagne/60 bg-[length:0%_1px] bg-bottom-left bg-no-repeat transition-[background-size,color] duration-(--dur-fast) ease-(--ease-luxury) hover:bg-[length:100%_1px] hover:text-mineral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none";
+  "inline-flex items-center rounded-[2px] py-3 -my-3 text-mist bg-origin-content bg-linear-to-r from-champagne/60 to-champagne/60 bg-[length:0%_1px] bg-bottom-left bg-no-repeat transition-[background-size,color] duration-(--dur-fast) ease-(--ease-luxury) hover:bg-[length:100%_1px] hover:text-mineral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none pointer-coarse:min-h-11 pointer-coarse:min-w-11";
 
 /* size-11 = the 44px touch minimum; the glyph stays 16px. */
 const socialClass =
@@ -190,6 +190,7 @@ export function Footer({
         <div className="grid gap-12 py-16 md:grid-cols-12 md:gap-8 md:py-20">
           <div className="flex flex-col gap-6 md:col-span-4">
             <Logo
+              wordmarkClassName="h-10"
               className="h-10 text-mineral"
               ariaLabel={tCommon("logoHome")}
               LinkComponent={Link}

@@ -1,11 +1,16 @@
 import { z } from "zod";
-import type { ContentStatus, FieldType } from "@/generated/prisma/enums";
+import type {
+  ContentStatus,
+  FieldType,
+  ProductImageRole,
+} from "@/generated/prisma/enums";
 import type { UpsertProductInput } from "@/actions/products";
 import {
   OCCASIONS,
   type Occasion,
 } from "@/components/studio/products/occasions";
 import { toTranslationsRecord } from "@/lib/translations-form";
+import { CONTENT_STATUSES } from "@/lib/content-status";
 
 // ————————————————————— Initial (server) shape —————————————————————
 
@@ -44,7 +49,12 @@ export type ProductFormInitial = {
   /** Import provenance — read-only in the form, shown in the Provenance panel. */
   importSource: string | null;
   importRef: string | null;
-  images: { url: string; alt: string; order: number }[];
+  images: {
+    url: string;
+    alt: string;
+    order: number;
+    role: ProductImageRole | null;
+  }[];
   customFields: {
     label: string;
     type: FieldType;
@@ -96,6 +106,17 @@ export const TIER_LABEL: Record<number, string> = {
   4: "Tier 4 — 3D printing",
 };
 
+// ————————————————————— Image roles —————————————————————
+
+/** "none" persists as SQL NULL — most shots carry no role at all. */
+export const IMAGE_ROLE_OPTIONS = [
+  { value: "none", label: "No role" },
+  { value: "HERO", label: "Hero" },
+  { value: "DETAIL", label: "Detail" },
+  { value: "IN_ROOM", label: "In room" },
+  { value: "PROCESS", label: "Process" },
+] as const;
+
 // ————————————————————— Schema —————————————————————
 
 const priceString = z
@@ -112,7 +133,7 @@ export const formSchema = z
     description: z.string(),
     categoryId: z.string().min(1, "Pick a category."),
     featured: z.boolean(),
-    status: z.enum(["DRAFT", "PUBLISHED"]),
+    status: z.enum(CONTENT_STATUSES),
     priceMin: priceString,
     priceMax: priceString,
     showPrice: z.boolean(),
@@ -131,7 +152,13 @@ export const formSchema = z
       }),
     ),
     careNotes: z.string(),
-    images: z.array(z.object({ url: z.string().min(1), alt: z.string() })),
+    images: z.array(
+      z.object({
+        url: z.string().min(1),
+        alt: z.string(),
+        role: z.enum(["none", "HERO", "DETAIL", "IN_ROOM", "PROCESS"]),
+      }),
+    ),
     videoUrl: optionalUrl,
     model3dUrl: optionalUrl,
     customFields: z.array(
@@ -190,7 +217,11 @@ export function buildDefaultValues(product?: ProductFormInitial): FormValues {
     madeWith: product?.madeWith ?? [],
     careNotes: product?.careNotes ?? "",
     images:
-      product?.images.map((img) => ({ url: img.url, alt: img.alt })) ?? [],
+      product?.images.map((img) => ({
+        url: img.url,
+        alt: img.alt,
+        role: img.role ?? "none",
+      })) ?? [],
     videoUrl: product?.videoUrl ?? "",
     model3dUrl: product?.model3dUrl ?? "",
     customFields:
@@ -250,6 +281,7 @@ export function buildUpsertPayload(
       url: img.url,
       alt: img.alt,
       order: index,
+      role: img.role === "none" ? null : img.role,
     })),
     customFields: values.customFields.map((field, index) => ({
       label: field.label,

@@ -3,10 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { requireStaff, revalidatePublic, type ActionResult } from "@/actions/helpers";
+import {
+  requireStaff,
+  revalidatePublic,
+  type ActionResult,
+} from "@/actions/helpers";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
+import { decideMerge, type MergeAction } from "@/lib/scraper/merge-policy";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import {
   fetchGoogleSheetCsv,
@@ -68,7 +73,10 @@ const PUBLIC_ENTITY: Partial<
  * are user-facing and must reach the client verbatim, which runAction's
  * generic error blurring would prevent.
  */
-function toFriendlyError(error: unknown, fallback: string): ActionResult<never> {
+function toFriendlyError(
+  error: unknown,
+  fallback: string,
+): ActionResult<never> {
   if (error instanceof ImportError) return { ok: false, error: error.message };
   console.error("Bulk import failed:", error);
   if (error instanceof Error && error.message === "Unauthorized") {
@@ -103,6 +111,21 @@ export type ImportPreview = {
   /** Rows found in the file before the cap was applied. */
   totalRows: number;
   truncated: boolean;
+  /**
+   * products template only: the H5 merge verdict per row (by `row.index`),
+   * computed against the CURRENT catalog before anything is written — same
+   * decision `import-tiers.ts`'s deploy-time fill and the scraper's promote
+   * path already make, reused here rather than re-invented. `ownerEditedCount`
+   * is how many rows the wizard's "will overwrite" warning names; it counts
+   * "refresh-availability" verdicts (an owner-edited row) — "skip" rows
+   * (already-clean, un-owner-touched) are excluded from the *warning* since
+   * running the import again on them changes nothing, but their verdict is
+   * still present in `verdicts` for the row-by-row display.
+   */
+  productMerge?: {
+    verdicts: Record<number, MergeAction>;
+    ownerEditedCount: number;
+  };
 };
 
 export async function previewImport(
@@ -148,7 +171,54 @@ export async function previewImport(
     const counts = { create: 0, update: 0, error: 0, total: validated.length };
     for (const row of validated) counts[row.status] += 1;
 
-    return { ok: true, data: { rows: validated, counts, totalRows, truncated } };
+    let productMerge: ImportPreview["productMerge"];
+    if (typeKey === "products") {
+      const slugs = [
+        ...new Set(
+          validated
+            .filter((row) => row.status !== "error")
+            .map((row) => row.data.slug?.trim())
+            .filter((slug): slug is string => Boolean(slug)),
+        ),
+      ];
+      const existing = slugs.length
+        ? await db.product.findMany({
+            where: { slug: { in: slugs } },
+            select: { slug: true, ownerTouched: true, needsRewrite: true },
+          })
+        : [];
+      const bySlug = new Map(existing.map((p) => [p.slug, p]));
+
+      const verdicts: Record<number, MergeAction> = {};
+      let ownerEditedCount = 0;
+      for (const row of validated) {
+        if (row.status === "error") continue;
+        const slug = row.data.slug?.trim();
+        const match = slug ? bySlug.get(slug) : undefined;
+        const verdict = decideMerge(
+          match
+            ? {
+                ownerTouched: match.ownerTouched,
+                needsRewrite: match.needsRewrite,
+              }
+            : null,
+        );
+        verdicts[row.index] = verdict;
+        if (verdict === "refresh-availability") ownerEditedCount += 1;
+      }
+      productMerge = { verdicts, ownerEditedCount };
+    }
+
+    return {
+      ok: true,
+      data: {
+        rows: validated,
+        counts,
+        totalRows,
+        truncated,
+        ...(productMerge ? { productMerge } : {}),
+      },
+    };
   } catch (error) {
     return toFriendlyError(
       error,
@@ -164,7 +234,14 @@ const runSchema = z.object({
   rows: z
     .array(z.record(z.string(), z.string()))
     .min(1, "Nothing to import — every row failed validation.")
-    .max(MAX_IMPORT_ROWS, `Imports are capped at ${MAX_IMPORT_ROWS} rows per file.`),
+    .max(
+      MAX_IMPORT_ROWS,
+      `Imports are capped at ${MAX_IMPORT_ROWS} rows per file.`,
+    ),
+  /** products only: the operator's explicit "yes, replace owner-edited rows
+   *  too" — ticked after `previewImport` showed how many that is. Ignored by
+   *  every other template. */
+  overwriteOwnerEdited: z.boolean().optional().default(false),
 });
 
 export type RunImportInput = z.input<typeof runSchema>;
@@ -174,6 +251,9 @@ export type ImportReport = {
   updated: number;
   /** Rows rejected by server-side re-validation (also listed in errors). */
   skipped: number;
+  /** products only: rows left alone (or refreshed availability-only)
+   *  because the owner had edited them and overwriteOwnerEdited wasn't set. */
+  protectedCount: number;
   errors: { row: number; message: string }[];
 };
 
@@ -197,7 +277,7 @@ export async function runImport(
         error: parsed.error.issues[0]?.message ?? "Invalid import request.",
       };
     }
-    const { typeKey, rows } = parsed.data;
+    const { typeKey, rows, overwriteOwnerEdited } = parsed.data;
 
     // Re-validate server-side — the client only echoes previewed rows,
     // but nothing stops a stale or hand-crafted payload.
@@ -219,15 +299,19 @@ export async function runImport(
 
     let created = 0;
     let updated = 0;
+    let protectedCount = 0;
     for (let start = 0; start < attempt.length; start += BATCH_SIZE) {
       const batch = attempt.slice(start, start + BATCH_SIZE);
       const results = await Promise.allSettled(
-        batch.map((row) => importRow(typeKey, row.data, ctx)),
+        batch.map((row) =>
+          importRow(typeKey, row.data, ctx, overwriteOwnerEdited),
+        ),
       );
       results.forEach((result, i) => {
         if (result.status === "fulfilled") {
           if (result.value === "created") created += 1;
-          else updated += 1;
+          else if (result.value === "updated") updated += 1;
+          else protectedCount += 1;
         } else {
           console.error(
             `Bulk import row ${batch[i].index} (${typeKey}) failed:`,
@@ -249,15 +333,20 @@ export async function runImport(
         created,
         updated,
         skipped,
+        protectedCount,
         errors: errors.length,
         total: rows.length,
+        ...(overwriteOwnerEdited ? { overwroteOwnerEdited: true } : {}),
       },
     });
     for (const path of REVALIDATE_PATHS[typeKey]) revalidatePath(path);
     const publicEntity = PUBLIC_ENTITY[typeKey];
     if (publicEntity) revalidatePublic(publicEntity);
 
-    return { ok: true, data: { created, updated, skipped, errors } };
+    return {
+      ok: true,
+      data: { created, updated, skipped, protectedCount, errors },
+    };
   } catch (error) {
     return toFriendlyError(error, "Something went wrong. Please try again.");
   }
@@ -301,7 +390,8 @@ async function buildContext(
     const tagBySlug = new Map<string, string>();
     for (const row of rows) {
       const category = row.data.category?.trim();
-      if (category) categoryBySlug.set(slugify(category) || "category", category);
+      if (category)
+        categoryBySlug.set(slugify(category) || "category", category);
       for (const tag of splitList(row.data.tags)) {
         tagBySlug.set(slugify(tag) || "tag", tag);
       }
@@ -349,10 +439,11 @@ function importRow(
   typeKey: ImportTypeKey,
   row: Record<string, string>,
   ctx: ImportContext,
-): Promise<"created" | "updated"> {
+  overwriteOwnerEdited: boolean,
+): Promise<"created" | "updated" | "protected"> {
   switch (typeKey) {
     case "products":
-      return importProductRow(row, ctx);
+      return importProductRow(row, ctx, overwriteOwnerEdited);
     case "categories":
       return importCategoryRow(row, ctx);
     case "blog-posts":
@@ -387,7 +478,9 @@ async function mirrorProductImage(url: string): Promise<string> {
   if (url.includes(".blob.vercel-storage.com")) return url; // already ours
 
   try {
-    const response = await safeFetch(url, { signal: AbortSignal.timeout(20_000) });
+    const response = await safeFetch(url, {
+      signal: AbortSignal.timeout(20_000),
+    });
     if (!response.ok) return url;
     const contentType = (response.headers.get("content-type") ?? "")
       .split(";")[0]
@@ -402,10 +495,9 @@ async function mirrorProductImage(url: string): Promise<string> {
     const ext = ACCEPTED_UPLOAD_TYPES[contentType] ?? ".jpg";
     const base =
       slugify(
-        decodeURIComponent(new URL(url).pathname.split("/").pop() ?? "").replace(
-          /\.[^.]+$/,
-          "",
-        ),
+        decodeURIComponent(
+          new URL(url).pathname.split("/").pop() ?? "",
+        ).replace(/\.[^.]+$/, ""),
       ) || "import";
     const stored = await putFile(buffer, {
       pathname: `products/${base}${ext}`,
@@ -496,10 +588,44 @@ function parseCustomFields(row: Record<string, string>): {
 async function importProductRow(
   row: Record<string, string>,
   ctx: ImportContext,
-): Promise<"created" | "updated"> {
+  overwriteOwnerEdited: boolean,
+): Promise<"created" | "updated" | "protected"> {
   const slug = row.slug.trim();
   const categoryId = ctx.categoryIdBySlug.get(row.category_slug.trim());
   if (!categoryId) throw new Error(`Unknown category ${row.category_slug}`);
+
+  const existing = await db.product.findUnique({
+    where: { slug },
+    select: { id: true, ownerTouched: true, needsRewrite: true },
+  });
+
+  // H5, extended from the sheet importer and the scraper's promote path to
+  // Bulk Import: an owner-edited row is never silently overwritten by a
+  // stale export re-run through this screen. `previewImport` computed and
+  // showed the same verdict before the operator confirmed, and
+  // `overwriteOwnerEdited` is their explicit "yes, replace it anyway".
+  const tier0 = intOrNull(row.tier);
+  const inStock0 = parseBool(row.in_stock);
+  const verdict = decideMerge(
+    existing
+      ? {
+          ownerTouched: existing.ownerTouched,
+          needsRewrite: existing.needsRewrite,
+        }
+      : null,
+  );
+  if (!overwriteOwnerEdited && existing) {
+    if (verdict === "skip") return "protected";
+    if (verdict === "refresh-availability") {
+      if (inStock0 !== null) {
+        await db.product.update({
+          where: { id: existing.id },
+          data: { inStock: inStock0 },
+        });
+      }
+      return "protected";
+    }
+  }
 
   // needsRewrite is intentionally untouched on update: bulk import must
   // never silently clear the scraper's rewrite guard.
@@ -508,8 +634,8 @@ async function importProductRow(
   // in_stock TRUE/FALSE). An EMPTY cell is "no opinion" — omitted from the
   // write so an update never clobbers an existing tier or stock flag; on
   // create the schema defaults apply (tier null, inStock true).
-  const tier = intOrNull(row.tier);
-  const inStock = parseBool(row.in_stock);
+  const tier = tier0;
+  const inStock = inStock0;
   const base = {
     ...(tier !== null && tier >= 1 && tier <= 4 ? { tier } : {}),
     ...(inStock !== null ? { inStock } : {}),
@@ -543,11 +669,6 @@ async function importProductRow(
 
   const customFields = parseCustomFields(row);
 
-  const existing = await db.product.findUnique({
-    where: { slug },
-    select: { id: true },
-  });
-
   await db.$transaction(async (tx) => {
     const product = existing
       ? await tx.product.update({ where: { id: existing.id }, data: base })
@@ -561,10 +682,15 @@ async function importProductRow(
       });
     }
 
-    await tx.customizationField.deleteMany({ where: { productId: product.id } });
+    await tx.customizationField.deleteMany({
+      where: { productId: product.id },
+    });
     if (customFields.length > 0) {
       await tx.customizationField.createMany({
-        data: customFields.map((field) => ({ ...field, productId: product.id })),
+        data: customFields.map((field) => ({
+          ...field,
+          productId: product.id,
+        })),
       });
     }
   });
@@ -589,7 +715,8 @@ async function importBlogPostRow(
 
   const categoryName = row.category?.trim();
   const blogCategoryId = categoryName
-    ? (ctx.blogCategoryIdBySlug.get(slugify(categoryName) || "category") ?? null)
+    ? (ctx.blogCategoryIdBySlug.get(slugify(categoryName) || "category") ??
+      null)
     : null;
   const tagSlugs = [
     ...new Set(splitList(row.tags).map((tag) => slugify(tag) || "tag")),
@@ -656,7 +783,11 @@ async function importFaqRow(
     return "updated";
   }
   await db.faq.create({
-    data: { question, answer: row.answer.trim(), order: order ?? ctx.nextOrder++ },
+    data: {
+      question,
+      answer: row.answer.trim(),
+      order: order ?? ctx.nextOrder++,
+    },
   });
   return "created";
 }
@@ -669,9 +800,36 @@ async function importTestimonialRow(
   const quote = row.quote.trim();
   const rating = intOrNull(row.rating);
   const order = intOrNull(row.order);
+
+  // Only a recognised value is ever written — a blank or malformed cell
+  // leaves an existing row's permission untouched on update, and defaults to
+  // UNKNOWN (the schema's own default) on create.
+  const PERMISSION_VALUES = [
+    "UNKNOWN",
+    "REQUESTED",
+    "GRANTED",
+    "DECLINED",
+  ] as const;
+  const permissionRaw = row.permission_status?.trim().toUpperCase();
+  const permissionStatus = PERMISSION_VALUES.find((v) => v === permissionRaw);
+
+  // A slug that does not resolve to a real product is left alone rather than
+  // clearing any link the row already has — a typo in one cell of a 500-row
+  // sheet must not silently unlink a testimonial from its piece.
+  const productSlug = row.product_slug?.trim();
+  const linkedProduct = productSlug
+    ? await db.product.findUnique({
+        where: { slug: productSlug },
+        select: { id: true },
+      })
+    : null;
+
   const data = {
     location: nullIfEmpty(row.location),
     avatarUrl: nullIfEmpty(row.avatar_url),
+    designation: nullIfEmpty(row.designation),
+    ...(permissionStatus ? { permissionStatus } : {}),
+    ...(linkedProduct ? { productId: linkedProduct.id } : {}),
   };
 
   const existing = await db.testimonial.findFirst({
@@ -692,6 +850,10 @@ async function importTestimonialRow(
     });
     return "updated";
   }
+  // Imported testimonials arrive as drafts — a bulk sheet of quotes has not
+  // been through the review pipeline `describeTestimonialProblem` polices
+  // (permission included), so nothing an import writes reaches the
+  // storefront until a human opens the row.
   await db.testimonial.create({
     data: {
       ...data,
@@ -699,6 +861,8 @@ async function importTestimonialRow(
       quote,
       rating: rating ?? 5,
       order: order ?? ctx.nextOrder++,
+      status: "DRAFT",
+      permissionStatus: permissionStatus ?? "UNKNOWN",
     },
   });
   return "created";
@@ -746,7 +910,9 @@ async function importPortfolioRow(
       ? await tx.portfolio.update({ where: { id: existing.id }, data: base })
       : await tx.portfolio.create({ data: { ...base, slug } });
 
-    await tx.portfolioImage.deleteMany({ where: { portfolioId: portfolio.id } });
+    await tx.portfolioImage.deleteMany({
+      where: { portfolioId: portfolio.id },
+    });
     if (images.length > 0) {
       await tx.portfolioImage.createMany({
         data: images.map((image) => ({ ...image, portfolioId: portfolio.id })),
@@ -763,7 +929,9 @@ async function importPageRow(
   const slug = row.slug.trim();
   const data = {
     title: row.title.trim(),
-    content: (await markdownToTiptap(row.content ?? "")) as Prisma.InputJsonValue,
+    content: (await markdownToTiptap(
+      row.content ?? "",
+    )) as Prisma.InputJsonValue,
     seoTitle: nullIfEmpty(row.seo_title),
     seoDescription: nullIfEmpty(row.seo_description),
   };

@@ -44,13 +44,23 @@ model Category {
   order        Int         @default(0)
   /// Per-locale { name, description } overrides; base is English (I3).
   translations Json?
+  /// Owner SEO overrides; null falls back to the name-derived metadata.
+  seoTitle       String?
+  seoDescription String?
+  /// false takes the shelf off every public surface without deleting it.
+  visible        Boolean     @default(true)
   products     Product[]
   portfolios   Portfolio[]
+  posts BlogPost[] @relation("BlogPostCollection")
 }
 
 enum ContentStatus {
   DRAFT
+  /// Written, awaiting approval. Every public reader treats it as DRAFT.
+  REVIEW
   PUBLISHED
+  /// Retired but kept. Never public, never orderable.
+  ARCHIVED
 }
 
 model Product {
@@ -128,6 +138,9 @@ model Product {
   customFields   CustomizationField[]
   inquiries      Inquiry[]
   testimonials   Testimonial[]
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
+  sheetConflicts SheetConflict[]
 
   @@unique([importSource, importRef])
   @@index([categoryId, status])
@@ -139,6 +152,14 @@ model Product {
   @@index([confirmedAt])
 }
 
+/// What a product photograph shows, so the page can pick the in-room frame.
+enum ProductImageRole {
+  HERO
+  DETAIL
+  IN_ROOM
+  PROCESS
+}
+
 model ProductImage {
   id        String  @id @default(cuid())
   url       String
@@ -146,6 +167,8 @@ model ProductImage {
   order     Int     @default(0)
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  /// Null on every existing frame; the room-context band needs IN_ROOM.
+  role ProductImageRole?
 
   @@index([productId])
 }
@@ -233,6 +256,8 @@ model Inquiry {
   staffNotes         String?       @db.Text
   status             InquiryStatus @default(NEW)
   createdAt          DateTime      @default(now())
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
 
   @@index([status, createdAt])
 }
@@ -270,6 +295,8 @@ model Portfolio {
   // Public list/home/sitemap filter by status + order by createdAt; the detail
   // "related" query filters categoryId + status. Product/BlogPost carry the
   // equivalent indexes; Portfolio had none, forcing scan+sort (PERF audit).
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
   @@index([status, createdAt])
   @@index([categoryId, status])
 }
@@ -301,6 +328,8 @@ model BlogCategory {
   /// translated — it is the URL the category filter is linked by.
   translations Json?
   posts        BlogPost[]
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
 }
 
 model Tag {
@@ -333,6 +362,12 @@ model BlogPost {
   translations   Json?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
+  /// Optional link to a shop collection, for the article's related-collections strip.
+  categoryId String?
+  category   Category? @relation("BlogPostCollection", fields: [categoryId], references: [id], onDelete: SetNull)
+  @@index([categoryId])
 
   @@index([status, publishedAt])
 }
@@ -424,8 +459,12 @@ model Faq {
   question     String
   answer       String @db.Text
   order        Int    @default(0)
+  /// Public readers select PUBLISHED; existing rows were back-filled to it.
+  status       ContentStatus @default(PUBLISHED)
   /// Per-locale { question, answer } overrides; base is English (I3).
   translations Json?
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
 }
 
 /// Where an asset came from. Recorded at the two places a Media row is
@@ -476,6 +515,14 @@ model Media {
   /// unknown, which renders as no claim rather than a wrong one.
   provenance   Provenance?
   createdAt    DateTime  @default(now())
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
+  /// Library metadata (B0 · media). `posterUrl` is a URL and is registered in media-usages.ts.
+  tags      String[] @default([])
+  caption   String?
+  favourite Boolean  @default(false)
+  duration  Int?
+  posterUrl String?
 
   @@index([folder])
   // Indexed so the delete guard can look up references by URL (ENG-806).
@@ -556,6 +603,11 @@ model SiteSettings {
   /// direction: a mis-sorted or re-keyed sheet inserts thousands, while
   /// updates are already held back by `ownerTouched`.
   sheetFillMaxCreates  Int?
+  /// Owner switch: render demo rows on the public site (always marked, never in the sitemap).
+  demoContentPublic Boolean @default(false)
+  /// The owner's spreadsheet and its tab ids; null falls back to the environment.
+  sheetId     String?
+  sheetTabIds Json    @default("{}")
 }
 
 /// One run of the sheet → catalog fill: what it read, what it changed, and
@@ -576,6 +628,9 @@ model ImportRun {
   detail        Json     @default("{}")
   startedAt     DateTime @default(now())
   finishedAt    DateTime?
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
+  conflicts SheetConflict[]
 
   @@index([startedAt])
 }
@@ -697,6 +752,13 @@ model ScrapeSource {
   @@index([tier, enabled])
 }
 
+/// How much of a source a scrape job covers.
+enum ScrapeScope {
+  SOURCE
+  CATEGORY
+  URL
+}
+
 model ScrapeJob {
   id           String           @id @default(cuid())
   sourceId     String?
@@ -716,6 +778,12 @@ model ScrapeJob {
   createdAt    DateTime         @default(now())
   finishedAt   DateTime?
   products     ScrapedProduct[]
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
+  /// What the job was asked to cover: the whole source, one listing, or one page.
+  scope     ScrapeScope @default(SOURCE)
+  /// Heartbeat: touched on every page advance so a dead RUNNING job can be reclaimed.
+  updatedAt DateTime    @default(now()) @updatedAt
 
   @@index([status, createdAt])
 }
@@ -757,6 +825,8 @@ model ScrapedProduct {
   sheetSyncedAt     DateTime?
   sheetSyncError    String?
   importedProductId String?
+  /// The one mutable field on an otherwise immutable staged row: the reviewer's notes.
+  notes String? @db.Text
 
   @@unique([sourceKey, externalId])
   @@index([reviewStatus])
@@ -1046,6 +1116,8 @@ model CustomPage {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   updatedById    String?
+  /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
+  isDemo Boolean @default(false)
 
   @@index([status, publishAt])
 }
@@ -1064,4 +1136,66 @@ model CustomBlock {
   translations Json?
 
   @@index([pageId, order])
+}
+
+/// One field on one product where the sheet and the Studio disagree after an
+/// owner edit (B0 · sheets). Status is a String with a code-side enum, the
+/// ImportRun.trigger precedent, so a new state never needs an enum migration.
+model SheetConflict {
+  id           String     @id @default(cuid())
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  importRunId  String?
+  importRun    ImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
+  field        String
+  sheetValue   String?
+  dbValue      String?
+  status       String     @default("OPEN")
+  createdAt    DateTime   @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+
+  @@index([status, createdAt])
+  @@index([productId])
+}
+
+/// One push of rows to the owner's sheet (B0 · sheets): the history the
+/// sheet-import screen shows. No URL columns.
+model SheetSyncRun {
+  id         String    @id @default(cuid())
+  direction  String
+  tab        String
+  rows       Int       @default(0)
+  status     String
+  error      String?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  @@index([startedAt])
+}
+
+/// A hand-kept research note from a relevant website (B0 · research
+/// library): RESEARCH, never PRODUCTION. `images` is a Json array of URLs,
+/// registered in media-usages.ts.
+model ResearchRecord {
+  id          String    @id @default(cuid())
+  source      String
+  url         String?
+  title       String
+  category    String?
+  materials   String?
+  dimensions  String?
+  price       String?
+  images      Json      @default("[]")
+  description String?   @db.Text
+  tags        String[]  @default([])
+  extractedAt DateTime?
+  notes       String?   @db.Text
+  status      String    @default("RESEARCH")
+  isDemo      Boolean   @default(false)
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  @@index([status, createdAt])
 }

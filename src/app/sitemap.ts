@@ -28,10 +28,14 @@ const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
   { path: "/terms", priority: 0.2 },
 ];
 
-/** Public content only: PUBLISHED and never the DEMO seeds. */
+/**
+ * Public content only: PUBLISHED and never a demo fixture. Hard-coded rather
+ * than `demoWhere()` on purpose — the owner's demo switch may show fixtures
+ * on the page, but a sitemap entry invites crawlers to index them.
+ */
 const PUBLISHED_NOT_DEMO = {
   status: "PUBLISHED" as const,
-  NOT: { title: { startsWith: "DEMO" } },
+  isDemo: false,
 };
 
 type Entry = MetadataRoute.Sitemap[number];
@@ -81,7 +85,7 @@ async function readContentSlugs(): Promise<ContentSlugs> {
     // Only categories that actually have a published, non-DEMO product —
     // empty category pages are thin content and shouldn't be submitted (SEO-008).
     db.category.findMany({
-      where: { products: { some: PUBLISHED_NOT_DEMO } },
+      where: { visible: true, products: { some: PUBLISHED_NOT_DEMO } },
       select: { slug: true },
     }),
     db.blogPost.findMany({
@@ -97,7 +101,7 @@ async function readContentSlugs(): Promise<ContentSlugs> {
     // entirely, because a sitemap entry for a page that tells crawlers not to
     // index it is a contradiction Google reports as an error.
     db.customPage.findMany({
-      where: { ...liveWhere(), noindex: false },
+      where: { ...liveWhere(), noindex: false, isDemo: false },
       select: { slug: true, updatedAt: true },
     }),
   ]);

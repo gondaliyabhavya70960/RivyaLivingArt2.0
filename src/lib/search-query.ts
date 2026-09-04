@@ -4,6 +4,7 @@ import { groupForTier } from "@/lib/catalog-taxonomy";
 import { localize, localizeName } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
 import { expandQueryTerms } from "@/lib/search-synonyms";
+import { NO_DEMO, type DemoClause } from "@/lib/demo-clause";
 
 /**
  * The site's one search query layer — REDESIGN.md §5.6 and §11.
@@ -42,14 +43,15 @@ export const LIST_TAKE = 6;
  */
 export const TOTAL_NOT_COUNTED = -1;
 
-const PRODUCT_BASE_WHERE = {
-  status: "PUBLISHED",
-  NOT: { title: { startsWith: "DEMO" } },
-} satisfies Prisma.ProductWhereInput;
+/** PUBLISHED plus the caller's demo-content gate (see demo-clause.ts). */
+function productBaseWhere(demo: DemoClause): Prisma.ProductWhereInput {
+  return { status: "PUBLISHED", ...demo };
+}
 
 const PRODUCT_CARD_SELECT = {
   id: true,
   slug: true,
+  isDemo: true,
   displayName: true,
   title: true,
   shortTagline: true,
@@ -69,7 +71,7 @@ const PRODUCT_CARD_SELECT = {
 } satisfies Prisma.ProductSelect;
 
 /** Opt out of the `count(*)` — see {@link TOTAL_NOT_COUNTED}. */
-type CountOption = { withTotal?: boolean };
+type CountOption = { withTotal?: boolean; demo?: DemoClause };
 
 /**
  * Relevance-ish product search: title matches rank ahead of tagline/
@@ -83,8 +85,9 @@ type CountOption = { withTotal?: boolean };
 export async function searchProducts(
   q: string,
   take: number = PRODUCTS_TAKE,
-  { withTotal = true }: CountOption = {},
+  { withTotal = true, demo = NO_DEMO }: CountOption = {},
 ) {
+  const base = productBaseWhere(demo);
   // Gap 7: buyer vocabulary ("epoxy", "geode", "PLA") expands to studio
   // vocabulary before matching — both languages hit the same shelf.
   const terms = expandQueryTerms(q);
@@ -102,13 +105,13 @@ export async function searchProducts(
 
   const [titleRows, secondaryRows] = await Promise.all([
     db.product.findMany({
-      where: { ...PRODUCT_BASE_WHERE, ...titleMatch },
+      where: { ...base, ...titleMatch },
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }, { id: "desc" }],
       take,
       select: PRODUCT_CARD_SELECT,
     }),
     db.product.findMany({
-      where: { ...PRODUCT_BASE_WHERE, ...secondaryMatch },
+      where: { ...base, ...secondaryMatch },
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }, { id: "desc" }],
       take,
       select: PRODUCT_CARD_SELECT,
@@ -136,7 +139,7 @@ export async function searchProducts(
     : capped
       ? await db.product.count({
           where: {
-            ...PRODUCT_BASE_WHERE,
+            ...base,
             OR: [titleMatch, ...secondaryMatch.OR],
           },
         })
@@ -148,15 +151,16 @@ export async function searchProducts(
 export async function searchPosts(
   q: string,
   take: number = LIST_TAKE,
-  { withTotal = true }: CountOption = {},
+  { withTotal = true, demo = NO_DEMO }: CountOption = {},
 ) {
-  const where = {
+  const where: Prisma.BlogPostWhereInput = {
     status: "PUBLISHED",
+    ...demo,
     OR: [
       { title: { contains: q, mode: "insensitive" } },
       { excerpt: { contains: q, mode: "insensitive" } },
     ],
-  } satisfies Prisma.BlogPostWhereInput;
+  };
   const rows = await db.blogPost.findMany({
     where,
     orderBy: { publishedAt: "desc" },
@@ -187,15 +191,16 @@ export async function searchPosts(
 export async function searchPortfolios(
   q: string,
   take: number = LIST_TAKE,
-  { withTotal = true }: CountOption = {},
+  { withTotal = true, demo = NO_DEMO }: CountOption = {},
 ) {
-  const where = {
+  const where: Prisma.PortfolioWhereInput = {
     status: "PUBLISHED",
+    ...demo,
     OR: [
       { title: { contains: q, mode: "insensitive" } },
       { story: { contains: q, mode: "insensitive" } },
     ],
-  } satisfies Prisma.PortfolioWhereInput;
+  };
   const rows = await db.portfolio.findMany({
     where,
     orderBy: { createdAt: "desc" },
@@ -230,14 +235,20 @@ export async function searchPortfolios(
  * A category only counts as a result when it has something published behind
  * it: a doorway into an empty shelf is worse than no doorway.
  */
-export async function searchCategories(q: string, take: number = LIST_TAKE) {
+export async function searchCategories(
+  q: string,
+  take: number = LIST_TAKE,
+  demo: DemoClause = NO_DEMO,
+) {
+  const base = productBaseWhere(demo);
   const terms = expandQueryTerms(q);
   const where = {
     OR: terms.flatMap((term) => [
       { name: { contains: term, mode: "insensitive" as const } },
       { description: { contains: term, mode: "insensitive" as const } },
     ]),
-    products: { some: PRODUCT_BASE_WHERE },
+    visible: true,
+    products: { some: base },
   } satisfies Prisma.CategoryWhereInput;
 
   const rows = await db.category.findMany({
@@ -249,7 +260,7 @@ export async function searchCategories(q: string, take: number = LIST_TAKE) {
       slug: true,
       name: true,
       translations: true,
-      _count: { select: { products: { where: PRODUCT_BASE_WHERE } } },
+      _count: { select: { products: { where: base } } },
     },
   });
   return { rows };

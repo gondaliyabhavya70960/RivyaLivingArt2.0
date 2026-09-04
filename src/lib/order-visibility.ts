@@ -21,7 +21,7 @@
  * the action still accepts.
  */
 export function canOrderProduct(input: {
-  /** `Product.status` — a `ContentStatus` value ("DRAFT" | "PUBLISHED"). */
+  /** `Product.status` — a `ContentStatus` value (DRAFT | REVIEW | PUBLISHED | ARCHIVED); only PUBLISHED passes. */
   status: string;
   /** `(await draftMode()).isEnabled` for the current request. */
   previewEnabled: boolean;

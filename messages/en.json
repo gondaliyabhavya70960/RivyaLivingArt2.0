@@ -59,7 +59,10 @@
     "logoHome": "Rivya Living Art — home",
     "dismissAnnouncement": "Dismiss announcement",
     "announcementDefault": "Current lead time · Small pieces 7–10 days · Statement pieces 3–6 weeks",
-    "ratedOutOf": "Rated {rating} out of {outOf} stars"
+    "ratedOutOf": "Rated {rating} out of {outOf} stars",
+    "demoMark": "Demo content",
+    "demoDetail": "Demo content — not a real listing",
+    "of": "of"
   },
   "Header": {
     "search": "Search",
@@ -298,7 +301,10 @@
       "print": "3d printing",
       "process": "process",
       "journal": "journal",
-      "words": "kind words"
+      "words": "kind words",
+      "largeFormat": "large format",
+      "furniture": "furniture",
+      "rooms": "in the room"
     },
     "manifesto": {
       "line1": "Objects made slowly.",
@@ -311,6 +317,84 @@
       "body": "Every Rivya Living Art piece passes through the same hands, from the first pour to the last pass of 3000 grit. There is no production line here — only a bench, a set of moulds, and the time a piece needs.",
       "cta": "Meet the maker",
       "imageAlt": "Hands polishing a cured resin surface at the studio bench"
+    },
+    "largeFormat": {
+      "eyebrow": "large-format work",
+      "heading": "Made at scale, too",
+      "intro": "Tables, wall panels, sculptural pieces and preservation work planned to fit a room rather than a shelf.",
+      "cta": "See large-format work",
+      "index": "{number} of {total}"
+    },
+    "furniture": {
+      "eyebrow": "what we commission",
+      "heading": "What we commission",
+      "intro": "The studio does not keep furniture in stock. Send the room and the piece you are picturing, and we plan it around both.",
+      "cta": "Start a furniture commission",
+      "conceptLabel": "Concept",
+      "kinds": {
+        "dining": {
+          "title": "Dining table",
+          "lead": "Poured to your table's footprint, not a standard size.",
+          "leadTime": "3–6 weeks",
+          "alt": "A large wooden workbench in the studio, standing in as a concept image for a dining table."
+        },
+        "coffee": {
+          "title": "Coffee table",
+          "lead": "A low table built around how you actually sit.",
+          "leadTime": "3–6 weeks",
+          "alt": "A finished resin-and-teak board and bowl on the studio table, standing in as a concept image for a coffee table."
+        },
+        "side": {
+          "title": "Side table",
+          "lead": "A single surface, sized for the corner it lives in.",
+          "leadTime": "3–6 weeks",
+          "alt": "A close macro of sealed teak wood grain, standing in as a concept image for a side table."
+        },
+        "console": {
+          "title": "Console",
+          "lead": "A hallway piece, cast to the wall it stands against.",
+          "leadTime": "3–6 weeks",
+          "alt": "The studio at night — poured moulds curing under a warm work lamp, standing in as a concept image for a console."
+        },
+        "chair": {
+          "title": "Chair",
+          "lead": "A seat shaped and finished by hand, one at a time.",
+          "leadTime": "3–6 weeks",
+          "alt": "Hands arranging petals inside an empty mould, standing in as a concept image for a chair."
+        },
+        "bench": {
+          "title": "Bench",
+          "lead": "A long seat for an entryway or a table.",
+          "leadTime": "3–6 weeks",
+          "alt": "Deep blue resin catching the light across a finished surface, standing in as a concept image for a bench."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "in the room",
+      "heading": "In the room",
+      "intro": "A commissioned piece rarely stands alone — here is the kind of room it goes into.",
+      "conceptLabel": "Concept",
+      "living": {
+        "title": "Living room",
+        "caption": "A commissioned piece, pictured in a living room setting.",
+        "alt": "Resin being poured in a slow, steady stream, standing in as a concept image for a living room."
+      },
+      "dining": {
+        "title": "Dining room",
+        "caption": "A commissioned piece, pictured in a dining room setting.",
+        "alt": "A macro band of layered resin texture, standing in as a concept image for a dining room."
+      },
+      "study": {
+        "title": "Study",
+        "caption": "A commissioned piece, pictured in a study.",
+        "alt": "Filled moulds curing overnight under a warm work lamp, standing in as a concept image for a study."
+      },
+      "bedroom": {
+        "title": "Bedroom",
+        "caption": "A commissioned piece, pictured in a bedroom.",
+        "alt": "Gold leaf flakes drifting inside settling translucent blue resin, standing in as a concept image for a bedroom."
+      }
     }
   },
   "Process": {
@@ -321,35 +405,51 @@
     "hero": {
       "eyebrow": "our process",
       "headline": "From idea to heirloom.",
-      "lead": "Six unhurried steps between your first message and the piece in your hands. Here is exactly how a Rivya Living Art commission comes together — and how long it honestly takes."
+      "lead": "Ten unhurried steps between your first message and the piece in your hands. Here is exactly how a Rivya Living Art commission comes together — and how long it honestly takes."
     },
     "timeline": {
-      "heading": "Six steps, no shortcuts",
-      "step1Title": "The brief",
-      "step1Copy": "It starts with a WhatsApp conversation. You share the idea, reference photos, the sizes you're imagining and the budget you're comfortable with — and we ask the questions that shape the design.",
-      "step2Title": "Design & mock-up",
-      "step2Copy": "We translate the brief into sketches and, for 3D-printed work, digital previews. Nothing is poured until you've approved the design — every detail agreed before resin ever meets the mould.",
-      "step3Title": "Materials",
-      "step3Copy": "Art-grade epoxy resin, mineral pigments, preserved florals and selected wood. If the piece holds your own flowers or keepsakes, we prepare and preserve them first, with the care they deserve.",
-      "step4Title": "The pour",
-      "step4Copy": "Resin goes in layer by layer, each pour left to cure for 24–72 hours before the next. Layering is what gives a piece its depth — and exactly why it can never be hurried.",
-      "step5Title": "Finishing",
-      "step5Copy": "Once fully cured, the piece is sanded from 400 up to 3000 grit, then polished until it reads like glass. Hardware, hooks or stands are fitted and checked by hand.",
-      "step6Title": "Quality & dispatch",
-      "step6Copy": "You receive photos of the finished piece for approval before it ships. Then it's packed fragile-proof and sent with tracked shipping, anywhere in India.",
+      "heading": "Ten steps, no shortcuts",
+      "step1Title": "Concept",
+      "step1Copy": "It starts with a WhatsApp conversation. You share the idea, reference photos, the sizes you're imagining and the budget you're comfortable with — and we ask the questions that shape the design, sketching it out before anything is poured.",
+      "step2Title": "Material selection",
+      "step2Copy": "Art-grade epoxy resin, mineral pigments, preserved florals and seasoned wood are matched to the brief — and, for a structural base, a 3D-printed form. If the piece holds your own flowers or keepsakes, we prepare and preserve them at this stage.",
+      "step3Title": "Wood preparation",
+      "step3Copy": "Seasoned teak and river wood is planed, sanded and sealed before it ever meets resin, so the grain is ready to hold a pour without warping or bubbling at the join.",
+      "step4Title": "Resin composition",
+      "step4Copy": "Pigment is mixed into the resin in small batches and tested against the light before a full pour — gold leaf and preserved botanicals are set in only once the colour is right.",
+      "step5Title": "Casting",
+      "step5Copy": "The composed resin is poured into the mould layer by layer, each one levelled and worked with a precision heat gun to clear air before it begins to set.",
+      "step6Title": "Curing",
+      "step6Copy": "Each poured layer cures for 24–72 hours before the next goes in, and the finished piece rests under controlled conditions until it is fully hardened — resin rewards patience, not speed.",
       "eyebrow": "how a piece is made",
       "step1Meta": "On WhatsApp",
-      "step2Meta": "Nothing is poured before you approve",
-      "step3Meta": "Art-grade epoxy",
-      "step4Meta": "24–72 hours per layer",
-      "step5Meta": "400 → 3000 grit",
-      "step6Meta": "Tracked, anywhere in India",
+      "step2Meta": "Art-grade epoxy",
+      "step3Meta": "By hand",
+      "step4Meta": "Nothing is poured before you approve",
+      "step5Meta": "Layer by layer",
+      "step6Meta": "24–72 hours per layer",
       "step1Alt": "The studio bench at the start of a commission",
       "step2Alt": "An FDM print head laying translucent blue filament onto the build plate",
       "step3Alt": "Gold leaf flakes suspended in settling blue resin",
       "step4Alt": "Deep sapphire resin mid-pour, spreading across a round mould",
       "step5Alt": "Gloved hands working blue resin with a precision heat gun",
-      "step6Alt": "Finished resin pieces arranged in a lined gift box"
+      "step6Alt": "Finished resin pieces arranged in a lined gift box",
+      "step7Title": "Surface refinement",
+      "step7Copy": "Once fully cured, the piece is sanded from 400 up to 3000 grit, then polished until the surface reads like glass and the depth beneath it is fully clear.",
+      "step7Meta": "400 → 3000 grit",
+      "step7Alt": "Water beading on a mirror-polished resin surface, gold flakes suspended beneath",
+      "step8Title": "Hand finishing",
+      "step8Copy": "Hardware, hooks or stands are fitted and checked by hand, and every edge is gone over once more before a piece is called finished.",
+      "step8Meta": "Fitted by hand",
+      "step8Alt": "A champagne gold vein running through a hand-finished resin surface",
+      "step9Title": "Quality inspection",
+      "step9Copy": "The finished piece is checked edge to edge against the brief, and you receive photographs of it for your own approval before anything ships.",
+      "step9Meta": "Photos before it ships",
+      "step9Alt": "The bevelled edge of a cured epoxy slab catching the light",
+      "step10Title": "Delivery",
+      "step10Copy": "Once approved, the piece is packed fragile-proof and sent with tracked shipping, anywhere in India. The studio does not offer installation — delivery is where the commission ends.",
+      "step10Meta": "Tracked, anywhere in India",
+      "step10Alt": "A finished resin-and-teak serving board and bowl, ready to leave the studio"
     },
     "materials": {
       "heading": "What your piece is made of",
@@ -874,7 +974,9 @@
       "wishlistRemove": "Remove {title} from your wishlist",
       "madeToOrder": "Made to order",
       "viewPiece": "View piece",
-      "shipsIn": "Ships in 7–10 days"
+      "shipsIn": "Ships in 7–10 days",
+      "askOnWhatsApp": "Ask on WhatsApp",
+      "materialsDimensions": "Materials and dimensions"
     },
     "collection": {
       "count": "{count, plural, =0 {No pieces yet} one {# piece} other {# pieces}}",
@@ -942,7 +1044,8 @@
       "body": "Every piece here waits out its own cure before anyone touches it. That is why the catalogue moves at the speed it does.",
       "cta": "See how it is made",
       "imageAlt": "A resin pour curing under studio light, its surface still settling."
-    }
+    },
+    "quickViewLabel": "Quick view"
   },
   "Search": {
     "meta": {
@@ -1060,7 +1163,12 @@
     "emptyStatement": "Nothing filed under that yet.",
     "emptyDirection": "The journal is written between pours — try another topic, or read everything.",
     "emptyStatementUnfiltered": "The journal launches soon.",
-    "emptyDirectionUnfiltered": "We are writing the first entries between pours. Check back shortly."
+    "emptyDirectionUnfiltered": "We are writing the first entries between pours. Check back shortly.",
+    "relatedCollections": {
+      "eyebrow": "explore further",
+      "heading": "Shop the collection",
+      "cardEyebrow": "Collection"
+    }
   },
   "Portfolio": {
     "meta": {
@@ -1347,7 +1455,14 @@
       "detailsEyebrow": "the details",
       "detailsHeading": "How it is made, kept and delivered",
       "viewCollection": "View the collection"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "In a room",
+      "heading": "See it in its setting",
+      "caption": "Photographed in a real room, at true scale — not a studio render."
+    },
+    "demoOrderNote": "This is a Content Lab demo piece — the order still submits, prefixed [DEMO] on WhatsApp.",
+    "dimensionsLabel": "Dimensions"
   },
   "Upload": {
     "add": "+ Add references",
@@ -1423,7 +1538,13 @@
       "scope": "large work",
       "how": "how it runs",
       "brief": "your brief",
-      "gallery": "pieces"
+      "gallery": "pieces",
+      "philosophy": "philosophy",
+      "materials": "materials",
+      "pieces": "furniture",
+      "work": "past work",
+      "words": "words",
+      "faq": "questions"
     },
     "hero": {
       "eyebrow": "large-format commissions",
@@ -1492,6 +1613,53 @@
       "heading": "Tell us about the room",
       "body": "Send the space, the use and the date that matters. Design, materials and price are settled with you on WhatsApp before a single layer is poured.",
       "formCta": "Plan a custom order"
+    },
+    "philosophy": {
+      "eyebrow": "why plan first",
+      "heading": "Planned before it is priced",
+      "p1": "A large piece lives with a room for years, so it is designed for that room specifically — never sized to a standard sheet and shipped out.",
+      "p2": "The studio takes on a small number of large commissions at a time, for the same reason each one takes weeks rather than days: layered resin work at this scale cannot be rushed without it showing later.",
+      "p3": "Nothing is poured until the design, the finish and the size are agreed in writing — the room gets one chance to be measured correctly, and the studio does not guess."
+    },
+    "pieces": {
+      "eyebrow": "furniture at this scale",
+      "heading": "The furniture side of large work",
+      "intro": "The same six kinds shown on the homepage — a table, a console, a bench — planned and poured to a specific room."
+    },
+    "work": {
+      "eyebrow": "commissioned before",
+      "heading": "Large work, delivered",
+      "cta": "See all commissions"
+    },
+    "words": {
+      "eyebrow": "in their words",
+      "heading": "What clients of large work say"
+    },
+    "faq": {
+      "eyebrow": "asked often",
+      "heading": "Questions about large work"
     }
+  },
+  "CureLine": {
+    "pageSections": "Page sections"
+  },
+  "Testimonials": {
+    "demoNotice": "Demo testimonial — not a customer review",
+    "linkedPiece": "View this piece",
+    "linkedProject": "View this project",
+    "watchFilm": "Watch the film",
+    "verifiedBy": "Verified customer",
+    "givenOn": "Given on {date}",
+    "wallHeading": "In their words"
+  },
+  "Lightbox": {
+    "prev": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "of": "of"
+  },
+  "AccordionGallery": {
+    "expand": "Expand",
+    "collapse": "Collapse"
   }
 }

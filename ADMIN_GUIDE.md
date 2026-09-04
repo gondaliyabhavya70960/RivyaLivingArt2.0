@@ -45,6 +45,8 @@ Every image, video, and 3D file you've ever uploaded lives here (stored on Verce
 
 Accepted files: images (JPG, PNG, WebP, AVIF) up to 8 MB; videos (MP4, WebM) and 3D models (GLB, USDZ) up to 16 MB. SVG is blocked for security (an SVG file can carry scripts).
 
+The library is a proper asset manager now: drag files onto the page to upload, page through it sixty at a time, sort and filter by type, orientation, date, size, favourites or demo rows, switch between grid and list, and open any file in the **details drawer** — its size and dimensions, every place on the site that uses it (with links), tags, a caption, a favourite star, the alt text, **Replace file**, **Move to folder**, and for a video a **Capture poster** button that takes a still from the film. Select several files to set their alt text in one go. Every upload is checked against its own bytes, not just the name it claims — a file that says it is a JPEG but is not is refused.
+
 ## 6. WhatsApp Orders (Inquiries)
 
 **Every "Place Order" click is saved here — even if WhatsApp never opened on the customer's phone.** Nothing gets lost.
@@ -63,7 +65,9 @@ Show off finished commissions. Each portfolio item has a story, an optional **Be
 
 ## 9. Testimonials
 
-Name, quote, city, a 1–5 star rating, an optional photo, and display order (arrows). Published testimonials rotate in the carousel on the home page.
+Each testimonial is its own page now (Quote · Attribution · Links · Media · Review). Beyond the name, quote, city and rating you can record the customer's designation, the piece or the project it belongs to (the product page then shows it), a photograph of the piece in their home, a short film with its poster, the date and the language it was given in, private notes, and — the part that matters — **permission**. A testimonial cannot be **Published** until Permission is **Granted** on the Review tab; the studio refuses the save and says so. Statuses run Draft → Pending review → Verified → Published, plus Archived; **Featured** picks the ones the big quote band shows. The list can be searched, sorted and filtered by status, and rows imported from a sheet arrive as Draft.
+
+Demo testimonials (from the Content Lab, see §21) are always marked "demo" on the site and never count as real reviews in Google's data.
 
 ## 10. FAQs
 
@@ -83,6 +87,8 @@ The one form that controls site-wide details:
 - **WhatsApp number** — this becomes the `wa.me` link behind every order button. It must be **digits only, with the country code, no + or spaces** (e.g. `917096036250`) — the form shows a live preview of the resulting link and won't let you save an invalid one.
 - **Socials** — put your real Instagram handle here before launch (the footer icon uses it).
 - **Default SEO** and **default care notes** — the fallbacks used when a product or page has none of its own.
+- **Sheets** — the id of your master spreadsheet and its five tab ids, so the scraper, the tier fill and the pushes all write to the sheet you name here (the deploy settings are the fallback).
+- **Demo content** — the switch that lets the Content Lab's demo pieces show on the live site, marked "DEMO CONTENT" (see §21). Off by default; leave it off unless you are showing the site to someone.
 
 ## 13. SEO defaults
 
@@ -109,7 +115,7 @@ For adding lots of content at once — products, categories, blog posts, FAQs, t
 3. **Feed it in**, either way:
    - **Google Sheet link** — the sheet must be shared as **"Anyone with the link can view"** (or published to the web), or the import will tell you it can't read it.
    - **Upload a .csv or .xlsx file** directly.
-4. **Review the preview.** Every row is checked *before anything is written*: rows are marked **Create** (new), **Update** (a row with the same slug already exists — importing updates it), or **Error** with a plain-English reason (unknown category, bad price, duplicate slug in the file, etc.). Error rows are simply skipped; they never block the good rows.
+4. **Review the preview.** Every row is checked *before anything is written*: rows are marked **Create** (new), **Update** (a row with the same slug already exists — importing updates it), or **Error** with a plain-English reason (unknown category, bad price, duplicate slug in the file, etc.). Error rows are simply skipped; they never block the good rows. For products the preview also counts the rows you have **edited in the studio** since they were last imported: those are left alone (only their stock status refreshes) unless you tick **Overwrite owner-edited products** — the same rule the scraper and the sheet fill follow, so an import can never silently undo your hand edits.
 5. **Run the import** and read the report: created / updated / skipped counts and any per-row errors.
 
 Good to know: up to **500 rows** per file; image columns take public URLs which are downloaded and re-uploaded into your own media storage; blog/page content columns are written in Markdown and converted to the rich editor format automatically.
@@ -139,6 +145,24 @@ The scraper collects competitor products **for research and cataloging speed** �
 ## 20. Sheet Import (your four-tier catalog sheet)
 
 **Sheet Import** is the status page for the catalog that loads automatically from your master Google Sheet's four tier tabs — **Tier1_Owner** (all rows), **Tier2_ResinGoods** (top 1,000), **Tier3_Supplies** (top 2,500), **Tier4_3DPrint** (top 500). The import runs on every deploy; this page shows per-tier counts, the last run's created/updated/failed numbers, and how many imported product images still point at external sites. Imported images are copied ("mirrored") into your own storage in batches — a nightly job works through the backlog, and a button on this page runs the next batch on demand.
+
+Three things were added here:
+
+- **Preview** runs the whole four-tier fill as a dry run — nothing is written — and shows exactly what a real run would create, update and skip, with the reason for every dropped row. **Run now** does the real thing without waiting for a deploy (it honours the master switch in Settings).
+- **Conflicts** — when the sheet and a studio edit changed the same field of the same product between fills, the fill no longer picks a side quietly. Each conflict is listed by field with both values, and you choose **Keep mine**, **Take sheet** or **Skip**.
+- **Push history** — every write TO the sheet (a scrape job, a tier, the confirmed list, the website tab) leaves a row here with its outcome.
+
+## 21. Content Lab (demo content)
+
+**Content Lab** loads a full set of *demo* content — a hundred concept pieces, thirty journal posts, twelve case studies, forty testimonials, FAQs, landing pages, media, enquiries and research notes — so you can see every screen of the studio and the site full, edit real rows, and rehearse the flows without inventing anything by hand. Every demo row is marked as such everywhere it appears (a small "DEMO CONTENT" mark on the site, a **demo** badge in the studio, a **Demo only** filter on every list).
+
+- **Seed** loads the set; **Remove** deletes every demo row (it asks you to type a confirmation). Neither touches a real product, post or enquiry.
+- **Show demo content on the live site** is a switch in Content Lab and in Settings. Off, the demo pieces exist only inside the studio. On, they render on the site marked "DEMO CONTENT" — but they are never in the sitemap, never in Google's structured data, never pushed to your sheet and never mirrored, whatever the switch says. A demo order still opens WhatsApp, with the message prefixed **[DEMO]**, and is saved as a demo enquiry.
+- The loader refuses to write into a production database unless it is told to twice, so the demo set cannot land on the live site by accident.
+
+## 22. Process steps, materials and sections that ship off
+
+**Page Sections** gained two dedicated screens: **Process Steps** (the ten stages the Process page tells, each with its words and picture, reorderable and hideable — but never all hidden) and **Materials** (the four materials both the Process and the About page show; reordering one moves it on both). The homepage's **What we commission** (furniture) and **In the room** bands, and the Large Format page's **pieces** band, ship **switched off** — they are commission framing with concept pictures and no prices, and they appear only when you turn them on in Page Sections.
 
 ---
 

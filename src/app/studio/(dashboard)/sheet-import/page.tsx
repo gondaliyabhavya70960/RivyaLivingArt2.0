@@ -19,6 +19,7 @@ import { mirrorNextCatalogBatch } from "@/actions/catalog-mirror";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
+import { FillPreview } from "@/components/studio/sheet-import/fill-preview";
 import { SheetFillPolicy } from "@/components/studio/sheet-fill-policy";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 
@@ -33,7 +34,11 @@ const TIER_META: Record<
   { tab: string; label: string; target: string }
 > = {
   1: { tab: "Tier1_Owner", label: "Tier 1 — Owner", target: "all rows" },
-  2: { tab: "Tier2_ResinGoods", label: "Tier 2 — Resin goods", target: "top 1,000" },
+  2: {
+    tab: "Tier2_ResinGoods",
+    label: "Tier 2 — Resin goods",
+    target: "top 1,000",
+  },
   3: { tab: "Tier3_Supplies", label: "Tier 3 — Supplies", target: "top 2,500" },
   4: { tab: "Tier4_3DPrint", label: "Tier 4 — 3D printing", target: "top 500" },
 };
@@ -68,6 +73,11 @@ export default async function SheetImportPage() {
       orderBy: { startedAt: "desc" },
       take: 8,
     }),
+  ]);
+
+  const [syncRuns, openConflicts] = await Promise.all([
+    db.sheetSyncRun.findMany({ orderBy: { startedAt: "desc" }, take: 20 }),
+    db.sheetConflict.count({ where: { status: "OPEN" } }),
   ]);
 
   const [
@@ -155,7 +165,12 @@ export default async function SheetImportPage() {
 
   const runMeta = (lastRun?.meta ?? {}) as {
     tiers?: Record<string, RunTierStats>;
-    totals?: { created: number; updated: number; skipped: number; failed: number };
+    totals?: {
+      created: number;
+      updated: number;
+      skipped: number;
+      failed: number;
+    };
   };
   const runByTier = new Map<number, RunTierStats>(
     Object.values(runMeta.tiers ?? {}).map((t) => [t.tier, t]),
@@ -171,7 +186,11 @@ export default async function SheetImportPage() {
   const kpis = [
     { label: "Published from sheet", value: totalPublished, icon: CircleCheck },
     { label: "Held as drafts", value: totalDrafts, icon: Layers },
-    { label: "Published without images", value: [...noImage.values()].reduce((a, b) => a + b, 0), icon: ImageOff },
+    {
+      label: "Published without images",
+      value: [...noImage.values()].reduce((a, b) => a + b, 0),
+      icon: ImageOff,
+    },
     { label: "Out of stock (published)", value: outOfStock, icon: PackageX },
   ];
 
@@ -181,13 +200,29 @@ export default async function SheetImportPage() {
         title="Sheet Import"
         description="The four-tier product import from the owner spreadsheet — live catalog state, the last run, and how the pipeline moves data."
         actions={
-          <Button asChild variant="outline">
-            <a href={SHEET_URL} target="_blank" rel="noopener noreferrer">
-              Open source sheet <ExternalLink />
-            </a>
-          </Button>
+          <>
+            <Button asChild variant="outline">
+              <Link href="/studio/sheet-import/conflicts">
+                Conflicts
+                {openConflicts > 0 && (
+                  <Badge variant="warning" className="ms-1.5">
+                    {openConflicts}
+                  </Badge>
+                )}
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <a href={SHEET_URL} target="_blank" rel="noopener noreferrer">
+                Open source sheet <ExternalLink />
+              </a>
+            </Button>
+          </>
         }
       />
+
+      <div className="mb-6">
+        <FillPreview />
+      </div>
 
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <SheetFillPolicy
@@ -209,18 +244,20 @@ export default async function SheetImportPage() {
               {importRuns.map((run) => (
                 <li
                   key={run.id}
-                  className="flex items-baseline justify-between gap-3 border-b border-border pb-2 last:border-0"
+                  className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b border-border pb-2 last:border-0"
                 >
                   <span className="text-muted-foreground">
                     {dateFormatter.format(run.startedAt)}
-                    <span className="ms-2 text-xs uppercase">{run.trigger}</span>
+                    <span className="ms-2 text-xs uppercase">
+                      {run.trigger}
+                    </span>
                   </span>
                   {run.abortedReason ? (
                     <span className="text-end text-xs text-alert">
                       {run.abortedReason}
                     </span>
                   ) : (
-                    <span className="shrink-0 tabular-nums">
+                    <span className="ms-auto text-end tabular-nums">
                       +{run.created} new · {run.updated} updated ·{" "}
                       {run.unchanged} unchanged
                       {run.failed > 0 ? ` · ${run.failed} failed` : ""}
@@ -232,6 +269,74 @@ export default async function SheetImportPage() {
           )}
         </section>
       </div>
+
+      {/* Push history — every write TO the sheet (job/tier/confirmed/website
+          tabs), as opposed to "Recent fills" above, which is the catalog
+          reading FROM it. B0's SheetSyncRun; last 20. */}
+      <section className="mb-6 rounded-card border border-border bg-card p-5 shadow-e1">
+        <h2 className="font-medium text-foreground">Sheet push history</h2>
+        {syncRuns.length === 0 ? (
+          <p className="mt-1 text-sm text-muted-foreground">
+            No push has been recorded yet — syncing a job, a tier or the
+            confirmed list to the sheet will add one.
+          </p>
+        ) : (
+          <div
+            tabIndex={0}
+            role="region"
+            aria-label="Sheet push history"
+            className="mt-3 overflow-x-auto [contain:paint]"
+          >
+            <table className="w-full text-sm">
+              <thead>
+                <StudioTableHead>
+                  <th className="py-2 pe-4 font-medium">When</th>
+                  <th className="py-2 pe-4 font-medium">Tab</th>
+                  <th className="py-2 pe-4 text-right font-medium">Rows</th>
+                  <th className="py-2 pe-4 font-medium">Status</th>
+                  <th className="py-2 font-medium">Error</th>
+                </StudioTableHead>
+              </thead>
+              <tbody>
+                {syncRuns.map((run) => (
+                  <tr
+                    key={run.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="py-2 pe-4 whitespace-nowrap text-muted-foreground">
+                      {dateFormatter.format(run.startedAt)}
+                    </td>
+                    <td className="py-2 pe-4 font-mono text-xs">{run.tab}</td>
+                    <td className="py-2 pe-4 text-right tabular-nums">
+                      {run.rows}
+                    </td>
+                    <td className="py-2 pe-4">
+                      <Badge
+                        variant={
+                          run.status === "SYNCED" ? "success" : "outline"
+                        }
+                        className={
+                          run.status === "FAILED"
+                            ? "border-destructive/40 text-destructive"
+                            : undefined
+                        }
+                      >
+                        {run.status.toLowerCase()}
+                      </Badge>
+                    </td>
+                    <td
+                      className="py-2 max-w-[24ch] truncate text-xs text-muted-foreground"
+                      title={run.error ?? undefined}
+                    >
+                      {run.error ?? "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ label, value, icon: Icon }) => (
@@ -257,11 +362,11 @@ export default async function SheetImportPage() {
       </div>
 
       <div
-            tabIndex={0}
-            role="region"
-            aria-label="Sheet rows"
-            className="mt-6 overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
+        tabIndex={0}
+        role="region"
+        aria-label="Sheet rows"
+        className="mt-6 overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+      >
         <table className="w-full text-sm">
           <thead>
             <StudioTableHead>
@@ -279,10 +384,7 @@ export default async function SheetImportPage() {
               const meta = TIER_META[tier];
               const run = runByTier.get(tier);
               return (
-                <tr
-                  key={tier}
-                  className="border-b border-border last:border-0"
-                >
+                <tr key={tier} className="border-b border-border last:border-0">
                   <td className="py-3 pl-4 pr-4">
                     <Link
                       href={`/studio/products?tier=${tier}`}
@@ -355,9 +457,7 @@ export default async function SheetImportPage() {
               </div>
               <div className="flex justify-between gap-4">
                 <dt>Failed</dt>
-                <dd className="tabular-nums">
-                  {runMeta.totals?.failed ?? 0}
-                </dd>
+                <dd className="tabular-nums">{runMeta.totals?.failed ?? 0}</dd>
               </div>
             </dl>
           ) : (
@@ -382,15 +482,15 @@ export default async function SheetImportPage() {
               changed.
             </li>
             <li>
-              The next deploy imports the tabs: Tier 1 in full, Tiers 2–4 as
-              the sheet-ordered top 1,000 / 2,500 / 500. Unchanged rows are
-              skipped; rows that fall out of the selection move to draft —
-              nothing is deleted.
+              The next deploy imports the tabs: Tier 1 in full, Tiers 2–4 as the
+              sheet-ordered top 1,000 / 2,500 / 500. Unchanged rows are skipped;
+              rows that fall out of the selection move to draft — nothing is
+              deleted.
             </li>
             <li>
               Imported fields (title, description, prices, images, category,
-              availability) refresh from the sheet whenever a row changes;
-              edit the sheet, not the product, for those fields.
+              availability) refresh from the sheet whenever a row changes; edit
+              the sheet, not the product, for those fields.
             </li>
           </ol>
         </div>
@@ -403,9 +503,9 @@ export default async function SheetImportPage() {
             </h2>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            Catalog images still served from scraped source hosts. A nightly
-            job copies them to our own storage in batches; each batch resumes
-            where the last one stopped, and failures keep their original URL.
+            Catalog images still served from scraped source hosts. A nightly job
+            copies them to our own storage in batches; each batch resumes where
+            the last one stopped, and failures keep their original URL.
           </p>
           <dl className="mt-3 space-y-1.5 text-sm text-muted-foreground">
             <div className="flex justify-between gap-4">

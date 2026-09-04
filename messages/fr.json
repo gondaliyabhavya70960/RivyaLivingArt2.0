@@ -59,7 +59,10 @@
     "logoHome": "Rivya Living Art — accueil",
     "dismissAnnouncement": "Masquer l'annonce",
     "announcementDefault": "Délai actuel · Petites pièces 7–10 jours · Grandes pièces 3–6 semaines",
-    "ratedOutOf": "Noté {rating} sur {outOf} étoiles"
+    "ratedOutOf": "Noté {rating} sur {outOf} étoiles",
+    "demoMark": "Contenu de démonstration",
+    "demoDetail": "Contenu de démonstration — pas une offre réelle",
+    "of": "sur"
   },
   "Header": {
     "search": "Recherche",
@@ -298,7 +301,10 @@
       "print": "impression 3d",
       "process": "processus",
       "journal": "journal",
-      "words": "de belles paroles"
+      "words": "de belles paroles",
+      "largeFormat": "grand format",
+      "furniture": "mobilier",
+      "rooms": "dans la pièce"
     },
     "manifesto": {
       "line1": "Des objets faits lentement.",
@@ -311,6 +317,84 @@
       "body": "Chaque pièce Rivya Living Art passe entre les mêmes mains, de la première coulée au dernier passage au grain 3000. Il n'y a pas de chaîne de production ici — seulement un établi, quelques moules, et le temps qu'une pièce demande.",
       "cta": "Rencontrer l'artisan",
       "imageAlt": "Des mains polissent une surface de résine durcie sur l'établi de l'atelier"
+    },
+    "largeFormat": {
+      "eyebrow": "travaux grand format",
+      "heading": "Fabriqué à grande échelle aussi",
+      "intro": "Tables, panneaux muraux, pièces sculpturales et travaux de conservation, pensés pour une pièce plutôt que pour une étagère.",
+      "cta": "Voir les pièces grand format",
+      "index": "{number} sur {total}"
+    },
+    "furniture": {
+      "eyebrow": "ce que nous réalisons sur commande",
+      "heading": "Ce que nous réalisons sur commande",
+      "intro": "L'atelier ne garde pas de meubles en stock. Envoyez-nous la pièce de votre intérieur et celle que vous imaginez, et nous les pensons ensemble.",
+      "cta": "Commencer une commande de mobilier",
+      "conceptLabel": "Concept",
+      "kinds": {
+        "dining": {
+          "title": "Table à manger",
+          "lead": "Coulée aux dimensions de votre table, jamais à une taille standard.",
+          "leadTime": "3–6 semaines",
+          "alt": "Un grand établi en bois dans l'atelier, utilisé ici comme image de concept pour une table à manger."
+        },
+        "coffee": {
+          "title": "Table basse",
+          "lead": "Une table basse pensée selon la façon dont vous vous asseyez réellement.",
+          "leadTime": "3–6 semaines",
+          "alt": "Un plateau en résine et teck terminé, avec un bol, sur la table de l'atelier, utilisé ici comme image de concept pour une table basse."
+        },
+        "side": {
+          "title": "Table d'appoint",
+          "lead": "Une surface unique, à la taille du coin qu'elle occupe.",
+          "leadTime": "3–6 semaines",
+          "alt": "Un gros plan du grain de teck scellé, utilisé ici comme image de concept pour une table d'appoint."
+        },
+        "console": {
+          "title": "Console",
+          "lead": "Une pièce d'entrée, coulée pour le mur contre lequel elle repose.",
+          "leadTime": "3–6 semaines",
+          "alt": "L'atelier de nuit — des moules remplis durcissant sous une lampe de travail chaude, utilisé ici comme image de concept pour une console."
+        },
+        "chair": {
+          "title": "Chaise",
+          "lead": "Une assise façonnée et finie à la main, une à la fois.",
+          "leadTime": "3–6 semaines",
+          "alt": "Des mains disposant des pétales dans un moule vide, utilisé ici comme image de concept pour une chaise."
+        },
+        "bench": {
+          "title": "Banc",
+          "lead": "Une longue assise pour une entrée ou une table.",
+          "leadTime": "3–6 semaines",
+          "alt": "Une résine bleu profond captant la lumière sur une surface terminée, utilisé ici comme image de concept pour un banc."
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "dans la pièce",
+      "heading": "Dans la pièce",
+      "intro": "Une pièce sur commande est rarement seule — voici le type de pièce où elle prend place.",
+      "conceptLabel": "Concept",
+      "living": {
+        "title": "Salon",
+        "caption": "Une pièce sur commande, représentée dans un salon.",
+        "alt": "De la résine coulée en un filet lent et régulier, utilisé ici comme image de concept pour un salon."
+      },
+      "dining": {
+        "title": "Salle à manger",
+        "caption": "Une pièce sur commande, représentée dans une salle à manger.",
+        "alt": "Une bande macro de texture de résine en couches, utilisé ici comme image de concept pour une salle à manger."
+      },
+      "study": {
+        "title": "Bureau",
+        "caption": "Une pièce sur commande, représentée dans un bureau.",
+        "alt": "Des moules remplis durcissant toute la nuit sous une lampe de travail chaude, utilisé ici comme image de concept pour un bureau."
+      },
+      "bedroom": {
+        "title": "Chambre",
+        "caption": "Une pièce sur commande, représentée dans une chambre.",
+        "alt": "Des paillettes d'or dérivant dans une résine bleue translucide qui se stabilise, utilisé ici comme image de concept pour une chambre."
+      }
     }
   },
   "Process": {
@@ -321,35 +405,51 @@
     "hero": {
       "eyebrow": "notre processus",
       "headline": "De l'idée à l'héritage.",
-      "lead": "Six étapes sans précipitation, entre votre premier message et la pièce entre vos mains. Voici exactement comment naît une commande Rivya Living Art — et le temps qu'elle demande vraiment."
+      "lead": "Dix étapes sans précipitation entre votre premier message et la pièce entre vos mains. Voici, très précisément, comment se construit une commande Rivya Living Art — et combien de temps cela prend vraiment."
     },
     "timeline": {
-      "heading": "Six étapes, aucun raccourci",
-      "step1Title": "Le brief",
-      "step1Copy": "Tout commence par une conversation sur WhatsApp. Vous partagez votre idée, des photos de référence, les dimensions que vous imaginez et le budget qui vous convient — et nous posons les questions qui façonnent le projet.",
-      "step2Title": "Conception et maquette",
-      "step2Copy": "Nous traduisons le brief en croquis et, pour les pièces imprimées en 3D, en aperçus numériques. Rien n'est coulé avant que vous n'ayez approuvé la conception — chaque détail est validé avant que la résine ne rencontre le moule.",
-      "step3Title": "Les matériaux",
-      "step3Copy": "Résine époxy de qualité artistique, pigments minéraux, fleurs préservées et bois sélectionné. Si la pièce accueille vos propres fleurs ou souvenirs, nous les préparons et les préservons d'abord, avec tout le soin qu'ils méritent.",
-      "step4Title": "La coulée",
-      "step4Copy": "La résine est coulée couche après couche, chaque coulée durcissant 24–72 heures avant la suivante. C'est la superposition qui donne à une pièce sa profondeur — et précisément pourquoi elle ne peut jamais être précipitée.",
-      "step5Title": "La finition",
-      "step5Copy": "Une fois entièrement durcie, la pièce est poncée du grain 400 jusqu'au grain 3000, puis polie jusqu'à devenir aussi limpide que du verre. Ferrures, crochets ou supports sont posés et vérifiés à la main.",
-      "step6Title": "Contrôle et expédition",
-      "step6Copy": "Vous recevez des photos de la pièce achevée pour approbation avant son expédition. Elle est ensuite emballée avec le plus grand soin, à l'épreuve des chocs, et envoyée en livraison suivie, partout en Inde.",
+      "heading": "Dix étapes, aucun raccourci",
+      "step1Title": "Concept",
+      "step1Copy": "Tout commence par une conversation sur WhatsApp. Vous partagez l'idée, des photos de référence, les dimensions que vous imaginez et le budget qui vous convient — et nous posons les questions qui façonnent le design, en l'esquissant avant que rien ne soit coulé.",
+      "step2Title": "Choix des matériaux",
+      "step2Copy": "Résine époxy de qualité artistique, pigments minéraux, fleurs préservées et bois patiné sont choisis selon le brief — et, pour une base structurelle, une forme imprimée en 3D. Si la pièce doit accueillir vos propres fleurs ou souvenirs, nous les préparons et les préservons dès cette étape.",
+      "step3Title": "Préparation du bois",
+      "step3Copy": "Le teck et le bois de rivière patinés sont rabotés, poncés et scellés avant tout contact avec la résine, afin que le grain soit prêt à recevoir une coulée sans gauchir ni bulle au point de jonction.",
+      "step4Title": "Composition de la résine",
+      "step4Copy": "Le pigment est mélangé à la résine par petits lots et testé à contre-jour avant une coulée complète — la feuille d'or et les plantes préservées ne sont ajoutées qu'une fois la couleur juste.",
+      "step5Title": "Coulée",
+      "step5Copy": "La résine composée est coulée dans le moule couche par couche, chacune nivelée et travaillée au décapeur thermique de précision pour chasser l'air avant qu'elle ne commence à prendre.",
+      "step6Title": "Durcissement",
+      "step6Copy": "Chaque couche coulée durcit pendant 24 à 72 heures avant la suivante, et la pièce terminée repose dans des conditions contrôlées jusqu'à durcissement complet — la résine récompense la patience, pas la précipitation.",
       "eyebrow": "comment naît une pièce",
       "step1Meta": "Sur WhatsApp",
-      "step2Meta": "Rien n'est coulé sans votre accord",
-      "step3Meta": "Époxy de qualité artistique",
-      "step4Meta": "24–72 heures par couche",
-      "step5Meta": "grain 400 → 3000",
-      "step6Meta": "Suivi, partout en Inde",
+      "step2Meta": "Résine époxy de qualité artistique",
+      "step3Meta": "À la main",
+      "step4Meta": "Rien n'est coulé avant votre accord",
+      "step5Meta": "Couche par couche",
+      "step6Meta": "24–72 heures par couche",
       "step1Alt": "L'établi de l'atelier au début d'une commande",
       "step2Alt": "Une tête d'impression FDM dépose un filament bleu translucide sur le plateau",
       "step3Alt": "Des paillettes d'or en suspension dans une résine bleue qui se stabilise",
       "step4Alt": "Une résine saphir profond en pleine coulée, s'étalant dans un moule rond",
       "step5Alt": "Des mains gantées travaillent la résine bleue au pistolet à air chaud",
-      "step6Alt": "Des pièces en résine finies disposées dans un coffret doublé"
+      "step6Alt": "Des pièces en résine finies disposées dans un coffret doublé",
+      "step7Title": "Affinage de la surface",
+      "step7Copy": "Une fois entièrement durcie, la pièce est poncée du grain 400 jusqu'au grain 3000, puis polie jusqu'à ce que la surface paraisse du verre et que la profondeur en dessous soit parfaitement nette.",
+      "step7Meta": "Grain 400 → 3000",
+      "step7Alt": "Des gouttes d'eau sur une surface de résine polie miroir, avec des paillettes d'or en suspension en dessous",
+      "step8Title": "Finition à la main",
+      "step8Copy": "Ferrures, crochets ou pieds sont posés et vérifiés à la main, et chaque arête est reprise une dernière fois avant qu'une pièce ne soit déclarée terminée.",
+      "step8Meta": "Finition à la main",
+      "step8Alt": "Une veine d'or champagne traverse une surface de résine finie à la main",
+      "step9Title": "Contrôle qualité",
+      "step9Copy": "La pièce terminée est vérifiée bord à bord au regard du brief, et vous recevez des photos pour validation avant tout envoi.",
+      "step9Meta": "Photos avant expédition",
+      "step9Alt": "Le bord biseauté d'une plaque d'époxy durcie captant la lumière",
+      "step10Title": "Livraison",
+      "step10Copy": "Une fois validée, la pièce est emballée contre la casse et expédiée avec suivi partout en Inde. Le studio ne propose pas de pose — la livraison marque la fin de la commande.",
+      "step10Meta": "Suivi, partout en Inde",
+      "step10Alt": "Un plateau de service et un bol en résine et teck terminés, prêts à quitter le studio"
     },
     "materials": {
       "heading": "Ce qui compose votre pièce",
@@ -873,7 +973,9 @@
       "wishlistRemove": "Retirer {title} de votre liste d'envies",
       "madeToOrder": "Fabriqué sur commande",
       "viewPiece": "Voir la pièce",
-      "shipsIn": "Expédié sous 7–10 jours"
+      "shipsIn": "Expédié sous 7–10 jours",
+      "askOnWhatsApp": "Demander sur WhatsApp",
+      "materialsDimensions": "Matériaux et dimensions"
     },
     "collection": {
       "count": "{count, plural, =0 {Aucune pièce pour l'instant} one {# pièce} other {# pièces}}",
@@ -942,7 +1044,8 @@
       "cta": "Voir comment c'est fait",
       "imageAlt": "Une coulée de résine durcit sous la lumière de l'atelier, sa surface encore en train de se poser."
     },
-    "sortName": "Nom"
+    "sortName": "Nom",
+    "quickViewLabel": "Aperçu rapide"
   },
   "Search": {
     "meta": {
@@ -1060,7 +1163,12 @@
     "emptyStatement": "Rien de classé sous ce thème pour l'instant.",
     "emptyDirection": "Le journal s'écrit entre deux coulées — essayez un autre thème, ou lisez tout.",
     "emptyStatementUnfiltered": "Le journal arrive bientôt.",
-    "emptyDirectionUnfiltered": "Nous écrivons les premiers articles entre deux coulées. Revenez bientôt."
+    "emptyDirectionUnfiltered": "Nous écrivons les premiers articles entre deux coulées. Revenez bientôt.",
+    "relatedCollections": {
+      "eyebrow": "continuer l'exploration",
+      "heading": "Découvrir la collection",
+      "cardEyebrow": "Collection"
+    }
   },
   "Portfolio": {
     "meta": {
@@ -1347,7 +1455,14 @@
       "detailsEyebrow": "les détails",
       "detailsHeading": "Comment elle est faite, entretenue et livrée",
       "viewCollection": "Voir la collection"
-    }
+    },
+    "roomContext": {
+      "eyebrow": "Dans une pièce",
+      "heading": "Vue dans son cadre",
+      "caption": "Photographiée dans une pièce réelle, à l'échelle réelle — pas un rendu studio."
+    },
+    "demoOrderNote": "Il s'agit d'une pièce de démonstration du Content Lab — la commande est tout de même envoyée, préfixée [DEMO] sur WhatsApp.",
+    "dimensionsLabel": "Dimensions"
   },
   "Consent": {
     "label": "Consentement aux cookies et à la mesure d'audience",
@@ -1423,7 +1538,13 @@
       "scope": "grandes pièces",
       "how": "déroulement",
       "brief": "votre brief",
-      "gallery": "pièces"
+      "gallery": "pièces",
+      "philosophy": "philosophie",
+      "materials": "matériaux",
+      "pieces": "mobilier",
+      "work": "réalisations",
+      "words": "témoignages",
+      "faq": "questions"
     },
     "hero": {
       "eyebrow": "commandes grand format",
@@ -1492,6 +1613,53 @@
       "heading": "Parlez-nous du lieu",
       "body": "Envoyez l'espace, l'usage et la date qui compte. Dessin, matériaux et prix se règlent avec vous sur WhatsApp avant qu'une seule couche ne soit coulée.",
       "formCta": "Préparer une commande sur mesure"
+    },
+    "philosophy": {
+      "eyebrow": "pourquoi planifier d'abord",
+      "heading": "Pensé avant d'être chiffré",
+      "p1": "Une grande pièce vit avec un intérieur pendant des années ; elle est donc conçue précisément pour cet intérieur — jamais taillée à une dimension standard puis expédiée.",
+      "p2": "L'atelier n'accepte qu'un petit nombre de commandes grand format à la fois, pour la même raison que chacune prend des semaines plutôt que des jours : un travail de résine en couches à cette échelle ne peut pas être précipité sans que cela se voie plus tard.",
+      "p3": "Rien n'est coulé avant que le design, la finition et la taille ne soient convenus par écrit — la pièce n'a qu'une seule chance d'être correctement mesurée, et l'atelier ne devine pas."
+    },
+    "pieces": {
+      "eyebrow": "le mobilier à cette échelle",
+      "heading": "Le volet mobilier du travail grand format",
+      "intro": "Les six mêmes types que sur la page d'accueil — une table, une console, un banc — pensés et coulés pour un intérieur précis."
+    },
+    "work": {
+      "eyebrow": "déjà réalisé sur commande",
+      "heading": "Travaux grand format, livrés",
+      "cta": "Voir toutes les réalisations"
+    },
+    "words": {
+      "eyebrow": "dans leurs mots",
+      "heading": "Ce que disent les clients de travaux grand format"
+    },
+    "faq": {
+      "eyebrow": "questions fréquentes",
+      "heading": "Questions sur le travail grand format"
     }
+  },
+  "CureLine": {
+    "pageSections": "Sections de la page"
+  },
+  "Testimonials": {
+    "demoNotice": "Témoignage de démonstration — pas un avis client réel",
+    "linkedPiece": "Voir cette pièce",
+    "linkedProject": "Voir ce projet",
+    "watchFilm": "Regarder le film",
+    "verifiedBy": "Client vérifié",
+    "givenOn": "Donné le {date}",
+    "wallHeading": "Dans leurs mots"
+  },
+  "Lightbox": {
+    "prev": "Précédent",
+    "next": "Suivant",
+    "close": "Fermer",
+    "of": "sur"
+  },
+  "AccordionGallery": {
+    "expand": "Développer",
+    "collapse": "Réduire"
   }
 }

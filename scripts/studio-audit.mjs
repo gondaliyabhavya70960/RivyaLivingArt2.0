@@ -52,6 +52,12 @@ const DEFAULT_ROUTES = [
   "/studio/seo",
   "/studio/users",
   "/studio/activity",
+  "/studio/testimonials/new",
+  "/studio/content-lab",
+  "/studio/research",
+  "/studio/sheet-import/conflicts",
+  "/studio/process",
+  "/studio/materials",
 ];
 
 const args = process.argv.slice(2);

@@ -119,8 +119,10 @@ export function localizeLexical(
     const candidate = overlay[i];
     if (!candidate || typeof candidate !== "object") return row;
     const { label, value } = candidate as Record<string, unknown>;
-    const nextLabel = typeof label === "string" && label.trim() ? label.trim() : row.label;
-    const nextValue = typeof value === "string" && value.trim() ? value.trim() : row.value;
+    const nextLabel =
+      typeof label === "string" && label.trim() ? label.trim() : row.label;
+    const nextValue =
+      typeof value === "string" && value.trim() ? value.trim() : row.value;
     return nextLabel === row.label && nextValue === row.value
       ? row
       : { label: nextLabel, value: nextValue };
@@ -231,8 +233,10 @@ export const TRANSLATABLE_FIELDS = {
   blogPost: ["title", "excerpt", "content", "seoTitle", "seoDescription"],
   portfolio: ["title", "story", "brief", "process", "clientNote", "location"],
   faq: ["question", "answer"],
-  /** The customer's name is never translated — only their words and place. */
-  testimonial: ["quote", "location"],
+  /** The customer's name is never translated — only their words, place, the
+      line under their name and (when they wrote no catalogue product) what
+      they said they bought. */
+  testimonial: ["quote", "location", "designation", "productTitle"],
   page: ["title", "content"],
   /** A taxonomy label is one word to a reader and a URL to everything else —
       the slug is deliberately not translatable. */

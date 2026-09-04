@@ -20,6 +20,7 @@ import {
   type BulkProductTarget,
 } from "@/actions/products";
 import { formatPriceBand } from "@/lib/utils";
+import { useColumnVisibility } from "@/hooks/use-column-visibility";
 import { useSelection } from "@/hooks/use-selection";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,9 +35,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BulkBar } from "@/components/studio/bulk-bar";
+import { ColumnsMenu } from "@/components/studio/columns-menu";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import { Pagination, PAGE_SIZE } from "@/components/studio/pagination";
+import { SortHead, useSort } from "@/components/studio/sort-header";
+import type { ColumnDef } from "@/lib/column-visibility";
 import type {
   ProductListFilter,
   ProductStatusTab,
@@ -49,6 +54,7 @@ export type ProductRow = {
   priceMin: number | null;
   priceMax: number | null;
   status: ContentStatus;
+  isDemo: boolean;
   featured: boolean;
   needsRewrite: boolean;
   /** Owner-sheet tier (1-4) or null for studio-made products. */
@@ -65,8 +71,36 @@ export type ProductRow = {
 
 const STATUS_TABS: { value: ProductStatusTab; label: string }[] = [
   { value: "PUBLISHED", label: "Published" },
+  { value: "REVIEW", label: "Review" },
   { value: "DRAFT", label: "Drafts" },
+  { value: "ARCHIVED", label: "Archived" },
   { value: "ALL", label: "All" },
+];
+
+/** Row status chip — one tone/label per `ContentStatus` value. */
+const STATUS_BADGE_VARIANT: Record<
+  ContentStatus,
+  "success" | "warning" | "secondary" | "outline"
+> = {
+  PUBLISHED: "success",
+  REVIEW: "warning",
+  DRAFT: "secondary",
+  ARCHIVED: "outline",
+};
+const STATUS_BADGE_LABEL: Record<ContentStatus, string> = {
+  PUBLISHED: "Published",
+  REVIEW: "Review",
+  DRAFT: "Draft",
+  ARCHIVED: "Archived",
+};
+
+const PRODUCT_COLUMNS: ColumnDef[] = [
+  { key: "category", label: "Category" },
+  { key: "price", label: "Price" },
+  { key: "tier", label: "Tier" },
+  { key: "stock", label: "Stock" },
+  { key: "featured", label: "Featured" },
+  { key: "updated", label: "Updated" },
 ];
 
 /** Sticky right actions column wherever the table scrolls horizontally — i.e.
@@ -114,18 +148,53 @@ export function ProductList({
   const [allMatching, setAllMatching] = useState(false);
   const [bulkCategory, setBulkCategory] = useState("");
 
-  const pageRows = products;
+  // The current server page, sorted client-side (SortHead sorts what is
+  // ON SCREEN — the catalog itself is server-paginated, so a "global" sort
+  // would need a server-side order-by this list does not have).
+  const {
+    sorted,
+    sort,
+    toggle: toggleSort,
+  } = useSort<ProductRow>(
+    products,
+    (row, key) => {
+      switch (key) {
+        case "title":
+          return row.title;
+        case "category":
+          return row.categoryName;
+        case "price":
+          return row.priceMin;
+        case "tier":
+          return row.tier;
+        case "stock":
+          return row.inStock;
+        case "featured":
+          return row.featured;
+        case "updated":
+          return row.updatedAt;
+        default:
+          return null;
+      }
+    },
+    { key: "updated", dir: "desc" },
+  );
+  const pageRows = sorted;
   const rowIds = useMemo(() => pageRows.map((p) => p.id), [pageRows]);
   const selection = useSelection(rowIds);
+  const columns = useColumnVisibility("products", PRODUCT_COLUMNS);
 
   const filterArmed = allMatching && selection.allSelected;
   /** The count every bulk action + confirmation actually applies to. */
   const effectiveCount = filterArmed ? total : selection.count;
-  const bulkTarget: BulkProductTarget = filterArmed ? { filter } : selection.ids;
+  const bulkTarget: BulkProductTarget = filterArmed
+    ? { filter }
+    : selection.ids;
 
   const categoryFilter = searchParams.get("category") ?? "ALL";
   const tierFilter = searchParams.get("tier") ?? "ALL";
   const stockFilter = searchParams.get("stock") ?? "ALL";
+  const demoFilter = searchParams.get("demo") === "1";
 
   const formatCount = (n: number) => n.toLocaleString("en-IN");
 
@@ -190,7 +259,7 @@ export function ProductList({
     router.refresh();
   }
 
-  async function handleStatus(status: "DRAFT" | "PUBLISHED") {
+  async function handleStatus(status: ContentStatus) {
     setBusy(true);
     const result = await setProductsStatus(bulkTarget, status);
     setBusy(false);
@@ -212,7 +281,7 @@ export function ProductList({
       }
     } else {
       toast.success(
-        `Moved ${formatCount(updated)} product${updated === 1 ? "" : "s"} to draft.`,
+        `Moved ${formatCount(updated)} product${updated === 1 ? "" : "s"} to ${STATUS_BADGE_LABEL[status].toLowerCase()}.`,
       );
     }
     clearSelection();
@@ -279,7 +348,7 @@ export function ProductList({
       <div
         role="group"
         aria-label="Filter by status"
-        className="mb-4 flex w-fit items-center gap-1 rounded-full border border-border bg-card p-1"
+        className="mb-4 flex w-fit max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-card p-1 [scrollbar-width:none]"
       >
         {STATUS_TABS.map((tab) => {
           const active = statusTab === tab.value;
@@ -393,6 +462,21 @@ export function ProductList({
             <SelectItem value="out">Out of stock</SelectItem>
           </SelectContent>
         </Select>
+
+        <button
+          type="button"
+          aria-pressed={demoFilter}
+          onClick={() => updateParams({ demo: demoFilter ? undefined : "1" })}
+          className={
+            demoFilter
+              ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              : "inline-flex min-h-11 items-center rounded-full border border-border px-4 text-small text-graphite outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+          }
+        >
+          Demo only
+        </button>
+
+        <ColumnsMenu tableKey="products" columns={PRODUCT_COLUMNS} />
       </div>
 
       {/* Cross-page selection banner (audit L-AD1, Gmail pattern). */}
@@ -402,9 +486,7 @@ export function ProductList({
             <>
               <span>
                 All{" "}
-                <span className="u-num font-medium">
-                  {formatCount(total)}
-                </span>{" "}
+                <span className="u-num font-medium">{formatCount(total)}</span>{" "}
                 products matching this filter are selected.
               </span>
               <button
@@ -418,10 +500,7 @@ export function ProductList({
           ) : (
             <>
               <span>
-                All{" "}
-                <span className="u-num font-medium">
-                  {rowIds.length}
-                </span>{" "}
+                All <span className="u-num font-medium">{rowIds.length}</span>{" "}
                 products on this page are selected.
               </span>
               <button
@@ -442,71 +521,50 @@ export function ProductList({
           description="Try clearing the filters, or add your first product to start building the catalog."
         />
       ) : (
-        <div
-            tabIndex={0}
-            role="region"
-            aria-label="Products"
-            className="relative overflow-x-auto rounded-card border border-border bg-card shadow-e1 xl:overflow-x-visible [contain:paint] xl:[contain:none] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
-          <table className="w-full min-w-[62rem] text-small xl:min-w-0">
-            <thead className="xl:sticky xl:top-16 xl:z-20 xl:bg-card">
-              <StudioTableHead>
-                <th className="w-10 py-3 pe-2 ps-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
+        <>
+          {/* §12.6 — on a phone the table becomes cards (inquiry-list.tsx
+            pattern). Both views render; one is `display:none` per breakpoint,
+            which also removes it from the accessibility tree. */}
+          <label className="mb-3 flex min-h-11 cursor-pointer items-center gap-3 text-small text-graphite md:hidden">
+            <Checkbox
+              aria-label="Select all"
+              checked={selection.allSelected}
+              onCheckedChange={() => {
+                if (selection.allSelected) setAllMatching(false);
+                selection.toggleAll();
+              }}
+            />
+            Select all on this page
+          </label>
+          <ul className="space-y-3 md:hidden">
+            {pageRows.map((product) => (
+              <li
+                key={product.id}
+                className="rounded-card border border-border bg-card p-4 shadow-e1"
+              >
+                <div className="flex items-start gap-3">
                   <Checkbox
-                    aria-label="Select all"
-                    checked={selection.allSelected}
-                    onCheckedChange={() => {
-                      // Unticking select-all always disarms filter-mode too.
-                      if (selection.allSelected) setAllMatching(false);
-                      selection.toggleAll();
-                    }}
+                    aria-label={`Select ${product.title}`}
+                    checked={selection.selected.has(product.id)}
+                    onCheckedChange={() => selection.toggle(product.id)}
+                    className="mt-1"
                   />
-                </th>
-                <th className="w-15 py-3 pe-3 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10" />
-                <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-25">Title</th>
-                <th className="py-3 pe-4">Category</th>
-                <th className="py-3 pe-4">Price</th>
-                <th className="py-3 pe-4">Status</th>
-                <th className="py-3 pe-4">Tier</th>
-                <th className="py-3 pe-4">Stock</th>
-                <th className="py-3 pe-4 text-center">Featured</th>
-                <th className="py-3 pe-4">Updated</th>
-                <th className={`py-3 pe-4 ${STICKY_ACTIONS_CELL}`}>
-                  <span className="sr-only">Actions</span>
-                </th>
-              </StudioTableHead>
-            </thead>
-            <tbody>
-              {pageRows.map((product) => (
-                <StudioRow
-                  key={product.id}
-                  selected={selection.selected.has(product.id)}
-                >
-                  <td className="py-3 pe-2 ps-4 align-middle max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
-                    <Checkbox
-                      aria-label={`Select ${product.title}`}
-                      checked={selection.selected.has(product.id)}
-                      onCheckedChange={() => selection.toggle(product.id)}
+                  {product.thumbnailUrl ? (
+                    <Image
+                      src={product.thumbnailUrl}
+                      unoptimized={!isOptimizableImageSrc(product.thumbnailUrl)}
+                      alt=""
+                      width={48}
+                      height={48}
+                      className="size-12 shrink-0 rounded-image border border-border object-cover"
                     />
-                  </td>
-                  <td className="py-2 pe-3 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
-                    {product.thumbnailUrl ? (
-                      <Image
-                        src={product.thumbnailUrl}
-                        unoptimized={!isOptimizableImageSrc(product.thumbnailUrl)}
-                        alt=""
-                        width={48}
-                        height={48}
-                        className="size-12 rounded-image border border-border object-cover"
-                      />
-                    ) : (
-                      <div
-                        aria-hidden
-                        className="size-12 rounded-image border border-border bg-background"
-                      />
-                    )}
-                  </td>
-                  <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-25">
+                  ) : (
+                    <div
+                      aria-hidden
+                      className="size-12 shrink-0 rounded-image border border-border bg-background"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
                         href={`/studio/products/${product.id}`}
@@ -514,96 +572,233 @@ export function ProductList({
                       >
                         {product.title}
                       </Link>
-                      {product.title.startsWith("DEMO") && (
-                        <Badge variant="outline">DEMO</Badge>
-                      )}
-                      {product.needsRewrite && (
-                        <Badge variant="warning">needs rewrite</Badge>
-                      )}
-                      {product.demoted && (
-                        <Badge
-                          variant="outline"
-                          className="border-sapphire-ink/30 text-sapphire-ink"
-                          title="Demoted to draft by the sheet import's tier cap — not an intentional owner draft."
-                        >
-                          Out of tier cap
-                        </Badge>
-                      )}
+                      {product.isDemo && <DemoBadge />}
                     </div>
-                  </td>
-                  <td className="py-3 pe-4 text-graphite">
-                    {product.categoryName}
-                  </td>
-                  <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
-                    {formatPriceBand(product.priceMin, product.priceMax)}
-                  </td>
-                  <td className="py-3 pe-4">
-                    {/* Status is not an action, so it is not sapphire (A2:
-                        royal = clickable). Published reads as a quiet success
-                        outline; Draft keeps the neutral chip. */}
-                    <Badge
-                      variant={
-                        product.status === "PUBLISHED" ? "success" : "secondary"
-                      }
-                    >
-                      {product.status === "PUBLISHED" ? "Published" : "Draft"}
-                    </Badge>
-                  </td>
-                  <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
-                    {product.tier ? (
-                      <Badge variant="outline">
-                        T{product.tier}
-                        {product.imported ? " · sheet" : ""}
+                    <p className="mt-0.5 text-small text-graphite">
+                      {product.categoryName}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <Badge variant={STATUS_BADGE_VARIANT[product.status]}>
+                        {STATUS_BADGE_LABEL[product.status]}
                       </Badge>
-                    ) : (
-                      <span aria-hidden>—</span>
-                    )}
-                  </td>
-                  <td className="py-3 pe-4 whitespace-nowrap">
-                    {product.inStock ? (
-                      <span className="text-graphite">In stock</span>
-                    ) : (
-                      <Badge variant="secondary">Out of stock</Badge>
-                    )}
-                  </td>
-                  <td className="py-3 pe-4 text-center">
-                    <button
-                      type="button"
-                      onClick={() => handleFeature(product)}
-                      aria-label={
-                        product.featured
-                          ? `Unfeature ${product.title}`
-                          : `Feature ${product.title}`
-                      }
-                      aria-pressed={product.featured}
-                      className="inline-flex size-11 items-center justify-center rounded-input outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:bg-foreground/6 focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none"
-                    >
-                      <Star
-                        className={
-                          product.featured
-                            ? "size-4 fill-sapphire-ink text-sapphire-ink"
-                            : "size-4 text-graphite/50"
-                        }
+                      <span className="u-num text-12 text-graphite">
+                        {formatPriceBand(product.priceMin, product.priceMax)}
+                      </span>
+                      <span className="u-micro ms-auto">
+                        {product.updatedAt}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div
+            tabIndex={0}
+            role="region"
+            aria-label="Products"
+            className="relative hidden overflow-x-auto rounded-card border border-border bg-card shadow-e1 md:block xl:overflow-x-visible [contain:paint] xl:[contain:none] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
+            <table className="w-full min-w-[62rem] text-small xl:min-w-0">
+              <thead className="xl:sticky xl:top-16 xl:z-20 xl:bg-card">
+                <StudioTableHead>
+                  <th className="w-10 py-3 pe-2 ps-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
+                    <Checkbox
+                      aria-label="Select all"
+                      checked={selection.allSelected}
+                      onCheckedChange={() => {
+                        // Unticking select-all always disarms filter-mode too.
+                        if (selection.allSelected) setAllMatching(false);
+                        selection.toggleAll();
+                      }}
+                    />
+                  </th>
+                  <th className="w-15 py-3 pe-3 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10" />
+                  <th className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-25">
+                    Title
+                  </th>
+                  {columns.isVisible("category") && (
+                    <SortHead
+                      label="Category"
+                      sortKey="category"
+                      sort={sort}
+                      onSort={toggleSort}
+                    />
+                  )}
+                  {columns.isVisible("price") && (
+                    <SortHead
+                      label="Price"
+                      sortKey="price"
+                      sort={sort}
+                      onSort={toggleSort}
+                      numeric
+                    />
+                  )}
+                  <th className="py-3 pe-4">Status</th>
+                  {columns.isVisible("tier") && (
+                    <th className="py-3 pe-4">Tier</th>
+                  )}
+                  {columns.isVisible("stock") && (
+                    <th className="py-3 pe-4">Stock</th>
+                  )}
+                  {columns.isVisible("featured") && (
+                    <th className="py-3 pe-4 text-center">Featured</th>
+                  )}
+                  {columns.isVisible("updated") && (
+                    <SortHead
+                      label="Updated"
+                      sortKey="updated"
+                      sort={sort}
+                      onSort={toggleSort}
+                      numeric
+                    />
+                  )}
+                  <th className={`py-3 pe-4 ${STICKY_ACTIONS_CELL}`}>
+                    <span className="sr-only">Actions</span>
+                  </th>
+                </StudioTableHead>
+              </thead>
+              <tbody>
+                {pageRows.map((product) => (
+                  <StudioRow
+                    key={product.id}
+                    selected={selection.selected.has(product.id)}
+                  >
+                    <td className="py-3 pe-2 ps-4 align-middle max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-0">
+                      <Checkbox
+                        aria-label={`Select ${product.title}`}
+                        checked={selection.selected.has(product.id)}
+                        onCheckedChange={() => selection.toggle(product.id)}
                       />
-                    </button>
-                  </td>
-                  <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
-                    {product.updatedAt}
-                  </td>
-                  <td className={`py-3 pe-4 text-end ${STICKY_ACTIONS_CELL}`}>
-                    <Link
-                      href={`/studio/products/${product.id}`}
-                      className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
-                    >
-                      Edit
-                      <span className="sr-only"> {product.title}</span>
-                    </Link>
-                  </td>
-                </StudioRow>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    </td>
+                    <td className="py-2 pe-3 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-10">
+                      {product.thumbnailUrl ? (
+                        <Image
+                          src={product.thumbnailUrl}
+                          unoptimized={
+                            !isOptimizableImageSrc(product.thumbnailUrl)
+                          }
+                          alt=""
+                          width={48}
+                          height={48}
+                          className="size-12 rounded-image border border-border object-cover"
+                        />
+                      ) : (
+                        <div
+                          aria-hidden
+                          className="size-12 rounded-image border border-border bg-background"
+                        />
+                      )}
+                    </td>
+                    <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-25">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Link
+                          href={`/studio/products/${product.id}`}
+                          className="rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                        >
+                          {product.title}
+                        </Link>
+                        {product.isDemo && <DemoBadge />}
+                        {product.needsRewrite && (
+                          <Badge variant="warning">needs rewrite</Badge>
+                        )}
+                        {product.demoted && (
+                          <Badge
+                            variant="outline"
+                            className="border-sapphire-ink/30 text-sapphire-ink"
+                            title="Demoted to draft by the sheet import's tier cap — not an intentional owner draft."
+                          >
+                            Out of tier cap
+                          </Badge>
+                        )}
+                      </div>
+                    </td>
+                    {columns.isVisible("category") && (
+                      <td className="py-3 pe-4 text-graphite">
+                        {product.categoryName}
+                      </td>
+                    )}
+                    {columns.isVisible("price") && (
+                      <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
+                        {formatPriceBand(product.priceMin, product.priceMax)}
+                      </td>
+                    )}
+                    <td className="py-3 pe-4">
+                      {/* Status is not an action, so it is not sapphire (A2:
+                        royal = clickable). Published reads as a quiet success
+                        outline; the newer statuses (10 remnants: REVIEW,
+                        ARCHIVED) get their own tone rather than falling back
+                        to Draft's grey, which used to be every non-published
+                        row regardless of which of the four it actually was. */}
+                      <Badge variant={STATUS_BADGE_VARIANT[product.status]}>
+                        {STATUS_BADGE_LABEL[product.status]}
+                      </Badge>
+                    </td>
+                    {columns.isVisible("tier") && (
+                      <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
+                        {product.tier ? (
+                          <Badge variant="outline">
+                            T{product.tier}
+                            {product.imported ? " · sheet" : ""}
+                          </Badge>
+                        ) : (
+                          <span aria-hidden>—</span>
+                        )}
+                      </td>
+                    )}
+                    {columns.isVisible("stock") && (
+                      <td className="py-3 pe-4 whitespace-nowrap">
+                        {product.inStock ? (
+                          <span className="text-graphite">In stock</span>
+                        ) : (
+                          <Badge variant="secondary">Out of stock</Badge>
+                        )}
+                      </td>
+                    )}
+                    {columns.isVisible("featured") && (
+                      <td className="py-3 pe-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleFeature(product)}
+                          aria-label={
+                            product.featured
+                              ? `Unfeature ${product.title}`
+                              : `Feature ${product.title}`
+                          }
+                          aria-pressed={product.featured}
+                          className="inline-flex size-11 items-center justify-center rounded-input outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:bg-foreground/6 focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none"
+                        >
+                          <Star
+                            className={
+                              product.featured
+                                ? "size-4 fill-sapphire-ink text-sapphire-ink"
+                                : "size-4 text-graphite/50"
+                            }
+                          />
+                        </button>
+                      </td>
+                    )}
+                    {columns.isVisible("updated") && (
+                      <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
+                        {product.updatedAt}
+                      </td>
+                    )}
+                    <td className={`py-3 pe-4 text-end ${STICKY_ACTIONS_CELL}`}>
+                      <Link
+                        href={`/studio/products/${product.id}`}
+                        className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                      >
+                        Edit
+                        <span className="sr-only"> {product.title}</span>
+                      </Link>
+                    </td>
+                  </StudioRow>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       <Pagination
@@ -632,7 +827,23 @@ export function ProductList({
           disabled={busy}
           onClick={() => handleStatus("DRAFT")}
         >
-          Draft
+          {statusTab === "ARCHIVED" ? "Restore to draft" : "Draft"}
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={busy}
+          onClick={() => handleStatus("REVIEW")}
+        >
+          Send to review
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={busy}
+          onClick={() => handleStatus("ARCHIVED")}
+        >
+          Archive
         </Button>
         <Select
           value={bulkCategory}

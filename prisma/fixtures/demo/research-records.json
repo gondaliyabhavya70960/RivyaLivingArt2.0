@@ -1,0 +1,677 @@
+[
+  {
+    "id": "demo-research-001",
+    "source": "Pinterest",
+    "url": "https://example.com/research/1",
+    "title": "Reference note 1 — Baby Footprint Keepsake",
+    "category": "art-craft-pieces",
+    "materials": "Epoxy resin",
+    "dimensions": "46cm diameter",
+    "price": "₹1150",
+    "images": [
+      "/media/v3/hero-pour.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "art",
+      "wall"
+    ],
+    "extractedAt": "2026-02-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-002",
+    "source": "Instagram",
+    "url": "https://example.com/research/2",
+    "title": "Reference note 2 — Anniversary Preservation Frame",
+    "category": "sculptures-objets",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "price": "₹1300",
+    "images": [
+      "/media/v3/login-backdrop.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "decor"
+    ],
+    "extractedAt": "2026-03-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-003",
+    "source": "A competitor storefront",
+    "url": "https://example.com/research/3",
+    "title": "Reference note 3 — Coaster Set",
+    "category": "resin-home-decor",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 4 ft length",
+    "price": "₹1450",
+    "images": [
+      "/media/v3/macro-epoxy.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "gifting",
+      "corporate"
+    ],
+    "extractedAt": null,
+    "notes": null,
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-004",
+    "source": "A trade show catalogue",
+    "url": null,
+    "title": "Reference note 4 — Wall Art Panel",
+    "category": "tablespace-sets",
+    "materials": "Epoxy resin",
+    "dimensions": "28 x 22 x 2 in",
+    "price": "₹1600",
+    "images": [
+      "/media/v3/macro-flower.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "jewellery"
+    ],
+    "extractedAt": "2026-05-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-005",
+    "source": "Etsy",
+    "url": "https://example.com/research/5",
+    "title": "Reference note 5 — Gold Leaf Serving Tray",
+    "category": "resin-jewelry-keychains",
+    "materials": "Epoxy resin",
+    "dimensions": "50cm diameter",
+    "price": null,
+    "images": [
+      "/media/v3/macro-pigment.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "wedding",
+      "preservation"
+    ],
+    "extractedAt": "2026-06-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-006",
+    "source": "Pinterest",
+    "url": "https://example.com/research/6",
+    "title": "Reference note 6 — Engagement Tray",
+    "category": "varmala-preservation",
+    "materials": "Epoxy resin",
+    "dimensions": "14\" x 14\"",
+    "price": "₹1900",
+    "images": [
+      "/media/v3/macro-teak.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "process"
+    ],
+    "extractedAt": null,
+    "notes": "Worth revisiting for palette ideas.",
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-007",
+    "source": "Instagram",
+    "url": "https://example.com/research/7",
+    "title": "Reference note 7 — Diwali Diya Set",
+    "category": "wedding-photo-frames",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 3 ft length",
+    "price": "₹2050",
+    "images": [
+      "/media/v3/print-head.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "studio"
+    ],
+    "extractedAt": "2026-08-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-008",
+    "source": "A competitor storefront",
+    "url": null,
+    "title": "Reference note 8 — Minimalist Tea Light Holder",
+    "category": "resin-trays-serving-platters",
+    "materials": "Epoxy resin",
+    "dimensions": "32 x 26 x 2 in",
+    "price": "₹2200",
+    "images": [
+      "/media/v3/story-cure.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "furniture",
+      "concept"
+    ],
+    "extractedAt": "2026-09-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-009",
+    "source": "A trade show catalogue",
+    "url": "https://example.com/research/9",
+    "title": "Reference note 9 — Marble Pattern Wall Clock",
+    "category": "candle-tea-light-holders",
+    "materials": "Epoxy resin",
+    "dimensions": "54cm diameter",
+    "price": "₹2350",
+    "images": [
+      "/media/v3/story-gild.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "art",
+      "wall"
+    ],
+    "extractedAt": null,
+    "notes": null,
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-010",
+    "source": "Etsy",
+    "url": "https://example.com/research/10",
+    "title": "Reference note 10 — Geode Wall Clock",
+    "category": "resin-wall-clocks",
+    "materials": "Epoxy resin",
+    "dimensions": "18\" x 18\"",
+    "price": null,
+    "images": [
+      "/media/v3/story-polish.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "decor"
+    ],
+    "extractedAt": "2026-11-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-011",
+    "source": "Pinterest",
+    "url": "https://example.com/research/11",
+    "title": "Reference note 11 — Crystal-Look Vase",
+    "category": "resin-vases",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 2 ft length",
+    "price": "₹2650",
+    "images": [
+      "/media/v3/story-pour.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "gifting",
+      "corporate"
+    ],
+    "extractedAt": "2026-12-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-012",
+    "source": "Instagram",
+    "url": null,
+    "title": "Reference note 12 — Pigment Art Vase",
+    "category": "drinkware-barware",
+    "materials": "Epoxy resin",
+    "dimensions": "36 x 30 x 2 in",
+    "price": "₹2800",
+    "images": [
+      "/media/v3/studio-hands.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "jewellery"
+    ],
+    "extractedAt": null,
+    "notes": "Worth revisiting for palette ideas.",
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-013",
+    "source": "A competitor storefront",
+    "url": "https://example.com/research/13",
+    "title": "Reference note 13 — Resin Coaster & Tumbler Set",
+    "category": "vanity-mirrors",
+    "materials": "Epoxy resin",
+    "dimensions": "58cm diameter",
+    "price": "₹2950",
+    "images": [
+      "/media/v3/studio-interior.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "wedding",
+      "preservation"
+    ],
+    "extractedAt": "2026-02-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-014",
+    "source": "A trade show catalogue",
+    "url": "https://example.com/research/14",
+    "title": "Reference note 14 — Resin-Embellished Vanity Mirror",
+    "category": "resin-furniture-surfaces",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "price": "₹3100",
+    "images": [
+      "/media/v3/texture-band.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "process"
+    ],
+    "extractedAt": "2026-03-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-015",
+    "source": "Etsy",
+    "url": "https://example.com/research/15",
+    "title": "Reference note 15 — Monogram Letter Set",
+    "category": "art-craft-pieces",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 1 ft length",
+    "price": null,
+    "images": [
+      "/media/v3/tile-create.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "studio"
+    ],
+    "extractedAt": null,
+    "notes": null,
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-016",
+    "source": "Pinterest",
+    "url": null,
+    "title": "Reference note 16 — Baby Footprint Keepsake",
+    "category": "sculptures-objets",
+    "materials": "Epoxy resin",
+    "dimensions": "40 x 34 x 2 in",
+    "price": "₹3400",
+    "images": [
+      "/media/v3/tile-gift.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "furniture",
+      "concept"
+    ],
+    "extractedAt": "2026-05-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-017",
+    "source": "Instagram",
+    "url": "https://example.com/research/17",
+    "title": "Reference note 17 — Anniversary Preservation Frame",
+    "category": "resin-home-decor",
+    "materials": "Epoxy resin",
+    "dimensions": "62cm diameter",
+    "price": "₹3550",
+    "images": [
+      "/media/v3/tile-live.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "art",
+      "wall"
+    ],
+    "extractedAt": "2026-06-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-018",
+    "source": "A competitor storefront",
+    "url": "https://example.com/research/18",
+    "title": "Reference note 18 — Coaster Set",
+    "category": "tablespace-sets",
+    "materials": "Epoxy resin",
+    "dimensions": "14\" x 14\"",
+    "price": "₹3700",
+    "images": [
+      "/media/v3/tile-preserve.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "decor"
+    ],
+    "extractedAt": null,
+    "notes": "Worth revisiting for palette ideas.",
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-019",
+    "source": "A trade show catalogue",
+    "url": "https://example.com/research/19",
+    "title": "Reference note 19 — Wall Art Panel",
+    "category": "resin-jewelry-keychains",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 5 ft length",
+    "price": "₹3850",
+    "images": [
+      "/media/v3/tile-print.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "gifting",
+      "corporate"
+    ],
+    "extractedAt": "2026-08-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-020",
+    "source": "Etsy",
+    "url": null,
+    "title": "Reference note 20 — Gold Leaf Serving Tray",
+    "category": "varmala-preservation",
+    "materials": "Epoxy resin",
+    "dimensions": "44 x 18 x 2 in",
+    "price": null,
+    "images": [
+      "/media/v3/workshop-private.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "jewellery"
+    ],
+    "extractedAt": "2026-09-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-021",
+    "source": "Pinterest",
+    "url": "https://example.com/research/21",
+    "title": "Reference note 21 — Engagement Tray",
+    "category": "wedding-photo-frames",
+    "materials": "Epoxy resin",
+    "dimensions": "66cm diameter",
+    "price": "₹4150",
+    "images": [
+      "/media/v3/workshop-table.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "wedding",
+      "preservation"
+    ],
+    "extractedAt": null,
+    "notes": null,
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-022",
+    "source": "Instagram",
+    "url": "https://example.com/research/22",
+    "title": "Reference note 22 — Diwali Diya Set",
+    "category": "resin-trays-serving-platters",
+    "materials": "Epoxy resin",
+    "dimensions": "18\" x 18\"",
+    "price": "₹4300",
+    "images": [
+      "/media/v3/bespoke-petals.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "process"
+    ],
+    "extractedAt": "2026-11-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-023",
+    "source": "A competitor storefront",
+    "url": "https://example.com/research/23",
+    "title": "Reference note 23 — Minimalist Tea Light Holder",
+    "category": "candle-tea-light-holders",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 4 ft length",
+    "price": "₹4450",
+    "images": [
+      "/media/v3/hero-pour.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "studio"
+    ],
+    "extractedAt": "2026-12-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-024",
+    "source": "A trade show catalogue",
+    "url": null,
+    "title": "Reference note 24 — Marble Pattern Wall Clock",
+    "category": "resin-wall-clocks",
+    "materials": "Epoxy resin",
+    "dimensions": "48 x 22 x 2 in",
+    "price": "₹4600",
+    "images": [
+      "/media/v3/login-backdrop.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "furniture",
+      "concept"
+    ],
+    "extractedAt": null,
+    "notes": "Worth revisiting for palette ideas.",
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-025",
+    "source": "Etsy",
+    "url": "https://example.com/research/25",
+    "title": "Reference note 25 — Geode Wall Clock",
+    "category": "resin-vases",
+    "materials": "Epoxy resin",
+    "dimensions": "70cm diameter",
+    "price": null,
+    "images": [
+      "/media/v3/macro-epoxy.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "art",
+      "wall"
+    ],
+    "extractedAt": "2026-02-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-026",
+    "source": "Pinterest",
+    "url": "https://example.com/research/26",
+    "title": "Reference note 26 — Crystal-Look Vase",
+    "category": "drinkware-barware",
+    "materials": "Epoxy resin",
+    "dimensions": "10\" x 10\"",
+    "price": "₹4900",
+    "images": [
+      "/media/v3/macro-flower.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "decor"
+    ],
+    "extractedAt": "2026-03-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-027",
+    "source": "Instagram",
+    "url": "https://example.com/research/27",
+    "title": "Reference note 27 — Pigment Art Vase",
+    "category": "vanity-mirrors",
+    "materials": "Epoxy resin",
+    "dimensions": "Approx. 3 ft length",
+    "price": "₹5050",
+    "images": [
+      "/media/v3/macro-pigment.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "gifting",
+      "corporate"
+    ],
+    "extractedAt": null,
+    "notes": null,
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-028",
+    "source": "A competitor storefront",
+    "url": null,
+    "title": "Reference note 28 — Resin Coaster & Tumbler Set",
+    "category": "resin-furniture-surfaces",
+    "materials": "Epoxy resin",
+    "dimensions": "52 x 26 x 2 in",
+    "price": "₹5200",
+    "images": [
+      "/media/v3/macro-teak.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "jewellery"
+    ],
+    "extractedAt": "2026-05-01T00:00:00.000Z",
+    "notes": null,
+    "status": "SHORTLISTED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-029",
+    "source": "A trade show catalogue",
+    "url": "https://example.com/research/29",
+    "title": "Reference note 29 — Resin-Embellished Vanity Mirror",
+    "category": "art-craft-pieces",
+    "materials": "Epoxy resin",
+    "dimensions": "74cm diameter",
+    "price": "₹5350",
+    "images": [
+      "/media/v3/print-head.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "wedding",
+      "preservation"
+    ],
+    "extractedAt": "2026-06-01T00:00:00.000Z",
+    "notes": null,
+    "status": "ARCHIVED",
+    "isDemo": true,
+    "createdById": null
+  },
+  {
+    "id": "demo-research-030",
+    "source": "Etsy",
+    "url": "https://example.com/research/30",
+    "title": "Reference note 30 — Monogram Letter Set",
+    "category": "sculptures-objets",
+    "materials": "Epoxy resin",
+    "dimensions": "14\" x 14\"",
+    "price": null,
+    "images": [
+      "/media/v3/story-cure.avif"
+    ],
+    "description": "Content Lab demo research note — a hand-kept reference, not a scraped or published record.",
+    "tags": [
+      "process"
+    ],
+    "extractedAt": null,
+    "notes": "Worth revisiting for palette ideas.",
+    "status": "RESEARCH",
+    "isDemo": true,
+    "createdById": null
+  }
+]

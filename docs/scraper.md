@@ -33,11 +33,28 @@ staged table and `@@unique([importSource, importRef])` on the catalog. The same
 source product always resolves to the same row — re-scraping updates, it does
 not duplicate.
 
-**Scraping targets exactly one source.** `createScrapeJob` takes a single
-source (or one pasted URL); `createTierJobs` is a separate, confirmed action
-for fanning out across a tier.
+**Scraping targets exactly one source, at one of three scopes.** `SOURCE`
+(default) crawls the whole registered site; `CATEGORY` paginates one listing
+page; `URL` fetches one product page. `createScrapeJob` takes a single source
+(or one pasted URL); `createTierJobs` is a separate, confirmed action for
+fanning out across a tier.
 
 ---
+
+## The stage rail
+
+`/studio/scraper` opens with nine numbers, sources through confirmed — the
+pipeline as one strip rather than five separate screens an operator has to
+remember the order of: **sources** (the registry) → **discovery** (registered,
+not yet fingerprinted to a platform) → **scraping** (jobs queued or running
+right now) → **staged** (rows landed in `ScrapedProduct`) → **quality** (open
+extraction failures) → **review** (awaiting a decision) → **approved** →
+**imported** (promoted to a draft `Product`) → **confirmed** (blessed for the
+sheet). Every cell links to the screen its count describes.
+
+`src/lib/scraper/stages.ts` (the definitions + the pure shaping function,
+tested without a database) / `stages-server.ts` (the nine counting queries,
+run in parallel) / `src/components/studio/scraper/stage-rail.tsx`.
 
 ## Running a scrape
 
@@ -46,6 +63,26 @@ for fanning out across a tier.
 The button names its source deliberately: on a page reachable from a list of a
 hundred suppliers, "Run scrape" does not say which one, and a screenshot of the
 wrong run then explains nothing.
+
+### Scope: whole source, one category, or one product
+
+The source detail page's scope picker decides what one Scrape press covers:
+
+- **Whole source** — the registry's ordinary behaviour, paginating the
+  platform's full catalog endpoint (or the JSON-LD sitemap fallback).
+- **One category** — paginates a single listing/collection page the operator
+  pastes in. Shopify needs no adapter change (the listing URL's own
+  `/products.json` already scopes to it); WooCommerce derives a best-effort
+  category slug from the listing's last path segment; the JSON-LD fallback
+  discovers product links from that one page instead of the sitemap.
+- **One product** — a single fetch via the JSON-LD path, regardless of the
+  source's detected platform (a store's product API has no "just this one"
+  request the way a JSON-LD fetch does).
+
+A category/URL job still needs the registered source (for its tier, breaker
+state and politeness delay), and the pasted page is verified same-host as the
+source before a job is created. `ScrapeJob.scope` records which; adapters read
+it off `AdapterContext.scope`.
 
 ### One run per source
 
@@ -61,6 +98,28 @@ The rule lives in `src/lib/scraper/run-scope.ts` and applies to the tier
 fan-out too, which reports skipped sources **by name** (a cuid is not something
 an operator can act on).
 
+### Stale-job reclaim
+
+A serverless invocation that crashes mid-page never gets to write `FAILED` —
+without a heartbeat, that would leave its source "spoken for" forever, and no
+scrape of it could ever be queued again. `ScrapeJob.updatedAt` is the
+heartbeat: each page advance writes it via an **optimistic** update
+(`where: { id, cursorPage }`), so two workers can never both fold the same
+page's counts in, and a `RUNNING` job whose heartbeat predates
+`STALE_RUNNING_MS` (10 minutes) is presumed dead and no longer counts as
+in-flight — `run-scope.ts`'s `isStaleRunning`. The old job stays in the
+database, still resumable by id if it turns out to be alive after all; a fresh
+one just isn't blocked by it.
+
+### The scrape runner survives navigation
+
+The poll-until-finished loop lives in a module store
+(`src/hooks/use-scrape-runner.ts`), not a component ref, mounted once by
+`scraper/layout.tsx` above every route the section owns. Start a scrape from
+the dashboard, walk to a source's own page, and it is still running when you
+get there — the loop used to die with whichever component started it. A
+`beforeunload` guard warns while a run is active.
+
 ### The circuit breaker
 
 Five consecutive failed jobs pauses a source. A paused source refuses new jobs
@@ -71,6 +130,14 @@ what "resume" means to the person pressing it.
 A success resets the counter to zero rather than decrementing. A source that
 fails, succeeds, then fails is having a bad day, not blocking us; a decaying
 counter would creep up on those and eventually pause a working source.
+
+State is recorded against the `ScrapeSource` found by its stable `key`
+(`ScrapeJob.sourceKey`), not by the job's `sourceId` foreign key — that FK is
+nullable (`onDelete: SetNull`) and goes null the moment a source row is
+deleted, while the key is a plain string that survives it. A source
+re-registered under the same key keeps its failure history instead of
+restarting silently disconnected from it; no source under the key at all
+just skips the bookkeeping and logs why (`describeBreakerSkip`).
 
 `src/lib/scraper/breaker.ts` · threshold `BREAKER_THRESHOLD` (5).
 
@@ -121,22 +188,55 @@ row per broken field rather than one per scrape.
 
 `src/lib/scraper/validation.ts`
 
+### Normalization
+
+Materials, colour and dimension units are cleaned up once, at staging, before
+`contentHash` runs — "Epoxy resin" and "epoxy Resin" become one spelling,
+"10 x 12 inches" becomes "10 x 12 in" — so a source's own inconsistency never
+manufactures a false content change and the review grid shows one vocabulary
+instead of a hundred sources' worth of spelling. Scraped URLs are also
+canonicalised (lowercase host, tracking params stripped, query sorted, no
+trailing slash), so two links that differ only in campaign noise resolve
+identically. `contentHash` reads only title/price/status/images — none of
+which normalization touches — so this needed no version bump.
+
+`src/lib/scraper/normalize.ts` (pure, fully unit-tested).
+
+### Reviewer notes
+
+`ScrapedProduct.notes` is the one field an otherwise-immutable staged row may
+still change after it lands — a reviewer's own comment on the listing, not
+the source's data, and editable even on an already-`IMPORTED` row. Set from
+the review grid's detail sheet via `setScrapedNotes` (`src/actions/scraper-review.ts`).
+
+### Research library
+
+`/studio/research` is a hand-kept reference note — "here's a piece worth
+adapting" — backed by its own `ResearchRecord` table, never a product and
+never on the path from scrape to catalogue. `src/actions/research.ts`,
+`src/components/studio/research/`.
+
 ---
 
 ## Where things live
 
 | Concern | File |
 | --- | --- |
+| Stage rail | `src/lib/scraper/stages.ts` / `stages-server.ts` |
 | Run / resume / fan out | `src/actions/scraper-jobs.ts` |
-| One-run-per-source | `src/lib/scraper/run-scope.ts` |
+| The runner (survives navigation) | `src/hooks/use-scrape-runner.ts` |
+| One-run-per-source + stale reclaim | `src/lib/scraper/run-scope.ts` |
 | Circuit breaker + delay | `src/lib/scraper/breaker.ts` |
-| Adapters | `src/lib/scraper/adapters/` |
+| Adapters (scope-aware) | `src/lib/scraper/adapters/` |
 | Safety | `src/lib/scraper/robots.ts`, `ssrf.ts` |
 | Dedupe / change detection | `src/lib/scraper/hash.ts`, `fingerprint.ts` |
+| Normalization | `src/lib/scraper/normalize.ts` |
 | Price history | `src/lib/scraper/price-history.ts` |
 | Validation | `src/lib/scraper/validation.ts` |
-| Review + promote | `src/actions/scraper-review.ts` |
-| Merge protection | `src/lib/scraper/merge-policy.ts` |
+| Category mapping | `src/lib/scraper/category-map.ts` (+ `.test.ts` against the real catalog) |
+| Review + promote + notes | `src/actions/scraper-review.ts` |
+| Research library | `src/actions/research.ts` |
+| Merge protection | `src/lib/scraper/merge-policy.ts` (also honoured by Bulk Import's products template, `src/actions/import.ts`) |
 
 ## Environment
 

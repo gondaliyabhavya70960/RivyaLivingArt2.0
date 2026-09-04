@@ -11,6 +11,7 @@ import {
   type ShopProductItem,
 } from "@/lib/shop";
 import { defaultLocale } from "@/i18n/config";
+import { demoWhere } from "@/lib/demo-content";
 
 // Public (unauthenticated) read actions for the shop's infinite scroll and
 // the localStorage wishlist panel. Read-only against the PUBLISHED/non-DEMO
@@ -44,7 +45,7 @@ export async function loadMoreProducts(
 
     const { filters, sort, cursor, locale } = parsed.data;
     return await fetchProductsPage({
-      where: buildProductWhere(filters),
+      where: buildProductWhere(filters, await demoWhere()),
       sort,
       cursor,
       take: 24, // hard cap — clients cannot request bigger pages (matches the lib default)
@@ -80,7 +81,11 @@ export async function fetchWishlistItems(
     const parsed = wishlistItemsSchema.safeParse(input);
     if (!parsed.success) return [];
     const { slugs, locale } = parsed.data;
-    return await fetchProductsBySlugs(slugs, locale ?? defaultLocale);
+    return await fetchProductsBySlugs(
+      slugs,
+      locale ?? defaultLocale,
+      await demoWhere(),
+    );
   } catch (error) {
     console.error("fetchWishlistItems failed:", error);
     return [];

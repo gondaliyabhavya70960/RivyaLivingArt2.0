@@ -5,6 +5,623 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 3 · batch F2 — CI sweeps everything, the smoke grows, the audits bite, and four real defects fall out (2026-09-04)
+
+The F2 agent was stopped after the container restarted under it (its shell never returned from a
+`grep`); its in-progress audit flip and drift loop were committed from the worktree and the rest of
+the batch was built by hand on the same branch, on top of the merged A4 and C2.
+
+- **CI (`ci.yml`)**: after the build and the database tests (which seed and remove a demo set of
+  their own), the job seeds the Content Lab fixtures through the guarded `scripts/seed-demo.ts`,
+  starts the server with them in place, runs `npm run test:e2e` against it with the Studio audit's
+  credentials, and sweeps `/product/demo-product-001`, `/shop/gift-collections`,
+  `/blog/demo-post-001`, `/portfolio/demo-case-001` and `/p/demo-lander` (plus their `/ar` twins
+  and `/ar/process`) through the design and a11y audits. The workflow header and the route
+  comments describe the job as it is.
+- **`scripts/e2e-smoke.mjs`: 10 → 27 checks**, the original ten untouched. New: the search overlay
+  opens and `/search` finds the demo piece; a shop facet narrows the list and lands in the URL; the
+  customization form on the demo PDP (size, swatch, engraving, finish, contact) submits through the
+  spam gate to a `wa.me/917096036250` link carrying `[DEMO] ` and the chosen size, reaches the
+  `/whatsapp-order` fallback, and — with `DATABASE_URL` — leaves an Inquiry row marked `isDemo`
+  created by that click; `/ar` is right-to-left and `/hi` renders a Devanagari h1; with the Studio
+  credentials: the login lands, the demo product opens in the editor, a `sharp`-rendered 64×64 PNG
+  (fresh checksum every run — the library dedupes uploads) lands in the media library and is
+  removed again, the sheet-fill Preview answers, and a testimonial is refused `PUBLISHED` until its
+  permission is `GRANTED`, then publishes (the row is deleted afterwards). Studio and database
+  checks skip, as skips, without their inputs. The eight `verify-*.mjs` / `screenshot-lab.mjs`
+  scripts are deleted; the order path they carried lives here now.
+- **`scripts/redesign-audit.mjs`**: at widths of 700px and below the browser context is
+  touch-capable, so `pointer-coarse:` utilities apply and the **44px tap floor FAILS** there (it is
+  reported, not failed, on fine-pointer widths; `isMobile` is deliberately not set — mobile
+  emulation widens `innerWidth` by a phantom scrollbar and fakes a 2px overflow on every route; a
+  half-pixel tolerance keeps a `min-h-11` that measures 43.99 from failing). A new rule reads the
+  sticky header's `data-ink` promise against the rendered pixels beside its text (a 10px patch
+  outside the logo and the nav on both sides, after the first-viewport images have loaded,
+  decoded with `sharp`) and fails under 4.5:1.
+- **`scripts/keyboard-audit.mjs`**: the shared Lightbox joins the overlays — the product gallery's
+  full-screen control, the portfolio wall's first tile and the demo lander's fullscreen gallery:
+  Enter opens, ArrowRight advances the `role="status"` counter, End/Home jump, Escape closes,
+  focus returns.
+- **Drift, reconciled** (A2's open item): `.sf-hero-drift` is an `infinite alternate` 6 s ambient
+  loop the audit's duration rule exempts like every other loop; mounted on the homepage and
+  large-format heroes on the poster wrapper, never the image.
+- **Real 404s**: the list pages' `loading.tsx` boundaries wrapped their child detail routes too
+  (`/portfolio/loading.tsx` covers `/portfolio/[slug]`), so a missing slug streamed a 200 shell. The
+  three list pages now sit in `(index)` route groups with their own boundaries, and the PDP and
+  category pages drop theirs: a missing product, portfolio case, journal post, category or lander
+  answers a real 404 (measured); the demo routes answer 200.
+- **Four defects the new gates found**, fixed in this batch: the search PAGE never applied the
+  demo gate (`searchProducts` was called at its `NO_DEMO` default, so `/search` hid rows the
+  overlay offered; `isDemo` is now selected and marked); the order action refused every Content Lab
+  piece (`productId: z.cuid()` — fixture ids are deterministic strings — so a demo order answered
+  "Something went wrong" while G's smoke had passed on an unrelated demo Inquiry); under a touch
+  context the header logo (32px) and four footer links sat under the tap floor, and the fix
+  itself surfaced a second one — the wordmark SVG was `h-full`, so a 44px link made it 37% wider and
+  every page overflowed by 9px, now pinned to its visual height; and the transparent header measured
+  2.7:1 beside its logo over a bright hero frame, so a top scrim (obsidian 85 → 55 → transparent
+  over 112px) sits under the chrome only while the bar is transparent.
+- **Docs**: `CLAUDE.md` (commands, the ten-surface CMS table with the Content Lab, the demo,
+  testimonial and off-by-default rules, motion primitives, Design QA and the definition of done),
+  `AGENTS.md` (what a green PR is evidence for, the container-restart and `test:db` traps),
+  `ADMIN_GUIDE.md` (media library, testimonials, Settings' Sheets and Demo content, Bulk Import's
+  overwrite checkbox, Sheet Import's Preview / conflicts / history, Content Lab, process steps and
+  the bands that ship off), the owner handbook (8.3), the roadmap status,
+  `docs/studio-cms/04-structure-layer.md` (with C2).
+
+Verified on the F2 tree (`wave3/f2`, merged fast-forward into the branch), every run isolated on the
+built server with the demo set seeded: typecheck · lint · vitest · test:db · copy:check · `next build` ·
+`npm run test:e2e` **27/27** · redesign-audit **0 failing rules** with the new rules on the 13 CI routes plus
+the five demo detail routes at 1440 / 390 (touch) / 360 (touch), and ten `/ar` routes at 1440 and 390 ·
+a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at 1440 and 390 with the three
+lightbox paths (the mega menu and the lander gallery correctly skipped at 390) · studio-audit clean across
+36 routes at 1440 and 390 · Lighthouse with drift mounted: home perf 98 / a11y 97 / LCP 1.0 s, plp 97 / 100
+/ 1.2 s · motion-budget 48.4 KB · a missing product, portfolio case, journal post, category or lander
+answers 404, the demo routes 200. CI runs the same sweep on the pushed head.
+
+---
+
+## Wave 2 · batch C2 — the block catalogue grows from six to sixteen (2026-09-04)
+
+Merged `84b63d8` (nine blocks from the worktree, one commit each) plus `c37afd1` (the tenth,
+built on the main branch because it needs A3's shared Lightbox, which the worktree predates),
+`93d839d` (the demo lander exercises the new blocks; fixture enum; docs) and `cfa918e` (the
+database suites run one file at a time). The C2 agent was stopped after the container restarted
+under it (its shell never returned from a `grep`); its in-progress videoStory diff was completed
+by hand — the walker branch and the tests/db case it had not yet written — and committed as
+`8dcd758`, then masonryGallery and bentoGallery followed in the worktree.
+
+- **Readers of existing content** (nothing invented — HARD RULES §1.1): `collectionGrid`
+  (visible categories by slug), `portfolioGrid` (`recent` | `manual`, PUBLISHED behind the demo
+  gate), `journalGrid` (optional category, PUBLISHED behind the demo gate), `testimonial` (one
+  row, `editorial` | `featured`, rendered only if PUBLISHED and past the demo gate at render time)
+  and `testimonialGrid` (`featured` | `manual` → `TestimonialWall`).
+- **Film**: `videoHero` (dark ground; `BlockDef.once` generalised to `slot: "hero"`, so
+  `describeBlockArrangementProblem` refuses a hero beside a videoHero and the "only the hero may be
+  dark" test now names both) and `videoStory` (the same `HeroMedia` idiom boxed 4:3 on a light
+  ground). Both take the film as a library link and the poster through the media picker.
+- **Pictures**: `masonryGallery` (up to twelve, CSS columns cycling four tile ratios),
+  `bentoGallery` (up to six on the homepage collections' 12-column bento, lead tile two rows
+  tall) and `fullscreenGallery` (up to twelve square thumbnails opening the shared storefront
+  Lightbox — keyboard stepping, RTL arrows, live region, focus return and the FLIP entrance are
+  one implementation). Every tile is a `MeniscusImage`; captions render as written. The editor
+  gains `GalleryImagesField` — an ordered, capped list of library picks with description, caption,
+  move and remove — shared by all three.
+- Every URL-bearing block joins `media-usages.ts` in its own commit with a tests/db case
+  (`videoHero`, `videoStory`, and the three galleries walked per picture with its position).
+  `spacing` maps to `section-compact` | `section-standard` only; no per-block theme; no stats
+  block. `custom-blocks.test.ts` records each count bump with its dated reason (6 → 16) and the
+  catalogue is closed again at sixteen; `docs/studio-cms/04-structure-layer.md`'s table and
+  "six types" sentences describe it as it is.
+- `/p/demo-lander` gains a masonry, a bento, a videoStory (the studio's own process clip) and a
+  fullscreen gallery between the FAQ picker and the closing CTA, so CI and the local sweep render
+  every gallery block on a real route; the fixture loader's block enum catches up.
+
+Verified on the merged head (`cfa918e`): typecheck · lint · vitest 63 files / 628 · test:db 6 / 33
+(five new media-usages cases) · copy:check 1,303 · i18n-missing clean · vitest `src/lib/demo`
+(every fixture picture on disk) · `next build` · motion-budget 48.4 KB · redesign-audit 0 failing
+rules on the 13 CI routes plus the five demo detail routes (the lander now carrying the four new
+blocks) at 1440 / 390 / 360 and nine `/ar` routes at 390 · a11y-audit 0 critical/serious at 1440 /
+390 / `/ar` 390 · keyboard-audit at 1440 and 390 · E2E 10/10 · studio-audit clean across 36 routes at
+1440 and 390 · Lighthouse budgets met · demo proofs unchanged · `/p/demo-lander` on the running
+server renders the masonry (CSS columns), the bento (two-row lead tile), the video story (the
+process clip) and the fullscreen gallery (twelve square thumbnails), and its `/ar` twin is RTL.
+
+---
+
+## Wave 2 · batch A4 — ten process steps, accordion gallery, journal collections, Studio process/materials surfaces (2026-09-04)
+
+Merged `352ef9e`. A4's agent was stopped after the container restarted under it (its shell never
+returned from a `git diff --stat`), so its last verified change — the accordion-gallery fix it had
+gated at 20:48 — was committed by the coordinator as `b5f0847` and the batch merged from there; the
+merged head was built and audited here before the push. Merge collisions: the nine message files
+(three-way merged through the repo's own `i18n-merge.mjs`, no key collisions), the sidebar and
+studio-audit route appends (both kept), `site-images.test.ts`'s alt-key count (A2's ten plus A4's
+four → 56), and `site-copy.generated.ts` (regenerated: 1,303 slots).
+
+- **Ten steps, not six.** `/process`'s timeline is driven by `PROCESS_STEPS` (B0) instead of a
+  local six-entry list, relabelled to the owner-confirmed fabrication sequence — Concept ·
+  Material selection · Wood preparation · Resin composition · Casting · Curing · Surface refinement
+  · Hand finishing · Quality inspection · Delivery (delivery only; the studio states no
+  installation service). Four new `site-images.ts` slots (`process.step7–10`, 4:5, fallbacks read
+  as polish / finish / inspection / delivery atmosphere) and every `Process.timeline.step<n>`
+  key in all nine locales; Meta values reuse only figures already published on the site (24–72 h
+  per layer, 400 → 3000 grit, tracked anywhere in India) or a short mono word. "Six steps, no
+  shortcuts" → "Ten steps, no shortcuts" ×9 (19 English values changed, all nine locales updated —
+  the `--stale` gate is clean).
+- **Two registry surfaces (plan decision 1).** `page-sections.ts` gains `"process-steps"` (ten
+  defs, explicit copy keys on step1/step10 to dodge the `step1*`/`step10*` prefix collision) and
+  `"materials"` (four defs owning the copy pair plus every picture of that material on BOTH pages,
+  so reordering one moves it on both). `describeArrangementProblem` refuses to empty a whole list
+  (hide all ten steps, or all four materials). `SUBLIST_PAGES` marks the two as not routable (no
+  h1 owner) and the shared h1-invariant tests are updated rather than weakened. `/studio/process`
+  and `/studio/materials` render the existing `SectionsBoard` pre-filtered to one page key — draft,
+  publish and revision history come free; sidebar and audit routes appended.
+- **`storefront/accordion-gallery.tsx`**: flex strips, the active one at `flex-grow: 3`, driven by
+  hover, focus-within or a roving-tabindex click; reduced motion collapses to equal strips with
+  every copy panel visible; below `md` the same markup reads as stacked cards; every panel's copy
+  stays in the DOM and the accessibility tree. Mounted on `/process` and `/about` materials in
+  place of the static grid and hover-macro cards, keeping every copy key and alt. The follow-up
+  fix (`b5f0847`): no default active strip (a hover used to open a second strip beside the one
+  marked active from load), the macro photograph opens under the same three triggers un-prefixed
+  so a tap on a phone card reveals it, and the trigger and its copy share one bottom-anchored
+  column so a two-line title no longer overlaps the panel.
+- **Journal**: `blog/[slug]` shows the article's own shop collection (B0's
+  `BlogPost.category`, distinct from the editorial blog category) plus up to two visible siblings
+  through `CollectionCard`, only when the author pointed the post at one; the three optional bands
+  under the reading sheet alternate sand/mineral so any subset stays light → light. Demo posts and
+  demo related cards carry `<DemoMark/>`; the Article JSON-LD is withheld for a demo post
+  (BreadcrumbList stays); `blog/page.tsx`'s demo-category exclusion was already correct from B0.
+- i18n ×9: `Process.timeline.step7–10{Title,Copy,Meta,Alt}`, `Blog.relatedCollections.*`,
+  `AccordionGallery.*`. Not done by the agent before it was stopped: hero rise/drift on `/process`
+  (the page keeps its current hero; the drift token itself is F2's) — recorded as an open item.
+- Measured in the worktree: 478 unit tests, 18 db tests, typecheck, lint, copy:check, i18n
+  `--stale` clean; audits, E2E, keyboard, motion 48.4 KB, studio audit and Lighthouse on
+  `/process` per the agent's own log; a hover/focus/click/reduced-motion script against the built
+  `/process` and `/about`.
+
+Verified on the merged head (`352ef9e`): typecheck · lint · vitest 63 files / 623 · test:db 6 / 28 ·
+copy:check 1,303 · i18n-missing clean, `--stale` reports the 19 relabelled English values with every
+locale updated · `next build` · motion-budget 48.4 KB · redesign-audit 0 failing rules on the 13 CI
+routes plus the five demo detail routes at 1440 / 390 / 360 and nine `/ar` routes (now including
+`/ar/process`) at 390 · a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at
+1440 and 390 · E2E 10/10 · studio-audit clean across 36 routes (the two new surfaces included) at
+1440 and 390 · Lighthouse budgets met · demo proofs on the running server: no sitemap entry,
+`noindex, nofollow`, no Product JSON-LD and the DemoMark on the demo PDP; the DemoMark on the demo
+journal post with no Article JSON-LD. Environment note: the session container restarted twice under
+the running agents (their shells never returned) and Postgres has to be restarted by hand after
+each restart (`pg_ctl … start` per PROJECT_STATE's environment recipe).
+
+---
+
+## Wave 2 · batch A2 — homepage bands and the large-format page (2026-09-03)
+
+Merged `40e0211`, built and gated in its own worktree; the merged head was built and audited here
+before the push. The only merge collision was `site-copy.generated.ts`, regenerated from the
+merged messages (1,282 slots). One merge follow-up: the sections board dimmed a hidden row with
+`opacity-60`, which put its graphite meta text under AA — nothing had shipped a hidden section
+until A2's off-by-default bands, so the studio audit met the treatment for the first time and
+failed `/studio/sections` with eight serious contrast findings; the row now carries a muted tint
+beside its existing "Hidden" badge and keeps full-contrast text. A2's one deferred item — the homepage "pieces" band could not mark
+demo fixtures because `CARD_SELECT` had no `isDemo` until A3 — closes by construction on this
+head: the band renders A3's `CatalogProductCard`, which carries the `DemoMark`.
+
+- **`page-sections.ts`**: `SectionDef.defaultVisible?` (default `true`) lets a section ship OFF
+  without a new mechanism; `page-sections-server.ts` resolves `row?.visible ?? def.defaultVisible
+  ?? true` on both the public and the Studio path, and the sections board shows an "Off by
+  default" hint. HOME gains **large-format** (after `pieces`), **furniture** (after `collections`,
+  off) and **rooms** (after `maker`, off) — still three dark bands, none adjacent. LARGE_FORMAT
+  gains **philosophy**, **materials**, **pieces** (off), **work**, **words** and **faq** between
+  `scope`/`how` and `brief`/`gallery` — still two dark. `page-sections.test.ts` now checks every
+  page's default arrangement against its own band-rhythm guardrail and resolves every
+  `cureLabelKey` against `messages/en.json`.
+- **`furniture-kinds.ts`** is the shared six-kind list (dining, coffee, side, console, chair,
+  bench) both furniture bands read — D9/D26 commission framing: concept tiles captioned as such,
+  a lead-time line that reuses `Process.timelines`' published figure, a WhatsApp CTA, **no prices
+  and no product rows**. Ten new `site-images.ts` slots (six 4:5 furniture tiles, four 4:3 room
+  tiles) fall back to existing §15.4 masters read as bench, formwork, surface and interior
+  atmosphere; `large-format.ts` adds `"art-craft-pieces"` to `LARGE_FORMAT_CATEGORY_SLUGS`, so
+  that page's gallery shows real published pieces instead of the empty-state invitation.
+- **`(v2)/page.tsx`**: the hero switches to the `poster` ref (mobile crop + focal point) with the
+  `sf-hero-rise` stagger on eyebrow / h1 / lede / CTA row — the poster stays the LCP and is never
+  animated; the primary CTA is `/custom-order`, the secondary `/shop`. New large-format teaser,
+  furniture and rooms bands; the collections band is a 12-column bento with a two-row lead tile;
+  the words band renders through `SnapRail` below `md`; the bespoke band's background is the first
+  `HeroParallax` mount since D18; manifesto, maker, print, process, why, journal and closing wrap
+  their text in `Reveal`.
+- **`large-resin-art/page.tsx`**: the same hero treatment and six new sections — `philosophy`,
+  `materials` (reusing `Process.materials.*`), `pieces` (off by default, the furniture tiles),
+  `work` / `words` / `faq` (conditional, rendering nothing when empty).
+- **`drift` is not mounted.** A1's `.sf-hero-drift` is a one-shot 6,000 ms animation and
+  `redesign-audit.mjs`'s duration rule exempts only infinite loops, so the prop fails Part 3.8's
+  four-value gate the moment it is used. Both heroes keep the rise stagger; reconciling the drift
+  token is an F2 item.
+- i18n ×9 (real translations): `Home.largeFormat.*`, `Home.furniture.*`, `Home.rooms.*`,
+  `Home.cure.{largeFormat,furniture,rooms}`, `LargeFormat.{philosophy,pieces,work,words,faq}.*`,
+  `LargeFormat.cure.*`, `Common.of`.
+- Measured in the worktree: 477 unit tests, 18 db tests, redesign/a11y audits clean on `/` and
+  `/large-resin-art` at 1440/390/360 (+ `/ar`), keyboard, E2E 10/10, motion 48.4 KB, Lighthouse
+  home perf 97–98 with LCP 1.1–1.3 s, screenshots with the off-by-default bands forced visible
+  through temporary `PageSection` rows (reverted).
+
+Verified on the merged head (`40e0211` plus the sections-board fix `909e28a`): typecheck · lint ·
+vitest 63 files / 620 · test:db 6 / 28 · copy:check 1,282 · i18n-missing and `--stale` clean ·
+`next build` · motion-budget 48.4 KB (unchanged) · redesign-audit 0 failing rules on the 13 CI
+routes plus the five demo detail routes at 1440 / 390 / 360 and eight `/ar` routes at 390 ·
+a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at 1440 and 390 · E2E
+10/10 · Lighthouse budgets met (perf ≥ 85, a11y ≥ 95) · studio-audit clean across 34 routes at
+1440 and 390 after the sections-board fix (the first pass failed `/studio/sections` with eight
+serious contrast findings, all on the dimmed hidden rows) · the demo detail routes re-audited
+clean at both widths after re-seeding the demo set that `test:db` had removed, with the proofs
+restored (no sitemap entry, `noindex, nofollow`, no Product JSON-LD, the DemoMark rendered) · on
+the running server the homepage carries the rise stagger and no drift, seven `/custom-order`
+links, the large-format teaser, a four-tile bento lead and no furniture or rooms band (both off by
+default — their headings occur only inside the serialised message payload), and `/large-resin-art`
+renders philosophy, materials, pieces, work, words and faq.
+
+---
+
+## Wave 1 · batch E and wave 2 · batch A3 — scraper + Sheets, and the shop / PDP / category pass (2026-09-03)
+
+Merged `5d6a74c` (A3) and `817865e` (E), each built and gated in its own worktree against its own
+database copy; the merged head was built and audited here before the push. Merge follow-ups:
+`f827adf` (C1's design-lab mock rows gain A3's four card fields — C1 landed after A3 branched, and
+the out-of-stock mock row is marked demo so the lab shows the DemoMark state) and, inside the E
+merge commit, the `FlaskConical` icon both G and E imported into the sidebar (kept once), the
+Settings screen stacking G's Demo content section above E's Sheets section, `studio-audit.mjs`
+keeping both batches' routes, and `import.ts` taking E's merge-aware preview.
+
+### A3 — shop card, quick view, shared lightbox, PDP, category
+- **D21 on the card row.** `src/lib/shop.ts`'s `CARD_SELECT`/`ShopProductItem` grow `materials`,
+  `dimensions`, `videoUrl`, `isDemo` and `images.role`; `materials`/`dimensions` stay outside
+  `TRANSLATABLE_FIELDS.product` (mirroring `large-format.ts`) — owner free text, shown as typed in
+  all nine locales. New `src/lib/card-meta.ts`: `cardMetaLine()` (one mono "materials · dimensions"
+  line, `null` when both are empty) and `accessibleCardName()` (the card link's full, never-truncated
+  accessible name — Part 17's no-ellipsis rule).
+- **`catalog-product-card.tsx`**: the mono meta line; `<DemoMark/>` on a fixture row; the
+  single-image hover zoom only when there is no second image to wipe in; below the stretched card
+  link and outside it, two real ghost controls — `QuickViewTrigger` and an "Ask on WhatsApp" ghost
+  link (`data-wa-source="card"`), both flush-padded after a real 360px overflow was caught by the
+  audit in the worktree and fixed. New `shop/card-hover-video.tsx` (an ambient hover clip, mounted
+  only for a fine hover-capable pointer under no reduced motion, `preload="none"`, never on the
+  priority row) and `shop/card-ask-whatsapp.tsx` (its own client island so the card stays a Server
+  Component).
+- **`shop/quick-view.tsx` + `quick-view-trigger.tsx`**: a storefront Dialog reviving the four
+  `Shop.quickView*` keys that already shipped in nine locales, plus one new `Shop.quickViewLabel`.
+- **PDP**: the related rail is a grid from `md` and a `SnapRail` below it; the manual testimonial
+  grid is replaced by `<ProductTestimonials/>` (product → category → hidden); `reviewJsonLd` is
+  appended to the Product JSON-LD, and the whole Product/Offer/Review graph is omitted for a demo
+  fixture, which also gets `noindex`; `<DemoMark/>` under the eyebrow; a room-context band after the
+  commerce split, only when the product carries an `IN_ROOM` image. `order-panel.tsx` gains a mono
+  demo-order note; `SWATCH_COLORS`/`swatchColor` move to `src/lib/swatch-colors.ts` (a byte-identical
+  pure move, now unit-tested). `customization-controls.tsx`'s empty engraving preview moves off
+  `text-graphite/60` (the AA failure batch G's audit found) to full-opacity `text-graphite`.
+- **Shared lightbox**: new `storefront/lightbox.tsx` — one Dialog + keyboard + RTL + live-region +
+  focus-return implementation with a CSS FLIP entrance (`src/lib/flip.ts`, pure and unit-tested)
+  measured against the opening tile. `gallery.tsx` and `portfolio/lightbox-gallery.tsx` become
+  consumers, keeping their own stage content; `gallery.tsx`'s video and `model-viewer.tsx` gain a
+  `poster`.
+- **`/shop`**: the ecosystem tabs clear the 44px touch floor via `pointer-coarse:` (A1 had flagged
+  the miss). **`/shop/[category]`**: `<Reveal>` on text bands, the related-collections strip gains a
+  `SnapRail` below `sm`, and the breadcrumb JSON-LD's hardcoded English "Home"/"Shop" is localised.
+- `/search` constructs `ShopProductItem` by hand from `search-query.ts` and defaults the four new
+  fields — no behaviour change there. `REDESIGN.md` §0 row 4: the wishlist stays (D11) — an
+  account-less local list, not a bag.
+- i18n ×9: `Shop.card.*`, `Shop.quickViewLabel`, `Product.roomContext.*`, `Product.demoOrderNote`,
+  `Product.dimensionsLabel`, `Lightbox.*`; `site-copy.generated.ts` → 1,207 slots.
+- Measured in the worktree: 490 unit tests, 18 db tests, build, redesign/a11y audits clean at
+  1440/390/360 (+ `/ar` at 390) on `/shop`, `/shop/gift-collections` and a PDP, a manual lightbox
+  keyboard pass on both origins, motion-budget 48.4 KB, E2E 10/10.
+
+### E — scraper pipeline and the sheet fill
+- **A nine-stage rail on `/studio/scraper`** (`src/lib/scraper/stages.ts` + `stages-server.ts`,
+  `scraper/stage-rail.tsx`): sources through confirmed, each cell a live count linking to its
+  screen.
+- **A scrape has a scope**: whole source, one category/listing page, or one product page
+  (`ScrapeJob.scope`, migrated in B0), verified against the source's own host before a job is
+  created; the three adapters honour it.
+- **The runner survives navigation**: `src/hooks/use-scrape-runner.ts` is a module store mounted
+  once by `scraper/layout.tsx`, so a run no longer dies with whichever page component started it;
+  `beforeunload` warns while a run is active.
+- **Stale-job reclaim**: a `RUNNING` job whose `updatedAt` heartbeat is older than ten minutes is
+  presumed dead and no longer locks its source; each page advance is an optimistic
+  `where: { id, cursorPage }` update so two workers never drive one job.
+  `partitionByInFlight` now takes the in-flight jobs (with status and heartbeat) rather than ids,
+  and the breaker is keyed by `sourceKey`.
+- **Normalisation at staging** (`src/lib/scraper/normalize.ts`): material, colour and unit aliases
+  plus `canonicalizeUrl`, applied before `contentHash`, so a source's own inconsistency never
+  manufactures a false change. Reviewer notes on a staged listing (`ScrapedProduct.notes`).
+- **`/studio/research`** — a hand-kept research library (`ResearchRecord`, `actions/research.ts`),
+  never a product on its own.
+- **Bulk Import runs the owner-edit guard**: `previewImport` applies `decideMerge` per row and
+  reports `ownerEditedCount`; the wizard shows "Will overwrite N owner-edited products" behind an
+  explicit `overwriteOwnerEdited` checkbox, and `importProductRow` honours
+  `refresh-availability`. **Behaviour change:** a plain re-import of an already-imported,
+  untouched row is now skipped rather than unconditionally overwritten unless the box is ticked.
+- **The deploy-time sheet fill is one implementation**: `src/lib/import/tier-fill.ts`
+  `runTierFill({ trigger, dryRun })`, with `prisma/import-tiers.ts` a thin caller — proven
+  byte-identical on `SELECT tier, status, count(*)` before and after the extraction (373 draft +
+  4,000 published), idempotent on re-run. `actions/sheet-fill.ts` gives `/studio/sheet-import`
+  Preview and Run now via `decideFillRun("PREVIEW" | "MANUAL")`, and every dropped row says why.
+- **Conflicts and history**: when the sheet and a studio edit change the same field between fills
+  (owner-touched ∧ `studioEditedAt` after the last run ∧ hash differs), one `SheetConflict` per
+  field lands on `/studio/sheet-import/conflicts` — Keep mine · Take sheet · Skip. Every push (job,
+  tier, confirmed list, website mirror) is wrapped in a `SheetSyncRun` with a visible history.
+- **The sheet id lives in Settings** (`readSheetId(settings)`, env fallback) with a "Sheets" section
+  for the spreadsheet id and the five tab ids; `syncWebsiteProductsToSheet`'s underlying writer
+  (`product-sheet-sync.ts`) still resolves env-only — recorded in `docs/google-sheets.md`.
+- `category-map.test.ts` asserts every keyword slug is a seeded category; `/scraper/mapping` is
+  titled "Source → category report". Docs: `docs/scraper.md`, `docs/google-sheets.md`.
+- No storefront copy touched (the Studio is English-only). Measured in the worktree: 450 unit
+  tests, 13 db tests, typecheck, lint.
+
+Verified on the merged head (`817865e` plus the sheet-import wrap fix): typecheck · lint · vitest
+63 files / 618 · test:db 6 / 28 · copy:check 1,207 · i18n-missing and `--stale` clean · `next build`
+· motion-budget 48.4 KB (unchanged) · redesign-audit 0 failing rules on the 13 CI routes plus
+`/product/demo-product-001`, `/shop/gift-collections`, `/blog/demo-post-001`,
+`/portfolio/demo-case-001` and `/p/demo-lander` at 1440 / 390 / 360, and eight `/ar` routes at 390 ·
+a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at 1440 and 390 · E2E
+10/10 · studio-audit clean across 34 routes at 1440 — at 390 it caught `/studio/sheet-import`
+overflowing by 69px: the "Recent fills" summary (`+15 new · 30 updated · 240 unchanged · 1 failed`)
+was `shrink-0` beside the date, which only became too long once the demo ImportRun fixtures were
+seeded; the row now wraps, rebuilt and re-audited clean · Lighthouse budgets met (perf ≥ 85, a11y
+≥ 95) · demo proofs on the running server: no sitemap entry for the fixture, `noindex`, no Product
+JSON-LD, the DemoMark rendered, the demo order note present, and the room-context band rendering
+from the fixture's `IN_ROOM` image (A3 could not exercise that path in its worktree).
+
+---
+
+## Wave 1 · batch F1 — CSP enforced, JSON-LD literals, magic-byte upload sniff (2026-09-03)
+
+Merged `86f6bba`, built and gated in its own worktree; the merged head was built here and the
+enforced policy checked against the running site before the push.
+
+## F1 — CSP enforcement, JSON-LD accuracy, upload magic-byte validation
+
+Three hygiene fixes, each small enough to verify in isolation.
+
+**CSP now blocks instead of only reporting.** The report-only period ran clean, so `next.config.ts` renames the header key from `Content-Security-Policy-Report-Only` to `Content-Security-Policy`. The directive string carries forward unchanged except for one real gap the enforced header would have hit immediately: `frame-src` now allows `https://www.google.com`, because the click-to-activate Google Maps embed on `/contact` (`StudioMap`) had nowhere else to load from. Every other third-party host already loading client-side — Vercel Analytics/Speed Insights, Meta Pixel, GA4 — was already allow-listed; verified against `src/components/analytics/*` and the locale layout rather than assumed. Nonces were considered and rejected: minting one per request would force pages off the prerendered path, and this storefront depends on 13 routes × 9 locales staying statically generated to keep database fan-out off the request path. Rollback is a one-line key rename back to `-Report-Only`; the header comment records this so a revert never has to re-derive the policy.
+
+**The Organization/LocalBusiness JSON-LD stopped lying about language support.** `availableLanguage` was a literal `["en", "hi"]`, unchanged since the site had two locales — it now spreads `locales` from `src/i18n/config.ts`, all nine. The literal `priceRange: "₹₹–₹₹₹"` is gone too: there is no settings column behind it, and inventing one just to keep a schema field filled would be exactly the kind of number the redesign contract forbids. Rendering nothing beats a stale or fabricated figure.
+
+**Uploads are now checked against their own bytes, not just their claimed type.** `src/lib/media-ingest.ts` gains `sniffContentType(buffer)` — magic-byte detection for the seven signature-bearing formats the studio accepts (JPEG, PNG, WebP, AVIF, MP4, WebM, GLB) — and `validateDeclaredType(buffer, declared)`, which throws a typed `MediaTypeMismatchError` when the sniffed family (image/video/model) disagrees with what the upload declared. `finalizeAsset` now runs this check first, before touching sharp or computing a checksum, closing a gap where the studio's upload action trusted `file.type` — a value the browser sends and the client fully controls — with nothing behind it. USDZ stays declared-type-only and says why: it's a zip container, and a zip's magic bytes can't distinguish a real USDZ from any other zip-based file. Verified with 25 new tests over hand-built byte fixtures (no files on disk), covering every signature, every mismatch direction, and the case where nothing was recognized at all.
+
+Merge follow-up: the upload action now names a declared-type mismatch in its per-file failure
+list instead of folding it into "(storage error)".
+
+---
+
+## Wave 1 · batches C1 and D — Studio content management and the media library (2026-09-03)
+
+Merged `a9447c4` (C1) and `cc8983d` (D), each built and gated in its own worktree; the merged head
+was then built and audited here before the push. Two merge follow-ups landed as `89af275`.
+
+### C1 — Studio content management, part 1
+- The five main content lists (products, blog, portfolio, inquiries, FAQs) share one shape: sort
+  on every sortable column, a "Demo only" filter for Content Lab fixtures, and — on products,
+  blog, portfolio and FAQs — a phone card layout below `md` instead of a sideways table. Products
+  and inquiries gain a per-browser "Columns" menu.
+- `ContentStatus`'s REVIEW and ARCHIVED values (migrated in B0) are reachable: four status tabs
+  with live counts on products, blog and portfolio, with bulk Send to review / Archive / Restore
+  to draft beside Publish / Draft; the dashboard counts split the same way; FAQs get a status
+  column with a click-to-toggle badge. **Visible change:** blog and portfolio lists now open on
+  the Published tab, the convention products already used.
+- Blog and portfolio forms are tabbed (Content · Media · Taxonomy · SEO; Story · Media · Results ·
+  Taxonomy) on the product form's pattern with per-tab error dots; blog posts gain a Related
+  collection; portfolio gets the real device-frame preview; the category editor gains SEO
+  title/description and a visibility toggle; categories, FAQ and staff dialogs get inline,
+  screen-reader-wired errors; every product image can carry a role (hero · detail · in-room ·
+  process).
+- The four update actions record a bounded before-picture in `ActivityLog.meta.before`
+  (`snapshotBefore`). Product, blog and portfolio forms autosave to the browser every 800 ms with
+  a Restore / Discard banner; the draft clears on a real save and never touches the database.
+- The topbar bell opens an inbox derived from existing rows (review queues, last scrape jobs,
+  last sheet-import runs, last publish events) — no new table.
+- `/design-lab` is rebuilt on the live v3 components behind the staff login and the production
+  404; `storefront/{product-card,tabs,order-summary-preview,marquee}.tsx` are deleted with it.
+- Measured in the worktree: 415 unit tests (33 new), 13 db tests, typecheck, lint, copy:check,
+  i18n.
+
+### D — the media library becomes a DAM
+- `/studio/media` is URL-driven: keyset pagination (60 a page), sort, and server-side type /
+  orientation / favourite / demo / size / date filters stacking with folder, search, missing-alt,
+  unused and AI-generated; grid/list toggle; phone cards. Orientation is answered by three small
+  static `$queryRaw` calls (Prisma cannot compare two columns in a plain filter).
+- A detail drawer per file: dimensions, bytes, checksum, provenance, a labelled "used in" list
+  linking to the owning Studio section, inline caption/tags/favourite/alt, replace-file at the
+  same URL, and for video a poster capture (frame at one second → its own library row). Bulk bar
+  gains Move, batch description and favourite. Upload is a drag-and-drop zone with a folder picker.
+  The media picker lists video as well as images.
+- The Part 15 blur-up placeholders are finally rendered: every site-image slot resolves its LQIP
+  on the URL it actually resolved to (bundled master or owner override), so a repointed slot never
+  paints the picture it used to show. Mirrored catalogue images get a library row of their own.
+  The generation queue for the next photography batch (bench concepts, large-format art, concept
+  rooms, four process steps, mobile crops, three video loops) is recorded in
+  `docs/media-v3-manifest.json` as `plannedSets`, for the owner's machine to run.
+- `src/lib/media.ts` (dead Cloudinary constants, zero importers) now carries the library's shared
+  formatting helpers instead.
+- Measured in the worktree: 411 unit tests, 23 db tests (10 new), typecheck, lint, copy:check.
+
+### Merge follow-ups (`89af275`)
+- The inquiries page had G's and C1's `isDemo` additions auto-merged into the same select and row
+  mapping; one copy remains.
+- The marquee keyframes left `globals.css` with their only consumer.
+- The Tiptap editor's contenteditable now carries a role, `aria-multiline` and an accessible name,
+  closing the `aria-input-field-name` finding the Content Lab audit reproduced on every editor.
+
+---
+
+## Transformation batch G — Content Lab (2026-09-03)
+
+Merged `b642f17`, built in its own worktree against its own database copy; it depends only on B0,
+so it ran ahead of wave 1's queue.
+
+### Added: demo fixtures the owner can seed into any database, on demand
+The plan's Content Lab (§15): a full, deterministic content set — 100 products across the 16
+seeded categories (edge-matrix by construction: title lengths 8–220 chars, 0/1/8 images, every
+`ContentStatus`, `needsRewrite`, `ownerTouched`, every tier, `ar`/`hi` translations on ten rows,
+every `FieldType` on `demo-product-001` for the E2E order path), 10 journal categories + 30 posts,
+12 portfolio cases (one carrying `beforeImageUrl`/`afterImageUrl`, so `BeforeAfter` finally has
+data), 40 testimonials across 10 categories (every `TestimonialStatus`; a PUBLISHED + GRANTED row so
+the wall renders), 30 FAQs, 5 landing pages exercising every block type, 40 media rows, 30
+inquiries, 30 research notes, 3 scrape jobs (DONE / FAILED / a deliberately stale RUNNING row) with
+40 staged products, and 5 import runs. `isDemo: true` throughout; image paths restricted to files
+this repo already ships (a test asserts each is on disk).
+
+`src/lib/demo/{fixtures,apply,guard}.ts`: zod-validated loaders, a dependency-ordered
+`seedDemo` / `removeDemo` / `demoStatus` engine (upsert by id — safe to run twice), and
+`describeDemoHost()`, the host allow-list every write path checks. `npm run seed:demo` is the CLI
+(`--status`, `--remove`, `--allow-production` plus a typed "DEMO INTO PRODUCTION" confirmation a
+non-interactive shell can never satisfy). `prisma/bootstrap.ts` never references it; a test greps
+to make sure.
+
+`/studio/content-lab` (ADMIN): host card, mono counts, last seed/remove, the public-visibility
+switch, Seed (disabled with a reason when the host is not allow-listed) and Remove (typed confirm).
+The switch is also on Site Settings; the dashboard gained a "Demo records" tile. A demo product's
+Place Order still works — its Inquiry saves `isDemo: true` and its WhatsApp message is prefixed
+`[DEMO] ` (`withDemoPrefix` in `whatsapp.ts`); the commissions board shows a badge and a `?demo=1`
+filter.
+
+### Verified
+typecheck · lint · vitest 418 · test:db 18 (seed twice → same counts, gate both ways, sitemap
+excludes, remove → zero rows, real rows untouched) · copy:check · a production build ·
+`redesign-audit` / `a11y-audit` on the six demo routes at 1440/390/360 + `/ar` · motion 48.2 KB ·
+keyboard · E2E 10/10 · `studio-audit` on Content Lab and four demo screens · sitemap excludes
+every `demo-` id · `noindex` on demo detail routes · production-mode hiding proven against
+`showDemoContent()`. The local main database now carries the demo set (`seed:demo --status`),
+which is what the later audits and the F2 CI step build on.
+
+### Two things found, not fixed here
+- `order-panel.tsx`'s empty-engraving preview (`text-graphite/60` at `text-h3`) fails AA contrast
+  — pre-existing, surfaced because `demo-product-001` is the first audited route with a TEXT
+  customisation field. Routed to A3.
+- The blog post form's Tiptap editor has no accessible name (`aria-input-field-name`) — reproduced
+  on a real post, unrelated to fixtures. Routed to C1's merge.
+
+---
+
+## Wave 1 · batches A1 and B — design-system hygiene, chrome, and the testimonial system (2026-09-03)
+
+Two of wave 1's six batches merged (`39c10dd`, `df8fc64`) after each was built and verified in
+its own worktree against its own copy of the catalogue database. C1 (Studio content), D (media),
+E (scraper + sheets) and F1 (hygiene) follow the same way.
+
+### A1 — the house curve is one curve, and the header watches the page
+- `src/lib/bezier-ease.ts` (a ~30-line Newton–Raphson cubic-bezier solver) lets `gsap.ts` register
+  `"luxury"` and `"settle"` eases from the exact control points `tokens.css` defines, mirrored in
+  `motion-tokens.ts` and pinned by a test that reads the CSS back. `gsap/CustomEase` would have
+  cost ~2.5 KB gzipped against a 49 KB ceiling for two fixed curves. `Reveal` eases on `"luxury"`.
+- `tokens.css` names Tailwind's five breakpoints in `@theme`; its cure-gutter query and the one
+  that lived inside a JS string in `toast.tsx` now read `@variant lg` off `--breakpoint-lg`.
+  Verified in the built CSS: both compile to `@media (min-width:64rem)`.
+- `hero-parallax.tsx` moves `Math.min(40, height * 0.12)` (Part 14's 20–40 px cap) instead of 12 %
+  of the hero. Three primitives in `globals.css`, each with a reduced-motion resting state:
+  `.sf-hero-rise`, `.sf-hero-drift` (on the poster's wrapper, never the LCP image),
+  `.sf-manifesto-brighten` (scroll-linked, no JS). `hero-media.tsx` accepts a `SiteImageRef`
+  (mobile crop + focal point) as well as a bare URL, and can opt into the drift.
+- `use-hero-ink.ts`: an IntersectionObserver over the header's own top-80 px band replaces the
+  seven-route transparency allowlist (the list stays as the SSR seed); the header exposes
+  `data-ink` so the audit can check it.
+- `brand-colors.ts` carries the thirteen v3 roles (a test reads `tokens.css` and asserts each hex)
+  and re-skins the four OG cards, the manifest, the root error page and email. `BRAND.gold` is a
+  deprecated alias of champagne until the order panel's swatch table moves (batch A3).
+- RTL residue closed: drawer entrance, nav underline origin, filter drawer, cure-line origin; the
+  cure line's `aria-label` is now `CureLine.pageSections` in nine locales; `ui/select.tsx` uses
+  logical padding. New `SnapRail` (first importer of `carousel-nav.tsx`) and `DemoMark`.
+  `button.tsx` `sm` and the announcement link clear 44 px on a coarse pointer.
+- Measured: 417 unit tests, build, design/a11y audits at 1440 and 390 (+ Arabic), keyboard paths,
+  E2E 10/10. Motion 48.4 KB gzipped (the two registered eases), under the 49 KB ceiling.
+- Open, routed to A3: the shop ecosystem tabs still miss the 44 px floor at 390.
+
+### B — testimonials: a review pipeline, a publish guard, three storefront modes
+- `describeTestimonialProblem` (`src/lib/testimonials-rules.ts`, 24-assertion matrix) refuses
+  PUBLISHED unless the customer's permission is recorded as GRANTED; it runs before every write,
+  single or bulk, and returns its reason. Rows already live before this shipped are untouched
+  (the guard fires on a save, never retroactively).
+- `/studio/testimonials/new` and `/[id]` replace the dialog: a five-tab form (Quote · Attribution ·
+  Links · Media · Review) on the product-form pattern, product/portfolio pickers reusing the
+  provenance search, translations, draft preview. The list gained sort, status filter, search,
+  a bulk bar (Publish reports what it skipped and why) and phone-width cards.
+- `TestimonialCard` grew `editorial`, `linked` (beside the piece's own photograph) and `video`
+  (poster + play chip, never autoplay) variants; `TestimonialWall` (CSS columns, never a
+  carousel), `FeaturedTestimonial`, and `ProductTestimonials` (product → category → nothing) are
+  built and wait for their mounts in A2/A3. `review-jsonld.ts` emits Review/AggregateRating only
+  from PUBLISHED, non-demo, permission-GRANTED rows. `/custom-order` reads six through the wall.
+- Bulk-imported testimonials arrive as drafts and may link a product by slug.
+- Measured: 419 unit tests, 13 db tests, build, Studio audit clean on the two new routes at both
+  widths, design/a11y clean on `/custom-order` with all three variants live, E2E 10/10.
+- Merge notes: B's `demo-mark.tsx` stand-in was dropped for A1's; `Common.demoMark` keeps A1's
+  wording; the resolver now serves the localised `designation`/`productTitle` (`aca1c0c`).
+
+### Worktree lesson
+`npm run build` panics under Turbopack in a worktree whose `node_modules` is a symlink to the
+sibling checkout. The working invocation is the same three steps with
+`NEXT_PRIVATE_OUTPUT_TRACE_ROOT=/home/user npx next build`; `next.config.ts` is not touched.
+
+---
+
+## Transformation batch B0 — schema, demo gates, shared helpers (2026-09-03)
+
+The owner answered the roadmap's remaining gates (D7–D27) in one sitting and asked for the
+whole plan; B0 is the foundation every later batch builds on. Twelve commits, eleven
+additive migrations (44 → 55), zero data changes to any existing row.
+
+### Added
+- **Testimonial system schema** (`20260904100000`): `TestimonialStatus` (DRAFT · PENDING_REVIEW ·
+  VERIFIED · PUBLISHED · ARCHIVED) and `PermissionStatus`; status, featured, isDemo, designation,
+  category, givenAt, language, product/portfolio links (set-null), productTitle, purchaseType,
+  media pointers, installation image, film + poster, internal notes, permission, verification,
+  timestamps, indexes. **Every existing row is back-filled to PUBLISHED in the same migration**,
+  so the live site did not change on deploy. `getTestimonials()` is now gated (`status =
+  PUBLISHED` plus the demo gate), total (try/catch → `[]`), and takes either the old positional
+  form or `{ take, locale, productId, portfolioId, category, featured, includeDemo }`.
+  `revalidatePublic("testimonial")` finally purges the PDP, `/custom-order` and
+  `/large-resin-art`, not just `/` — a withdrawn testimonial used to linger on product pages for
+  a day. Shipped in PR #41 (merged); the rest of the batch is PR #42.
+- **`ContentStatus` REVIEW and ARCHIVED** (`20260904101000`, enum values only). Every public
+  reader already selects PUBLISHED; the eleven inline `z.enum(["DRAFT","PUBLISHED"])` schemas
+  now read `CONTENT_STATUSES` from `src/lib/content-status.ts`.
+- **The demo-content marker** (`20260904102000`): `isDemo` on Product, BlogPost, BlogCategory,
+  Portfolio, Faq, CustomPage, Media, Inquiry, ScrapeJob, ImportRun (Testimonial had it), and
+  `SiteSettings.demoContentPublic` (default off). One gate, `showDemoContent()` in
+  `src/lib/demo-content.ts`: fixtures show off production, or in production only while the
+  owner's switch is on. `demoWhere()` is spread into every public reader; the cached readers
+  (`fetchDefaultShopFirstPage`, `fetchDuplicateTitleCounts`, `readCatalogNav`) carry the
+  boolean in their cache key. The sitemap, `generateStaticParams`, the website→Sheet mirror and
+  the image mirror hard-code `isDemo: false` whatever the switch says. Detail routes 404 a
+  hidden fixture and mark a shown one `noindex`. **The "DEMO" title-prefix convention is
+  retired** — zero occurrences remain.
+- **`Faq.status`** (`20260904103000`, default PUBLISHED); every public FAQ reader selects it.
+- **`Category.seoTitle` / `seoDescription` / `visible`** (`20260904104000`); the mega-menu, shop
+  chips, search, sitemap, tiles, portfolio chips and sibling shelves honour `visible`; the
+  category page 404s a hidden shelf and prefers the owner's SEO fields.
+- **`Media.tags` / `caption` / `favourite` / `duration` / `posterUrl`** (`20260904105000`);
+  `posterUrl` joins the delete guard as "Video poster · <file>".
+- **Scraper** (`20260904106000`): `ScrapedProduct.notes`, `ScrapeScope` + `ScrapeJob.scope`,
+  `ScrapeJob.updatedAt` heartbeat.
+- **Sheets** (`20260904107000`): `SheetConflict`, `SheetSyncRun`, `SiteSettings.sheetId` /
+  `sheetTabIds`.
+- **`BlogPost.categoryId`** → Category (`20260904108000`), **`ProductImage.role`**
+  (`20260904109000`), **`ResearchRecord`** (`20260904110000`; its `images` array joins the
+  delete guard).
+- Helpers: `snapshotBefore()` for bounded before-pictures in the activity log;
+  `PROCESS_STEPS` (the owner-confirmed ten, written once).
+
+### Verified
+typecheck · lint · vitest 40 files / 391 tests (8 new) · test:db 4 files / 13 tests (5 new:
+testimonial gate, demo gate hidden/shown/never-in-sitemap, video poster guard, research
+picture guard) · `prisma migrate deploy` from scratch and `migrate diff` after every migration
+(only the five statements that pre-exist on `main` remain: three raw-SQL trigram indexes and
+two column defaults from the brand rename) · the production build and the browser audits are
+recorded in the PR body.
+
+### Two things learned the hard way
+- Prisma 7.9 removed `migrate diff --from-url`; the drift proof is
+  `--from-config-datasource --to-schema prisma/schema.prisma --script`.
+- `src/lib/tiptap-media.test.ts` mocks the database table by table, so every new reader in
+  `media-usages.ts` is also a new mock line — by design, not an oversight.
+
+---
+
 ## Deploys — cap the prerender's database fan-out (2026-09-03)
 
 Every Vercel deployment since 09:03 failed. The database was never the problem, and neither was any

@@ -63,6 +63,14 @@ Per-row `sheetSyncStatus` exists because the job-level flag can only say a push
 also makes "nobody pushed this yet" look different from "this failed", and only
 one of those needs anyone to do something.
 
+### Push history
+
+Every push — a job, a tier, the confirmed list, the website mirror — writes
+one `SheetSyncRun` row (direction, tab, row count, status, error,
+started/finished). `/studio/sheet-import`'s "Sheet push history" table is the
+last 20 of them: before this, the only record of what a push did was whatever
+toast happened to be on screen when it finished.
+
 ---
 
 ## Filling the catalogue from the sheet
@@ -94,6 +102,33 @@ nobody dares touch.
 Every run — deploy, manual or preview — records an `ImportRun`. Before this,
 the only account of what a deploy did to the catalogue was a build log nobody
 keeps.
+
+### Running it from the studio
+
+`/studio/sheet-import`'s **Preview** button runs the whole pipeline —
+reading, normalizing, the merge decision, the blast-radius pre-pass — and
+writes nothing (`runTierFill({ dryRun: true })`); **Run now** does the same
+run for real, without waiting for the next deploy, gated by the master switch
+the same way a deploy is. Both call `src/lib/import/tier-fill.ts`'s
+`runTierFill` — the same function `prisma/import-tiers.ts` calls at deploy
+time, not a second implementation of the fill.
+
+### Sheet/studio conflicts
+
+A fill only ever refreshes availability on an owner-edited product (H5) —
+never content. But silently dropping the sheet's OTHER changes to that row
+forever was its own kind of loss, so when a product's `studioEditedAt` is
+**after** the previous fill's start — a fresh studio edit, not one the
+pipeline already knew about — and the sheet's content has also moved on that
+row, the fill writes one `SheetConflict` per differing field instead
+(title, price, materials, dimensions, description, in-stock). Availability
+still refreshes the same as always; this is purely additional information.
+
+`/studio/sheet-import/conflicts` resolves them, one field at a time: **keep
+mine** (nothing written), **take sheet** (that field takes the sheet's value
+and `studioEditedAt` bumps, so the row reads as a fresh studio decision
+rather than a stale one), **skip** (nothing written, logged as a deliberate
+pass). Every choice logs activity with a before-snapshot of the field.
 
 ---
 
@@ -151,12 +186,25 @@ Server-side only. Never in the client, never committed.
 | --- | --- |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Service-account key, raw JSON |
 | `GOOGLE_SERVICE_ACCOUNT_KEY_B64` | The same, base64 — for platforms that mangle newlines |
-| `SCRAPE_SHEET_ID` / `SHEET_ID` | The spreadsheet id |
+| `SCRAPE_SHEET_ID` / `SHEET_ID` | The spreadsheet id — fallback only, see below |
+
+**`SiteSettings.sheetId`** (Settings → Sheets) takes priority over both
+environment variables when set — `readSheetId(settings)` checks it first, so
+the owner can point the whole pipeline at a different spreadsheet without a
+redeploy. Blank falls straight back to the environment. `sheetTabIds` (same
+screen) records each tab's numeric id, which `deleteRowsFromTab` reads before
+falling back to its own metadata lookup — a small saved round trip once it's
+filled in, not a requirement.
 
 `isSheetSyncConfigured()` treats sync as **optional**: with no credentials
 every path short-circuits, the studio says so plainly, and scraping continues
 unaffected. That is why an environment without them is not broken — it simply
 does not sync.
+
+Not every push has been threaded the owner's `sheetId` yet — the website
+mirror (`pushWebsiteProducts`, `product-sheet-sync.ts`) still resolves from
+the environment only. Every push still records its `SheetSyncRun`
+regardless.
 
 > The sheet is owner-private. Anonymous CSV export returns 401, which is why
 > `data/tiers/*.csv.gz` are fetched by the `fetch-tiers` Actions workflow
@@ -172,4 +220,7 @@ does not sync.
 | Website mirror + delete | `src/lib/scraper/product-sheet-sync.ts`, `website-sheet.ts` |
 | Confirmed tab | `src/lib/scraper/confirm.ts` |
 | Fill policy | `src/lib/import/fill-policy.ts` |
+| The fill itself (preview + real, one implementation) | `src/lib/import/tier-fill.ts` |
+| Studio Preview / Run now / conflict resolution | `src/actions/sheet-fill.ts` |
 | Actions | `src/actions/scraper-sheets.ts` |
+| Owner sheet id + tab ids | Settings → Sheets (`src/actions/settings.ts`'s `setSheetIds`) |

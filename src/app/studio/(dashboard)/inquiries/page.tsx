@@ -66,10 +66,13 @@ export default async function InquiriesPage({
     q?: string;
     page?: string;
     view?: string;
+    /** Content Lab (batch G): "1" shows only demo fixture inquiries. */
+    demo?: string;
   }>;
 }) {
-  const { status, source, q, page, view } = await searchParams;
+  const { status, source, q, page, view, demo } = await searchParams;
   const isBoard = view === "board";
+  const demoOnly = demo === "1";
 
   // The (dashboard) layout already DB-validated the principal this request
   // (requireStaffPage). This JWT read only decides whether the bulk Delete
@@ -80,6 +83,7 @@ export default async function InquiriesPage({
   const where: Prisma.InquiryWhereInput = {
     ...(isStatus(status) ? { status } : {}),
     ...(isSource(source) ? { source } : {}),
+    ...(demoOnly ? { isDemo: true } : {}),
     ...(q
       ? {
           OR: [
@@ -88,6 +92,7 @@ export default async function InquiriesPage({
           ],
         }
       : {}),
+    ...(demo === "1" ? { isDemo: true } : {}),
   };
 
   // Count first so the requested page can be clamped to the real range — a
@@ -115,6 +120,7 @@ export default async function InquiriesPage({
             phone: true,
             source: true,
             status: true,
+            isDemo: true,
             createdAt: true,
             product: { select: { title: true } },
           },
@@ -126,7 +132,10 @@ export default async function InquiriesPage({
     db.inquiry.groupBy({ by: ["status"], _count: { _all: true } }),
     isBoard
       ? db.inquiry.findMany({
-          where: { status: { in: STATUS_ORDER } },
+          where: {
+            status: { in: STATUS_ORDER },
+            ...(demoOnly ? { isDemo: true } : {}),
+          },
           orderBy: { createdAt: "desc" },
           take: BOARD_CAP,
           select: {
@@ -137,6 +146,7 @@ export default async function InquiriesPage({
             status: true,
             timeline: true,
             createdAt: true,
+            isDemo: true,
             product: {
               select: {
                 title: true,
@@ -168,6 +178,7 @@ export default async function InquiriesPage({
     source: inquiry.source,
     productTitle: inquiry.product?.title ?? null,
     status: inquiry.status,
+    isDemo: inquiry.isDemo,
     createdAt: dateFormatter.format(inquiry.createdAt),
   }));
 
@@ -182,10 +193,21 @@ export default async function InquiriesPage({
     timeline: inquiry.timeline,
     createdAtIso: inquiry.createdAt.toISOString(),
     createdAt: shortDateFormatter.format(inquiry.createdAt),
+    isDemo: inquiry.isDemo,
   }));
 
   const TAB =
     "inline-flex min-h-11 items-center rounded-full px-5 text-small outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none";
+
+  // Content Lab (batch G): a "Demo only" toggle that preserves the view but
+  // flips `?demo=1`, so it composes with Table and Board alike.
+  const demoHref = (() => {
+    const params = new URLSearchParams();
+    if (isBoard) params.set("view", "board");
+    if (!demoOnly) params.set("demo", "1");
+    const qs = params.toString();
+    return qs ? `/studio/inquiries?${qs}` : "/studio/inquiries";
+  })();
 
   return (
     <div>
@@ -194,32 +216,47 @@ export default async function InquiriesPage({
         title="Commissions"
         description="Every WhatsApp order from the public site — from the first message through to delivery."
         actions={
-          <div
-            role="group"
-            aria-label="View"
-            className="flex items-center gap-1 rounded-full border border-border bg-card p-1"
-          >
+          <div className="flex flex-wrap items-center gap-2">
+            <div
+              role="group"
+              aria-label="View"
+              className="flex items-center gap-1 rounded-full border border-border bg-card p-1"
+            >
+              <Link
+                href="/studio/inquiries"
+                aria-current={isBoard ? undefined : "page"}
+                className={
+                  isBoard
+                    ? `${TAB} text-graphite hover:text-foreground`
+                    : `${TAB} bg-foreground/6 font-medium text-foreground`
+                }
+              >
+                Table
+              </Link>
+              <Link
+                href="/studio/inquiries?view=board"
+                aria-current={isBoard ? "page" : undefined}
+                className={
+                  isBoard
+                    ? `${TAB} bg-foreground/6 font-medium text-foreground`
+                    : `${TAB} text-graphite hover:text-foreground`
+                }
+              >
+                Board
+              </Link>
+            </div>
             <Link
-              href="/studio/inquiries"
-              aria-current={isBoard ? undefined : "page"}
+              href={demoHref}
+              // A navigating filter is a link, so its "on" state is aria-current
+              // (aria-pressed belongs to buttons; axe flags it on an anchor).
+              aria-current={demoOnly ? "true" : undefined}
               className={
-                isBoard
-                  ? `${TAB} text-graphite hover:text-foreground`
-                  : `${TAB} bg-foreground/6 font-medium text-foreground`
+                demoOnly
+                  ? `${TAB} rounded-full border border-border bg-foreground/6 font-medium text-foreground`
+                  : `${TAB} rounded-full border border-border text-graphite hover:text-foreground`
               }
             >
-              Table
-            </Link>
-            <Link
-              href="/studio/inquiries?view=board"
-              aria-current={isBoard ? "page" : undefined}
-              className={
-                isBoard
-                  ? `${TAB} bg-foreground/6 font-medium text-foreground`
-                  : `${TAB} text-graphite hover:text-foreground`
-              }
-            >
-              Board
+              Demo only
             </Link>
           </div>
         }

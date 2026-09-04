@@ -16,6 +16,12 @@ export default defineConfig({
   },
   test: {
     include: ["tests/db/**/*.test.ts"],
+    // One file at a time. The suites share one database: demo-seed.test.ts
+    // writes and removes 400+ rows (40 of them Media) while media-query's
+    // orientation assertion is scoped by prefix but reads the same table,
+    // and the two interleaved once (2026-09-04) into a failure neither
+    // reproduces alone. Sequential files cost ~10 s and remove the race.
+    fileParallelism: false,
     environment: "node",
     testTimeout: 30_000,
     env: {

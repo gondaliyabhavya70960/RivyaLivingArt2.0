@@ -1,3 +1,4 @@
+import { demoWhere } from "@/lib/demo-content";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, Search as SearchIcon } from "lucide-react";
@@ -154,11 +155,16 @@ export default async function SearchPage({
   const query = (raw?.trim() ?? "").slice(0, MAX_QUERY);
   const searched = query.length >= MIN_QUERY;
 
+  // The same demo gate the search overlay's action applies: fixtures show
+  // here only when SiteSettings.demoContentPublic or a non-production
+  // VERCEL_ENV says so (B0). Left at the NO_DEMO default, this page hid rows
+  // the overlay offered — caught by the E2E smoke's /search check (F2).
+  const demo = searched ? await demoWhere() : undefined;
   const [products, posts, portfolios] = searched
     ? await Promise.all([
-        searchProducts(query),
-        searchPosts(query),
-        searchPortfolios(query),
+        searchProducts(query, undefined, { demo }),
+        searchPosts(query, undefined, { demo }),
+        searchPortfolios(query, undefined, { demo }),
       ])
     : [
         { rows: [], total: 0 },
@@ -192,6 +198,15 @@ export default async function SearchPage({
         ? { url: p.images[1].url, alt: p.images[1].alt || lp.title }
         : null,
       variantChips: [],
+      // D21 added these to ShopProductItem for the catalog card's mono meta
+      // line, hover video and demo mark. `search-query.ts`'s own select is
+      // B0-owned and unchanged by this batch, so the search results simply
+      // carry the same "nothing to show" defaults they always rendered —
+      // no card here loses anything it had before this type grew.
+      materials: null,
+      dimensions: null,
+      videoUrl: null,
+      isDemo: p.isDemo,
     };
   });
 
