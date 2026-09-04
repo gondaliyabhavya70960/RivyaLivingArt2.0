@@ -14,7 +14,7 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
-import { logActivity } from "@/lib/activity";
+import { logActivity, snapshotBefore } from "@/lib/activity";
 import { deleteFile } from "@/lib/storage";
 import { findMediaUsages } from "@/lib/media-usages";
 import { createWithUniqueSlug, uniqueSlug } from "@/lib/slug";
@@ -398,6 +398,20 @@ export async function upsertProduct(
         title: product.title,
         status: product.status,
         rewriteConfirmed: data.confirmRewrite || undefined,
+        // The before-picture six smaller entities already record, on the one
+        // with 4,385 rows — where an accidental edit is most expensive and
+        // hardest to spot. Only on an update: a create has no before.
+        before: existing
+          ? snapshotBefore(existing, [
+              "title",
+              "status",
+              "priceMin",
+              "priceMax",
+              "shortTagline",
+              "inStock",
+              "featured",
+            ])
+          : undefined,
       },
     });
 
