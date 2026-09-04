@@ -47,7 +47,10 @@ describe("the block catalogue", () => {
     // staggered CSS columns, the first of the three gallery blocks.
     // 15, not 14 (2026-09-04): `bentoGallery` — up to six pictures, the first
     // two rows tall, on the same 12-column bento the homepage collections use.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(15);
+    // 16, not 15 (2026-09-04): `fullscreenGallery` — thumbnails opening the
+    // shared storefront Lightbox; the tenth and last block of the Phase 11
+    // catalogue growth. The catalogue is closed again at sixteen.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(16);
   });
 
   it("declares every type it lists", () => {

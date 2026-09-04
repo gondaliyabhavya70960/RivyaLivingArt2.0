@@ -638,6 +638,25 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "fullscreenGallery" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <GalleryImagesField
+            idPrefix={id("images")}
+            label="Pictures"
+            hint="Up to twelve square thumbnails; each opens full-screen with keyboard stepping. The description doubles as the full-screen title, so write one for every picture."
+            value={asGalleryImages(data.images)}
+            max={12}
+            onChange={(next) => set("images", next)}
+          />
+        </>
+      )}
+
       {block.type === "videoStory" && (
         <>
           <TextField

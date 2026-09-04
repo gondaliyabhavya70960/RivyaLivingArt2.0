@@ -260,6 +260,16 @@ export const bentoGallerySchema = z.object({
   spacing,
 });
 
+/**
+ * `fullscreenGallery` — up to twelve square thumbnails that open the shared
+ * storefront Lightbox (A3's `storefront/lightbox.tsx`): keyboard stepping,
+ * RTL-aware arrows, focus return and the FLIP entrance come with it.
+ */
+export const fullscreenGallerySchema = z.object({
+  heading: text(160),
+  images: z.array(galleryImageSchema).max(12).default([]),
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -291,6 +301,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "videoStory",
   "masonryGallery",
   "bentoGallery",
+  "fullscreenGallery",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -311,6 +322,7 @@ export type VideoStoryData = z.infer<typeof videoStorySchema>;
 export type GalleryImage = z.infer<typeof galleryImageSchema>;
 export type MasonryGalleryData = z.infer<typeof masonryGallerySchema>;
 export type BentoGalleryData = z.infer<typeof bentoGallerySchema>;
+export type FullscreenGalleryData = z.infer<typeof fullscreenGallerySchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -516,6 +528,14 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     label: "Bento gallery",
     description: "Up to six pictures in a bento grid — the first one large, the rest beside it.",
     schema: bentoGallerySchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
+    ground: "alternating",
+  },
+  fullscreenGallery: {
+    type: "fullscreenGallery",
+    label: "Fullscreen gallery",
+    description: "Up to twelve thumbnails that open full-screen, with keyboard stepping.",
+    schema: fullscreenGallerySchema,
     translatable: [{ name: "heading", label: "Heading", kind: "text" }],
     ground: "alternating",
   },

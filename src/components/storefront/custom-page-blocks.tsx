@@ -13,6 +13,7 @@ import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { CollectionCard } from "@/components/storefront/collection-card";
 import { FeaturedTestimonial } from "@/components/storefront/featured-testimonial";
+import { FullscreenGallery } from "@/components/storefront/fullscreen-gallery";
 import { HeroMedia } from "@/components/storefront/hero-media";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import {
@@ -37,6 +38,7 @@ import type {
   VideoStoryData,
   MasonryGalleryData,
   BentoGalleryData,
+  FullscreenGalleryData,
   GalleryImage,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
@@ -1142,6 +1144,42 @@ function BentoGalleryBlock({
   );
 }
 
+/**
+ * `fullscreenGallery` — a server band around the client island that owns the
+ * thumbnails and the shared Lightbox. Standard spacing (the block has no
+ * spacing switch by design); nothing without a single picture.
+ */
+function FullscreenGalleryBlock({
+  id,
+  data,
+  ground,
+  heading,
+}: {
+  id: string;
+  data: FullscreenGalleryData;
+  ground: BlockGround;
+  heading: "h1" | "h2";
+}) {
+  const Tag = heading;
+  const images = renderableGalleryImages(data.images);
+  const headingId = `${id}-heading`;
+  if (images.length === 0) return null;
+
+  return (
+    <Band ground={ground} labelledBy={data.heading ? headingId : undefined}>
+      {data.heading ? (
+        <Tag
+          id={headingId}
+          className="mb-10 font-display text-h2 leading-tight tracking-display"
+        >
+          {data.heading}
+        </Tag>
+      ) : null}
+      <FullscreenGallery images={images} />
+    </Band>
+  );
+}
+
 function FaqPickerBlock({
   id,
   data,
@@ -1410,6 +1448,17 @@ export function CustomPageBlock({
           data={data}
           ground={ground}
           spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
+    case "fullscreenGallery": {
+      const data = block.data as FullscreenGalleryData;
+      return (
+        <FullscreenGalleryBlock
+          id={block.id}
+          data={data}
+          ground={ground}
           heading={heading}
         />
       );

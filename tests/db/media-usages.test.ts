@@ -304,4 +304,43 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       await db.customPage.delete({ where: { id } });
     }
   });
+
+  // fullscreenGallery is the third block on the gallery walker branch.
+  it("guards every picture of a fullscreenGallery block", async (ctx) => {
+    if (!db) {
+      ctx.skip();
+      return;
+    }
+    const id = `test-media-usages-fullscreen-${Date.now()}`;
+    const first = `/uploads/test/${id}-1.jpg`;
+    const second = `/uploads/test/${id}-2.jpg`;
+    const page = await db.customPage.create({
+      data: { id, slug: id, title: "Media usages test lander" },
+    });
+    await db.customBlock.create({
+      data: {
+        pageId: page.id,
+        type: "fullscreenGallery",
+        order: 0,
+        data: {
+          heading: "",
+          images: [
+            { url: first, alt: "one", caption: "" },
+            { url: second, alt: "two", caption: "" },
+          ],
+        },
+      },
+    });
+    try {
+      const details = await findMediaUsageDetails([first, second]);
+      expect(details.get(first)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(picture 1\)$/,
+      );
+      expect(details.get(second)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(picture 2\)$/,
+      );
+    } finally {
+      await db.customPage.delete({ where: { id } });
+    }
+  });
 });
