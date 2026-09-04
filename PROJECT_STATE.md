@@ -41,10 +41,13 @@ In Progress:              nothing in flight. Owner-machine follow-ups: fetch the
 Next Exact Task:          none from the plan. Everything the 2026-09-04 audit listed as pending is
                           either closed on PRs #43–#45 or an owner-machine follow-up above. A next
                           session starts from `docs/transformation-roadmap.md` (status) and CHANGELOG's
-                          newest entry, not from the plan file. Newest entry: the header-contrast rule
-                          no longer reports its own cross-fade — CI 149 failed /contact on a tree that
-                          passed on main (149 red, 150 green, identical trees), because the rule read
-                          `data-ink` and the pixels at two different moments.
+                          newest entry, not from the plan file. Newest entry: the Lighthouse PDP gate
+                          (the PDP measures 99 perf / 100 a11y — the local zeros were BASE_URL pointing
+                          at a dead port, not a sandbox limit) and all 28 planned images generated but
+                          NOT built. Before it: the header-contrast rule no longer reports its own
+                          cross-fade — CI 149 failed /contact on a tree that passed on main (149 red,
+                          150 green, identical trees), because the rule read `data-ink` and the pixels
+                          at two different moments.
 Files Created:            11 migration dirs (20260904100000 … 20260904110000) · src/lib/
                           {content-status,demo-clause,demo-content,activity-snapshot,
                           process-steps}.ts (+ tests) · tests/db/{testimonials-gate,demo-gate}.test.ts

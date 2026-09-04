@@ -17,6 +17,11 @@ import { launch } from "chrome-launcher";
 
 import { resolveChromiumPath } from "./lib/browser.mjs";
 
+// BASE_URL WINS over LH_BASE — CI sets BASE_URL job-wide, so the two agree
+// there. Locally they can disagree: an env file that exports BASE_URL silently
+// overrides the LH_BASE the docs tell you to pass, and the run then measures
+// whatever is (not) listening on the other port. The unmeasured-category guard
+// below is what turns that into an error you can read instead of a zero.
 const BASE = process.env.BASE_URL ?? process.env.LH_BASE ?? "http://localhost:3000";
 
 /**
@@ -87,7 +92,28 @@ try {
       },
     });
     const c = result.lhr.categories;
-    const score = (k) => Math.round((c[k]?.score ?? 0) * 100);
+    /* A category with a null score means Lighthouse did not measure the page —
+       an unreachable URL is the usual cause, and it is silent. `?? 0` turned
+       that into "scored 0", which reads as a catastrophic BUDGET MISS on a
+       site that was never loaded. It cost a whole investigation: the numbers
+       were reported to the owner as a sandbox limitation ("Lighthouse scores 0
+       here") when in fact BASE_URL pointed at a port with nothing behind it,
+       and the same page scored 98 the moment it was aimed correctly. A gate
+       must say "I could not measure this", never invent a number for it. */
+    const unmeasured = Object.entries(c)
+      .filter(([, v]) => typeof v?.score !== "number")
+      .map(([k]) => k);
+    if (unmeasured.length > 0) {
+      throw new Error(
+        `Lighthouse returned no score for ${unmeasured.join(", ")} on ${url}. ` +
+          `That is a failed RUN, not a bad score${
+            result.lhr.runtimeError
+              ? ` — ${result.lhr.runtimeError.code}: ${result.lhr.runtimeError.message}`
+              : " — check that a server is actually listening on that URL"
+          }.`,
+      );
+    }
+    const score = (k) => Math.round(c[k].score * 100);
     const audits = result.lhr.audits;
     rows.push({
       name,

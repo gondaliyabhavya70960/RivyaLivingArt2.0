@@ -275,9 +275,18 @@ jobs:
           node scripts/studio-audit.mjs
           node scripts/studio-audit.mjs --w 390
 
-      # Lighthouse over the two routes that exist without an owner-fed
-      # catalog. Performance, a11y, SEO and best-practices are ALL enforced
-      # (defaults: perf >= 85, a11y >= 95; the site measures 98/100/96/100).
+      # Lighthouse over home, the PLP and the demo PDP. Only PERF and A11Y are
+      # enforced (perf >= 85, a11y >= 95); best-practices and SEO are printed.
+      # That distinction is load-bearing now the PDP is measured: the demo
+      # product is deliberately noindex, so `is-crawlable` puts its SEO at 69
+      # while perf/a11y are 99/100. Gating SEO here would fail the build for
+      # the demo gate working correctly.
+      #
+      # The PDP joined this step once it had numbers behind it rather than a
+      # guess: measured 2026-09-04 against a local production build at
+      # 99 perf / 100 a11y / 96 BP / 69 SEO, LCP 1.0s, CLS 0, TBT 0ms
+      # (home 98/97/96/100, PLP 98/100/96/100). It can only be measured at all
+      # because the demo set is seeded earlier in this job.
       #
       # Perf was ungated for exactly one run, because the first numbers looked
       # like a site problem - 43 on this runner - and a budget guessed from a
@@ -286,7 +295,7 @@ jobs:
       # throttling default in place; correcting it moved the same page from
       # 59 to 98.
       - name: Lighthouse budget
-        run: LH_BASE=http://127.0.0.1:3000 node scripts/lighthouse-audit.mjs
+        run: node scripts/lighthouse-audit.mjs demo-product-001
 
       # `next start` detaches its real server into a process group of its own,
       # so neither the launcher's `$!` nor `setsid $!` is the thing to kill —

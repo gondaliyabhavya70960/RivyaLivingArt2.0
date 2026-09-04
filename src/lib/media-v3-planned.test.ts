@@ -49,6 +49,26 @@ describe("describePlanned", () => {
     expect(described.needs).toContain("generation run");
   });
 
+  it("reads a generated-but-unpromoted row as generated, and names the promote", () => {
+    // Where all 28 batch-D rows sit after 2026-09-04: rendered, URLs recorded,
+    // still `status: "planned"` because the master cannot be built without the
+    // CDN. Reading `status` alone told an owner holding 56 finished renders to
+    // run a generation — the one wrong instruction here that costs money.
+    const described = describePlanned(plan({ candidates: [{ variant: "a", url: HF_URL }] }));
+    expect(described.state).toBe("generated");
+    expect(described.needs).toContain("--promote bench-plank");
+    expect(described.needs).not.toContain("generation run");
+  });
+
+  it("tallies generated rows apart from ungenerated ones", () => {
+    const tally = tallyPlanned([
+      plan(),
+      plan({ id: "bench-side-top", candidates: [{ variant: "a", url: HF_URL }] }),
+    ]);
+    expect(tally.planned).toBe(1);
+    expect(tally.generated).toBe(1);
+  });
+
   it('calls a row that left "planned" with no candidates incomplete', () => {
     // Only reachable by hand-editing the manifest — `promotePlanned` refuses to
     // produce it — which is exactly why the state exists rather than a crash.
@@ -183,6 +203,7 @@ describe("the promoted partition the fetch scripts read", () => {
   it("holds back everything still planned", () => {
     expect(tallyPlanned(plannedEntries(fixture))).toEqual({
       planned: 1,
+      generated: 0,
       incomplete: 2,
       unculled: 0,
       ready: 0,
@@ -200,10 +221,23 @@ describe("the promoted partition the fetch scripts read", () => {
 describe("the 28 entries in docs/media-v3-manifest.json", () => {
   const entries = plannedEntries(manifest);
 
-  it("are all still planned — nothing has been generated in-session", () => {
-    // If this ever fails it is good news, not a defect: someone promoted a row
-    // on a machine that can reach the CDN. Update the expectation with it.
-    expect(tallyPlanned(entries).planned).toBe(entries.length);
+  it("are all generated but none promoted — the CDN is what is missing, not the render", () => {
+    // This assertion used to read `.planned === entries.length`, under a
+    // comment saying a failure would be good news. It failed on 2026-09-04 for
+    // exactly that reason: all 28 were generated in-session through the
+    // Higgsfield MCP (56 renders, two variants each) and their URLs recorded.
+    // They stay `status: "planned"` deliberately — promoting a row makes
+    // bundled-media.test.ts demand its master ON DISK, and the master cannot be
+    // built where the CDN answers 403. So the queue's honest state is
+    // "generated, awaiting a promote on a machine that can download".
+    const tally = tallyPlanned(entries);
+    expect(tally.generated).toBe(entries.length);
+    expect(tally.planned).toBe(0);
+    for (const entry of entries) {
+      expect((entry.candidates ?? []).length, entry.id).toBeGreaterThan(0);
+      expect(entry.keeper, entry.id).toBeNull();
+      expect(entry.status, entry.id).toBe("planned");
+    }
   });
 
   it("can never be promoted onto a master file that already exists", () => {

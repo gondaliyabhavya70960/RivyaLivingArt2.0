@@ -5,6 +5,48 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Follow-up · the Lighthouse PDP gate, and 28 planned images generated (2026-09-04)
+
+**The PDP joins the Lighthouse gate.** The budget was waiting on one measurement that had
+never actually been taken: every local run reported `0` on every page, and that was recorded
+as a sandbox limitation. It was not. `scripts/lighthouse-audit.mjs` reads `BASE_URL` in
+preference to `LH_BASE`, a local env file exported `BASE_URL=…:3000`, and nothing was
+listening there — so Lighthouse was measuring a dead port and returning null category scores,
+which `?? 0` rendered as a catastrophic-looking zero. Aimed at the running server the same
+build scores **home 98/97, PLP 98/100, PDP 99/100** (LCP 1.0–1.2s, CLS 0, TBT ≤10ms). The
+PDP clears 85/95 comfortably, so `demo-product-001` is now passed to the CI step, which could
+only ever measure it because the demo set is seeded earlier in that job.
+
+Two things were fixed so the same hour is never spent twice:
+
+- A category with a **null score is now a thrown error naming the URL** and Lighthouse's own
+  `runtimeError`, not a zero. A gate must say "I could not measure this" rather than invent a
+  number for it. Failure-tested against a dead port: it exits 1 with
+  `CHROME_INTERSTITIAL_ERROR` instead of reporting a budget miss.
+- The CI step's comment claimed performance, a11y, SEO **and** best-practices were all
+  enforced. Only perf and a11y are (`budgetFail` filters on those two). That distinction is
+  load-bearing now the PDP is measured: the demo product is deliberately `noindex`, so
+  `is-crawlable` puts its SEO at 69 while perf/a11y are 99/100 — gating SEO would fail the
+  build for the demo gate working correctly.
+
+**All 28 `plannedSets` entries are generated.** 56 renders through the Higgsfield MCP (two
+variants each, same `model` and `promptSuffix` as the built `assets`; five jobs failed and were
+re-run), and every result URL is recorded in the row's `candidates`. They stay
+`status: "planned"` deliberately: `--promote` makes `bundled-media.test.ts` demand the master
+ON DISK and `media-v3-preflight.mjs` demand a culled `keeper`, and the master cannot be built
+here — the CDN answers 403 to the agent proxy, an organization policy denial to report rather
+than route around. Downloading and building is what remains, on a machine with ordinary
+internet.
+
+That data change broke the queue's own reporting, which is fixed in the same commit:
+`describePlanned` read `status` alone, so all 28 rows still said *"needs a generation run"* —
+the one wrong instruction here that costs money to follow. There is now a fifth state,
+`generated`, printing `needs a promote — 2 candidate URL(s) already recorded` with the exact
+command. The manifest test that asserted "nothing has been generated in-session" said in its
+own comment that a failure would be good news; it now asserts the true state instead.
+
+---
+
 ## Follow-up · the header-contrast gate stops reporting its own cross-fade (2026-09-04)
 
 CI run 149 failed `/contact` on the sticky-header contrast rule — `data-ink="ink"` measured at

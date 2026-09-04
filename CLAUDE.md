@@ -68,23 +68,31 @@ records what shipped, and lists what genuinely remains.
 - `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
   `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
   next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
-- **The manifest's 28 `plannedSets` entries are a queue, not files.** Batch D
-  recorded the NEXT photography batch — bench concepts, large-format art,
-  concept rooms, four process actions, six mobile crops, three loops — as a
-  prompt, a placement and a ratio each, with no candidates and no master. A
-  plain fetch run therefore cannot produce them, and until 2026-09-04 did not
-  mention them either, so "run the fetch script on an ordinary machine"
-  produced silence. The real sequence, one entry at a time: generate the
-  entry's prompt → `--promote <id> <url> [<url>]` (records the results as
-  candidates and fills in the master path) → `--candidates` and set `"keeper"`
-  → the default run → point a slot at the file in /studio/site-images, because
-  a built master is not a wired one. `node scripts/media-v3-fetch.mjs
-  --planned` prints the queue and that sequence; every other mode ends by
-  naming what it could not build. A promoted SET F row is built by
-  `media-v3-video-fetch.mjs`, not the still pipeline. `media-v3-preflight.mjs`
-  and `bundled-media.test.ts` skip `status: "planned"` rows on purpose — an
-  ungenerated picture must never fail a build — and hold a promoted one to
-  every rule a real asset answers.
+- **All 28 `plannedSets` entries are GENERATED; none is built.** Batch D
+  recorded the next photography batch — bench concepts, large-format art,
+  concept rooms, five process actions, six mobile crops, three loops — as a
+  prompt, a placement and a ratio each. On 2026-09-04 every one of them was
+  rendered through the Higgsfield MCP (56 renders, two variants each, same
+  `model` and `promptSuffix` as the built `assets`; 5 jobs failed and were
+  re-run) and the result URLs are recorded in each row's `candidates`.
+  **They stay `status: "planned"` on purpose.** `--promote` flips a row to
+  "promoted", and from that moment `bundled-media.test.ts` demands the master
+  exist ON DISK and `media-v3-preflight.mjs` demands a culled `keeper` — so
+  promoting a row whose file nobody has downloaded turns the build red. The
+  file cannot be downloaded here: the CDN holding these URLs answers 403 to the
+  agent proxy's egress policy, an organization policy denial to report, not to
+  route around. What remains, on any machine with ordinary internet:
+  `--promote <id>` (no URLs needed — it falls back to the recorded candidates)
+  → `--candidates` and set `"keeper"` → the default run → point a slot at the
+  file in /studio/site-images, because a built master is not a wired one.
+  `node scripts/media-v3-fetch.mjs --planned` prints the queue, and a
+  generated-but-unpromoted row now reads `generated · needs a promote` with its
+  exact command: it used to say "needs a generation run" off `status` alone,
+  which told an owner holding 56 finished renders to pay for them twice.
+  A promoted SET F row is built by `media-v3-video-fetch.mjs`, not the still
+  pipeline. **These URLs are not permanent** — the previous batch's were
+  re-verified alive eight days after generation, so treat that as the working
+  window and re-generate from the same prompts if they have expired.
 - **DONE — `public/` is committed** (2026-08-31, 242 files, 22 MB). The owner
   supplied the directory that the imported ZIP had been exported without, and
   it is now tracked. Verified rather than assumed before committing: all 25
