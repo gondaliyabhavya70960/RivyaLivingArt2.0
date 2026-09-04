@@ -26,14 +26,6 @@ export const BRAND = {
   whatsapp: "#128c7e",
   alert: "#9b3a2e",
   success: "#2c6b5b",
-  /**
-   * @deprecated v2.0 "Midnight Gild" alias, kept ONLY because
-   * `order-panel.tsx` (owned by batch A3, not this one) still imports
-   * `BRAND.gold` for its swatch-colour table. Equal to `champagne` — the v3
-   * role gold's every prior use in this file (OG hairlines, eyebrows) was
-   * re-pointed to. Remove once A3 migrates that file to the named role.
-   */
-  gold: "#b89b63",
 } as const;
 
 /** `#rrggbb` → `"r, g, b"`, for composing rgba() strings from a brand hex. */
