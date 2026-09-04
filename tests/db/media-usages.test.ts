@@ -181,4 +181,44 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       await db.customPage.delete({ where: { id } });
     }
   });
+
+  // C2 · block catalogue growth: `videoStory` carries the same two URLs as
+  // videoHero (film + poster) on a light band; the walker treats both types
+  // alike, and this case keeps that true if either branch is ever split.
+  it("guards a videoStory block's video and poster", async (ctx) => {
+    if (!db) {
+      ctx.skip();
+      return;
+    }
+    const id = `test-media-usages-videostory-${Date.now()}`;
+    const videoUrl = `/uploads/test/${id}-film.mp4`;
+    const posterUrl = `/uploads/test/${id}-poster.jpg`;
+    const page = await db.customPage.create({
+      data: {
+        id,
+        slug: id,
+        title: "Media usages test lander",
+      },
+    });
+    await db.customBlock.create({
+      data: {
+        pageId: page.id,
+        type: "videoStory",
+        order: 0,
+        data: { videoUrl, posterUrl },
+      },
+    });
+    try {
+      const details = await findMediaUsageDetails([videoUrl, posterUrl]);
+      expect(details.get(videoUrl)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(video\)$/,
+      );
+      expect(details.get(posterUrl)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(poster\)$/,
+      );
+    } finally {
+      // Deletes the block via the page's cascade.
+      await db.customPage.delete({ where: { id } });
+    }
+  });
 });

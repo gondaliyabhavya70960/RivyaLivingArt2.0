@@ -37,10 +37,13 @@ describe("the block catalogue", () => {
     // 12, not 11 (2026-09-03): `videoHero` — the opening film instead of a
     // photograph. It shares the hero's `"hero"` slot (`BlockDef.once`
     // generalised to `BlockDef.slot` in this same commit) so a page can open
-    // with one or the other, never both. The roadmap's Phase 11
-    // block-catalogue growth adds ten types in total, one per commit; this
-    // count keeps climbing through the rest of the file's history.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(12);
+    // with one or the other, never both.
+    // 13, not 12 (2026-09-03): `videoStory` — a film beside a passage of
+    // text, on a light ground; the same HeroMedia idiom as videoHero, boxed
+    // rather than full-bleed. The roadmap's Phase 11 block-catalogue growth
+    // adds ten types in total, one per commit; this count keeps climbing
+    // through the rest of the file's history.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(13);
   });
 
   it("declares every type it lists", () => {

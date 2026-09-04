@@ -170,7 +170,11 @@ export async function findMediaUsageDetails(
     // every URL-bearing block joins this `in` list in the same commit that
     // adds it, per this file's own header rule).
     customBlocks: db.customBlock.findMany({
-      where: { type: { in: ["hero", "imageCta", "richText", "videoHero"] } },
+      where: {
+        type: {
+          in: ["hero", "imageCta", "richText", "videoHero", "videoStory"],
+        },
+      },
       select: {
         type: true,
         data: true,
@@ -280,7 +284,9 @@ export async function findMediaUsageDetails(
       for (const u of urls) add(u, label);
       return;
     }
-    if (block.type === "videoHero") {
+    if (block.type === "videoHero" || block.type === "videoStory") {
+      // videoStory (C2) carries the same two URLs as videoHero — the film
+      // and its poster — on a light band instead of the opening one.
       const data = block.data as {
         videoUrl?: unknown;
         posterUrl?: unknown;

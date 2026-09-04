@@ -590,6 +590,43 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "videoStory" && (
+        <>
+          <TextField
+            id={id("videoUrl")}
+            label="Video"
+            hint="A file already in the library (right-click → copy link on the Media screen), or a full https:// address. The media picker here only offers pictures for now — video support is landing in a parallel batch."
+            value={String(data.videoUrl ?? "")}
+            onChange={(v) => set("videoUrl", v)}
+          />
+          <ImageField
+            id={id("posterUrl")}
+            label="Poster (shown while the film loads, and instead of it on phones)"
+            value={String(data.posterUrl ?? "")}
+            alt={String(data.imageAlt ?? "")}
+            onChange={(url) => set("posterUrl", url)}
+            onAltChange={(alt) => set("imageAlt", alt)}
+          />
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <AreaField
+            id={id("body")}
+            label="Words"
+            value={String(data.body ?? "")}
+            onChange={(v) => set("body", v)}
+          />
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {def.translatable.length > 0 && (
         <TranslationsSection
           idPrefix={`blk-${block.id}`}

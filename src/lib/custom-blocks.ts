@@ -209,6 +209,22 @@ export const videoHeroSchema = z.object({
   ctaHref: href,
 });
 
+/**
+ * A film beside a passage of text — the "video beside text" idiom, on a
+ * light ground rather than the hero's dark opening treatment. Uses the same
+ * `HeroMedia` component as `videoHero`, wrapped in an aspect-ratio box
+ * instead of a full-bleed one, so it inherits the same "poster is the LCP,
+ * film gated off reduced motion and touch" behaviour without re-deriving it.
+ */
+export const videoStorySchema = z.object({
+  videoUrl: mediaUrl,
+  posterUrl: imageUrl,
+  imageAlt: text(200),
+  heading: text(160),
+  body: text(800),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -237,6 +253,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "testimonial",
   "testimonialGrid",
   "videoHero",
+  "videoStory",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -253,6 +270,7 @@ export type JournalGridData = z.infer<typeof journalGridSchema>;
 export type TestimonialBlockData = z.infer<typeof testimonialSchema>;
 export type TestimonialGridData = z.infer<typeof testimonialGridSchema>;
 export type VideoHeroData = z.infer<typeof videoHeroSchema>;
+export type VideoStoryData = z.infer<typeof videoStorySchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -432,6 +450,18 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     ],
     ground: "dark",
     slot: "hero",
+  },
+  videoStory: {
+    type: "videoStory",
+    label: "Video and words",
+    description: "A film beside a heading and a passage of text.",
+    schema: videoStorySchema,
+    translatable: [
+      { name: "heading", label: "Heading", kind: "text" },
+      { name: "body", label: "Body", kind: "textarea" },
+      { name: "imageAlt", label: "Poster description", kind: "text" },
+    ],
+    ground: "alternating",
   },
 };
 

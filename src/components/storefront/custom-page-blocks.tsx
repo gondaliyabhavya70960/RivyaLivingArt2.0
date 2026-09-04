@@ -34,6 +34,7 @@ import type {
   TestimonialBlockData,
   TestimonialGridData,
   VideoHeroData,
+  VideoStoryData,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
@@ -915,6 +916,69 @@ function ImageCtaBlock({
   );
 }
 
+/**
+ * `videoStory` — a film beside a passage of text, light ground.
+ *
+ * Same `HeroMedia` component `videoHero` uses, boxed in a fixed-aspect frame
+ * instead of full-bleed: `HeroMedia` fills whatever positioned ancestor it is
+ * given, so the poster's LCP treatment and the film's reduced-motion/touch
+ * gating come along unchanged. No poster, no band — same "nothing when
+ * empty" rule as `videoHero`.
+ */
+function VideoStoryBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: VideoStoryData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const Tag = heading;
+  const poster = isRenderableSrc(data.posterUrl) ? data.posterUrl : null;
+  const video = isRenderableSrc(data.videoUrl) ? data.videoUrl : null;
+  const headingId = `${id}-heading`;
+
+  if (!poster) return null;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-image lg:col-span-6">
+          <HeroMedia
+            posterSrc={poster}
+            videoUrl={video ?? undefined}
+            posterAlt={data.imageAlt}
+          />
+        </div>
+        <div className="flex flex-col gap-6 lg:col-span-6">
+          {data.heading ? (
+            <Tag
+              id={headingId}
+              className="font-display text-h2 leading-tight tracking-display"
+            >
+              {data.heading}
+            </Tag>
+          ) : null}
+          {data.body ? (
+            <p className="u-prose font-body text-body leading-relaxed">
+              {data.body}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </Band>
+  );
+}
+
 function FaqPickerBlock({
   id,
   data,
@@ -1163,5 +1227,17 @@ export function CustomPageBlock({
           first={first}
         />
       );
+    case "videoStory": {
+      const data = block.data as VideoStoryData;
+      return (
+        <VideoStoryBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
   }
 }
