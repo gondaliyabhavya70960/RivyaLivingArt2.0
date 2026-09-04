@@ -64,12 +64,7 @@ export function PageList({ pages }: { pages: PageRow[] }) {
     return (
       <EmptyState
         title="No pages yet"
-        description="Create a page for content like About, Shipping or FAQs — the seeded legal pages appear here too."
-        action={
-          <Button asChild size="sm">
-            <Link href="/studio/pages/new">New page</Link>
-          </Button>
-        }
+        description="The Privacy Policy and Terms pages are seeded on first deploy — if this list is empty, the seed has not run against this database."
       />
     );
   }

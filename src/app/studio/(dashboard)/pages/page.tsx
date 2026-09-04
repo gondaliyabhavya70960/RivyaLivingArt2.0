@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Plus } from "lucide-react";
-
 import { db } from "@/lib/db";
-import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
 import { isLegalPageSlug } from "@/components/studio/pages/legal";
 import {
@@ -31,16 +27,18 @@ export default async function PagesPage() {
 
   return (
     <div>
+      {/* No "New page" action, deliberately. A Page row only reaches a
+          visitor if a route reads it, and exactly two do — `(v2)/privacy`
+          and `(v2)/terms`, each hardcoding its own slug. A page created here
+          would 404, and `KNOWN_ROUTES` would not let the navigation editor
+          link it either, so the button offered content nobody could reach.
+          Standalone pages are a real feature (a catch-all renderer, metadata,
+          the slug joining KNOWN_ROUTES and the sitemap) and are worth
+          building deliberately rather than half-having; owner decision,
+          2026-09-04. `upsertPage` refuses a create for the same reason. */}
       <PageHeader
         title="Pages"
-        description="Standalone site pages — About, policies and anything else the storefront links to."
-        actions={
-          <Button asChild>
-            <Link href="/studio/pages/new">
-              <Plus /> New page
-            </Link>
-          </Button>
-        }
+        description="The two policy pages the footer links to. Their wording, SEO and translations are editable here; their URLs are fixed."
       />
       <PageList pages={rows} />
     </div>

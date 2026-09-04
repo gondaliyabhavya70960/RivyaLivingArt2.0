@@ -59,13 +59,25 @@ export async function upsertPage(
   }
   const data = parsed.data;
 
-  const existing = data.id
-    ? await db.page.findUnique({
-        where: { id: data.id },
-        select: { id: true, slug: true },
-      })
-    : null;
-  if (data.id && !existing) {
+  // Creation is closed. Only `(v2)/privacy` and `(v2)/terms` read a Page row,
+  // each hardcoding its own slug, so a new page would have no URL — 404 for
+  // every visitor, and unlinkable besides, since `KNOWN_ROUTES` lists no Page
+  // slug. The Studio no longer offers it, and this is the guard that matters:
+  // a Server Action is reachable without the screen that used to call it.
+  // Reopening this means building the renderer first, not deleting these lines.
+  if (!data.id) {
+    return {
+      ok: false,
+      error:
+        "New pages are not available: the storefront has no route for one, so it would be unreachable. The Privacy and Terms pages can be edited.",
+    };
+  }
+
+  const existing = await db.page.findUnique({
+    where: { id: data.id },
+    select: { id: true, slug: true },
+  });
+  if (!existing) {
     return { ok: false, error: "Page not found — it may have been deleted." };
   }
 
@@ -89,7 +101,8 @@ export async function upsertPage(
       translations: translationsWrite,
     };
 
-    // Slug is immutable after creation so public URLs stay stable.
+    // Slug is immutable, so a public URL stays stable. `existing` is
+    // guaranteed above — creation is refused before this point.
     const page = existing
       ? await db.page.update({ where: { id: existing.id }, data: base })
       : await db.page.create({
