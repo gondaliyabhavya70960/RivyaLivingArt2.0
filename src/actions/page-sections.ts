@@ -52,10 +52,19 @@ async function ensureRows(pageKey: SectionPageKey, userId: string) {
     .filter(({ def }) => !have.has(def.key));
   if (missing.length === 0) return;
   await db.pageSection.createMany({
+    // `visible` is seeded from the REGISTRY, not left to the column default.
+    // The resolver reads `row?.visible ?? def.defaultVisible ?? true`, so a
+    // section that ships OFF (the homepage's furniture and rooms concept
+    // bands, the large-format pieces band) is off only while it HAS NO ROW.
+    // This function creates rows for every section of a page the moment the
+    // owner touches any one of them — so without this, dragging one section
+    // or leaving a note silently switched those bands on, live, with no
+    // Publish and nothing in the UI saying so.
     data: missing.map(({ def, index }) => ({
       pageKey,
       key: def.key,
       order: index,
+      visible: def.defaultVisible ?? true,
       updatedById: userId,
     })),
   });
