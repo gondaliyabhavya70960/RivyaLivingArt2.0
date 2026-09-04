@@ -43,7 +43,9 @@ describe("the block catalogue", () => {
     // rather than full-bleed. The roadmap's Phase 11 block-catalogue growth
     // adds ten types in total, one per commit; this count keeps climbing
     // through the rest of the file's history.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(13);
+    // 14, not 13 (2026-09-04): `masonryGallery` — up to twelve pictures in
+    // staggered CSS columns, the first of the three gallery blocks.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(14);
   });
 
   it("declares every type it lists", () => {

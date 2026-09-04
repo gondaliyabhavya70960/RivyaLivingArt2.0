@@ -172,7 +172,14 @@ export async function findMediaUsageDetails(
     customBlocks: db.customBlock.findMany({
       where: {
         type: {
-          in: ["hero", "imageCta", "richText", "videoHero", "videoStory"],
+          in: [
+            "hero",
+            "imageCta",
+            "richText",
+            "videoHero",
+            "videoStory",
+            "masonryGallery",
+          ],
         },
       },
       select: {
@@ -296,6 +303,18 @@ export async function findMediaUsageDetails(
       }
       if (typeof data?.posterUrl === "string") {
         add(data.posterUrl, `${label} (poster)`);
+      }
+      return;
+    }
+    if (block.type === "masonryGallery") {
+      // The gallery blocks (C2) carry an array of pictures; each URL is
+      // guarded under the page label, numbered so the drawer can say which.
+      const data = block.data as { images?: unknown } | null;
+      if (Array.isArray(data?.images)) {
+        data.images.forEach((item, index) => {
+          const url = (item as { url?: unknown } | null)?.url;
+          if (typeof url === "string") add(url, `${label} (picture ${index + 1})`);
+        });
       }
       return;
     }

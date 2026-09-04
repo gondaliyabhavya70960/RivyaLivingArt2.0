@@ -35,6 +35,8 @@ import type {
   TestimonialGridData,
   VideoHeroData,
   VideoStoryData,
+  MasonryGalleryData,
+  GalleryImage,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
 import type { ResolvedBlock } from "@/lib/custom-pages-server";
@@ -979,6 +981,101 @@ function VideoStoryBlock({
   );
 }
 
+/** The four tile ratios a masonry cycles through — a stagger the block can
+ *  promise without knowing each upload's real dimensions. */
+const MASONRY_ASPECTS = [
+  "aspect-[4/5]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-[4/3]",
+] as const;
+
+/** Pictures an owner actually filled in — an empty row in the editor is not a tile. */
+function renderableGalleryImages(images: GalleryImage[]) {
+  return images.filter((image) => isRenderableSrc(image.url));
+}
+
+function GalleryFigure({
+  image,
+  className,
+  sizes,
+}: {
+  image: GalleryImage;
+  className: string;
+  sizes: string;
+}) {
+  return (
+    <figure className="m-0">
+      <MeniscusImage
+        src={sizedExternalSrc(image.url, 1200)}
+        alt={image.alt}
+        width={1200}
+        height={900}
+        sizes={sizes}
+        unoptimized={!isOptimizableImageSrc(image.url)}
+        className={className}
+        imageClassName="object-cover"
+      />
+      {image.caption ? (
+        <figcaption className="u-micro mt-2 text-graphite">
+          {image.caption}
+        </figcaption>
+      ) : null}
+    </figure>
+  );
+}
+
+/**
+ * `masonryGallery` — CSS columns of `MeniscusImage`, two on phones and three
+ * from `md`. Nothing when the owner has not filled in a single picture.
+ */
+function MasonryGalleryBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: MasonryGalleryData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const Tag = heading;
+  const images = renderableGalleryImages(data.images);
+  const headingId = `${id}-heading`;
+  if (images.length === 0) return null;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      {data.heading ? (
+        <Tag
+          id={headingId}
+          className="mb-10 font-display text-h2 leading-tight tracking-display"
+        >
+          {data.heading}
+        </Tag>
+      ) : null}
+      <div className="columns-2 gap-5 md:columns-3 md:gap-6">
+        {images.map((image, index) => (
+          <div key={`${image.url}-${index}`} className="mb-5 break-inside-avoid md:mb-6">
+            <GalleryFigure
+              image={image}
+              className={MASONRY_ASPECTS[index % MASONRY_ASPECTS.length]}
+              sizes="(min-width:768px) 33vw, 50vw"
+            />
+          </div>
+        ))}
+      </div>
+    </Band>
+  );
+}
+
 function FaqPickerBlock({
   id,
   data,
@@ -1227,6 +1324,18 @@ export function CustomPageBlock({
           first={first}
         />
       );
+    case "masonryGallery": {
+      const data = block.data as MasonryGalleryData;
+      return (
+        <MasonryGalleryBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
     case "videoStory": {
       const data = block.data as VideoStoryData;
       return (

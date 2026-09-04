@@ -590,6 +590,30 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "masonryGallery" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <GalleryImagesField
+            idPrefix={id("images")}
+            label="Pictures"
+            hint="Up to twelve. Tiles stagger through four shapes in the order you list them; a caption is optional and shows under its picture as written."
+            value={asGalleryImages(data.images)}
+            max={12}
+            onChange={(next) => set("images", next)}
+          />
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {block.type === "videoStory" && (
         <>
           <TextField
@@ -838,6 +862,158 @@ function SpacingField({
  * the row's own web address. Local state, not the parent's — so a half-typed
  * line is not re-split into an array on every keystroke.
  */
+type GalleryImageValue = { url: string; alt: string; caption: string };
+
+/** The stored array as the editor's own shape — tolerant of a row written by
+ *  an older shape or by hand, never throwing on it. */
+function asGalleryImages(value: unknown): GalleryImageValue[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => {
+    const row = (item ?? {}) as Record<string, unknown>;
+    return {
+      url: typeof row.url === "string" ? row.url : "",
+      alt: typeof row.alt === "string" ? row.alt : "",
+      caption: typeof row.caption === "string" ? row.caption : "",
+    };
+  });
+}
+
+/**
+ * An ordered, capped list of pictures for the gallery blocks: each row is a
+ * library pick (or a pasted URL), its description and an optional caption,
+ * with move/remove controls — the order is the order the storefront renders.
+ */
+function GalleryImagesField({
+  idPrefix,
+  label,
+  hint,
+  value,
+  max,
+  onChange,
+}: {
+  idPrefix: string;
+  label: string;
+  hint?: string;
+  value: GalleryImageValue[];
+  max: number;
+  onChange: (next: GalleryImageValue[]) => void;
+}) {
+  function update(index: number, patch: Partial<GalleryImageValue>) {
+    onChange(value.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+  }
+  function move(index: number, delta: number) {
+    const target = index + delta;
+    if (target < 0 || target >= value.length) return;
+    const next = [...value];
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
+  }
+  return (
+    <div className="space-y-3">
+      <Label>{label}</Label>
+      {hint && <p className="text-xs text-graphite">{hint}</p>}
+      <ol className="space-y-3">
+        {value.map((row, index) => {
+          const rowId = `${idPrefix}-${index}`;
+          return (
+            <li
+              key={rowId}
+              className="space-y-2 rounded-card border border-border bg-card p-3"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="u-num text-12 text-graphite">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <Input
+                  id={`${rowId}-url`}
+                  aria-label={`Picture ${index + 1}`}
+                  value={row.url}
+                  placeholder="Pick from the library"
+                  onChange={(e) => update(index, { url: e.target.value })}
+                />
+                <MediaPicker onSelect={(item) => update(index, { url: item.url })} />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Move picture ${index + 1} up`}
+                  disabled={index === 0}
+                  onClick={() => move(index, -1)}
+                >
+                  Up
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Move picture ${index + 1} down`}
+                  disabled={index === value.length - 1}
+                  onClick={() => move(index, 1)}
+                >
+                  Down
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Remove picture ${index + 1}`}
+                  onClick={() => onChange(value.filter((_, i) => i !== index))}
+                >
+                  Remove
+                </Button>
+              </div>
+              {row.url && (
+                <div className="relative h-24 w-36 overflow-hidden rounded-lg border border-border">
+                  <Image
+                    src={row.url}
+                    alt=""
+                    fill
+                    sizes="144px"
+                    unoptimized={!isOptimizableImageSrc(row.url)}
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div className="space-y-1">
+                  <Label htmlFor={`${rowId}-alt`}>What the picture shows</Label>
+                  <Input
+                    id={`${rowId}-alt`}
+                    value={row.alt}
+                    onChange={(e) => update(index, { alt: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor={`${rowId}-caption`}>Caption (optional)</Label>
+                  <Input
+                    id={`${rowId}-caption`}
+                    value={row.caption}
+                    onChange={(e) => update(index, { caption: e.target.value })}
+                  />
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      <div className="flex items-center gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={value.length >= max}
+          onClick={() => onChange([...value, { url: "", alt: "", caption: "" }])}
+        >
+          Add picture
+        </Button>
+        <p className="text-xs text-graphite">
+          {value.length} of {max}.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function SlugListField({
   id,
   label,

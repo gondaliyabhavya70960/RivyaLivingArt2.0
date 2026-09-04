@@ -225,6 +225,31 @@ export const videoStorySchema = z.object({
   spacing,
 });
 
+/**
+ * One picture in a gallery block — the URL, what it shows, and an optional
+ * caption rendered as written. Captions and alt text live inside the array,
+ * so they are outside `TranslationsSection`'s flat-field reach; like a
+ * product's materials line they render beside translated chrome rather than
+ * inside a translated sentence, and the owner types them once.
+ */
+export const galleryImageSchema = z.object({
+  url: imageUrl,
+  alt: text(200),
+  caption: text(200),
+});
+
+/**
+ * `masonryGallery` — up to twelve pictures in CSS columns. The tiles cycle
+ * through four aspect ratios so the columns stagger without the block having
+ * to know each upload's real dimensions (Part 15: no image on this site
+ * fades in — every tile is a `MeniscusImage`).
+ */
+export const masonryGallerySchema = z.object({
+  heading: text(160),
+  images: z.array(galleryImageSchema).max(12).default([]),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -254,6 +279,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "testimonialGrid",
   "videoHero",
   "videoStory",
+  "masonryGallery",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -271,6 +297,8 @@ export type TestimonialBlockData = z.infer<typeof testimonialSchema>;
 export type TestimonialGridData = z.infer<typeof testimonialGridSchema>;
 export type VideoHeroData = z.infer<typeof videoHeroSchema>;
 export type VideoStoryData = z.infer<typeof videoStorySchema>;
+export type GalleryImage = z.infer<typeof galleryImageSchema>;
+export type MasonryGalleryData = z.infer<typeof masonryGallerySchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -461,6 +489,14 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
       { name: "body", label: "Body", kind: "textarea" },
       { name: "imageAlt", label: "Poster description", kind: "text" },
     ],
+    ground: "alternating",
+  },
+  masonryGallery: {
+    type: "masonryGallery",
+    label: "Masonry gallery",
+    description: "Up to twelve pictures in staggered columns, each with an optional caption.",
+    schema: masonryGallerySchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
     ground: "alternating",
   },
 };
