@@ -72,7 +72,7 @@ export function PublishBar({
     }
     setReport(null);
     toast.success(
-      `${surface} published — ${res.data?.published ?? 0} change${res.data?.published === 1 ? "" : "s"} are now live.`,
+      `${surface} published — ${res.data?.published ?? 0} change${res.data?.published === 1 ? " is" : "s are"} now live.`,
     );
     router.refresh();
   }
