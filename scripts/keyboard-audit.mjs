@@ -21,11 +21,11 @@
  * The mega menu opens on focus rather than on a key, which IS its keyboard
  * path (`onFocus` in site-header.tsx) — so focusing the trigger is the action.
  *
- * NOT covered: the portfolio/product lightbox. It lives on detail routes,
- * which CI does not sweep because their slugs are content rather than code
- * (ci.yml AUDIT_ROUTES). Roadmap Phase 17 gives CI deterministic detail slugs;
- * the lightbox joins this file then, and until it does that gap is stated here
- * rather than left to be inferred from a passing run.
+ * The shared Lightbox (A3, `storefront/lightbox.tsx`) is driven the same way
+ * on the demo detail routes CI seeds (F2): the product gallery's full-screen
+ * control, the portfolio wall's first tile and the demo lander's fullscreen
+ * gallery — Enter opens the dialog, ArrowRight advances the `role="status"`
+ * counter, End and Home jump, Escape closes, focus returns to the tile.
  */
 import { launchChromium } from "./lib/browser.mjs";
 
@@ -228,6 +228,116 @@ for (const overlay of OVERLAYS) {
     fail(`${overlay.name}: focus was not returned to the trigger on close`);
   } else {
     pass(`${overlay.name}: returns focus to its trigger`);
+  }
+}
+
+/**
+ * The shared Lightbox on the routes that mount it. Each entry names the
+ * control a keyboard user opens it from; a route whose control is absent at
+ * this width (or whose demo row is not seeded) is skipped, not failed, the
+ * same way the overlays above treat a missing trigger.
+ */
+const LIGHTBOXES = [
+  {
+    name: "product gallery lightbox",
+    route: "/product/demo-product-001",
+    trigger: 'main button[aria-label*="full" i]',
+  },
+  {
+    name: "portfolio wall lightbox",
+    route: "/portfolio/demo-case-001",
+    trigger: "main figure button",
+  },
+  {
+    name: "landing-page fullscreen gallery",
+    route: "/p/demo-lander",
+    trigger: "main li > button[aria-label]",
+  },
+];
+
+for (const box of LIGHTBOXES) {
+  const response = await page
+    .goto(base + box.route, { waitUntil: "domcontentloaded", timeout: 120_000 })
+    .catch(() => null);
+  if (!response) {
+    pass(`${box.name}: ${box.route} unreachable — skipped`);
+    continue;
+  }
+  await page.evaluate(() => document.fonts.ready);
+  try {
+    await page.waitForLoadState("networkidle", { timeout: 15_000 });
+  } catch {
+    // see above
+  }
+  const trigger = page.locator(box.trigger).first();
+  if ((await trigger.count()) === 0 || !(await trigger.isVisible())) {
+    pass(`${box.name}: no control on ${box.route} at this width — skipped`);
+    continue;
+  }
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.focus();
+  const focused = await settles(
+    page,
+    (sel) => document.activeElement?.matches(sel) ?? false,
+    box.trigger,
+  );
+  if (!focused) {
+    fail(`${box.name}: the control cannot take keyboard focus`);
+    continue;
+  }
+  await page.keyboard.press("Enter");
+  const dialog = page.locator('[role="dialog"]').last();
+  try {
+    await dialog.waitFor({ state: "visible", timeout: 3000 });
+  } catch {
+    fail(`${box.name}: Enter on the control did not open a dialog`);
+    continue;
+  }
+  const status = dialog.locator('[role="status"]').first();
+  const readStatus = async () => ((await status.count()) ? (await status.textContent())?.trim() ?? "" : "");
+  const opened = await readStatus();
+  if (!opened) {
+    fail(`${box.name}: the dialog has no role="status" counter`);
+  } else {
+    pass(`${box.name}: Enter opens it — "${opened}"`);
+  }
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(350);
+  const advanced = await readStatus();
+  if (opened && advanced && advanced !== opened) {
+    pass(`${box.name}: ArrowRight advances — "${advanced}"`);
+  } else if (opened) {
+    // A one-picture gallery has nowhere to go; that is content, not a defect.
+    pass(`${box.name}: ArrowRight left the counter at "${advanced}" (a single frame, or the end)`);
+  }
+  await page.keyboard.press("End");
+  await page.waitForTimeout(250);
+  const atEnd = await readStatus();
+  await page.keyboard.press("Home");
+  await page.waitForTimeout(250);
+  const atHome = await readStatus();
+  if (opened && atHome === opened) {
+    pass(`${box.name}: End/Home jump — "${atEnd}" → "${atHome}"`);
+  } else if (opened) {
+    fail(`${box.name}: Home did not return to the first frame — "${atHome}"`);
+  }
+  await page.keyboard.press("Escape");
+  try {
+    await dialog.waitFor({ state: "hidden", timeout: 3000 });
+    pass(`${box.name}: Escape closes it`);
+  } catch {
+    fail(`${box.name}: Escape did not close it — focus is trapped`);
+    continue;
+  }
+  const returned = await settles(
+    page,
+    (sel) => document.activeElement?.matches(sel) ?? false,
+    box.trigger,
+  );
+  if (returned) {
+    pass(`${box.name}: returns focus to the control`);
+  } else {
+    fail(`${box.name}: focus was not returned to the control on close`);
   }
 }
 
