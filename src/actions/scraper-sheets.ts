@@ -15,6 +15,7 @@ import {
   upsertRowsToTab,
 } from "@/lib/scraper/sheets";
 import { pushJobToSheet, recordSheetSyncRun } from "@/lib/scraper/sheet-push";
+import { readSheetSettings } from "@/lib/scraper/sheet-settings";
 import { CONFIRMED_COLUMNS, CONFIRMED_SHEET_TAB } from "@/lib/scraper/confirm";
 import { pushWebsiteProducts } from "@/lib/scraper/product-sheet-sync";
 import { WEBSITE_SHEET_TAB } from "@/lib/scraper/website-sheet";
@@ -27,13 +28,7 @@ const NOT_CONFIGURED_ERROR =
 /** The owner's sheet id + tab-id map (`/studio/settings` → Sheets), fetched
  *  once per action so every push in this file resolves the SAME sheet the
  *  owner chose rather than each call re-deciding independently. */
-async function getSheetIdSettings() {
-  const settings = await db.siteSettings.findUnique({
-    where: { id: "main" },
-    select: { sheetId: true, sheetTabIds: true },
-  });
-  return settings ?? undefined;
-}
+const getSheetIdSettings = readSheetSettings;
 
 export type SheetSyncCounts = {
   updated: number;

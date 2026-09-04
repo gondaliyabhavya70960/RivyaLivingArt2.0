@@ -67,7 +67,7 @@ describe("the one-writer invariant (D23)", () => {
     const pushCalls = source.match(/\bpushJobToSheet\(/g) ?? [];
     expect(pushCalls).toHaveLength(1);
     expect(source).toMatch(
-      /if \(shouldPushOnComplete\(status, source\?\.sheetSyncPolicy\)\) \{\s*const outcome = await pushJobToSheet\(job\.id\);/,
+      /if \(shouldPushOnComplete\(status, source\?\.sheetSyncPolicy\)\) \{\s*const outcome = await pushJobToSheet\(job\.id, await readSheetSettings\(\)\);/,
     );
   });
 

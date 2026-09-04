@@ -36,6 +36,22 @@ export function normalizeBaseUrl(input: string): string {
   return `${u.protocol}//${u.host}`;
 }
 
+/**
+ * The page a CATEGORY or URL scoped job targets: scheme defaulted, hash
+ * dropped and trailing slashes trimmed like `normalizeBaseUrl`, but the PATH
+ * AND QUERY KEPT. `normalizeBaseUrl` identifies a site; a scoped job's whole
+ * point is one page on it, and reducing the pasted URL to its origin turned
+ * every category and single-URL job into a whole-source crawl (the runner did
+ * exactly that until the 2026-09-04 plan audit caught it — the adapters were
+ * right, they were handed the wrong URL).
+ */
+export function normalizePageUrl(input: string): string {
+  const withProto = /^https?:\/\//i.test(input) ? input : `https://${input}`;
+  const u = new URL(withProto);
+  const path = u.pathname.replace(/\/+$/, "");
+  return `${u.protocol}//${u.host}${path}${u.search}`;
+}
+
 async function probe(url: string, timeoutMs = 10_000): Promise<Response | null> {
   try {
     // safeFetch validates the host (and each redirect hop) is a public
