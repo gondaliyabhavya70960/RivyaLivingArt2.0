@@ -137,7 +137,13 @@ export function revalidatePublic(entity: RevalidatableEntity, slug?: string) {
       else revalidateLocalizedPattern("/portfolio/[slug]");
       break;
     case "faq":
-      paths.push("/faq");
+      // /faq is not the only place an FAQ is answered: the PDP renders the
+      // top three (product/[slug]/page.tsx), and the commission and
+      // large-format pages carry their own picks. Refreshing only /faq left a
+      // withdrawn answer — a wrong price, a lead time the owner has changed —
+      // live on all 4,385 product pages until ISR expired.
+      paths.push("/faq", "/custom-order", "/large-resin-art");
+      revalidateLocalizedPattern("/product/[slug]");
       break;
     case "testimonial":
       // Every page that renders a words band. `slug` is the PRODUCT slug the
