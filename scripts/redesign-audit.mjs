@@ -23,6 +23,8 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
+import sharp from "sharp";
+
 import { launchChromium } from "./lib/browser.mjs";
 
 /**
@@ -46,11 +48,47 @@ const widthIndex = rest.indexOf("--w");
 const width = widthIndex === -1 ? 1440 : Number(rest[widthIndex + 1]);
 const base = process.env.BASE_URL ?? "http://localhost:3000";
 
+/* Touch-capable contexts at phone widths (F2). The 44px tap-floor rule below
+   used to be a NOTE because the browser context this script drove was always
+   mouse/fine-pointer, so every `pointer-coarse:min-h-11` utility the repo
+   ships (button.tsx, footer links, the announcement link, the locale
+   switcher, the shop tabs — A1) never applied and the count it reported was
+   never what a phone visitor actually gets. `hasTouch` (and `isMobile`,
+   which Chromium requires alongside it for `pointer: coarse` /
+   `any-pointer: coarse` to resolve in the media query) make those utilities
+   active only where a real phone would activate them too — ≤700px, the same
+   threshold the mobile-height branch below already uses. */
+const touchContext = width <= 700;
 const browser = await launchChromium();
 const context = await browser.newContext({
   viewport: { width, height: width < 700 ? 844 : 900 },
+  ...(touchContext ? { hasTouch: true, isMobile: true } : {}),
 });
 const page = await context.newPage();
+
+/**
+ * WCAG relative-luminance contrast (F2, the header `data-ink` rule below).
+ * `sRgbToLinear` follows the spec's own piecewise definition; `contrastOf`
+ * is the standard `(L1+0.05)/(L2+0.05)` with the lighter channel first.
+ */
+function sRgbToLinear(channel) {
+  const c = channel / 255;
+  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+function relativeLuminance([r, g, b]) {
+  return 0.2126 * sRgbToLinear(r) + 0.7152 * sRgbToLinear(g) + 0.0722 * sRgbToLinear(b);
+}
+function contrastOf(rgbA, rgbB) {
+  const a = relativeLuminance(rgbA);
+  const b = relativeLuminance(rgbB);
+  const lighter = Math.max(a, b);
+  const darker = Math.min(a, b);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function parseRgbTriple(value) {
+  const m = String(value ?? "").match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
 
 let failures = 0;
 let routeFailures = 0;
@@ -489,8 +527,16 @@ for (const route of routesArg.split(",")) {
        - Anything inside the Studio scope, which is a dense desktop tool and
          not held to the storefront's tap floor.
 
-       Reported at NOTE while the count settles: the measurement is honest but
-       the exemption list is the part that decides whether it can ever fail. */
+       FAILS at touch widths (F2): the repo's own `pointer-coarse:min-h-11`
+       utilities (button.tsx, footer links, the announcement link, the locale
+       switcher, the shop tabs — A1) only grow a hit area under `pointer:
+       coarse`, so the rule is only honest where THIS SCRIPT'S OWN context is
+       touch-capable — `touchContext` above, ≤700px. Below that, this script
+       still counts and reports offenders (a design smell worth reading) but
+       does not fail the build on them: a fine-pointer viewport was never
+       promised 44px by a system that ties the expansion to coarse pointers
+       on purpose, and failing there would be enforcing a rule against a
+       viewport the rule never applied to. */
     const TAP_MIN = 44;
     const inRunningText = (el) => {
       const p = el.closest("p, li, blockquote, figcaption");
@@ -622,7 +668,10 @@ for (const route of routesArg.split(",")) {
     report("FAIL", `lift or scale on a control's hover — ${audit.hoverLift.join(", ")} (Part 3.4: colour and underline only)`);
   }
   if (audit.smallTargetCount) {
-    report("NOTE", `${audit.smallTargetCount} interactive element(s) under the 44px tap floor — ${audit.smallTargets.join(", ")}`);
+    report(
+      touchContext ? "FAIL" : "NOTE",
+      `${audit.smallTargetCount} interactive element(s) under the 44px tap floor — ${audit.smallTargets.join(", ")}${touchContext ? "" : " (not failed — fine-pointer viewport, pointer-coarse: doesn't apply here)"}`,
+    );
   }
   // Promoted from NOTE in Phase 1b: every audited route passes it, so the
   // rule now holds the line instead of describing it. The count is of
@@ -631,6 +680,91 @@ for (const route of routesArg.split(",")) {
   if (audit.champagne > 2) {
     report("FAIL", `${audit.champagne} champagne-coloured elements in the first viewport (Part 3.1 caps visible ones at 2)`);
   }
+
+  /* Sticky header contrast (F2). `use-hero-ink.ts` / `site-header.tsx` set
+     `data-ink="mineral"` while the header floats transparent over a dark
+     hero and `data-ink="ink"` once it is solid — the audit's job is to check
+     that promise against the ACTUAL rendered pixels, not just trust the
+     attribute. Every other rule in this file reads computed style; this one
+     alone reads real pixels (via a Playwright screenshot decoded with
+     `sharp`), because "what is behind it" for a transparent header is
+     whatever photograph is mounted there — a gradient scrim's own computed
+     colour stops are not the same thing as what a visitor's eye contends
+     with over a bright frame of the pour.
+
+     Sample point: the header's own top-left corner, inside the `u-shell`
+     gutter and above the logo — empty in both LTR and RTL, at every width
+     the header renders at, and at the same y the logo's text sits behind
+     (the header's 64–80px band renders one background across its width, so
+     a few px away from a glyph is representative of what is directly behind
+     it). The colour compared is what the LOGO — the one header element whose
+     class is a literal `text-mineral`/`text-ink` toggle rather than an
+     opacity variant — actually computes to. */
+  const headerInfo = await page.evaluate(() => {
+    const header = document.querySelector('[data-slot="sf-site-header"]');
+    if (!header) return null;
+    const textEl =
+      header.querySelector("a[aria-label]") ??
+      header.querySelector("nav a, nav button") ??
+      header;
+    const r = header.getBoundingClientRect();
+    return {
+      ink: header.getAttribute("data-ink"),
+      color: getComputedStyle(textEl).color,
+      rect: { x: r.x, y: r.y, width: r.width, height: r.height },
+    };
+  });
+
+  if (!headerInfo) {
+    report("FAIL", 'no sticky header ([data-slot="sf-site-header"]) found — cannot verify header contrast');
+  } else if (!headerInfo.ink) {
+    report("FAIL", "sticky header has no data-ink attribute (use-hero-ink.ts)");
+  } else {
+    const textRgb = parseRgbTriple(headerInfo.color);
+    const patch = 10;
+    const sampleX = Math.max(0, Math.round(headerInfo.rect.x + 6));
+    const sampleY = Math.max(0, Math.round(headerInfo.rect.y + 6));
+    let bgRgb = null;
+    try {
+      const shot = await page.screenshot({
+        clip: { x: sampleX, y: sampleY, width: patch, height: patch },
+      });
+      const { data, info } = await sharp(shot)
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+      let rSum = 0;
+      let gSum = 0;
+      let bSum = 0;
+      let n = 0;
+      for (let i = 0; i + 2 < data.length; i += info.channels) {
+        rSum += data[i];
+        gSum += data[i + 1];
+        bSum += data[i + 2];
+        n += 1;
+      }
+      if (n > 0) bgRgb = [rSum / n, gSum / n, bSum / n];
+    } catch {
+      // A screenshot can legitimately fail (a route with no header content
+      // at this exact pixel, a headless-Chromium quirk) — report it as
+      // "unknown" below rather than crash the whole audit run over one route.
+    }
+    if (!textRgb || !bgRgb) {
+      report(
+        "FAIL",
+        `sticky header data-ink="${headerInfo.ink}" — could not measure its contrast (text colour ${headerInfo.color ?? "?"}, background sample ${bgRgb ? "ok" : "failed"})`,
+      );
+    } else {
+      const ratio = contrastOf(textRgb, bgRgb);
+      if (ratio < 4.5) {
+        const rounded = (v) => Math.round(v);
+        report(
+          "FAIL",
+          `sticky header data-ink="${headerInfo.ink}" contrast ${ratio.toFixed(2)}:1 against rgb(${bgRgb.map(rounded).join(",")}) at the top of the page — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))`,
+        );
+      }
+    }
+  }
+
   if (routeFailures === 0) console.log("  · clean");
 }
 
