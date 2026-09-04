@@ -72,9 +72,18 @@ records what shipped, and lists what genuinely remains.
   recorded the next photography batch — bench concepts, large-format art,
   concept rooms, five process actions, six mobile crops, three loops — as a
   prompt, a placement and a ratio each. On 2026-09-04 every one of them was
-  rendered through the Higgsfield MCP (56 renders, two variants each, same
+  rendered through the Higgsfield MCP (59 renders, two variants each, same
   `model` and `promptSuffix` as the built `assets`; 5 jobs failed and were
-  re-run) and the result URLs are recorded in each row's `candidates`.
+  re-run) and the result URLs are recorded in each row's `candidates`. The
+  stills come off `nano_banana_pro` at 4k — 3712x4608 and 3072x5504 measured —
+  comfortably over §15.5's 2560 floor. **SET F's three loops were generated
+  twice**: the first pass took `seedance_2_5`'s defaults, which are 720p and
+  audio ON, so the clips were 1280x720 against a 1920 `targetWidth` and carried
+  an audio track for a surface `HeroMedia` plays muted and `aria-hidden`. Their
+  variant `a` is now a 1080p (1920x1080), audio-free re-run; the 720p clip
+  stays as variant `b` marked `offSpec`, the way `videos[0]` already records
+  its own too-short first take. 1080p is that model's ceiling, which is exactly
+  the entry's target.
   **They stay `status: "planned"` on purpose.** `--promote` flips a row to
   "promoted", and from that moment `bundled-media.test.ts` demands the master
   exist ON DISK and `media-v3-preflight.mjs` demands a culled `keeper` — so

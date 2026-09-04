@@ -5,6 +5,33 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Follow-up · SET F's loops re-generated at the width the manifest asks for (2026-09-04)
+
+An audit of what the imagery pipeline actually holds, after the 28 plannedSets rows were
+generated earlier today. Two things it confirmed and one it caught:
+
+- **Nothing is missing.** All 76 site-image slots resolve to a file that exists on disk (25
+  distinct files, 0 missing); the 24 built assets and the one built video are intact; all 28
+  planned rows carry candidates.
+- **The stills are comfortably over spec** — `nano_banana_pro` at 4k returns 3712x4608 and
+  3072x5504, against §15.5's 2560 floor and a largest `targetWidth` of 2400.
+- **The three SET F loops were NOT.** They took `seedance_2_5`'s defaults — 720p and audio ON —
+  so they came back 1280x720 against a 1920 `targetWidth`, carrying an audio track for a
+  surface `HeroMedia` plays muted and `aria-hidden`, against §15.3's 2.5 MB ceiling. Variant
+  `a` of each is now a 1080p (1920x1080, the model's ceiling and exactly the entry's target),
+  audio-free re-run; the 720p clip stays as variant `b` marked `offSpec`, which is the shape
+  `videos[0].candidates[a]` already uses to keep its own too-short first take as a cull
+  reference.
+
+Also inspected and deliberately NOT adopted: six older loops sit in the Higgsfield account from
+2026-08-28 (`cinematic_studio_3_0`, 1344x768) — a pigment-dispersion macro, a light bar over
+polished resin, a live-edge tracking shot, a hands-only sanding clip and two 9:16 mobile
+backgrounds. They are written in the superseded v2/v7 vocabulary ("quiet luxury", "mineral
+neutrals") rather than §15.3's palette suffix, and 1344px is under every SET F target, so
+adopting them would put a different design system's imagery behind v3 pages.
+
+---
+
 ## Follow-up · the Lighthouse PDP gate, and 28 planned images generated (2026-09-04)
 
 **The PDP joins the Lighthouse gate.** The budget was waiting on one measurement that had
