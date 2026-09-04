@@ -174,7 +174,11 @@ async function oosIntroFor(
 /* ————————————————— product orders ————————————————— */
 
 const productOrderSchema = z.object({
-  productId: z.cuid(),
+  // Not `z.cuid()`: catalogue rows are cuids, but the Content Lab's demo
+  // pieces carry deterministic ids ("demo-product-001") and their order
+  // flow must reach the same wa.me handoff (D7/D8 — the message is prefixed
+  // "[DEMO] "). The id is looked up below; an unknown one is refused there.
+  productId: z.string().trim().min(1).max(64),
   selections: z.array(selectionSchema).max(20),
   referenceImageUrls: z.array(referenceUrlSchema).max(5),
   notes: z.string().trim().max(1500).optional(),
