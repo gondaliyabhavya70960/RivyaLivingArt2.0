@@ -115,7 +115,8 @@ describe("alt keys", () => {
 
   it("covers the slots that carry real descriptions", () => {
     const withAlt = SLOTS.filter((s) => s.altKey);
-    expect(withAlt.length).toBe(52);
+    // 42 + A2's ten homepage furniture/rooms slots + A4's four process.step7–10 slots.
+    expect(withAlt.length).toBe(56);
   });
 });
 

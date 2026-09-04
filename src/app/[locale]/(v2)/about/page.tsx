@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
-import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
+import { AccordionGallery } from "@/components/storefront/accordion-gallery";
 import { Button } from "@/components/storefront/button";
 import { CraftChapters } from "@/components/storefront/craft-chapters";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
+import { Reveal } from "@/components/motion/reveal";
 import {
   Eyebrow,
   SectionHeading,
@@ -37,24 +38,6 @@ export async function generateMetadata({
 /** ISR so the studio address (Site Settings) stays fresh. */
 export const revalidate = 300;
 
-/**
- * The four materials — REDESIGN.md §11.3 item 5: "four large cards, each with
- * image, name, one line, hover revealing a macro". Copy comes from the
- * Process namespace, which §11.4 makes the canonical description of what a
- * piece is made of; only the photography is chosen here. Every frame is a
- * first-party `/media` file — Part 15.2 keeps studio imagery real.
- */
-const MATERIALS = [
-  { key: "m1", image: "about.material1.image", macro: "about.material1.macro" },
-  { key: "m2", image: "about.material2.image", macro: "about.material2.macro" },
-  { key: "m3", image: "about.material3.image", macro: "about.material3.macro" },
-  { key: "m4", image: "about.material4.image", macro: "about.material4.macro" },
-] as const satisfies readonly {
-  key: string;
-  image: SiteImageKey;
-  macro: SiteImageKey;
-}[];
-
 /** Alt text for the four material frames — the Process namespace owns the
  *  material copy (§11.4), and next-intl cannot key off a template literal in
  *  a way the message-extraction tooling can follow, so the keys are listed. */
@@ -76,6 +59,8 @@ const MATERIAL_ALT_KEYS = [
  * work is made, what it is made of, and where.
  *
  * 1. Hero — full-screen, mono `THE STUDIO`, *Where resin meets reverence.*
+ *    The texture band behind it is the page's LCP, so the heading stays
+ *    static — nothing here may delay or animate the LCP element (Part 14).
  * 2. The story in four chapters — THE BEGINNING · THE MATERIAL · THE
  *    PHILOSOPHY, large editorial type at a 68ch measure, with what the studio
  *    holds to carried inside the philosophy chapter as mono numerals rather
@@ -83,9 +68,18 @@ const MATERIAL_ALT_KEYS = [
  * 3. THE MAKER — the fourth chapter, given a portrait and its own band.
  * 4. The craft — **one** vertical sticky story (it used to render twice,
  *    heading and all) that links out to the full process.
- * 5. Materials — four large cards, hover revealing a macro.
+ * 5. Materials — the same four cards Process describes (§11.4's canonical
+ *    instance), through `AccordionGallery`: hover, focus or a tap widens one
+ *    strip and brings its macro forward, replacing the old always-static
+ *    grid with a crossfaded hover-macro card each. Order and visibility come
+ *    from `getPageSections("materials")` — the SAME arrangeable list
+ *    Process's own materials band reads, so moving one here moves it there.
  * 6. The studio — three photographs, and the address when the owner has
  *    filled one. Never a placeholder (Part 0).
+ *
+ * Every OTHER band's words rise in on scroll (`Reveal`) — never the hero, and
+ * never wrapped around a photograph (`MeniscusImage` already owns its own
+ * reveal, and `Reveal` fading its wrapper in as well would double up).
  *
  * Band rhythm (§3.1): dark hero → story → maker → dark craft → materials →
  * studio → dark close. Three dark bands, none adjacent.
@@ -98,18 +92,29 @@ export default async function AboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tProcess, tCommon, settings, images, imageRefs, sections] =
-    await Promise.all([
-      getTranslations("About"),
-      getTranslations("Process"),
-      getTranslations("Common"),
-      getSiteSettings(),
-      getSiteImages(),
-      // Both resolve from the same cached read, so asking for the refs as well
-      // costs nothing — the hero needs the crop, the rest only need a URL.
-      getSiteImageRefs(),
-      getPageSections("about"),
-    ]);
+  const [
+    t,
+    tProcess,
+    tAccordion,
+    tCommon,
+    settings,
+    images,
+    imageRefs,
+    sections,
+    materialSections,
+  ] = await Promise.all([
+    getTranslations("About"),
+    getTranslations("Process"),
+    getTranslations("AccordionGallery"),
+    getTranslations("Common"),
+    getSiteSettings(),
+    getSiteImages(),
+    // Both resolve from the same cached read, so asking for the refs as well
+    // costs nothing — the hero needs the crop, the rest only need a URL.
+    getSiteImageRefs(),
+    getPageSections("about"),
+    getPageSections("materials"),
+  ]);
 
   /* The three written chapters. The fourth — THE MAKER — is the block below
      them, because a chapter with a portrait is not a paragraph. */
@@ -161,6 +166,25 @@ export default async function AboutPage({
     },
   ];
 
+  /* §11.4's canonical materials list, resolved and filtered — the same four
+     cards Process's own materials band reads, so an owner reordering or
+     hiding one here moves or hides it there too. */
+  const visibleMaterials = materialSections.filter(
+    (material) => material.visible,
+  );
+  const materialItems = visibleMaterials.map((material) => {
+    const n = material.key.slice(1);
+    const index = Number(n) - 1;
+    return {
+      key: material.key,
+      src: images[`about.material${n}.image` as SiteImageKey],
+      macroSrc: images[`about.material${n}.macro` as SiteImageKey],
+      alt: tProcess(MATERIAL_ALT_KEYS[index]),
+      title: tProcess(`materials.m${n}Title`),
+      copy: tProcess(`materials.m${n}Copy`),
+    };
+  });
+
   /* Part 0 — the address is printed only when the owner has actually set it;
      an unset field yields no row rather than a placeholder. Opening hours
      have no field in the data model, so the page does not claim any. */
@@ -180,7 +204,8 @@ export default async function AboutPage({
     /* ════════ 01 · Hero — full-screen, dark ════════
             `/about` is a transparent-navbar route, so the band pulls up under
             the 80px header slot. The macro is the LCP: `priority`, never
-            revealed, never animated (Part 14). */
+            revealed, never animated (Part 14) — and the heading beside it
+            stays static for the same reason. */
     hero: (
       <section
         data-theme="navy"
@@ -232,59 +257,62 @@ export default async function AboutPage({
             title={t("story.heading")}
           />
 
-          <ol className="flex flex-col gap-16">
-            {chapters.map((chapter, index) => (
-              <li
-                key={chapter.key}
-                className="grid gap-6 border-t border-hairline pt-8 lg:grid-cols-12"
-              >
-                <h3 className="u-micro lg:col-span-3">
-                  {String(index + 1).padStart(2, "0")} · {chapter.label}
-                </h3>
-                {/* Seven columns, not eight: `u-prose` caps at 68ch, and 68ch
-                        of 20px Inter is 858px — over the 600–720px measure §3.2
-                        calls the preferred one. The column is what actually holds
-                        the line to ~72 characters. */}
-                <div className="flex flex-col gap-8 lg:col-span-7 lg:col-start-4">
-                  {/* §11.3 asks for large editorial type here, and §3.2 puts
+          <Reveal>
+            <ol className="flex flex-col gap-16">
+              {chapters.map((chapter, index) => (
+                <li
+                  key={chapter.key}
+                  className="grid gap-6 border-t border-hairline pt-8 lg:grid-cols-12"
+                >
+                  <h3 className="u-micro lg:col-span-3">
+                    {String(index + 1).padStart(2, "0")} · {chapter.label}
+                  </h3>
+                  {/* Seven columns, not eight: `u-prose` caps at 68ch, and 68ch
+                          of 20px Inter is 858px — over the 600–720px measure §3.2
+                          calls the preferred one. The column is what actually holds
+                          the line to ~72 characters. */}
+                  <div className="flex flex-col gap-8 lg:col-span-7 lg:col-start-4">
+                    {/* §11.3 asks for large editorial type here, and §3.2 puts
                           running prose in Inter — Instrument Serif is listed for
                           headings, campaign statements and pull-quotes, not for
                           four paragraphs of body copy at display contrast. "Large"
                           is delivered by size, measure and leading instead. */}
-                  <p className="u-prose font-body text-20 leading-[1.7] text-ink">
-                    {chapter.body}
-                  </p>
+                    <p className="u-prose font-body text-20 leading-[1.7] text-ink">
+                      {chapter.body}
+                    </p>
 
-                  {/* What the studio holds to, inside the chapter that
+                    {/* What the studio holds to, inside the chapter that
                           argues for it. Mono numerals and words — §3.7 rules out
                           the icon-per-value grid this replaces. */}
-                  {chapter.key === "philosophy" ? (
-                    <ol className="grid gap-8 sm:grid-cols-2">
-                      {values.map((value, i) => (
-                        <li key={value.key} className="flex flex-col gap-2">
-                          <p className="u-micro">
-                            {String(i + 1).padStart(2, "0")}
-                          </p>
-                          <h4 className="font-body text-16 font-medium text-ink">
-                            {value.title}
-                          </h4>
-                          <p className="font-body text-14 leading-relaxed text-graphite">
-                            {value.copy}
-                          </p>
-                        </li>
-                      ))}
-                    </ol>
-                  ) : null}
-                </div>
-              </li>
-            ))}
-          </ol>
+                    {chapter.key === "philosophy" ? (
+                      <ol className="grid gap-8 sm:grid-cols-2">
+                        {values.map((value, i) => (
+                          <li key={value.key} className="flex flex-col gap-2">
+                            <p className="u-micro">
+                              {String(i + 1).padStart(2, "0")}
+                            </p>
+                            <h4 className="font-body text-16 font-medium text-ink">
+                              {value.title}
+                            </h4>
+                            <p className="font-body text-14 leading-relaxed text-graphite">
+                              {value.copy}
+                            </p>
+                          </li>
+                        ))}
+                      </ol>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
         </div>
       </section>
     ),
     /* ════════ 03 · The maker — moved up ════════
             §11.3 item 3: large portrait, mono THE MAKER, the name, the
-            description, `Start a conversation`. */
+            description, `Start a conversation`. The portrait keeps its own
+            meniscus reveal; only the text column rises on scroll. */
     maker: (
       <section
         aria-labelledby="maker-heading"
@@ -300,21 +328,23 @@ export default async function AboutPage({
             className="aspect-[4/5] rounded-image lg:col-span-5"
             imageClassName="object-cover"
           />
-          <div className="flex flex-col gap-6 lg:col-span-6 lg:col-start-7">
-            <Eyebrow>{t("chapterLabels.maker")}</Eyebrow>
-            <h2
-              id="maker-heading"
-              className="font-display text-h2 leading-[1.05] tracking-display"
-            >
-              {t("maker.name")}
-            </h2>
-            <p className="u-prose font-body text-body leading-relaxed text-graphite">
-              {t("maker.body")}
-            </p>
-            <Button asChild variant="primary" size="lg" className="w-fit">
-              <Link href="/contact">{t("maker.ctaConversation")}</Link>
-            </Button>
-          </div>
+          <Reveal className="lg:col-span-6 lg:col-start-7">
+            <div className="flex flex-col gap-6">
+              <Eyebrow>{t("chapterLabels.maker")}</Eyebrow>
+              <h2
+                id="maker-heading"
+                className="font-display text-h2 leading-[1.05] tracking-display"
+              >
+                {t("maker.name")}
+              </h2>
+              <p className="u-prose font-body text-body leading-relaxed text-graphite">
+                {t("maker.body")}
+              </p>
+              <Button asChild variant="primary" size="lg" className="w-fit">
+                <Link href="/contact">{t("maker.ctaConversation")}</Link>
+              </Button>
+            </div>
+          </Reveal>
         </div>
       </section>
     ),
@@ -339,54 +369,32 @@ export default async function AboutPage({
         }
       />
     ),
-    /* ════════ 05 · Materials — four large cards ════════
-            Hover (and keyboard focus) crossfades a macro of the same material
-            in behind the name. The macro is decorative: it shows the reader
-            the surface, and the card's own copy already names it. */
+    /* ════════ 05 · Materials — the canonical four, shared with Process ═══
+            AccordionGallery replaces the always-static grid: hover, focus or
+            a tap widens one strip and brings its macro forward — the same
+            crossfade the old cards did on hover, now with a keyboard and
+            touch path too. */
     materials: (
       <section
         aria-labelledby="materials-heading"
         className="section-standard bg-mineral"
       >
         <div className="u-shell flex flex-col gap-12">
-          <SectionHeading
-            id="materials-heading"
-            eyebrow={t("materials.eyebrow")}
-            title={t("sustain.heading")}
-            intro={t("sustain.body")}
+          <Reveal>
+            <SectionHeading
+              id="materials-heading"
+              eyebrow={t("materials.eyebrow")}
+              title={t("sustain.heading")}
+              intro={t("sustain.body")}
+            />
+          </Reveal>
+          <AccordionGallery
+            items={materialItems}
+            labels={{
+              expand: tAccordion("expand"),
+              collapse: tAccordion("collapse"),
+            }}
           />
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {/* The card is not interactive, so no focus equivalent is owed
-                    (Part 16): the macro is a second look at a surface the card
-                    already names in words. */}
-            {MATERIALS.map((material, index) => (
-              <li key={material.key} className="group flex flex-col gap-4">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-sand">
-                  <MeniscusImage
-                    src={images[material.image]}
-                    alt={tProcess(MATERIAL_ALT_KEYS[index])}
-                    fill
-                    sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
-                    className="absolute inset-0"
-                    imageClassName="object-cover"
-                  />
-                  <Image
-                    src={images[material.macro]}
-                    alt=""
-                    fill
-                    sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
-                    className="object-cover opacity-0 transition-opacity duration-(--dur-base) ease-(--ease-luxury) group-hover:opacity-100 motion-reduce:transition-none"
-                  />
-                </div>
-                <h3 className="font-body text-16 font-medium text-ink">
-                  {tProcess(`materials.${material.key}Title`)}
-                </h3>
-                <p className="font-body text-14 leading-relaxed text-graphite">
-                  {tProcess(`materials.${material.key}Copy`)}
-                </p>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
     ),

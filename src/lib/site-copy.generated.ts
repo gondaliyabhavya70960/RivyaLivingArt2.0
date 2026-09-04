@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1282 slots · 0 flagged as unreachable from any component.
+ * 1303 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -339,6 +339,22 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Process.timeline.step4Alt","group":"Process","section":"timeline","label":"Step 4 alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Process.timeline.step5Alt","group":"Process","section":"timeline","label":"Step 5 alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Process.timeline.step6Alt","group":"Process","section":"timeline","label":"Step 6 alt","kind":"alt","tier":"editorial","max":160},
+  {"key":"Process.timeline.step7Title","group":"Process","section":"timeline","label":"Step 7 title","kind":"heading","tier":"editorial","max":80},
+  {"key":"Process.timeline.step7Copy","group":"Process","section":"timeline","label":"Step 7 copy","kind":"body","tier":"editorial","max":400},
+  {"key":"Process.timeline.step7Meta","group":"Process","section":"timeline","label":"Step 7 meta","kind":"micro","tier":"interface","max":200},
+  {"key":"Process.timeline.step7Alt","group":"Process","section":"timeline","label":"Step 7 alt","kind":"alt","tier":"editorial","max":160},
+  {"key":"Process.timeline.step8Title","group":"Process","section":"timeline","label":"Step 8 title","kind":"heading","tier":"editorial","max":80},
+  {"key":"Process.timeline.step8Copy","group":"Process","section":"timeline","label":"Step 8 copy","kind":"body","tier":"editorial","max":400},
+  {"key":"Process.timeline.step8Meta","group":"Process","section":"timeline","label":"Step 8 meta","kind":"micro","tier":"interface","max":200},
+  {"key":"Process.timeline.step8Alt","group":"Process","section":"timeline","label":"Step 8 alt","kind":"alt","tier":"editorial","max":160},
+  {"key":"Process.timeline.step9Title","group":"Process","section":"timeline","label":"Step 9 title","kind":"heading","tier":"editorial","max":80},
+  {"key":"Process.timeline.step9Copy","group":"Process","section":"timeline","label":"Step 9 copy","kind":"body","tier":"editorial","max":400},
+  {"key":"Process.timeline.step9Meta","group":"Process","section":"timeline","label":"Step 9 meta","kind":"micro","tier":"interface","max":200},
+  {"key":"Process.timeline.step9Alt","group":"Process","section":"timeline","label":"Step 9 alt","kind":"alt","tier":"editorial","max":160},
+  {"key":"Process.timeline.step10Title","group":"Process","section":"timeline","label":"Step 10 title","kind":"heading","tier":"editorial","max":80},
+  {"key":"Process.timeline.step10Copy","group":"Process","section":"timeline","label":"Step 10 copy","kind":"body","tier":"editorial","max":400},
+  {"key":"Process.timeline.step10Meta","group":"Process","section":"timeline","label":"Step 10 meta","kind":"micro","tier":"interface","max":200},
+  {"key":"Process.timeline.step10Alt","group":"Process","section":"timeline","label":"Step 10 alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Process.materials.heading","group":"Process","section":"materials","label":"Heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Process.materials.m1Title","group":"Process","section":"materials","label":"M 1 title","kind":"heading","tier":"editorial","max":80},
   {"key":"Process.materials.m1Copy","group":"Process","section":"materials","label":"M 1 copy","kind":"body","tier":"editorial","max":400},
@@ -914,6 +930,9 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Blog.emptyDirection","group":"Journal","section":"general","label":"Empty direction","kind":"body","tier":"editorial","max":400},
   {"key":"Blog.emptyStatementUnfiltered","group":"Journal","section":"general","label":"Empty statement unfiltered","kind":"body","tier":"editorial","max":400},
   {"key":"Blog.emptyDirectionUnfiltered","group":"Journal","section":"general","label":"Empty direction unfiltered","kind":"body","tier":"editorial","max":400},
+  {"key":"Blog.relatedCollections.eyebrow","group":"Journal","section":"relatedCollections","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Blog.relatedCollections.heading","group":"Journal","section":"relatedCollections","label":"Heading","kind":"heading","tier":"editorial","max":80},
+  {"key":"Blog.relatedCollections.cardEyebrow","group":"Journal","section":"relatedCollections","label":"Card eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Portfolio.meta.title","group":"Portfolio","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Portfolio.meta.titlePaged","group":"Portfolio","section":"meta","label":"Title paged","kind":"meta","tier":"editorial","max":160,"vars":["page"]},
   {"key":"Portfolio.meta.description","group":"Portfolio","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
@@ -1292,4 +1311,6 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Lightbox.next","group":"System","section":"general","label":"Next","kind":"body","tier":"editorial","max":400},
   {"key":"Lightbox.close","group":"System","section":"general","label":"Close","kind":"body","tier":"editorial","max":400},
   {"key":"Lightbox.of","group":"System","section":"general","label":"Of","kind":"body","tier":"editorial","max":400},
+  {"key":"AccordionGallery.expand","group":"System","section":"general","label":"Expand","kind":"body","tier":"editorial","max":400},
+  {"key":"AccordionGallery.collapse","group":"System","section":"general","label":"Collapse","kind":"body","tier":"editorial","max":400},
 ] as const;

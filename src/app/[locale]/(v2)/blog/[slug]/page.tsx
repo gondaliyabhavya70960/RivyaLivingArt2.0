@@ -15,6 +15,8 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
+import { CollectionCard } from "@/components/storefront/collection-card";
+import { DemoMark } from "@/components/storefront/demo-mark";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import {
   Eyebrow,
@@ -181,7 +183,14 @@ function splitAtMiddleSection(html: string): [string, string] {
 const getPost = cache((slug: string) =>
   db.blogPost.findUnique({
     where: { slug },
-    include: { blogCategory: true, tags: true },
+    include: {
+      blogCategory: true,
+      tags: true,
+      // The shop collection the article points at (B0's `BlogPost.category`,
+      // not `blogCategory` — the editorial taxonomy above). Powers the
+      // related-collections strip below.
+      category: true,
+    },
   }),
 );
 
@@ -195,6 +204,7 @@ type RelatedPost = {
   content: unknown;
   translations: unknown;
   blogCategory: { name: string; translations: unknown } | null;
+  isDemo: boolean;
 };
 
 /**
@@ -212,6 +222,7 @@ const RELATED_SELECT = {
   content: true,
   translations: true,
   blogCategory: { select: { name: true, translations: true } },
+  isDemo: true,
 } as const;
 
 /** The translatable fields the related tiles actually carry and render. */
@@ -270,7 +281,11 @@ export async function generateMetadata({
   }
   // Metadata runs before the page body, so the body's demo gate alone let a
   // hidden fixture's title reach the not-found page's <title>.
-  if (post.isDemo && !(await draftMode()).isEnabled && !(await showDemoContent())) {
+  if (
+    post.isDemo &&
+    !(await draftMode()).isEnabled &&
+    !(await showDemoContent())
+  ) {
     notFound();
   }
   const lp = localize(post, locale, TRANSLATABLE_FIELDS.blogPost);
@@ -361,8 +376,12 @@ export default async function BlogPostPage({ params }: PageProps) {
     [2, 3],
   );
 
+  // The article's own shop collection (B0's `BlogPost.categoryId`) — a
+  // hidden category is treated as unset rather than shown anyway.
+  const category = post.category?.visible ? post.category : null;
+
   const productSlugs = linkedProductSlugs(html);
-  const [related, linkedProducts] = await Promise.all([
+  const [related, linkedProducts, siblingCategories] = await Promise.all([
     getRelated(post),
     productSlugs.length > 0
       ? fetchProductsPage({
@@ -376,13 +395,47 @@ export default async function BlogPostPage({ params }: PageProps) {
           withTotal: false,
         })
       : null,
+    // Up to two more collections, in catalogue order, to sit beside it.
+    // `Category` carries no `isDemo` — the whole catalogue taxonomy is real
+    // (demo products just use these same 16 seeded categories), so no demo
+    // gate is needed here.
+    category
+      ? db.category.findMany({
+          where: { visible: true, id: { not: category.id } },
+          orderBy: { order: "asc" },
+          take: 2,
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            image: true,
+            translations: true,
+          },
+        })
+      : Promise.resolve([]),
   ]);
   const pieces = linkedProducts?.items ?? [];
+  const collectionCards = category ? [category, ...siblingCategories] : [];
 
   // §11.9 "contextual product CTA cards mid-article" — between sections, and
   // only when the author actually pointed at a piece.
   const [bodyStart, bodyRest] =
     pieces.length > 0 ? splitAtMiddleSection(html) : [html, ""];
+
+  // Three optional bands share the sand/mineral alternation below the fixed
+  // sand reading sheet — each one only consumes a tone (and flips it for the
+  // next) when it actually renders, so whichever subset shows still reads as
+  // a clean light → light alternation rather than two sand bands touching.
+  let tone: "sand" | "mineral" = "sand";
+  const flipTone = () => {
+    tone = tone === "sand" ? "mineral" : "sand";
+    return tone;
+  };
+  const piecesTone = pieces.length > 0 ? flipTone() : null;
+  const collectionsTone = collectionCards.length > 0 ? flipTone() : null;
+  const relatedTone = related.length > 0 ? flipTone() : null;
+  const toneClass = (value: "sand" | "mineral" | null) =>
+    value === "sand" ? "bg-sand" : "bg-mineral";
 
   const minutes = readMinutes(lp.content);
   // Server-side date formatting in the request locale (no client hydration).
@@ -440,7 +493,10 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <>
       <ReadingProgress />
-      <JsonLd data={articleJsonLd} />
+      {/* A demo post is not a real article — Part 0 forbids structured data
+          that dresses a fixture up as content a search engine should index.
+          The breadcrumb trail still describes a real page, demo or not. */}
+      {!post.isDemo ? <JsonLd data={articleJsonLd} /> : null}
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* ════════ 01 · Trail — compact ════════ */}
@@ -510,6 +566,12 @@ export default async function BlogPostPage({ params }: PageProps) {
             <span aria-hidden>·</span>
             <span>{t("minRead", { minutes })}</span>
           </p>
+          {post.isDemo ? (
+            <p className="flex flex-wrap items-center gap-2">
+              <DemoMark label={tCommon("demoMark")} />
+              <span className="u-micro">{tCommon("demoDetail")}</span>
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -600,7 +662,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       {pieces.length > 0 ? (
         <section
           aria-labelledby="article-pieces-heading"
-          className="section-standard bg-mineral"
+          className={`section-standard ${toneClass(piecesTone)}`}
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading
@@ -617,15 +679,42 @@ export default async function BlogPostPage({ params }: PageProps) {
         </section>
       ) : null}
 
+      {/* ════════ 05b · Shop the collection — standard ════════
+          The article's own shop collection (B0's `BlogPost.category`) plus
+          up to two siblings, in catalogue order — renders only when the
+          author actually pointed the post at one. */}
+      {collectionCards.length > 0 ? (
+        <section
+          aria-labelledby="article-collections-heading"
+          className={`section-standard ${toneClass(collectionsTone)}`}
+        >
+          <div className="u-shell flex flex-col gap-12">
+            <SectionHeading
+              id="article-collections-heading"
+              eyebrow={t("relatedCollections.eyebrow")}
+              title={t("relatedCollections.heading")}
+            />
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {collectionCards.map((c) => (
+                <CollectionCard
+                  key={c.id}
+                  href={`/shop/${c.slug}`}
+                  name={t("relatedCollections.cardEyebrow")}
+                  promise={localizeName(c, locale)}
+                  image={c.image}
+                  imageAlt=""
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* ════════ 06 · More from the journal — standard ════════ */}
       {related.length > 0 ? (
         <section
           aria-labelledby="article-related-heading"
-          className={
-            pieces.length > 0
-              ? "section-standard bg-sand"
-              : "section-standard bg-mineral"
-          }
+          className={`section-standard ${toneClass(relatedTone)}`}
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading
@@ -665,14 +754,22 @@ export default async function BlogPostPage({ params }: PageProps) {
                         className="flex aspect-[4/3] items-center justify-center bg-deep-ocean font-display text-39 text-mineral/60"
                       >
                         {relatedPost.blogCategory
-                          ? localizeName(relatedPost.blogCategory, locale).charAt(0)
+                          ? localizeName(
+                              relatedPost.blogCategory,
+                              locale,
+                            ).charAt(0)
                           : "R"}
                       </span>
                     )}
-                    <p className="u-micro">
-                      {relatedPost.blogCategory
-                        ? localizeName(relatedPost.blogCategory, locale)
-                        : t("journalFallbackCategory")}
+                    <p className="u-micro flex flex-wrap items-center gap-2">
+                      <span>
+                        {relatedPost.blogCategory
+                          ? localizeName(relatedPost.blogCategory, locale)
+                          : t("journalFallbackCategory")}
+                      </span>
+                      {relatedPost.isDemo ? (
+                        <DemoMark label={tCommon("demoMark")} />
+                      ) : null}
                     </p>
                     <h3 className="font-display text-h3 leading-[1.14] tracking-display text-ink">
                       <Link
