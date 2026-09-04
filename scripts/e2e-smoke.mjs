@@ -42,6 +42,32 @@ import { chromium } from "playwright-core";
 
 const BASE = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const WA_NUMBER = "917096036250";
+// Both shapes a WhatsApp deep link takes: the app's own `wa.me/<number>?text=`
+// and the `api.whatsapp.com/send/?phone=<number>&text=` that wa.me redirects
+// to on a machine with real internet.
+const WA_HOSTS = /^https:\/\/(wa\.me|api\.whatsapp\.com)\//;
+
+/** The phone number a WhatsApp deep link addresses, in either shape. */
+function waHouseNumber(href) {
+  let url;
+  try {
+    url = new URL(href);
+  } catch {
+    return "";
+  }
+  if (url.hostname === "wa.me") return url.pathname.replace(/^\/+/, "").split("/")[0];
+  if (url.hostname === "api.whatsapp.com") return url.searchParams.get("phone") ?? "";
+  return "";
+}
+
+/** The pre-filled message of a WhatsApp deep link, decoded (`+` is a space). */
+function waMessage(href) {
+  try {
+    return new URL(href).searchParams.get("text") ?? "";
+  } catch {
+    return "";
+  }
+}
 const DEMO_PDP = "/product/demo-product-001";
 const STUDIO_EMAIL = process.env.STUDIO_EMAIL;
 const STUDIO_PASSWORD = process.env.STUDIO_PASSWORD;
@@ -262,6 +288,24 @@ try {
       // /whatsapp-order fallback, which renders the same link. Watch the
       // context for the new tab AND read the fallback's own anchor, and
       // accept whichever carries the wa.me URL.
+      //
+      // A machine with real internet never keeps that tab on wa.me: WhatsApp
+      // answers with a 301 to api.whatsapp.com/send/?phone=…&text=… and
+      // re-encodes the spaces as "+", which is exactly what the first CI run
+      // of this check saw (25/27). So the context answers the wa.me
+      // navigation itself — recording the URL the panel asked for and
+      // serving a stub — and the assertions read that recorded link. CI
+      // never contacts WhatsApp, and the check means the same thing on a
+      // laptop, in this sandbox and on the runner.
+      const waRequests = [];
+      await p.context().route(WA_HOSTS, (route) => {
+        waRequests.push(route.request().url());
+        return route.fulfill({
+          status: 200,
+          contentType: "text/html",
+          body: "<!doctype html><title>wa.me stub</title>",
+        });
+      });
       const newPagePromise = p
         .context()
         .waitForEvent("page", { timeout: 20000 })
@@ -270,8 +314,8 @@ try {
       const newPage = await newPagePromise;
       let waUrl = "";
       if (newPage) {
-        await newPage.waitForURL(/wa\.me/, { timeout: 10000 }).catch(() => {});
-        waUrl = newPage.url();
+        await newPage.waitForURL(WA_HOSTS, { timeout: 10000 }).catch(() => {});
+        waUrl = waRequests.find((u) => u.startsWith("https://wa.me/")) ?? newPage.url();
         await newPage.close().catch(() => {});
       }
       const fell = await p
@@ -289,15 +333,16 @@ try {
               .sort((x, y) => y.length - x.length)[0] ?? "",
           )) || waUrl;
       }
-      const decoded = decodeURIComponent(waUrl);
+      const message = waMessage(waUrl);
       check(
         "Place Order opens wa.me with the house number",
-        waUrl.startsWith(`https://wa.me/${WA_NUMBER}`),
-        waUrl.slice(0, 80) || "no popup",
+        waHouseNumber(waUrl) === WA_NUMBER,
+        waUrl.slice(0, 120) || "no popup",
       );
       check(
         'the demo order message carries the "[DEMO] " prefix and the chosen size',
-        decoded.includes("[DEMO]") && decoded.includes("16 inch"),
+        message.includes("[DEMO]") && message.includes("16 inch"),
+        message.slice(0, 120),
       );
       check("the /whatsapp-order fallback follows the popup", fell, p.url());
       check("no page errors during the order flow", pageErrors.length === 0, pageErrors[0] ?? "");

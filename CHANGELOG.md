@@ -5,6 +5,23 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Follow-up · the E2E smoke meets a runner with real internet (2026-09-04)
+
+- **CI runs #136 (the PR #42 head) and #137 (`main`) were red at the new "E2E smoke" step**, 25/27:
+  on the runner the wa.me tab followed WhatsApp's 301 to `api.whatsapp.com/send/?phone=…&text=…`
+  (spaces re-encoded as `+`), so "opens wa.me with the house number" and "carries the [DEMO] prefix
+  and the chosen size" misread a URL this sandbox never sees — the proxy here answers wa.me with a
+  403 and the tab stays where the panel sent it. No product code was wrong: the same run's Inquiry
+  row, `/whatsapp-order` fallback, Studio, upload, sheet preview and testimonial checks all passed.
+- **Fix (`scripts/e2e-smoke.mjs`)**: the order-flow context now routes `wa.me` and
+  `api.whatsapp.com`, records the URL the panel requested and serves a stub, and asserts on the
+  recorded link through two small parsers (`waHouseNumber`, `waMessage` — `URLSearchParams` turns
+  `+` back into a space), so the check reads the same on a laptop, in the sandbox and on the runner,
+  and CI never contacts WhatsApp. 27/27 against the `main` build here; the trap is recorded in
+  `AGENTS.md`.
+
+---
+
 ## Wave 3 · batch F2 — CI sweeps everything, the smoke grows, the audits bite, and four real defects fall out (2026-09-04)
 
 The F2 agent was stopped after the container restarted under it (its shell never returned from a

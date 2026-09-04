@@ -15,9 +15,12 @@ Current Phase:            Transformation COMPLETE — Phases 1b–17 of the mast
                           (B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 · C2 · F2); CI sweeps the
                           demo detail routes, the E2E smoke, the lightboxes and the Studio
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             every batch COMPLETE (2026-09-04); PR #42 draft, ready for the owner's review;
-                          CI green on every pushed head
-                          on every head; Vercel preview green after the P2037 pool/retry fix
+Phase Status:             every batch COMPLETE (2026-09-04); PR #42 MERGED by the owner (main = cc029bc).
+                          CI was green on every head up to the F2 smoke step; the first runs of that step
+                          (#136 on the PR head, #137 on main) failed 25/27 because the runner's wa.me tab
+                          follows WhatsApp's redirect — fixed by the follow-up PR that routes wa.me inside
+                          the smoke's browser context (this branch, restarted from main); Vercel preview
+                          green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
                           demo gate on every public reader + DEMO prefix retired · Faq.status ·
