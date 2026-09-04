@@ -391,6 +391,20 @@ export function SiteHeader({
         <div
           aria-hidden
           className={cn(
+            // Top scrim for the TRANSPARENT state (F2): the header floats
+            // over a photograph whose top edge the hero's own bottom-up
+            // gradient leaves lightest, and `redesign-audit.mjs` measured
+            // mineral text beside the logo at 2.7:1 over a bright frame.
+            // Obsidian at 85% fading out over 112px keeps every row of the
+            // chrome above 4.5:1 whatever the picture does; it is a scrim,
+            // not a box, and it is gone the moment the bar goes solid.
+            "pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-obsidian/85 via-obsidian/55 to-transparent transition-opacity duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
+            transparent ? "opacity-100" : "opacity-0",
+          )}
+        />
+        <div
+          aria-hidden
+          className={cn(
             "absolute inset-x-0 top-0 border-b border-hairline bg-mineral/88 transition-[opacity,height] duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
             solid ? "h-16" : "h-20",
             transparent ? "opacity-0" : "opacity-100 backdrop-blur-md",

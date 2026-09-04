@@ -52,6 +52,11 @@ export function LogoWordmark({ className }: { className?: string }) {
  */
 export function Logo({
   className,
+  /** The wordmark's own height class (default `h-8`). Explicit rather than
+   *  `h-full` because the link's box grows to the 44px coarse-pointer floor
+   *  and a `w-auto` SVG following that height would grow 37% wider with it
+   *  — measured as a 9px horizontal overflow at 390px under touch. */
+  wordmarkClassName,
   href = "/",
   /** Translated home label; the English default serves the staff studio. */
   ariaLabel = "Rivya Living Art — home",
@@ -60,6 +65,7 @@ export function Logo({
   LinkComponent = Link,
 }: {
   className?: string;
+  wordmarkClassName?: string;
   href?: string;
   ariaLabel?: string;
   LinkComponent?: React.ElementType;
@@ -68,9 +74,14 @@ export function Logo({
     <LinkComponent
       href={href}
       aria-label={ariaLabel}
-      className={cn("inline-flex h-8 items-center text-current", className)}
+      className={cn(
+        // 44px hit area on coarse pointers (Part 17 tap floor); the visual
+        // height stays whatever the caller sets.
+        "inline-flex h-8 items-center text-current pointer-coarse:min-h-11",
+        className,
+      )}
     >
-      <LogoWordmark />
+      <LogoWordmark className={cn("h-8", wordmarkClassName)} />
     </LinkComponent>
   );
 }
