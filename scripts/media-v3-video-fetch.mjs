@@ -48,6 +48,8 @@ import {
 import { dirname, join } from "node:path";
 import sharp from "sharp";
 
+import { promotedVideos } from "./lib/media-v3-planned.mjs";
+
 const ROOT = join(import.meta.dirname, "..");
 const MANIFEST = join(ROOT, "docs/media-v3-manifest.json");
 const OUT_DIR = join(ROOT, "public/media/v3");
@@ -65,7 +67,12 @@ const MAX_BYTES = 2.5 * 1024 * 1024;
 const SHEET_FRAMES = 6;
 
 const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
-const videos = manifest.videos ?? [];
+/* `plannedSets`' SET F is three more loops, promoted in place rather than moved
+   into `videos` (see scripts/lib/media-v3-planned.mjs). A promoted row carries
+   the same keeper/candidates/master/masterWebm/poster fields this script reads,
+   so it joins the list rather than needing a second code path. Today all three
+   are still `status: "planned"` and this adds nothing. */
+const videos = [...(manifest.videos ?? []), ...promotedVideos(manifest)];
 
 function sh(cmd, cmdArgs) {
   return execFileSync(cmd, cmdArgs, { stdio: ["ignore", "pipe", "pipe"] });

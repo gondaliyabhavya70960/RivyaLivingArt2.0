@@ -10,9 +10,11 @@ rooms, D10/D20 Part 14 as the ceiling with the 18-pattern shortlist, D7/D8/D14 a
 D25 ten process steps ending in Delivery — and the batches landed in this order: B0 (schema and gates),
 A1, B, G, C1, D, F1, E, A3, A2, A4, C2, F2. `CHANGELOG.md` carries one entry per batch with its merge
 hash and the gates run on the merged head; `PROJECT_STATE.md`'s checkpoint block is the summary. Two
-things stay owner-machine work: fetching the planned Higgsfield sets recorded in
-`docs/media-v3-manifest.json` (the CDN refuses the sandbox) and replacing the generated maker portrait
-with a photograph.**
+things stay owner-machine work: generating the planned Higgsfield sets recorded in
+`docs/media-v3-manifest.json` (the CDN refuses the sandbox; `node scripts/media-v3-fetch.mjs --planned`
+prints the queue and the generate → promote → cull → fetch sequence, since a planned entry has no
+candidates for the fetch to find until `--promote` records them) and replacing the generated maker
+portrait with a photograph.**
 
 ---
 

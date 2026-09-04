@@ -68,6 +68,23 @@ records what shipped, and lists what genuinely remains.
 - `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
   `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
   next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
+- **The manifest's 28 `plannedSets` entries are a queue, not files.** Batch D
+  recorded the NEXT photography batch — bench concepts, large-format art,
+  concept rooms, four process actions, six mobile crops, three loops — as a
+  prompt, a placement and a ratio each, with no candidates and no master. A
+  plain fetch run therefore cannot produce them, and until 2026-09-04 did not
+  mention them either, so "run the fetch script on an ordinary machine"
+  produced silence. The real sequence, one entry at a time: generate the
+  entry's prompt → `--promote <id> <url> [<url>]` (records the results as
+  candidates and fills in the master path) → `--candidates` and set `"keeper"`
+  → the default run → point a slot at the file in /studio/site-images, because
+  a built master is not a wired one. `node scripts/media-v3-fetch.mjs
+  --planned` prints the queue and that sequence; every other mode ends by
+  naming what it could not build. A promoted SET F row is built by
+  `media-v3-video-fetch.mjs`, not the still pipeline. `media-v3-preflight.mjs`
+  and `bundled-media.test.ts` skip `status: "planned"` rows on purpose — an
+  ungenerated picture must never fail a build — and hold a promoted one to
+  every rule a real asset answers.
 - **DONE — `public/` is committed** (2026-08-31, 242 files, 22 MB). The owner
   supplied the directory that the imported ZIP had been exported without, and
   it is now tracked. Verified rather than assumed before committing: all 25
