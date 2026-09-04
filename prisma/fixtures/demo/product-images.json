@@ -570,64 +570,64 @@
   {
     "id": "demo-product-image-023-01",
     "productId": "demo-product-023",
-    "url": "/media/v3/macro-pigment.avif",
-    "alt": "Marbled Resin Canvas — view 1 (Content Lab demo photograph)",
+    "url": "/media/v3/workshop-table.avif",
+    "alt": "Beginner Pour Workshop — view 1 (Content Lab demo photograph)",
     "order": 0,
     "role": "HERO"
   },
   {
     "id": "demo-product-image-023-02",
     "productId": "demo-product-023",
-    "url": "/media/v3/macro-teak.avif",
-    "alt": "Marbled Resin Canvas — view 2 (Content Lab demo photograph)",
+    "url": "/media/v3/workshop-private.avif",
+    "alt": "Beginner Pour Workshop — view 2 (Content Lab demo photograph)",
     "order": 1,
     "role": null
   },
   {
     "id": "demo-product-image-023-03",
     "productId": "demo-product-023",
-    "url": "/media/v3/print-head.avif",
-    "alt": "Marbled Resin Canvas — view 3 (Content Lab demo photograph)",
+    "url": "/media/v3/studio-hands.avif",
+    "alt": "Beginner Pour Workshop — view 3 (Content Lab demo photograph)",
     "order": 2,
     "role": null
   },
   {
     "id": "demo-product-image-023-04",
     "productId": "demo-product-023",
-    "url": "/media/v3/story-cure.avif",
-    "alt": "Marbled Resin Canvas — view 4 (Content Lab demo photograph)",
+    "url": "/media/v3/story-pour.avif",
+    "alt": "Beginner Pour Workshop — view 4 (Content Lab demo photograph)",
     "order": 3,
     "role": null
   },
   {
     "id": "demo-product-image-023-05",
     "productId": "demo-product-023",
-    "url": "/media/v3/story-gild.avif",
-    "alt": "Marbled Resin Canvas — view 5 (Content Lab demo photograph)",
+    "url": "/media/v3/macro-pigment.avif",
+    "alt": "Beginner Pour Workshop — view 5 (Content Lab demo photograph)",
     "order": 4,
     "role": null
   },
   {
     "id": "demo-product-image-023-06",
     "productId": "demo-product-023",
-    "url": "/media/v3/story-polish.avif",
-    "alt": "Marbled Resin Canvas — view 6 (Content Lab demo photograph)",
+    "url": "/media/v3/story-cure.avif",
+    "alt": "Beginner Pour Workshop — view 6 (Content Lab demo photograph)",
     "order": 5,
     "role": null
   },
   {
     "id": "demo-product-image-023-07",
     "productId": "demo-product-023",
-    "url": "/media/v3/story-pour.avif",
-    "alt": "Marbled Resin Canvas — view 7 (Content Lab demo photograph)",
+    "url": "/media/v3/story-polish.avif",
+    "alt": "Beginner Pour Workshop — view 7 (Content Lab demo photograph)",
     "order": 6,
     "role": null
   },
   {
     "id": "demo-product-image-023-08",
     "productId": "demo-product-023",
-    "url": "/media/v3/studio-hands.avif",
-    "alt": "Marbled Resin Canvas — view 8 (Content Lab demo photograph)",
+    "url": "/media/v3/story-gild.avif",
+    "alt": "Beginner Pour Workshop — view 8 (Content Lab demo photograph)",
     "order": 7,
     "role": null
   },
@@ -1291,7 +1291,7 @@
     "id": "demo-product-image-053-01",
     "productId": "demo-product-053",
     "url": "/media/v3/hero-pour.avif",
-    "alt": "Marble Pattern Wall Clock — view 1 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 1 (Content Lab demo photograph)",
     "order": 0,
     "role": "HERO"
   },
@@ -1299,7 +1299,7 @@
     "id": "demo-product-image-053-02",
     "productId": "demo-product-053",
     "url": "/media/v3/login-backdrop.avif",
-    "alt": "Marble Pattern Wall Clock — view 2 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 2 (Content Lab demo photograph)",
     "order": 1,
     "role": null
   },
@@ -1307,7 +1307,7 @@
     "id": "demo-product-image-053-03",
     "productId": "demo-product-053",
     "url": "/media/v3/macro-epoxy.avif",
-    "alt": "Marble Pattern Wall Clock — view 3 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 3 (Content Lab demo photograph)",
     "order": 2,
     "role": null
   },
@@ -1315,7 +1315,7 @@
     "id": "demo-product-image-053-04",
     "productId": "demo-product-053",
     "url": "/media/v3/macro-flower.avif",
-    "alt": "Marble Pattern Wall Clock — view 4 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 4 (Content Lab demo photograph)",
     "order": 3,
     "role": null
   },
@@ -1323,7 +1323,7 @@
     "id": "demo-product-image-053-05",
     "productId": "demo-product-053",
     "url": "/media/v3/macro-pigment.avif",
-    "alt": "Marble Pattern Wall Clock — view 5 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 5 (Content Lab demo photograph)",
     "order": 4,
     "role": null
   },
@@ -1331,7 +1331,7 @@
     "id": "demo-product-image-053-06",
     "productId": "demo-product-053",
     "url": "/media/v3/macro-teak.avif",
-    "alt": "Marble Pattern Wall Clock — view 6 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 6 (Content Lab demo photograph)",
     "order": 5,
     "role": null
   },
@@ -1339,7 +1339,7 @@
     "id": "demo-product-image-053-07",
     "productId": "demo-product-053",
     "url": "/media/v3/print-head.avif",
-    "alt": "Marble Pattern Wall Clock — view 7 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 7 (Content Lab demo photograph)",
     "order": 6,
     "role": null
   },
@@ -1347,7 +1347,7 @@
     "id": "demo-product-image-053-08",
     "productId": "demo-product-053",
     "url": "/media/v3/story-cure.avif",
-    "alt": "Marble Pattern Wall Clock — view 8 (Content Lab demo photograph)",
+    "alt": "Rainbow Cloud Name Plaque — view 8 (Content Lab demo photograph)",
     "order": 7,
     "role": null
   },
