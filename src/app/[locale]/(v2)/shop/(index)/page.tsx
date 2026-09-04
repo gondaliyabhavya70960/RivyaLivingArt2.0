@@ -15,7 +15,7 @@ import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { groupForCategorySlug } from "@/lib/catalog-taxonomy";
 import { db } from "@/lib/db";
-import { getSiteImages } from "@/lib/site-images-server";
+import { getSiteImageRefs } from "@/lib/site-images-server";
 import { showDemoContent } from "@/lib/demo-content";
 import { demoClause } from "@/lib/demo-clause";
 import {
@@ -230,7 +230,10 @@ export default async function ShopPage({
   const t = await getTranslations("Shop");
   const tNav = await getTranslations("Nav");
   const tCommon = await getTranslations("Common");
-  const images = await getSiteImages();
+  // Refs rather than bare URLs: the editorial break is the one slot this
+  // page renders, and the ref carries the 20px LQIP the URL map drops. Same
+  // cached read either way — `getSiteImages` is a narrowing of this one.
+  const imageRefs = await getSiteImageRefs();
 
   const params = await searchParams;
   const sortParam = first(params.sort);
@@ -469,7 +472,8 @@ export default async function ShopPage({
                4,000-piece catalogue stops reading as an endless grid. */
             <div className="grid items-center gap-8 border-y border-hairline py-10 md:grid-cols-12 md:gap-12">
               <MeniscusImage
-                src={images["shop.editorialBreak"]}
+                src={imageRefs["shop.editorialBreak"].url}
+                blurDataURL={imageRefs["shop.editorialBreak"].blurDataUrl}
                 alt={t("editorialBreak.imageAlt")}
                 width={1200}
                 height={800}
