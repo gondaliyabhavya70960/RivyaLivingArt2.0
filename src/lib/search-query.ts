@@ -51,6 +51,7 @@ function productBaseWhere(demo: DemoClause): Prisma.ProductWhereInput {
 const PRODUCT_CARD_SELECT = {
   id: true,
   slug: true,
+  isDemo: true,
   displayName: true,
   title: true,
   shortTagline: true,
