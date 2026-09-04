@@ -114,6 +114,12 @@ export function revalidatePublic(entity: RevalidatableEntity, slug?: string) {
   // Not localized — one file at the root, listing every locale's URLs.
   revalidatePath("/sitemap.xml");
 
+  // Landing pages read OTHER entities: the block catalogue grew readers for
+  // products, collections, journal posts, cases, testimonials and FAQs, so a
+  // lander is stale the moment any of those changes and nothing here said so.
+  // Its own `customPage` arm only ever covered edits to the page itself.
+  if (entity !== "page") revalidateLocalizedPattern("/p/[slug]");
+
   const paths: string[] = [];
   switch (entity) {
     case "product":
