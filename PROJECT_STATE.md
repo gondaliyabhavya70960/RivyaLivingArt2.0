@@ -34,11 +34,17 @@ In Progress:              nothing in flight. Owner-machine follow-ups: fetch the
                           replace the generated maker portrait with a photograph; add `.env.example`
                           (`.env*` edits are denied here); a by-eye reduced-motion pass over the A2/A3/
                           C2 mounts; turn SiteSettings.demoContentPublic on only as a deliberate act;
-                          review and merge PR #43
+                          measure Lighthouse on the PDP (`LH_BASE=… node scripts/lighthouse-audit.mjs
+                          demo-product-001`) — it scores 0 in this sandbox, so the 85/95 gate cannot be
+                          added to ci.yml until the owner reports real numbers.
+                          PRs #43, #44 and #45 are MERGED (main = 9d2ba69)
 Next Exact Task:          none from the plan. Everything the 2026-09-04 audit listed as pending is
-                          either closed on PR #43 or an owner-machine follow-up above. A next session
-                          starts from `docs/transformation-roadmap.md` (status) and CHANGELOG's newest
-                          entry, not from the plan file.
+                          either closed on PRs #43–#45 or an owner-machine follow-up above. A next
+                          session starts from `docs/transformation-roadmap.md` (status) and CHANGELOG's
+                          newest entry, not from the plan file. Newest entry: the header-contrast rule
+                          no longer reports its own cross-fade — CI 149 failed /contact on a tree that
+                          passed on main (149 red, 150 green, identical trees), because the rule read
+                          `data-ink` and the pixels at two different moments.
 Files Created:            11 migration dirs (20260904100000 … 20260904110000) · src/lib/
                           {content-status,demo-clause,demo-content,activity-snapshot,
                           process-steps}.ts (+ tests) · tests/db/{testimonials-gate,demo-gate}.test.ts

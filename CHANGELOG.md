@@ -5,6 +5,31 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Follow-up · the header-contrast gate stops reporting its own cross-fade (2026-09-04)
+
+CI run 149 failed `/contact` on the sticky-header contrast rule — `data-ink="ink"` measured at
+1.08:1 over rgb(8,10,14) — and run 150 passed the SAME TREE minutes later (`git diff 8581218
+124b2d8` is empty). The rule, not the header, was wrong.
+
+`data-ink` is an attribute: it flips in the same commit as the state. The two layers it describes
+do not — the obsidian scrim and the mineral bar cross-fade over `--dur-base`, and the logo's colour
+transitions over `--dur-fast`. So immediately after the hero leaves the header's 80px band the
+attribute and the pixels legitimately disagree. The audit's own route walk is what drags the hero
+through that band, twice, and `use-hero-ink.ts` delivers its IntersectionObserver callback on a
+later frame — so on a loaded runner the cross-fade can begin AFTER the walk's animation-settle loop
+has already returned. The rule then read the attribute, waited up to eight seconds for images, and
+screenshotted, reporting the two as one simultaneous measurement.
+
+The rule now settles the header first (two identical readings with nothing animating inside it,
+capped at 3s), takes the attribute, the promised colour and the sample geometry in ONE evaluate, and
+re-reads afterwards; a reading that spans a state change is reported as a NOTE naming the flip
+rather than failing the build. The image-decode caveat is unchanged. A genuinely mis-inked header is
+a state, not a transition, so requiring stability cannot hide one — proved by raising the threshold
+to 100 so every route violates it and confirming `/` and `/contact` still report FAIL, then forcing
+a flip mid-measurement and confirming both downgrade to NOTE with 0 failing rules.
+
+---
+
 ## Follow-up · the plan-completion audit and what it found (2026-09-04)
 
 Sixteen read-only verifiers checked the merged `main` against every bullet of the approved plan
