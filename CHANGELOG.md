@@ -5,6 +5,71 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 2 · batch A4 — ten process steps, accordion gallery, journal collections, Studio process/materials surfaces (2026-09-04)
+
+Merged `352ef9e`. A4's agent was stopped after the container restarted under it (its shell never
+returned from a `git diff --stat`), so its last verified change — the accordion-gallery fix it had
+gated at 20:48 — was committed by the coordinator as `b5f0847` and the batch merged from there; the
+merged head was built and audited here before the push. Merge collisions: the nine message files
+(three-way merged through the repo's own `i18n-merge.mjs`, no key collisions), the sidebar and
+studio-audit route appends (both kept), `site-images.test.ts`'s alt-key count (A2's ten plus A4's
+four → 56), and `site-copy.generated.ts` (regenerated: 1,303 slots).
+
+- **Ten steps, not six.** `/process`'s timeline is driven by `PROCESS_STEPS` (B0) instead of a
+  local six-entry list, relabelled to the owner-confirmed fabrication sequence — Concept ·
+  Material selection · Wood preparation · Resin composition · Casting · Curing · Surface refinement
+  · Hand finishing · Quality inspection · Delivery (delivery only; the studio states no
+  installation service). Four new `site-images.ts` slots (`process.step7–10`, 4:5, fallbacks read
+  as polish / finish / inspection / delivery atmosphere) and every `Process.timeline.step<n>`
+  key in all nine locales; Meta values reuse only figures already published on the site (24–72 h
+  per layer, 400 → 3000 grit, tracked anywhere in India) or a short mono word. "Six steps, no
+  shortcuts" → "Ten steps, no shortcuts" ×9 (19 English values changed, all nine locales updated —
+  the `--stale` gate is clean).
+- **Two registry surfaces (plan decision 1).** `page-sections.ts` gains `"process-steps"` (ten
+  defs, explicit copy keys on step1/step10 to dodge the `step1*`/`step10*` prefix collision) and
+  `"materials"` (four defs owning the copy pair plus every picture of that material on BOTH pages,
+  so reordering one moves it on both). `describeArrangementProblem` refuses to empty a whole list
+  (hide all ten steps, or all four materials). `SUBLIST_PAGES` marks the two as not routable (no
+  h1 owner) and the shared h1-invariant tests are updated rather than weakened. `/studio/process`
+  and `/studio/materials` render the existing `SectionsBoard` pre-filtered to one page key — draft,
+  publish and revision history come free; sidebar and audit routes appended.
+- **`storefront/accordion-gallery.tsx`**: flex strips, the active one at `flex-grow: 3`, driven by
+  hover, focus-within or a roving-tabindex click; reduced motion collapses to equal strips with
+  every copy panel visible; below `md` the same markup reads as stacked cards; every panel's copy
+  stays in the DOM and the accessibility tree. Mounted on `/process` and `/about` materials in
+  place of the static grid and hover-macro cards, keeping every copy key and alt. The follow-up
+  fix (`b5f0847`): no default active strip (a hover used to open a second strip beside the one
+  marked active from load), the macro photograph opens under the same three triggers un-prefixed
+  so a tap on a phone card reveals it, and the trigger and its copy share one bottom-anchored
+  column so a two-line title no longer overlaps the panel.
+- **Journal**: `blog/[slug]` shows the article's own shop collection (B0's
+  `BlogPost.category`, distinct from the editorial blog category) plus up to two visible siblings
+  through `CollectionCard`, only when the author pointed the post at one; the three optional bands
+  under the reading sheet alternate sand/mineral so any subset stays light → light. Demo posts and
+  demo related cards carry `<DemoMark/>`; the Article JSON-LD is withheld for a demo post
+  (BreadcrumbList stays); `blog/page.tsx`'s demo-category exclusion was already correct from B0.
+- i18n ×9: `Process.timeline.step7–10{Title,Copy,Meta,Alt}`, `Blog.relatedCollections.*`,
+  `AccordionGallery.*`. Not done by the agent before it was stopped: hero rise/drift on `/process`
+  (the page keeps its current hero; the drift token itself is F2's) — recorded as an open item.
+- Measured in the worktree: 478 unit tests, 18 db tests, typecheck, lint, copy:check, i18n
+  `--stale` clean; audits, E2E, keyboard, motion 48.4 KB, studio audit and Lighthouse on
+  `/process` per the agent's own log; a hover/focus/click/reduced-motion script against the built
+  `/process` and `/about`.
+
+Verified on the merged head (`352ef9e`): typecheck · lint · vitest 63 files / 623 · test:db 6 / 28 ·
+copy:check 1,303 · i18n-missing clean, `--stale` reports the 19 relabelled English values with every
+locale updated · `next build` · motion-budget 48.4 KB · redesign-audit 0 failing rules on the 13 CI
+routes plus the five demo detail routes at 1440 / 390 / 360 and nine `/ar` routes (now including
+`/ar/process`) at 390 · a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at
+1440 and 390 · E2E 10/10 · studio-audit clean across 36 routes (the two new surfaces included) at
+1440 and 390 · Lighthouse budgets met · demo proofs on the running server: no sitemap entry,
+`noindex, nofollow`, no Product JSON-LD and the DemoMark on the demo PDP; the DemoMark on the demo
+journal post with no Article JSON-LD. Environment note: the session container restarted twice under
+the running agents (their shells never returned) and Postgres has to be restarted by hand after
+each restart (`pg_ctl … start` per PROJECT_STATE's environment recipe).
+
+---
+
 ## Wave 2 · batch A2 — homepage bands and the large-format page (2026-09-03)
 
 Merged `40e0211`, built and gated in its own worktree; the merged head was built and audited here

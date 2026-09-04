@@ -11,11 +11,12 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation wave 2 — wave 1 complete (A1 B C1 D E F1 + G); A3 and A2
-                          merged; A4 and C2 in flight; F2 after wave 2
+Current Phase:            Transformation wave 2/3 — wave 1 complete (A1 B C1 D E F1 + G); A3, A2, A4
+                          merged; C2 and F2 finished by the coordinator (agents stopped after a
+                          container restart froze their shells)
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 COMPLETE (2026-09-03); PR #42 draft;
-                          CI green
+Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 COMPLETE (2026-09-04); PR #42
+                          draft; CI green
                           on every head; Vercel preview green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
@@ -23,9 +24,10 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              wave 2 — A4 (process/about/journal + Studio process/materials) in wt-a4,
-                          C2 (block catalogue) in wt-c2; then F2 (CI demo seed + detail routes + e2e,
-                          audit flips, docs; reconcile the 6 s sf-hero-drift token with Part 3.8)
+In Progress:              C2 (four blocks left: videoStory finish, masonryGallery, bentoGallery,
+                          fullscreenGallery + docs/studio-cms/04) in wt-c2; F2 (CI demo seed + detail
+                          routes + e2e, audit flips, drift loop, soft-404, docs) in wt-f2 — both
+                          continued by the coordinator from the agents' worktree state
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
@@ -41,7 +43,8 @@ Files Created:            11 migration dirs (20260904100000 … 20260904110000) 
                           stages-server,normalize}.ts · hooks/use-scrape-runner.ts · scraper/layout.tsx
                           · actions/{research,sheet-fill}.ts · lib/import/tier-fill.ts · studio
                           research + sheet-import/conflicts routes · settings/sheet-ids-section.tsx
-                          · A2: src/lib/furniture-kinds.ts
+                          · A2: src/lib/furniture-kinds.ts · A4: storefront/accordion-gallery.tsx ·
+                          studio/(dashboard)/{process,materials}/{page,loading}.tsx
 Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-usages,shop,
                           search-query,catalog-nav,catalog-mirror,custom-pages-server,
                           custom-page-data,large-format,site-settings,activity,order-visibility,
@@ -57,7 +60,10 @@ Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-us
                           prisma/import-tiers.ts (thin caller) · docs/{scraper,google-sheets}.md.
                           A2: page-sections{,-server,-studio}.ts · sections-board · site-images.ts
                           (+10 slots) · large-format.ts · (v2)/page.tsx · large-resin-art/page.tsx ·
-                          nine message files (+75 keys) · site-copy.generated.ts (1,282 slots)
+                          nine message files (+75 keys) · site-copy.generated.ts (1,282 slots).
+                          A4: process/about/blog pages · page-sections{,.test}.ts (process-steps,
+                          materials) · site-images.ts (+4 slots) · sidebar · studio-audit routes ·
+                          nine message files (+21 keys, 19 relabelled) · registry 1,303 slots
 Database Changes:         11 additive migrations (44 → 55). One data statement: existing
                           Testimonial rows back-filled to PUBLISHED (they were live). Product
                           isDemo ADD COLUMN takes a brief ACCESS EXCLUSIVE lock — deploy off-peak.
@@ -83,6 +89,9 @@ Tests Run:                typecheck · lint · test (40 files / 391) · test:db 
                           · A2 merged head (909e28a): the same set — test (63 / 620) · copy:check
                           (1,282) · studio-audit 34 routes 1440/390 after the sections-board
                           contrast fix · demo detail routes re-audited after re-seeding
+                          · A4 merged head (352ef9e): the same set — test (63 / 623) · copy:check
+                          (1,303) · --stale 19 relabelled values, all locales · studio-audit 36
+                          routes 1440/390 · blog demo proofs (DemoMark, no Article JSON-LD)
 Tests Passing:            all of the above (motion 48.2 KB is in the 45–49 KB warn band as before)
 Known Issues:             Subagent API returned 529 for the whole batch, so B0 was implemented in
                           the main session rather than by the planned agent workflow; the
@@ -94,6 +103,9 @@ Known Issues:             Subagent API returned 529 for the whole batch, so B0 w
                           before notFound() resolves (loading boundary), so a missing slug
                           answers 200 + the not-found UI + noindex — an SEO item for batch F2,
                           not introduced here.
+                          The session container restarts after idle stretches: running agents'
+                          shells freeze (A4, C2, F2 were stopped and finished by hand) and
+                          Postgres must be restarted (pg_ctl start on /var/lib/postgresql/rivyadata).
                           E leaves syncWebsiteProductsToSheet reading its sheet id from the
                           environment (its writer is outside E's files; documented in
                           docs/google-sheets.md). Bulk Import re-imports now skip untouched
