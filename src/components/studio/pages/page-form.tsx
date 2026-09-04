@@ -22,7 +22,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { slugify } from "@/lib/slug";
 
 // ————————————————————— Types & schema —————————————————————
 
@@ -65,14 +64,21 @@ function toContentRecord(value: unknown): Record<string, unknown> {
 
 // ————————————————————— The form —————————————————————
 
-export function PageForm({ page }: { page?: PageFormInitial }) {
+/**
+ * Edits an existing page. There is no create mode: only `(v2)/privacy` and
+ * `(v2)/terms` read a Page row, each hardcoding its slug, so a new page would
+ * have no URL — `/studio/pages/new` and the "New page" action were removed
+ * with `upsertPage`'s create branch (owner decision, 2026-09-04). Requiring
+ * `page` is what keeps the dead branches from growing back.
+ */
+export function PageForm({ page }: { page: PageFormInitial }) {
   const router = useRouter();
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const isLegal = page ? isLegalPageSlug(page.slug) : false;
+  const isLegal = isLegalPageSlug(page.slug);
 
   const {
     register,
@@ -82,28 +88,25 @@ export function PageForm({ page }: { page?: PageFormInitial }) {
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: page?.title ?? "",
-      slug: page?.slug ?? "",
-      content: toContentRecord(page?.content),
-      seoTitle: page?.seoTitle ?? "",
-      seoDescription: page?.seoDescription ?? "",
-      translations: toTranslationsRecord(page?.translations),
+      title: page.title,
+      slug: page.slug,
+      content: toContentRecord(page.content),
+      seoTitle: page.seoTitle ?? "",
+      seoDescription: page.seoDescription ?? "",
+      translations: toTranslationsRecord(page.translations),
     },
   });
 
   useUnsavedChangesGuard(isDirty && !saving);
 
   const watchedTitle = useWatch({ control, name: "title" });
-  const watchedSlug = useWatch({ control, name: "slug" });
-  const slugPreview = slugify(watchedSlug || watchedTitle);
 
   async function onSubmit(values: FormValues) {
     setSaving(true);
 
     const payload: UpsertPageInput = {
-      id: page?.id,
-      // The slug is only read on create — immutable for existing rows.
-      slug: page ? undefined : values.slug || undefined,
+      id: page.id,
+      // Never sent: a slug is minted once and a public URL must stay stable.
       title: values.title,
       content: values.content,
       seoTitle: values.seoTitle || undefined,
@@ -118,16 +121,11 @@ export function PageForm({ page }: { page?: PageFormInitial }) {
       toast.error(result.error);
       return;
     }
-    toast.success(page ? "Page saved." : "Page created.");
-    if (!page && result.data) {
-      router.push(`/studio/pages/${result.data.id}`);
-    } else {
-      router.refresh();
-    }
+    toast.success("Page saved.");
+    router.refresh();
   }
 
   async function handleDelete() {
-    if (!page) return;
     setDeleting(true);
     const result = await deletePages([page.id]);
     setDeleting(false);
@@ -157,43 +155,24 @@ export function PageForm({ page }: { page?: PageFormInitial }) {
           <FieldError id="page-title-error">{errors.title?.message}</FieldError>
         </div>
 
-        {page ? (
-          <div className="space-y-1.5">
-            <Label htmlFor="page-slug">Slug</Label>
-            <div className="flex flex-wrap items-center gap-2">
-              <p
-                id="page-slug"
-                className="rounded-md bg-muted/60 px-3 py-2 font-mono text-xs text-muted-foreground"
-              >
-                /{page.slug}
-              </p>
-              {isLegal && <Badge variant="secondary">Legal page</Badge>}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {isLegal
-                ? "The site footer links to this page — its slug never changes and the page cannot be deleted."
-                : "Locked after creation to keep public URLs stable."}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-1.5">
-            <Label htmlFor="page-slug">Slug</Label>
-            <Input
+        {/* Read-only: every page here already exists and its URL is fixed. */}
+        <div className="space-y-1.5">
+          <Label htmlFor="page-slug">Slug</Label>
+          <div className="flex flex-wrap items-center gap-2">
+            <p
               id="page-slug"
-              placeholder="about-us"
-              autoComplete="off"
-              spellCheck={false}
-              {...register("slug")}
-            />
-            <p className="font-mono text-xs text-muted-foreground">
-              /{slugPreview || "…"}
+              className="rounded-md bg-muted/60 px-3 py-2 font-mono text-xs text-muted-foreground"
+            >
+              /{page.slug}
             </p>
-            <p className="text-xs text-muted-foreground">
-              Leave empty to generate from the title. Locked after creation — a
-              number is appended if it is already taken.
-            </p>
+            {isLegal && <Badge variant="secondary">Legal page</Badge>}
           </div>
-        )}
+          <p className="text-xs text-muted-foreground">
+            {isLegal
+              ? "The site footer links to this page — its slug never changes and the page cannot be deleted."
+              : "Locked after creation to keep public URLs stable."}
+          </p>
+        </div>
 
         <div className="space-y-1.5">
           <Label>Body</Label>
