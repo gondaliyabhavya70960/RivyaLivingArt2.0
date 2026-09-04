@@ -10,7 +10,9 @@ import { cn } from "@/lib/utils";
 export interface CraftChapter {
   title: string;
   copy: string;
-  image: { src: string; alt: string };
+  /** `blurDataURL` is the slot's 20px LQIP when one is recorded for the
+   *  resolved file; null is the resolver's own "none known". */
+  image: { src: string; alt: string; blurDataURL?: string | null };
 }
 
 export interface CraftChaptersProps {
@@ -115,6 +117,10 @@ export function CraftChapters({
           {/* ————— the stage: one frame, four photographs, ≥1024px ————— */}
           <div className="hidden lg:col-span-6 lg:block lg:self-start lg:sticky lg:top-28">
             <div className="relative aspect-[4/3] overflow-hidden rounded-image bg-deep-ocean">
+              {/* The stage is the ONLY copy of the photograph above 1024px —
+                  the stacked card below is `lg:hidden` — so the LQIP has to
+                  be spread here too, or the desktop reading is the one left
+                  without a ground under the picture. */}
               {chapters.map((chapter, index) => (
                 <Image
                   key={chapter.image.src}
@@ -123,6 +129,12 @@ export function CraftChapters({
                   fill
                   sizes="(min-width:1024px) 45vw, 90vw"
                   aria-hidden={index === active ? undefined : true}
+                  {...(chapter.image.blurDataURL
+                    ? {
+                        placeholder: "blur" as const,
+                        blurDataURL: chapter.image.blurDataURL,
+                      }
+                    : {})}
                   className={cn(
                     "object-cover transition-opacity duration-(--dur-slow) ease-(--ease-luxury) motion-reduce:transition-none",
                     index === active ? "opacity-100" : "opacity-0",
@@ -164,6 +176,7 @@ export function CraftChapters({
                     pinned sequences on mobile. */}
                 <MeniscusImage
                   src={chapter.image.src}
+                  blurDataURL={chapter.image.blurDataURL}
                   alt={chapter.image.alt}
                   width={1000}
                   height={1250}

@@ -242,6 +242,7 @@ export default async function WorkshopsPage({
               <li key={benefit.key} className="flex flex-col gap-5">
                 <MeniscusImage
                   src={images[benefit.image]}
+                  blurDataURL={imageRefs[benefit.image].blurDataUrl}
                   alt={t(`intro.alt${index + 1}`)}
                   width={900}
                   height={1125}
@@ -528,10 +529,26 @@ export default async function WorkshopsPage({
         heading={t("room.heading")}
         intro={t("room.body")}
         photos={[
-          { src: images["workshops.room1"], alt: t("room.alt1") },
-          { src: images["workshops.room2"], alt: t("room.alt2") },
-          { src: images["workshops.room3"], alt: t("room.alt3") },
-          { src: images["workshops.room4"], alt: t("room.alt4") },
+          {
+            src: images["workshops.room1"],
+            blurDataURL: imageRefs["workshops.room1"].blurDataUrl,
+            alt: t("room.alt1"),
+          },
+          {
+            src: images["workshops.room2"],
+            blurDataURL: imageRefs["workshops.room2"].blurDataUrl,
+            alt: t("room.alt2"),
+          },
+          {
+            src: images["workshops.room3"],
+            blurDataURL: imageRefs["workshops.room3"].blurDataUrl,
+            alt: t("room.alt3"),
+          },
+          {
+            src: images["workshops.room4"],
+            blurDataURL: imageRefs["workshops.room4"].blurDataUrl,
+            alt: t("room.alt4"),
+          },
         ]}
       />
     ),

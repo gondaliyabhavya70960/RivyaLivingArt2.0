@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils";
 export type AccordionGalleryItem = {
   key: string;
   src: string;
+  /** The strip photograph's 20px LQIP when the resolved slot records one —
+   *  null is the resolver's own "none known", forwarded as it stands. */
+  blurDataURL?: string | null;
   alt: string;
   title: string;
   copy: string;
@@ -123,6 +126,7 @@ export function AccordionGallery({
           >
             <MeniscusImage
               src={item.src}
+              blurDataURL={item.blurDataURL}
               alt={item.alt}
               fill
               sizes="(min-width:768px) 40vw, 100vw"

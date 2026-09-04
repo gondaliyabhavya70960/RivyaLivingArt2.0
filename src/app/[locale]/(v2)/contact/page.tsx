@@ -22,7 +22,7 @@ import {
 import { db } from "@/lib/db";
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { getPageSections } from "@/lib/page-sections-server";
-import { getSiteImages } from "@/lib/site-images-server";
+import { getSiteImageRefs } from "@/lib/site-images-server";
 import { getSiteSettings } from "@/lib/site-settings";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
 import { demoWhere } from "@/lib/demo-content";
@@ -69,7 +69,7 @@ export default async function ContactPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tCommon, tWa, settings, faqRows, images, sections] =
+  const [t, tCommon, tWa, settings, faqRows, imageRefs, sections] =
     await Promise.all([
       getTranslations("Contact.page"),
       getTranslations("Common"),
@@ -80,7 +80,10 @@ export default async function ContactPage({
         orderBy: { order: "asc" },
         take: 6,
       }),
-      getSiteImages(),
+      // Refs, not bare URLs: the hero below is this page's LCP and the ref is
+      // the only thing that carries its 20px LQIP. Same cached read either
+      // way — `getSiteImages` is a narrowing of this one.
+      getSiteImageRefs(),
       getPageSections("contact"),
     ]);
 
@@ -132,13 +135,23 @@ export default async function ContactPage({
         <div className="grid lg:min-h-[70svh] lg:grid-cols-2">
           <div className="relative min-h-[38svh] lg:min-h-full">
             <Image
-              src={images["contact.hero"]}
+              src={imageRefs["contact.hero"].url}
               alt={t("heroImageAlt")}
               fill
               priority
               quality={80}
               sizes="(min-width:1024px) 50vw, 100vw"
               className="object-cover"
+              // The slot's 20px LQIP (batch D). next/image paints it as a
+              // background behind this `<img>` and drops it the moment the
+              // real bytes decode — a ground, never a fade, so §2.7 holds and
+              // the LCP element itself is untouched.
+              {...(imageRefs["contact.hero"].blurDataUrl
+                ? {
+                    placeholder: "blur" as const,
+                    blurDataURL: imageRefs["contact.hero"].blurDataUrl,
+                  }
+                : {})}
             />
           </div>
           <div className="flex flex-col justify-center gap-8 px-6 py-16 md:px-12 lg:px-16 lg:py-24">
