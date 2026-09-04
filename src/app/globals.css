@@ -441,13 +441,23 @@
     }
   }
 
-  /* Hero media drift — a slow 6s settle to 1.04x scale on the wrapper AROUND
-     the poster `<Image>`, never the `<img>` itself (hero-media.tsx), so the
-     LCP element's own box is never transformed. Turned off once the ambient
+  /* Hero media drift — an AMBIENT loop on the wrapper AROUND the poster
+     `<Image>`, never the `<img>` itself (hero-media.tsx), so the LCP
+     element's own box is never transformed. Turned off once the ambient
      video takes over (`data-video-playing="true"`) so the two motions never
-     compete for the same frame. */
+     compete for the same frame.
+
+     `infinite alternate` (F2, roadmap Phase 1b reconciliation) — was a
+     one-shot 6000ms `forwards` fill, which is neither one of Part 3.8's four
+     sanctioned durations nor a loop, so `redesign-audit.mjs`'s duration rule
+     failed the instant anything mounted `drift` (3393aae dropped the prop
+     from both heroes rather than ship a failing gate). The 6s PERIOD is
+     unchanged — only the iteration count and direction, so the audit's own
+     `animationIterationCount.includes("infinite")` check exempts it exactly
+     the way the marquee and the toast countdown already are, with no change
+     to the rule itself. */
   .sf-hero-drift {
-    animation: sf-hero-drift 6s var(--ease-luxury) forwards;
+    animation: sf-hero-drift 6s var(--ease-luxury) infinite alternate;
   }
   .sf-hero-drift[data-video-playing="true"] {
     animation: none;
