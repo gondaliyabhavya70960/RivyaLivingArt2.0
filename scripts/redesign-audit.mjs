@@ -14,6 +14,13 @@
  * the built output and a database, so it starts the server and sweeps every
  * public route at 1440px and 390px. Non-zero exit fails the build.
  *
+ * Part 14's reduced-motion clause rides along at the end of each route: the
+ * same route is loaded a second time in a `reducedMotion: "reduce"` context
+ * and sampled for anything still moving. It is the one rule here that needs a
+ * second page load — about three seconds a route, measured — and it is worth
+ * that: every other check reads a settled page, and a missing reduced-motion
+ * fallback is invisible on one.
+ *
  * Every rule here fails the build. The champagne count was the one exception
  * — a design review rather than a test, printed as a note for a human — until
  * Phase 1b, when every audited route was measured passing it and the note
@@ -65,6 +72,19 @@ const context = await browser.newContext({
   ...(touchContext ? { hasTouch: true } : {}),
 });
 const page = await context.newPage();
+
+/* The same viewport with the media feature on, for the reduced-motion rule at
+   the end of the route loop. A second CONTEXT rather than an
+   `emulateMedia` flip on the page above, because a visitor whose OS carries
+   the setting carries it from the first paint: flipping the query on a page
+   that has already mounted, hydrated and finished its entrances measures a
+   different thing entirely. */
+const reducedContext = await browser.newContext({
+  viewport: { width, height: width < 700 ? 844 : 900 },
+  ...(touchContext ? { hasTouch: true } : {}),
+  reducedMotion: "reduce",
+});
+const reducedPage = await reducedContext.newPage();
 
 /**
  * WCAG relative-luminance contrast (F2, the header `data-ink` rule below).
@@ -736,15 +756,26 @@ for (const route of routesArg.split(",")) {
        patch under the logo reads the logo's own pixels and reports a
        contrast nobody sees). The worst of them is the ratio reported: the
        scrim behind the row has to hold wherever a nav item lands. */
-    await page.evaluate(
+    // Whether the pictures behind the header actually settled. A busy machine
+    // (CI, or a laptop running several audits) can leave a hero still
+    // decoding when the cap expires, and screenshotting THEN samples the
+    // page's empty ground rather than the photograph — which reads as a
+    // contrast failure that no visitor would ever see. Observed exactly once
+    // in three consecutive local runs while other work loaded the box, and
+    // the reduced-motion pass added below doubles the page loads a run makes,
+    // so the odds only go up. The wait still caps: an audit must not hang on
+    // a genuinely broken image. But the caller below refuses to FAIL on a
+    // measurement it knows is unsettled — an unreliable red is worse than a
+    // missed amber, because a gate nobody trusts stops being a gate.
+    const headerPixelsSettled = await page.evaluate(
       () =>
         Promise.race([
           Promise.all(
             [...document.images]
               .filter((img) => !img.complete && img.getBoundingClientRect().top < innerHeight)
               .map((img) => new Promise((done) => { img.onload = img.onerror = done; })),
-          ),
-          new Promise((done) => setTimeout(done, 4000)),
+          ).then(() => true),
+          new Promise((done) => setTimeout(() => done(false), 8000)),
         ]),
     );
     const patch = 10;
@@ -794,10 +825,135 @@ for (const route of routesArg.split(",")) {
     } else if (worst.ratio < 4.5) {
       const rounded = (v) => Math.round(v);
       report(
-        "FAIL",
-        `sticky header data-ink="${headerInfo.ink}" contrast ${worst.ratio.toFixed(2)}:1 against rgb(${worst.bgRgb.map(rounded).join(",")}) beside its text (x=${worst.sampleX}) — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))`,
+        headerPixelsSettled ? "FAIL" : "NOTE",
+        `sticky header data-ink="${headerInfo.ink}" contrast ${worst.ratio.toFixed(2)}:1 against rgb(${worst.bgRgb.map(rounded).join(",")}) beside its text (x=${worst.sampleX}) — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))${headerPixelsSettled ? "" : " — NOT FAILED: an above-the-fold image was still decoding when the pixels were sampled, so this reading is not trustworthy"}`,
       );
     }
+  }
+
+  /* Part 14's reduced-motion clause, run rather than trusted: "when
+     `prefers-reduced-motion: reduce`, disable parallax, large transforms,
+     auto-play motion, pinned scrubs, the marquee and complex transitions —
+     and jump every reveal to its final state. No exceptions."
+
+     Nothing enforced it. `shots.mjs --reduced` takes PICTURES under the media
+     query, and a picture of a settled page looks the same either way, so a
+     new animation that forgot its fallback shipped green. What makes the CSS
+     side true today is one rule — tokens.css's global collapse, which flattens
+     every animation and transition on the page to 0.01ms — and a single rule
+     is exactly the kind of thing an `!important` elsewhere, a scoped
+     stylesheet or a careless deletion takes out silently. Everything driven
+     from JS is outside its reach altogether: a WAAPI animation, a video that
+     plays itself, a scroll-linked timeline.
+
+     So the assertion is about what is RUNNING, not about what is declared.
+     The route is walked a second time with the feature on and
+     `getAnimations()` is sampled all the way down; an animation whose
+     playState is "running" with a per-iteration duration a visitor could
+     actually see is the defect. Sampling through the walk rather than once at
+     the end is the point — a one-shot entrance is over by the time a settled
+     page is measured, and a missing fallback on an entrance is the commonest
+     form this bug takes.
+
+     Deliberately NOT offenders: an animation the CSS switched off (`animation:
+     none` leaves no animation object at all), one the collapse already
+     flattened, and anything paused or finished. This pass injects no styles
+     and no script of its own into the page, so nothing it counts is its own
+     doing.
+
+     Two things the duration test cannot speak for are checked in their own
+     terms. A progress-based timeline (`animation-timeline: view()` /
+     `scroll()`) has no time duration at all — it is scroll-linked motion, and
+     `sf-manifesto-brighten` needed its own explicit `animation: none` under
+     reduce for exactly that reason. And a `<video>` playing by itself is the
+     "auto-play motion" the clause names, in the one form no duration collapse
+     can ever reach. */
+  const PERCEPTIBLE_MS = 16; // one frame at 60Hz; the smallest sanctioned token is 180ms
+  let reduced = null;
+  try {
+    await reducedPage.goto(base + route, {
+      waitUntil: "domcontentloaded",
+      timeout: 120_000,
+    });
+    await reducedPage.evaluate(() => document.fonts.ready);
+    reduced = await reducedPage.evaluate(async (perceptibleMs) => {
+      const label = (el, pseudo) => {
+        if (!el || !el.tagName) return "(detached)";
+        const cls =
+          typeof el.className === "string" && el.className
+            ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".")
+            : "";
+        return `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ""}${cls}${pseudo ?? ""}`;
+      };
+
+      const moving = new Map();
+      const playing = new Set();
+      const sample = () => {
+        for (const animation of document.getAnimations()) {
+          if (animation.playState !== "running") continue;
+          const effect = animation.effect;
+          if (!effect) continue;
+          const what =
+            animation.animationName ??
+            (animation.transitionProperty
+              ? `transition ${animation.transitionProperty}`
+              : "animation");
+          const where = label(effect.target, effect.pseudoElement);
+          if (
+            animation.timeline &&
+            animation.timeline.constructor.name !== "DocumentTimeline"
+          ) {
+            moving.set(`${where} ${what}`, `${where} — ${what}, scroll-linked`);
+            continue;
+          }
+          const timing = effect.getComputedTiming?.();
+          // Per ITERATION: a loop's total is Infinity, and what a visitor sees
+          // move is one pass of it.
+          const ms = timing?.duration;
+          if (typeof ms !== "number" || !(ms > perceptibleMs)) continue;
+          moving.set(`${where} ${what}`, `${where} — ${what} @ ${Math.round(ms)}ms`);
+        }
+        for (const video of document.querySelectorAll("video")) {
+          if (!video.paused && !video.ended) playing.add(label(video));
+        }
+      };
+
+      const step = Math.round(window.innerHeight * 0.8);
+      sample();
+      for (let y = 0; y < document.body.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        for (let i = 0; i < 2; i += 1) {
+          await new Promise((r) => setTimeout(r, 50));
+          sample();
+        }
+      }
+      window.scrollTo(0, 0);
+      for (let i = 0; i < 8; i += 1) {
+        await new Promise((r) => setTimeout(r, 50));
+        sample();
+      }
+      return {
+        moving: [...moving.values()].slice(0, 8),
+        playing: [...playing].slice(0, 4),
+      };
+    }, PERCEPTIBLE_MS);
+  } catch (err) {
+    report(
+      "FAIL",
+      `did not load under prefers-reduced-motion: reduce — ${String(err).slice(0, 120)}`,
+    );
+  }
+  if (reduced?.moving.length) {
+    report(
+      "FAIL",
+      `still animating under prefers-reduced-motion: reduce — ${reduced.moving.join(", ")} (Part 14: no exceptions)`,
+    );
+  }
+  if (reduced?.playing.length) {
+    report(
+      "FAIL",
+      `video playing itself under prefers-reduced-motion: reduce — ${reduced.playing.join(", ")} (Part 14: no auto-play motion)`,
+    );
   }
 
   if (routeFailures === 0) console.log("  · clean");
