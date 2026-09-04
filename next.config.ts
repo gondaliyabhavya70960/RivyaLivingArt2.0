@@ -7,6 +7,14 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  * Content-Security-Policy for the app (SEC-001). ENFORCED as of the F1
  * hygiene pass — the report-only period (below) ran clean, so the header key
  * is `Content-Security-Policy` rather than `Content-Security-Policy-Report-Only`.
+ *
+ * `media-src`, `worker-src` and the Blob host in `connect-src` were added
+ * after the flip, not before it. docs/studio-cms/10-landmines.md said in this
+ * repository's own voice that all three "would break the moment the header is
+ * renamed" and to add them FIRST; the flip went ahead without them, and
+ * report-only mode could not have caught it — a report-only policy reports,
+ * it never blocks, so the clean period proved nothing about these. Uploads and
+ * owner-uploaded film would have failed in production and nowhere else.
  * The directive string is the report-only phase's plus ONE addition made at
  * the flip: `frame-src 'self' https://www.google.com`, because StudioMap on
  * /contact embeds a click-to-activate Google Maps iframe that report-only
@@ -45,10 +53,24 @@ const CSP_DIRECTIVES = [
   // product imagery on many source-store hosts (Shopify CDN, kanhakreation,
   // 3dzone, …) that cannot be enumerated ahead of the full sheet export.
   "img-src 'self' data: blob: https:",
+  // Video has no `https:` blanket the way img-src does, and with no media-src
+  // it falls back to default-src 'self' — which blocks every owner-uploaded
+  // film, since those live on Blob (or Cloudinary), not this origin. The
+  // hosts are the ones next.config already trusts in `remotePatterns`;
+  // `blob:` covers a locally previewed file before it is uploaded.
+  "media-src 'self' blob: https://*.public.blob.vercel-storage.com https://res.cloudinary.com",
+  // `blob:` workers: the Blob client SDK and the browser image tooling the
+  // uploader leans on both construct them, and default-src 'self' forbids it.
+  "worker-src 'self' blob:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://connect.facebook.net https://www.googletagmanager.com",
-  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com",
+  // `*.public.blob.vercel-storage.com` is the direct-to-Blob CLIENT upload
+  // (`src/lib/upload-client.ts` → `@vercel/blob/client`, token minted by
+  // /api/upload): the browser PUTs the file to the store itself, so without
+  // this the commission form's reference images and the media library's
+  // uploads fail in production the moment the policy is enforced.
+  "connect-src 'self' https://*.public.blob.vercel-storage.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://connect.facebook.net https://www.facebook.com https://www.google-analytics.com https://region1.google-analytics.com",
   // Google Maps embed, StudioMap (src/components/sections/studio-map.tsx),
   // click-to-activate on /contact — the only third-party frame the site
   // mounts.
