@@ -36,6 +36,7 @@ import type {
   VideoHeroData,
   VideoStoryData,
   MasonryGalleryData,
+  BentoGalleryData,
   GalleryImage,
 } from "@/lib/custom-blocks";
 import type { BlockGround } from "@/lib/custom-blocks";
@@ -1076,6 +1077,71 @@ function MasonryGalleryBlock({
   );
 }
 
+/**
+ * `bentoGallery` — the homepage collections' 12-column bento idiom for up to
+ * six owner pictures: the lead tile spans two rows, the rest sit 4:3 beside
+ * and under it; two columns on phones. Nothing without a single picture.
+ */
+function BentoGalleryBlock({
+  id,
+  data,
+  ground,
+  spacing,
+  heading,
+}: {
+  id: string;
+  data: BentoGalleryData;
+  ground: BlockGround;
+  spacing: "compact" | "standard";
+  heading: "h1" | "h2";
+}) {
+  const Tag = heading;
+  const images = renderableGalleryImages(data.images);
+  const headingId = `${id}-heading`;
+  if (images.length === 0) return null;
+
+  return (
+    <Band
+      ground={ground}
+      spacing={spacing}
+      labelledBy={data.heading ? headingId : undefined}
+    >
+      {data.heading ? (
+        <Tag
+          id={headingId}
+          className="mb-10 font-display text-h2 leading-tight tracking-display"
+        >
+          {data.heading}
+        </Tag>
+      ) : null}
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-6 md:gap-6">
+        {images.map((image, index) => (
+          <div
+            key={`${image.url}-${index}`}
+            className={cn(
+              index === 0
+                ? "col-span-2 md:col-span-4 md:row-span-2 md:h-full"
+                : "md:col-span-2",
+            )}
+          >
+            <GalleryFigure
+              image={image}
+              className={cn(
+                index === 0 ? "aspect-[4/3] md:aspect-auto md:h-full" : "aspect-[4/3]",
+              )}
+              sizes={
+                index === 0
+                  ? "(min-width:768px) 66vw, 100vw"
+                  : "(min-width:768px) 33vw, 50vw"
+              }
+            />
+          </div>
+        ))}
+      </div>
+    </Band>
+  );
+}
+
 function FaqPickerBlock({
   id,
   data,
@@ -1328,6 +1394,18 @@ export function CustomPageBlock({
       const data = block.data as MasonryGalleryData;
       return (
         <MasonryGalleryBlock
+          id={block.id}
+          data={data}
+          ground={ground}
+          spacing={data.spacing}
+          heading={heading}
+        />
+      );
+    }
+    case "bentoGallery": {
+      const data = block.data as BentoGalleryData;
+      return (
+        <BentoGalleryBlock
           id={block.id}
           data={data}
           ground={ground}

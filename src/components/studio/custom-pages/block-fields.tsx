@@ -614,6 +614,30 @@ export function BlockFields({
         </>
       )}
 
+      {block.type === "bentoGallery" && (
+        <>
+          <TextField
+            id={id("heading")}
+            label="Heading"
+            value={String(data.heading ?? "")}
+            onChange={(v) => set("heading", v)}
+          />
+          <GalleryImagesField
+            idPrefix={id("images")}
+            label="Pictures"
+            hint="Up to six. The first picture is the large tile; the rest sit beside and under it in the order you list them."
+            value={asGalleryImages(data.images)}
+            max={6}
+            onChange={(next) => set("images", next)}
+          />
+          <SpacingField
+            id={id("spacing")}
+            value={String(data.spacing ?? "standard")}
+            onChange={(v) => set("spacing", v)}
+          />
+        </>
+      )}
+
       {block.type === "videoStory" && (
         <>
           <TextField

@@ -179,6 +179,7 @@ export async function findMediaUsageDetails(
             "videoHero",
             "videoStory",
             "masonryGallery",
+            "bentoGallery",
           ],
         },
       },
@@ -306,7 +307,7 @@ export async function findMediaUsageDetails(
       }
       return;
     }
-    if (block.type === "masonryGallery") {
+    if (block.type === "masonryGallery" || block.type === "bentoGallery") {
       // The gallery blocks (C2) carry an array of pictures; each URL is
       // guarded under the page label, numbered so the drawer can say which.
       const data = block.data as { images?: unknown } | null;

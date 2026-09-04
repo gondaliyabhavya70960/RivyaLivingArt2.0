@@ -45,7 +45,9 @@ describe("the block catalogue", () => {
     // through the rest of the file's history.
     // 14, not 13 (2026-09-04): `masonryGallery` — up to twelve pictures in
     // staggered CSS columns, the first of the three gallery blocks.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(14);
+    // 15, not 14 (2026-09-04): `bentoGallery` — up to six pictures, the first
+    // two rows tall, on the same 12-column bento the homepage collections use.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(15);
   });
 
   it("declares every type it lists", () => {

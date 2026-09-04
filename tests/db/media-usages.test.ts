@@ -263,4 +263,45 @@ describe("Database-backed: findMediaUsages / findMediaUsageDetails (Prompt 07)",
       await db.customPage.delete({ where: { id } });
     }
   });
+
+  // bentoGallery shares the masonry walker branch; this case keeps that true
+  // if the branches are ever split.
+  it("guards every picture of a bentoGallery block", async (ctx) => {
+    if (!db) {
+      ctx.skip();
+      return;
+    }
+    const id = `test-media-usages-bento-${Date.now()}`;
+    const first = `/uploads/test/${id}-1.jpg`;
+    const second = `/uploads/test/${id}-2.jpg`;
+    const page = await db.customPage.create({
+      data: { id, slug: id, title: "Media usages test lander" },
+    });
+    await db.customBlock.create({
+      data: {
+        pageId: page.id,
+        type: "bentoGallery",
+        order: 0,
+        data: {
+          heading: "",
+          images: [
+            { url: first, alt: "one", caption: "" },
+            { url: second, alt: "two", caption: "" },
+          ],
+          spacing: "standard",
+        },
+      },
+    });
+    try {
+      const details = await findMediaUsageDetails([first, second]);
+      expect(details.get(first)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(picture 1\)$/,
+      );
+      expect(details.get(second)?.[0]).toMatch(
+        /^Landing page · Media usages test lander \(picture 2\)$/,
+      );
+    } finally {
+      await db.customPage.delete({ where: { id } });
+    }
+  });
 });

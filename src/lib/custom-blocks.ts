@@ -250,6 +250,16 @@ export const masonryGallerySchema = z.object({
   spacing,
 });
 
+/**
+ * `bentoGallery` — up to six pictures in a 12-column bento: the first tile
+ * two rows tall, the rest 4:3. Same picture rows as the masonry.
+ */
+export const bentoGallerySchema = z.object({
+  heading: text(160),
+  images: z.array(galleryImageSchema).max(6).default([]),
+  spacing,
+});
+
 export const finalCtaSchema = z.object({
   heading: text(160),
   body: text(600),
@@ -280,6 +290,7 @@ export const CUSTOM_BLOCK_TYPES = [
   "videoHero",
   "videoStory",
   "masonryGallery",
+  "bentoGallery",
 ] as const;
 
 export type CustomBlockType = (typeof CUSTOM_BLOCK_TYPES)[number];
@@ -299,6 +310,7 @@ export type VideoHeroData = z.infer<typeof videoHeroSchema>;
 export type VideoStoryData = z.infer<typeof videoStorySchema>;
 export type GalleryImage = z.infer<typeof galleryImageSchema>;
 export type MasonryGalleryData = z.infer<typeof masonryGallerySchema>;
+export type BentoGalleryData = z.infer<typeof bentoGallerySchema>;
 
 /** One field an owner translates, in the shape `TranslationsSection` wants. */
 export type BlockTranslatableField = {
@@ -496,6 +508,14 @@ export const CUSTOM_BLOCKS: Record<CustomBlockType, BlockDef> = {
     label: "Masonry gallery",
     description: "Up to twelve pictures in staggered columns, each with an optional caption.",
     schema: masonryGallerySchema,
+    translatable: [{ name: "heading", label: "Heading", kind: "text" }],
+    ground: "alternating",
+  },
+  bentoGallery: {
+    type: "bentoGallery",
+    label: "Bento gallery",
+    description: "Up to six pictures in a bento grid — the first one large, the rest beside it.",
+    schema: bentoGallerySchema,
     translatable: [{ name: "heading", label: "Heading", kind: "text" }],
     ground: "alternating",
   },
