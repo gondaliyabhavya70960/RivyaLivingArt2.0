@@ -286,6 +286,16 @@ const customBlockType = z.enum([
   "imageCta",
   "faqPicker",
   "finalCta",
+  "collectionGrid",
+  "portfolioGrid",
+  "journalGrid",
+  "testimonial",
+  "testimonialGrid",
+  "videoHero",
+  "videoStory",
+  "masonryGallery",
+  "bentoGallery",
+  "fullscreenGallery",
 ]);
 
 export const customBlockSchema = z.object({
