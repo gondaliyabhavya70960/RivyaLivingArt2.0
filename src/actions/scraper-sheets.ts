@@ -20,6 +20,7 @@ import { CONFIRMED_COLUMNS, CONFIRMED_SHEET_TAB } from "@/lib/scraper/confirm";
 import { pushWebsiteProducts } from "@/lib/scraper/product-sheet-sync";
 import { WEBSITE_SHEET_TAB } from "@/lib/scraper/website-sheet";
 
+import { SHEET_SYNC_STATUS } from "@/lib/sheet-status";
 const STUDIO_PATH = "/studio/scraper";
 
 const NOT_CONFIGURED_ERROR =
@@ -152,7 +153,7 @@ export async function syncWebsiteProductsToSheet(): Promise<
       await recordSheetSyncRun({
         tab: WEBSITE_SHEET_TAB,
         rows: 0,
-        status: "UNCONFIGURED",
+        status: SHEET_SYNC_STATUS.UNCONFIGURED,
         startedAt,
       });
       return { outcome: "unconfigured" };
@@ -172,7 +173,7 @@ export async function syncWebsiteProductsToSheet(): Promise<
     await recordSheetSyncRun({
       tab: WEBSITE_SHEET_TAB,
       rows: pushed.total,
-      status: "SYNCED",
+      status: SHEET_SYNC_STATUS.SYNCED,
       startedAt,
     });
     revalidatePath(STUDIO_PATH);
@@ -271,7 +272,7 @@ export async function syncConfirmedToSheet(): Promise<
     await recordSheetSyncRun({
       tab: CONFIRMED_SHEET_TAB,
       rows: rows.length,
-      status: "SYNCED",
+      status: SHEET_SYNC_STATUS.SYNCED,
       startedAt,
     });
     revalidatePath(STUDIO_PATH);
@@ -393,7 +394,7 @@ export async function syncTierToSheet(
     await recordSheetSyncRun({
       tab,
       rows: rows.length,
-      status: "SYNCED",
+      status: SHEET_SYNC_STATUS.SYNCED,
       startedAt,
     });
     revalidatePath(STUDIO_PATH);

@@ -9,6 +9,7 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
+import { SHEET_CONFLICT_STATUS } from "@/lib/sheet-status";
 import { logActivity, snapshotBefore } from "@/lib/activity";
 import { db } from "@/lib/db";
 import {
@@ -144,7 +145,7 @@ export async function resolveSheetConflict(
       where: { id: parsed.id },
     });
     if (!conflict) throw new Error("That conflict no longer exists.");
-    if (conflict.status !== "OPEN") {
+    if (conflict.status !== SHEET_CONFLICT_STATUS.OPEN) {
       throw new Error("This conflict was already resolved.");
     }
 
@@ -175,7 +176,7 @@ export async function resolveSheetConflict(
     await db.sheetConflict.update({
       where: { id: parsed.id },
       data: {
-        status: "RESOLVED",
+        status: SHEET_CONFLICT_STATUS.RESOLVED,
         resolvedAt: new Date(),
         resolvedById: session.user.id,
       },
@@ -207,9 +208,9 @@ export async function bulkResolveSheetConflicts(
     const parsed = bulkResolveSchema.parse({ ids, choice });
 
     const res = await db.sheetConflict.updateMany({
-      where: { id: { in: parsed.ids }, status: "OPEN" },
+      where: { id: { in: parsed.ids }, status: SHEET_CONFLICT_STATUS.OPEN },
       data: {
-        status: "RESOLVED",
+        status: SHEET_CONFLICT_STATUS.RESOLVED,
         resolvedAt: new Date(),
         resolvedById: session.user.id,
       },
