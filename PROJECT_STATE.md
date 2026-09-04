@@ -15,8 +15,8 @@ Current Phase:            Transformation wave 2/3 — wave 1 complete (A1 B C1 D
                           merged; C2 and F2 finished by the coordinator (agents stopped after a
                           container restart froze their shells)
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 COMPLETE (2026-09-04); PR #42
-                          draft; CI green
+Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 · C2 COMPLETE (2026-09-04);
+                          PR #42 draft; CI green
                           on every head; Vercel preview green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
@@ -24,10 +24,10 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              C2 (four blocks left: videoStory finish, masonryGallery, bentoGallery,
-                          fullscreenGallery + docs/studio-cms/04) in wt-c2; F2 (CI demo seed + detail
-                          routes + e2e, audit flips, drift loop, soft-404, docs) in wt-f2 — both
-                          continued by the coordinator from the agents' worktree state
+In Progress:              F2 (CI demo seed + detail routes + e2e, audit flips, drift loop, soft-404,
+                          docs) in wt-f2 — continued by the coordinator from the agent's worktree
+                          state (audit flip + header-contrast rule, drift loop and the product
+                          loading.tsx removal were in progress)
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
@@ -44,7 +44,8 @@ Files Created:            11 migration dirs (20260904100000 … 20260904110000) 
                           · actions/{research,sheet-fill}.ts · lib/import/tier-fill.ts · studio
                           research + sheet-import/conflicts routes · settings/sheet-ids-section.tsx
                           · A2: src/lib/furniture-kinds.ts · A4: storefront/accordion-gallery.tsx ·
-                          studio/(dashboard)/{process,materials}/{page,loading}.tsx
+                          studio/(dashboard)/{process,materials}/{page,loading}.tsx · C2:
+                          storefront/fullscreen-gallery.tsx
 Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-usages,shop,
                           search-query,catalog-nav,catalog-mirror,custom-pages-server,
                           custom-page-data,large-format,site-settings,activity,order-visibility,
@@ -63,7 +64,12 @@ Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-us
                           nine message files (+75 keys) · site-copy.generated.ts (1,282 slots).
                           A4: process/about/blog pages · page-sections{,.test}.ts (process-steps,
                           materials) · site-images.ts (+4 slots) · sidebar · studio-audit routes ·
-                          nine message files (+21 keys, 19 relabelled) · registry 1,303 slots
+                          nine message files (+21 keys, 19 relabelled) · registry 1,303 slots.
+                          C2: custom-blocks.ts (+10 blocks, 16) · custom-page-blocks.tsx ·
+                          studio custom-pages block-fields/board · media-usages.ts · tests/db
+                          media-usages (+5 cases) · prisma/fixtures/demo/custom-blocks.json (+4
+                          lander blocks) · lib/demo/fixtures.ts enum · docs/studio-cms/04 ·
+                          vitest.db.config.mts (fileParallelism false)
 Database Changes:         11 additive migrations (44 → 55). One data statement: existing
                           Testimonial rows back-filled to PUBLISHED (they were live). Product
                           isDemo ADD COLUMN takes a brief ACCESS EXCLUSIVE lock — deploy off-peak.
@@ -92,6 +98,8 @@ Tests Run:                typecheck · lint · test (40 files / 391) · test:db 
                           · A4 merged head (352ef9e): the same set — test (63 / 623) · copy:check
                           (1,303) · --stale 19 relabelled values, all locales · studio-audit 36
                           routes 1440/390 · blog demo proofs (DemoMark, no Article JSON-LD)
+                          · C2 merged head (cfa918e): the same set — test (63 / 628) · test:db
+                          (6 / 33, sequential files) · demo lander renders all four new blocks
 Tests Passing:            all of the above (motion 48.2 KB is in the 45–49 KB warn band as before)
 Known Issues:             Subagent API returned 529 for the whole batch, so B0 was implemented in
                           the main session rather than by the planned agent workflow; the

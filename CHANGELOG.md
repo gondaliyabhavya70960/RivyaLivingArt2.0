@@ -5,6 +5,54 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 2 · batch C2 — the block catalogue grows from six to sixteen (2026-09-04)
+
+Merged `84b63d8` (nine blocks from the worktree, one commit each) plus `c37afd1` (the tenth,
+built on the main branch because it needs A3's shared Lightbox, which the worktree predates),
+`93d839d` (the demo lander exercises the new blocks; fixture enum; docs) and `cfa918e` (the
+database suites run one file at a time). The C2 agent was stopped after the container restarted
+under it (its shell never returned from a `grep`); its in-progress videoStory diff was completed
+by hand — the walker branch and the tests/db case it had not yet written — and committed as
+`8dcd758`, then masonryGallery and bentoGallery followed in the worktree.
+
+- **Readers of existing content** (nothing invented — HARD RULES §1.1): `collectionGrid`
+  (visible categories by slug), `portfolioGrid` (`recent` | `manual`, PUBLISHED behind the demo
+  gate), `journalGrid` (optional category, PUBLISHED behind the demo gate), `testimonial` (one
+  row, `editorial` | `featured`, rendered only if PUBLISHED and past the demo gate at render time)
+  and `testimonialGrid` (`featured` | `manual` → `TestimonialWall`).
+- **Film**: `videoHero` (dark ground; `BlockDef.once` generalised to `slot: "hero"`, so
+  `describeBlockArrangementProblem` refuses a hero beside a videoHero and the "only the hero may be
+  dark" test now names both) and `videoStory` (the same `HeroMedia` idiom boxed 4:3 on a light
+  ground). Both take the film as a library link and the poster through the media picker.
+- **Pictures**: `masonryGallery` (up to twelve, CSS columns cycling four tile ratios),
+  `bentoGallery` (up to six on the homepage collections' 12-column bento, lead tile two rows
+  tall) and `fullscreenGallery` (up to twelve square thumbnails opening the shared storefront
+  Lightbox — keyboard stepping, RTL arrows, live region, focus return and the FLIP entrance are
+  one implementation). Every tile is a `MeniscusImage`; captions render as written. The editor
+  gains `GalleryImagesField` — an ordered, capped list of library picks with description, caption,
+  move and remove — shared by all three.
+- Every URL-bearing block joins `media-usages.ts` in its own commit with a tests/db case
+  (`videoHero`, `videoStory`, and the three galleries walked per picture with its position).
+  `spacing` maps to `section-compact` | `section-standard` only; no per-block theme; no stats
+  block. `custom-blocks.test.ts` records each count bump with its dated reason (6 → 16) and the
+  catalogue is closed again at sixteen; `docs/studio-cms/04-structure-layer.md`'s table and
+  "six types" sentences describe it as it is.
+- `/p/demo-lander` gains a masonry, a bento, a videoStory (the studio's own process clip) and a
+  fullscreen gallery between the FAQ picker and the closing CTA, so CI and the local sweep render
+  every gallery block on a real route; the fixture loader's block enum catches up.
+
+Verified on the merged head (`cfa918e`): typecheck · lint · vitest 63 files / 628 · test:db 6 / 33
+(five new media-usages cases) · copy:check 1,303 · i18n-missing clean · vitest `src/lib/demo`
+(every fixture picture on disk) · `next build` · motion-budget 48.4 KB · redesign-audit 0 failing
+rules on the 13 CI routes plus the five demo detail routes (the lander now carrying the four new
+blocks) at 1440 / 390 / 360 and nine `/ar` routes at 390 · a11y-audit 0 critical/serious at 1440 /
+390 / `/ar` 390 · keyboard-audit at 1440 and 390 · E2E 10/10 · studio-audit clean across 36 routes at
+1440 and 390 · Lighthouse budgets met · demo proofs unchanged · `/p/demo-lander` on the running
+server renders the masonry (CSS columns), the bento (two-row lead tile), the video story (the
+process clip) and the fullscreen gallery (twelve square thumbnails), and its `/ar` twin is RTL.
+
+---
+
 ## Wave 2 · batch A4 — ten process steps, accordion gallery, journal collections, Studio process/materials surfaces (2026-09-04)
 
 Merged `352ef9e`. A4's agent was stopped after the container restarted under it (its shell never
