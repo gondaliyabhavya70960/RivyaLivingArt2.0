@@ -623,7 +623,7 @@
     }
   ],
   "plannedSets": {
-    "$comment": "docs/transformation-audit.md §10.3's generation plan, the batch-D slice of it (SET A–F, 28 entries). EVERY ENTRY HAS NOW BEEN GENERATED and its result URLs are recorded in `candidates` — 56 renders, two variants each, made 2026-09-04 through the Higgsfield MCP on the same `model` and `promptSuffix` the built `assets` used. What is NOT done is everything that needs the file itself: `keeper` is still null and `status` is still \"planned\" for all 28, because the masters cannot be built in a session — the CDN holding these URLs answers 403 to the agent proxy's egress policy, which is an organization policy denial to report, not to route around. Leaving them \"planned\" is deliberate and load-bearing: `--promote` flips a row to \"promoted\", and from that moment bundled-media.test.ts demands the master exist ON DISK and media-v3-preflight.mjs demands a culled `keeper`, so promoting a row whose file nobody has downloaded turns the build red. The remaining sequence, on any machine with ordinary internet: `node scripts/media-v3-fetch.mjs --promote <id>` (no URLs needed — it falls back to the candidates recorded here), then `--candidates` to cull and set \"keeper\", then the default run to write the AVIF master and its LQIP, then point a slot at the file in /studio/site-images, because a built master is not a wired one. SET F rows are loops: build them with media-v3-video-fetch.mjs, not the still pipeline. `--planned` prints the queue and that whole sequence. These URLs are not permanent — the previous batch's were re-verified alive eight days after generation, so treat that as the working window and re-generate from the same prompts if they have expired.",
+    "$comment": "docs/transformation-audit.md §10.3's generation plan, the batch-D slice of it (SET A–F, 28 entries). EVERY ENTRY HAS NOW BEEN GENERATED and its result URLs are recorded in `candidates` — 56 renders, two variants each, made 2026-09-04 through the Higgsfield MCP on the same `model` and `promptSuffix` the built `assets` used. What is NOT done is everything that needs the file itself: `keeper` is still null and `status` is still \"planned\" for all 28, because the masters cannot be built in a session — the CDN holding these URLs answers 403 to the agent proxy's egress policy, which is an organization policy denial to report, not to route around. Leaving them \"planned\" is deliberate and load-bearing: `--promote` flips a row to \"promoted\", and from that moment bundled-media.test.ts demands the master exist ON DISK and media-v3-preflight.mjs demands a culled `keeper`, so promoting a row whose file nobody has downloaded turns the build red. The remaining sequence, on any machine with ordinary internet: `node scripts/media-v3-fetch.mjs --promote <id>` (no URLs needed — it falls back to the candidates recorded here), then `--candidates` to cull and set \"keeper\", then the default run to write the AVIF master and its LQIP, then point a slot at the file in /studio/site-images, because a built master is not a wired one. SET F rows are loops: build them with media-v3-video-fetch.mjs, not the still pipeline. Their variant `a` was re-generated at 1080p (1920x1080, the entry's targetWidth) with generate_audio false, because the first pass took seedance_2_5's 720p default and its audio-on default — under-spec on width, and audio is wasted bytes against §15.3's 2.5 MB ceiling on a surface HeroMedia plays muted and aria-hidden. The 720p clip is kept as variant `b`, marked offSpec, the way videos[0].candidates[a] records its own short clip. `--planned` prints the queue and that whole sequence. These URLs are not permanent — the previous batch's were re-verified alive eight days after generation, so treat that as the working window and re-generate from the same prompts if they have expired.",
     "sets": {
       "bench-concepts": "SET A — §15.2-safe furniture as work in progress: the bench, the formwork, a slab before it becomes a table — never a finished piece presented as a delivered commission.",
       "large-art": "SET B — large-format resin art beyond the six v3 collection tiles.",
@@ -1219,13 +1219,19 @@
         "candidates": [
           {
             "variant": "a",
-            "jobId": "e5af8152-7bfc-41b9-ac2e-e0ae63943856",
-            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_e5af8152-7bfc-41b9-ac2e-e0ae63943856.mp4"
+            "jobId": "68d5cfae-d0fd-4be1-a8d6-937bb6825773",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_122203_68d5cfae-d0fd-4be1-a8d6-937bb6825773.mp4",
+            "resolution": "1080p",
+            "durationSeconds": 6,
+            "audio": false
           },
           {
             "variant": "b",
-            "jobId": "7d71c3d8-0626-47d8-ae59-f8e2b245e5a5",
-            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_7d71c3d8-0626-47d8-ae59-f8e2b245e5a5.mp4"
+            "jobId": "e5af8152-7bfc-41b9-ac2e-e0ae63943856",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_e5af8152-7bfc-41b9-ac2e-e0ae63943856.mp4",
+            "resolution": "720p",
+            "durationSeconds": 6,
+            "offSpec": "1280x720 — under this entry's 1920 targetWidth, and generated with audio on for a surface that plays muted. Kept only as a cull reference."
           }
         ],
         "keeper": null,
@@ -1242,13 +1248,19 @@
         "candidates": [
           {
             "variant": "a",
-            "jobId": "db94fcf1-b131-4e35-a697-5a6b69814c4a",
-            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_db94fcf1-b131-4e35-a697-5a6b69814c4a.mp4"
+            "jobId": "c9d86230-7be9-42e9-9a93-293e7cb0a8cb",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_122203_c9d86230-7be9-42e9-9a93-293e7cb0a8cb.mp4",
+            "resolution": "1080p",
+            "durationSeconds": 6,
+            "audio": false
           },
           {
             "variant": "b",
-            "jobId": "0b1d415a-64eb-40cc-b855-77d26404d839",
-            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_0b1d415a-64eb-40cc-b855-77d26404d839.mp4"
+            "jobId": "db94fcf1-b131-4e35-a697-5a6b69814c4a",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_db94fcf1-b131-4e35-a697-5a6b69814c4a.mp4",
+            "resolution": "720p",
+            "durationSeconds": 6,
+            "offSpec": "1280x720 — under this entry's 1920 targetWidth, and generated with audio on for a surface that plays muted. Kept only as a cull reference."
           }
         ],
         "keeper": null,
@@ -1265,13 +1277,19 @@
         "candidates": [
           {
             "variant": "a",
-            "jobId": "904600d1-68d6-4f59-bcda-fe691ec5a807",
-            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_904600d1-68d6-4f59-bcda-fe691ec5a807.mp4"
+            "jobId": "b6c6efd5-ee11-43b2-9549-d80b3188c25f",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_122203_b6c6efd5-ee11-43b2-9549-d80b3188c25f.mp4",
+            "resolution": "1080p",
+            "durationSeconds": 6,
+            "audio": false
           },
           {
             "variant": "b",
-            "jobId": "95c695ca-2fee-4d46-b605-3ff093ecddf7",
-            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105655_95c695ca-2fee-4d46-b605-3ff093ecddf7.mp4"
+            "jobId": "904600d1-68d6-4f59-bcda-fe691ec5a807",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_904600d1-68d6-4f59-bcda-fe691ec5a807.mp4",
+            "resolution": "720p",
+            "durationSeconds": 6,
+            "offSpec": "1280x720 — under this entry's 1920 targetWidth, and generated with audio on for a surface that plays muted. Kept only as a cull reference."
           }
         ],
         "keeper": null,
