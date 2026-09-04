@@ -623,7 +623,7 @@
     }
   ],
   "plannedSets": {
-    "$comment": "docs/transformation-audit.md §10.3's generation plan, the batch-D slice of it (SET A–F, 28 entries). Nothing here has been generated — candidates stays empty, keeper stays null and there is no master path until an owner works the queue on an ordinary machine (the Higgsfield CDN answers 403 to this session's egress policy, same as every other entry in this file). The fetch script cannot conjure these out of a prompt: generate it, then `node scripts/media-v3-fetch.mjs --promote <id> <url> [<url>]` records the results and moves the row on from status planned, after which the ordinary --candidates cull and default build handle it like any asset (SET F loops build through media-v3-video-fetch.mjs). `--planned` prints the queue and that whole sequence. Every still prompt already carries promptSuffix, which itself carries REDESIGN §15's \"no faces, no logos, no text\" clause. scripts/media-v3-preflight.mjs and bundled-media.test.ts both skip status: \"planned\" entries on purpose — there is no master file to check yet, and checking for one would fail every entry in this object by design.",
+    "$comment": "docs/transformation-audit.md §10.3's generation plan, the batch-D slice of it (SET A–F, 28 entries). EVERY ENTRY HAS NOW BEEN GENERATED and its result URLs are recorded in `candidates` — 56 renders, two variants each, made 2026-09-04 through the Higgsfield MCP on the same `model` and `promptSuffix` the built `assets` used. What is NOT done is everything that needs the file itself: `keeper` is still null and `status` is still \"planned\" for all 28, because the masters cannot be built in a session — the CDN holding these URLs answers 403 to the agent proxy's egress policy, which is an organization policy denial to report, not to route around. Leaving them \"planned\" is deliberate and load-bearing: `--promote` flips a row to \"promoted\", and from that moment bundled-media.test.ts demands the master exist ON DISK and media-v3-preflight.mjs demands a culled `keeper`, so promoting a row whose file nobody has downloaded turns the build red. The remaining sequence, on any machine with ordinary internet: `node scripts/media-v3-fetch.mjs --promote <id>` (no URLs needed — it falls back to the candidates recorded here), then `--candidates` to cull and set \"keeper\", then the default run to write the AVIF master and its LQIP, then point a slot at the file in /studio/site-images, because a built master is not a wired one. SET F rows are loops: build them with media-v3-video-fetch.mjs, not the still pipeline. `--planned` prints the queue and that whole sequence. These URLs are not permanent — the previous batch's were re-verified alive eight days after generation, so treat that as the working window and re-generate from the same prompts if they have expired.",
     "sets": {
       "bench-concepts": "SET A — §15.2-safe furniture as work in progress: the bench, the formwork, a slab before it becomes a table — never a finished piece presented as a delivered commission.",
       "large-art": "SET B — large-format resin art beyond the six v3 collection tiles.",
@@ -641,7 +641,18 @@
         "targetWidth": 2400,
         "alt": "A long rectangular slab of resin-and-timber tabletop clamped in formwork on a workshop bench, still unfinished, edge clamps visible",
         "prompt": "A long rectangular slab destined to become a dining table, resin poured into a live-edge timber void and still curing inside its clamped formwork on a low workshop bench, sawdust and a spirit level beside it, shot low and wide so the length of the slab reads clearly, no finished furniture, no people, no interior setting — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "f4766588-de1e-43a1-a7fa-5b2bffaf95fb",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105039_f4766588-de1e-43a1-a7fa-5b2bffaf95fb.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "4368445d-b354-42c7-81f6-264016ff3447",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105039_4368445d-b354-42c7-81f6-264016ff3447.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -653,7 +664,18 @@
         "targetWidth": 1200,
         "alt": "A round coffee-table blank in formwork with sapphire resin filling a live-edge seam, clamps at the rim",
         "prompt": "A round coffee-table blank in raw formwork, sapphire-tinted resin filling a live-edge seam down its centre, spring clamps holding the mould rim, seen close from table height, no finished legs attached, no room around it — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "e234bbd6-418b-4e77-8644-de1a0744ad04",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105349_e234bbd6-418b-4e77-8644-de1a0744ad04.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "45ea9964-8c68-4d05-9a5f-fb6376728af0",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_45ea9964-8c68-4d05-9a5f-fb6376728af0.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -665,7 +687,18 @@
         "targetWidth": 1200,
         "alt": "A small round side-table blank with one resin pour already cured pale sapphire, a second pour dammed and about to begin",
         "prompt": "A small round side-table blank on a bench, one layer of resin already cured to a pale sapphire disc, a dam of masking tape built up around its rim ready for a second pour, a jug of mixed resin waiting beside it, no finished piece in frame — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "14cd74a5-9d40-4e3f-8f30-03329f8ab1cf",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_14cd74a5-9d40-4e3f-8f30-03329f8ab1cf.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "e9bbac1e-aa69-431d-ab94-3e2dbbe2b7fb",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_e9bbac1e-aa69-431d-ab94-3e2dbbe2b7fb.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -677,7 +710,18 @@
         "targetWidth": 1800,
         "alt": "A narrow console-table plank of timber and resin clamped along a workshop bench, sawdust and a router nearby",
         "prompt": "A long narrow console-table plank, alternating bands of teak and sapphire resin, clamped edge to edge along a workshop bench under a single hanging lamp, a hand router and a bag of sawdust resting to one side, no finished legs, no interior — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "36de4af4-cfa2-4d6e-8eb2-30648878e5b7",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_36de4af4-cfa2-4d6e-8eb2-30648878e5b7.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "f9ce3c90-ea0f-4c2c-aa7f-b1272fafcb58",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_f9ce3c90-ea0f-4c2c-aa7f-b1272fafcb58.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -689,7 +733,18 @@
         "targetWidth": 1200,
         "alt": "A single chair-seat blank of curved resin and timber laminate, still in its curved mould, no finished chair frame in frame",
         "prompt": "A single curved chair-seat blank, laminated timber and a thin sapphire resin seam, still resting inside its curved plywood mould on a bench, weights holding the laminate down, no legs or frame attached, no finished chair anywhere in shot — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "ad93f1fb-2751-4668-ac81-6a9f78a77b96",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_ad93f1fb-2751-4668-ac81-6a9f78a77b96.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "943feabf-cfac-4f83-a339-2c280b7d7876",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_943feabf-cfac-4f83-a339-2c280b7d7876.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -701,7 +756,18 @@
         "targetWidth": 1200,
         "alt": "A long bench plank blank, timber with a single sapphire resin river down its length, still on trestles, unsanded edge",
         "prompt": "A long bench-seat plank, a single sapphire resin river running down the centre of the timber, resting on two sawhorse trestles, its edge still rough and unsanded, wood shavings on the floor beneath, no finished bench frame in shot — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "9c917fff-d810-4fe4-ada6-da0884af7c4f",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_9c917fff-d810-4fe4-ada6-da0884af7c4f.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "d20430b8-189c-42e5-a7f2-419ec1ec8ae2",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105348_d20430b8-189c-42e5-a7f2-419ec1ec8ae2.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -713,7 +779,18 @@
         "targetWidth": 1200,
         "alt": "A large abstract resin wall panel leaning against a bare studio wall, deep sapphire pours over a dark ground, no frame around it, no room setting",
         "prompt": "A large abstract resin wall panel leaning unmounted against a bare obsidian studio wall, deep sapphire pours swirling over a near-black ground with a single champagne vein through it, no frame, no hanging hardware, no furnished room around it — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "5a959b58-7020-4edd-a87b-61d456eb621e",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105423_5a959b58-7020-4edd-a87b-61d456eb621e.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "616eaf0b-8075-473c-9281-b8decb48ebad",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105422_616eaf0b-8075-473c-9281-b8decb48ebad.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -725,7 +802,18 @@
         "targetWidth": 1800,
         "alt": "A large resin panel built from layered pours reading as depth of water, pale sapphire at the surface deepening to obsidian",
         "prompt": "A large resin panel built from many thin layered pours, the palest sapphire at the top deepening through mid-tone blue to near-obsidian at the base, read at an angle so the layered depth is visible as if looking down through still water, no horizon, no external scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "82d8b535-12dc-4704-b89e-3702b5bced7f",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105422_82d8b535-12dc-4704-b89e-3702b5bced7f.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "f50e4450-7f27-4491-9400-15358ef36fb6",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105422_f50e4450-7f27-4491-9400-15358ef36fb6.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -737,7 +825,18 @@
         "targetWidth": 2400,
         "alt": "A very wide, low resin panel with a single soft horizontal gradient from deep ocean to a warm champagne line, no literal landscape features",
         "prompt": "A very wide, low resin panel, a single soft horizontal gradient running from deep-ocean blue at the top to a warm champagne line low in the frame, entirely abstract — no horizon features, no sun disc, no literal scenery — read as a horizon only by the gradient itself — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "99598b9a-43c0-48f4-8289-4decf062ec50",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105423_99598b9a-43c0-48f4-8289-4decf062ec50.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "1f2fcf05-9c70-480c-9210-38307114ce85",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105422_1f2fcf05-9c70-480c-9210-38307114ce85.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -749,7 +848,18 @@
         "targetWidth": 900,
         "alt": "A tight square crop of a large resin pour, obsidian and sapphire swirling around a single champagne thread",
         "prompt": "A tight square macro of a large abstract resin pour, obsidian and deep sapphire swirling together around one fine champagne-gold thread, shot close enough that no edge of the panel is visible, pure abstract surface — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "0f17b3c9-0760-46bc-926a-942adef77f20",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105422_0f17b3c9-0760-46bc-926a-942adef77f20.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "2c9b3342-36c9-4bad-ad41-dfed745a1e91",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105422_2c9b3342-36c9-4bad-ad41-dfed745a1e91.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -761,7 +871,18 @@
         "targetWidth": 1800,
         "alt": "A neutral, unstyled living room in muted grey and warm wood tones with one large resin wall panel as the only colour",
         "prompt": "A quiet, unstyled living room — a low sofa, a plain rug, muted grey walls, warm wood floor — with one large abstract resin wall panel as the single point of colour in an otherwise neutral, unstyled room; walls, furniture and floor kept to muted greys and warm neutrals so the resin panel is the only saturated colour in the frame; captioned as a concept rendering, not a delivered installation — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "f55cebfa-0546-49c3-ba9b-f5698a3640f8",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105423_f55cebfa-0546-49c3-ba9b-f5698a3640f8.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "2c123620-de85-4473-8359-78495d1f504d",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105423_2c123620-de85-4473-8359-78495d1f504d.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -773,7 +894,18 @@
         "targetWidth": 1800,
         "alt": "A neutral, unstyled dining room in muted tones with one large resin wall panel as the only colour",
         "prompt": "A plain dining room — a bare table, simple chairs, neutral walls — with one large abstract resin wall panel as the single point of colour in an otherwise neutral, unstyled room; walls, furniture and floor kept to muted greys and warm neutrals so the resin panel is the only saturated colour in the frame; captioned as a concept rendering, not a delivered installation — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "cbc1dfcc-0c46-4fcf-a575-d05029a8bfbc",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_cbc1dfcc-0c46-4fcf-a575-d05029a8bfbc.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "93fad1b4-a80b-47b3-ac12-a8e984b96ea3",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_93fad1b4-a80b-47b3-ac12-a8e984b96ea3.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -785,7 +917,18 @@
         "targetWidth": 1800,
         "alt": "A neutral, unstyled study in muted tones with one large resin wall panel as the only colour",
         "prompt": "A spare study — a plain desk, one chair, a bare bookshelf, neutral walls — with one large abstract resin wall panel as the single point of colour in an otherwise neutral, unstyled room; walls, furniture and floor kept to muted greys and warm neutrals so the resin panel is the only saturated colour in the frame; captioned as a concept rendering, not a delivered installation — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "cf830d55-e0e2-4676-814c-8bd0cef279cb",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_cf830d55-e0e2-4676-814c-8bd0cef279cb.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "a6cdabea-2adf-400d-aaa8-2be77e728577",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_110044_a6cdabea-2adf-400d-aaa8-2be77e728577.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -797,7 +940,18 @@
         "targetWidth": 1800,
         "alt": "A neutral, unstyled bedroom in muted tones with one large resin wall panel as the only colour",
         "prompt": "A calm, unstyled bedroom — a plain bed, muted linen, neutral walls — with one large abstract resin wall panel as the single point of colour in an otherwise neutral, unstyled room; walls, furniture and floor kept to muted greys and warm neutrals so the resin panel is the only saturated colour in the frame; captioned as a concept rendering, not a delivered installation — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "35d88d74-85b9-4eb8-a72e-71975d0784b4",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_110044_35d88d74-85b9-4eb8-a72e-71975d0784b4.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "437fe62e-b6f4-4add-9028-fc5e5f57bc88",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_437fe62e-b6f4-4add-9028-fc5e5f57bc88.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -809,7 +963,18 @@
         "targetWidth": 1200,
         "alt": "A hand-planed timber slab being checked for flatness on a workshop bench, shavings curling off it, no resin yet",
         "prompt": "A rough-sawn timber slab clamped to a workshop bench, a hand plane mid-stroke along its edge, pale shavings curling off and scattered beneath, the slab's live edge bare of resin, a straightedge laid across it to check for flatness — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "cf03b00e-aea5-4477-b900-79ce078b3fe0",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_cf03b00e-aea5-4477-b900-79ce078b3fe0.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "f6f5581d-e461-4e99-99cf-df9c560ff96e",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_f6f5581d-e461-4e99-99cf-df9c560ff96e.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -821,7 +986,18 @@
         "targetWidth": 1200,
         "alt": "A glass jug of clear resin being stirred with a stick of deep sapphire pigment swirling through it, mid-blend",
         "prompt": "A glass mixing jug of clear epoxy resin on a scale, a stir stick lifting a ribbon of deep sapphire pigment paste through the clear liquid mid-blend, the swirl only half-dissolved, a second small pot of champagne-gold mica powder waiting beside it — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "29be3b34-be93-43bc-a0a2-f1c5f27d1b46",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_29be3b34-be93-43bc-a0a2-f1c5f27d1b46.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "3ea2a0fc-d4cf-4064-baa7-691081e25373",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105458_3ea2a0fc-d4cf-4064-baa7-691081e25373.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -833,7 +1009,18 @@
         "targetWidth": 1200,
         "alt": "A wet-sanded resin surface catching a low light, a sanding block resting on it, a thin sheen of water across the surface",
         "prompt": "A cured resin tabletop mid wet-sand, a sanding block resting at an angle on its surface, a thin film of water catching the single soft key light and showing the surface's slowly emerging gloss against duller sanded patches nearby — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "19d33f63-e469-4f15-bd96-bdd1fed17ac4",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_110116_19d33f63-e469-4f15-bd96-bdd1fed17ac4.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "eea68767-0b52-420a-b2e9-058bc02aa708",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105522_eea68767-0b52-420a-b2e9-058bc02aa708.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -845,7 +1032,18 @@
         "targetWidth": 1200,
         "alt": "A polishing pad mid-pass across a resin surface, a mirror-bright arc trailing behind it against a duller ground",
         "prompt": "A foam polishing pad mid-pass across a large resin surface, a mirror-bright arc of finished gloss trailing behind it against the still-matte resin ahead of it, the reflected key light stretched along the polished band — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "6f0139ec-619d-4226-8bcc-4149878f0bf3",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105522_6f0139ec-619d-4226-8bcc-4149878f0bf3.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "ee7397f2-94d9-486d-85c5-f5bf1f971ad7",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_110044_ee7397f2-94d9-486d-85c5-f5bf1f971ad7.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -857,7 +1055,18 @@
         "targetWidth": 1200,
         "alt": "A finished resin surface tilted under a raking light to check for a flat, even gloss, a hand's edge just entering frame",
         "prompt": "A finished resin tabletop tilted up at an angle under a single raking key light so every ripple in the gloss would show, the surface reading perfectly flat and even, the edge of a hand just entering the bottom of frame to hold the angle, no face — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "274b07c9-90c3-477b-8c69-da364a5be823",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105522_274b07c9-90c3-477b-8c69-da364a5be823.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "0c467b20-ef29-4e19-92fe-4234e2cf5282",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105522_0c467b20-ef29-4e19-92fe-4234e2cf5282.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -869,7 +1078,18 @@
         "targetWidth": 1080,
         "alt": "A vertical crop of the homepage pour hero, keeping the ribbon of resin centred in a tall phone frame",
         "prompt": "Deep sapphire resin pouring in one unbroken ribbon into a shallow round mould against a matte obsidian backdrop, reframed to a tall vertical crop keeping the ribbon and the mould centred — a 9:16 vertical reframe of an existing full-bleed hero, keeping the same subject, palette and light as the horizontal master so the crop reads as the same photograph, not a new scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "a8d411a6-0453-40b2-bfbb-281734967d18",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_110044_a8d411a6-0453-40b2-bfbb-281734967d18.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "eb765534-2824-4286-90dc-9b0bbab6b209",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105522_eb765534-2824-4286-90dc-9b0bbab6b209.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -881,7 +1101,18 @@
         "targetWidth": 1080,
         "alt": "A vertical crop of the About hero's macro texture band, kept centred so no edge of the texture is lost",
         "prompt": "A close macro texture of poured resin catching a single soft key light, reframed to a tall vertical band with the texture's brightest arc kept centred — a 9:16 vertical reframe of an existing full-bleed hero, keeping the same subject, palette and light as the horizontal master so the crop reads as the same photograph, not a new scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "8a6e3f5a-d502-4405-952a-21420be84f2d",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_8a6e3f5a-d502-4405-952a-21420be84f2d.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "ba154716-4d34-4392-b1a1-d5c90e34e6c1",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_ba154716-4d34-4392-b1a1-d5c90e34e6c1.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -893,7 +1124,18 @@
         "targetWidth": 1080,
         "alt": "A vertical crop of the large-format hero's studio-interior scene, the work bench kept in the lower two-thirds",
         "prompt": "A dark studio interior with a work bench of curing large-format moulds under one warm lamp, reframed to a tall vertical crop with the bench kept in the lower two-thirds of frame — a 9:16 vertical reframe of an existing full-bleed hero, keeping the same subject, palette and light as the horizontal master so the crop reads as the same photograph, not a new scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "547d8387-8205-45ab-8517-0d0165806a7b",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_547d8387-8205-45ab-8517-0d0165806a7b.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "b368607c-2ff1-4fc7-83c7-3ff89424b907",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_b368607c-2ff1-4fc7-83c7-3ff89424b907.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -905,7 +1147,18 @@
         "targetWidth": 1080,
         "alt": "A vertical crop of the process hero poster's pour frame, the ribbon of resin kept centred",
         "prompt": "A single frame of sapphire resin mid-pour into a shallow mould against a matte black backdrop, reframed to a tall vertical crop keeping the pouring ribbon centred — a 9:16 vertical reframe of an existing full-bleed hero, keeping the same subject, palette and light as the horizontal master so the crop reads as the same photograph, not a new scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "fdda2a71-676c-4722-aa7d-f86c1f255d53",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_fdda2a71-676c-4722-aa7d-f86c1f255d53.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "f3acd574-2e6e-4230-be06-fd482d98cf92",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_f3acd574-2e6e-4230-be06-fd482d98cf92.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -917,7 +1170,18 @@
         "targetWidth": 1080,
         "alt": "A vertical crop of the workshops hero's bench scene, the shared table kept centred",
         "prompt": "A long shared workshop table set with pour cups and moulds under warm pendant light, reframed to a tall vertical crop keeping the near end of the table centred — a 9:16 vertical reframe of an existing full-bleed hero, keeping the same subject, palette and light as the horizontal master so the crop reads as the same photograph, not a new scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "2313ce9d-80b6-45bf-9f50-1b9a20140d3d",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_2313ce9d-80b6-45bf-9f50-1b9a20140d3d.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "fe222bd6-e74f-4495-8d86-019940565b06",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_fe222bd6-e74f-4495-8d86-019940565b06.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -929,7 +1193,18 @@
         "targetWidth": 1080,
         "alt": "A vertical crop of the portfolio hero's macro texture band, kept centred so no edge of the texture is lost",
         "prompt": "A wide macro texture band of poured resin under a single soft key light, reframed to a tall vertical crop with the texture's brightest region kept centred — a 9:16 vertical reframe of an existing full-bleed hero, keeping the same subject, palette and light as the horizontal master so the crop reads as the same photograph, not a new scene — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "03ce8334-07e9-44b5-8f20-5331b3093a82",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_03ce8334-07e9-44b5-8f20-5331b3093a82.png"
+          },
+          {
+            "variant": "b",
+            "jobId": "3aa0b9ac-4f83-4765-9a67-37704aee769f",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105554_3aa0b9ac-4f83-4765-9a67-37704aee769f.png"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -941,7 +1216,18 @@
         "targetWidth": 1920,
         "alt": "Deep sapphire resin pouring in one unbroken ribbon into a wide shallow mould against a matte black backdrop, seen from slightly above",
         "prompt": "Extreme slow-motion macro of sapphire resin pouring in one unbroken ribbon into a wide shallow mould, shot from a slightly higher camera angle than the existing process-pour clip for variety, matte black backdrop, locked-off camera, no hands, the pool level barely changing so the loop closes seamlessly — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "e5af8152-7bfc-41b9-ac2e-e0ae63943856",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_e5af8152-7bfc-41b9-ac2e-e0ae63943856.mp4"
+          },
+          {
+            "variant": "b",
+            "jobId": "7d71c3d8-0626-47d8-ae59-f8e2b245e5a5",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_7d71c3d8-0626-47d8-ae59-f8e2b245e5a5.mp4"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -953,7 +1239,18 @@
         "targetWidth": 1920,
         "alt": "Champagne-gold leaf settling onto a wet sapphire resin surface, fine cracks of gold spreading across the pool",
         "prompt": "Extreme slow-motion macro of champagne-gold leaf settling onto a wet sapphire resin surface, a single sheet drifting down and adhering as fine cracks of gold spread across the pool, matte black backdrop, locked-off camera, no hands, loopable from a near-still final second — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "db94fcf1-b131-4e35-a697-5a6b69814c4a",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_db94fcf1-b131-4e35-a697-5a6b69814c4a.mp4"
+          },
+          {
+            "variant": "b",
+            "jobId": "0b1d415a-64eb-40cc-b855-77d26404d839",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_0b1d415a-64eb-40cc-b855-77d26404d839.mp4"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       },
@@ -965,7 +1262,18 @@
         "targetWidth": 1920,
         "alt": "A long workshop bench set with pour cups, pigment jars and curing moulds under warm pendant light, seen in a slow dolly move",
         "prompt": "A slow, smooth dolly move along a long workshop bench set with pour cups, pigment jars and curing moulds under warm pendant light, camera at table height moving left to right at a steady pace, no people, the far end of the bench softly out of focus, first and last frame close enough in composition to loop — palette limited to deep ocean #08283A, obsidian #080A0E, sapphire #164E6B and muted champagne gold #B89B63; single soft directional key with warm rim fill; matte surfaces, no plastic sheen; cool shadows; editorial product-photography realism; shallow depth of field; no text, no logos, no watermarks, no faces.",
-        "candidates": [],
+        "candidates": [
+          {
+            "variant": "a",
+            "jobId": "904600d1-68d6-4f59-bcda-fe691ec5a807",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105654_904600d1-68d6-4f59-bcda-fe691ec5a807.mp4"
+          },
+          {
+            "variant": "b",
+            "jobId": "95c695ca-2fee-4d46-b605-3ff093ecddf7",
+            "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3DhoW2nhI28P4KJAzGKTvXSsp9j/hf_20260904_105655_95c695ca-2fee-4d46-b605-3ff093ecddf7.mp4"
+          }
+        ],
         "keeper": null,
         "status": "planned"
       }

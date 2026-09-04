@@ -350,8 +350,9 @@ function listPlanned() {
 
   const tally = tallyPlanned(entries);
   console.log(
-    `\n${entries.length} entries: ${tally.planned} planned · ${tally.incomplete} incomplete · ` +
-      `${tally.unculled} awaiting a cull · ${tally.ready} ready to build.\n`,
+    `\n${entries.length} entries: ${tally.planned} planned · ${tally.generated} generated · ` +
+      `${tally.incomplete} incomplete · ${tally.unculled} awaiting a cull · ` +
+      `${tally.ready} ready to build.\n`,
   );
   console.log(SEQUENCE);
 }

@@ -94,9 +94,16 @@ export function masterPaths(entry) {
 /**
  * One row's place in the queue, and the sentence a script prints for it.
  *
- * Four states, and every one of them is a thing the owner can act on:
- * `planned` needs a generation, `incomplete` a promote that carried URLs,
- * `unculled` a keeper, `ready` nothing at all.
+ * Five states, and every one of them is a thing the owner can act on:
+ * `planned` needs a generation, `generated` a promote, `incomplete` a promote
+ * that carried URLs, `unculled` a keeper, `ready` nothing at all.
+ *
+ * `generated` is the state a row sits in once it has been rendered but the
+ * master has not been built — which is where all 28 batch-D rows are, because
+ * generating them needs only the API and building them needs the CDN the agent
+ * proxy refuses. Before it existed this function read `status` alone and told
+ * an owner holding 56 finished renders that every row "needs a generation run",
+ * which is the one instruction that costs money to follow twice.
  *
  * @param {PlannedEntry} entry
  */
@@ -106,7 +113,15 @@ export function describePlanned(entry) {
   const base = { id: entry.id, set: entry.set, kind };
 
   if (isPlanned(entry)) {
-    return { ...base, state: PLANNED, needs: "a generation run — no candidate URLs recorded" };
+    return candidates.length > 0
+      ? {
+          ...base,
+          state: "generated",
+          needs:
+            `a promote — ${candidates.length} candidate URL(s) already recorded: ` +
+            `media-v3-fetch.mjs --promote ${entry.id}`,
+        }
+      : { ...base, state: PLANNED, needs: "a generation run — no candidate URLs recorded" };
   }
   if (candidates.length === 0) {
     return {
@@ -141,7 +156,7 @@ export function describePlanned(entry) {
  * @param {PlannedEntry[]} entries
  */
 export function tallyPlanned(entries) {
-  const tally = { planned: 0, incomplete: 0, unculled: 0, ready: 0 };
+  const tally = { planned: 0, generated: 0, incomplete: 0, unculled: 0, ready: 0 };
   for (const entry of entries) tally[describePlanned(entry).state] += 1;
   return tally;
 }
