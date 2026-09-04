@@ -405,35 +405,51 @@
     "hero": {
       "eyebrow": "our process",
       "headline": "From idea to heirloom.",
-      "lead": "Six unhurried steps between your first message and the piece in your hands. Here is exactly how a Rivya Living Art commission comes together — and how long it honestly takes."
+      "lead": "Ten unhurried steps between your first message and the piece in your hands. Here is exactly how a Rivya Living Art commission comes together — and how long it honestly takes."
     },
     "timeline": {
-      "heading": "Six steps, no shortcuts",
-      "step1Title": "The brief",
-      "step1Copy": "It starts with a WhatsApp conversation. You share the idea, reference photos, the sizes you're imagining and the budget you're comfortable with — and we ask the questions that shape the design.",
-      "step2Title": "Design & mock-up",
-      "step2Copy": "We translate the brief into sketches and, for 3D-printed work, digital previews. Nothing is poured until you've approved the design — every detail agreed before resin ever meets the mould.",
-      "step3Title": "Materials",
-      "step3Copy": "Art-grade epoxy resin, mineral pigments, preserved florals and selected wood. If the piece holds your own flowers or keepsakes, we prepare and preserve them first, with the care they deserve.",
-      "step4Title": "The pour",
-      "step4Copy": "Resin goes in layer by layer, each pour left to cure for 24–72 hours before the next. Layering is what gives a piece its depth — and exactly why it can never be hurried.",
-      "step5Title": "Finishing",
-      "step5Copy": "Once fully cured, the piece is sanded from 400 up to 3000 grit, then polished until it reads like glass. Hardware, hooks or stands are fitted and checked by hand.",
-      "step6Title": "Quality & dispatch",
-      "step6Copy": "You receive photos of the finished piece for approval before it ships. Then it's packed fragile-proof and sent with tracked shipping, anywhere in India.",
+      "heading": "Ten steps, no shortcuts",
+      "step1Title": "Concept",
+      "step1Copy": "It starts with a WhatsApp conversation. You share the idea, reference photos, the sizes you're imagining and the budget you're comfortable with — and we ask the questions that shape the design, sketching it out before anything is poured.",
+      "step2Title": "Material selection",
+      "step2Copy": "Art-grade epoxy resin, mineral pigments, preserved florals and seasoned wood are matched to the brief — and, for a structural base, a 3D-printed form. If the piece holds your own flowers or keepsakes, we prepare and preserve them at this stage.",
+      "step3Title": "Wood preparation",
+      "step3Copy": "Seasoned teak and river wood is planed, sanded and sealed before it ever meets resin, so the grain is ready to hold a pour without warping or bubbling at the join.",
+      "step4Title": "Resin composition",
+      "step4Copy": "Pigment is mixed into the resin in small batches and tested against the light before a full pour — gold leaf and preserved botanicals are set in only once the colour is right.",
+      "step5Title": "Casting",
+      "step5Copy": "The composed resin is poured into the mould layer by layer, each one levelled and worked with a precision heat gun to clear air before it begins to set.",
+      "step6Title": "Curing",
+      "step6Copy": "Each poured layer cures for 24–72 hours before the next goes in, and the finished piece rests under controlled conditions until it is fully hardened — resin rewards patience, not speed.",
       "eyebrow": "how a piece is made",
       "step1Meta": "On WhatsApp",
-      "step2Meta": "Nothing is poured before you approve",
-      "step3Meta": "Art-grade epoxy",
-      "step4Meta": "24–72 hours per layer",
-      "step5Meta": "400 → 3000 grit",
-      "step6Meta": "Tracked, anywhere in India",
+      "step2Meta": "Art-grade epoxy",
+      "step3Meta": "By hand",
+      "step4Meta": "Nothing is poured before you approve",
+      "step5Meta": "Layer by layer",
+      "step6Meta": "24–72 hours per layer",
       "step1Alt": "The studio bench at the start of a commission",
       "step2Alt": "An FDM print head laying translucent blue filament onto the build plate",
       "step3Alt": "Gold leaf flakes suspended in settling blue resin",
       "step4Alt": "Deep sapphire resin mid-pour, spreading across a round mould",
       "step5Alt": "Gloved hands working blue resin with a precision heat gun",
-      "step6Alt": "Finished resin pieces arranged in a lined gift box"
+      "step6Alt": "Finished resin pieces arranged in a lined gift box",
+      "step7Title": "Surface refinement",
+      "step7Copy": "Once fully cured, the piece is sanded from 400 up to 3000 grit, then polished until the surface reads like glass and the depth beneath it is fully clear.",
+      "step7Meta": "400 → 3000 grit",
+      "step7Alt": "Water beading on a mirror-polished resin surface, gold flakes suspended beneath",
+      "step8Title": "Hand finishing",
+      "step8Copy": "Hardware, hooks or stands are fitted and checked by hand, and every edge is gone over once more before a piece is called finished.",
+      "step8Meta": "Fitted by hand",
+      "step8Alt": "A champagne gold vein running through a hand-finished resin surface",
+      "step9Title": "Quality inspection",
+      "step9Copy": "The finished piece is checked edge to edge against the brief, and you receive photographs of it for your own approval before anything ships.",
+      "step9Meta": "Photos before it ships",
+      "step9Alt": "The bevelled edge of a cured epoxy slab catching the light",
+      "step10Title": "Delivery",
+      "step10Copy": "Once approved, the piece is packed fragile-proof and sent with tracked shipping, anywhere in India. The studio does not offer installation — delivery is where the commission ends.",
+      "step10Meta": "Tracked, anywhere in India",
+      "step10Alt": "A finished resin-and-teak serving board and bowl, ready to leave the studio"
     },
     "materials": {
       "heading": "What your piece is made of",
@@ -1147,7 +1163,12 @@
     "emptyStatement": "Nothing filed under that yet.",
     "emptyDirection": "The journal is written between pours — try another topic, or read everything.",
     "emptyStatementUnfiltered": "The journal launches soon.",
-    "emptyDirectionUnfiltered": "We are writing the first entries between pours. Check back shortly."
+    "emptyDirectionUnfiltered": "We are writing the first entries between pours. Check back shortly.",
+    "relatedCollections": {
+      "eyebrow": "explore further",
+      "heading": "Shop the collection",
+      "cardEyebrow": "Collection"
+    }
   },
   "Portfolio": {
     "meta": {
@@ -1636,5 +1657,9 @@
     "next": "Next",
     "close": "Close",
     "of": "of"
+  },
+  "AccordionGallery": {
+    "expand": "Expand",
+    "collapse": "Collapse"
   }
 }

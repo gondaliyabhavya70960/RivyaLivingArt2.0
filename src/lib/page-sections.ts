@@ -24,9 +24,27 @@ export const SECTION_PAGES = [
   "custom-order",
   "contact",
   "workshops",
+  "process-steps",
+  "materials",
 ] as const;
 
 export type SectionPageKey = (typeof SECTION_PAGES)[number];
+
+/**
+ * `SECTION_PAGES` entries that are not a routable page in their own right —
+ * a finer-grained arrangement living INSIDE an existing page, reached from
+ * its own Studio screen (`/studio/process`, `/studio/materials`) rather than
+ * through the page-level picker. `"process-steps"` reorders the ten cards
+ * inside `process`'s own `stages` band; `"materials"` reorders the four
+ * material cards shared by `process`'s `materials` band and `about`'s.
+ * Neither carries an `h1` — the page around it already has one — so the two
+ * h1 invariants below (every OTHER page has exactly one, and it can never be
+ * hidden) do not apply to these.
+ */
+export const SUBLIST_PAGES: ReadonlySet<SectionPageKey> = new Set([
+  "process-steps",
+  "materials",
+]);
 
 export type SectionDef = {
   /** Stable key. Also the DOM id, the cure-line anchor and the manifest key. */
@@ -410,7 +428,7 @@ const PROCESS: readonly SectionDef[] = [
   },
   {
     key: "stages",
-    label: "The six stages",
+    label: "The ten stages",
     description: "Idea to delivery, one numbered stage at a time.",
     hideable: true,
     movable: true,
@@ -443,6 +461,203 @@ const PROCESS: readonly SectionDef[] = [
     movable: false,
     copyPrefixes: ["Process.cta"],
     imageKeys: [],
+  },
+];
+
+/**
+ * The ten process steps, as their own arrangeable list — the `stages` band
+ * above renders whichever of these are visible, in this order, and the cure
+ * line on `/process` regenerates from the same resolved list. One row per
+ * `PROCESS_STEPS` entry (`src/lib/process-steps.ts`) by construction; a test
+ * pins the two counts together.
+ *
+ * `step1` and `step10` spell out their four copy keys explicitly rather than
+ * a `"Process.timeline.step1"` / `"Process.timeline.step10"` prefix — a
+ * prefix match would let `"step1"` also claim every `step10*` key. `step2`
+ * through `step9` have no such collision, so a single prefix is enough.
+ */
+const PROCESS_STEPS_LIST: readonly SectionDef[] = [
+  {
+    key: "step1",
+    label: "01 · Concept",
+    description: "The opening WhatsApp conversation and the brief.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: [
+      "Process.timeline.step1Title",
+      "Process.timeline.step1Copy",
+      "Process.timeline.step1Meta",
+      "Process.timeline.step1Alt",
+    ],
+    imageKeys: ["process.step1"],
+  },
+  {
+    key: "step2",
+    label: "02 · Material selection",
+    description:
+      "Choosing the resin, wood, pigment and any preserved botanicals.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step2"],
+    imageKeys: ["process.step2"],
+  },
+  {
+    key: "step3",
+    label: "03 · Wood preparation",
+    description:
+      "Planing, sanding and sealing the wood before resin ever meets it.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step3"],
+    imageKeys: ["process.step3"],
+  },
+  {
+    key: "step4",
+    label: "04 · Resin composition",
+    description: "Mixing and testing pigment before a full pour.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step4"],
+    imageKeys: ["process.step4"],
+  },
+  {
+    key: "step5",
+    label: "05 · Casting",
+    description: "Pouring the resin into the mould, layer by layer.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step5"],
+    imageKeys: ["process.step5"],
+  },
+  {
+    key: "step6",
+    label: "06 · Curing",
+    description: "Each layer left to cure before the next goes in.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step6"],
+    imageKeys: ["process.step6"],
+  },
+  {
+    key: "step7",
+    label: "07 · Surface refinement",
+    description: "Sanding from 400 up to 3000 grit, then polishing.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step7"],
+    imageKeys: ["process.step7"],
+  },
+  {
+    key: "step8",
+    label: "08 · Hand finishing",
+    description: "Hardware fitted and every edge checked by hand.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step8"],
+    imageKeys: ["process.step8"],
+  },
+  {
+    key: "step9",
+    label: "09 · Quality inspection",
+    description: "Checked against the brief before photographs go to you.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Process.timeline.step9"],
+    imageKeys: ["process.step9"],
+  },
+  {
+    key: "step10",
+    label: "10 · Delivery",
+    description: "Packed fragile-proof and sent with tracked shipping.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: [
+      "Process.timeline.step10Title",
+      "Process.timeline.step10Copy",
+      "Process.timeline.step10Meta",
+      "Process.timeline.step10Alt",
+    ],
+    imageKeys: ["process.step10"],
+  },
+];
+
+/**
+ * The four materials, as their own arrangeable list — shared by `process`'s
+ * `materials` band and `about`'s. Each row owns the one copy pair Process
+ * carries plus the alt text, and every picture of that material on either
+ * page: `process.material<n>` and the About page's frame + macro pair.
+ * Reordering or hiding a material here moves or hides it on BOTH pages —
+ * §11.4 already treats Process as the canonical description of what a piece
+ * is made of, and this is that same claim applied to arrangement.
+ */
+const MATERIALS_LIST: readonly SectionDef[] = [
+  {
+    key: "m1",
+    label: "Material 1",
+    description: "Epoxy resin — shown on Process and About.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: [
+      "Process.materials.m1Title",
+      "Process.materials.m1Copy",
+      "Process.materials.alt1",
+    ],
+    imageKeys: [
+      "process.material1",
+      "about.material1.image",
+      "about.material1.macro",
+    ],
+  },
+  {
+    key: "m2",
+    label: "Material 2",
+    description: "Teak & river wood — shown on Process and About.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: [
+      "Process.materials.m2Title",
+      "Process.materials.m2Copy",
+      "Process.materials.alt2",
+    ],
+    imageKeys: [
+      "process.material2",
+      "about.material2.image",
+      "about.material2.macro",
+    ],
+  },
+  {
+    key: "m3",
+    label: "Material 3",
+    description: "Mineral pigments — shown on Process and About.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: [
+      "Process.materials.m3Title",
+      "Process.materials.m3Copy",
+      "Process.materials.alt3",
+    ],
+    imageKeys: [
+      "process.material3",
+      "about.material3.image",
+      "about.material3.macro",
+    ],
+  },
+  {
+    key: "m4",
+    label: "Material 4",
+    description: "Preserved botanicals — shown on Process and About.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: [
+      "Process.materials.m4Title",
+      "Process.materials.m4Copy",
+      "Process.materials.alt4",
+    ],
+    imageKeys: [
+      "process.material4",
+      "about.material4.image",
+      "about.material4.macro",
+    ],
   },
 ];
 
@@ -825,6 +1040,8 @@ export const PAGE_SECTIONS: Record<SectionPageKey, readonly SectionDef[]> = {
   "custom-order": CUSTOM_ORDER,
   contact: CONTACT,
   workshops: WORKSHOPS,
+  "process-steps": PROCESS_STEPS_LIST,
+  materials: MATERIALS_LIST,
 };
 
 /** What the owner is arranging, in their words — the studio screen's tabs. */
@@ -839,6 +1056,11 @@ export const PAGE_SECTION_LABELS: Record<
   "custom-order": { title: "Bespoke", path: "/custom-order" },
   contact: { title: "Contact", path: "/contact" },
   workshops: { title: "Workshops", path: "/workshops" },
+  // Fragment paths — never a page of their own. `pageKeyForPath` matches
+  // paths exactly, so `/process#stages` and `/process#materials` never
+  // collide with the `process` entry above.
+  "process-steps": { title: "Process steps", path: "/process#stages" },
+  materials: { title: "Materials", path: "/process#materials" },
 };
 
 export function isSectionPageKey(value: string): value is SectionPageKey {
@@ -940,6 +1162,14 @@ export function describeArrangementProblem(
   const unhideable = sections.find((s) => !s.hideable && !s.visible);
   if (unhideable) {
     return `${unhideable.label} is part of the page's structure and cannot be hidden.`;
+  }
+
+  // Every other list carries at least one unhideable section (the hero, at
+  // minimum), so this can only ever fire for a list where every entry is
+  // individually hideable — the ten process steps, the four materials. One
+  // of those is allowed to lose nine members, never all ten.
+  if (sections.length > 0 && shown.length === 0) {
+    return "Every section here would be hidden, and the page cannot lose all of them. Leave at least one showing.";
   }
 
   const darkShown = shown.filter((s) => s.dark);

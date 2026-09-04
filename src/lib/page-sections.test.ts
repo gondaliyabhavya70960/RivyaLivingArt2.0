@@ -8,10 +8,12 @@ import {
   applyReorder,
   PAGE_SECTION_LABELS,
   SECTION_PAGES,
+  SUBLIST_PAGES,
   describeArrangementProblem,
   isSectionPageKey,
   sectionDef,
 } from "./page-sections";
+import { PROCESS_STEP_COUNT } from "./process-steps";
 
 /** The shipped homepage, in registry order, with everything showing. */
 function shipped() {
@@ -33,21 +35,28 @@ describe("the section manifest", () => {
     }
   });
 
-  it("gives every page exactly one section carrying the h1", () => {
+  it("gives every routable page exactly one section carrying the h1", () => {
     // REDESIGN.md Part 19.1, and `scripts/redesign-audit.mjs` fails on it. Two
     // sections claiming the heading would let an owner hide the wrong one.
+    // `SUBLIST_PAGES` are arrangements INSIDE a page, not a page of their
+    // own — the page around them already has an h1, so they carry none.
     for (const page of SECTION_PAGES) {
       const owners = PAGE_SECTIONS[page].filter((s) => s.ownsH1);
-      expect(owners.length, page).toBe(1);
+      expect(owners.length, page).toBe(SUBLIST_PAGES.has(page) ? 0 : 1);
     }
   });
 
   it("never lets the h1 section be hidden or moved", () => {
     for (const page of SECTION_PAGES) {
+      if (SUBLIST_PAGES.has(page)) continue;
       const owner = PAGE_SECTIONS[page].find((s) => s.ownsH1);
       expect(owner?.hideable).toBe(false);
       expect(owner?.movable).toBe(false);
     }
+  });
+
+  it("keeps the process-steps registry in step with PROCESS_STEPS", () => {
+    expect(PAGE_SECTIONS["process-steps"].length).toBe(PROCESS_STEP_COUNT);
   });
 
   it("ships an arrangement its own validator accepts", () => {
@@ -225,6 +234,23 @@ describe("the arrangement guardrails", () => {
 
   it("allows an empty page rather than throwing on one", () => {
     expect(describeArrangementProblem([])).toBeNull();
+  });
+
+  it("refuses to hide every one of the ten process steps", () => {
+    const allHidden = PAGE_SECTIONS["process-steps"].map((s) => ({
+      ...s,
+      visible: false,
+    }));
+    expect(describeArrangementProblem(allHidden)).toMatch(/cannot lose all/);
+  });
+
+  it("still refuses a fourth dark band once the sections list is long", () => {
+    // The "hide everything" guard above must not fire just because SOME
+    // sections are hidden — only when NONE are left showing.
+    const sections = shipped().map((s) =>
+      s.key === "why" ? { ...s, visible: false } : s,
+    );
+    expect(describeArrangementProblem(sections)).toBeNull();
   });
 });
 

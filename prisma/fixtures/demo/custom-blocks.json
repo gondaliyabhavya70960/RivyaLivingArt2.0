@@ -100,20 +100,6 @@
     "translations": null
   },
   {
-    "id": "demo-block-lander-finalcta",
-    "pageId": "demo-lander",
-    "type": "finalCta",
-    "order": 5,
-    "data": {
-      "heading": "Ready to start?",
-      "body": "Every order finalises on WhatsApp — no payment gateway, no account.",
-      "ctaLabel": "Order on WhatsApp",
-      "ctaHref": "",
-      "whatsapp": true
-    },
-    "translations": null
-  },
-  {
     "id": "demo-block-002-hero",
     "pageId": "demo-page-002",
     "type": "hero",
@@ -174,6 +160,178 @@
       "body": "",
       "ctaLabel": "",
       "ctaHref": ""
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-masonry",
+    "pageId": "demo-lander",
+    "type": "masonryGallery",
+    "order": 5,
+    "data": {
+      "heading": "From the bench (concept pictures)",
+      "images": [
+        {
+          "url": "/media/v3/story-pour.avif",
+          "alt": "Resin poured over a prepared teak slab, the first layer finding its level.",
+          "caption": "Resin poured over a prepared teak slab"
+        },
+        {
+          "url": "/media/v3/story-gild.avif",
+          "alt": "Gold leaf laid into a cured seam by hand.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/story-cure.avif",
+          "alt": "A slab resting under cover while a layer cures.",
+          "caption": "A slab resting under cover while a layer cures."
+        },
+        {
+          "url": "/media/v3/story-polish.avif",
+          "alt": "Wet-sanding a cured surface toward its final polish.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/macro-teak.avif",
+          "alt": "Teak grain under a clear resin skin, in close-up.",
+          "caption": "Teak grain under a clear resin skin"
+        },
+        {
+          "url": "/media/v3/macro-pigment.avif",
+          "alt": "Pigment blooming through a poured layer.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/macro-flower.avif",
+          "alt": "A preserved flower held in clear resin.",
+          "caption": "A preserved flower held in clear resin."
+        }
+      ],
+      "spacing": "standard"
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-bento",
+    "pageId": "demo-lander",
+    "type": "bentoGallery",
+    "order": 6,
+    "data": {
+      "heading": "Six frames of one pour",
+      "images": [
+        {
+          "url": "/media/v3/story-pour.avif",
+          "alt": "Resin poured over a prepared teak slab, the first layer finding its level.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/story-gild.avif",
+          "alt": "Gold leaf laid into a cured seam by hand.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/story-cure.avif",
+          "alt": "A slab resting under cover while a layer cures.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/story-polish.avif",
+          "alt": "Wet-sanding a cured surface toward its final polish.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/macro-teak.avif",
+          "alt": "Teak grain under a clear resin skin, in close-up.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/macro-pigment.avif",
+          "alt": "Pigment blooming through a poured layer.",
+          "caption": ""
+        }
+      ],
+      "spacing": "compact"
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-videostory",
+    "pageId": "demo-lander",
+    "type": "videoStory",
+    "order": 7,
+    "data": {
+      "videoUrl": "/media/v3/process-pour.mp4",
+      "posterUrl": "/media/v3/process-pour-poster.avif",
+      "imageAlt": "Resin being poured across a slab, from the studio's process film.",
+      "heading": "Ten seconds of a pour",
+      "body": "The film is a demo fixture — the studio's own process clip, shown here so the video-and-words block has something real to play.",
+      "spacing": "standard"
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-fullscreen",
+    "pageId": "demo-lander",
+    "type": "fullscreenGallery",
+    "order": 8,
+    "data": {
+      "heading": "Open any picture full-screen",
+      "images": [
+        {
+          "url": "/media/v3/story-pour.avif",
+          "alt": "Resin poured over a prepared teak slab, the first layer finding its level.",
+          "caption": "Resin poured over a prepared teak slab"
+        },
+        {
+          "url": "/media/v3/story-gild.avif",
+          "alt": "Gold leaf laid into a cured seam by hand.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/story-cure.avif",
+          "alt": "A slab resting under cover while a layer cures.",
+          "caption": "A slab resting under cover while a layer cures."
+        },
+        {
+          "url": "/media/v3/story-polish.avif",
+          "alt": "Wet-sanding a cured surface toward its final polish.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/macro-teak.avif",
+          "alt": "Teak grain under a clear resin skin, in close-up.",
+          "caption": "Teak grain under a clear resin skin"
+        },
+        {
+          "url": "/media/v3/macro-pigment.avif",
+          "alt": "Pigment blooming through a poured layer.",
+          "caption": ""
+        },
+        {
+          "url": "/media/v3/macro-flower.avif",
+          "alt": "A preserved flower held in clear resin.",
+          "caption": "A preserved flower held in clear resin."
+        },
+        {
+          "url": "/media/v3/macro-epoxy.avif",
+          "alt": "Epoxy at the meniscus, seconds before it levels.",
+          "caption": ""
+        }
+      ]
+    },
+    "translations": null
+  },
+  {
+    "id": "demo-block-lander-finalcta",
+    "pageId": "demo-lander",
+    "type": "finalCta",
+    "order": 9,
+    "data": {
+      "heading": "Ready to start?",
+      "body": "Every order finalises on WhatsApp — no payment gateway, no account.",
+      "ctaLabel": "Order on WhatsApp",
+      "ctaHref": "",
+      "whatsapp": true
     },
     "translations": null
   }

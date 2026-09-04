@@ -405,35 +405,51 @@
     "hero": {
       "eyebrow": "nuestro proceso",
       "headline": "De la idea a la reliquia.",
-      "lead": "Seis pasos sin prisas entre tu primer mensaje y la pieza en tus manos. Así es exactamente cómo cobra vida un encargo de Rivya Living Art, y cuánto tiempo lleva de verdad."
+      "lead": "Diez pasos tranquilos entre tu primer mensaje y la pieza en tus manos. Así es, exactamente, como se hace realidad un encargo de Rivya Living Art — y cuánto tiempo lleva de verdad."
     },
     "timeline": {
-      "heading": "Seis pasos, sin atajos",
-      "step1Title": "El planteamiento",
-      "step1Copy": "Todo empieza con una conversación por WhatsApp. Nos compartes la idea, fotos de referencia, los tamaños que imaginas y el presupuesto con el que te sientes cómodo, y nosotros hacemos las preguntas que dan forma al diseño.",
-      "step2Title": "Diseño y boceto",
-      "step2Copy": "Traducimos el planteamiento en bocetos y, para las piezas impresas en 3D, en vistas previas digitales. No se vierte nada hasta que apruebas el diseño: cada detalle se acuerda antes de que la resina toque el molde.",
-      "step3Title": "Materiales",
-      "step3Copy": "Resina epoxi de calidad artística, pigmentos minerales, flores preservadas y madera seleccionada. Si la pieza guarda tus propias flores o recuerdos, primero los preparamos y preservamos con el cuidado que merecen.",
-      "step4Title": "El vertido",
-      "step4Copy": "La resina se añade capa a capa, y cada vertido se deja curar entre 24–72 horas antes del siguiente. Las capas son lo que da profundidad a una pieza, y justo por eso nunca se puede apresurar.",
-      "step5Title": "El acabado",
-      "step5Copy": "Una vez curada por completo, la pieza se lija desde grano 400 hasta 3000 y luego se pule hasta que parece cristal. Los herrajes, ganchos o soportes se colocan y se revisan a mano.",
-      "step6Title": "Calidad y envío",
-      "step6Copy": "Recibes fotos de la pieza terminada para tu aprobación antes de que salga. Después se embala a prueba de golpes y se envía con seguimiento a cualquier lugar de la India.",
+      "heading": "Diez pasos, sin atajos",
+      "step1Title": "Concepto",
+      "step1Copy": "Todo empieza con una conversación por WhatsApp. Nos cuentas la idea, fotos de referencia, las medidas que imaginas y el presupuesto con el que te sientes cómodo — y nosotros hacemos las preguntas que dan forma al diseño, dibujándolo antes de verter nada.",
+      "step2Title": "Selección de materiales",
+      "step2Copy": "Resina epoxi de grado artístico, pigmentos minerales, flores preservadas y madera curada se eligen según el encargo — y, para una base estructural, una forma impresa en 3D. Si la pieza guarda tus propias flores o recuerdos, los preparamos y preservamos en esta etapa.",
+      "step3Title": "Preparación de la madera",
+      "step3Copy": "La teca y la madera de río curadas se cepillan, lijan y sellan antes de que la resina las toque, para que la veta esté lista para recibir un vertido sin alabearse ni burbujear en la unión.",
+      "step4Title": "Composición de la resina",
+      "step4Copy": "El pigmento se mezcla en la resina en pequeños lotes y se prueba a contraluz antes de un vertido completo — el pan de oro y las flores preservadas se incorporan solo cuando el color es el correcto.",
+      "step5Title": "Vertido",
+      "step5Copy": "La resina ya compuesta se vierte en el molde capa a capa; cada una se nivela y se trabaja con una pistola de calor de precisión para retirar el aire antes de que empiece a asentarse.",
+      "step6Title": "Curado",
+      "step6Copy": "Cada capa vertida cura entre 24 y 72 horas antes de la siguiente, y la pieza terminada reposa en condiciones controladas hasta endurecerse por completo — la resina premia la paciencia, no la prisa.",
       "eyebrow": "cómo se hace una pieza",
       "step1Meta": "Por WhatsApp",
-      "step2Meta": "No se vierte nada sin tu visto bueno",
-      "step3Meta": "Epoxi de calidad artística",
-      "step4Meta": "24–72 horas por capa",
-      "step5Meta": "grano 400 → 3000",
-      "step6Meta": "Con seguimiento, a toda la India",
+      "step2Meta": "Resina epoxi de grado artístico",
+      "step3Meta": "A mano",
+      "step4Meta": "No se vierte nada sin tu aprobación",
+      "step5Meta": "Capa a capa",
+      "step6Meta": "24–72 horas por capa",
       "step1Alt": "El banco del estudio al inicio de un encargo",
       "step2Alt": "Un cabezal de impresión FDM deposita filamento azul translúcido en la base",
       "step3Alt": "Copos de pan de oro suspendidos en resina azul que se asienta",
       "step4Alt": "Resina de zafiro profundo en pleno vertido, extendiéndose por un molde redondo",
       "step5Alt": "Manos enguantadas trabajan resina azul con una pistola de calor de precisión",
-      "step6Alt": "Piezas de resina acabadas dispuestas en una caja de regalo forrada"
+      "step6Alt": "Piezas de resina acabadas dispuestas en una caja de regalo forrada",
+      "step7Title": "Refinado de la superficie",
+      "step7Copy": "Una vez curada por completo, la pieza se lija desde el grano 400 hasta el 3000 y luego se pule hasta que la superficie parece cristal y la profundidad que hay debajo queda totalmente clara.",
+      "step7Meta": "Grano 400 → 3000",
+      "step7Alt": "Gotas de agua sobre una superficie de resina pulida como espejo, con motas de oro suspendidas debajo",
+      "step8Title": "Acabado a mano",
+      "step8Copy": "Herrajes, ganchos o soportes se colocan y se revisan a mano, y cada borde se repasa una vez más antes de que una pieza se considere terminada.",
+      "step8Meta": "Acabado a mano",
+      "step8Alt": "Una veta dorada color champán recorre una superficie de resina acabada a mano",
+      "step9Title": "Inspección de calidad",
+      "step9Copy": "La pieza terminada se revisa borde a borde frente al encargo, y recibes fotografías suyas para tu propia aprobación antes de que se envíe nada.",
+      "step9Meta": "Fotos antes del envío",
+      "step9Alt": "El borde biselado de una plancha de epoxi curada captando la luz",
+      "step10Title": "Entrega",
+      "step10Copy": "Una vez aprobada, la pieza se embala a prueba de roturas y se envía con seguimiento a cualquier punto de la India. El estudio no ofrece instalación — la entrega es donde termina el encargo.",
+      "step10Meta": "Con seguimiento, a cualquier punto de la India",
+      "step10Alt": "Una bandeja y un cuenco de resina y teca terminados, listos para salir del estudio"
     },
     "materials": {
       "heading": "De qué está hecha tu pieza",
@@ -1147,7 +1163,12 @@
     "emptyStatement": "Aún no hay nada archivado ahí.",
     "emptyDirection": "El diario se escribe entre vertido y vertido: prueba otro tema o léelo todo.",
     "emptyStatementUnfiltered": "El diario se estrena pronto.",
-    "emptyDirectionUnfiltered": "Estamos escribiendo las primeras entradas entre vertido y vertido. Vuelve pronto."
+    "emptyDirectionUnfiltered": "Estamos escribiendo las primeras entradas entre vertido y vertido. Vuelve pronto.",
+    "relatedCollections": {
+      "eyebrow": "sigue explorando",
+      "heading": "Compra la colección",
+      "cardEyebrow": "Colección"
+    }
   },
   "Portfolio": {
     "meta": {
@@ -1636,5 +1657,9 @@
     "next": "Siguiente",
     "close": "Cerrar",
     "of": "de"
+  },
+  "AccordionGallery": {
+    "expand": "Expandir",
+    "collapse": "Contraer"
   }
 }

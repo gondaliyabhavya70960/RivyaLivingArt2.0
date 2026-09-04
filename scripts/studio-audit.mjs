@@ -56,6 +56,8 @@ const DEFAULT_ROUTES = [
   "/studio/content-lab",
   "/studio/research",
   "/studio/sheet-import/conflicts",
+  "/studio/process",
+  "/studio/materials",
 ];
 
 const args = process.argv.slice(2);

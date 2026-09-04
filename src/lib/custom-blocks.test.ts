@@ -22,7 +22,35 @@ describe("the block catalogue", () => {
     // Not a style preference — the catalogue's size is the only thing standing
     // between a page an owner assembles and layout rot (§4.8). Growing it is a
     // decision, and this test is where the decision gets made out loud.
-    expect(CUSTOM_BLOCK_TYPES.length).toBe(6);
+    //
+    // 7, not 6 (2026-09-03): `collectionGrid` — a row of collections picked
+    // by hand, reusing `CollectionCard`'s existing doorway-tile grammar.
+    // 8, not 7 (2026-09-03): `portfolioGrid` — real commissions, the newest
+    // published cases or up to six the owner chose.
+    // 9, not 8 (2026-09-03): `journalGrid` — the newest published posts,
+    // across the journal or filtered to one category.
+    // 10, not 9 (2026-09-03): `testimonial` — one customer's words, alone;
+    // must be PUBLISHED and pass the demo gate at render time or it shows
+    // nothing.
+    // 11, not 10 (2026-09-03): `testimonialGrid` — a TestimonialWall of the
+    // featured rows, or up to six the owner chose.
+    // 12, not 11 (2026-09-03): `videoHero` — the opening film instead of a
+    // photograph. It shares the hero's `"hero"` slot (`BlockDef.once`
+    // generalised to `BlockDef.slot` in this same commit) so a page can open
+    // with one or the other, never both.
+    // 13, not 12 (2026-09-03): `videoStory` — a film beside a passage of
+    // text, on a light ground; the same HeroMedia idiom as videoHero, boxed
+    // rather than full-bleed. The roadmap's Phase 11 block-catalogue growth
+    // adds ten types in total, one per commit; this count keeps climbing
+    // through the rest of the file's history.
+    // 14, not 13 (2026-09-04): `masonryGallery` — up to twelve pictures in
+    // staggered CSS columns, the first of the three gallery blocks.
+    // 15, not 14 (2026-09-04): `bentoGallery` — up to six pictures, the first
+    // two rows tall, on the same 12-column bento the homepage collections use.
+    // 16, not 15 (2026-09-04): `fullscreenGallery` — thumbnails opening the
+    // shared storefront Lightbox; the tenth and last block of the Phase 11
+    // catalogue growth. The catalogue is closed again at sixteen.
+    expect(CUSTOM_BLOCK_TYPES.length).toBe(16);
   });
 
   it("declares every type it lists", () => {
@@ -47,14 +75,31 @@ describe("the block catalogue", () => {
     }
   });
 
-  it("lets only the hero be dark", () => {
+  it("lets only the hero and video hero be dark", () => {
     // §3.1 is enforced by making the violation inexpressible; that only works
     // while the grounds stay declared this way. The closing band deliberately
     // has no dark option — the obsidian footer sits directly below it.
+    // `videoHero` joined `hero` here in the same commit that gave it the
+    // shared `"hero"` slot below — the two dark types are exactly the two
+    // that can never coexist, which is what keeps this pair from ever being
+    // the "two dark bands edge to edge" violation.
     const dark = CUSTOM_BLOCK_TYPES.filter(
       (t) => CUSTOM_BLOCKS[t].ground !== "alternating",
     );
-    expect(dark).toEqual(["hero"]);
+    expect(dark).toEqual(["hero", "videoHero"]);
+  });
+
+  it("gives every dark block the shared hero slot", () => {
+    // The mechanism, stated directly rather than inferred from the message
+    // string a refusal happens to produce: nothing that paints dark is
+    // reachable without ALSO being mutually exclusive with everything else
+    // that paints dark.
+    const dark = CUSTOM_BLOCK_TYPES.filter(
+      (t) => CUSTOM_BLOCKS[t].ground === "dark",
+    );
+    for (const type of dark) {
+      expect(CUSTOM_BLOCKS[type].slot, type).toBe("hero");
+    }
   });
 });
 
@@ -103,6 +148,22 @@ describe("parsing a block's data", () => {
     expect(describeBlockDataProblem("hero", { image: "nope.jpg" })).toMatch(
       /library/,
     );
+  });
+
+  it("refuses more than six collections", () => {
+    // Like the bad-blob case above: a seventh slug makes the whole blob
+    // fail its own schema, so the block renders its (empty) defaults rather
+    // than a silently truncated seven-turned-six list.
+    const data = parseBlockData<{ slugs: string[] }>("collectionGrid", {
+      slugs: ["a", "b", "c", "d", "e", "f", "g"],
+    });
+    expect(data.slugs).toEqual([]);
+  });
+
+  it("defaults every new block's spacing to standard", () => {
+    expect(
+      parseBlockData<{ spacing: string }>("collectionGrid", {}).spacing,
+    ).toBe("standard");
   });
 });
 
@@ -169,16 +230,36 @@ describe("the arrangement guardrails", () => {
     ).toMatch(/one closing invitation/);
   });
 
+  it("refuses a hero and a video hero together", () => {
+    // Two DIFFERENT types sharing one slot — the case a same-type-only count
+    // could never catch, and the reason `once` became `slot`.
+    expect(
+      describeBlockArrangementProblem([block("hero"), block("videoHero")]),
+    ).toMatch(/opens once/);
+    expect(
+      describeBlockArrangementProblem([block("videoHero"), block("hero")]),
+    ).toMatch(/opens once/);
+  });
+
+  it("allows a video hero alone, same as a plain hero alone", () => {
+    expect(
+      describeBlockArrangementProblem([block("videoHero"), block("richText")]),
+    ).toBeNull();
+  });
+
   it("cannot produce two dark grounds edge to edge", () => {
     // The adjacency rule is still in `describeBlockArrangementProblem` as the
-    // guard for a future block type, but today it is unreachable — and this is
-    // why. Exactly one block paints dark, and it is `once`, so no arrangement
-    // the catalogue can express puts two together.
+    // guard for a future block type, but today it is unreachable — and this
+    // is why. Two types paint dark, but they share ONE slot, so no
+    // arrangement the catalogue can express ever puts two dark blocks on the
+    // same page at all, let alone next to each other.
     const darkTypes = CUSTOM_BLOCK_TYPES.filter(
       (t) => CUSTOM_BLOCKS[t].ground === "dark",
     );
-    expect(darkTypes).toHaveLength(1);
-    expect(CUSTOM_BLOCKS[darkTypes[0]].once).toBe(true);
+    expect(darkTypes.length).toBeGreaterThan(0);
+    const slots = new Set(darkTypes.map((t) => CUSTOM_BLOCKS[t].slot));
+    expect(slots.size).toBe(1);
+    expect(slots.has(undefined)).toBe(false);
   });
 });
 
