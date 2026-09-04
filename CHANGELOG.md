@@ -55,8 +55,8 @@ the flip), the hero-parallax JSDoc (mounted since A2, not "zero importers"), AGE
 count, CLAUDE.md's slot count and `registerEase` rationale, and three PROJECT_STATE checkpoint keys
 that still described pre-wave-1 state.
 
-**Left for the owner's machine**: the planned Higgsfield sets (the CDN refuses this sandbox, and
-`media-v3-fetch.mjs` iterates `assets` only — promote a planned entry first), the real maker
+**Left for the owner's machine**: the planned Higgsfield sets (the CDN refuses this sandbox; the
+generate → `--promote` → cull → fetch sequence is now in the script itself, `--planned`), the real maker
 photograph, `.env.example` (`.env*` edits are denied here), and a by-eye reduced-motion pass over
 the A2/A3/C2 mounts.
 

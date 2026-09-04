@@ -112,7 +112,10 @@ all of them:
   shipped locale and an unmirrored RTL is worse than none.
 - **Numerics are mono and tabular** — every price, count, date, dimension and cure time.
 - **Motion** must use the Part 3.8 tokens, must have a reduced-motion fallback, and must
-  never scroll-jack beyond the two sanctioned pins.
+  never scroll-jack beyond the two sanctioned pins. The fallback is gated:
+  `redesign-audit.mjs` loads every audited route a second time under
+  `prefers-reduced-motion: reduce` and fails on anything still animating, any scroll-linked
+  timeline and any video playing by itself.
 - **All user-facing copy goes through next-intl.** Add the key to `messages/en.json`
   first, then translate the batch into `ar de es fr gu hi ja zh`.
 - **Commits:** `feat|fix|chore|refactor(scope): message`. Small, verified commits.

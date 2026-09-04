@@ -215,6 +215,11 @@ jobs:
       # neither of the two widths the repo holds itself to. 1440/390 stay
       # because they are the design targets; these two make the stated
       # contract enforceable. Both were measured clean before being added.
+      # Part 14's reduced-motion clause rides along INSIDE the same script —
+      # each route is loaded a second time under `prefers-reduced-motion:
+      # reduce` and anything still moving fails it — so it wants no invocation
+      # of its own here, and it sweeps all four widths and the RTL set below
+      # for free. The cost is one extra page load a route, about three seconds.
       - name: Design audit
         run: |
           node scripts/redesign-audit.mjs "$AUDIT_ROUTES"

@@ -161,6 +161,13 @@ async function buildWhere(
               },
             },
             { alt: { contains: filters.q, mode: "insensitive" as const } },
+            // The drawer lets an owner write a caption and tag an asset
+            // `varmala` or `commission-2026`; without these two clauses that
+            // label decorated the tile and retrieved nothing, which makes
+            // tagging forty assets busywork. `has` is an exact array match —
+            // a tag is a chosen token, not prose to search inside.
+            { caption: { contains: filters.q, mode: "insensitive" as const } },
+            { tags: { has: filters.q } },
           ],
         }
       : {}),

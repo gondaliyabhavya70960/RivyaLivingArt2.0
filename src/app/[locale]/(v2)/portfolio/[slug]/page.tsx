@@ -539,7 +539,11 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           (§11.9). Pure scroll mapping — nothing to collapse under reduced
           motion, and `aria-hidden`, so it adds no announcement. */}
       <ReadingProgress />
-      <JsonLd data={portfolioJsonLd} />
+      {/* A Content Lab fixture never presents itself as a real work in
+          structured data — the product and journal detail routes already
+          withhold theirs. The BreadcrumbList stays: it mirrors navigation the
+          visitor can see, and says nothing about the piece. */}
+      {!portfolio.isDemo ? <JsonLd data={portfolioJsonLd} /> : null}
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* ════════ 01 · The finished piece — dark hero ════════

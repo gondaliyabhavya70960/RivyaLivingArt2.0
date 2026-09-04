@@ -1,5 +1,3 @@
-import { BRAND } from "@/lib/brand-colors";
-
 /**
  * Swatch colour names → CSS colours — moved verbatim out of
  * `order-panel.tsx` (A3/D21). Product DATA, not design tokens: these are the
@@ -9,8 +7,15 @@ import { BRAND } from "@/lib/brand-colors";
  *
  * A pure move — `order-panel.tsx`'s markup, behaviour and every value below
  * are byte-identical to what shipped before this file existed; only the
- * import site changed. `BRAND.gold` stays the deprecated champagne alias
- * noted in `brand-colors.ts` until this table's own "gold" entry is revisited.
+ * import site changed.
+ *
+ * "gold" carries its own literal like the other forty-three. It briefly read
+ * `BRAND.gold`, a v2 alias `brand-colors.ts` marked deprecated and promised to
+ * drop "once A3 migrates that file" — this file IS that migration, so the
+ * promise came due. A product's gold swatch is the owner's colour option, not
+ * the champagne brand role; the two being equal today is a coincidence this
+ * table should not depend on, since repointing the brand accent must never
+ * silently repaint a customer's chosen finish.
  */
 export const SWATCH_COLORS: Record<string, string> = {
   white: "#f4f4f1",
@@ -37,7 +42,7 @@ export const SWATCH_COLORS: Record<string, string> = {
   olive: "#6b7233",
   yellow: "#eac54f",
   mustard: "#d9a521",
-  gold: BRAND.gold,
+  gold: "#b89b63",
   amber: "#e8a33d",
   orange: "#e07b39",
   peach: "#f3b192",

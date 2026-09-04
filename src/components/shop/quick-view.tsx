@@ -38,10 +38,13 @@ export function QuickView({
   item,
   open,
   onOpenChange,
+  onClosed,
 }: {
   item: ShopProductItem;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Focus to restore when the dialog closes — the element that opened it. */
+  onClosed?: () => void;
 }) {
   const t = useTranslations("Shop");
   const tCommon = useTranslations("Common");
@@ -64,6 +67,15 @@ export function QuickView({
       <DialogContent
         closeLabel={tCommon("close")}
         className="grid max-w-2xl gap-6 sm:grid-cols-2 sm:gap-8"
+        // Radix parks focus on the body when a dialog it did not open through
+        // its own trigger closes. The caller hands back the element that
+        // opened this one, so Escape returns the visitor to the card they
+        // were reading rather than the top of the shop.
+        onCloseAutoFocus={(event) => {
+          if (!onClosed) return;
+          event.preventDefault();
+          onClosed();
+        }}
       >
         <DialogTitle className="sr-only">{item.title}</DialogTitle>
 

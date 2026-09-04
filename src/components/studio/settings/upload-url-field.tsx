@@ -8,6 +8,7 @@ import { uploadMediaFiles } from "@/actions/media";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FieldError } from "@/components/studio/field-error";
 
 /**
  * URL input with an Upload button — files land in the media library's
@@ -70,6 +71,8 @@ export function UploadUrlField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="min-w-64 flex-1"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
         />
         <input
           ref={fileInputRef}
@@ -89,7 +92,11 @@ export function UploadUrlField({
         </Button>
       </div>
       {help && <p className="text-xs text-muted-foreground">{help}</p>}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {/* The SEO form's only error path. As a bare paragraph it was neither
+          announced nor tied to the field, so a screen-reader user typing an
+          invalid sharing-image URL heard nothing and the form looked as
+          though it had simply not saved. */}
+      <FieldError id={`${id}-error`}>{error}</FieldError>
     </div>
   );
 }

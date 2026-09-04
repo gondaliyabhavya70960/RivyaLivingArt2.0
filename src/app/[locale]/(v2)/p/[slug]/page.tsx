@@ -8,7 +8,11 @@ import { localeAlternates } from "@/i18n/seo";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
 import { DemoMark } from "@/components/storefront/demo-mark";
 import { CustomPageBlock } from "@/components/storefront/custom-page-blocks";
-import { resolveBlockGrounds, resolveHeadingLevels } from "@/lib/custom-blocks";
+import {
+  CUSTOM_BLOCKS,
+  resolveBlockGrounds,
+  resolveHeadingLevels,
+} from "@/lib/custom-blocks";
 import { resolveBlockExtras } from "@/lib/custom-page-data";
 import { getCustomPage, liveWhere } from "@/lib/custom-pages-server";
 import { db } from "@/lib/db";
@@ -107,7 +111,14 @@ export default async function CustomLandingPage({ params }: PageProps) {
 
   const grounds = resolveBlockGrounds(page.blocks);
   const headings = resolveHeadingLevels(page.blocks);
-  const leadsWithHero = page.blocks[0]?.type === "hero";
+  // Ask the block's SLOT, not its type name. Two block types occupy the hero
+  // slot — `hero` and `videoHero` — and the catalogue is what says so
+  // (`CUSTOM_BLOCKS[type].slot`). While this read the type name directly, a
+  // lander opening with the video hero rendered the breadcrumb rail and then
+  // slid a full-bleed `-mt-20` hero up over it, clipping the trail the page
+  // was given because a lander is often a visitor's first page.
+  const first = page.blocks[0];
+  const leadsWithHero = first ? CUSTOM_BLOCKS[first.type].slot === "hero" : false;
 
   // Every demo detail route wears the mark (CLAUDE.md, "Demo content is real
   // rows, always marked"). It sits with the crumb trail, or — under a

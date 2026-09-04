@@ -14,6 +14,14 @@
  * download itself can fail.
  */
 import { readFileSync } from "node:fs";
+
+import {
+  entryKind,
+  isPlanned,
+  plannedEntries,
+  tallyPlanned,
+} from "./lib/media-v3-planned.mjs";
+
 const m = JSON.parse(readFileSync("docs/media-v3-manifest.json", "utf8"));
 let problems = [];
 
@@ -37,9 +45,13 @@ for (const a of m.assets) {
   if (!a.ratio) problems.push(`${a.id}: no ratio`);
 }
 
-// 4. master paths unique
+// 4. master paths unique — across the promoted planned rows too, since
+// media-v3-fetch.mjs now builds those in the same pass and a collision would
+// mean one run overwriting the other's file.
+const planned = plannedEntries(m);
 const seen = new Map();
-for (const a of m.assets) {
+for (const a of [...m.assets, ...planned.filter((e) => !isPlanned(e))]) {
+  if (!a.master) continue; // reported by rule 3 or rule 6, not twice here
   if (seen.has(a.master)) problems.push(`duplicate master ${a.master}: ${seen.get(a.master)} & ${a.id}`);
   seen.set(a.master, a.id);
 }
@@ -51,38 +63,44 @@ for (const v of m.videos ?? []) {
   for (const f of ["master","masterWebm","poster"]) if (!v[f]) problems.push(`video ${v.id}: no ${f}`);
 }
 
-// 6. plannedSets (batch D · media system) — the generation queue nothing has
-// run yet (docs/transformation-audit.md §10.3). An entry with
-// `status: "planned"` is SKIPPED by every rule above by construction (it
-// lives under a different top-level key), and skipped here on purpose too:
-// a planned entry has no keeper and no master by design, so rules 1–4 would
-// fail every row in the set. This checks only the shape buildMasters() will
-// eventually need once an owner promotes an entry out of "planned" — caught
-// before that day, not on it.
-const plannedEntries = m.plannedSets?.entries ?? [];
+// 6. plannedSets (batch D · media system) — the generation queue
+// (docs/transformation-audit.md §10.3). A `status: "planned"` row is SKIPPED
+// everywhere above and here: it has no keeper and no master BY DESIGN, so
+// holding it to rules 1–4 would fail every row in the set and a build would
+// fail for imagery nobody has generated yet. A row an owner has PROMOTED is a
+// different thing — media-v3-fetch.mjs builds it alongside `assets`, so from
+// that moment it answers the same questions the assets do.
 const REQUIRED_PLANNED_FIELDS = [
   "id", "set", "placement", "ratio", "targetWidth", "alt", "prompt",
   "candidates", "keeper", "status",
 ];
-for (const e of plannedEntries) {
+for (const e of planned) {
   for (const field of REQUIRED_PLANNED_FIELDS) {
     if (!(field in e)) problems.push(`plannedSets/${e.id ?? "?"}: missing "${field}"`);
   }
-  if (e.status === "planned") continue; // nothing to verify offline yet
+  if (isPlanned(e)) continue; // nothing to verify offline yet
   // Promoted out of "planned": a real asset from here on, held to the same
-  // keeper/candidate rules as everything in m.assets.
+  // keeper/candidate rules as everything in m.assets — and to the same field
+  // rules, because media-v3-fetch.mjs builds it in the very same loop.
   const c = e.candidates?.find((x) => x.variant === e.keeper);
-  if (!e.keeper) problems.push(`plannedSets/${e.id}: promoted out of "planned" but has no keeper`);
+  if (!e.keeper) problems.push(`plannedSets/${e.id}: promoted but not culled — run --candidates, then set "keeper"`);
   else if (!c) problems.push(`plannedSets/${e.id}: no candidate "${e.keeper}"`);
   else if (!c.url) problems.push(`plannedSets/${e.id}: keeper has no url`);
+  const masters = entryKind(e) === "loop" ? ["master", "masterWebm", "poster"] : ["master"];
+  for (const field of masters) {
+    if (!e[field]) problems.push(`plannedSets/${e.id}: no ${field} path`);
+    else if (!e[field].startsWith("public/")) problems.push(`plannedSets/${e.id}: ${field} outside public/`);
+  }
+  if (!Number.isInteger(e.targetWidth)) problems.push(`plannedSets/${e.id}: targetWidth not an integer`);
 }
 const plannedIds = new Set();
-for (const e of plannedEntries) {
+for (const e of planned) {
   if (e.id && plannedIds.has(e.id)) problems.push(`plannedSets: duplicate id ${e.id}`);
   if (e.id) plannedIds.add(e.id);
 }
 
-console.log(`assets: ${m.assets.length}   videos: ${(m.videos??[]).length}   plannedSets: ${plannedEntries.length} (${plannedEntries.filter(e=>e.status==="planned").length} planned)`);
+const tally = tallyPlanned(planned);
+console.log(`assets: ${m.assets.length}   videos: ${(m.videos??[]).length}   plannedSets: ${planned.length} (${tally.planned} planned, ${tally.unculled} awaiting a cull, ${tally.ready} ready to build)`);
 console.log(`distinct master paths: ${seen.size}`);
 console.log(`unique CDN hosts: ${[...new Set(m.assets.map(a=>new URL(a.candidates.find(c=>c.variant===a.keeper).url).host))].join(", ")}`);
 console.log();

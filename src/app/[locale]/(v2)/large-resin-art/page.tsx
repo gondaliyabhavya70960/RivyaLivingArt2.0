@@ -334,6 +334,7 @@ export default async function LargeResinArtPage({
                 <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-sand">
                   <MeniscusImage
                     src={images[slot]}
+                    blurDataURL={imageRefs[slot].blurDataUrl}
                     alt={t(`scope.${key}Alt` as "scope.k1Alt")}
                     fill
                     sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
@@ -490,6 +491,7 @@ export default async function LargeResinArtPage({
                 <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-sand">
                   <MeniscusImage
                     src={images[slot]}
+                    blurDataURL={imageRefs[slot].blurDataUrl}
                     alt={tProcess(
                       `materials.alt${index + 1}` as "materials.alt1",
                     )}
@@ -544,6 +546,7 @@ export default async function LargeResinArtPage({
                 <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-mineral">
                   <MeniscusImage
                     src={images[kind.slot]}
+                    blurDataURL={imageRefs[kind.slot].blurDataUrl}
                     alt={tHome(
                       `furniture.kinds.${kind.key}.alt` as "furniture.kinds.dining.alt",
                     )}

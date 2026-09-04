@@ -19,7 +19,8 @@ function cssHex(name: string): string {
 }
 
 // BRAND's v3 keys, mapped to the tokens.css custom property they mirror.
-// `gold` is the deliberate v2 alias (== champagne) and is checked separately.
+// This is the whole of BRAND now: the v2 `gold` alias was retired once its
+// only consumer, the swatch table, took its own literal.
 const TOKEN_NAME: Record<string, string> = {
   obsidian: "obsidian",
   deepOcean: "deep-ocean",
@@ -43,7 +44,12 @@ describe("BRAND vs tokens.css", () => {
     });
   }
 
-  it("gold stays a deprecated alias of champagne", () => {
-    expect(BRAND.gold).toBe(BRAND.champagne);
+  it("carries no key that is not a v3 palette role", () => {
+    // The v2 "Midnight Gild" `gold` alias lived here until its own removal
+    // condition — A3 migrating the swatch table — came due. Every remaining
+    // key is a role mirrored against tokens.css above; a new one must be too,
+    // or the OG images, the manifest, global-error and the email drift from
+    // the palette the site actually renders.
+    expect(Object.keys(BRAND).sort()).toEqual(Object.keys(TOKEN_NAME).sort());
   });
 });

@@ -8,7 +8,7 @@ import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import { SITE_IMAGES_TAG } from "@/lib/site-images-server";
-import { isSiteImageKey } from "@/lib/site-images";
+import { isSiteImageKey, SITE_IMAGE_FALLBACKS } from "@/lib/site-images";
 import {
   blobStorageConfigured,
   importBundledSiteImages,
@@ -83,10 +83,18 @@ export async function setSiteImage(input: {
         data: { draft: { ...readDraft(existing.draft), url }, mediaId },
       });
     } else {
-      // Nothing published to preserve: write both halves so the slot reads
-      // correctly in preview and publishes to exactly what was chosen.
+      // A slot with no row is still PUBLISHED — as its bundled default, which
+      // is what a visitor is looking at. So the first edit stages like every
+      // other: `url` holds the default that stays live, `draft` holds the
+      // owner's choice until the surface is published.
+      //
+      // This branch used to write the owner's pick into BOTH halves, which
+      // put a new photograph on the storefront the instant they pressed Save
+      // — no preview, no Publish, no way to stage it. Its copy twin had the
+      // same bug and was fixed in 38413f2; this is that fix's sibling, found
+      // by the defect sweep that went looking for exactly this shape.
       await db.siteImage.create({
-        data: { key, url, mediaId, draft: { url } },
+        data: { key, url: SITE_IMAGE_FALLBACKS[key], mediaId, draft: { url } },
       });
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Eye } from "lucide-react";
 
@@ -19,10 +19,18 @@ import type { ShopProductItem } from "@/lib/shop";
 export function QuickViewTrigger({ item }: { item: ShopProductItem }) {
   const t = useTranslations("Shop");
   const [open, setOpen] = useState(false);
+  // Where focus goes when the dialog closes. Radix returns focus to its own
+  // trigger only when the trigger is a `DialogTrigger`; this button opens the
+  // dialog through state instead, so without this a visitor who pressed
+  // Escape on the twelfth card landed back on `<body>` — at the top of the
+  // shop, past the header, the announcement bar and every filter, with their
+  // place in the grid gone. The lightbox already returns focus this way.
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   return (
     <>
       <Button
+        ref={triggerRef}
         type="button"
         variant="ghost"
         size="sm"
@@ -39,7 +47,12 @@ export function QuickViewTrigger({ item }: { item: ShopProductItem }) {
         <Eye aria-hidden strokeWidth={1.5} className="size-4" />
         {t("quickViewLabel")}
       </Button>
-      <QuickView item={item} open={open} onOpenChange={setOpen} />
+      <QuickView
+        item={item}
+        open={open}
+        onOpenChange={setOpen}
+        onClosed={() => triggerRef.current?.focus()}
+      />
     </>
   );
 }

@@ -73,7 +73,10 @@ describe("the media-v3 generation queue (docs/transformation-audit.md §10.3)", 
     // just guards the count so a future edit that silently drops an entry
     // (a bad merge, a copy-paste that skipped one) is caught here rather
     // than discovered the day someone runs the fetch script and gets 27
-    // masters instead of 28.
+    // masters instead of 28. The count survives the whole queue being worked:
+    // `--promote` flips a row's status in place rather than moving it into
+    // `assets` (scripts/lib/media-v3-planned.mjs), precisely so this number
+    // keeps meaning something.
     expect(entries.length).toBe(28);
   });
 
@@ -94,6 +97,10 @@ describe("the media-v3 generation queue (docs/transformation-audit.md §10.3)", 
     // master path needs to start passing the same disk check every other
     // bundled asset passes above. Nothing is promoted yet, so this loop is
     // empty today — it exists so that day does not slip through silently.
+    //
+    // A row still marked "planned" is skipped and can never fail a build; a
+    // promoted one names a file, and this repository commits `public/`, so the
+    // manifest edit and the master belong in the same commit.
     for (const entry of entries) {
       if (entry.status === "planned") continue;
       const master = (entry as { master?: string }).master;
@@ -104,7 +111,9 @@ describe("the media-v3 generation queue (docs/transformation-audit.md §10.3)", 
       if (master) {
         expect(
           existsSync(publicPath(master.replace(/^public\//, ""))),
-          master,
+          `${master} — promoted but not built. Finish the sequence ` +
+            "(`node scripts/media-v3-fetch.mjs --planned`) before committing, " +
+            'or leave the entry at status "planned".',
         ).toBe(true);
       }
     }

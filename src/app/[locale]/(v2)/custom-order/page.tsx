@@ -26,7 +26,7 @@ import { isOptimizableImageSrc, isRenderableSrc } from "@/lib/image-src";
 import { localize, TRANSLATABLE_FIELDS } from "@/lib/localize";
 import { getTestimonials } from "@/lib/testimonials";
 import { getPageSections } from "@/lib/page-sections-server";
-import { getSiteImages } from "@/lib/site-images-server";
+import { getSiteImageRefs } from "@/lib/site-images-server";
 import { getFormOptions } from "@/lib/form-options-server";
 import { showDemoContent } from "@/lib/demo-content";
 import { demoClause } from "@/lib/demo-clause";
@@ -133,7 +133,7 @@ export default async function CustomOrderPage({
     tFaq,
     tPortfolio,
     tCommon,
-    images,
+    imageRefs,
     formOptions,
     sections,
   ] = await Promise.all([
@@ -143,7 +143,10 @@ export default async function CustomOrderPage({
     getTranslations("Faq"),
     getTranslations("Portfolio"),
     getTranslations("Common"),
-    getSiteImages(),
+    // Refs, not bare URLs: the commission hero below is this page's LCP and
+    // the ref is the only thing that carries its 20px LQIP. Same cached read
+    // either way — `getSiteImages` is a narrowing of this one.
+    getSiteImageRefs(),
     // The four dropdowns, resolved for this visitor's language.
     getFormOptions(locale),
     getPageSections("custom-order"),
@@ -250,13 +253,23 @@ export default async function CustomOrderPage({
         <div className="grid lg:min-h-svh lg:grid-cols-2">
           <div className="relative min-h-[46svh] lg:min-h-full">
             <Image
-              src={images["customOrder.hero"]}
+              src={imageRefs["customOrder.hero"].url}
               alt={t("heroImageAlt")}
               fill
               priority
               quality={80}
               sizes="(min-width:1024px) 50vw, 100vw"
               className="object-cover"
+              // The slot's 20px LQIP (batch D). next/image paints it as a
+              // background behind this `<img>` and drops it the moment the
+              // real bytes decode — a ground, never a fade, so §2.7 holds and
+              // the LCP element itself is untouched.
+              {...(imageRefs["customOrder.hero"].blurDataUrl
+                ? {
+                    placeholder: "blur" as const,
+                    blurDataURL: imageRefs["customOrder.hero"].blurDataUrl,
+                  }
+                : {})}
             />
             {/* Header clearance: the chrome is transparent over this hero. */}
             <span

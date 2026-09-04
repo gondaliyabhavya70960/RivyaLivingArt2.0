@@ -54,6 +54,10 @@ yarn-error.log*
 # .claude/ scaffolding is committed team infrastructure (DESIGN.md Part E3);
 # only per-machine local state stays out
 /.claude/settings.local.json
+# Throwaway git worktrees an agent runs in when work is parallelised. Each is a
+# whole second checkout of this repository living inside it, created and removed
+# by the harness — committing one would nest the repo in itself.
+/.claude/worktrees/
 screenshots/
 
 # Agent scratch space — screenshots and probe scripts, never committed

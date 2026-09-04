@@ -55,9 +55,14 @@ const DIRECTION_THRESHOLD = 8;
 /** Hover-intent delay before the mega panel opens (§5.3). */
 const MEGA_INTENT = 120;
 
-/** Mobile drawer item stagger (§5.4: "items staggered 40ms"). */
+/** Mobile drawer item stagger (§5.4: "items staggered 40ms").
+ *
+ *  The `rtl:` twin matters as much as the panel's own (:650): without it the
+ *  drawer slides in from the correct edge in Arabic while every item inside
+ *  it flies in from the opposite one — the half-mirrored state CLAUDE.md
+ *  calls worse than no mirroring at all. */
 const DRAWER_ITEM =
-  "animate-in fade-in slide-in-from-right-4 fill-mode-backwards duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none";
+  "animate-in fade-in slide-in-from-right-4 rtl:slide-in-from-left-4 fill-mode-backwards duration-(--dur-base) ease-(--ease-luxury) motion-reduce:animate-none";
 
 /** Ordered mega-menu columns with their /shop?type= filter + i18n key. */
 const MEGA_GROUPS: Array<{ group: CatalogGroup; labelKey: string }> = [

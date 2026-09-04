@@ -42,7 +42,19 @@ import { cn } from "@/lib/utils";
  * Reduced motion skips the mechanism entirely: no mask, no transition, no
  * observer. The frame simply is.
  */
-export type MeniscusImageProps = ImageProps & {
+export type MeniscusImageProps = Omit<ImageProps, "blurDataURL"> & {
+  /**
+   * The image's 20px LQIP, if one is known for it.
+   *
+   * Widened to accept `null` because that is the shape every resolver on this
+   * site hands back — `SiteImageRef.blurDataUrl` and `blurForMany` both say
+   * "no placeholder is recorded for this URL" with a null. Taking it here
+   * means a call site forwards `ref.blurDataUrl` as it stands instead of
+   * spelling `?? undefined` at each of the twenty frames that render a slot,
+   * and none of them can quietly drift into passing a placeholder that
+   * belongs to a different picture.
+   */
+  blurDataURL?: string | null;
   /** Applied to the wrapper. Put the aspect ratio here. */
   className?: string;
   /** Applied to the <img> itself — object-fit, object-position, scale. */
@@ -76,10 +88,24 @@ export type MeniscusImageProps = ImageProps & {
  * governs the meniscus reveal mechanism above, not a resolved blur-up
  * ground). Only fills in when the caller passed `blurDataURL` but no
  * explicit `placeholder` of their own.
+ *
+ * The placeholder sits UNDER the mask, so a frame that is still closed shows
+ * no blur either: the reveal plays over the ground rather than beside it, and
+ * nothing here adds a transition of its own.
  */
-function withBlurPlaceholder(props: ImageProps): ImageProps {
-  if (!props.blurDataURL || props.placeholder) return props;
-  return { ...props, placeholder: "blur" };
+function withBlurPlaceholder({
+  blurDataURL,
+  ...props
+}: Omit<
+  MeniscusImageProps,
+  "className" | "imageClassName" | "reveal" | "mobileSrc" | "focal"
+>): ImageProps {
+  // A null blur is dropped rather than forwarded: `<Image blurDataURL={null}>`
+  // with no placeholder is meaningless, and next/image would carry it into
+  // the DOM as an attribute nobody reads.
+  if (!blurDataURL) return props;
+  if (props.placeholder) return { ...props, blurDataURL };
+  return { ...props, blurDataURL, placeholder: "blur" };
 }
 
 /** A solid mask whose height is animated from 0% to 100%, anchored bottom. */

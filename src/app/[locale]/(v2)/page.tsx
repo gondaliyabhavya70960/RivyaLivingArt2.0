@@ -512,6 +512,7 @@ export default async function Home({
                   <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-sand">
                     <MeniscusImage
                       src={images[tile.slot]}
+                      blurDataURL={imageRefs[tile.slot].blurDataUrl}
                       alt={tLargeFormat(tile.altKey)}
                       fill
                       sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
@@ -638,6 +639,7 @@ export default async function Home({
                 <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-mineral">
                   <MeniscusImage
                     src={images[kind.slot]}
+                    blurDataURL={imageRefs[kind.slot].blurDataUrl}
                     alt={t(
                       `furniture.kinds.${kind.key}.alt` as "furniture.kinds.dining.alt",
                     )}
@@ -678,6 +680,7 @@ export default async function Home({
         <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
           <MeniscusImage
             src={images["home.maker"]}
+            blurDataURL={imageRefs["home.maker"].blurDataUrl}
             alt={t("maker.imageAlt")}
             width={1200}
             height={1500}
@@ -720,27 +723,31 @@ export default async function Home({
             intro={t("rooms.intro")}
           />
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {ROOM_KEYS.map((room) => (
-              <li key={room} className="flex flex-col gap-3">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-image bg-sand">
-                  <MeniscusImage
-                    src={images[`home.rooms.${room}` as "home.rooms.living"]}
-                    alt={t(`rooms.${room}.alt` as "rooms.living.alt")}
-                    fill
-                    sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
-                    className="absolute inset-0"
-                    imageClassName="object-cover"
-                  />
-                </div>
-                <DemoMark label={t("rooms.conceptLabel")} />
-                <h3 className="font-body text-16 font-medium text-ink">
-                  {t(`rooms.${room}.title` as "rooms.living.title")}
-                </h3>
-                <p className="font-body text-14 text-graphite">
-                  {t(`rooms.${room}.caption` as "rooms.living.caption")}
-                </p>
-              </li>
-            ))}
+            {ROOM_KEYS.map((room) => {
+              const slot = `home.rooms.${room}` as "home.rooms.living";
+              return (
+                <li key={room} className="flex flex-col gap-3">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-image bg-sand">
+                    <MeniscusImage
+                      src={images[slot]}
+                      blurDataURL={imageRefs[slot].blurDataUrl}
+                      alt={t(`rooms.${room}.alt` as "rooms.living.alt")}
+                      fill
+                      sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 90vw"
+                      className="absolute inset-0"
+                      imageClassName="object-cover"
+                    />
+                  </div>
+                  <DemoMark label={t("rooms.conceptLabel")} />
+                  <h3 className="font-body text-16 font-medium text-ink">
+                    {t(`rooms.${room}.title` as "rooms.living.title")}
+                  </h3>
+                  <p className="font-body text-14 text-graphite">
+                    {t(`rooms.${room}.caption` as "rooms.living.caption")}
+                  </p>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
@@ -976,6 +983,7 @@ export default async function Home({
           </Reveal>
           <MeniscusImage
             src={images["home.print"]}
+            blurDataURL={imageRefs["home.print"].blurDataUrl}
             alt={t("printStudio.imageAlt")}
             width={1400}
             height={1050}
@@ -1062,15 +1070,19 @@ export default async function Home({
           <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {(
               [
-                { key: "handcrafted", src: images["home.why.handcrafted"] },
-                { key: "bespoke", src: images["home.why.bespoke"] },
-                { key: "slowMade", src: images["home.why.slowMade"] },
-                { key: "heirloom", src: images["home.why.heirloom"] },
+                {
+                  key: "handcrafted",
+                  image: imageRefs["home.why.handcrafted"],
+                },
+                { key: "bespoke", image: imageRefs["home.why.bespoke"] },
+                { key: "slowMade", image: imageRefs["home.why.slowMade"] },
+                { key: "heirloom", image: imageRefs["home.why.heirloom"] },
               ] as const
             ).map((proof) => (
               <li key={proof.key} className="flex flex-col gap-4">
                 <MeniscusImage
-                  src={proof.src}
+                  src={proof.image.url}
+                  blurDataURL={proof.image.blurDataUrl}
                   alt={t(`why.proof.${proof.key}.alt`)}
                   width={800}
                   height={1000}

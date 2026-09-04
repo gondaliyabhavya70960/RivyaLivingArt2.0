@@ -68,6 +68,23 @@ records what shipped, and lists what genuinely remains.
 - `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
   `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
   next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
+- **The manifest's 28 `plannedSets` entries are a queue, not files.** Batch D
+  recorded the NEXT photography batch — bench concepts, large-format art,
+  concept rooms, four process actions, six mobile crops, three loops — as a
+  prompt, a placement and a ratio each, with no candidates and no master. A
+  plain fetch run therefore cannot produce them, and until 2026-09-04 did not
+  mention them either, so "run the fetch script on an ordinary machine"
+  produced silence. The real sequence, one entry at a time: generate the
+  entry's prompt → `--promote <id> <url> [<url>]` (records the results as
+  candidates and fills in the master path) → `--candidates` and set `"keeper"`
+  → the default run → point a slot at the file in /studio/site-images, because
+  a built master is not a wired one. `node scripts/media-v3-fetch.mjs
+  --planned` prints the queue and that sequence; every other mode ends by
+  naming what it could not build. A promoted SET F row is built by
+  `media-v3-video-fetch.mjs`, not the still pipeline. `media-v3-preflight.mjs`
+  and `bundled-media.test.ts` skip `status: "planned"` rows on purpose — an
+  ungenerated picture must never fail a build — and hold a promoted one to
+  every rule a real asset answers.
 - **DONE — `public/` is committed** (2026-08-31, 242 files, 22 MB). The owner
   supplied the directory that the imported ZIP had been exported without, and
   it is now tracked. Verified rather than assumed before committing: all 25
@@ -266,7 +283,16 @@ against the rendered pixels behind the logo (≥ 4.5:1).
   Part 19.1 as an executable check: one `h1`, no duplicated section heading,
   max two `section-major`, max three dark bands and never adjacent, numbers in
   mono, no ellipsis in an accessible name, alt text that describes the picture,
-  no horizontal overflow.
+  no horizontal overflow. It also loads every route a **second time in a
+  `reducedMotion: "reduce"` context** and samples `getAnimations()` down the
+  page: anything still running with a per-iteration duration over one frame,
+  any scroll-linked timeline and any `<video>` playing by itself is a Part 14
+  failure. That is the only gate on the reduced-motion contract — the CSS side
+  rests on one global collapse in `tokens.css`, and everything driven from JS
+  is outside its reach — so it samples through the walk rather than at rest,
+  because a one-shot entrance is over before a settled page is measured.
+  Motion behind a click (the lightbox FLIP, quick view) is not on this path;
+  `keyboard-audit.mjs` is where those surfaces get opened.
 - `node scripts/a11y-audit.mjs "/en,/en/shop,…" [--w 390]` — axe-core over the
   rendered routes; fails on critical or serious findings (§19.6). Moderate and
   minor are printed, not failed.
@@ -383,8 +409,10 @@ ScrollTrigger for the two pinned scrubs.
   `start-`/`end-`) — Arabic is a shipped locale and an unmirrored RTL is worse
   than none.
 - Motion: every effect must (1) use the Part 3.8 tokens, (2) have a
-  reduced-motion fallback, (3) never scroll-jack beyond the two sanctioned
-  pins (the homepage material story, the process steps).
+  reduced-motion fallback — `redesign-audit.mjs` drives a `reduce` context per
+  route and fails on anything still moving, so a forgotten fallback no longer
+  ships green — (3) never scroll-jack beyond the two sanctioned pins (the
+  homepage material story, the process steps).
 - All user-facing copy goes through next-intl. Add the key to
   `messages/en.json` first, then translate the batch into ar/de/es/fr/gu/hi/
   ja/zh — `scripts/i18n-missing.mjs` is the gate that catches a key rendering

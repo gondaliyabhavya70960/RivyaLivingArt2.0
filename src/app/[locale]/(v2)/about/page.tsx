@@ -147,22 +147,38 @@ export default async function AboutPage({
     {
       title: t("craft.panel1Title"),
       copy: t("craft.panel1Copy"),
-      image: { src: images["about.chapter1"], alt: t("chapters.alt1") },
+      image: {
+        src: images["about.chapter1"],
+        blurDataURL: imageRefs["about.chapter1"].blurDataUrl,
+        alt: t("chapters.alt1"),
+      },
     },
     {
       title: t("chapters.embedTitle"),
       copy: t("chapters.embedCopy"),
-      image: { src: images["about.chapter2"], alt: t("chapters.alt2") },
+      image: {
+        src: images["about.chapter2"],
+        blurDataURL: imageRefs["about.chapter2"].blurDataUrl,
+        alt: t("chapters.alt2"),
+      },
     },
     {
       title: t("craft.panel2Title"),
       copy: t("craft.panel2Copy"),
-      image: { src: images["about.chapter3"], alt: t("chapters.alt3") },
+      image: {
+        src: images["about.chapter3"],
+        blurDataURL: imageRefs["about.chapter3"].blurDataUrl,
+        alt: t("chapters.alt3"),
+      },
     },
     {
       title: t("craft.panel3Title"),
       copy: t("craft.panel3Copy"),
-      image: { src: images["about.chapter4"], alt: t("chapters.alt4") },
+      image: {
+        src: images["about.chapter4"],
+        blurDataURL: imageRefs["about.chapter4"].blurDataUrl,
+        alt: t("chapters.alt4"),
+      },
     },
   ];
 
@@ -175,9 +191,11 @@ export default async function AboutPage({
   const materialItems = visibleMaterials.map((material) => {
     const n = material.key.slice(1);
     const index = Number(n) - 1;
+    const slot = `about.material${n}.image` as SiteImageKey;
     return {
       key: material.key,
-      src: images[`about.material${n}.image` as SiteImageKey],
+      src: images[slot],
+      blurDataURL: imageRefs[slot].blurDataUrl,
       macroSrc: images[`about.material${n}.macro` as SiteImageKey],
       alt: tProcess(MATERIAL_ALT_KEYS[index]),
       title: tProcess(`materials.m${n}Title`),
@@ -321,6 +339,7 @@ export default async function AboutPage({
         <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
           <MeniscusImage
             src={images["about.maker"]}
+            blurDataURL={imageRefs["about.maker"].blurDataUrl}
             alt={t("maker.imageAlt")}
             width={1200}
             height={1500}
@@ -408,9 +427,21 @@ export default async function AboutPage({
         intro={t("studio.body")}
         facts={studioFacts}
         photos={[
-          { src: images["about.studio1"], alt: t("studio.alt1") },
-          { src: images["about.studio2"], alt: t("studio.alt2") },
-          { src: images["about.studio3"], alt: t("studio.alt3") },
+          {
+            src: images["about.studio1"],
+            blurDataURL: imageRefs["about.studio1"].blurDataUrl,
+            alt: t("studio.alt1"),
+          },
+          {
+            src: images["about.studio2"],
+            blurDataURL: imageRefs["about.studio2"].blurDataUrl,
+            alt: t("studio.alt2"),
+          },
+          {
+            src: images["about.studio3"],
+            blurDataURL: imageRefs["about.studio3"].blurDataUrl,
+            alt: t("studio.alt3"),
+          },
         ]}
       />
     ),

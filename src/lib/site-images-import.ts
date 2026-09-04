@@ -4,6 +4,7 @@ import path from "node:path";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { SITE_IMAGE_SLOTS } from "@/lib/site-images";
 import { guessMediaType, putFile } from "@/lib/storage";
+import { blurFor } from "@/lib/lqip";
 
 /**
  * Copy the bundled site-image defaults into storage and point their slots at
@@ -110,6 +111,15 @@ export async function importBundledSiteImages(
           folder: "site",
           bytes: bytes.byteLength,
           provenance: bundledProvenance(file),
+          // Carry the bundled LQIP across with the bytes. `blurFor` is keyed
+          // on the PUBLIC path, and this import is the moment that path stops
+          // being the slot's url — from here the slot points at Blob storage,
+          // where `blurFor` finds nothing and `blurForMany` falls back to this
+          // column. Without this line every site image silently loses its
+          // placeholder the first time an owner presses "Import bundled
+          // images", or the first time bootstrap runs it on a fresh deploy:
+          // the blur would work everywhere except production.
+          blurDataUrl: blurFor(file) ?? null,
         },
       });
 

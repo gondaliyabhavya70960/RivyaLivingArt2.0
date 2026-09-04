@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 /** One photograph of the real studio. Local `/media` art only — Part 0. */
 export type StudioPhoto = {
   src: string;
+  /** The slot's 20px LQIP when one is recorded for the resolved file — null
+   *  is the resolver's own "none known", forwarded as it stands. */
+  blurDataURL?: string | null;
   alt: string;
 };
 
@@ -100,6 +103,7 @@ export function StudioGallery({
             <li key={photo.src}>
               <MeniscusImage
                 src={photo.src}
+                blurDataURL={photo.blurDataURL}
                 alt={photo.alt}
                 width={900}
                 height={1125}

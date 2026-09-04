@@ -333,6 +333,10 @@ export async function listMediaForPicker(
                 { pathname: { contains: parsed.q, mode: "insensitive" } },
                 { originalName: { contains: parsed.q, mode: "insensitive" } },
                 { alt: { contains: parsed.q, mode: "insensitive" } },
+                // Same reach as the library screen — a picker that could not
+                // find what the library can would send the owner back to it.
+                { caption: { contains: parsed.q, mode: "insensitive" } },
+                { tags: { has: parsed.q } },
               ],
             }
           : {}),

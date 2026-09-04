@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { PageHeader } from "@/components/studio/page-header";
 import {
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { isCustomBlockType, parseBlockData } from "@/lib/custom-blocks";
 import { getCustomPageForStudio } from "@/lib/custom-pages-server";
 import { db } from "@/lib/db";
+import { DraftPreview } from "@/components/studio/draft-preview";
 
 export const metadata: Metadata = { title: "Edit landing page" };
 
@@ -94,14 +95,13 @@ export default async function EditCustomPage({
                 All landing pages
               </Link>
             </Button>
-            <Button asChild variant="outline" size="sm">
-              <a
-                href={`/api/draft?redirect=${encodeURIComponent(`/p/${page.slug}`)}`}
-              >
-                <Eye aria-hidden className="size-4" />
-                Preview
-              </a>
-            </Button>
+            {/* The device-frame preview the four record editors have. This
+                is the surface that most needs it — the one page built out of
+                layout blocks, where an owner arranges galleries and video
+                heroes and can only find out at 390px whether the rhythm
+                survives. It keeps its own new-tab link inside the dialog, so
+                nothing that worked before is lost. */}
+            <DraftPreview path={`/p/${page.slug}`} />
           </div>
         }
       />

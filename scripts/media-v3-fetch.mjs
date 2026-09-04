@@ -2,8 +2,10 @@
 /**
  * REDESIGN.md §15.5 as an executable pipeline.
  *
- *   node scripts/media-v3-fetch.mjs --candidates   # cull step: contact sheet
- *   node scripts/media-v3-fetch.mjs                # build step: masters + LQIP
+ *   node scripts/media-v3-fetch.mjs --planned            # what is queued, and why
+ *   node scripts/media-v3-fetch.mjs --promote <id> <url>… # a plan becomes an asset
+ *   node scripts/media-v3-fetch.mjs --candidates         # cull step: contact sheet
+ *   node scripts/media-v3-fetch.mjs                      # build step: masters + LQIP
  *
  * Part 15's assets were generated through the Higgsfield MCP on 2026-08-23 and
  * are recorded in `docs/media-v3-manifest.json` — every asset id, its §15.4
@@ -34,10 +36,29 @@
  *    is written at the largest width its `sizes` can actually request, and the
  *    ladder is generated at request time from it. The 20px LQIP is real and is
  *    written to src/lib/media-v3-blur.json as a base64 data URL per asset.
+ *
+ * THE PLANNED SETS ARE PART OF THIS SCRIPT'S JOB TOO
+ * `docs/media-v3-manifest.json` also carries `plannedSets` — 28 entries batch D
+ * recorded as the next photography batch. They have a prompt but no candidates
+ * and no master, so nothing here could fetch them; for a while this script did
+ * not even look at them, and a documented "run media-v3-fetch.mjs on an ordinary
+ * machine" therefore produced an empty result and no explanation. Every run now
+ * reports the queue, `--planned` prints it in full with the order to work it in,
+ * and `--promote` turns one row into an ordinary asset the paths above already
+ * handle. The state machine itself lives in scripts/lib/media-v3-planned.mjs.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import sharp from "sharp";
+
+import {
+  describePlanned,
+  isPlanned,
+  plannedEntries,
+  promotePlanned,
+  promotedStills,
+  tallyPlanned,
+} from "./lib/media-v3-planned.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const MANIFEST = join(ROOT, "docs/media-v3-manifest.json");
@@ -49,11 +70,58 @@ const SHEET_DIR = join(ROOT, ".media-v3-candidates");
 // the CDN) actually needs in order to cull.
 const REVIEW_DIR = join(ROOT, "docs/media-v3-review");
 
+const USAGE = `Usage:
+  node scripts/media-v3-fetch.mjs --planned
+  node scripts/media-v3-fetch.mjs --promote <id> [<candidate url> …]
+  node scripts/media-v3-fetch.mjs --candidates [--force]
+  node scripts/media-v3-fetch.mjs [--force]`;
+
 const args = process.argv.slice(2);
 const wantCandidates = args.includes("--candidates");
+const wantPlanned = args.includes("--planned");
 const force = args.includes("--force");
+const promoteAt = args.indexOf("--promote");
+// Everything after --promote up to the next flag: the id, then the result URLs.
+const promoteArgs =
+  promoteAt === -1 ? [] : args.slice(promoteAt + 1).filter((a) => !a.startsWith("--"));
+const [promoteId, ...promoteUrls] = promoteArgs;
+
+/* A typo used to be indistinguishable from the default run — `--promot bench-x`
+   silently rebuilt every master instead of promoting anything. Refuse instead. */
+const KNOWN_FLAGS = new Set(["--candidates", "--force", "--planned", "--promote"]);
+const stray = args.filter(
+  (a, i) =>
+    (a.startsWith("--") && !KNOWN_FLAGS.has(a)) ||
+    (!a.startsWith("--") && (promoteAt === -1 || i < promoteAt)),
+);
+if (stray.length) {
+  console.error(`Unrecognised argument: ${stray.join(", ")}\n\n${USAGE}`);
+  process.exit(1);
+}
+if (wantPlanned && promoteAt !== -1) {
+  console.error(`--planned lists the queue and --promote changes it; run one at a time.\n\n${USAGE}`);
+  process.exit(1);
+}
 
 const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
+
+/**
+ * The rows this run treats as assets: the 25 originals plus any planned entry
+ * an owner has promoted. A promoted row carries the same fields, so everything
+ * below it — contact sheet, review sheets, masters, LQIP — is unchanged.
+ */
+function assetsForRun() {
+  const promoted = promotedStills(manifest);
+  for (const entry of promoted) {
+    if (!entry.master) {
+      throw new Error(
+        `plannedSets/${entry.id} left "planned" without a master path. ` +
+          `Re-run: node scripts/media-v3-fetch.mjs --promote ${entry.id}`,
+      );
+    }
+  }
+  return [...manifest.assets, ...promoted];
+}
 
 /** AVIF quality by role. Macros and tiles sit in small columns and can take a
  *  lower number than a full-bleed band, where banding in a dark gradient shows. */
@@ -78,7 +146,7 @@ function write(file, buf) {
 async function buildContactSheet() {
   mkdirSync(SHEET_DIR, { recursive: true });
   const rows = [];
-  for (const asset of manifest.assets) {
+  for (const asset of assetsForRun()) {
     const cells = [];
     for (const cand of asset.candidates) {
       const name = `${asset.id}-${cand.variant}.avif`;
@@ -89,7 +157,9 @@ async function buildContactSheet() {
         write(path, await sharp(src).resize({ width: 640 }).avif({ quality: 55 }).toBuffer());
       }
       cells.push(
-        `<figure><img src="${name}" alt=""><figcaption>${cand.variant} · ${cand.jobId.slice(0, 8)}</figcaption></figure>`,
+        // A promoted row's candidates come from a pasted URL, which may carry
+        // no job id — a caption is not worth a crash three downloads in.
+        `<figure><img src="${name}" alt=""><figcaption>${cand.variant}${cand.jobId ? ` · ${cand.jobId.slice(0, 8)}` : ""}</figcaption></figure>`,
       );
     }
     rows.push(
@@ -125,10 +195,11 @@ async function writeReviewSheets() {
   const CELL = 460;
   const LABEL = 26;
 
-  const sets = [...new Set(manifest.assets.map((a) => a.set))];
+  const assets = assetsForRun();
+  const sets = [...new Set(assets.map((a) => a.set))];
   for (const set of sets) {
     const cells = [];
-    for (const asset of manifest.assets.filter((a) => a.set === set)) {
+    for (const asset of assets.filter((a) => a.set === set)) {
       for (const cand of asset.candidates) {
         const file = join(SHEET_DIR, `${asset.id}-${cand.variant}.avif`);
         if (existsSync(file)) {
@@ -179,7 +250,8 @@ async function writeReviewSheets() {
 
 /* ————————————————— build step ————————————————— */
 async function buildMasters() {
-  const pending = manifest.assets.filter((a) => !a.keeper);
+  const assets = assetsForRun();
+  const pending = assets.filter((a) => !a.keeper);
   if (pending.length) {
     console.error(
       `${pending.length} asset(s) have no keeper yet: ${pending.map((a) => a.id).join(", ")}\n` +
@@ -200,7 +272,7 @@ async function buildMasters() {
   const blur = existsSync(BLUR_FILE)
     ? JSON.parse(readFileSync(BLUR_FILE, "utf8"))
     : {};
-  for (const asset of manifest.assets) {
+  for (const asset of assets) {
     const cand = asset.candidates.find((c) => c.variant === asset.keeper);
     if (!cand) throw new Error(`${asset.id}: no candidate "${asset.keeper}"`);
 
@@ -237,9 +309,136 @@ async function buildMasters() {
   console.log(`LQIP manifest: ${BLUR_FILE}`);
 }
 
-console.log(
-  wantCandidates
-    ? "REDESIGN.md §15.5 — downloading candidates for the cull\n"
-    : "REDESIGN.md §15.5 — building masters + LQIP\n",
-);
-await (wantCandidates ? buildContactSheet() : buildMasters());
+/* ————————————————— the planned queue —————————————————
+ * `plannedSets` is the generation plan: a prompt, a placement and a ratio, with
+ * no candidates and no file. Nothing here can fetch one — the pictures do not
+ * exist yet — so the only useful thing a script can do is say so precisely, and
+ * name the one command that moves a row forward.
+ */
+
+const SEQUENCE = `The sequence, on a machine with ordinary internet:
+  1. Generate the entry's prompt from docs/media-v3-manifest.json. It already
+     carries §15.3's palette suffix and the "no faces, no logos, no text" clause.
+  2. node scripts/media-v3-fetch.mjs --promote <id> <url> [<url>]
+     Records the results as candidates and fills in the master path.
+  3. node scripts/media-v3-fetch.mjs --candidates
+     Contact sheet; cull to one variant and set "keeper" on the entry.
+     (SET F loops: media-v3-video-fetch.mjs --candidates instead.)
+  4. node scripts/media-v3-fetch.mjs
+     Writes the AVIF master and its LQIP. (SET F: media-v3-video-fetch.mjs.)
+  5. Point a slot at the new file in /studio/site-images. Nothing on the site
+     reads a new master until a slot names it — a built master is not a wired one.`;
+
+function listPlanned() {
+  const entries = plannedEntries(manifest);
+  if (entries.length === 0) {
+    console.log("No `plannedSets` in docs/media-v3-manifest.json — nothing queued.");
+    return;
+  }
+
+  const sets = manifest.plannedSets?.sets ?? {};
+  for (const set of [...new Set(entries.map((e) => e.set))]) {
+    console.log(`\n${set}${sets[set] ? ` — ${sets[set]}` : ""}`);
+    for (const entry of entries.filter((e) => e.set === set)) {
+      const { state, needs } = describePlanned(entry);
+      console.log(
+        `  ${entry.id.padEnd(26)} ${String(entry.ratio).padEnd(5)} ` +
+          `${String(entry.targetWidth).padStart(4)}  ${state.padEnd(10)} needs ${needs}`,
+      );
+    }
+  }
+
+  const tally = tallyPlanned(entries);
+  console.log(
+    `\n${entries.length} entries: ${tally.planned} planned · ${tally.incomplete} incomplete · ` +
+      `${tally.unculled} awaiting a cull · ${tally.ready} ready to build.\n`,
+  );
+  console.log(SEQUENCE);
+}
+
+/**
+ * The rule this script broke from the day batch D wrote the queue: never
+ * finish silently.
+ *
+ * A default run with every master already on disk prints "25 masters" and
+ * exits — which, while 28 planned entries sat unfetchable in the same file,
+ * read as "the media set is complete". Every mode ends here instead.
+ */
+function reportPlannedTail() {
+  const entries = plannedEntries(manifest);
+  const waiting = entries.map(describePlanned).filter((d) => d.state !== "ready");
+  if (waiting.length === 0) return;
+
+  const byNeed = new Map();
+  for (const d of waiting) byNeed.set(d.needs, [...(byNeed.get(d.needs) ?? []), d.id]);
+
+  console.log(
+    `\n${waiting.length} of ${entries.length} plannedSets entries could not be built by this run:`,
+  );
+  for (const [needs, ids] of byNeed) {
+    console.log(`  · ${ids.length} ${ids.length === 1 ? "needs" : "need"} ${needs}`);
+    console.log(`      ${ids.join(", ")}`);
+  }
+  console.log("\n  node scripts/media-v3-fetch.mjs --planned   — the full queue and the order to work it in");
+}
+
+/** Promote ONE row: candidates in, master path filled, status flipped. */
+function promote(id, urls) {
+  const entries = plannedEntries(manifest);
+  const entry = entries.find((e) => e.id === id);
+  if (!entry) {
+    console.error(
+      `No planned entry "${id}" in docs/media-v3-manifest.json.\n` +
+        "  node scripts/media-v3-fetch.mjs --planned   — the ids that do exist",
+    );
+    process.exit(1);
+  }
+  if (!isPlanned(entry)) {
+    // Idempotent like the rest of the script: say where the row already is.
+    const { state, needs } = describePlanned(entry);
+    console.log(`${id} was promoted already (${state}). It needs ${needs}.`);
+    return;
+  }
+
+  let promoted;
+  try {
+    promoted = promotePlanned(entry, urls);
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+
+  /* Replace rather than Object.assign: a promoted row's fields are ordered to
+     match an `assets` row, and assigning into the old object would append
+     `master` at the end instead. The manifest is read by people. */
+  entries[entries.indexOf(entry)] = promoted;
+  write(MANIFEST, JSON.stringify(manifest, null, 2) + "\n");
+
+  console.log(`✓ ${id} promoted — ${promoted.candidates.length} candidate(s), master ${promoted.master}`);
+  console.log(`  docs/media-v3-manifest.json updated. Next: ${describePlanned(promoted).needs}`);
+  if (promoted.masterWebm) {
+    console.log(
+      "  This is a SET F loop: media-v3-video-fetch.mjs builds it (MP4 + WebM + poster), not this script.",
+    );
+  }
+}
+
+if (wantPlanned) {
+  console.log("REDESIGN.md §15.5 — the generation queue (docs/media-v3-manifest.json → plannedSets)");
+  listPlanned();
+} else if (promoteAt !== -1) {
+  if (!promoteId) {
+    console.error(`--promote needs the id of a planned entry.\n\n${USAGE}`);
+    process.exit(1);
+  }
+  promote(promoteId, promoteUrls);
+  reportPlannedTail();
+} else {
+  console.log(
+    wantCandidates
+      ? "REDESIGN.md §15.5 — downloading candidates for the cull\n"
+      : "REDESIGN.md §15.5 — building masters + LQIP\n",
+  );
+  await (wantCandidates ? buildContactSheet() : buildMasters());
+  reportPlannedTail();
+}

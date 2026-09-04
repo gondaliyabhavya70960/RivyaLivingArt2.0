@@ -114,6 +114,12 @@ export function revalidatePublic(entity: RevalidatableEntity, slug?: string) {
   // Not localized — one file at the root, listing every locale's URLs.
   revalidatePath("/sitemap.xml");
 
+  // Landing pages read OTHER entities: the block catalogue grew readers for
+  // products, collections, journal posts, cases, testimonials and FAQs, so a
+  // lander is stale the moment any of those changes and nothing here said so.
+  // Its own `customPage` arm only ever covered edits to the page itself.
+  if (entity !== "page") revalidateLocalizedPattern("/p/[slug]");
+
   const paths: string[] = [];
   switch (entity) {
     case "product":
@@ -137,7 +143,13 @@ export function revalidatePublic(entity: RevalidatableEntity, slug?: string) {
       else revalidateLocalizedPattern("/portfolio/[slug]");
       break;
     case "faq":
-      paths.push("/faq");
+      // /faq is not the only place an FAQ is answered: the PDP renders the
+      // top three (product/[slug]/page.tsx), and the commission and
+      // large-format pages carry their own picks. Refreshing only /faq left a
+      // withdrawn answer — a wrong price, a lead time the owner has changed —
+      // live on all 4,385 product pages until ISR expired.
+      paths.push("/faq", "/custom-order", "/large-resin-art");
+      revalidateLocalizedPattern("/product/[slug]");
       break;
     case "testimonial":
       // Every page that renders a words band. `slug` is the PRODUCT slug the

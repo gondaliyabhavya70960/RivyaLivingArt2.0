@@ -132,9 +132,11 @@ export default async function ProcessPage({
 
   const materialItems = visibleMaterials.map((material) => {
     const n = material.key.slice(1);
+    const slot = `process.material${n}` as SiteImageKey;
     return {
       key: material.key,
-      src: images[`process.material${n}` as SiteImageKey],
+      src: images[slot],
+      blurDataURL: imageRefs[slot].blurDataUrl,
       alt: t(`materials.alt${n}`),
       title: t(`materials.m${n}Title`),
       copy: t(`materials.m${n}Copy`),
@@ -219,6 +221,7 @@ export default async function ProcessPage({
                   <div className="lg:col-span-5 lg:self-start lg:sticky lg:top-28">
                     <MeniscusImage
                       src={images[image]}
+                      blurDataURL={imageRefs[image].blurDataUrl}
                       alt={t(`timeline.${step.key}Alt`)}
                       width={1000}
                       height={1250}
