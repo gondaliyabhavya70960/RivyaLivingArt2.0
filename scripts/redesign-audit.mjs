@@ -53,7 +53,7 @@ const base = process.env.BASE_URL ?? "http://localhost:3000";
    mouse/fine-pointer, so every `pointer-coarse:min-h-11` utility the repo
    ships (button.tsx, footer links, the announcement link, the locale
    switcher, the shop tabs — A1) never applied and the count it reported was
-   never what a phone visitor actually gets. `hasTouch` (and `isMobile`,
+   never what a phone visitor actually gets. `hasTouch` (isMobile is NOT set — it widens innerWidth by a phantom scrollbar and fakes a 2px overflow;
    which Chromium requires alongside it for `pointer: coarse` /
    `any-pointer: coarse` to resolve in the media query) make those utilities
    active only where a real phone would activate them too — ≤700px, the same
@@ -62,7 +62,7 @@ const touchContext = width <= 700;
 const browser = await launchChromium();
 const context = await browser.newContext({
   viewport: { width, height: width < 700 ? 844 : 900 },
-  ...(touchContext ? { hasTouch: true, isMobile: true } : {}),
+  ...(touchContext ? { hasTouch: true } : {}),
 });
 const page = await context.newPage();
 
@@ -562,7 +562,9 @@ for (const route of routesArg.split(",")) {
       if (/after:-?inset|before:-?inset/.test(cls)) continue; // expanded hit area
       if (el.tagName === "A" && inRunningText(el)) continue;
       const r = el.getBoundingClientRect();
-      if (r.width < TAP_MIN || r.height < TAP_MIN) {
+      // Half a pixel of tolerance: a 44px floor met through `min-h-11` can
+      // measure 43.99 after subpixel layout, and that is not a small target.
+      if (r.width < TAP_MIN - 0.5 || r.height < TAP_MIN - 0.5) {
         smallTargets.push(
           `${describe(el)} ${Math.round(r.width)}×${Math.round(r.height)}`,
         );
@@ -708,10 +710,14 @@ for (const route of routesArg.split(",")) {
       header.querySelector("nav a, nav button") ??
       header;
     const r = header.getBoundingClientRect();
+    const t = textEl.getBoundingClientRect();
+    const nav = header.querySelector("nav")?.getBoundingClientRect() ?? null;
     return {
       ink: header.getAttribute("data-ink"),
       color: getComputedStyle(textEl).color,
       rect: { x: r.x, y: r.y, width: r.width, height: r.height },
+      text: { x: t.x, y: t.y, width: t.width, height: t.height },
+      nav: nav ? { x: nav.x, width: nav.width } : null,
     };
   });
 
@@ -721,47 +727,76 @@ for (const route of routesArg.split(",")) {
     report("FAIL", "sticky header has no data-ink attribute (use-hero-ink.ts)");
   } else {
     const textRgb = parseRgbTriple(headerInfo.color);
+    /* The pixels behind the header are a photograph: sample only once every
+       image in the first viewport has finished loading (bounded — a slow
+       host must not stall the audit), or the LQIP blur placeholder's grey is
+       what gets measured. Sample points sit in the GAPS beside the header's
+       text — just outside the logo on both sides, and just outside the nav
+       on both sides — at the text's vertical centre, never under a glyph (a
+       patch under the logo reads the logo's own pixels and reports a
+       contrast nobody sees). The worst of them is the ratio reported: the
+       scrim behind the row has to hold wherever a nav item lands. */
+    await page.evaluate(
+      () =>
+        Promise.race([
+          Promise.all(
+            [...document.images]
+              .filter((img) => !img.complete && img.getBoundingClientRect().top < innerHeight)
+              .map((img) => new Promise((done) => { img.onload = img.onerror = done; })),
+          ),
+          new Promise((done) => setTimeout(done, 4000)),
+        ]),
+    );
     const patch = 10;
-    const sampleX = Math.max(0, Math.round(headerInfo.rect.x + 6));
-    const sampleY = Math.max(0, Math.round(headerInfo.rect.y + 6));
-    let bgRgb = null;
-    try {
-      const shot = await page.screenshot({
-        clip: { x: sampleX, y: sampleY, width: patch, height: patch },
-      });
-      const { data, info } = await sharp(shot)
-        .raw()
-        .toBuffer({ resolveWithObject: true });
-      let rSum = 0;
-      let gSum = 0;
-      let bSum = 0;
-      let n = 0;
-      for (let i = 0; i + 2 < data.length; i += info.channels) {
-        rSum += data[i];
-        gSum += data[i + 1];
-        bSum += data[i + 2];
-        n += 1;
+    const midY = Math.round(headerInfo.text.y + headerInfo.text.height / 2 - patch / 2);
+    const xs = [
+      headerInfo.text.x - patch - 6,
+      headerInfo.text.x + headerInfo.text.width + 6,
+      ...(headerInfo.nav
+        ? [headerInfo.nav.x - patch - 6, headerInfo.nav.x + headerInfo.nav.width + 6]
+        : []),
+    ]
+      .map((x) => Math.round(x))
+      .filter((x) => x >= 0 && x + patch <= width);
+    let worst = null;
+    for (const sampleX of xs) {
+      try {
+        const shot = await page.screenshot({
+          clip: { x: sampleX, y: Math.max(0, midY), width: patch, height: patch },
+        });
+        const { data, info } = await sharp(shot)
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        let rSum = 0;
+        let gSum = 0;
+        let bSum = 0;
+        let n = 0;
+        for (let i = 0; i + 2 < data.length; i += info.channels) {
+          rSum += data[i];
+          gSum += data[i + 1];
+          bSum += data[i + 2];
+          n += 1;
+        }
+        if (n === 0 || !textRgb) continue;
+        const bgRgb = [rSum / n, gSum / n, bSum / n];
+        const ratio = contrastOf(textRgb, bgRgb);
+        if (!worst || ratio < worst.ratio) worst = { ratio, bgRgb, sampleX };
+      } catch {
+        // A screenshot can legitimately fail (a headless-Chromium quirk on
+        // one route) — the other sample points still speak.
       }
-      if (n > 0) bgRgb = [rSum / n, gSum / n, bSum / n];
-    } catch {
-      // A screenshot can legitimately fail (a route with no header content
-      // at this exact pixel, a headless-Chromium quirk) — report it as
-      // "unknown" below rather than crash the whole audit run over one route.
     }
-    if (!textRgb || !bgRgb) {
+    if (!textRgb || !worst) {
       report(
         "FAIL",
-        `sticky header data-ink="${headerInfo.ink}" — could not measure its contrast (text colour ${headerInfo.color ?? "?"}, background sample ${bgRgb ? "ok" : "failed"})`,
+        `sticky header data-ink="${headerInfo.ink}" — could not measure its contrast (text colour ${headerInfo.color ?? "?"}, ${xs.length} sample point(s))`,
       );
-    } else {
-      const ratio = contrastOf(textRgb, bgRgb);
-      if (ratio < 4.5) {
-        const rounded = (v) => Math.round(v);
-        report(
-          "FAIL",
-          `sticky header data-ink="${headerInfo.ink}" contrast ${ratio.toFixed(2)}:1 against rgb(${bgRgb.map(rounded).join(",")}) at the top of the page — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))`,
-        );
-      }
+    } else if (worst.ratio < 4.5) {
+      const rounded = (v) => Math.round(v);
+      report(
+        "FAIL",
+        `sticky header data-ink="${headerInfo.ink}" contrast ${worst.ratio.toFixed(2)}:1 against rgb(${worst.bgRgb.map(rounded).join(",")}) beside its text (x=${worst.sampleX}) — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))`,
+      );
     }
   }
 
