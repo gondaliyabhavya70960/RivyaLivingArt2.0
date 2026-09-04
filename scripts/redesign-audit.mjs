@@ -721,25 +721,100 @@ for (const route of routesArg.split(",")) {
      a few px away from a glyph is representative of what is directly behind
      it). The colour compared is what the LOGO — the one header element whose
      class is a literal `text-mineral`/`text-ink` toggle rather than an
-     opacity variant — actually computes to. */
-  const headerInfo = await page.evaluate(() => {
-    const header = document.querySelector('[data-slot="sf-site-header"]');
-    if (!header) return null;
-    const textEl =
-      header.querySelector("a[aria-label]") ??
-      header.querySelector("nav a, nav button") ??
-      header;
-    const r = header.getBoundingClientRect();
-    const t = textEl.getBoundingClientRect();
-    const nav = header.querySelector("nav")?.getBoundingClientRect() ?? null;
-    return {
-      ink: header.getAttribute("data-ink"),
-      color: getComputedStyle(textEl).color,
-      rect: { x: r.x, y: r.y, width: r.width, height: r.height },
-      text: { x: t.x, y: t.y, width: t.width, height: t.height },
-      nav: nav ? { x: nav.x, width: nav.width } : null,
-    };
-  });
+     opacity variant — actually computes to.
+
+     THE MEASUREMENT MUST BE COHERENT. `data-ink` is an attribute: it flips in
+     the same commit as the state. The two layers it describes do not — the
+     obsidian scrim and the mineral bar cross-fade over `--dur-base`. So for a
+     few hundred ms after the hero leaves the header's band the attribute and
+     the pixels legitimately disagree, and a reading taken across that window
+     reports a contrast no visitor ever sees. The route walk above scrolls to
+     the bottom and back, which is precisely what drags the hero through that
+     band twice, and `use-hero-ink.ts`'s IntersectionObserver delivers its
+     callback on a later frame — so on a loaded runner the cross-fade can
+     BEGIN after the walk's animation-settle loop has already returned, and
+     the rule used to read the attribute, then wait up to 8s for images, then
+     screenshot, reporting the two as if they were simultaneous. CI run 149
+     failed `/contact` exactly that way (`data-ink="ink"` at 1.08:1 over
+     rgb(8,10,14)) on a tree that went green on `main` minutes later with no
+     change at all. Hence: settle first, sample together, and re-read
+     afterwards — a FAIL is only reported when the header held still for the
+     whole measurement. A genuinely mis-inked header is a STATE, not a
+     transition, so requiring stability cannot hide one. */
+
+  /* The pixels behind the header are a photograph: sample only once every
+     image in the first viewport has finished loading (bounded — a slow host
+     must not stall the audit), or the LQIP blur placeholder's grey is what
+     gets measured. A busy machine (CI, or a laptop running several audits)
+     can leave a hero still decoding when the cap expires, and screenshotting
+     THEN samples the page's empty ground rather than the photograph — which
+     reads as a contrast failure that no visitor would ever see. Observed
+     exactly once in three consecutive local runs while other work loaded the
+     box, and the reduced-motion pass added below doubles the page loads a run
+     makes, so the odds only go up. The wait still caps: an audit must not
+     hang on a genuinely broken image. */
+  const headerPixelsSettled = await page.evaluate(
+    () =>
+      Promise.race([
+        Promise.all(
+          [...document.images]
+            .filter((img) => !img.complete && img.getBoundingClientRect().top < innerHeight)
+            .map((img) => new Promise((done) => { img.onload = img.onerror = done; })),
+        ).then(() => true),
+        new Promise((done) => setTimeout(() => done(false), 8000)),
+      ]),
+  );
+
+  /* One reading of everything the rule compares — the attribute, the colour
+     it promises, the geometry the samples are taken from, and whether any
+     animation inside the header is still running. Taken as one evaluate so
+     the four cannot drift apart between calls. */
+  const readHeaderState = () =>
+    page.evaluate(() => {
+      const header = document.querySelector('[data-slot="sf-site-header"]');
+      if (!header) return null;
+      const textEl =
+        header.querySelector("a[aria-label]") ??
+        header.querySelector("nav a, nav button") ??
+        header;
+      const r = header.getBoundingClientRect();
+      const t = textEl.getBoundingClientRect();
+      const nav = header.querySelector("nav")?.getBoundingClientRect() ?? null;
+      return {
+        ink: header.getAttribute("data-ink"),
+        color: getComputedStyle(textEl).color,
+        // Only animations targeting the header itself: the page below it may
+        // hold an infinite ambient drift that would never let this settle.
+        moving: document.getAnimations().filter((a) => {
+          if (a.playState !== "running") return false;
+          const target = a.effect?.target;
+          return target instanceof Element && header.contains(target);
+        }).length,
+        rect: { x: r.x, y: r.y, width: r.width, height: r.height },
+        text: { x: t.x, y: t.y, width: t.width, height: t.height },
+        nav: nav ? { x: nav.x, width: nav.width } : null,
+      };
+    });
+
+  // Settle: two consecutive identical readings with nothing animating inside
+  // the header. Capped — a header that never rests still gets measured, and
+  // the post-check below is what decides whether that reading may FAIL.
+  let headerInfo = await readHeaderState();
+  if (headerInfo) {
+    const settleDeadline = Date.now() + 3000;
+    for (;;) {
+      const next = await readHeaderState();
+      if (!next) {
+        headerInfo = next;
+        break;
+      }
+      const held = next.ink === headerInfo.ink && next.color === headerInfo.color;
+      headerInfo = next;
+      if (held && next.moving === 0) break;
+      if (Date.now() > settleDeadline) break;
+      await page.waitForTimeout(50);
+    }
+  }
 
   if (!headerInfo) {
     report("FAIL", 'no sticky header ([data-slot="sf-site-header"]) found — cannot verify header contrast');
@@ -747,37 +822,12 @@ for (const route of routesArg.split(",")) {
     report("FAIL", "sticky header has no data-ink attribute (use-hero-ink.ts)");
   } else {
     const textRgb = parseRgbTriple(headerInfo.color);
-    /* The pixels behind the header are a photograph: sample only once every
-       image in the first viewport has finished loading (bounded — a slow
-       host must not stall the audit), or the LQIP blur placeholder's grey is
-       what gets measured. Sample points sit in the GAPS beside the header's
-       text — just outside the logo on both sides, and just outside the nav
-       on both sides — at the text's vertical centre, never under a glyph (a
-       patch under the logo reads the logo's own pixels and reports a
-       contrast nobody sees). The worst of them is the ratio reported: the
-       scrim behind the row has to hold wherever a nav item lands. */
-    // Whether the pictures behind the header actually settled. A busy machine
-    // (CI, or a laptop running several audits) can leave a hero still
-    // decoding when the cap expires, and screenshotting THEN samples the
-    // page's empty ground rather than the photograph — which reads as a
-    // contrast failure that no visitor would ever see. Observed exactly once
-    // in three consecutive local runs while other work loaded the box, and
-    // the reduced-motion pass added below doubles the page loads a run makes,
-    // so the odds only go up. The wait still caps: an audit must not hang on
-    // a genuinely broken image. But the caller below refuses to FAIL on a
-    // measurement it knows is unsettled — an unreliable red is worse than a
-    // missed amber, because a gate nobody trusts stops being a gate.
-    const headerPixelsSettled = await page.evaluate(
-      () =>
-        Promise.race([
-          Promise.all(
-            [...document.images]
-              .filter((img) => !img.complete && img.getBoundingClientRect().top < innerHeight)
-              .map((img) => new Promise((done) => { img.onload = img.onerror = done; })),
-          ).then(() => true),
-          new Promise((done) => setTimeout(() => done(false), 8000)),
-        ]),
-    );
+    /* Sample points sit in the GAPS beside the header's text — just outside
+       the logo on both sides, and just outside the nav on both sides — at the
+       text's vertical centre, never under a glyph (a patch under the logo
+       reads the logo's own pixels and reports a contrast nobody sees). The
+       worst of them is the ratio reported: the scrim behind the row has to
+       hold wherever a nav item lands. */
     const patch = 10;
     const midY = Math.round(headerInfo.text.y + headerInfo.text.height / 2 - patch / 2);
     const xs = [
@@ -817,6 +867,14 @@ for (const route of routesArg.split(",")) {
         // one route) — the other sample points still speak.
       }
     }
+    // Did the header hold still for the whole of the sampling above? If it
+    // did not, the pixels and the attribute describe two different moments.
+    const afterInfo = await readHeaderState();
+    const heldStill =
+      Boolean(afterInfo) &&
+      afterInfo.ink === headerInfo.ink &&
+      afterInfo.color === headerInfo.color &&
+      afterInfo.moving === 0;
     if (!textRgb || !worst) {
       report(
         "FAIL",
@@ -824,9 +882,17 @@ for (const route of routesArg.split(",")) {
       );
     } else if (worst.ratio < 4.5) {
       const rounded = (v) => Math.round(v);
+      /* An unreliable red is worse than a missed amber, because a gate nobody
+         trusts stops being a gate: both caveats below downgrade to NOTE and
+         say which one applied. */
+      const untrustworthy = !headerPixelsSettled
+        ? " — NOT FAILED: an above-the-fold image was still decoding when the pixels were sampled, so this reading is not trustworthy"
+        : !heldStill
+          ? ` — NOT FAILED: the header changed state while it was being measured (data-ink ${headerInfo.ink} → ${afterInfo?.ink ?? "gone"}), so the attribute and the pixels describe different moments`
+          : "";
       report(
-        headerPixelsSettled ? "FAIL" : "NOTE",
-        `sticky header data-ink="${headerInfo.ink}" contrast ${worst.ratio.toFixed(2)}:1 against rgb(${worst.bgRgb.map(rounded).join(",")}) beside its text (x=${worst.sampleX}) — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))${headerPixelsSettled ? "" : " — NOT FAILED: an above-the-fold image was still decoding when the pixels were sampled, so this reading is not trustworthy"}`,
+        untrustworthy ? "NOTE" : "FAIL",
+        `sticky header data-ink="${headerInfo.ink}" contrast ${worst.ratio.toFixed(2)}:1 against rgb(${worst.bgRgb.map(rounded).join(",")}) beside its text (x=${worst.sampleX}) — needs ≥4.5:1 (text rgb(${textRgb.map(rounded).join(",")}))${untrustworthy}`,
       );
     }
   }

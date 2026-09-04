@@ -278,7 +278,13 @@ not cover, or to see a failure's detail. At widths of 700px and below the
 design audit drives a touch-capable context, so `pointer-coarse:` utilities
 apply and the 44px tap floor FAILS there (it is reported, not failed, on
 fine-pointer widths); it also measures the sticky header's `data-ink` promise
-against the rendered pixels behind the logo (≥ 4.5:1).
+against the rendered pixels behind the logo (≥ 4.5:1). That one rule compares
+an ATTRIBUTE against PIXELS, so it settles the header first and re-reads it
+afterwards, and downgrades to a NOTE when the state changed mid-measurement:
+`data-ink` flips in one commit while the scrim and the bar cross-fade over
+`--dur-base`, and the route walk drags the hero through the header's band
+twice, so a late IntersectionObserver callback on a loaded runner used to be
+reported as a contrast failure no visitor could see.
 - `node scripts/redesign-audit.mjs "/en,/en/shop,…" [--w 390]` — REDESIGN.md
   Part 19.1 as an executable check: one `h1`, no duplicated section heading,
   max two `section-major`, max three dark bands and never adjacent, numbers in
