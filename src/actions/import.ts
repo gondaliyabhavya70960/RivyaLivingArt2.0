@@ -615,7 +615,14 @@ async function importProductRow(
       : null,
   );
   if (!overwriteOwnerEdited && existing) {
-    if (verdict === "skip") return "protected";
+    // Only OWNERSHIP protects a row here, which is the same gate tier-fill
+    // applies. `decideMerge`'s other guard verdict, "skip", means "already
+    // rewritten, the SCRAPE has nothing new to say" — a judgement about a
+    // re-scrape of a supplier's page. This importer's incoming row is the
+    // owner's own spreadsheet, so reading "skip" as "protected" made Bulk
+    // Import — one of the three sanctioned ways to fill the catalogue
+    // (HARD RULE 3) — refuse to update almost every existing product,
+    // reporting them as protected rather than written.
     if (verdict === "refresh-availability") {
       if (inStock0 !== null) {
         await db.product.update({
