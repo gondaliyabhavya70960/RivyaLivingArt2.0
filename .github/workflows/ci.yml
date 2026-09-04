@@ -8,8 +8,14 @@
 # against it — the two checks that used to be run by hand, and the reason a
 # §3.1 band-rhythm violation reached a pull request before anyone noticed.
 #
-# Not in CI: scripts/e2e-smoke.mjs — it needs a populated catalog, so it runs
-# against a running server (`BASE_URL=… npm run test:e2e`), local or deployed.
+# After the build the job seeds the Content Lab demo set into the throwaway
+# database (the guarded `scripts/seed-demo.ts` — localhost is an allowed
+# host), so the audits sweep the detail routes on deterministic slugs
+# (/product/demo-product-001, /blog/demo-post-001, /portfolio/demo-case-001,
+# /p/demo-lander, /shop/gift-collections) and `scripts/e2e-smoke.mjs` runs
+# against the started server with the Studio credentials the Studio audit
+# uses. The demo rows never reach production: the loader refuses non-local
+# hosts and the sitemap, JSON-LD, Sheet and mirror exclude them by clause.
 name: CI
 
 on:
@@ -103,16 +109,17 @@ jobs:
       # gives it categories, FAQs and legal pages, `seed-blogs.ts` the journal,
       # and `prisma/import-tiers.ts` (run by bootstrap on every build) the
       # tracked tier snapshot under data/tiers plus the 20 portfolio cases —
-      # so this database is NOT empty. Detail routes (/product/…, /blog/…,
-      # /portfolio/…) are still absent because their slugs are content, not
-      # code; sweeping them with deterministic slugs is roadmap Phase 16.
-      # /search is a query-only noindex route with nothing to audit empty.
+      # so this database is NOT empty. The detail routes are swept on the
+      # Content Lab's deterministic demo slugs (seeded below, after the
+      # database tests — which remove any demo set they find — and before
+      # the server starts). /search is a query-only noindex route with
+      # nothing to audit empty.
       # D22 gates the portfolio case seed behind an explicit opt-in, so an
       # unset environment gets an empty archive. CI opts in on purpose: the
       # database is a throwaway container and /portfolio below is only worth
       # auditing with cases in it. Production leaves this unset.
       PORTFOLIO_SEED: "1"
-      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms"
+      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander"
       # Arabic is a shipped locale and nothing in CI ever loaded one. The repo
       # carries 29 `rtl:` variants across 19 files and four JS direction
       # inversions (lightbox, gallery, cure line) that no gate protected: a
@@ -120,9 +127,10 @@ jobs:
       # passes every English check. A short set is enough — the chrome, a
       # grid, a form and a prose page cover every layout family, and the
       # horizontal-overflow assertion is what catches an unmirrored rule.
-      # Detail routes stay out for the same reason they do above: CI has no
-      # catalogue.
-      AR_ROUTES: "/ar,/ar/shop,/ar/about,/ar/contact,/ar/privacy,/ar/large-resin-art"
+      # The demo PDP, a category page and the demo lander join the RTL set
+      # for the same reason: a gallery, a card grid and a block page are
+      # layout families the six chrome routes do not cover.
+      AR_ROUTES: "/ar,/ar/shop,/ar/about,/ar/contact,/ar/privacy,/ar/large-resin-art,/ar/process,/ar/product/demo-product-001,/ar/shop/gift-collections,/ar/p/demo-lander"
       BASE_URL: http://127.0.0.1:3000
 
     steps:
@@ -151,6 +159,16 @@ jobs:
       - name: Database-backed tests
         run: npm run test:db
 
+      # The Content Lab demo set (Phase 15). Seeded AFTER the database tests,
+      # which seed and remove a demo set of their own, and BEFORE the server
+      # starts, so every demo route below renders on first request. The
+      # loader refuses any host that is not local unless told otherwise, so
+      # this step can never be pointed at a real database by accident.
+      - name: Seed the demo set
+        run: |
+          npx tsx scripts/seed-demo.ts
+          npx tsx scripts/seed-demo.ts --status
+
       # The audits drive a real browser. The version is read from
       # `playwright-core` rather than pinned here, so bumping the dependency
       # cannot leave CI installing a revision its own library refuses to use.
@@ -172,6 +190,21 @@ jobs:
           echo "::error::the built server did not come up within 60s"
           cat /tmp/next.log
           exit 1
+
+      # The storefront smoke (`scripts/e2e-smoke.mjs`): the DOM contracts the
+      # WhatsApp order flow depends on, the search overlay, a shop facet, the
+      # customization form on the demo PDP submitting to wa.me with the
+      # "[DEMO] " prefix and an isDemo Inquiry row, the Studio login and its
+      # demo rows, a media upload, the sheet-fill preview, and the Arabic and
+      # Hindi locales. The staff row is created here (idempotent) so the
+      # Studio checks can sign in; the Studio audit below reuses it.
+      - name: E2E smoke
+        env:
+          STUDIO_EMAIL: studio-audit@example.com
+          STUDIO_PASSWORD: ci-studio-audit-only
+        run: |
+          npx tsx scripts/ci-staff-user.ts
+          npm run test:e2e
 
       # REDESIGN.md Part 19.1: one h1, no repeated section heading, at most
       # two major sections, at most three dark bands and never adjacent,
