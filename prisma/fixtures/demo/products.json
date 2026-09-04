@@ -927,25 +927,36 @@
   },
   {
     "id": "demo-product-023",
-    "title": "Marbled Resin Canvas · Statement Size",
-    "displayName": "Marbled Resin Canvas",
+    "title": "Beginner Resin Pour Workshop · Saturday Session",
+    "displayName": "Beginner Pour Workshop",
     "slug": "demo-product-023",
-    "shortTagline": "Finished by hand, no two alike",
-    "description": "Marbled Resin Canvas in pigmented epoxy resin on cradled panel. Every piece is poured, cured and finished by hand at the studio, so colour and veining vary slightly from the photograph — that variation is the material, not a flaw. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
+    "shortTagline": "Three hours, all materials included",
+    "description": "A three-hour beginner session at the Surat studio: pigment theory, a guided coaster pour and a small tray, cured over the weekend and posted to you. Aprons, gloves and every material are included; groups of up to six, booked through WhatsApp like everything else here. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
     "priceMin": 1351,
     "priceMax": null,
     "showPrice": true,
-    "timeline": null,
-    "materials": "Pigmented epoxy resin on cradled panel",
-    "dimensions": "Approx. 4 ft length",
-    "occasions": [],
-    "lexical": [],
+    "timeline": "Saturdays, 10:00–13:00",
+    "materials": "All materials included",
+    "dimensions": null,
+    "occasions": [
+      "Birthday"
+    ],
+    "lexical": [
+      {
+        "label": "Suited to",
+        "value": "First-time makers, twelve and up"
+      },
+      {
+        "label": "You take home",
+        "value": "Four coasters and a tray, once cured"
+      }
+    ],
     "careNotes": null,
     "status": "ARCHIVED",
     "featured": false,
     "videoUrl": null,
     "model3dUrl": null,
-    "categorySlug": "art-craft-pieces",
+    "categorySlug": "workshops",
     "seoTitle": null,
     "seoDescription": null,
     "ogImage": null,
@@ -964,28 +975,28 @@
   },
   {
     "id": "demo-product-024",
-    "title": "Deep Blue Abstract Art",
-    "displayName": null,
+    "title": "Advanced Layering Workshop · Private Booking",
+    "displayName": "Advanced Layering Workshop",
     "slug": "demo-product-024",
-    "shortTagline": "Hand-poured in the Surat studio",
-    "description": "Deep Blue Abstract Art in pigmented epoxy resin on cradled panel. Every piece is poured, cured and finished by hand at the studio, so colour and veining vary slightly from the photograph — that variation is the material, not a flaw. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
+    "shortTagline": "A private day on depth, gilding and finishing",
+    "description": "A full private day for two to four makers with a first pour behind them: layered depth, gold-leaf inlay, bubble control and the polish sequence, on a piece you design in the morning. Lunch included; finished pieces are posted after their cure. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
     "priceMin": 1388,
     "priceMax": null,
     "showPrice": true,
-    "timeline": "7-10 days",
-    "materials": "Pigmented epoxy resin on cradled panel",
-    "dimensions": "48 x 22 x 2 in",
+    "timeline": "By appointment",
+    "materials": "All materials included",
+    "dimensions": null,
     "occasions": [
-      "Housewarming"
+      "Anniversary"
     ],
     "lexical": [
       {
         "label": "Suited to",
-        "value": "A statement corner or entry console"
+        "value": "Two to four makers with a first pour behind them"
       },
       {
-        "label": "Pour story",
-        "value": "Three-layer pour, cured over 72 hours"
+        "label": "Format",
+        "value": "Six hours, lunch included, pieces posted after cure"
       }
     ],
     "careNotes": null,
@@ -993,7 +1004,7 @@
     "featured": true,
     "videoUrl": null,
     "model3dUrl": null,
-    "categorySlug": "art-craft-pieces",
+    "categorySlug": "workshops",
     "seoTitle": null,
     "seoDescription": null,
     "ogImage": null,
@@ -2188,19 +2199,19 @@
   },
   {
     "id": "demo-product-053",
-    "title": "Marble Pattern Wall Clock · Statement Size",
-    "displayName": "Marble Pattern Wall Clock",
+    "title": "Rainbow Cloud Name Plaque · Kids Room",
+    "displayName": "Rainbow Cloud Name Plaque",
     "slug": "demo-product-053",
-    "shortTagline": "Made to order, 3–6 week lead time",
-    "description": "Marble Pattern Wall Clock in epoxy resin with mixed pigments. Every piece is poured, cured and finished by hand at the studio, so colour and veining vary slightly from the photograph — that variation is the material, not a flaw. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
+    "shortTagline": "Their name, poured in soft pastel layers",
+    "description": "Rainbow Cloud Name Plaque in pigmented epoxy resin for a nursery or child's room. The name is cast into the cloud in your choice of pastel pair, edges are rounded and the sealed matte finish wipes clean; a keyhole hanger sits in the back. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
     "priceMin": 2461,
     "priceMax": 6461,
     "showPrice": true,
     "timeline": "2-3 weeks",
-    "materials": "Epoxy resin with mixed pigments",
-    "dimensions": "98cm diameter",
+    "materials": "Pigmented epoxy resin, sealed matte finish",
+    "dimensions": "30 × 18 cm",
     "occasions": [
-      "Diwali"
+      "Birthday"
     ],
     "lexical": [],
     "careNotes": null,
@@ -2208,7 +2219,7 @@
     "featured": false,
     "videoUrl": null,
     "model3dUrl": null,
-    "categorySlug": "resin-home-decor",
+    "categorySlug": "kids-room-decor",
     "seoTitle": null,
     "seoDescription": null,
     "ogImage": null,
@@ -2227,19 +2238,19 @@
   },
   {
     "id": "demo-product-054",
-    "title": "Geode Wall Clock",
-    "displayName": null,
+    "title": "Ocean Friends Wall Hooks · Set of Three",
+    "displayName": "Ocean Friends Wall Hooks",
     "slug": "demo-product-054",
-    "shortTagline": "One-of-a-kind resin piece",
-    "description": "Geode Wall Clock in epoxy resin with mixed pigments. Every piece is poured, cured and finished by hand at the studio, so colour and veining vary slightly from the photograph — that variation is the material, not a flaw. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
+    "shortTagline": "Whale, turtle and starfish, ready to hang",
+    "description": "Ocean Friends Wall Hooks in epoxy resin with pastel pigments — a whale, a turtle and a starfish, each on a brass hook rated for a school bag. Sealed, rounded and screwed to the wall with the fixings in the box. Content Lab concept row: this is placeholder demonstration content, not a real product for sale.",
     "priceMin": 2498,
     "priceMax": 6498,
     "showPrice": true,
     "timeline": "3-6 weeks",
-    "materials": "Epoxy resin with mixed pigments",
-    "dimensions": "14\" x 14\"",
+    "materials": "Epoxy resin with pastel pigments, brass hooks",
+    "dimensions": "12 cm each · set of 3",
     "occasions": [
-      "Engagement"
+      "Birthday"
     ],
     "lexical": [],
     "careNotes": null,
@@ -2247,7 +2258,7 @@
     "featured": false,
     "videoUrl": null,
     "model3dUrl": null,
-    "categorySlug": "resin-home-decor",
+    "categorySlug": "kids-room-decor",
     "seoTitle": null,
     "seoDescription": null,
     "ogImage": null,

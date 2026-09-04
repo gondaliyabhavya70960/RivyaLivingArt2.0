@@ -552,10 +552,9 @@ export function BlockFields({
 
       {block.type === "videoHero" && (
         <>
-          <TextField
+          <VideoField
             id={id("videoUrl")}
             label="Video"
-            hint="A file already in the library (right-click → copy link on the Media screen), or a full https:// address. The media picker here only offers pictures for now — video support is landing in a parallel batch."
             value={String(data.videoUrl ?? "")}
             onChange={(v) => set("videoUrl", v)}
           />
@@ -659,10 +658,9 @@ export function BlockFields({
 
       {block.type === "videoStory" && (
         <>
-          <TextField
+          <VideoField
             id={id("videoUrl")}
             label="Video"
-            hint="A file already in the library (right-click → copy link on the Media screen), or a full https:// address. The media picker here only offers pictures for now — video support is landing in a parallel batch."
             value={String(data.videoUrl ?? "")}
             onChange={(v) => set("videoUrl", v)}
           />
@@ -768,6 +766,53 @@ function AreaField({
         onChange={(e) => onChange(e.target.value)}
       />
       {hint && <p className="text-xs text-graphite">{hint}</p>}
+    </div>
+  );
+}
+
+/**
+ * A film from the media library (`MediaPicker accept="VIDEO"`, batch D) or a
+ * pasted address. The same shape as ImageField without the alt text — the
+ * poster next to it carries the description.
+ */
+function VideoField({
+  id,
+  label,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          id={id}
+          value={value}
+          placeholder="Choose from the library, or paste a full https:// address"
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <MediaPicker accept="VIDEO" onSelect={(item) => onChange(item.url)} />
+        {value && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onChange("")}
+          >
+            Clear
+          </Button>
+        )}
+      </div>
+      <p className="text-xs text-graphite">
+        An MP4 or WebM already uploaded on the Media screen, or one hosted
+        elsewhere. Keep it short and silent — it plays muted, and only where
+        motion is allowed.
+      </p>
     </div>
   );
 }

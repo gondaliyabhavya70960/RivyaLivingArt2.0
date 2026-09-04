@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { CONFIRMED_SHEET_TAB, CONFIRMED_COLUMNS } from "@/lib/scraper/confirm";
+import { readSheetSettings } from "@/lib/scraper/sheet-settings";
 import { deleteRowsFromTab, isSheetSyncConfigured, upsertRowsToTab } from "@/lib/scraper/sheets";
 import {
   WEBSITE_COLUMNS,
@@ -30,7 +31,10 @@ export async function pushWebsiteProducts(): Promise<{
   appended: number;
   total: number;
 } | null> {
-  if (!isSheetSyncConfigured()) return null;
+  // The owner's sheet from Settings, env fallback — the same document the
+  // manual pushes write to (see `readSheetSettings`).
+  const settings = await readSheetSettings();
+  if (!isSheetSyncConfigured(settings)) return null;
 
   const products = await db.product.findMany({
     // Demo fixtures never reach the owner's sheet, whatever the site shows.
@@ -61,6 +65,7 @@ export async function pushWebsiteProducts(): Promise<{
     header: WEBSITE_COLUMNS,
     rows,
     keyOf: (row) => row[0] ?? "",
+    settings,
   });
   return { updated, appended, total: rows.length };
 }
@@ -76,21 +81,25 @@ export async function pushWebsiteProducts(): Promise<{
 export async function removeProductsFromSheet(
   ids: readonly string[],
 ): Promise<{ website: number; confirmed: number } | null> {
-  if (!isSheetSyncConfigured() || ids.length === 0) return null;
+  if (ids.length === 0) return null;
 
   const byProductId = (row: string[]) => row[0] ?? "";
   try {
+    const settings = await readSheetSettings();
+    if (!isSheetSyncConfigured(settings)) return null;
     const website = await deleteRowsFromTab({
       tab: WEBSITE_SHEET_TAB,
       keys: ids,
       keyOf: byProductId,
       columns: WEBSITE_COLUMNS.length,
+      settings,
     });
     const confirmed = await deleteRowsFromTab({
       tab: CONFIRMED_SHEET_TAB,
       keys: ids,
       keyOf: byProductId,
       columns: CONFIRMED_COLUMNS.length,
+      settings,
     });
     return { website: website.deleted, confirmed: confirmed.deleted };
   } catch {

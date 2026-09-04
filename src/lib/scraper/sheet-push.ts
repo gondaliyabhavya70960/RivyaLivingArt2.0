@@ -8,6 +8,7 @@ import {
   type SheetIdSettings,
 } from "@/lib/scraper/sheets";
 
+import { SHEET_SYNC_DIRECTION, type SheetSyncStatus } from "@/lib/sheet-status";
 /**
  * The one writer that pushes a job's staged rows into its tier tab.
  *
@@ -40,14 +41,14 @@ const FALLBACK_TIER: ScrapeTier = "RESIN_GOODS";
 export async function recordSheetSyncRun(opts: {
   tab: string;
   rows: number;
-  status: "SYNCED" | "FAILED" | "UNCONFIGURED" | "EMPTY";
+  status: SheetSyncStatus;
   error?: string | null;
   startedAt: Date;
 }): Promise<void> {
   try {
     await db.sheetSyncRun.create({
       data: {
-        direction: "PUSH",
+        direction: SHEET_SYNC_DIRECTION.PUSH,
         tab: opts.tab,
         rows: opts.rows,
         status: opts.status,

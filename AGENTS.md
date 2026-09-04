@@ -129,7 +129,7 @@ npm run lint -- --fix       # eslint
 npm run test                # vitest, pure src/lib functions
 npm run build               # migrate deploy + bootstrap + next build — NEEDS a database
 npm run copy:check          # the copy registry must match messages/en.json
-BASE_URL=http://127.0.0.1:3000 npm run test:e2e   # 10 smoke checks incl. the WhatsApp rule
+BASE_URL=http://127.0.0.1:3000 npm run test:e2e   # the E2E smoke (storefront contract, order flow, Studio paths)
 
 node scripts/i18n-missing.mjs                     # keys missing or untranslated
 node scripts/redesign-audit.mjs "/,/shop" [--w 390]
@@ -205,6 +205,11 @@ reproducing the failure first, then showing it gone.
   and check `uptime` before blaming a script.
 - **`npm run test:db` seeds and REMOVES a demo set of its own** in whatever database it points
   at. Re-seed (`npm run seed:demo`) before any audit or smoke that needs `/product/demo-product-001`.
+- **The CI runner has real internet; this sandbox does not.** A wa.me tab on the runner follows
+  WhatsApp's 301 to `api.whatsapp.com/send/?phone=…&text=…` (spaces re-encoded as `+`), which
+  is what failed the first E2E smoke run on `main` after it passed here. The smoke now answers
+  the wa.me navigation inside the browser context and asserts on the recorded link; any new
+  check that reaches an external host needs the same treatment or a runner-shaped fixture.
 
 ---
 

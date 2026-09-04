@@ -29,10 +29,12 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     image: {
       url: "/mock/coasters.webp",
       alt: "Round ocean-wave resin coasters with gold-leaf veins on a navy backdrop",
+      role: null,
     },
     hoverImage: {
       url: "/mock/pour-detail.webp",
       alt: "Close detail of resin being poured over pigment",
+      role: null,
     },
     variantChips: ["Navy", "Sapphire", "Gold vein"],
     tier: 1,
@@ -56,10 +58,12 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     image: {
       url: "/mock/geode-tray.webp",
       alt: "Oval gold-leaf geode resin serving tray with sapphire bands",
+      role: null,
     },
     hoverImage: {
       url: "/mock/pour-detail.webp",
       alt: "Close detail of resin being poured over pigment",
+      role: null,
     },
     variantChips: ["Small", "Large"],
     tier: 1,
@@ -83,6 +87,7 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     image: {
       url: "/mock/varmala-block.webp",
       alt: "Clear resin keepsake block preserving red and marigold wedding garland flowers",
+      role: null,
     },
     hoverImage: null,
     variantChips: ["Cube", "Slab"],
@@ -108,6 +113,7 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     image: {
       url: "/mock/pendant.webp",
       alt: "Teardrop resin pendant with gold flakes and pressed white flowers",
+      role: null,
     },
     hoverImage: null,
     variantChips: [],

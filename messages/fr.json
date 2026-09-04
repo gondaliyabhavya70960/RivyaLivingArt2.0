@@ -335,37 +335,31 @@
         "dining": {
           "title": "Table à manger",
           "lead": "Coulée aux dimensions de votre table, jamais à une taille standard.",
-          "leadTime": "3–6 semaines",
           "alt": "Un grand établi en bois dans l'atelier, utilisé ici comme image de concept pour une table à manger."
         },
         "coffee": {
           "title": "Table basse",
           "lead": "Une table basse pensée selon la façon dont vous vous asseyez réellement.",
-          "leadTime": "3–6 semaines",
           "alt": "Un plateau en résine et teck terminé, avec un bol, sur la table de l'atelier, utilisé ici comme image de concept pour une table basse."
         },
         "side": {
           "title": "Table d'appoint",
           "lead": "Une surface unique, à la taille du coin qu'elle occupe.",
-          "leadTime": "3–6 semaines",
           "alt": "Un gros plan du grain de teck scellé, utilisé ici comme image de concept pour une table d'appoint."
         },
         "console": {
           "title": "Console",
           "lead": "Une pièce d'entrée, coulée pour le mur contre lequel elle repose.",
-          "leadTime": "3–6 semaines",
           "alt": "L'atelier de nuit — des moules remplis durcissant sous une lampe de travail chaude, utilisé ici comme image de concept pour une console."
         },
         "chair": {
           "title": "Chaise",
           "lead": "Une assise façonnée et finie à la main, une à la fois.",
-          "leadTime": "3–6 semaines",
           "alt": "Des mains disposant des pétales dans un moule vide, utilisé ici comme image de concept pour une chaise."
         },
         "bench": {
           "title": "Banc",
           "lead": "Une longue assise pour une entrée ou une table.",
-          "leadTime": "3–6 semaines",
           "alt": "Une résine bleu profond captant la lumière sur une surface terminée, utilisé ici comme image de concept pour un banc."
         }
       }

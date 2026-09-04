@@ -335,37 +335,31 @@
         "dining": {
           "title": "Dining table",
           "lead": "Poured to your table's footprint, not a standard size.",
-          "leadTime": "3–6 weeks",
           "alt": "A large wooden workbench in the studio, standing in as a concept image for a dining table."
         },
         "coffee": {
           "title": "Coffee table",
           "lead": "A low table built around how you actually sit.",
-          "leadTime": "3–6 weeks",
           "alt": "A finished resin-and-teak board and bowl on the studio table, standing in as a concept image for a coffee table."
         },
         "side": {
           "title": "Side table",
           "lead": "A single surface, sized for the corner it lives in.",
-          "leadTime": "3–6 weeks",
           "alt": "A close macro of sealed teak wood grain, standing in as a concept image for a side table."
         },
         "console": {
           "title": "Console",
           "lead": "A hallway piece, cast to the wall it stands against.",
-          "leadTime": "3–6 weeks",
           "alt": "The studio at night — poured moulds curing under a warm work lamp, standing in as a concept image for a console."
         },
         "chair": {
           "title": "Chair",
           "lead": "A seat shaped and finished by hand, one at a time.",
-          "leadTime": "3–6 weeks",
           "alt": "Hands arranging petals inside an empty mould, standing in as a concept image for a chair."
         },
         "bench": {
           "title": "Bench",
           "lead": "A long seat for an entryway or a table.",
-          "leadTime": "3–6 weeks",
           "alt": "Deep blue resin catching the light across a finished surface, standing in as a concept image for a bench."
         }
       }

@@ -51,6 +51,9 @@ export type ResolvedCustomPage = {
   seoDescription: string | null;
   ogImage: string | null;
   noindex: boolean;
+  /** A Content Lab fixture: rendered only while demo content shows, always
+   *  marked on the page and kept out of the index whatever `noindex` says. */
+  isDemo: boolean;
   status: string;
   publishAt: Date | null;
   updatedAt: Date;
@@ -102,6 +105,7 @@ export const getCustomPage = cache(
       seoDescription: lp.seoDescription,
       ogImage: row.ogImage,
       noindex: row.noindex,
+      isDemo: row.isDemo,
       status: row.status,
       publishAt: row.publishAt,
       updatedAt: row.updatedAt,
@@ -131,6 +135,7 @@ export async function listCustomPagesForStudio() {
       status: true,
       publishAt: true,
       noindex: true,
+      isDemo: true,
       updatedAt: true,
       _count: { select: { blocks: true } },
     },

@@ -8,7 +8,7 @@ import { locales } from "@/i18n/config";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { copySlot, describeCopyProblem, isCopyKey } from "@/lib/site-copy";
-import { SITE_COPY_TAG } from "@/lib/site-copy-server";
+import { SITE_COPY_TAG, shippedCopy } from "@/lib/site-copy-server";
 
 /**
  * Site Copy actions — the write half of /studio/site-copy.
@@ -93,14 +93,22 @@ export async function setSiteCopy(input: {
         data: { draftValue: value, updatedById: session.user.id },
       });
     } else {
-      // A slot with no row yet has nothing published to preserve. Writing the
-      // words to BOTH columns means the row reads correctly in preview and
-      // publishes to exactly what the owner typed.
+      // A slot with no row yet is still a DRAFT: the visitor keeps reading the
+      // shipped words until the surface is published. So `value` (what IS
+      // published) holds the shipped default and `draftValue` the owner's
+      // words — the board counts the difference as pending, preview renders
+      // the draft, publish copies it over, Reset deletes the row. The first
+      // version of this branch wrote the words to BOTH columns, which made
+      // the first edit of every slot live instantly, bypassing Publish; the
+      // 2026-09-04 audit's smoke check (save → visitor unchanged → Publish →
+      // live) caught it. `shippedCopy` is null only for a key the catalogue
+      // does not know, which keySchema already refuses.
+      const shipped = await shippedCopy(key, locale);
       await db.siteCopy.create({
         data: {
           key,
           locale,
-          value,
+          value: shipped ?? value,
           draftValue: value,
           updatedById: session.user.id,
         },

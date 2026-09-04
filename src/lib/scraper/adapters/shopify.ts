@@ -93,16 +93,31 @@ function mapProduct(
   };
 }
 
+/** The origin + collection path a scoped request is built on (exported for the test). */
+export function shopifyEndpointBase(
+  baseUrl: string,
+  scope: AdapterContext["scope"],
+): string {
+  if (scope !== "CATEGORY") return baseUrl;
+  try {
+    const u = new URL(baseUrl);
+    return `${u.origin}${u.pathname.replace(/\/+$/, "")}`;
+  } catch {
+    return baseUrl;
+  }
+}
+
 export const shopifyAdapter: Adapter = async (ctx) => {
   if (ctx.page > 1) {
     await sleep(resolveDelayMs(ctx.requestDelayMs, POLITENESS_DELAY_MS));
   }
 
-  // CATEGORY scope needs no branch here: `ctx.baseUrl` is then the
-  // collection page the operator pasted (e.g. ".../collections/vases"), and
-  // Shopify serves that exact URL's own `/products.json` — the same request
-  // this line always made, just scoped by which URL it was handed.
-  const url = `${ctx.baseUrl}/products.json?limit=${PAGE_SIZE}&page=${ctx.page}`;
+  // CATEGORY scope: `ctx.baseUrl` is the collection page the operator pasted
+  // (e.g. ".../collections/vases", possibly with a sort query), and Shopify
+  // serves that path's own `/products.json` — the same request this adapter
+  // always made, scoped by which URL it was handed. The query is dropped so
+  // the endpoint keeps its own `?limit=&page=`.
+  const url = `${shopifyEndpointBase(ctx.baseUrl, ctx.scope)}/products.json?limit=${PAGE_SIZE}&page=${ctx.page}`;
   // Validate the host + any redirect hop before the request — a source whose
   // /products.json 30x-redirects to an internal address must not be followed
   // (SEC-107; raw fetch's default redirect:"follow" bypassed the guard).

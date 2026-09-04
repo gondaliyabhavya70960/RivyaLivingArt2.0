@@ -15,7 +15,7 @@ import {
   type StagedImage,
 } from "@/lib/publish";
 import { COPY_SLOTS, copySlot } from "@/lib/site-copy";
-import { SITE_COPY_TAG } from "@/lib/site-copy-server";
+import { SITE_COPY_TAG, shippedCopy } from "@/lib/site-copy-server";
 import {
   SITE_IMAGE_SLOTS,
   siteImageSlot,
@@ -224,7 +224,27 @@ export async function discardSurfaceDraft(
     const session = await requireStaff(["ADMIN", "EDITOR"]);
     const { copyKeys, imageKeys } = slotsForSurface(surface);
 
-    const [copyResult, imageResult] = await db.$transaction([
+    // A row whose published words are still the shipped default was created
+    // by a first edit (`setSiteCopy` stages it that way) and has never been
+    // published: discarding its draft leaves nothing to keep, so the row goes
+    // rather than lingering as a "Changed" override equal to the default.
+    // Every other row just drops its draft.
+    const staged = await db.siteCopy.findMany({
+      where: { key: { in: copyKeys }, draftValue: { not: null } },
+      select: { key: true, locale: true, value: true },
+    });
+    const neverPublished: { key: string; locale: string }[] = [];
+    for (const row of staged) {
+      if ((await shippedCopy(row.key, row.locale)) === row.value) {
+        neverPublished.push({ key: row.key, locale: row.locale });
+      }
+    }
+
+    const [removed, copyResult, imageResult] = await db.$transaction([
+      db.siteCopy.deleteMany({
+        // No row has an empty key, so an empty list deletes nothing.
+        where: neverPublished.length ? { OR: neverPublished } : { key: "" },
+      }),
       db.siteCopy.updateMany({
         where: { key: { in: copyKeys }, draftValue: { not: null } },
         data: { draftValue: null },
@@ -240,12 +260,12 @@ export async function discardSurfaceDraft(
       action: "discard-draft",
       entity: "Surface",
       entityId: surface,
-      meta: { copy: copyResult.count, images: imageResult.count },
+      meta: { copy: copyResult.count + removed.count, images: imageResult.count },
     });
     revalidateTag(SITE_COPY_TAG, "max");
     revalidateTag(SITE_IMAGES_TAG, "max");
     revalidatePath(STUDIO_PATH);
-    return { discarded: copyResult.count + imageResult.count };
+    return { discarded: removed.count + copyResult.count + imageResult.count };
   });
 }
 

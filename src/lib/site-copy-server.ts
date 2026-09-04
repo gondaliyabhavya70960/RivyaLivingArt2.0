@@ -156,3 +156,33 @@ export async function countPendingForSurface(surface: string): Promise<number> {
   const copy = copyRows.filter((r) => r.draftValue !== r.value).length;
   return copy + images;
 }
+
+type MessageTree = { [key: string]: string | MessageTree };
+
+function walk(tree: MessageTree | undefined, key: string): string | null {
+  let node: string | MessageTree | undefined = tree;
+  for (const part of key.split(".")) {
+    if (!node || typeof node === "string") return null;
+    node = node[part];
+  }
+  return typeof node === "string" ? node : null;
+}
+
+/**
+ * The words a slot ships with in a locale — what a visitor reads while no
+ * override is published — falling back to English when the locale lacks the
+ * key (the board hides such rows, but an action must not throw on one).
+ * Null only when the key is unknown to the catalogue altogether.
+ */
+export async function shippedCopy(
+  key: string,
+  locale: string,
+): Promise<string | null> {
+  const load = (code: string) =>
+    import(`../../messages/${code}.json`)
+      .then((m) => (m.default ?? m) as MessageTree)
+      .catch(() => undefined);
+  const own = walk(await load(locale), key);
+  if (own) return own;
+  return locale === "en" ? null : walk(await load("en"), key);
+}

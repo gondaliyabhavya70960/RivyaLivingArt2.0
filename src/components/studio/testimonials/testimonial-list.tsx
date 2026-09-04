@@ -12,6 +12,7 @@ import {
   setTestimonialStatus,
 } from "@/actions/testimonials";
 import { BulkBar } from "@/components/studio/bulk-bar";
+import { DemoBadge } from "@/components/studio/demo-badge";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
 import {
@@ -102,21 +103,25 @@ export function TestimonialList({
 
   const statusFilter =
     (searchParams.get("status") as TestimonialStatus | null) ?? "ALL";
+  // `?demo=1` narrows to Content Lab fixtures, the same switch every other
+  // studio list carries.
+  const demoOnly = searchParams.get("demo") === "1";
 
   const filtered = useMemo(() => {
     const byStatus =
       statusFilter === "ALL"
         ? testimonials
         : testimonials.filter((t) => t.status === statusFilter);
+    const byDemo = demoOnly ? byStatus.filter((t) => t.isDemo) : byStatus;
     const q = search.trim().toLowerCase();
-    if (!q) return byStatus;
-    return byStatus.filter(
+    if (!q) return byDemo;
+    return byDemo.filter(
       (t) =>
         t.name.toLowerCase().includes(q) ||
         t.quote.toLowerCase().includes(q) ||
         (t.linkedLabel ?? "").toLowerCase().includes(q),
     );
-  }, [testimonials, statusFilter, search]);
+  }, [testimonials, statusFilter, demoOnly, search]);
 
   const { sorted, sort, toggle } = useSort<TestimonialRow>(
     filtered,
@@ -127,7 +132,7 @@ export function TestimonialList({
   const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
     sorted,
     PAGE_SIZE,
-    `${statusFilter}:${search}:${sort.key}:${sort.dir}`,
+    `${statusFilter}:${demoOnly}:${search}:${sort.key}:${sort.dir}`,
   );
 
   const rowIds = useMemo(() => pageRows.map((t) => t.id), [pageRows]);
@@ -142,6 +147,14 @@ export function TestimonialList({
     const params = new URLSearchParams(searchParams.toString());
     if (value === "ALL") params.delete("status");
     else params.set("status", value);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
+
+  function toggleDemoOnly() {
+    const params = new URLSearchParams(searchParams.toString());
+    if (demoOnly) params.delete("demo");
+    else params.set("demo", "1");
     const qs = params.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname);
   }
@@ -221,6 +234,18 @@ export function TestimonialList({
             className="w-72 ps-10"
           />
         </div>
+        <button
+          type="button"
+          aria-pressed={demoOnly}
+          onClick={toggleDemoOnly}
+          className={
+            demoOnly
+              ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              : "inline-flex min-h-11 items-center rounded-full border border-border px-4 text-small text-graphite outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+          }
+        >
+          Demo only
+        </button>
       </div>
 
       <div
@@ -283,9 +308,9 @@ export function TestimonialList({
                         {row.name}
                       </Link>
                       {row.isDemo && (
-                        <Badge variant="outline" className="ms-2">
-                          DEMO
-                        </Badge>
+                        <span className="ms-2">
+                          <DemoBadge />
+                        </span>
                       )}
                     </h3>
                     <p className="mt-1 line-clamp-2 text-small text-graphite">
@@ -391,9 +416,9 @@ export function TestimonialList({
                           {row.name}
                         </Link>
                         {row.isDemo && (
-                          <Badge variant="outline" className="ms-2">
-                            DEMO
-                          </Badge>
+                          <span className="ms-2">
+                            <DemoBadge />
+                          </span>
                         )}
                       </td>
                       <td className="px-4 py-3">

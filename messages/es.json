@@ -335,37 +335,31 @@
         "dining": {
           "title": "Mesa de comedor",
           "lead": "Vertida a la medida de tu mesa, nunca a un tamaño estándar.",
-          "leadTime": "3–6 semanas",
           "alt": "Un gran banco de trabajo de madera en el estudio, usado aquí como imagen de concepto para una mesa de comedor."
         },
         "coffee": {
           "title": "Mesa de centro",
           "lead": "Una mesa baja pensada según cómo te sientas de verdad.",
-          "leadTime": "3–6 semanas",
           "alt": "Una tabla terminada de resina y teca con un cuenco sobre la mesa del estudio, usada aquí como imagen de concepto para una mesa de centro."
         },
         "side": {
           "title": "Mesa auxiliar",
           "lead": "Una sola superficie, del tamaño del rincón donde vive.",
-          "leadTime": "3–6 semanas",
           "alt": "Un macro del veteado de teca sellada, usado aquí como imagen de concepto para una mesa auxiliar."
         },
         "console": {
           "title": "Consola",
           "lead": "Una pieza de recibidor, fundida para la pared contra la que se apoya.",
-          "leadTime": "3–6 semanas",
           "alt": "El estudio de noche — moldes llenos curando bajo una lámpara de trabajo cálida, usado aquí como imagen de concepto para una consola."
         },
         "chair": {
           "title": "Silla",
           "lead": "Un asiento formado y acabado a mano, uno a la vez.",
-          "leadTime": "3–6 semanas",
           "alt": "Manos colocando pétalos dentro de un molde vacío, usado aquí como imagen de concepto para una silla."
         },
         "bench": {
           "title": "Banco",
           "lead": "Un asiento alargado para una entrada o una mesa.",
-          "leadTime": "3–6 semanas",
           "alt": "Resina azul profundo captando la luz sobre una superficie terminada, usada aquí como imagen de concepto para un banco."
         }
       }

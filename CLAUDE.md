@@ -36,8 +36,12 @@ records what shipped, and lists what genuinely remains.
 - e2e smoke: `BASE_URL=… npm run test:e2e`   (the ten contract checks plus the
   search overlay, a shop facet, the demo PDP's order flow to wa.me with the
   `[DEMO] ` prefix, the locales, and — with `STUDIO_EMAIL`/`STUDIO_PASSWORD` —
-  the Studio login, a media upload, the sheet-fill preview and the
-  testimonial permission rule; database checks need `DATABASE_URL`)
+  the Studio login, a media upload, the sheet-fill preview, the testimonial
+  permission rule, a product's create → edit → delete, a page-builder block
+  save on `/p/demo-lander`, a site-copy draft → Publish → Reset round trip and
+  the scraper's refusal of an undetectable platform; database checks need
+  `DATABASE_URL`. The wa.me tab is answered inside the browser context — the
+  CI runner has real internet and WhatsApp's redirect once failed the check.)
 - demo content: `npm run seed:demo` (`--status`, `--remove`) loads the Content
   Lab fixtures into the database `DATABASE_URL` names; the loader refuses any
   non-local host. `npm run test:db` seeds AND removes a demo set of its own —
@@ -132,7 +136,7 @@ blank one. Adding a surface means following this, not inventing a ninth shape.
 
 | Surface | Registry | Table | Resolver |
 |---|---|---|---|
-| `/studio/site-copy` | `site-copy.ts` (1,185 slots) | `SiteCopy` | `getSiteCopy()` |
+| `/studio/site-copy` | `site-copy.generated.ts` (1,297 slots; `npm run copy:registry`) | `SiteCopy` | `getSiteCopy()` |
 | `/studio/site-images` | `site-images.ts` (62 slots) | `SiteImage` | `getSiteImages()` |
 | `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
 | `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
@@ -336,8 +340,10 @@ ScrollTrigger for the two pinned scrubs.
   motion that is a technology demo is rejected). `git log --diff-filter=D`
   finds them if one is ever wanted back.
 - **Motion primitives (A1–A3).** `src/lib/gsap.ts` registers the house eases
-  (`"luxury"`, `"settle"`) from `src/lib/motion-tokens.ts`, mirrored by test
-  against `tokens.css`; `globals.css` carries `sf-hero-rise` (staggered text
+  (`"luxury"`, `"settle"`) through `gsap.registerEase` with a 30-line
+  cubic-bezier solver (`bezier-ease.ts`) — never `gsap/CustomEase`, whose
+  ~2.5 KB would breach the 49 KB motion ratchet — from
+  `src/lib/motion-tokens.ts`, mirrored by test against `tokens.css`; `globals.css` carries `sf-hero-rise` (staggered text
   entrance on the non-LCP layer), `sf-hero-drift` (a 6 s `infinite alternate`
   ambient scale on the poster WRAPPER, never the image, off under reduced
   motion and while the video plays — mounted on the homepage and large-format

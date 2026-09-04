@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1303 slots · 0 flagged as unreachable from any component.
+ * 1297 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -270,27 +270,21 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Home.furniture.conceptLabel","group":"Homepage","section":"furniture","label":"Concept label","kind":"label","tier":"editorial","max":60},
   {"key":"Home.furniture.kinds.dining.title","group":"Homepage","section":"furniture","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.furniture.kinds.dining.lead","group":"Homepage","section":"furniture","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.furniture.kinds.dining.leadTime","group":"Homepage","section":"furniture","label":"Lead time","kind":"body","tier":"editorial","max":400},
   {"key":"Home.furniture.kinds.dining.alt","group":"Homepage","section":"furniture","label":"Alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Home.furniture.kinds.coffee.title","group":"Homepage","section":"furniture","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.furniture.kinds.coffee.lead","group":"Homepage","section":"furniture","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.furniture.kinds.coffee.leadTime","group":"Homepage","section":"furniture","label":"Lead time","kind":"body","tier":"editorial","max":400},
   {"key":"Home.furniture.kinds.coffee.alt","group":"Homepage","section":"furniture","label":"Alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Home.furniture.kinds.side.title","group":"Homepage","section":"furniture","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.furniture.kinds.side.lead","group":"Homepage","section":"furniture","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.furniture.kinds.side.leadTime","group":"Homepage","section":"furniture","label":"Lead time","kind":"body","tier":"editorial","max":400},
   {"key":"Home.furniture.kinds.side.alt","group":"Homepage","section":"furniture","label":"Alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Home.furniture.kinds.console.title","group":"Homepage","section":"furniture","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.furniture.kinds.console.lead","group":"Homepage","section":"furniture","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.furniture.kinds.console.leadTime","group":"Homepage","section":"furniture","label":"Lead time","kind":"body","tier":"editorial","max":400},
   {"key":"Home.furniture.kinds.console.alt","group":"Homepage","section":"furniture","label":"Alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Home.furniture.kinds.chair.title","group":"Homepage","section":"furniture","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.furniture.kinds.chair.lead","group":"Homepage","section":"furniture","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.furniture.kinds.chair.leadTime","group":"Homepage","section":"furniture","label":"Lead time","kind":"body","tier":"editorial","max":400},
   {"key":"Home.furniture.kinds.chair.alt","group":"Homepage","section":"furniture","label":"Alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Home.furniture.kinds.bench.title","group":"Homepage","section":"furniture","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.furniture.kinds.bench.lead","group":"Homepage","section":"furniture","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.furniture.kinds.bench.leadTime","group":"Homepage","section":"furniture","label":"Lead time","kind":"body","tier":"editorial","max":400},
   {"key":"Home.furniture.kinds.bench.alt","group":"Homepage","section":"furniture","label":"Alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Home.rooms.eyebrow","group":"Homepage","section":"rooms","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Home.rooms.heading","group":"Homepage","section":"rooms","label":"Heading","kind":"heading","tier":"editorial","max":80},

@@ -105,6 +105,14 @@ export function HeroMedia({
       unoptimized={
         posterProps.poster ? !isOptimizableImageSrc(posterUrl) : undefined
       }
+      // The slot's 20px LQIP (batch D): next/image paints it behind the
+      // poster until the real bytes land — a placeholder, not a fade, so
+      // §2.7's no-fade rule holds and the LCP element is unchanged. A ref
+      // without one (an owner upload predating the capture) renders as
+      // before.
+      {...(posterProps.poster?.blurDataUrl
+        ? { placeholder: "blur" as const, blurDataURL: posterProps.poster.blurDataUrl }
+        : {})}
     />
   );
 

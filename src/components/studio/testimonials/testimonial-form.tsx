@@ -747,21 +747,25 @@ export function TestimonialForm({
 
             <FormSection
               title="A short film"
-              description={
-                // The library picker only lists images until batch D wires a
-                // VIDEO filter into `listMediaForPicker` — until then this
-                // field takes a pasted URL (an /uploads path or a Vercel Blob
-                // link from a video uploaded elsewhere in the Studio).
-                "Paste a video URL — a picker for videos in the library is coming; for now upload the file elsewhere and paste its URL here."
-              }
+              description="A film from the media library, or a full https:// address of one hosted elsewhere. The poster shows while it loads and stands in for it on phones."
             >
               <div className="space-y-1.5">
-                <Label htmlFor="testimonial-video-url">Video URL</Label>
-                <Input
-                  id="testimonial-video-url"
-                  placeholder="https://… or /uploads/…"
-                  {...register("videoUrl")}
-                />
+                <Label htmlFor="testimonial-video-url">Video</Label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Input
+                    id="testimonial-video-url"
+                    className="min-w-56 flex-1"
+                    placeholder="https://… or /uploads/…"
+                    {...register("videoUrl")}
+                  />
+                  <MediaPicker
+                    accept="VIDEO"
+                    defaultFolder="site"
+                    onSelect={(item) =>
+                      setValue("videoUrl", item.url, { shouldDirty: true })
+                    }
+                  />
+                </div>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="testimonial-video-poster">Poster image</Label>

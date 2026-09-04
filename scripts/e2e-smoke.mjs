@@ -23,10 +23,16 @@
  *     /whatsapp-order fallback — and, when DATABASE_URL is set, the newest
  *     Inquiry row is the demo one (salvaged from the retired verify-phase2);
  *   - with STUDIO_EMAIL/STUDIO_PASSWORD set: the login lands in the Studio,
- *     the demo product's edit screen renders, a generated 1×1 PNG uploads
- *     into the media library, the sheet-fill Preview answers, and a
- *     testimonial cannot be PUBLISHED until its permission is GRANTED (then
- *     can);
+ *     the demo product's edit screen renders, a generated PNG uploads into
+ *     the media library, the sheet-fill Preview answers, and a testimonial
+ *     cannot be PUBLISHED until its permission is GRANTED (then can);
+ *   - the four Studio paths the plan named and the first cut of this file
+ *     left out (plan audit, 2026-09-04): a product is created, edited and
+ *     deleted through its form; the page builder saves a block on
+ *     /p/demo-lander and the lander renders it; a site-copy edit stages a
+ *     DRAFT the visitor does not see, Publish releases it, Reset returns the
+ *     shipped wording; and the scraper refuses a URL whose platform it cannot
+ *     detect — no job, no source, no network beyond the one probe;
  *   - /ar renders right-to-left and /hi renders a Devanagari h1.
  *
  * Studio and database checks skip (as skips, not passes) when their inputs
@@ -42,6 +48,32 @@ import { chromium } from "playwright-core";
 
 const BASE = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const WA_NUMBER = "917096036250";
+// Both shapes a WhatsApp deep link takes: the app's own `wa.me/<number>?text=`
+// and the `api.whatsapp.com/send/?phone=<number>&text=` that wa.me redirects
+// to on a machine with real internet.
+const WA_HOSTS = /^https:\/\/(wa\.me|api\.whatsapp\.com)\//;
+
+/** The phone number a WhatsApp deep link addresses, in either shape. */
+function waHouseNumber(href) {
+  let url;
+  try {
+    url = new URL(href);
+  } catch {
+    return "";
+  }
+  if (url.hostname === "wa.me") return url.pathname.replace(/^\/+/, "").split("/")[0];
+  if (url.hostname === "api.whatsapp.com") return url.searchParams.get("phone") ?? "";
+  return "";
+}
+
+/** The pre-filled message of a WhatsApp deep link, decoded (`+` is a space). */
+function waMessage(href) {
+  try {
+    return new URL(href).searchParams.get("text") ?? "";
+  } catch {
+    return "";
+  }
+}
 const DEMO_PDP = "/product/demo-product-001";
 const STUDIO_EMAIL = process.env.STUDIO_EMAIL;
 const STUDIO_PASSWORD = process.env.STUDIO_PASSWORD;
@@ -262,6 +294,24 @@ try {
       // /whatsapp-order fallback, which renders the same link. Watch the
       // context for the new tab AND read the fallback's own anchor, and
       // accept whichever carries the wa.me URL.
+      //
+      // A machine with real internet never keeps that tab on wa.me: WhatsApp
+      // answers with a 301 to api.whatsapp.com/send/?phone=…&text=… and
+      // re-encodes the spaces as "+", which is exactly what the first CI run
+      // of this check saw (25/27). So the context answers the wa.me
+      // navigation itself — recording the URL the panel asked for and
+      // serving a stub — and the assertions read that recorded link. CI
+      // never contacts WhatsApp, and the check means the same thing on a
+      // laptop, in this sandbox and on the runner.
+      const waRequests = [];
+      await p.context().route(WA_HOSTS, (route) => {
+        waRequests.push(route.request().url());
+        return route.fulfill({
+          status: 200,
+          contentType: "text/html",
+          body: "<!doctype html><title>wa.me stub</title>",
+        });
+      });
       const newPagePromise = p
         .context()
         .waitForEvent("page", { timeout: 20000 })
@@ -270,8 +320,8 @@ try {
       const newPage = await newPagePromise;
       let waUrl = "";
       if (newPage) {
-        await newPage.waitForURL(/wa\.me/, { timeout: 10000 }).catch(() => {});
-        waUrl = newPage.url();
+        await newPage.waitForURL(WA_HOSTS, { timeout: 10000 }).catch(() => {});
+        waUrl = waRequests.find((u) => u.startsWith("https://wa.me/")) ?? newPage.url();
         await newPage.close().catch(() => {});
       }
       const fell = await p
@@ -289,15 +339,16 @@ try {
               .sort((x, y) => y.length - x.length)[0] ?? "",
           )) || waUrl;
       }
-      const decoded = decodeURIComponent(waUrl);
+      const message = waMessage(waUrl);
       check(
         "Place Order opens wa.me with the house number",
-        waUrl.startsWith(`https://wa.me/${WA_NUMBER}`),
-        waUrl.slice(0, 80) || "no popup",
+        waHouseNumber(waUrl) === WA_NUMBER,
+        waUrl.slice(0, 120) || "no popup",
       );
       check(
         'the demo order message carries the "[DEMO] " prefix and the chosen size',
-        decoded.includes("[DEMO]") && decoded.includes("16 inch"),
+        message.includes("[DEMO]") && message.includes("16 inch"),
+        message.slice(0, 120),
       );
       check("the /whatsapp-order fallback follows the popup", fell, p.url());
       check("no page errors during the order flow", pageErrors.length === 0, pageErrors[0] ?? "");
@@ -476,9 +527,264 @@ try {
     } else {
       check("a testimonial is refused PUBLISHED without permission GRANTED", false, "no #testimonial-name");
     }
+
+    // Each Studio path below runs under `attempt`: a locator that never
+    // appears throws a TimeoutError, and one path's surprise must fail ITS
+    // checks, not abort the run before the other paths report.
+    const attempt = async (names, fn) => {
+      try {
+        await fn();
+      } catch (err) {
+        const reason = String(err?.message ?? err).split("\n")[0].slice(0, 160);
+        for (const name of names) {
+          if (!results.some((r) => r.name === name)) check(name, false, reason);
+        }
+      }
+    };
+
+    // Toasts are the Studio's answer to every action; each check below reads
+    // the one it expects rather than guessing at timing.
+    const toastSeen = (pattern, timeout = 15000) =>
+      studio
+        .getByText(pattern)
+        .first()
+        .waitFor({ state: "visible", timeout })
+        .then(() => true)
+        .catch(() => false);
+
+await attempt(["a product is created from the Studio form", "the product's edit saves what was typed", "the product is deleted from its form"], async () => {
+      // — A product's whole life through its form: create → edit → delete —
+      {
+        const stamp = Date.now();
+        const title = `E2E smoke product ${stamp}`;
+        await studio.goto(`${BASE}/studio/products/new`, NAV);
+        const titleField = studio.locator("#product-title");
+        if ((await titleField.count()) > 0) {
+          await titleField.fill(title);
+          await studio.locator("#product-description").fill("E2E smoke — safe to delete.");
+          // The category is a radix Select: open the trigger, take the first option.
+          await studio.locator('[aria-label="Category"]').first().click();
+          await studio.getByRole("option").first().click();
+          await studio.locator("#product-price-min").fill("999");
+          await studio.getByRole("button", { name: /^Save$/ }).first().click();
+          const created = await toastSeen(/Product created\./);
+          let productId = "";
+          for (let i = 0; i < 20 && !productId; i += 1) {
+            await studio.waitForTimeout(500);
+            const m = studio.url().match(/\/studio\/products\/([^/?#]+)$/);
+            if (m && m[1] !== "new") productId = m[1];
+          }
+          let inDb = true;
+          if (DATABASE_URL) {
+            const row = await query('select id, status from "Product" where title = $1', [title]);
+            inDb = row?.rows?.length === 1;
+            productId = productId || row?.rows?.[0]?.id || "";
+          }
+          check("a product is created from the Studio form", created && Boolean(productId) && inDb, productId || studio.url());
+
+          // Edit: the title changes and the change is what the database holds.
+          const edited = `${title} edited`;
+          if (productId) {
+            await studio.goto(`${BASE}/studio/products/${productId}`, NAV);
+            await studio.locator("#product-title").fill(edited);
+            await studio.getByRole("button", { name: /^Save$/ }).first().click();
+            const savedToast = await toastSeen(/Product saved\./);
+            let stored = savedToast;
+            if (DATABASE_URL) {
+              const row = await query('select title from "Product" where id = $1', [productId]);
+              stored = row?.rows?.[0]?.title === edited;
+            }
+            check("the product's edit saves what was typed", savedToast && stored);
+
+            // Delete: the form's own Delete → confirm dialog → gone from the list and the table.
+            await studio.getByRole("button", { name: /^Delete$/ }).first().click();
+            const typed = studio.locator("#confirm-delete-input");
+            if ((await typed.count()) > 0) await typed.fill("DELETE");
+            await studio.getByRole("button", { name: /^Delete 1 / }).click();
+            const deletedToast = await toastSeen(/Product deleted\./);
+            let gone = deletedToast;
+            if (DATABASE_URL) {
+              for (let i = 0; i < 10 && !gone; i += 1) {
+                const row = await query('select id from "Product" where id = $1', [productId]);
+                gone = row?.rows?.length === 0;
+                if (!gone) await studio.waitForTimeout(500);
+              }
+              // Belt and braces: never leave a smoke row behind.
+              await query('delete from "Product" where title in ($1, $2)', [title, edited]);
+            }
+            check("the product is deleted from its form", deletedToast && gone);
+          } else {
+            check("the product's edit saves what was typed", false, "no product id after create");
+            check("the product is deleted from its form", false, "no product id after create");
+          }
+        } else {
+          check("a product is created from the Studio form", false, "no #product-title");
+        }
+      }
+    });
+
+await attempt(["the page builder saves a block on /p/demo-lander", "the lander renders the saved block"], async () => {
+      // — The page builder saves a block, and the lander renders it —
+      {
+        const stamp = Date.now();
+        const marker = `E2E smoke eyebrow ${stamp}`;
+        await studio.goto(`${BASE}/studio/custom-pages/demo-lander`, NAV);
+        const editButtons = studio.getByRole("button", { name: /^Edit$/ });
+        if ((await editButtons.count()) > 0) {
+          await editButtons.first().click();
+          const eyebrow = studio.locator('input[id^="blk-"][id$="-eyebrow"]').first();
+          const original = await eyebrow.inputValue();
+          await eyebrow.fill(marker);
+          await studio.getByRole("button", { name: /^Save block$/ }).first().click();
+          const savedToast = await toastSeen(/Block saved\./);
+          let stored = savedToast;
+          if (DATABASE_URL) {
+            const row = await query(
+              'select data from "CustomBlock" where "pageId" = $1 order by "order" asc limit 1',
+              ["demo-lander"],
+            );
+            const data = row?.rows?.[0]?.data;
+            stored = (typeof data === "string" ? JSON.parse(data) : data)?.eyebrow === marker;
+          }
+          check("the page builder saves a block on /p/demo-lander", savedToast && stored);
+          let rendered = false;
+          for (let i = 0; i < 10 && !rendered; i += 1) {
+            const html = await fetch(`${BASE}/en/p/demo-lander`, { cache: "no-store" })
+              .then((r) => r.text())
+              .catch(() => "");
+            rendered = html.includes(marker);
+            if (!rendered) await studio.waitForTimeout(1000);
+          }
+          check("the lander renders the saved block", rendered);
+          // Put the fixture back the way the seed wrote it.
+          await eyebrow.fill(original);
+          await studio.getByRole("button", { name: /^Save block$/ }).first().click();
+          await toastSeen(/Block saved\./);
+        } else {
+          check("the page builder saves a block on /p/demo-lander", false, "no block Edit button (is the demo set seeded?)");
+        }
+      }
+    });
+
+await attempt(["a site-copy save stages a draft the visitor does not see", "Publish releases the surface's drafts to the storefront", "Reset returns the shipped wording"], async () => {
+      // — Site copy: a save is a DRAFT, Publish releases the surface, Reset returns the default —
+      {
+        const stamp = Date.now();
+        const marker = `E2E smoke eyebrow ${stamp}`;
+        await studio.goto(`${BASE}/studio/site-copy?group=Homepage&locale=en`, NAV);
+        const heroRow = studio
+          .locator('section[aria-labelledby="sec-hero"] li')
+          .filter({ hasText: "Hero eyebrow" })
+          .first();
+        if ((await heroRow.count()) > 0) {
+          await heroRow.getByRole("button", { name: /^Edit$/ }).click();
+          // The row's one field once it is open (the board labels it "Hero eyebrow").
+          await heroRow.locator("input, textarea").first().fill(marker);
+          await heroRow.getByRole("button", { name: /^Save$/ }).click();
+          const savedToast = await toastSeen(/eyebrow updated\./i);
+          let staged = savedToast;
+          let publicUntouched = true;
+          if (DATABASE_URL) {
+            const row = await query(
+              'select value, "draftValue" from "SiteCopy" where key = $1 and locale = $2',
+              ["Home.hero.eyebrow", "en"],
+            );
+            staged = row?.rows?.[0]?.draftValue === marker;
+          }
+          const homeBefore = await fetch(`${BASE}/en`, { cache: "no-store" }).then((r) => r.text()).catch(() => "");
+          publicUntouched = !homeBefore.includes(marker);
+          check("a site-copy save stages a draft the visitor does not see", savedToast && staged && publicUntouched);
+
+          // Publish the surface: the bar appears once something is pending.
+          const publish = studio.getByRole("button", { name: /^publish/i }).first();
+          const publishable = await publish.waitFor({ state: "visible", timeout: 15000 }).then(() => true).catch(() => false);
+          let live = false;
+          if (publishable) {
+            await publish.click();
+            const publishedToast = await toastSeen(/published —/i, 30000);
+            let released = publishedToast;
+            if (DATABASE_URL) {
+              const row = await query(
+                'select value, "draftValue" from "SiteCopy" where key = $1 and locale = $2',
+                ["Home.hero.eyebrow", "en"],
+              );
+              released = row?.rows?.[0]?.value === marker && row?.rows?.[0]?.draftValue === null;
+            }
+            for (let i = 0; i < 10 && !live; i += 1) {
+              const html = await fetch(`${BASE}/en`, { cache: "no-store" }).then((r) => r.text()).catch(() => "");
+              live = html.includes(marker);
+              if (!live) await studio.waitForTimeout(1000);
+            }
+            check(
+            "Publish releases the surface's drafts to the storefront",
+            publishedToast && released && live,
+            `toast ${publishedToast} · row ${released} · live ${live}`,
+          );
+          } else {
+            check("Publish releases the surface's drafts to the storefront", false, "no Publish button after the save");
+          }
+
+          // Reset returns the shipped wording — and the storefront follows.
+          await studio.reload(NAV);
+          const resetRow = studio
+            .locator('section[aria-labelledby="sec-hero"] li')
+            .filter({ hasText: "Hero eyebrow" })
+            .first();
+          await resetRow.getByRole("button", { name: /^Reset / }).click();
+          const resetToast = await toastSeen(/back to the shipped wording/i);
+          let cleared = resetToast;
+          if (DATABASE_URL) {
+            const row = await query('select 1 from "SiteCopy" where key = $1 and locale = $2', ["Home.hero.eyebrow", "en"]);
+            cleared = row?.rows?.length === 0;
+            // Never leave the smoke's words on the owner's homepage.
+            await query('delete from "SiteCopy" where key = $1 and locale = $2 and (value = $3 or "draftValue" = $3)', ["Home.hero.eyebrow", "en", marker]);
+          }
+          let restored = false;
+          for (let i = 0; i < 10 && !restored; i += 1) {
+            const html = await fetch(`${BASE}/en`, { cache: "no-store" }).then((r) => r.text()).catch(() => "");
+            restored = !html.includes(marker);
+            if (!restored) await studio.waitForTimeout(1000);
+          }
+          check("Reset returns the shipped wording", resetToast && cleared && restored);
+        } else {
+          check("a site-copy save stages a draft the visitor does not see", false, "no Hero eyebrow row on the Homepage surface");
+        }
+      }
+    });
+
+await attempt(["the scraper refuses an undetectable platform — no job, no source"], async () => {
+      // — The scraper refuses a site whose platform it cannot detect —
+      {
+        const stamp = Date.now();
+        // `.invalid` is reserved (RFC 2606): it never resolves, so the one
+        // fingerprint probe fails fast on any machine and nothing leaves it.
+        const host = `e2e-smoke-${stamp}.invalid`;
+        await studio.goto(`${BASE}/studio/scraper`, NAV);
+        const urlField = studio.locator("#scrape-url");
+        if ((await urlField.count()) > 0) {
+          const since = DATABASE_URL ? (await query("select now() as t"))?.rows?.[0]?.t : null;
+          await urlField.fill(`https://${host}/collections/all`);
+          await studio.getByRole("button", { name: /start scrape/i }).click();
+          const refused = await toastSeen(/could not detect a supported platform/i, 60000);
+          let clean = true;
+          if (DATABASE_URL) {
+            const jobs = await query('select count(*)::int as n from "ScrapeJob" where "createdAt" >= $1', [since]);
+            const sources = await query('select count(*)::int as n from "ScrapeSource" where "baseUrl" like $1', [`%${host}%`]);
+            clean = jobs?.rows?.[0]?.n === 0 && sources?.rows?.[0]?.n === 0;
+          }
+          check("the scraper refuses an undetectable platform — no job, no source", refused && clean);
+        } else {
+          check("the scraper refuses an undetectable platform — no job, no source", false, "no #scrape-url");
+        }
+      }
+    });
+
     await studio.close();
   } else {
-    skip("Studio checks (login, demo product, media upload, sheet preview, testimonial rule)", "STUDIO_EMAIL/STUDIO_PASSWORD unset");
+    skip(
+      "Studio checks (login, demo product, media upload, sheet preview, testimonial rule, product CRUD, page builder, site-copy publish, scraper refusal)",
+      "STUDIO_EMAIL/STUDIO_PASSWORD unset",
+    );
   }
 } finally {
   await browser.close();

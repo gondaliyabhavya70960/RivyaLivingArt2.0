@@ -31,6 +31,7 @@ import {
   resolvedFields,
 } from "@/lib/scraper/validation";
 import { shouldPushOnComplete } from "@/lib/scraper/sheet-policy";
+import { readSheetSettings } from "@/lib/scraper/sheet-settings";
 import { pushJobToSheet } from "@/lib/scraper/sheet-push";
 import { getAdapter } from "@/lib/scraper/adapters";
 import { jsonldAdapter } from "@/lib/scraper/adapters/jsonld";
@@ -45,6 +46,7 @@ import {
   fingerprint,
   isBlockedMarketplace,
   normalizeBaseUrl,
+  normalizePageUrl,
 } from "@/lib/scraper/fingerprint";
 import { contentHash } from "@/lib/scraper/hash";
 import {
@@ -700,24 +702,31 @@ export async function continueScrapeJob(
     let error: string | null = null;
 
     try {
-      // SOURCE crawls the registered source's base URL; CATEGORY/URL crawl
-      // the specific page `createScrapeJob` stored in `inputUrl` for this
-      // job — `job.source.baseUrl` would be the wrong target for those.
-      const baseUrl = normalizeBaseUrl(
+      // SOURCE crawls the registered source's site; CATEGORY/URL crawl the
+      // specific page `createScrapeJob` stored in `inputUrl` for this job —
+      // `job.source.baseUrl` would be the wrong target for those. The
+      // adapters read the listing / product page from `baseUrl`, so a scoped
+      // job keeps its PATH (`normalizePageUrl`); only the robots gate below
+      // wants the origin. Running the scoped URL through `normalizeBaseUrl`
+      // here used to hand the adapters the bare origin, which turned every
+      // category and single-URL job into a whole-source crawl.
+      const siteOrigin = normalizeBaseUrl(
         job.scope === "SOURCE"
           ? (job.source?.baseUrl ?? job.inputUrl)
           : job.inputUrl,
       );
+      const baseUrl =
+        job.scope === "SOURCE" ? siteOrigin : normalizePageUrl(job.inputUrl);
 
       // Politeness: honour robots.txt once, before the first page is fetched.
       // Gate on the site root — the universal "may we crawl you at all" signal.
       // A platform-specific path (e.g. /products.json) would false-fail sites
       // that disallow only that path, even though we can read their JSON-LD
       // product pages instead.
-      if (cursorPage === 0 && !(await isPathAllowed(baseUrl, "/"))) {
-        let host = baseUrl;
+      if (cursorPage === 0 && !(await isPathAllowed(siteOrigin, "/"))) {
+        let host = siteOrigin;
         try {
-          host = new URL(baseUrl).host;
+          host = new URL(siteOrigin).host;
         } catch {
           // keep baseUrl as-is
         }
@@ -861,7 +870,7 @@ export async function continueScrapeJob(
       // in code (D23). It is gone; `sheet-policy.test.ts` asserts both the
       // policy truth table and that this file keeps exactly one writer.
       if (shouldPushOnComplete(status, source?.sheetSyncPolicy)) {
-        const outcome = await pushJobToSheet(job.id);
+        const outcome = await pushJobToSheet(job.id, await readSheetSettings());
         await logActivity({
           userId: session.user.id,
           action: "sheet-sync-auto",

@@ -64,7 +64,7 @@ const PRODUCT_CARD_SELECT = {
   translations: true,
   category: { select: { name: true, translations: true } },
   images: {
-    select: { url: true, alt: true },
+    select: { url: true, alt: true, role: true, },
     orderBy: { order: "asc" },
     take: 2,
   },

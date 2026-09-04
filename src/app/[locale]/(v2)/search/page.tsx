@@ -192,10 +192,18 @@ export default async function SearchPage({
       featured: p.featured,
       categoryName: localize(p.category, locale, ["name"]).name,
       image: p.images[0]
-        ? { url: p.images[0].url, alt: p.images[0].alt || lp.title }
+        ? {
+            url: p.images[0].url,
+            alt: p.images[0].alt || lp.title,
+            role: p.images[0].role ?? null,
+          }
         : null,
       hoverImage: p.images[1]
-        ? { url: p.images[1].url, alt: p.images[1].alt || lp.title }
+        ? {
+            url: p.images[1].url,
+            alt: p.images[1].alt || lp.title,
+            role: p.images[1].role ?? null,
+          }
         : null,
       variantChips: [],
       // D21 added these to ShopProductItem for the catalog card's mono meta

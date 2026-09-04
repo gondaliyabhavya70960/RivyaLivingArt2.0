@@ -15,26 +15,30 @@ Current Phase:            Transformation COMPLETE — Phases 1b–17 of the mast
                           (B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 · C2 · F2); CI sweeps the
                           demo detail routes, the E2E smoke, the lightboxes and the Studio
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             every batch COMPLETE (2026-09-04); PR #42 draft, ready for the owner's review;
-                          CI green on every pushed head
-                          on every head; Vercel preview green after the P2037 pool/retry fix
-Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
-                          ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
-                          demo gate on every public reader + DEMO prefix retired · Faq.status ·
-                          Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
-                          SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
-                          ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
+Phase Status:             every batch COMPLETE (2026-09-04); PR #42 MERGED by the owner (main = cc029bc).
+                          CI was green on every head up to the F2 smoke step; the first runs of that step
+                          (#136 on the PR head, #137 on main) failed 25/27 because the runner's wa.me tab
+                          follows WhatsApp's redirect — fixed by the follow-up PR that routes wa.me inside
+                          the smoke's browser context (this branch, restarted from main); Vercel preview
+                          green after the P2037 pool/retry fix
+Completed:                Phases 1b–17 of the master prompt: 13 batches (B0 · A1 · B · G · C1 · D ·
+                          F1 · E · A3 · A2 · A4 · C2 · F2) merged as PR #42; then the plan-completion
+                          audit (16 verifiers + refuters over every plan bullet) and its follow-up on
+                          PR #43: the CI smoke's wa.me fix, scraper scope URL, sheet-settings on every
+                          writer, demo-lander noindex/mark, whole-file isolation guard, VIDEO picker
+                          in three forms, hero LQIP, demo badge on two lists, card image role, fixture
+                          rebalance, one lead-time key, sheet status enums, four new smoke checks
 In Progress:              nothing in flight. Owner-machine follow-ups: fetch the planned Higgsfield
-                          sets in docs/media-v3-manifest.json (the CDN refuses the sandbox); replace
-                          the generated maker portrait with a photograph; turn
-                          SiteSettings.demoContentPublic on only as a deliberate act; review and
-                          merge PR #42
-Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
-                          Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
-                          (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
-                          2026-09-03: D9/D26 commission framing all six kinds; D10/D20 Part 14
-                          ceiling; D7/D8/D14 additive schema + isDemo, demo content public only
-                          behind SiteSettings.demoContentPublic or off production; D25 ten steps.
+                          sets in docs/media-v3-manifest.json (the CDN refuses the sandbox; the
+                          fetch script iterates `assets` only, so promote each planned entry first);
+                          replace the generated maker portrait with a photograph; add `.env.example`
+                          (`.env*` edits are denied here); a by-eye reduced-motion pass over the A2/A3/
+                          C2 mounts; turn SiteSettings.demoContentPublic on only as a deliberate act;
+                          review and merge PR #43
+Next Exact Task:          none from the plan. Everything the 2026-09-04 audit listed as pending is
+                          either closed on PR #43 or an owner-machine follow-up above. A next session
+                          starts from `docs/transformation-roadmap.md` (status) and CHANGELOG's newest
+                          entry, not from the plan file.
 Files Created:            11 migration dirs (20260904100000 … 20260904110000) · src/lib/
                           {content-status,demo-clause,demo-content,activity-snapshot,
                           process-steps}.ts (+ tests) · tests/db/{testimonials-gate,demo-gate}.test.ts
@@ -53,7 +57,9 @@ Files Modified/Deleted:   prisma/schema.prisma · src/lib/{testimonials,media-us
                           scraper/product-sheet-sync}.ts · src/actions/{helpers,order,search,shop,
                           blog,portfolio,products,custom-pages}.ts · src/app/sitemap.ts · every
                           (v2) page that reads content · Studio product list/page · four Studio
-                          form schemas · vitest.db.config.mts · tests updated. Nothing deleted.
+                          form schemas · vitest.db.config.mts · tests updated. DELETED by F2:
+                          scripts/verify-chrome.mjs, verify-phase2…7.mjs (×6), screenshot-lab.mjs, and
+                          shop/[category]/loading.tsx + product/[slug]/loading.tsx (route groups).
                           A3: shop.ts D21 select · catalog-product-card · product page/gallery/
                           order-panel/model-viewer · portfolio lightbox-gallery · shop + category
                           pages · search page defaults · design-lab mock rows. E: scraper actions,

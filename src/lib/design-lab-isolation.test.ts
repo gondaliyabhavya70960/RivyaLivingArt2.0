@@ -5,14 +5,32 @@ import { describe, expect, it } from "vitest";
 /**
  * Guards HARD RULE 3: mock data must never reach a real page. Every import
  * of `design-lab/mock-data` — by relative path, the `@/app/design-lab/...`
- * alias, or a bare mention of the module specifier — must live inside
- * `src/app/design-lab/`. A hit anywhere else means someone has wired
- * placeholder products, testimonials or copy into a real route.
+ * alias, a `require`, or a dynamic `import()` — must live inside the design
+ * lab: `src/app/design-lab/` (the staff-gated route) or
+ * `src/components/design-lab/` (the lab's own sections, rendered only by that
+ * route). A hit anywhere else means someone has wired placeholder products,
+ * testimonials or copy into a real route.
+ *
+ * The scan reads the module specifier out of the WHOLE file, not line by
+ * line: the first version filtered to lines starting with `import`, so a
+ * multi-line `import {\n  A,\n  B,\n} from "…/mock-data"` — the shape the lab's
+ * own sections file has — was never examined at all (plan audit, 2026-09-04).
+ * A second assertion closes the other half of the hole: the lab's component
+ * folder may itself be imported only from inside the lab, so quarantining
+ * mock data there does not just move the leak one hop.
  */
 
 const SRC_ROOT = join(__dirname, "..");
-const DESIGN_LAB_DIR = join(SRC_ROOT, "app", "design-lab");
-const MOCK_DATA_PATTERN = /mock-data/;
+const DESIGN_LAB_DIRS = [
+  join(SRC_ROOT, "app", "design-lab"),
+  join(SRC_ROOT, "components", "design-lab"),
+];
+/** Any module specifier that names the mock-data file, in every import shape. */
+const MOCK_DATA_SPECIFIER =
+  /(?:\bfrom\s*|\brequire\s*\(\s*|\bimport\s*\(\s*)["'][^"'\n]*design-lab\/mock-data[^"'\n]*["']/g;
+/** Any module specifier that reaches into the lab's component folder. */
+const LAB_COMPONENT_SPECIFIER =
+  /(?:\bfrom\s*|\brequire\s*\(\s*|\bimport\s*\(\s*)["'](?:@\/components\/design-lab|[^"'\n]*\/components\/design-lab)[^"'\n]*["']/g;
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx"]);
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -29,27 +47,36 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe("design-lab mock-data isolation", () => {
-  it("is imported only from inside src/app/design-lab", () => {
-    const offenders: string[] = [];
+const insideLab = (file: string) =>
+  DESIGN_LAB_DIRS.some((dir) => file.startsWith(dir + sep));
 
-    for (const file of walk(SRC_ROOT)) {
-      if (file.startsWith(DESIGN_LAB_DIR + sep)) continue;
-      // The test file itself names the pattern in prose above — skip it.
-      if (file === __filename) continue;
-
-      const content = readFileSync(file, "utf8");
-      const importLines = content
-        .split("\n")
-        .filter((line) => /^\s*import\b/.test(line) || /require\(/.test(line));
-
-      for (const line of importLines) {
-        if (MOCK_DATA_PATTERN.test(line) && /design-lab/.test(line)) {
-          offenders.push(`${relative(SRC_ROOT, file)}: ${line.trim()}`);
-        }
-      }
+function offendersOf(pattern: RegExp): string[] {
+  const offenders: string[] = [];
+  for (const file of walk(SRC_ROOT)) {
+    if (insideLab(file)) continue;
+    // The test file itself names the patterns in prose above — skip it.
+    if (file === __filename) continue;
+    const content = readFileSync(file, "utf8");
+    for (const hit of content.match(pattern) ?? []) {
+      offenders.push(`${relative(SRC_ROOT, file)}: ${hit.replace(/\s+/g, " ").trim()}`);
     }
+  }
+  return offenders;
+}
 
-    expect(offenders).toEqual([]);
+describe("design-lab mock-data isolation", () => {
+  it("mock-data is imported only from inside the design lab", () => {
+    expect(offendersOf(MOCK_DATA_SPECIFIER)).toEqual([]);
+  });
+
+  it("the lab's component folder is imported only from inside the design lab", () => {
+    expect(offendersOf(LAB_COMPONENT_SPECIFIER)).toEqual([]);
+  });
+
+  it("the scan sees a multi-line import (the shape that slipped past the line filter)", () => {
+    const sample = 'import {\n  MOCK_PRODUCTS,\n} from "@/app/design-lab/mock-data";\n';
+    expect(sample.match(MOCK_DATA_SPECIFIER)).toHaveLength(1);
+    expect('const m = await import("../app/design-lab/mock-data")'.match(MOCK_DATA_SPECIFIER)).toHaveLength(1);
+    expect('import { x } from "@/lib/mock-data-shapes";'.match(MOCK_DATA_SPECIFIER)).toBeNull();
   });
 });

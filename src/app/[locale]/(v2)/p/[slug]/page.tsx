@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { detailOpenGraph } from "@/app/shared-metadata";
 import { localeAlternates } from "@/i18n/seo";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
+import { DemoMark } from "@/components/storefront/demo-mark";
 import { CustomPageBlock } from "@/components/storefront/custom-page-blocks";
 import { resolveBlockGrounds, resolveHeadingLevels } from "@/lib/custom-blocks";
 import { resolveBlockExtras } from "@/lib/custom-page-data";
@@ -66,8 +68,14 @@ export async function generateMetadata({
     description: page.seoDescription ?? undefined,
     alternates: localeAlternates(href, locale),
     // A campaign lander is often deliberately unindexed — a page that exists
-    // for one email blast should not compete with /shop in search.
-    robots: page.noindex ? { index: false, follow: true } : undefined,
+    // for one email blast should not compete with /shop in search. A demo
+    // lander is never indexed, whatever its own flag says: it is a Content
+    // Lab fixture, like every other demo detail route.
+    robots: page.isDemo
+      ? { index: false, follow: false }
+      : page.noindex
+        ? { index: false, follow: true }
+        : undefined,
     openGraph: {
       ...detailOpenGraph(locale),
       title: page.seoTitle || page.title,
@@ -101,6 +109,18 @@ export default async function CustomLandingPage({ params }: PageProps) {
   const headings = resolveHeadingLevels(page.blocks);
   const leadsWithHero = page.blocks[0]?.type === "hero";
 
+  // Every demo detail route wears the mark (CLAUDE.md, "Demo content is real
+  // rows, always marked"). It sits with the crumb trail, or — under a
+  // full-bleed hero, which pulls up beneath the header — directly after it.
+  const demoNotice = page.isDemo ? (
+    <div className={leadsWithHero ? "u-shell pt-6" : "mt-4"}>
+      <p className="flex flex-wrap items-center gap-2">
+        <DemoMark label={tCommon("demoMark")} />
+        <span className="u-micro">{tCommon("demoDetail")}</span>
+      </p>
+    </div>
+  ) : null;
+
   return (
     <>
       {/* A hero is full-bleed and pulls up under the header, so the crumb
@@ -112,19 +132,22 @@ export default async function CustomLandingPage({ params }: PageProps) {
             ariaLabel={tCommon("breadcrumb")}
             items={[{ label: tNav("home"), href: "/" }, { label: page.title }]}
           />
+          {demoNotice}
         </div>
       )}
 
       {page.blocks.map((block, index) => (
-        <CustomPageBlock
-          key={block.id}
-          block={block}
-          ground={grounds[index]}
-          heading={headings[index]}
-          first={index === 0}
-          extras={extras[block.id] ?? {}}
-          waHref={waHref}
-        />
+        <Fragment key={block.id}>
+          <CustomPageBlock
+            block={block}
+            ground={grounds[index]}
+            heading={headings[index]}
+            first={index === 0}
+            extras={extras[block.id] ?? {}}
+            waHref={waHref}
+          />
+          {leadsWithHero && index === 0 ? demoNotice : null}
+        </Fragment>
       ))}
     </>
   );
