@@ -143,6 +143,9 @@ export default async function Home({
 
   const t = await getTranslations("Home");
   const tCommon = await getTranslations("Common");
+  // The furniture tiles quote the statement-piece timeline the process page
+  // publishes — one key, so the figure cannot drift between the two pages.
+  const tProcess = await getTranslations("Process");
   const tWa = await getTranslations("WhatsApp");
   // The large-format teaser and the furniture/rooms bands read alt text and
   // wording that already lives on the pages the tiles link to, rather than a
@@ -656,9 +659,7 @@ export default async function Home({
                   )}
                 </p>
                 <p className="u-micro border-t border-hairline pt-3">
-                  {t(
-                    `furniture.kinds.${kind.key}.leadTime` as "furniture.kinds.dining.leadTime",
-                  )}
+                  {tProcess("timelines.e2Value")}
                 </p>
               </li>
             ))}

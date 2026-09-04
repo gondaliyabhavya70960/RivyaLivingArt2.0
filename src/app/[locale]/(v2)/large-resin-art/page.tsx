@@ -565,9 +565,7 @@ export default async function LargeResinArtPage({
                   )}
                 </p>
                 <p className="u-micro border-t border-hairline pt-3">
-                  {tHome(
-                    `furniture.kinds.${kind.key}.leadTime` as "furniture.kinds.dining.leadTime",
-                  )}
+                  {tProcess("timelines.e2Value")}
                 </p>
               </li>
             ))}

@@ -335,37 +335,31 @@
         "dining": {
           "title": "Esstisch",
           "lead": "Gegossen auf die Grundfläche Ihres Tisches, nicht auf eine Standardgröße.",
-          "leadTime": "3–6 Wochen",
           "alt": "Eine große Holzwerkbank im Atelier, hier als Konzeptbild für einen Esstisch."
         },
         "coffee": {
           "title": "Couchtisch",
           "lead": "Ein niedriger Tisch, gestaltet danach, wie Sie tatsächlich sitzen.",
-          "leadTime": "3–6 Wochen",
           "alt": "Ein fertiges Brett aus Harz und Teakholz mit einer Schale auf dem Atelier-Tisch, hier als Konzeptbild für einen Couchtisch."
         },
         "side": {
           "title": "Beistelltisch",
           "lead": "Eine einzelne Fläche, passend für die Ecke, in der sie steht.",
-          "leadTime": "3–6 Wochen",
           "alt": "Eine Nahaufnahme von versiegelter Teakholzmaserung, hier als Konzeptbild für einen Beistelltisch."
         },
         "console": {
           "title": "Konsole",
           "lead": "Ein Flurstück, gegossen für die Wand, an der es steht.",
-          "leadTime": "3–6 Wochen",
           "alt": "Das Atelier bei Nacht — gefüllte Gussformen härten unter einer warmen Arbeitsleuchte, hier als Konzeptbild für eine Konsole."
         },
         "chair": {
           "title": "Stuhl",
           "lead": "Ein Sitz, von Hand geformt und veredelt, einer nach dem anderen.",
-          "leadTime": "3–6 Wochen",
           "alt": "Hände, die Blütenblätter in einer leeren Gussform anordnen, hier als Konzeptbild für einen Stuhl."
         },
         "bench": {
           "title": "Bank",
           "lead": "Ein langer Sitzplatz für einen Eingang oder einen Tisch.",
-          "leadTime": "3–6 Wochen",
           "alt": "Tiefblaues Harz, das das Licht über eine fertige Oberfläche einfängt, hier als Konzeptbild für eine Bank."
         }
       }
