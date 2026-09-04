@@ -72,6 +72,11 @@ always brings it back. You cannot break the site by choosing the wrong picture.
 | Show 6 products on that page instead of 4 | Landing Pages → the Products block → How many | ✅ |
 | Put the picture on the other side | Landing Pages → the Picture block → Picture side | ✅ |
 | Schedule that page to go live at 6am | Landing Pages → **Go live at** | ✅ |
+| Reorder or hide one of the ten process steps | **Process Steps** → the ↑ ↓ / Hide buttons (all ten cannot be hidden) | ✅ |
+| Reorder the four materials on Process and About at once | **Materials** → the ↑ ↓ buttons | ✅ |
+| Show the furniture / rooms bands on the homepage | Page Sections → Home → **Show** on "What we commission" / "In the room" (they ship off) | ✅ |
+| Put a film, a picture wall or a full-screen gallery on a landing page | Landing Pages → add a Video, Masonry, Bento or Fullscreen gallery block (sixteen block types) | ✅ |
+| Fill the studio and the site with demo content to rehearse | **Content Lab** → Seed (and the "show on the live site" switch — off by default) | ✅ |
 
 Two things worth knowing before you rearrange a page:
 
@@ -86,7 +91,13 @@ Two things worth knowing before you rearrange a page:
 **Which seven pages** carry a manifest: the homepage, About, Process, Large
 Format, Bespoke, Contact and Workshops. Shop, Journal, Portfolio and the FAQ do
 not — each is an opening band plus its listing, and hiding the listing would
-leave nothing.
+leave nothing. Two more screens, **Process Steps** and **Materials**, are the
+same board pointed at one list each: the ten stages and the four materials.
+
+**Some sections ship switched off.** The homepage's "What we commission" and
+"In the room" bands and the Large Format page's "pieces" band are commission
+framing — concept pictures, lead times the site already publishes, a WhatsApp
+button, no prices and no products — and they stay hidden until you press Show.
 
 ### Why you cannot add a fifth material
 

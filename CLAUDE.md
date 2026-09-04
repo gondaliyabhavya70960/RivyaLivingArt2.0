@@ -33,11 +33,23 @@ records what shipped, and lists what genuinely remains.
 ## Commands
 - dev: `npm run dev`
 - test: `npm run test`   (vitest unit suite over src/lib pure functions)
-- e2e smoke: `BASE_URL=… npm run test:e2e`   (10 checks against a running server)
-- CI: `.github/workflows/ci.yml` runs typecheck · lint · copy:check · test on
-  every PR to Main, plus the real `npm run build` against a throwaway Postgres
-  — and then starts that build and runs `redesign-audit.mjs` + `a11y-audit.mjs`
-  over 13 public routes at 1440px and 390px. Both gate the build.
+- e2e smoke: `BASE_URL=… npm run test:e2e`   (the ten contract checks plus the
+  search overlay, a shop facet, the demo PDP's order flow to wa.me with the
+  `[DEMO] ` prefix, the locales, and — with `STUDIO_EMAIL`/`STUDIO_PASSWORD` —
+  the Studio login, a media upload, the sheet-fill preview and the
+  testimonial permission rule; database checks need `DATABASE_URL`)
+- demo content: `npm run seed:demo` (`--status`, `--remove`) loads the Content
+  Lab fixtures into the database `DATABASE_URL` names; the loader refuses any
+  non-local host. `npm run test:db` seeds AND removes a demo set of its own —
+  re-seed after it before any audit that needs `/product/demo-product-001`.
+- CI: `.github/workflows/ci.yml` runs typecheck · lint · copy:check ·
+  i18n-missing (+ `--stale` on PRs) · test on every PR to Main, plus the real
+  `npm run build` against a throwaway Postgres, `motion-budget`, `test:db`,
+  then seeds the demo set, starts the build and runs the E2E smoke,
+  `redesign-audit.mjs` (1440 · 1280 · 390 · 360) and `a11y-audit.mjs` over the
+  13 public routes plus the five demo detail routes, the RTL set, the keyboard
+  paths (chrome overlays and the three lightboxes), the Studio audit at both
+  widths and Lighthouse. All of it gates the build.
 - typecheck: `npm run typecheck`   (tsc --noEmit)
 - lint: `npm run lint -- --fix`
 - build: `npm run build`   (runs prisma migrate deploy + bootstrap first — needs DATABASE_URL)
@@ -106,7 +118,7 @@ records what shipped, and lists what genuinely remains.
   reads the owner's `Category.image`). Both are selectable from
   /studio/site-images.
 
-### The studio CMS — one pattern, eight surfaces
+### The studio CMS — one pattern, ten surfaces
 
 `docs/studio-cms/` is the plan; it is now built. Every surface follows the same
 shape, and the shape is the point:
@@ -125,9 +137,11 @@ blank one. Adding a surface means following this, not inventing a ninth shape.
 | `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
 | `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
 | `/studio/sections` | `page-sections.ts` (7 pages) | `PageSection` | `getPageSections()` |
-| `/studio/custom-pages` | `custom-blocks.ts` (6 types) | `CustomPage` · `CustomBlock` | `getCustomPage()` |
+| `/studio/process` · `/studio/materials` | `page-sections.ts` (`process-steps` ×10, `materials` ×4 — the same board pre-filtered) | `PageSection` | `getPageSections()` |
+| `/studio/custom-pages` | `custom-blocks.ts` (16 types) | `CustomPage` · `CustomBlock` | `getCustomPage()` |
 | `/studio/media` | — | `Media` | — |
 | `/studio/settings` · `/studio/seo` | `constants.ts` (fallbacks) | `SiteSettings` | `getSiteSettings()` |
+| `/studio/content-lab` | `prisma/fixtures/demo/*.json` (`src/lib/demo/`) | every content table, rows marked `isDemo` | `showDemoContent()` · `demoWhere()` |
 
 Four rules that hold across all of them:
 
@@ -142,8 +156,25 @@ Four rules that hold across all of them:
   `runAction` reports every throw as "something went wrong".
 - **Landing pages are the ONE place content lives in the row** (§4.8). A
   seasonal lander has no copy slot because nobody wrote one. The guard against
-  layout rot is the block catalogue's SIZE — six types, asserted by a test.
-  Scheduling is resolved at read time by `isLive()`, never by a cron.
+  layout rot is the block catalogue's SIZE — sixteen types since the Phase 11
+  growth (readers of existing content, film, and picture blocks; no prices, no
+  per-block theme), asserted by a test that records the dated reason for every
+  count bump. Scheduling is resolved at read time by `isLive()`, never by a cron.
+- **A section can ship OFF.** `SectionDef.defaultVisible: false` (the
+  homepage's furniture and rooms bands, the large-format page's pieces band)
+  renders nothing until the owner turns it on in the sections board; the
+  resolver reads `row?.visible ?? def.defaultVisible ?? true`.
+- **Demo content is real rows, always marked, never in the index.** The Content
+  Lab seeds fixtures with `isDemo: true`; every public reader spreads
+  `demoWhere()` — rows show only when `SiteSettings.demoContentPublic` is on or
+  `VERCEL_ENV` is not `production` — with `<DemoMark/>` and `noindex`, and the
+  sitemap, Product/Article/Review JSON-LD, the Google Sheet push and the image
+  mirror exclude them by clause regardless. A demo order is saved with
+  `Inquiry.isDemo` and its WhatsApp message carries `[DEMO] `.
+- **A testimonial publishes only with permission.** `describeTestimonialProblem`
+  refuses `PUBLISHED` unless `permissionStatus` is `GRANTED` (on a save — rows
+  back-filled by the migration stay live until edited); the Review JSON-LD
+  includes only PUBLISHED ∧ GRANTED ∧ not demo.
 - **Every new table that stores a media URL goes into `media-usages.ts` in the
   same commit.** That header rule was broken three times in one week and each
   break was silent — the worst 404'd only the phone layout.
@@ -217,9 +248,16 @@ below are the ones that are expensive to rediscover.
   only when the price moves. A gap between points means the price held.
 
 ### Design QA (needs a running server)
-The first two now run in CI over 13 routes at both widths; run them locally
-when you want a route CI does not cover — anything under /product, /blog,
-/portfolio or /p needs content the CI database has no seed for.
+The first two run in CI over the 13 public routes plus the five demo detail
+routes (`/product/demo-product-001`, `/shop/gift-collections`,
+`/blog/demo-post-001`, `/portfolio/demo-case-001`, `/p/demo-lander` — seeded by
+`scripts/seed-demo.ts` after the database tests) at 1440 · 1280 · 390 · 360,
+and the RTL set at 1440 · 390. Run them locally for a route or width CI does
+not cover, or to see a failure's detail. At widths of 700px and below the
+design audit drives a touch-capable context, so `pointer-coarse:` utilities
+apply and the 44px tap floor FAILS there (it is reported, not failed, on
+fine-pointer widths); it also measures the sticky header's `data-ink` promise
+against the rendered pixels behind the logo (≥ 4.5:1).
 - `node scripts/redesign-audit.mjs "/en,/en/shop,…" [--w 390]` — REDESIGN.md
   Part 19.1 as an executable check: one `h1`, no duplicated section heading,
   max two `section-major`, max three dark bands and never adjacent, numbers in
@@ -228,6 +266,10 @@ when you want a route CI does not cover — anything under /product, /blog,
 - `node scripts/a11y-audit.mjs "/en,/en/shop,…" [--w 390]` — axe-core over the
   rendered routes; fails on critical or serious findings (§19.6). Moderate and
   minor are printed, not failed.
+- `node scripts/keyboard-audit.mjs [--w 390]` — the chrome overlays (drawer,
+  search, mega menu) and the three lightboxes (product gallery, portfolio
+  wall, landing-page fullscreen gallery) driven by keyboard: open, focus,
+  ArrowRight / End / Home, Escape, focus return.
 - `node scripts/shots.mjs <out-dir> "/en,/en/shop" [--w 375] [--full] [--reduced]`
   — screenshots via the pre-installed Chromium; reports overflow and console
   errors.
@@ -293,7 +335,20 @@ ScrollTrigger for the two pinned scrubs.
   Part 14 forbids the first two on their own terms (nothing may delay the LCP;
   motion that is a technology demo is rejected). `git log --diff-filter=D`
   finds them if one is ever wanted back.
-- **`hero-parallax.tsx` has zero importers and is NOT dormant.** It was deleted
+- **Motion primitives (A1–A3).** `src/lib/gsap.ts` registers the house eases
+  (`"luxury"`, `"settle"`) from `src/lib/motion-tokens.ts`, mirrored by test
+  against `tokens.css`; `globals.css` carries `sf-hero-rise` (staggered text
+  entrance on the non-LCP layer), `sf-hero-drift` (a 6 s `infinite alternate`
+  ambient scale on the poster WRAPPER, never the image, off under reduced
+  motion and while the video plays — mounted on the homepage and large-format
+  heroes) and `sf-manifesto-brighten`; `storefront/snap-rail.tsx` is the
+  snap-scrolling rail every below-`md` row uses; `storefront/lightbox.tsx` is
+  the one lightbox (FLIP entrance from `src/lib/flip.ts`, keyboard, RTL, live
+  region, focus return) behind the product gallery, the portfolio wall and the
+  fullscreen gallery block; `hooks/use-hero-ink.ts` sets the header's
+  `data-ink` from an IntersectionObserver over dark bands.
+- **`hero-parallax.tsx` is mounted on the homepage bespoke band** (A2), px-capped
+  at `Math.min(40, h * 0.12)`. It was once deleted as dormant and put back: It was deleted
   in the first pass of D18 and put back: the audit files it under §3.2 REFINE,
   not §3.3 REMOVE, and names its destination — px-cap the translation at
   `Math.min(40, h * 0.12)` and mount it on the homepage bespoke band
@@ -375,11 +430,15 @@ attempt has already failed and been recorded.
 ## Definition of done (every task)
 typecheck ✓ lint ✓ build ✓ · works at 360px and 1280px · keyboard reachable ·
 reduced-motion checked · screenshots verified · HARD RULES respected ·
-`scripts/redesign-audit.mjs` and `scripts/a11y-audit.mjs` gate every PR over 12
-public routes, so run them by hand only for a route CI cannot reach (/product,
-/blog, /portfolio, /p) · order flow intact:
-Place Order saves an Inquiry and opens wa.me/917096036250 with the correct
-pre-filled message.
+`scripts/redesign-audit.mjs` and `scripts/a11y-audit.mjs` gate every PR over the
+13 public routes and the five demo detail routes (44px tap floor fails at phone
+widths; header contrast measured), `keyboard-audit.mjs` covers the overlays and
+the lightboxes, and `npm run test:e2e` runs in CI — run them by hand for a route
+or width CI does not sweep · order flow intact: Place Order saves an Inquiry
+and opens wa.me/917096036250 with the correct pre-filled message (a demo piece
+saves `isDemo` and prefixes `[DEMO] `) · a worktree build needs
+`NEXT_PRIVATE_OUTPUT_TRACE_ROOT=<parent dir> npx next build` (Turbopack refuses
+a symlinked node_modules otherwise).
 
 <!-- BEGIN:nextjs-agent-rules -->
 

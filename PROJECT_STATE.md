@@ -11,12 +11,12 @@ The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/trans
 Updated at the end of every transformation phase. The narrative sections below it are history.
 
 ```text
-Current Phase:            Transformation wave 2/3 — wave 1 complete (A1 B C1 D E F1 + G); A3, A2, A4
-                          merged; C2 and F2 finished by the coordinator (agents stopped after a
-                          container restart froze their shells)
+Current Phase:            Transformation COMPLETE — Phases 1b–17 of the master prompt built on PR #42
+                          (B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 · C2 · F2); CI sweeps the
+                          demo detail routes, the E2E smoke, the lightboxes and the Studio
                           (approved plan of 2026-09-03; base 7cdd09a = origin/main after PR #41)
-Phase Status:             B0 · A1 · B · G · C1 · D · F1 · E · A3 · A2 · A4 · C2 COMPLETE (2026-09-04);
-                          PR #42 draft; CI green
+Phase Status:             every batch COMPLETE (2026-09-04); PR #42 draft, ready for the owner's review;
+                          CI green on every pushed head
                           on every head; Vercel preview green after the P2037 pool/retry fix
 Completed:                12 commits: testimonial schema + gated resolver (PR #41, merged) ·
                           ContentStatus REVIEW/ARCHIVED · isDemo marker + demoContentPublic +
@@ -24,10 +24,11 @@ Completed:                12 commits: testimonial schema + gated resolver (PR #4
                           Category seo/visible · Media metadata · scraper scope/notes/heartbeat ·
                           SheetConflict/SheetSyncRun/sheet ids · BlogPost.categoryId ·
                           ProductImage.role · ResearchRecord · snapshotBefore + PROCESS_STEPS
-In Progress:              F2 (CI demo seed + detail routes + e2e, audit flips, drift loop, soft-404,
-                          docs) in wt-f2 — continued by the coordinator from the agent's worktree
-                          state (audit flip + header-contrast rule, drift loop and the product
-                          loading.tsx removal were in progress)
+In Progress:              nothing in flight. Owner-machine follow-ups: fetch the planned Higgsfield
+                          sets in docs/media-v3-manifest.json (the CDN refuses the sandbox); replace
+                          the generated maker portrait with a photograph; turn
+                          SiteSettings.demoContentPublic on only as a deliberate act; review and
+                          merge PR #42
 Next Exact Task:          Wave 1 per docs/plan (A1 design system + chrome · B testimonials · C1
                           Studio content · D media · E scraper + sheets · F1 hygiene), then wave 2
                           (A2 · A3 · A4 · C2 · G), then F2 CI/E2E/docs. Owner decisions taken
@@ -100,6 +101,10 @@ Tests Run:                typecheck · lint · test (40 files / 391) · test:db 
                           routes 1440/390 · blog demo proofs (DemoMark, no Article JSON-LD)
                           · C2 merged head (cfa918e): the same set — test (63 / 628) · test:db
                           (6 / 33, sequential files) · demo lander renders all four new blocks
+                          · F2 tree: smoke 27/27 · redesign-audit with touch contexts, the 44px
+                          FAIL and the header-contrast rule clean at 1440/390/360 + RTL 1440/390 ·
+                          a11y 1440/390/RTL · keyboard 1440/390 incl. three lightboxes · studio 36
+                          routes 1440/390 · Lighthouse home 98 / LCP 1.0 s with drift · 404s measured
 Tests Passing:            all of the above (motion 48.2 KB is in the 45–49 KB warn band as before)
 Known Issues:             Subagent API returned 529 for the whole batch, so B0 was implemented in
                           the main session rather than by the planned agent workflow; the
@@ -114,11 +119,16 @@ Known Issues:             Subagent API returned 529 for the whole batch, so B0 w
                           The session container restarts after idle stretches: running agents'
                           shells freeze (A4, C2, F2 were stopped and finished by hand) and
                           Postgres must be restarted (pg_ctl start on /var/lib/postgresql/rivyadata).
+                          Pre-existing soft-404 CLOSED by F2 (route groups scope the list pages'
+                          loading boundaries). Search page, demo order flow (cuid validation), the
+                          chrome's coarse-pointer tap floor and the transparent header's contrast
+                          over bright frames were all fixed by F2 after its gates found them.
                           E leaves syncWebsiteProductsToSheet reading its sheet id from the
                           environment (its writer is outside E's files; documented in
                           docs/google-sheets.md). Bulk Import re-imports now skip untouched
                           matching rows unless "overwrite owner-edited products" is ticked.
-Next Session Instruction: `npm run test:db` seeds AND removes the demo set in the database it
+Next Session Instruction: The transformation is complete on PR #42; the next session starts from the
+                          owner's review. `npm run test:db` seeds AND removes the demo set in the database it
                           runs against — run `npm run seed:demo` again before any audit that
                           needs /product/demo-product-001 (learned twice this session).
                           Read this block, then /root/.claude/plans/…elegant-mango.md (the

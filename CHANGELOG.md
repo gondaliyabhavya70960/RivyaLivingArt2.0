@@ -5,6 +5,81 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Wave 3 · batch F2 — CI sweeps everything, the smoke grows, the audits bite, and four real defects fall out (2026-09-04)
+
+The F2 agent was stopped after the container restarted under it (its shell never returned from a
+`grep`); its in-progress audit flip and drift loop were committed from the worktree and the rest of
+the batch was built by hand on the same branch, on top of the merged A4 and C2.
+
+- **CI (`ci.yml`)**: after the build and the database tests (which seed and remove a demo set of
+  their own), the job seeds the Content Lab fixtures through the guarded `scripts/seed-demo.ts`,
+  starts the server with them in place, runs `npm run test:e2e` against it with the Studio audit's
+  credentials, and sweeps `/product/demo-product-001`, `/shop/gift-collections`,
+  `/blog/demo-post-001`, `/portfolio/demo-case-001` and `/p/demo-lander` (plus their `/ar` twins
+  and `/ar/process`) through the design and a11y audits. The workflow header and the route
+  comments describe the job as it is.
+- **`scripts/e2e-smoke.mjs`: 10 → 27 checks**, the original ten untouched. New: the search overlay
+  opens and `/search` finds the demo piece; a shop facet narrows the list and lands in the URL; the
+  customization form on the demo PDP (size, swatch, engraving, finish, contact) submits through the
+  spam gate to a `wa.me/917096036250` link carrying `[DEMO] ` and the chosen size, reaches the
+  `/whatsapp-order` fallback, and — with `DATABASE_URL` — leaves an Inquiry row marked `isDemo`
+  created by that click; `/ar` is right-to-left and `/hi` renders a Devanagari h1; with the Studio
+  credentials: the login lands, the demo product opens in the editor, a `sharp`-rendered 64×64 PNG
+  (fresh checksum every run — the library dedupes uploads) lands in the media library and is
+  removed again, the sheet-fill Preview answers, and a testimonial is refused `PUBLISHED` until its
+  permission is `GRANTED`, then publishes (the row is deleted afterwards). Studio and database
+  checks skip, as skips, without their inputs. The eight `verify-*.mjs` / `screenshot-lab.mjs`
+  scripts are deleted; the order path they carried lives here now.
+- **`scripts/redesign-audit.mjs`**: at widths of 700px and below the browser context is
+  touch-capable, so `pointer-coarse:` utilities apply and the **44px tap floor FAILS** there (it is
+  reported, not failed, on fine-pointer widths; `isMobile` is deliberately not set — mobile
+  emulation widens `innerWidth` by a phantom scrollbar and fakes a 2px overflow on every route; a
+  half-pixel tolerance keeps a `min-h-11` that measures 43.99 from failing). A new rule reads the
+  sticky header's `data-ink` promise against the rendered pixels beside its text (a 10px patch
+  outside the logo and the nav on both sides, after the first-viewport images have loaded,
+  decoded with `sharp`) and fails under 4.5:1.
+- **`scripts/keyboard-audit.mjs`**: the shared Lightbox joins the overlays — the product gallery's
+  full-screen control, the portfolio wall's first tile and the demo lander's fullscreen gallery:
+  Enter opens, ArrowRight advances the `role="status"` counter, End/Home jump, Escape closes,
+  focus returns.
+- **Drift, reconciled** (A2's open item): `.sf-hero-drift` is an `infinite alternate` 6 s ambient
+  loop the audit's duration rule exempts like every other loop; mounted on the homepage and
+  large-format heroes on the poster wrapper, never the image.
+- **Real 404s**: the list pages' `loading.tsx` boundaries wrapped their child detail routes too
+  (`/portfolio/loading.tsx` covers `/portfolio/[slug]`), so a missing slug streamed a 200 shell. The
+  three list pages now sit in `(index)` route groups with their own boundaries, and the PDP and
+  category pages drop theirs: a missing product, portfolio case, journal post, category or lander
+  answers a real 404 (measured); the demo routes answer 200.
+- **Four defects the new gates found**, fixed in this batch: the search PAGE never applied the
+  demo gate (`searchProducts` was called at its `NO_DEMO` default, so `/search` hid rows the
+  overlay offered; `isDemo` is now selected and marked); the order action refused every Content Lab
+  piece (`productId: z.cuid()` — fixture ids are deterministic strings — so a demo order answered
+  "Something went wrong" while G's smoke had passed on an unrelated demo Inquiry); under a touch
+  context the header logo (32px) and four footer links sat under the tap floor, and the fix
+  itself surfaced a second one — the wordmark SVG was `h-full`, so a 44px link made it 37% wider and
+  every page overflowed by 9px, now pinned to its visual height; and the transparent header measured
+  2.7:1 beside its logo over a bright hero frame, so a top scrim (obsidian 85 → 55 → transparent
+  over 112px) sits under the chrome only while the bar is transparent.
+- **Docs**: `CLAUDE.md` (commands, the ten-surface CMS table with the Content Lab, the demo,
+  testimonial and off-by-default rules, motion primitives, Design QA and the definition of done),
+  `AGENTS.md` (what a green PR is evidence for, the container-restart and `test:db` traps),
+  `ADMIN_GUIDE.md` (media library, testimonials, Settings' Sheets and Demo content, Bulk Import's
+  overwrite checkbox, Sheet Import's Preview / conflicts / history, Content Lab, process steps and
+  the bands that ship off), the owner handbook (8.3), the roadmap status,
+  `docs/studio-cms/04-structure-layer.md` (with C2).
+
+Verified on the F2 tree (`wave3/f2`, merged fast-forward into the branch), every run isolated on the
+built server with the demo set seeded: typecheck · lint · vitest · test:db · copy:check · `next build` ·
+`npm run test:e2e` **27/27** · redesign-audit **0 failing rules** with the new rules on the 13 CI routes plus
+the five demo detail routes at 1440 / 390 (touch) / 360 (touch), and ten `/ar` routes at 1440 and 390 ·
+a11y-audit 0 critical/serious at 1440 / 390 / `/ar` 390 · keyboard-audit at 1440 and 390 with the three
+lightbox paths (the mega menu and the lander gallery correctly skipped at 390) · studio-audit clean across
+36 routes at 1440 and 390 · Lighthouse with drift mounted: home perf 98 / a11y 97 / LCP 1.0 s, plp 97 / 100
+/ 1.2 s · motion-budget 48.4 KB · a missing product, portfolio case, journal post, category or lander
+answers 404, the demo routes 200. CI runs the same sweep on the pushed head.
+
+---
+
 ## Wave 2 · batch C2 — the block catalogue grows from six to sixteen (2026-09-04)
 
 Merged `84b63d8` (nine blocks from the worktree, one commit each) plus `c37afd1` (the tenth,

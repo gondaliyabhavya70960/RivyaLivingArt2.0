@@ -2,11 +2,17 @@
 
 Companion to `docs/transformation-audit.md` (Phase 0). This is the plan for the master prompt's Phases 1–17, re-sequenced to what the repository had at `HEAD f1cfd95` (three phases have merged since; see the status line below). Read the audit first; this document assumes its vocabulary, its decision numbers (D7–D28) and its risk register.
 
-**Status (2026-09-03): Phase 0 merged (PR #29). Phase 1a's ungated half merged (PR #30). Phase 1b's
-ungated half merged (PR #31). The owner has answered D28, D23, D18, D22 and D24 — all YES; the answers and
-their reasoning are recorded in `PROJECT_STATE.md` under "DECISIONS (answered 2026-09-03)", and D28 sets
-the standing rule that a discarded-layer change is recovered only as an individually reviewed PR, never as
-a bulk cherry-pick. The remaining gates are D7-D17, D19-D21 and D25-D27.**
+**Status (2026-09-04): every phase below is built on PR #42 (`claude/rivya-website-redesign-dc3jz0`),
+after Phase 0 (PR #29), Phase 1a (PR #30), Phase 1b's ungated half (PR #31) and the testimonial schema
+(PR #41). The remaining gates were answered on 2026-09-03 — D9/D26 commission framing for furniture and
+rooms, D10/D20 Part 14 as the ceiling with the 18-pattern shortlist, D7/D8/D14 additive migrations with an
+`isDemo` marker and demo content public only behind `SiteSettings.demoContentPublic` or off production,
+D25 ten process steps ending in Delivery — and the batches landed in this order: B0 (schema and gates),
+A1, B, G, C1, D, F1, E, A3, A2, A4, C2, F2. `CHANGELOG.md` carries one entry per batch with its merge
+hash and the gates run on the merged head; `PROJECT_STATE.md`'s checkpoint block is the summary. Two
+things stay owner-machine work: fetching the planned Higgsfield sets recorded in
+`docs/media-v3-manifest.json` (the CDN refuses the sandbox) and replacing the generated maker portrait
+with a photograph.**
 
 ---
 
