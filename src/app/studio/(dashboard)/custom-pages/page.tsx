@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ExternalLink, Plus } from "lucide-react";
 
 import { DuplicatePageButton } from "@/components/studio/custom-pages/duplicate-button";
+import { DemoBadge } from "@/components/studio/demo-badge";
 import { PageHeader } from "@/components/studio/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,8 +31,17 @@ const STATE_LABEL = {
  * blocks for a season that ends, and the two have almost nothing in common
  * beyond the word "page".
  */
-export default async function CustomPagesPage() {
-  const pages = await listCustomPagesForStudio();
+export default async function CustomPagesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ demo?: string }>;
+}) {
+  // `?demo=1` narrows to Content Lab fixtures — the switch every other studio
+  // list carries; a server component, so it is a link rather than a button.
+  const { demo } = await searchParams;
+  const demoOnly = demo === "1";
+  const allPages = await listCustomPagesForStudio();
+  const pages = demoOnly ? allPages.filter((p) => p.isDemo) : allPages;
   const now = new Date();
 
   return (
@@ -49,9 +59,28 @@ export default async function CustomPagesPage() {
         }
       />
 
+      {allPages.some((p) => p.isDemo) && (
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <Link
+            href={demoOnly ? "/studio/custom-pages" : "/studio/custom-pages?demo=1"}
+            aria-pressed={demoOnly}
+            role="button"
+            className={
+              demoOnly
+                ? "inline-flex min-h-11 items-center rounded-full border border-sapphire-ink bg-sapphire-ink/10 px-4 text-small font-medium text-sapphire-ink outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                : "inline-flex min-h-11 items-center rounded-full border border-border px-4 text-small text-graphite outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus"
+            }
+          >
+            Demo only
+          </Link>
+        </div>
+      )}
+
       {pages.length === 0 ? (
         <p className="py-12 text-small text-graphite">
-          No landing pages yet. The first one takes about twenty minutes.
+          {demoOnly
+            ? "No demo landing pages — seed the Content Lab to see the demo lander here."
+            : "No landing pages yet. The first one takes about twenty minutes."}
         </p>
       ) : (
         <ul className="divide-y divide-border">
@@ -69,6 +98,11 @@ export default async function CustomPagesPage() {
                   >
                     {page.title}
                   </Link>
+                  {page.isDemo && (
+                    <span className="ms-2">
+                      <DemoBadge />
+                    </span>
+                  )}
                   <p className="font-mono text-12 text-graphite">
                     /p/{page.slug} · {page._count.blocks} block
                     {page._count.blocks === 1 ? "" : "s"} · edited{" "}

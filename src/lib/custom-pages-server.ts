@@ -135,6 +135,7 @@ export async function listCustomPagesForStudio() {
       status: true,
       publishAt: true,
       noindex: true,
+      isDemo: true,
       updatedAt: true,
       _count: { select: { blocks: true } },
     },
