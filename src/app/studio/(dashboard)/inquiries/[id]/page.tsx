@@ -299,7 +299,7 @@ export default async function InquiryDetailPage({
               <p>
                 <a
                   href={`tel:${inquiry.phone}`}
-                  className="text-primary hover:underline"
+                  className="text-sapphire-ink hover:underline"
                 >
                   {inquiry.phone}
                 </a>
@@ -308,7 +308,7 @@ export default async function InquiryDetailPage({
                 <p>
                   <a
                     href={`mailto:${inquiry.email}`}
-                    className="text-primary hover:underline"
+                    className="text-sapphire-ink hover:underline"
                   >
                     {inquiry.email}
                   </a>
@@ -321,7 +321,7 @@ export default async function InquiryDetailPage({
             <DetailCard title="Product">
               <Link
                 href={`/studio/products/${inquiry.productId}`}
-                className="text-sm font-medium text-primary hover:underline"
+                className="text-sm font-medium text-sapphire-ink hover:underline"
               >
                 {inquiry.product.title}
               </Link>

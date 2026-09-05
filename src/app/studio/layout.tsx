@@ -13,9 +13,11 @@ export const metadata: Metadata = SHARED_METADATA;
  * [locale] tree can server-render `<html lang/dir>` per locale — I18N-901).
  * The admin is English-only, so a fixed lang="en" is correct here. The
  * `.studio-v2` scope carries a live `prefers-color-scheme: dark` block
- * (globals.css) that re-points --bg/--surface/--text/--border/--focus and the
- * four named palette tokens the Studio's own surfaces consume, so this tree
- * follows the operating system rather than shipping light-only. Anything
+ * (globals.css) that re-points --bg/--surface/--text/--border/--focus and
+ * three of the four named palette tokens the Studio's own surfaces consume
+ * (mineral is pinned light on purpose: it is that scheme's --text, so no
+ * background may be routed through it — see the dark block's note), so this
+ * tree follows the operating system rather than shipping light-only. Anything
  * styled here has to hold in BOTH schemes — which is why Studio seams use
  * `border-border` and never the storefront's `rule` utility, whose --hairline
  * is a dark line that disappears on obsidian. The (dashboard) shell and the

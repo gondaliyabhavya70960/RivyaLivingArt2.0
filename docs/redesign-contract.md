@@ -31,6 +31,7 @@ inventing a third answer.
 | `sand` | warm neutral — alternate section ground, card surface |
 | `champagne` | accent: tiny highlights, active states, micro-labels, hairlines |
 | `champagne-ink` | champagne as TEXT on a light ground (champagne itself is 2.35:1 there) |
+| `sapphire-ink` | sapphire as TEXT or an indicator icon — sapphire itself on light; the Studio's dark scheme lifts it to `#5fafd6` (raw sapphire is 2.2:1 on obsidian). Never a fill |
 | `ink` | body text on light |
 | `graphite` | secondary text, all mono metadata |
 | `mist` | secondary text on dark |

@@ -28,7 +28,9 @@ const buttonVariants = cva(
         // it always sits on a dark surface (DS-702).
         inverse: "bg-mineral text-obsidian shadow-e1 hover:bg-sand",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-sapphire underline-offset-4 hover:underline",
+        // Text, so the AA companion: identical to sapphire on the light ground,
+        // lifted in the Studio's dark scheme where raw sapphire is 1.7:1 on a card.
+        link: "text-sapphire-ink underline-offset-4 hover:underline",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20",
       },

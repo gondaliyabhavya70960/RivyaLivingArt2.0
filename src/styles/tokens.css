@@ -65,8 +65,10 @@
      as text on mineral, so on LIGHT grounds the ink is simply sapphire; the
      Studio's dark scope (globals.css) lifts it, because #164E6B is 2.4:1 as
      text on obsidian while the sapphire FILL stays correct there (mineral on
-     it is 8:1). Fills, focus rings and the cure line keep `--sapphire`;
-     only link and label ink reads this. */
+     it is 8:1). Fills, focus rings and the cure line keep `--sapphire`.
+     What reads this: link and label ink, the semantic `accent-foreground`
+     (a text role), and the Select/menu indicator glyphs — a 16px tick and an
+     8px dot are icons held to the 3:1 floor, not fills. */
   --sapphire-ink: var(--sapphire);
 
   /* Studio-only status extras. The redesign spec defines no warning/info

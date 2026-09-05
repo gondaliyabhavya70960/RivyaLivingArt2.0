@@ -376,7 +376,10 @@ ScrollTrigger for the two pinned scrubs.
 ## Design system — v3 "Liquid Luxury"
 - **Colour**: obsidian · deep-ocean · sapphire/-hi · mineral · sand ·
   champagne · ink · graphite · mist · hairline/-dk · whatsapp · alert ·
-  success. Two AA companions exist because a palette role cannot carry text:
+  success. Three AA companions exist because a palette role cannot carry text:
+  `sapphire-ink` (sapphire itself on light; lifted to #5fafd6 in the Studio's
+  dark scheme, where raw sapphire is 2.2:1 on obsidian — every sapphire TEXT
+  or indicator icon in the Studio reads it, never a fill),
   `champagne-ink` (champagne is 2.35:1 on mineral) and `whatsapp-deep` (white
   on the brand green is 4.14:1). Champagne is never a fill, never a button
   background, never text below 16px on light, **max two per viewport**.
