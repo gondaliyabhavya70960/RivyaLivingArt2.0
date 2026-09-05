@@ -11,6 +11,7 @@ import {
   NAV_MENUS,
   NAV_MENU_DEFAULTS,
   describeHrefProblem,
+  describeLabelProblem,
   isNavMenuKey,
 } from "@/lib/nav-menus";
 import { NAV_MENUS_TAG } from "@/lib/nav-menus-server";
@@ -35,11 +36,15 @@ const hrefSchema = z
     const problem = describeHrefProblem(value);
     if (problem) ctx.addIssue({ code: "custom", message: problem });
   });
+// The same rule the board runs on every keystroke (`describeLabelProblem`),
+// so the two can never disagree about a label.
 const labelSchema = z
   .string()
   .trim()
-  .min(1, "Give the link some words")
-  .max(60, "Keep a navigation label under 60 characters");
+  .superRefine((value, ctx) => {
+    const problem = describeLabelProblem(value);
+    if (problem) ctx.addIssue({ code: "custom", message: problem });
+  });
 
 function revalidate() {
   revalidateTag(NAV_MENUS_TAG, "max");

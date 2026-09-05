@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ArrowDown, ArrowUp, Loader2, Plus, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -16,7 +16,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { describeHrefProblem, type NavMenuKey } from "@/lib/nav-menus";
+import { FieldError } from "@/components/studio/field-error";
+import { FieldHint, describedBy } from "@/components/studio/field-hint";
+import {
+  describeHrefProblem,
+  describeLabelProblem,
+  type NavMenuKey,
+} from "@/lib/nav-menus";
 import { cn } from "@/lib/utils";
 
 export type NavItemRow = {
@@ -163,9 +169,16 @@ function MenuSection({
     null,
   );
   const [busy, setBusy] = useState(false);
+  const addId = useId();
 
   const visible = menu.items.filter((i) => i.visible);
   const addProblem = adding ? describeHrefProblem(adding.href) : null;
+  // Shown once there is something to judge: an empty row is the state every
+  // add starts in, and the Add button already refuses it.
+  const addHrefProblem = adding?.href.trim() ? addProblem : null;
+  const addLabelProblem = adding?.label.trim()
+    ? describeLabelProblem(adding.label)
+    : null;
 
   async function add() {
     if (!adding) return;
@@ -245,35 +258,48 @@ function MenuSection({
           <div className="max-w-[52ch] space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <Input
+                id={`${addId}-label`}
                 className="w-full sm:w-52"
                 value={adding.label}
                 autoFocus
                 aria-label={`New ${menu.title} link text`}
                 placeholder="What it says"
+                aria-invalid={addLabelProblem ? true : undefined}
+                aria-describedby={describedBy(
+                  addLabelProblem && `${addId}-label-error`,
+                )}
                 onChange={(e) =>
                   setAdding({ ...adding, label: e.target.value })
                 }
               />
               <Input
+                id={`${addId}-href`}
                 className="w-full sm:w-56"
                 value={adding.href}
                 aria-label={`New ${menu.title} link destination`}
                 placeholder="/workshops"
                 list="nav-known-routes"
+                aria-invalid={addHrefProblem ? true : undefined}
+                aria-describedby={describedBy(
+                  `${addId}-href-hint`,
+                  addHrefProblem && `${addId}-href-error`,
+                )}
                 onChange={(e) => setAdding({ ...adding, href: e.target.value })}
               />
             </div>
-            {addProblem && adding.href.trim() ? (
-              <p role="alert" className="text-xs text-destructive">
-                {addProblem}
-              </p>
-            ) : null}
+            <FieldError id={`${addId}-label-error`}>{addLabelProblem}</FieldError>
+            <FieldError id={`${addId}-href-error`}>{addHrefProblem}</FieldError>
             <div className="flex gap-2">
               <Button
                 type="button"
                 size="sm"
                 onClick={add}
-                disabled={busy || !adding.label.trim() || Boolean(addProblem)}
+                disabled={
+                  busy ||
+                  !adding.label.trim() ||
+                  Boolean(addProblem) ||
+                  Boolean(addLabelProblem)
+                }
               >
                 Add
               </Button>
@@ -287,10 +313,10 @@ function MenuSection({
                 Cancel
               </Button>
             </div>
-            <p className="text-12 leading-relaxed text-graphite">
+            <FieldHint id={`${addId}-href-hint`}>
               Type the destination as it appears in the address bar —
               /workshops, /shop#collections, or a full https:// address.
-            </p>
+            </FieldHint>
           </div>
         )}
       </div>
@@ -328,12 +354,18 @@ function NavRow({
   );
   const [busy, setBusy] = useState(false);
 
+  const rowId = useId();
   const label = item.labels[locale] ?? item.key;
   const overridden = item.overridden[locale] ?? false;
   const problem = draft ? describeHrefProblem(draft.href) : null;
+  // Blank words are allowed here: they drop the override and the catalogue
+  // wording comes back. Only the length cap applies.
+  const labelProblem = draft
+    ? describeLabelProblem(draft.label, { allowEmpty: true })
+    : null;
 
   async function save() {
-    if (!draft) return;
+    if (!draft || problem || labelProblem) return;
     setBusy(true);
     if (draft.href.trim() !== item.href) {
       const res = await updateNavHref({ id: item.id, href: draft.href });
@@ -396,33 +428,39 @@ function NavRow({
             <div className="max-w-[52ch] space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Input
+                  id={`${rowId}-label`}
                   className="w-full sm:w-52"
                   value={draft.label}
                   autoFocus
                   aria-label={`Words for ${item.key}`}
+                  aria-invalid={labelProblem ? true : undefined}
+                  aria-describedby={describedBy(
+                    item.bundled && `${rowId}-label-hint`,
+                    labelProblem && `${rowId}-label-error`,
+                  )}
                   onChange={(e) =>
                     setDraft({ ...draft, label: e.target.value })
                   }
                 />
                 <Input
+                  id={`${rowId}-href`}
                   className="w-full sm:w-56"
                   value={draft.href}
                   aria-label={`Destination for ${item.key}`}
                   list="nav-known-routes"
+                  aria-invalid={problem ? true : undefined}
+                  aria-describedby={describedBy(problem && `${rowId}-href-error`)}
                   onChange={(e) => setDraft({ ...draft, href: e.target.value })}
                 />
               </div>
-              {problem ? (
-                <p role="alert" className="text-xs text-destructive">
-                  {problem}
-                </p>
-              ) : null}
+              <FieldError id={`${rowId}-label-error`}>{labelProblem}</FieldError>
+              <FieldError id={`${rowId}-href-error`}>{problem}</FieldError>
               <div className="flex gap-2">
                 <Button
                   type="button"
                   size="sm"
                   onClick={save}
-                  disabled={busy || Boolean(problem)}
+                  disabled={busy || Boolean(problem) || Boolean(labelProblem)}
                 >
                   Save
                 </Button>
@@ -437,10 +475,10 @@ function NavRow({
                 </Button>
               </div>
               {item.bundled && (
-                <p className="text-12 leading-relaxed text-graphite">
+                <FieldHint id={`${rowId}-label-hint`}>
                   Clearing the words puts this link back to its Site Copy
                   wording, which is translated into nine languages.
-                </p>
+                </FieldHint>
               )}
             </div>
           )}

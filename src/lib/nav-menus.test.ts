@@ -4,6 +4,7 @@ import {
   NAV_MENUS,
   NAV_MENU_DEFAULTS,
   describeHrefProblem,
+  describeLabelProblem,
   isNavMenuKey,
   resolveNavLabel,
 } from "./nav-menus";
@@ -117,5 +118,21 @@ describe("isNavMenuKey", () => {
     expect(isNavMenuKey("footer-legal")).toBe(true);
     expect(isNavMenuKey("footer")).toBe(false);
     expect(isNavMenuKey("")).toBe(false);
+  });
+});
+
+describe("describeLabelProblem", () => {
+  it("refuses an empty label unless empty is a meaningful act", () => {
+    expect(describeLabelProblem("")).toBe("Give the link some words");
+    expect(describeLabelProblem("   ")).toBe("Give the link some words");
+    expect(describeLabelProblem("   ", { allowEmpty: true })).toBeNull();
+  });
+
+  it("caps the label at 60 characters, measured after trimming", () => {
+    expect(describeLabelProblem("x".repeat(60))).toBeNull();
+    expect(describeLabelProblem(`  ${"x".repeat(60)}  `)).toBeNull();
+    expect(describeLabelProblem("x".repeat(61))).toBe(
+      "Keep a navigation label under 60 characters",
+    );
   });
 });
