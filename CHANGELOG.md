@@ -48,15 +48,19 @@ Chromium with `prefers-color-scheme` emulated, computed styles read off the open
 | tick / radio indicator | 1.49 | 5.48 | 6.86 | 6.86 |
 | command palette, selected item | 1.5 (computed) | 6.25 | 8.99 | 8.99 |
 
-Then a sweep, because "every dropdown" is a claim about the whole Studio: 41 routes (every
-dashboard page plus one record each of product, journal post, page, portfolio piece and scrape
-source), each form tab clicked in turn, every trigger opened, in both schemes. **89 surfaces per
-scheme** — 41 menus, 31 Selects, 16 native `<select>`s, the palette — plus the dialogs the sweep
-cannot see from a page load (new testimonial, invite user), the commission board's per-card status
-select and the inquiry detail's status picker (on a fixture inquiry), and the custom-page block
-editor's two select-bearing block types (on a fixture page). **Nothing below 4.5:1 for text or
-3:1 for an icon in either scheme.** Native selects score 13.53/18.41 on the control itself; their
-popup is drawn by the browser under `color-scheme: light dark`, so it follows the OS.
+Then a sweep, because "every dropdown" is a claim about the whole Studio — run against the
+branch rebased onto `main` as of #49, so it counts the seven routes and the block types that series
+added: 46 routes (every dashboard page plus one record each of product, journal post, page,
+portfolio piece and scrape source), each form tab clicked in turn, every trigger opened, in both
+schemes. **167 surfaces per scheme** — 95 menus (the notifications menu now sits on every route),
+41 Selects, 30 native `<select>`s, the palette — plus 47 more behind interactions the sweep cannot
+reach from a page load: the invite-user dialog, the testimonial form's three pickers, the
+commission board's per-card status select and the inquiry detail's status picker (on a fixture
+inquiry), and the block editor's five select-bearing block types (on a fixture page). **Nothing
+below 4.5:1 for text or 3:1 for an icon in either scheme**; the lowest readings are the
+highlighted row at 5.48 in dark and a muted menu icon at 4.83 in light. Native selects score
+13.53/18.41 on the control itself; their popup is drawn by the browser under
+`color-scheme: light dark`, so it follows the OS.
 
 ### The storefront is byte-identical
 Its only Select — the product order panel — overrides the panel with `bg-mineral text-ink` and
