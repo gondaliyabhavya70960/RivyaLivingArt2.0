@@ -5,6 +5,71 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — every Studio dropdown was invisible in dark mode (2026-09-05, seventh batch)
+
+The owner opened the category filter on `/studio/products` with the OS in dark mode and got a
+cream panel with nothing in it — one highlighted row in a grey that could barely be read, and
+twenty-four rows of nothing. Reproduced locally to the pixel, and it was not that screen: it was
+**every** Select, every menu and the command palette, on every Studio route.
+
+### Root cause — a background routed through the dark scheme's text colour
+The shadcn semantic layer in `globals.css` maps every pair to the scope's own names — card is
+`--surface`/`--text` — except popover, which went to the PALETTE names:
+`--color-popover: var(--mineral)`, `--color-popover-foreground: var(--ink)`. Under the Studio's
+dark block that is fatal twice over: `--ink` flips to `#f4f1e9` (it is now light text), and
+`--mineral` **cannot** flip, because it is that scheme's `--text` — a dark mineral would be dark
+body text on obsidian. So both sides of the pair resolved to `#f4f1e9`. Cream on cream, measured
+at **1.00:1**. The highlighted row was `--color-accent-foreground: var(--sapphire)` — a text role
+on the raw fill token, `#164e6b` on the flipped sand `#0f3247`: **1.49:1**. The tick and the
+radio dot were `text-sapphire`: the same 1.49.
+
+`.studio-v2` sits on `<html>`, so the Radix portals were never the problem; the tokens were.
+
+### The fix — the same pattern as card, nothing new
+- `--color-popover` → `var(--surface)`, `--color-popover-foreground` → `var(--text)`.
+- `--color-accent-foreground` → `var(--sapphire-ink)`: the AA companion that exists precisely
+  because a fill role cannot carry text. Identical to sapphire on the light ground; lifts to
+  `#5fafd6` in the dark scheme. The ghost button's hover state rides on the same token and was
+  equally unreadable in dark.
+- The Check and Circle indicators in `ui/select.tsx` and `ui/dropdown-menu.tsx`, and the command
+  palette's selected item (`text-primary` — the fill token again), → `text-sapphire-ink`.
+
+A side effect worth naming: in the **light** scheme the Studio's popovers move from mineral to
+the Studio's white `--surface`, which is what its cards and dialogs already are. They used to be
+a mineral panel on a mineral page, told apart by shadow alone.
+
+### Measured, not assumed
+Chromium with `prefers-color-scheme` emulated, computed styles read off the open panel:
+
+| | dark before | dark after | light before | light after |
+|---|---|---|---|---|
+| panel text on panel | 1.00 | 13.53 | 16.31 | 18.41 |
+| highlighted row text | 1.49 | 5.48 | 6.86 | 6.86 |
+| tick / radio indicator | 1.49 | 5.48 | 6.86 | 6.86 |
+| command palette, selected item | 1.5 (computed) | 6.25 | 8.99 | 8.99 |
+
+Then a sweep, because "every dropdown" is a claim about the whole Studio: 41 routes (every
+dashboard page plus one record each of product, journal post, page, portfolio piece and scrape
+source), each form tab clicked in turn, every trigger opened, in both schemes. **89 surfaces per
+scheme** — 41 menus, 31 Selects, 16 native `<select>`s, the palette — plus the dialogs the sweep
+cannot see from a page load (new testimonial, invite user), the commission board's per-card status
+select and the inquiry detail's status picker (on a fixture inquiry), and the custom-page block
+editor's two select-bearing block types (on a fixture page). **Nothing below 4.5:1 for text or
+3:1 for an icon in either scheme.** Native selects score 13.53/18.41 on the control itself; their
+popup is drawn by the browser under `color-scheme: light dark`, so it follows the OS.
+
+### The storefront is byte-identical
+Its only Select — the product order panel — overrides the panel with `bg-mineral text-ink` and
+its items with `focus:bg-sand focus:text-sapphire`, so the popover pair never reached it; and
+`--sapphire-ink` is `var(--sapphire)` at `:root`, so accent-foreground, the ghost hover and the
+indicators resolve to the same bytes outside the Studio. Read off the CSS chain rather than
+measured: no seeded product renders that Select (it needs a `SELECT`-type customization field),
+and a fixture field did not surface on the page either — that gate was not worth chasing for a
+proof the cascade already gives.
+
+### Same class, not a dropdown — recorded, not fixed here
+Three `text-primary` links on `/studio/inquiries/[id]` paint raw sapphire on obsidian in the
+dark scheme. Same defect, different surface; they are listed so the next Studio pass takes them.
 ## Content · the homepage, About, the Studio auth screens, and six registry lies (2026-09-05)
 
 Owner ask: *"change full home page and about page content, section selection and images and

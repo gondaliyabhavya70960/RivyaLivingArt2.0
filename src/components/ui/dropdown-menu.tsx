@@ -101,7 +101,7 @@ function DropdownMenuCheckboxItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <Check className="size-4 text-sapphire" />
+          <Check className="size-4 text-sapphire-ink" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -136,7 +136,7 @@ function DropdownMenuRadioItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <Circle className="size-2 fill-sapphire text-sapphire" />
+          <Circle className="size-2 fill-sapphire-ink text-sapphire-ink" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
