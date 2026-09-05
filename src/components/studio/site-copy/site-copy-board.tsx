@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,8 +17,16 @@ import { CharCounter } from "@/components/ui/char-counter";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { FieldError } from "@/components/studio/field-error";
+import { FieldHint, describedBy } from "@/components/studio/field-hint";
 import { SurfaceSwitcher } from "@/components/studio/site-copy/surface-switcher";
-import type { CopyGroup, CopyKind, CopyTier } from "@/lib/site-copy";
+import {
+  copySlot,
+  describeCopyProblem,
+  type CopyGroup,
+  type CopyKind,
+  type CopyTier,
+} from "@/lib/site-copy";
 import { cn } from "@/lib/utils";
 
 export type CopyRow = {
@@ -264,9 +272,25 @@ function CopyRowItem({ row, locale }: { row: CopyRow; locale: string }) {
 
   const max = row.max ?? 200;
   const multiline = MULTILINE.has(row.kind);
+  const keeps = Boolean(row.vars?.length || row.tags?.length);
+
+  // The same rule the Server Action enforces (`describeCopyProblem` — a
+  // missing `{var}` or `<tag>`, unbalanced braces), run on every keystroke
+  // here so the sentence it composes lands under the field. It used to be
+  // reached only on the server, where `runAction` flattened it to "Something
+  // went wrong" — the owner who deleted `{count}` never learned which word.
+  const slot = copySlot(row.key);
+  const problem =
+    draft === null || !slot ? null : describeCopyProblem(slot, draft);
+
+  const baseId = useId();
+  const fieldId = `${baseId}-field`;
+  const noteId = `${baseId}-note`;
+  const keepId = `${baseId}-keep`;
+  const errorId = `${baseId}-error`;
 
   async function save() {
-    if (draft === null) return;
+    if (draft === null || problem) return;
     setBusy(true);
     const res = await setSiteCopy({ key: row.key, locale, value: draft });
     setBusy(false);
@@ -343,11 +367,9 @@ function CopyRowItem({ row, locale }: { row: CopyRow; locale: string }) {
 
       {draft !== null && (
         <div className="mt-3 max-w-[70ch] space-y-2">
-          {row.note && (
-            <p className="text-xs leading-relaxed text-graphite">{row.note}</p>
-          )}
-          {(row.vars?.length || row.tags?.length) && (
-            <p className="text-xs leading-relaxed text-graphite">
+          {row.note && <FieldHint id={noteId}>{row.note}</FieldHint>}
+          {keeps && (
+            <FieldHint id={keepId}>
               Keep{" "}
               {[
                 ...(row.vars ?? []).map((v) => `{${v}}`),
@@ -358,24 +380,39 @@ function CopyRowItem({ row, locale }: { row: CopyRow; locale: string }) {
                 ? "it fills in a live value"
                 : "it carries formatting"}
               .
-            </p>
+            </FieldHint>
           )}
           {multiline ? (
             <Textarea
+              id={fieldId}
               value={draft}
               rows={4}
               autoFocus
               onChange={(e) => setDraft(e.target.value)}
               aria-label={row.label}
+              aria-invalid={problem ? true : undefined}
+              aria-describedby={describedBy(
+                row.note && noteId,
+                keeps && keepId,
+                problem && errorId,
+              )}
             />
           ) : (
             <Input
+              id={fieldId}
               value={draft}
               autoFocus
               onChange={(e) => setDraft(e.target.value)}
               aria-label={row.label}
+              aria-invalid={problem ? true : undefined}
+              aria-describedby={describedBy(
+                row.note && noteId,
+                keeps && keepId,
+                problem && errorId,
+              )}
             />
           )}
+          <FieldError id={errorId}>{problem}</FieldError>
           <CharCounter length={draft.length} max={max} />
           {row.overridden && (
             <p className="text-xs leading-relaxed text-graphite">
@@ -384,7 +421,7 @@ function CopyRowItem({ row, locale }: { row: CopyRow; locale: string }) {
             </p>
           )}
           <div className="flex items-center gap-2">
-            <Button size="sm" onClick={save} disabled={busy}>
+            <Button size="sm" onClick={save} disabled={busy || Boolean(problem)}>
               {busy && <Loader2 aria-hidden className="size-4 animate-spin" />}
               Save
             </Button>
