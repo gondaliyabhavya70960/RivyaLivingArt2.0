@@ -6,10 +6,9 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import {
-  RESEARCH_STATUSES,
   upsertResearchRecord,
-  type ResearchStatus,
 } from "@/actions/research";
+import { RESEARCH_STATUSES, type ResearchStatus } from "@/lib/research";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

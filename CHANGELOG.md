@@ -58,6 +58,19 @@ review), the client mirrors the action's limits and says so in a comment naming 
 - Two normalisations the map turned up: the invite dialog's email hint is linked, and the
   testimonial form's link-picker error was a bare `text-alert` paragraph with no alert role.
 
+### The research page did not load, and nothing said so
+Driving the research form in a browser found the page behind it rendering the dashboard's
+"This page didn't load" boundary — and the sweep record from before this batch shows it already
+did. `RESEARCH_STATUSES`, a constant, was exported from `src/actions/research.ts`, a
+`"use server"` module, and the client form imported it; Next hands a client a server-reference
+PROXY for anything it imports from such a module, so `RESEARCH_STATUSES.map` threw "map is not
+a function" during render. Typecheck, lint, the build and the 36-route Studio audit all passed
+it, because the audit reads the accessibility tree rather than whether the screen is the one
+intended — the same blind spot the per-page composer hit two days ago. The vocabulary now lives
+in `src/lib/research.ts`, the action imports it like everyone else, and
+`server-action-exports.test.ts` fails the suite on the next value export from any action file
+(it was the only one).
+
 ### Phase 12, reconciled
 The roadmap still listed the media system as open. The content series shipped it on 2026-09-04:
 cursor pagination, sort, date/size/orientation filters, the detail drawer with usages and

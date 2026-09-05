@@ -7,15 +7,13 @@ import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
 import type { Prisma } from "@/generated/prisma/client";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
+import { RESEARCH_STATUSES, type ResearchStatus } from "@/lib/research";
 
 const STUDIO_PATH = "/studio/research";
 
-export const RESEARCH_STATUSES = [
-  "RESEARCH",
-  "SHORTLISTED",
-  "DISCARDED",
-] as const;
-export type ResearchStatus = (typeof RESEARCH_STATUSES)[number];
+// The vocabulary lives in src/lib/research.ts: a value exported from this
+// "use server" file reaches a client component as a server-reference proxy,
+// not an array (see the note there).
 
 // ————————————————————— Create / update —————————————————————
 

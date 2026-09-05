@@ -10,8 +10,8 @@ import { toast } from "sonner";
 import {
   deleteResearchRecords,
   setResearchStatus,
-  type ResearchStatus,
 } from "@/actions/research";
+import type { ResearchStatus } from "@/lib/research";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
