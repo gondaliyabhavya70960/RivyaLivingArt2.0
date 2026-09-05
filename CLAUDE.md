@@ -99,7 +99,34 @@ records what shipped, and lists what genuinely remains.
   exact command: it used to say "needs a generation run" off `status` alone,
   which told an owner holding 56 finished renders to pay for them twice.
   A promoted SET F row is built by `media-v3-video-fetch.mjs`, not the still
-  pipeline. **These URLs are not permanent** — the previous batch's were
+  pipeline.
+- **Batch E (2026-09-05) added five more sets — 29 entries, 17 of them
+  generated.** `varmala-preservation` (7), `gifting` (6), `workshops` (6),
+  `atelier` (5) and `studio-chrome` (5), chosen from a slot audit rather than a
+  wish list: each entry names the over-worked master it is meant to relieve.
+  The queue is therefore MIXED from here on — `--planned` reports
+  `55 entries: 12 planned · 43 generated` — and that is the state the tests
+  assert, because telling an owner to generate something already rendered is
+  the one wrong instruction here that costs money. **Two of the 29 were
+  withdrawn the same day**, on review rather than on cost:
+  `varmala-before-after` was a 3:2 restatement of the manifest's own
+  `excluded[0]` (§15.2 forbids a generated picture standing in for a
+  customer's own flowers, and changing the aspect ratio does not change the
+  claim the picture makes), and `varmala-floret-macro` had nowhere to land —
+  the only 1:1 slots are `about.material1–4.macro`, and §15.3 generated those
+  four as one batch on identical ground and light, so swapping one member for
+  a different set's frame is the incoherence §15.3 exists to prevent. The remaining 12 stopped at
+  a hard wall: **the Higgsfield workspace ran out of credits.** The account's
+  "365 Unlimited" model subscriptions are NOT reachable through the MCP API —
+  `models_explore` reports `unlim.available: false` and every model, including
+  the ones named in the subscription list, rejects `use_unlim` with
+  "Unlimited generations aren't supported for <model>". There is one workspace
+  (private, max plan), so there is no other balance to switch to. Generating
+  the last 12 means either topping up credits or running the recorded prompts
+  in the Higgsfield web UI, where the unlimited plan does apply.
+  **The maker portrait is deliberately NOT in this queue** — §15.2 forbids a
+  generated maker, and a row in a generation queue is an invitation to generate
+  it. **These URLs are not permanent** — the previous batch's were
   re-verified alive eight days after generation, so treat that as the working
   window and re-generate from the same prompts if they have expired.
 - **DONE — `public/` is committed** (2026-08-31, 242 files, 22 MB). The owner
@@ -141,7 +168,7 @@ records what shipped, and lists what genuinely remains.
   committed, and they are. Rebuilding now means running the script on an
   ordinary machine; `git log --diff-filter=D` has the workflows if a runner is
   ever wanted again.
-- **Wired.** 58 of the 62 slots default to these masters. Four keep what they
+- **Wired.** 74 of the 78 slots default to these masters. Four keep what they
   had: `home.maker` and `about.maker` (§15.2 — the maker is never AI, and
   `site-images-import.test.ts` records that the file behind them is itself a
   generation, which is the owner's to replace with a real photograph) and the
@@ -171,7 +198,7 @@ blank one. Adding a surface means following this, not inventing a ninth shape.
 | Surface | Registry | Table | Resolver |
 |---|---|---|---|
 | `/studio/site-copy` | `site-copy.generated.ts` (1,297 slots; `npm run copy:registry`) | `SiteCopy` | `getSiteCopy()` |
-| `/studio/site-images` | `site-images.ts` (62 slots) | `SiteImage` | `getSiteImages()` |
+| `/studio/site-images` | `site-images.ts` (78 slots) | `SiteImage` | `getSiteImages()` |
 | `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
 | `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
 | `/studio/sections` | `page-sections.ts` (7 pages) | `PageSection` | `getPageSections()` |
@@ -219,9 +246,13 @@ Four rules that hold across all of them:
 
 ### Site Images (`/studio/site-images`)
 - The storefront's editorial photography is no longer hardcoded. Every call
-  site is a **named slot** in `src/lib/site-images.ts` (62 slots, 25 bundled
-  files) carrying its surface, the ratio the layout crops to and the
-  `public/media` file used when the owner has not replaced it.
+  site is a **named slot** in `src/lib/site-images.ts` (78 slots, 25 bundled
+  files — the count grew from 62 with the furniture/rooms concept tiles and the
+  four new process steps, then to 78 with `home.collections.create` and
+  `home.workshops`, and 78-over-25 is why batch E exists: `tile-live.avif`
+  alone backs eight slots and `tile-create.avif` seven) carrying its surface,
+  the ratio the layout crops to and the `public/media` file used when the owner
+  has not replaced it.
 - Pages read `getSiteImages()` (`src/lib/site-images-server.ts`) — a total map,
   so an unset slot always resolves to a file that exists in the repo. Cached
   24h behind the `site-images` tag, invalidated by the studio actions.

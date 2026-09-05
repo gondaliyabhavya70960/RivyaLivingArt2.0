@@ -26,7 +26,12 @@ export const CANONICAL_CATEGORIES: CanonicalCategory[] = [
     name: "Gift Collections",
     description:
       "Curated hampers and gift sets — resin keepsakes composed and wrapped for gifting.",
-    image: "/media/v6/collection-custom.webp",
+    // §15.4's own "Gift / keepsake" master. It was generated FOR the homepage
+    // collections band and then never reached it, because that band paints
+    // `Category.image` and this default still pointed at the superseded v6
+    // artwork. Existing rows keep whatever the owner or the Cloudinary
+    // reconcile put there — this is the value a fresh environment seeds.
+    image: "/media/v3/tile-gift.avif",
     translations: {
       hi: {
         name: "उपहार संग्रह",
@@ -216,7 +221,11 @@ export const CANONICAL_CATEGORIES: CanonicalCategory[] = [
     name: "3D Printed Décor",
     description:
       "Lithophane lamps, personalized photo pieces and printed decorative objects.",
-    image: "/media/v6/collection-3dprint.webp",
+    // §15.4's "Print / 3D" collection master, same story as gift-collections
+    // above. The other two print categories keep the shared v6 file: there is
+    // one printed-decor master, not three, and giving all three the same v3
+    // picture would only move the duplication.
+    image: "/media/v3/tile-print.avif",
     translations: {
       hi: {
         name: "3D प्रिंटेड सजावट",

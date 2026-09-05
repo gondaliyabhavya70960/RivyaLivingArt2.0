@@ -68,7 +68,7 @@ describe("the web app manifest icon", () => {
 describe("the media-v3 generation queue (docs/transformation-audit.md §10.3)", () => {
   const entries = mediaV3Manifest.plannedSets?.entries ?? [];
 
-  it("has every SET A–F entry batch D added", () => {
+  it("has every SET A–K entry batches D and E added", () => {
     // Not a file-existence check — these are jobs nobody has run yet. This
     // just guards the count so a future edit that silently drops an entry
     // (a bad merge, a copy-paste that skipped one) is caught here rather
@@ -77,7 +77,21 @@ describe("the media-v3 generation queue (docs/transformation-audit.md §10.3)", 
     // `--promote` flips a row's status in place rather than moving it into
     // `assets` (scripts/lib/media-v3-planned.mjs), precisely so this number
     // keeps meaning something.
-    expect(entries.length).toBe(28);
+    //
+    // 28 → 57 → 55 on 2026-09-05: batch E added five sets (varmala-preservation,
+    // gifting 6, workshops 6, atelier 5, studio-chrome 5) chosen from a slot
+    // audit — 76 registry slots share only 25 files, `tile-live.avif` carrying
+    // eight of them — so each new entry names the over-worked master it is
+    // meant to relieve. Two of the seven varmala rows were then withdrawn the
+    // same day: `varmala-before-after` restated `excluded[0]` (§15.2 forbids a
+    // generated picture standing in for a customer's own flowers, and a
+    // different aspect ratio does not change that claim) and
+    // `varmala-floret-macro` had no slot to land in, because the only 1:1 slots
+    // are the four §15.3 material macros generated as one batch on identical
+    // ground and light. The maker portrait is deliberately absent for the same
+    // family of reason: §15.2 forbids a generated maker, and a row in a
+    // generation queue is an invitation to generate it.
+    expect(entries.length).toBe(55);
   });
 
   it('never claims a master file exists for a status: "planned" entry', () => {

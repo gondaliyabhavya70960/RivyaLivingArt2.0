@@ -14,6 +14,8 @@ import {
   sectionDef,
 } from "./page-sections";
 import { PROCESS_STEP_COUNT } from "./process-steps";
+import { GENERATED_COPY_SLOTS } from "./site-copy.generated";
+import { isSiteImageKey } from "./site-images";
 
 /** The shipped homepage, in registry order, with everything showing. */
 function shipped() {
@@ -101,6 +103,55 @@ describe("registry-wide, across every page", () => {
     for (const page of SECTION_PAGES) {
       expect(describeArrangementProblem(defaultShipped(page)), page).toBeNull();
     }
+  });
+
+  it("matches at least one real copy slot for every copyPrefixes entry", () => {
+    // A STRING prefix over slot keys, which is what the field says it is
+    // ("Copy slots this section owns, as key prefixes") — `CustomOrder.page.hero`
+    // legitimately owns `heroEyebrow`, `heroHeadline`, `heroLead` and the rest
+    // without there being a `hero` node to resolve.
+    //
+    // The rule this enforces is that the prefix owns SOMETHING. Six entries
+    // owned nothing at all: `Workshops.why` and `Workshops.session` (the bands
+    // render `Workshops.intro` and `Workshops.experience`), and four on
+    // /custom-order — `page.brief`, `page.faq`, `page.work`, `page.testimonials`
+    // — against a page whose copy is `formHeading`, `proofHeading`,
+    // `seeCommissions`. Nothing threw, because `copyPrefixes` has exactly one
+    // consumer, `copyCount` on the sections board, so the only symptom was an
+    // integer in front of the owner that counted a tree that does not exist.
+    const keys = GENERATED_COPY_SLOTS.map((slot) => slot.key);
+
+    let checked = 0;
+    for (const page of SECTION_PAGES) {
+      for (const section of PAGE_SECTIONS[page]) {
+        for (const prefix of section.copyPrefixes) {
+          checked += 1;
+          expect(
+            keys.some((key) => key === prefix || key.startsWith(prefix)),
+            `${page} · ${section.key} → ${prefix} owns no copy slot`,
+          ).toBe(true);
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it("names a real slot for every imageKeys entry", () => {
+    // Same rule on the other half of the row. `isSiteImageKey` is the registry
+    // itself, so a renamed or deleted slot is caught here rather than by an
+    // owner opening a board that offers nothing.
+    let checked = 0;
+    for (const page of SECTION_PAGES) {
+      for (const section of PAGE_SECTIONS[page]) {
+        for (const key of section.imageKeys) {
+          checked += 1;
+          expect(isSiteImageKey(key), `${page} · ${section.key} → ${key}`).toBe(
+            true,
+          );
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 
   it("resolves every cureLabelKey against messages/en.json", () => {

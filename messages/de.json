@@ -112,7 +112,7 @@
     },
     "hero": {
       "eyebrow": "großformatige auftragsarbeiten · resin-kunst · auf bestellung",
-      "headline": "Flüssiger Luxus, für die Ewigkeit gegossen.",
+      "headline": "Gegossen für den Raum, in dem es stehen wird.",
       "lead": "Rivya Living Art fertigt große Auftragsarbeiten in Resin — Tische, Wandpaneele und Konservierungsstücke, um den Raum herum entworfen, in dem sie stehen werden — dazu eine Kollektion kleinerer Stücke, direkt bestellbar. In Surat von Hand gegossen, per WhatsApp abgeschlossen.",
       "ctaExplore": "Die Kollektion entdecken",
       "ctaBespoke": "Stück beauftragen",
@@ -256,7 +256,7 @@
       "heading": "Nach Ihrer Geschichte gefertigt",
       "body": "Ihre Blumen, Ihre Namen, Ihre Daten — in Harz bewahrt als ein Stück, das niemand sonst besitzen kann. Eine Auftragsarbeit beginnt und endet in einem einzigen WhatsApp-Gespräch.",
       "cta": "Auftrag starten",
-      "imageAlt": "Hände legen Blütenblätter einer Hochzeitsgirlande in eine Silikonform",
+      "imageAlt": "Behandschuhte Hände legen Ringelblumen- und Rosenblätter in eine leere Silikonform",
       "eyebrow": "maßanfertigungen",
       "lineFlowers": "Ihre Blumen.",
       "lineNames": "Ihre Namen.",
@@ -304,7 +304,8 @@
       "words": "freundliche worte",
       "largeFormat": "großformat",
       "furniture": "möbel",
-      "rooms": "im raum"
+      "rooms": "im raum",
+      "workshops": "Workshops"
     },
     "manifesto": {
       "line1": "Langsam gemachte Objekte.",
@@ -389,6 +390,13 @@
         "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Schlafzimmer.",
         "alt": "Goldflocken treiben in sich setzendem, durchscheinendem blauem Harz, hier als Konzeptbild für ein Schlafzimmer."
       }
+    },
+    "workshops": {
+      "eyebrow": "an der werkbank",
+      "heading": "Gießen Sie selbst",
+      "body": "Ein Nachmittag an der Studiowerkbank in Surat: Sie mischen das Harz, wählen die Pigmente und führen den Guss aus. Alles liegt bereit, bevor Sie kommen, Vorkenntnisse braucht es keine — und Sie gehen mit dem Stück, das Sie gemacht haben.",
+      "cta": "Zu den Terminen",
+      "imageAlt": "Ein langer Studiotisch für acht Plätze, mit Mischbechern, Handschuhen, Pigmentgläsern und leeren Formen in einer Reihe"
     }
   },
   "Process": {
@@ -458,7 +466,7 @@
       "eyebrow": "materialien",
       "headingEndure": "Materialien, die bleiben.",
       "intro": "Resin in Museumsqualität, UV-stabil. Pigmente und Metalle, ausgewählt danach, wie sie altern — nicht nur, wie sie auf Fotos wirken.",
-      "alt1": "Klares Epoxidharz, das im Guss das Licht einfängt",
+      "alt1": "Tiefblaues saphirfarbenes Epoxid, das in eine flache runde Form läuft",
       "alt2": "Maserung abgelagerten Hartholzes, versiegelt unter einer Resin-Oberfläche",
       "alt3": "Mischbecher mit saphirblauem Harz und lose Mineralpigmente auf der Werkbank",
       "alt4": "Konservierte Blütenblätter zwischen ausgehärteten Resin-Schichten"
@@ -492,14 +500,14 @@
     "hero": {
       "eyebrow": "das atelier",
       "headline": "Wo Resin auf Ehrfurcht trifft.",
-      "lead": "Rivya Living Art ist ein Atelier für Resin-Kunst auf Bestellung in Indien — eine kleine Werkstatt, die sich ganz dem widmet, das Wichtigste in glasklarer Tiefe zu bewahren: Ihre Blumen, Ihre Fotografien, Ihre besonderen Momente."
+      "lead": "Rivya Living Art ist ein Resin-Atelier in Surat, Indien, das ausschließlich auf Bestellung arbeitet — eine kleine Werkstatt, die das Wichtigste in glasklarer Tiefe bewahrt: Ihre Hochzeits-Varmala, Ihre Fotografien, Ihre Wendepunkte."
     },
     "story": {
       "heading": "Unsere Geschichte",
       "imageAlt": "Ein Resin-Rahmen mit konservierten Blumen, handgefertigt im Rivya Living Art-Atelier",
       "p1": "Rivya Living Art begann als Ein-Personen-Atelier — eine einzige Werkbank und eine stille Faszination dafür, was geschieht, wenn Licht durch gegossenes Resin fällt. Es ist Auftrag für Auftrag gewachsen, arbeitet aber noch immer so wie am Anfang: ein Stück nach dem anderen, jede Phase durch dieselben sorgsamen Hände.",
       "p2": "Die Farbpalette stammt aus dem Meer. Saphir-, Azur- und tiefe Ozeanblautöne durchziehen nahezu alles, was wir schaffen — Farben mit echter Tiefe, geschichtet, wie Wasser das Licht schichtet. Gold erscheint nur als feiner Akzent: ein Schimmer entlang einer Kante, eine zarte Ader durch das Blau.",
-      "p3": "Wir produzieren nicht in Masse und halten keinen Lagerbestand. Jede Auftragsarbeit beginnt als Gespräch auf WhatsApp — Ihre Idee, Ihre Referenzen, Ihr Budget — und endet als ein einzigartiges Stück, das es nirgendwo sonst auf der Welt gibt.",
+      "p3": "Wir produzieren nicht in Serie und halten kein Lager. Jeder Auftrag beginnt als Gespräch auf WhatsApp — Ihre Idee, Ihre Referenzen, Ihr Budget. Eine Varmala, die nach der Hochzeit bleiben soll, ein Stück für die Pooja-Ecke, ein Rahmen um eine einzige Fotografie — und er endet als ein Objekt, das es sonst nirgends gibt.",
       "eyebrow": "unsere geschichte"
     },
     "values": {
@@ -529,9 +537,9 @@
     "chapters": {
       "embedTitle": "In Gold und Blüten gefasst",
       "embedCopy": "Blüten, Blattgold und Erinnerungsstücke werden von Hand zwischen die Schichten gelegt — jedes Element genau dort versiegelt, wo es ruhen soll. So bewahrt das Stück einen Moment, nicht nur ein Material.",
-      "alt1": "Tiefes saphirblaues Resin mitten im Guss, wie es sich in einer runden Form ausbreitet",
+      "alt1": "Tiefblaues saphirfarbenes Resin, das in einem einzigen ununterbrochenen Band in eine flache runde Form läuft",
       "alt2": "Blattgoldflocken schweben in absetzendem, durchscheinend blauem Harz",
-      "alt3": "Das Studio bei Nacht — gegossene Formen härten unter einer warmen Arbeitslampe aus",
+      "alt3": "Gegossene Formen, die über Nacht unter einer einzelnen warmen Werklampe im dunklen Atelier aushärten",
       "alt4": "Wasserperlen auf spiegelblank poliertem Harz, Goldflocken darunter"
     },
     "sustain": {
@@ -549,7 +557,7 @@
     },
     "cta": {
       "heading": "Beginnen Sie Ihre Auftragsarbeit",
-      "body": "Sagen Sie uns, was Sie für immer bewahren möchten — wir formen es in Blau, Gold und glasklarem Resin. Ein Erbstück, das Sie für immer begleitet.",
+      "body": "Sagen Sie uns, was bleiben soll — wir gießen es in Blau, Gold und glasklares Harz. Ein Stück, einmal gemacht, zum Weitergeben.",
       "planCustom": "Sonderanfertigung planen"
     },
     "chapterLabels": {
@@ -564,11 +572,12 @@
     "studio": {
       "eyebrow": "wo wir arbeiten",
       "heading": "Die Werkbank, die Formen, das Licht.",
-      "body": "Ein Raum in Indien, in dem jede Auftragsarbeit angemischt, gegossen, ausgehärtet und veredelt wird. Nichts wird zur Fertigung nach außen gegeben.",
+      "body": "Ein Raum in Surat, in dem jeder Auftrag gemischt, gegossen, ausgehärtet und finissiert wird. Nichts wird zur Fertigung ausgelagert.",
       "addressLabel": "Adresse",
       "alt1": "Die Werkbank mit Gussformen und Mischbechern",
       "alt2": "Gefüllte Gussformen härten über Nacht unter einer warmen Arbeitslampe aus",
-      "alt3": "Ein fertiges Brett und eine Schale aus Harz und Teak auf dem Studiotisch"
+      "alt3": "Ein fertiges Brett und eine Schale aus Harz und Teak auf dem Studiotisch",
+      "hoursLabel": "Öffnungszeiten"
     }
   },
   "Workshops": {
@@ -724,7 +733,8 @@
         "how": "Wie es abläuft",
         "brief": "Ihr Briefing",
         "questions": "Fragen",
-        "work": "Aktuelle Arbeiten"
+        "work": "Aktuelle Arbeiten",
+        "words": "In ihren Worten"
       }
     },
     "form": {

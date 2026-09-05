@@ -111,11 +111,30 @@ const LARGE_FORMAT_TILES = [
 const ROOM_KEYS = ["living", "dining", "study", "bedroom"] as const;
 
 /**
+ * The three session facts the homepage workshops band quotes.
+ *
+ * `place` is the fourth on /workshops and is left out here: this band already
+ * says Surat in its own body copy, and the strip is a teaser rather than the
+ * page's own facts row.
+ */
+const WORKSHOP_FACTS = ["duration", "seats", "materials"] as const;
+
+/**
  * The v3 homepage — REDESIGN.md Part 6.
  *
- * Thirteen sections, two of them `major`. The content the old page carried is
- * all still here; what changed is that it now has a hierarchy. The deletions
- * the audit called for are real deletions:
+ * **Seventeen sections, one of them `major`** — and Part 6's own header still
+ * says thirteen and two, which is why the divergence is now recorded there
+ * rather than only here. `largeFormat`, `furniture`, `rooms` and `words` came
+ * after the spec was written; `furniture` and `rooms` ship OFF, so the default
+ * page is fifteen, and the four `conditional` sections render nothing on an
+ * empty database, so a fresh install is eleven. §01 is spec'd `major` and
+ * carries no `section-major` class on purpose: it is `min-h-svh` with its own
+ * padding. Both `major` slots are already allocated by the spec (§01 and §08),
+ * so the audit's count of one is a measurement artifact and not headroom for a
+ * third climax band.
+ *
+ * The content the old page carried is all still here; what changed is that it
+ * now has a hierarchy. The deletions the audit called for are real deletions:
  *
  * - the duplicate "From liquid to light" (it rendered twice)
  * - the eight-link collections list (absorbed into §05's six tiles)
@@ -151,6 +170,10 @@ export default async function Home({
   // wording that already lives on the pages the tiles link to, rather than a
   // second, drifting copy of the same words.
   const tLargeFormat = await getTranslations("LargeFormat");
+  // Same rule for the workshops band: it quotes the session facts the
+  // Workshops page publishes rather than restating the duration, the seat
+  // count and the city in a second, drifting place.
+  const tWorkshops = await getTranslations("Workshops");
 
   const demo = await demoWhere();
   const [
@@ -273,26 +296,6 @@ export default async function Home({
     };
   });
   const [featuredPost, ...restPosts] = journal;
-
-  /**
-   * §2.6 — one tick per section boundary, labelled in mono.
-   *
-   * GENERATED from the same resolved list the page renders, not maintained
-   * beside it. The two used to be separate arrays kept in step by hand, which
-   * was fine only while the order was fixed: the moment an owner could hide or
-   * move a section, a hand-written rail would point at sections that are not
-   * there and list them in an order the page no longer uses.
-   *
-   * Sections with no `cureLabelKey` — the closing invitation, the Why band —
-   * deliberately have no tick, exactly as before.
-   */
-  const cureMarks: CureMark[] = sections
-    .filter((section) => section.visible && section.cureLabelKey)
-    .map((section) => ({
-      id: section.key,
-      label: t(section.cureLabelKey as "cure.pour"),
-      ...(section.dark ? { dark: true } : {}),
-    }));
 
   const dateFormatter = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
@@ -597,7 +600,17 @@ export default async function Home({
                 href={tile.href}
                 name={t(`collections.tiles.${tile.key}.name`)}
                 promise={t(`collections.tiles.${tile.key}.promise`)}
-                image={tile.slug ? tileImages.get(tile.slug) : null}
+                image={
+                  /* Five tiles paint the owner's `Category.image`; the sixth
+                     points at /custom-order, which is not a category, so it
+                     falls back to its own slot rather than to the monogram.
+                     A category row whose image the owner has cleared falls
+                     back the same way it always did — to the monogram — which
+                     is a state the category editor can see and fix. */
+                  tile.slug
+                    ? tileImages.get(tile.slug)
+                    : imageRefs["home.collections.create"].url
+                }
                 imageAlt={t(`collections.tiles.${tile.key}.alt`)}
                 ratio={index === 0 ? "4/5" : "3/4"}
                 className={
@@ -942,6 +955,75 @@ export default async function Home({
         </div>
       </section>
     ),
+    /* ════════ new · Workshops — standard ════════
+    /workshops is a live page with a real page hero, a session grid and a
+    private-booking band, and until now NOTHING on the homepage pointed at
+    it: the only routes in were the drawer's second group and the footer.
+    This band is the third way to engage, between the commission band above
+    and the print studio below — commission one, pour one, print one.
+
+    The fact row reuses `Workshops.facts.*` rather than restating the
+    duration, the seat count and the city in a second place. Two copies of a
+    number are two chances to be wrong, and the owner edits that one in the
+    Workshops copy surface.
+
+    Sand ground: §09 above is dark and §10 below is mineral, so this keeps
+    the page alternating rather than repeating a ground. */
+    workshops: (
+      <section
+        id="workshops"
+        aria-labelledby="workshops-heading"
+        className="section-standard bg-sand"
+      >
+        <div className="u-shell grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+          <MeniscusImage
+            src={images["home.workshops"]}
+            blurDataURL={imageRefs["home.workshops"].blurDataUrl}
+            alt={t("workshops.imageAlt")}
+            width={1600}
+            height={900}
+            sizes="(min-width:1024px) 45vw, 90vw"
+            className="aspect-video lg:col-span-6"
+            imageClassName="object-cover"
+          />
+          <Reveal className="flex flex-col gap-6 lg:col-span-5 lg:col-start-8">
+            <Eyebrow>{t("workshops.eyebrow")}</Eyebrow>
+            <h2
+              id="workshops-heading"
+              className="max-w-[16ch] font-display text-h2 leading-[1.08] tracking-display"
+            >
+              {t("workshops.heading")}
+            </h2>
+            <p className="u-prose font-body text-body text-graphite">
+              {t("workshops.body")}
+            </p>
+            {/* Three of the four facts the Workshops page states, in the
+                strip's own mono. A list, not a `<dl>`: "2.5 hours" and
+                "Max 8 seats" name themselves, so the terms a definition list
+                would need would all be the same word. The separator trails
+                its own fact rather than leading the next one, so a wrapped
+                row never opens a line with a dot — the same rule the
+                Workshops strip follows. */}
+            <ul
+              aria-label={tWorkshops("facts.label")}
+              className="u-micro flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-hairline pt-5"
+            >
+              {WORKSHOP_FACTS.map((fact, index) => (
+                <li key={fact} className="flex items-center gap-4">
+                  <span>{tWorkshops(`facts.${fact}`)}</span>
+                  {index < WORKSHOP_FACTS.length - 1 ? (
+                    <span aria-hidden>·</span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+            <Button asChild variant="secondary" size="md" className="w-fit">
+              <Link href="/workshops">{t("workshops.cta")}</Link>
+            </Button>
+          </Reveal>
+        </div>
+      </section>
+    ),
     /* ════════ 09 · 3D printing — standard ════════
     Technical and monochrome, and deliberately NOT a dark band: §3.1
     forbids two dark sections touching, and §08 above is dark. */
@@ -1244,6 +1326,44 @@ export default async function Home({
       </section>
     ),
   };
+
+  /**
+   * §2.6 — one tick per section boundary, labelled in mono.
+   *
+   * GENERATED from the same resolved list the page renders, not maintained
+   * beside it. The two used to be separate arrays kept in step by hand, which
+   * was fine only while the order was fixed: the moment an owner could hide or
+   * move a section, a hand-written rail would point at sections that are not
+   * there and list them in an order the page no longer uses.
+   *
+   * Sections with no `cureLabelKey` — the closing invitation, the Why band —
+   * deliberately have no tick, exactly as before.
+   *
+   * **`visible` is not enough, which is why this is computed here and not
+   * beside the section list.** Four sections are `conditional` — pieces, work,
+   * words and journal — and their nodes evaluate to `null` when the database
+   * has no products, no portfolio cases, no testimonials or no posts. The
+   * manifest still calls them visible, so a rail built off `visible` alone
+   * rendered four labelled ticks (PIECES · WORK · WORDS · JOURNAL) pointing at
+   * DOM ids that do not exist. `CureLine` cannot detect that: when
+   * `getElementById` misses it falls back to even division, so the rail looked
+   * correct and simply described a different page — on an empty database, on a
+   * preview, and on any deploy where the owner had not yet added content. The
+   * nodes are already built by this point, so asking whether one exists is the
+   * same question the render below asks.
+   */
+  const cureMarks: CureMark[] = sections
+    .filter(
+      (section) =>
+        section.visible &&
+        section.cureLabelKey &&
+        sectionNodes[section.key] != null,
+    )
+    .map((section) => ({
+      id: section.key,
+      label: t(section.cureLabelKey as "cure.pour"),
+      ...(section.dark ? { dark: true } : {}),
+    }));
 
   return (
     <>

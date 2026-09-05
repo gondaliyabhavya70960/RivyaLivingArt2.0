@@ -104,6 +104,32 @@ export const SITE_IMAGE_SLOTS = [
     fallback: "/media/v3/bespoke-petals.avif",
     note: "Renders dimmed behind text — pick something with a calm, dark area.",
   },
+  /* The one collection tile with no category row behind it. The other five
+     doorways paint the owner's `Category.image`; "Commission a piece" points
+     at /custom-order, which is not a category, so it had NO picture at all —
+     `image={tile.slug ? … : null}` fell straight to CollectionCard's flat
+     deep-ocean monogram, in the lead position of the page's most prominent
+     band. A slot rather than a constant, so the one tile the category editor
+     cannot reach is still the owner's to change. */
+  {
+    key: "home.collections.create",
+    group: "Homepage",
+    label: "Collections · Commission a piece",
+    where: "Homepage · Collections, the tile linking to /custom-order",
+    ratio: "3:4",
+    fallback: "/media/v3/tile-create.avif",
+    note: "The only collections tile without a category row — the other five take their picture from the category editor.",
+    altKey: "Home.collections.tiles.create.alt",
+  },
+  {
+    key: "home.workshops",
+    group: "Homepage",
+    label: "Workshops band",
+    where: "Homepage · Pour one yourself",
+    ratio: "16:9",
+    fallback: "/media/v3/workshop-table.avif",
+    altKey: "Home.workshops.imageAlt",
+  },
   {
     key: "home.print",
     group: "Homepage",
@@ -389,11 +415,16 @@ export const SITE_IMAGE_SLOTS = [
     altKey: "About.chapters.alt4",
   },
   {
+    /* 4:5, not the 4:3 these three declared until 2026-09-05. `StudioGallery`
+       renders every one of them at `aspect-[4/5]` (studio-gallery.tsx:111) and
+       the board prints this string straight to the owner as "the ratio the
+       layout crops to", so an owner who supplied a correct 4:3 photograph lost
+       a third of it to a centre crop and had been told the file was right. */
     key: "about.studio1",
     group: "About",
     label: "Studio photo 1",
     where: "About · the studio, photo strip",
-    ratio: "4:3",
+    ratio: "4:5",
     fallback: "/media/v3/workshop-table.avif",
     altKey: "About.studio.alt1",
   },
@@ -402,7 +433,7 @@ export const SITE_IMAGE_SLOTS = [
     group: "About",
     label: "Studio photo 2",
     where: "About · the studio, photo strip",
-    ratio: "4:3",
+    ratio: "4:5",
     fallback: "/media/v3/studio-interior.avif",
     altKey: "About.studio.alt2",
   },
@@ -411,7 +442,7 @@ export const SITE_IMAGE_SLOTS = [
     group: "About",
     label: "Studio photo 3",
     where: "About · the studio, photo strip",
-    ratio: "4:3",
+    ratio: "4:5",
     fallback: "/media/v3/tile-live.avif",
     altKey: "About.studio.alt3",
   },

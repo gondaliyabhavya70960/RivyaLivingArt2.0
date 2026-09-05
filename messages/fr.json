@@ -112,7 +112,7 @@
     },
     "hero": {
       "eyebrow": "commandes grand format · art en résine · sur mesure",
-      "headline": "Le luxe liquide, coulé pour l'éternité.",
+      "headline": "Coulé pour la pièce où il vivra.",
       "lead": "Rivya Living Art crée de grandes œuvres en résine sur commande — tables, panneaux muraux et pièces de conservation conçus pour le lieu qu'ils habiteront — ainsi qu'une collection de pièces plus petites, prêtes à commander. Coulées à la main à Surat, finalisées sur WhatsApp.",
       "ctaExplore": "Explorer la collection",
       "ctaBespoke": "Commander une pièce",
@@ -256,7 +256,7 @@
       "heading": "Fait selon votre histoire",
       "body": "Vos fleurs, vos noms, vos dates — préservés dans la résine en une pièce que personne d'autre ne peut posséder. Une commande sur mesure commence et s'achève en une seule conversation WhatsApp.",
       "cta": "Lancer une commande",
-      "imageAlt": "Des mains déposent des pétales de guirlande de mariage dans un moule en silicone",
+      "imageAlt": "Des mains gantées disposent des pétales de souci et de rose dans un moule en silicone vide",
       "eyebrow": "commandes sur mesure",
       "lineFlowers": "Vos fleurs.",
       "lineNames": "Vos prénoms.",
@@ -304,7 +304,8 @@
       "words": "de belles paroles",
       "largeFormat": "grand format",
       "furniture": "mobilier",
-      "rooms": "dans la pièce"
+      "rooms": "dans la pièce",
+      "workshops": "Ateliers"
     },
     "manifesto": {
       "line1": "Des objets faits lentement.",
@@ -389,6 +390,13 @@
         "caption": "Une pièce sur commande, représentée dans une chambre.",
         "alt": "Des paillettes d'or dérivant dans une résine bleue translucide qui se stabilise, utilisé ici comme image de concept pour une chambre."
       }
+    },
+    "workshops": {
+      "eyebrow": "à l'établi",
+      "heading": "Coulez la vôtre",
+      "body": "Un après-midi à l'établi de l'atelier, à Surat : vous mélangez la résine, choisissez les pigments et réalisez la coulée. Tout est préparé avant votre arrivée, aucune expérience n'est requise, et vous repartez avec la pièce que vous avez faite.",
+      "cta": "Voir les séances",
+      "imageAlt": "Une longue table d'atelier dressée pour huit places, avec gobelets doseurs, gants, pots de pigment et moules vides alignés"
     }
   },
   "Process": {
@@ -458,7 +466,7 @@
       "eyebrow": "matériaux",
       "headingEndure": "Des matériaux choisis pour durer.",
       "intro": "Une résine de qualité muséale, stable aux UV. Des pigments et des métaux choisis pour la façon dont ils vieillissent, pas seulement pour la photo.",
-      "alt1": "Une résine époxy limpide captant la lumière en pleine coulée",
+      "alt1": "Époxy d'un saphir profond coulant dans un moule rond et peu profond",
       "alt2": "Le veinage d'un bois dur affiné, scellé sous une surface de résine",
       "alt3": "Des gobelets de résine saphir et du pigment minéral en vrac sur l'établi",
       "alt4": "Des pétales préservés pris entre des couches de résine durcie"
@@ -492,14 +500,14 @@
     "hero": {
       "eyebrow": "l'atelier",
       "headline": "Là où la résine rencontre le recueillement.",
-      "lead": "Rivya Living Art est un atelier d'art en résine sur commande, en Inde — une petite maison vouée à préserver ce qui compte le plus dans une profondeur limpide comme le verre : vos fleurs, vos photographies, vos moments marquants."
+      "lead": "Rivya Living Art est un atelier de résine sur commande à Surat, en Inde — une petite pratique vouée à garder l'essentiel dans une profondeur limpide comme le verre : votre varmala de mariage, vos photographies, vos jalons."
     },
     "story": {
       "heading": "Notre histoire",
       "imageAlt": "Un cadre en résine à fleurs préservées fabriqué à la main dans l'atelier Rivya Living Art",
       "p1": "Rivya Living Art a commencé comme un atelier tenu par une seule personne — un unique établi et une fascination discrète pour ce qui se produit lorsque la lumière traverse la résine coulée. Il a grandi commande après commande, mais il travaille toujours comme à ses débuts : une pièce à la fois, chaque étape passant entre les mêmes mains attentives.",
       "p2": "La palette est venue de la mer. Saphir, azur et bleus des grands fonds parcourent presque tout ce que nous créons — des couleurs d'une véritable profondeur, superposées comme l'eau superpose la lumière. L'or n'apparaît qu'en touche finale : un éclat le long d'une arête, une fine veine à travers le bleu.",
-      "p3": "Nous ne produisons pas en série et ne gardons aucun stock. Chaque commande commence par une conversation sur WhatsApp — votre idée, vos références, votre budget — et se termine en une pièce unique qui n'existe nulle part ailleurs au monde.",
+      "p3": "Nous ne produisons pas en série et ne gardons aucun stock. Chaque commande commence par une conversation sur WhatsApp — votre idée, vos références, votre budget. Une varmala à préserver après le mariage, une pièce pour le coin pooja, un cadre autour d'une seule photographie — et elle s'achève en un objet unique qui n'existe nulle part ailleurs.",
       "eyebrow": "notre histoire"
     },
     "values": {
@@ -529,9 +537,9 @@
     "chapters": {
       "embedTitle": "Serti d'or et de pétales",
       "embedCopy": "Fleurs, feuilles d'or et souvenirs sont déposés à la main entre les couches — chaque élément scellé exactement là où il doit reposer, pour que la pièce garde un instant, et pas seulement une matière.",
-      "alt1": "Résine d'un saphir profond en plein coulage, s'étendant dans un moule rond",
+      "alt1": "Résine d'un saphir profond coulant en un ruban ininterrompu dans un moule rond et peu profond",
       "alt2": "Des paillettes de feuille d'or flottant dans une résine bleue translucide",
-      "alt3": "L'atelier de nuit — des moules coulés durcissent sous la lumière chaude d'une lampe d'atelier",
+      "alt3": "Des moules coulés durcissant toute la nuit sous une seule lampe d'atelier chaude, dans l'obscurité",
       "alt4": "Des gouttes d'eau sur une résine polie miroir, paillettes d'or en dessous"
     },
     "sustain": {
@@ -549,7 +557,7 @@
     },
     "cta": {
       "heading": "Lancez votre commande",
-      "body": "Dites-nous ce que vous aimeriez garder pour toujours — nous le façonnerons dans le bleu, l'or et une résine limpide comme le verre. Un héritage que vous garderez pour toujours.",
+      "body": "Dites-nous ce que vous voulez garder — nous lui donnerons forme en bleu, en or et en résine limpide. Une pièce, faite une fois, à transmettre.",
       "planCustom": "Planifier une commande"
     },
     "chapterLabels": {
@@ -564,11 +572,12 @@
     "studio": {
       "eyebrow": "où nous travaillons",
       "heading": "L'établi, les moules, la lumière.",
-      "body": "Une seule pièce en Inde où chaque commande est mélangée, coulée, durcie et finie. Rien n'est confié à l'extérieur.",
+      "body": "Une pièce à Surat où chaque commande est mélangée, coulée, durcie et finie. Rien n'est confié à l'extérieur.",
       "addressLabel": "Adresse",
       "alt1": "L'établi de l'atelier garni de moules et de gobelets doseurs",
       "alt2": "Des moules remplis durcissent la nuit sous une lampe d'atelier chaleureuse",
-      "alt3": "Une planche et un bol finis en résine et teck sur la table de l'atelier"
+      "alt3": "Une planche et un bol finis en résine et teck sur la table de l'atelier",
+      "hoursLabel": "Horaires"
     }
   },
   "Workshops": {
@@ -724,7 +733,8 @@
         "how": "Comment ça se passe",
         "brief": "Votre brief",
         "questions": "Questions",
-        "work": "Travaux récents"
+        "work": "Travaux récents",
+        "words": "Dans leurs mots"
       }
     },
     "form": {
