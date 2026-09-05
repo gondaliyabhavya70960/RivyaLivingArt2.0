@@ -13,6 +13,8 @@ import {
 import { ApproveImportDialog } from "@/components/studio/scraper/approve-import-dialog";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
+import { FieldError } from "@/components/studio/field-error";
+import { FieldHint, describedBy } from "@/components/studio/field-hint";
 import {
   Pagination,
   PAGE_SIZE,
@@ -223,7 +225,35 @@ function DetailSheetBody({
     row.priceMax != null ? String(row.priceMax) : "",
   );
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<{
+    title?: string;
+    tagline?: string;
+    category?: string;
+    priceMin?: string;
+    priceMax?: string;
+  }>({});
   const locked = row.reviewStatus === "IMPORTED";
+
+  const ids = {
+    title: `edit-title-${row.id}`,
+    tagline: `edit-tagline-${row.id}`,
+    category: `edit-category-${row.id}`,
+    priceMin: `edit-min-${row.id}`,
+    priceMax: `edit-max-${row.id}`,
+    notes: `edit-notes-${row.id}`,
+  } as const;
+  type EditKey = keyof typeof errors;
+
+  function clear(key: EditKey) {
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
+  }
+
+  function a11y(key: EditKey) {
+    return {
+      "aria-invalid": errors[key] ? true : undefined,
+      "aria-describedby": describedBy(errors[key] && `${ids[key]}-error`),
+    };
+  }
 
   // Notes are the one field this otherwise-immutable row may change, and
   // they save independently of — and even once — the row is locked: a
@@ -238,15 +268,43 @@ function DetailSheetBody({
   }
 
   async function handleSave() {
-    const min = priceMin.trim() === "" ? null : Math.round(Number(priceMin));
-    const max = priceMax.trim() === "" ? null : Math.round(Number(priceMax));
+    // The bounds `editSchema` in actions/scraper-review.ts enforces (title
+    // 1–300, tagline ≤ 500, category ≤ 200, prices whole non-negative
+    // rupees), named under the field; plus min ≤ max, which the action does
+    // not check and a listing cannot sensibly violate.
+    const problems: typeof errors = {};
+    if (!title.trim()) problems.title = "Title is required.";
+    else if (title.trim().length > 300)
+      problems.title = "Keep the title under 300 characters.";
+    if (tagline.trim().length > 500)
+      problems.tagline = "Keep the tagline under 500 characters.";
+    if (category.trim().length > 200)
+      problems.category = "Keep the category under 200 characters.";
+    const rawMin = priceMin.trim() === "" ? null : Number(priceMin);
+    const rawMax = priceMax.trim() === "" ? null : Number(priceMax);
+    const price = "Enter a whole number of rupees, zero or more.";
+    if (rawMin != null && (!Number.isFinite(rawMin) || rawMin < 0))
+      problems.priceMin = price;
+    if (rawMax != null && (!Number.isFinite(rawMax) || rawMax < 0))
+      problems.priceMax = price;
     if (
-      (min != null && !Number.isFinite(min)) ||
-      (max != null && !Number.isFinite(max))
-    ) {
-      toast.error("Prices must be numbers.");
+      !problems.priceMin &&
+      !problems.priceMax &&
+      rawMin != null &&
+      rawMax != null &&
+      rawMin > rawMax
+    )
+      problems.priceMax = "The maximum is below the minimum.";
+    setErrors(problems);
+    const first = (
+      ["title", "tagline", "category", "priceMin", "priceMax"] as const
+    ).find((key) => problems[key]);
+    if (first) {
+      document.getElementById(ids[first])?.focus();
       return;
     }
+    const min = rawMin == null ? null : Math.round(rawMin);
+    const max = rawMax == null ? null : Math.round(rawMax);
     setSaving(true);
     await onSave({
       id: row.id,
@@ -291,7 +349,7 @@ function DetailSheetBody({
               size="sm"
               variant="outline"
               onClick={handleSave}
-              disabled={locked || saving || busy || !title.trim()}
+              disabled={locked || saving || busy}
             >
               {saving ? "Saving…" : "Save"}
             </Button>
@@ -301,33 +359,50 @@ function DetailSheetBody({
               Title
             </Label>
             <Input
-              id={`edit-title-${row.id}`}
+              id={ids.title}
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                clear("title");
+              }}
               disabled={locked}
+              {...a11y("title")}
             />
+            <FieldError id={`${ids.title}-error`}>{errors.title}</FieldError>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor={`edit-tagline-${row.id}`} className="text-xs">
               Tagline
             </Label>
             <Input
-              id={`edit-tagline-${row.id}`}
+              id={ids.tagline}
               value={tagline}
-              onChange={(e) => setTagline(e.target.value)}
+              onChange={(e) => {
+                setTagline(e.target.value);
+                clear("tagline");
+              }}
               disabled={locked}
+              {...a11y("tagline")}
             />
+            <FieldError id={`${ids.tagline}-error`}>{errors.tagline}</FieldError>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor={`edit-category-${row.id}`} className="text-xs">
               Category (source label)
             </Label>
             <Input
-              id={`edit-category-${row.id}`}
+              id={ids.category}
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                clear("category");
+              }}
               disabled={locked}
+              {...a11y("category")}
             />
+            <FieldError id={`${ids.category}-error`}>
+              {errors.category}
+            </FieldError>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1.5">
@@ -335,26 +410,44 @@ function DetailSheetBody({
                 Price min (₹)
               </Label>
               <Input
-                id={`edit-min-${row.id}`}
+                id={ids.priceMin}
                 type="number"
                 inputMode="numeric"
+                min={0}
+                step={1}
                 value={priceMin}
-                onChange={(e) => setPriceMin(e.target.value)}
+                onChange={(e) => {
+                  setPriceMin(e.target.value);
+                  clear("priceMin");
+                }}
                 disabled={locked}
+                {...a11y("priceMin")}
               />
+              <FieldError id={`${ids.priceMin}-error`}>
+                {errors.priceMin}
+              </FieldError>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor={`edit-max-${row.id}`} className="text-xs">
                 Price max (₹)
               </Label>
               <Input
-                id={`edit-max-${row.id}`}
+                id={ids.priceMax}
                 type="number"
                 inputMode="numeric"
+                min={0}
+                step={1}
                 value={priceMax}
-                onChange={(e) => setPriceMax(e.target.value)}
+                onChange={(e) => {
+                  setPriceMax(e.target.value);
+                  clear("priceMax");
+                }}
                 disabled={locked}
+                {...a11y("priceMax")}
               />
+              <FieldError id={`${ids.priceMax}-error`}>
+                {errors.priceMax}
+              </FieldError>
             </div>
           </div>
         </div>
@@ -377,13 +470,19 @@ function DetailSheetBody({
             </Button>
           </div>
           <Textarea
+            id={ids.notes}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Anything worth flagging for the next reviewer…"
             aria-label="Reviewer notes"
+            aria-describedby={`${ids.notes}-hint`}
             rows={3}
             maxLength={4000}
           />
+          <FieldHint id={`${ids.notes}-hint`}>
+            Up to 4,000 characters. Stays editable after import — a comment on
+            the listing, not the source&apos;s data.
+          </FieldHint>
         </div>
 
         {row.images.length > 0 && (
