@@ -64,8 +64,16 @@
   --color-foreground: var(--text);
   --color-card: var(--surface);
   --color-card-foreground: var(--text);
-  --color-popover: var(--mineral);
-  --color-popover-foreground: var(--ink);
+  /* The scope names, like card — NOT the palette names. Popover used to be
+     `--mineral` on `--ink`, which reads correctly on the light ground and is
+     invisible in the Studio's dark scheme: there `--text` IS mineral, so
+     mineral cannot flip to a dark value without taking the body text with
+     it, and `--ink` flips to the same light value — every Select and menu
+     painted cream text on a cream panel (measured 1.00:1). A background that
+     must follow the scheme has to be routed through `--surface`, which the
+     scope owns. The storefront's one Select overrides both anyway. */
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--text);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--mineral);
   --color-secondary: var(--sand);
@@ -73,7 +81,11 @@
   --color-muted: var(--sand);
   --color-muted-foreground: var(--text-secondary);
   --color-accent: var(--sand);
-  --color-accent-foreground: var(--sapphire);
+  /* A TEXT role, so the AA companion: `--sapphire-ink` is `--sapphire` on
+     the light ground (identical) and lifts to 5.5:1 on the flipped sand in
+     the Studio's dark scheme, where raw sapphire is 1.5:1 — the highlighted
+     item of every menu, and the ghost button's hover, were unreadable. */
+  --color-accent-foreground: var(--sapphire-ink);
   --color-destructive: var(--alert);
   --color-destructive-foreground: var(--mineral);
   --color-border: var(--border);
@@ -199,8 +211,13 @@
     --sapphire-ink: #5fafd6;
     --field-border: #6f7680;
     /* Named palette tokens the Studio's own surfaces consume directly
-       (bg-mineral, text-ink, bg-sand, text-graphite) flip with the scope so
-       an un-semantic utility is never a light patch on a dark screen. */
+       (text-ink, bg-sand, text-graphite) flip with the scope so an
+       un-semantic utility is never a light patch on a dark screen. Mineral
+       is the exception and CANNOT flip: it is this scheme's `--text`, so a
+       dark mineral would be dark body text on obsidian. The line below keeps
+       it at its light value on purpose — which is why nothing that must
+       follow the scheme may route a BACKGROUND through `--mineral` (the
+       popover pair did, and every menu came out cream-on-cream). */
     --mineral: #f4f1e9;
     --ink: #f4f1e9;
     --sand: #0f3247;

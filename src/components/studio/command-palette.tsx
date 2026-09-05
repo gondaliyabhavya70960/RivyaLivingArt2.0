@@ -125,7 +125,7 @@ export function CommandPalette({ role }: { role: Role }) {
   const GROUP_HEADING =
     "[&_[cmdk-group-heading]]:u-micro [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2";
   const ITEM =
-    "flex min-h-11 cursor-pointer items-center gap-3 rounded-input px-3 text-small text-foreground data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary";
+    "flex min-h-11 cursor-pointer items-center gap-3 rounded-input px-3 text-small text-foreground data-[selected=true]:bg-primary/10 data-[selected=true]:text-sapphire-ink";
 
   return (
     <Command.Dialog

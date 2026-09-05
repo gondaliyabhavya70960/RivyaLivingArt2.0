@@ -5,6 +5,98 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 10 — every Studio dropdown was invisible in dark mode (2026-09-05, seventh batch)
+
+The owner opened the category filter on `/studio/products` with the OS in dark mode and got a
+cream panel with nothing in it — one highlighted row in a grey that could barely be read, and
+twenty-four rows of nothing. Reproduced locally to the pixel, and it was not that screen: it was
+**every** Select, every menu and the command palette, on every Studio route.
+
+### Root cause — a background routed through the dark scheme's text colour
+The shadcn semantic layer in `globals.css` maps card to the scope's own names — `--surface`/
+`--text`. Popover went to the PALETTE names instead: `--color-popover: var(--mineral)`,
+`--color-popover-foreground: var(--ink)`. Other pairs also read palette names (secondary, muted
+and accent sit on `--sand`; the primary and destructive foregrounds on `--mineral`), and those
+survive the dark block because sand and ink flip there, or because mineral sits on a sapphire
+fill — popover was the one BACKGROUND routed through `--mineral`, the token that cannot flip.
+Under the Studio's dark block that is fatal twice over: `--ink` flips to `#f4f1e9` (it is now light text), and
+`--mineral` **cannot** flip, because it is that scheme's `--text` — a dark mineral would be dark
+body text on obsidian. So both sides of the pair resolved to `#f4f1e9`. Cream on cream, measured
+at **1.00:1**. The highlighted row was `--color-accent-foreground: var(--sapphire)` — a text role
+on the raw fill token, `#164e6b` on the flipped sand `#0f3247`: **1.49:1**. The tick and the
+radio dot were `text-sapphire`: the same 1.49.
+
+`.studio-v2` sits on `<html>`, so the Radix portals were never the problem; the tokens were.
+
+### The fix — the same pattern as card, nothing new
+- `--color-popover` → `var(--surface)`, `--color-popover-foreground` → `var(--text)`.
+- `--color-accent-foreground` → `var(--sapphire-ink)`: the AA companion that exists precisely
+  because a fill role cannot carry text. Identical to sapphire on the light ground; lifts to
+  `#5fafd6` in the dark scheme. The ghost button's hover state rides on the same token and was
+  equally unreadable in dark.
+- The Check and Circle indicators in `ui/select.tsx` and `ui/dropdown-menu.tsx`, and the command
+  palette's selected item (`text-primary` — the fill token again), → `text-sapphire-ink`.
+
+A side effect worth naming: in the **light** scheme the Studio's popovers move from mineral to
+the Studio's white `--surface`, which is what its cards and dialogs already are. They used to be
+a mineral panel on a mineral page, told apart by shadow alone.
+
+### Measured, not assumed
+Chromium with `prefers-color-scheme` emulated, computed styles read off the open panel:
+
+| | dark before | dark after | light before | light after |
+|---|---|---|---|---|
+| panel text on panel | 1.00 | 13.53 | 16.31 | 18.41 |
+| highlighted row text | 1.49 | 5.48 | 6.86 | 6.86 |
+| tick / radio indicator | 1.49 | 5.48 | 6.86 | 6.86 |
+| command palette, selected item, on its 10 % sapphire tint | 1.62 | 5.95 | 7.62 | 7.62 |
+
+Then a sweep, because "every dropdown" is a claim about the whole Studio — run against the
+branch rebased onto `main` as of #49, so it counts the seven routes and the block types that series
+added: 46 routes (every dashboard page plus one record each of product, journal post, page,
+portfolio piece and scrape source), each form tab clicked in turn, every trigger opened, in both
+schemes. **167 surfaces per scheme** — 95 menus (the notifications menu now sits on every route),
+41 Selects, 30 native `<select>`s, the palette — plus 47 more behind interactions the sweep cannot
+reach from a page load: the invite-user dialog, the testimonial form's three pickers, the
+commission board's per-card status select and the inquiry detail's status picker (on a fixture
+inquiry), and the block editor's five select-bearing block types (on a fixture page). **Nothing
+below 4.5:1 for text or 3:1 for an icon in either scheme**; the lowest readings are the
+highlighted row at 5.48 in dark and a muted menu icon at 4.83 in light. Native selects score
+13.53/18.41 on the control itself; their popup is drawn by the browser under
+`color-scheme: light dark`, so it follows the OS.
+
+### The storefront is byte-identical
+Its only Select — the product order panel — overrides the panel with `bg-mineral text-ink` and
+its items with `focus:bg-sand focus:text-sapphire`, so the popover pair never reached it; and
+`--sapphire-ink` is `var(--sapphire)` at `:root`, so accent-foreground, the ghost hover and the
+indicators resolve to the same bytes outside the Studio. Read off the CSS chain rather than
+measured: no seeded product renders that Select (it needs a `SELECT`-type customization field),
+and a fixture field did not surface on the page either — that gate was not worth chasing for a
+proof the cascade already gives.
+
+### Same class, not a dropdown — swept up in the follow-up commit
+The adversarial review of this change found the accounting above incomplete: `ui/button.tsx`'s
+`link` variant was raw `text-sapphire`, and three Studio list screens (journal, portfolio, pages)
+render their Edit links with it inside a deep-ocean row — 1.70:1 in dark. That, and the three
+`text-primary` links on `/studio/inquiries/[id]`, take the identical one-token swap to
+`sapphire-ink` (byte-identical on the storefront, whose buttons come from `storefront/button`):
+measured on the rebuilt Studio, both sites read 6.25:1 on deep-ocean in dark and an unchanged
+8.99:1 on white in light.
+The `sapphire-ink` token now also appears in `docs/redesign-contract.md` and CLAUDE.md, which
+had listed two AA companions while the repo relied on three.
+
+Recorded and NOT fixed, because each is a design decision rather than a token swap:
+`variant="destructive"` paints `text-white` on the lifted `--alert` fill, which is 2.39:1 in
+the dark scheme across its 19 Studio consumers (a fill needs its own dark value, not the text
+ink); `--field-border` (`#8a8f96`) reaches only 2.88:1 as a Select trigger's boundary on the
+mineral page ground in light, against the 3:1 non-text floor its own comment claims (3.26:1 on
+a white card); and `ui/dropdown-menu.tsx` still uses physical `left-`/`pl-`/`pr-`/`ml-` classes
+where the sibling `ui/select.tsx` moved to logical ones. Two corrections to the fix commit's own
+message, which cannot be rewritten once pushed: its fourth bullet describes a root-layout note
+that #49 had already rewritten, so the rebase carried nothing of it (the wording is adjusted in
+the follow-up instead); and its "6.25" for the palette's selected item was measured against the
+untinted card — on the item's actual 10 % sapphire tint the figures are 1.62 → 5.95 in dark and
+7.62 in light, still clear of 4.5:1 and still above the sweep's true minima.
 ## Content · the homepage, About, the Studio auth screens, and six registry lies (2026-09-05)
 
 Owner ask: *"change full home page and about page content, section selection and images and
