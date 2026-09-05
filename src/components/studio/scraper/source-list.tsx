@@ -19,6 +19,8 @@ import {
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
+import { FieldError } from "@/components/studio/field-error";
+import { FieldHint, describedBy } from "@/components/studio/field-hint";
 import { Pagination, PAGE_SIZE, usePagination } from "@/components/studio/pagination";
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import { Badge } from "@/components/ui/badge";
@@ -170,6 +172,11 @@ function AddSourceBody({
   const [supply, setSupply] = useState(false);
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<BulkAddReport | null>(null);
+  const [errors, setErrors] = useState<{
+    urls?: string;
+    vertical?: string;
+    country?: string;
+  }>({});
 
   // Split on newlines OR commas so pasting either shape works.
   const parsedUrls = urls
@@ -179,12 +186,27 @@ function AddSourceBody({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (parsedUrls.length === 0) {
-      toast.error("Paste at least one URL.");
-      return;
-    }
-    if (parsedUrls.length > 25) {
-      toast.error("Add up to 25 URLs at a time.");
+    // The same bounds `addScrapeSources` enforces (1–25 URLs of at most 2048
+    // characters, vertical ≤ 60, country ≤ 20) — named under the field here,
+    // because the action's own zod wording never survives `runAction`. Which
+    // of the URLs are usable is still the fingerprint's verdict, reported
+    // per row once the batch runs.
+    const problems: typeof errors = {};
+    if (parsedUrls.length === 0) problems.urls = "Paste at least one URL.";
+    else if (parsedUrls.length > 25)
+      problems.urls = "Add up to 25 URLs at a time.";
+    else if (parsedUrls.some((u) => u.length > 2048))
+      problems.urls = "One of these addresses is over 2,048 characters.";
+    if (vertical.trim().length > 60)
+      problems.vertical = "Keep the vertical under 60 characters.";
+    if (country.trim().length > 20)
+      problems.country = "Keep the country under 20 characters.";
+    setErrors(problems);
+    const first = (["urls", "vertical", "country"] as const).find(
+      (key) => problems[key],
+    );
+    if (first) {
+      document.getElementById(`source-${first}`)?.focus();
       return;
     }
     setBusy(true);
@@ -297,25 +319,34 @@ function AddSourceBody({
           </DialogFooter>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div className="space-y-1.5">
             <Label htmlFor="source-urls">Website URLs</Label>
             <Textarea
               id="source-urls"
               value={urls}
-              onChange={(e) => setUrls(e.target.value)}
+              onChange={(e) => {
+                setUrls(e.target.value);
+                if (errors.urls) setErrors({ ...errors, urls: undefined });
+              }}
               placeholder={
                 "https://one-resin-studio.com\nhttps://another-studio.com\nhttps://a-third-store.com"
               }
               rows={5}
               required
               autoFocus
+              aria-invalid={errors.urls ? true : undefined}
+              aria-describedby={describedBy(
+                "source-urls-hint",
+                errors.urls && "source-urls-error",
+              )}
             />
-            <p className="text-xs text-muted-foreground">
+            <FieldError id="source-urls-error">{errors.urls}</FieldError>
+            <FieldHint id="source-urls-hint">
               {parsedUrls.length > 0
                 ? `${parsedUrls.length} URL${parsedUrls.length === 1 ? "" : "s"} · up to 25 per batch`
                 : "One per line · up to 25 per batch"}
-            </p>
+            </FieldHint>
           </div>
 
           <div className="space-y-1.5">
@@ -343,18 +374,36 @@ function AddSourceBody({
               <Input
                 id="source-vertical"
                 value={vertical}
-                onChange={(e) => setVertical(e.target.value)}
+                onChange={(e) => {
+                  setVertical(e.target.value);
+                  if (errors.vertical)
+                    setErrors({ ...errors, vertical: undefined });
+                }}
                 placeholder="resin"
+                aria-invalid={errors.vertical ? true : undefined}
+                aria-describedby={describedBy(
+                  errors.vertical && "source-vertical-error",
+                )}
               />
+              <FieldError id="source-vertical-error">{errors.vertical}</FieldError>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="source-country">Country</Label>
               <Input
                 id="source-country"
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
+                onChange={(e) => {
+                  setCountry(e.target.value);
+                  if (errors.country)
+                    setErrors({ ...errors, country: undefined });
+                }}
                 placeholder="IN"
+                aria-invalid={errors.country ? true : undefined}
+                aria-describedby={describedBy(
+                  errors.country && "source-country-error",
+                )}
               />
+              <FieldError id="source-country-error">{errors.country}</FieldError>
             </div>
           </div>
 
