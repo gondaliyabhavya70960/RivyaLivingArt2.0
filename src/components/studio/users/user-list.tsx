@@ -24,6 +24,7 @@ import {
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
+import { FieldHint } from "@/components/studio/field-hint";
 import { EmptyState } from "@/components/studio/page-header";
 import {
   Pagination,
@@ -179,10 +180,11 @@ function InviteUserBody({
             placeholder="aarti@rivya-living-art.com"
             autoComplete="off"
             required
+            aria-describedby="invite-email-hint"
           />
-          <p className="text-xs text-muted-foreground">
+          <FieldHint id="invite-email-hint">
             Their sign-in address — kept private, never shown on the site.
-          </p>
+          </FieldHint>
         </div>
 
         <div className="space-y-1.5">

@@ -305,7 +305,7 @@ function LinkPicker({
               <Search /> {searching ? "Searching…" : "Search"}
             </Button>
           </div>
-          {error && <p className="text-sm text-alert">{error}</p>}
+          <FieldError>{error}</FieldError>
           {results.length > 0 ? (
             <ul className="space-y-1">
               {results.map((row) => (

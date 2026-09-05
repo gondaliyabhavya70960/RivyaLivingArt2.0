@@ -5,6 +5,70 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 11 — the hand-rolled forms learn to point at the field (2026-09-05, fourth batch)
+
+Phase 11's last ungated bullet: "`FieldError` everywhere, helper text." The Studio forms built on
+react-hook-form already named the field a refused save was about. Five built on `useState` did
+not — the scraper's add-sources dialog, the navigation board, the scraper review editor, the
+site-copy board and the research form. On those, every refusal travelled to the Server Action
+and came back through `runAction` as one toast: **"Something went wrong. Please try again."**
+That wrapper hides raw errors on purpose, and it hides zod's wording with them, so a blank title,
+a 61-character menu label, a deleted `{count}` and a 5,000-character description all failed
+with the same sentence and no field named. The `ActionResult` shape has no per-field
+channel, and adding one is not this batch's business; the fix is the one the react-hook-form
+screens already use — judge the field in the browser, with the same rule the action holds.
+
+### Two primitives
+`FieldHint` is the muted counterpart to `FieldError` (`role="alert"`, destructive): the sentence
+that explains a field BEFORE anything goes wrong, with an id so the control can point at it.
+`describedBy()` composes `aria-describedby` from whichever of hint and error currently exist,
+yielding `undefined` rather than an empty attribute when neither does. Every converted control
+now carries `aria-invalid` while refused and `aria-describedby` naming its hint and its error, so
+a screen reader hears the hint on focus and the error once there is one.
+
+### One rule, held once
+Two boards already shared a pure validator with their action — `describeHrefProblem` for the
+navigation board, and `describeCopyProblem`, which the site-copy action ran but the board never
+did. The label rule (1–60 characters) lived only in the action's zod schema, so it now lives in
+`lib/nav-menus.ts` as `describeLabelProblem` beside the href rule, the action's `labelSchema`
+reads it through `superRefine` exactly as `hrefSchema` reads the href one, and a unit test pins
+the two messages and the 60-character cap. Where no shared validator exists (research, sources,
+review), the client mirrors the action's limits and says so in a comment naming the schema.
+
+### Per form
+- **Site copy** — `describeCopyProblem` runs on every keystroke under the field: delete the
+  `{count}` a string needs and the sentence the server composes ("This text uses {count} to fill
+  in a live value…") appears where the deletion happened, Save disables, the "Keep {count} in
+  your wording" hint is now linked to the field rather than orphaned above it.
+- **Navigation** — both rows: the destination error moves from a hand-rolled alert paragraph to
+  `FieldError`; the label gains the 60-character check (and "Give the link some words" on a new
+  link); the per-row editor still allows a blank label, because blank is the act that restores
+  the catalogue wording. The two hint paragraphs are linked.
+- **Research** — thirteen fields, one former toast ("Source and title are required."). Now each
+  limit in `upsertSchema` is named under its field, the link must be an `https://` address, up
+  to 20 image links and 20 tags of 60 characters, and a refused submit focuses the first errored
+  field. The form is `noValidate`, so the browser's own tooltip no longer pre-empts the message.
+- **Add sources** — the two toasts (no URLs / more than 25) become the textarea's error, the live
+  URL count becomes its linked hint, vertical and country gain their 60/20 caps.
+- **Review editor** — title 1–300, tagline ≤ 500, category ≤ 200, prices whole non-negative
+  rupees with the min/max fields told apart (the old toast said "Prices must be numbers" for
+  either), plus one rule the action does not hold and a listing cannot sensibly break: the
+  maximum may not sit below the minimum. Reviewer notes get an id and a linked hint. The Save
+  button no longer goes dead on an empty title; it says why.
+- Two normalisations the map turned up: the invite dialog's email hint is linked, and the
+  testimonial form's link-picker error was a bare `text-alert` paragraph with no alert role.
+
+### Phase 12, reconciled
+The roadmap still listed the media system as open. The content series shipped it on 2026-09-04:
+cursor pagination, sort, date/size/orientation filters, the detail drawer with usages and
+replace-file, drag-and-drop upload, move-to-folder, bulk alt edit, the grid/list toggle, the
+`tags`/`caption`/`favourite`/`duration` columns (`20260904105000`), blur wiring through
+`SiteImageRef`, and `Media` rows for the catalogue mirror. The roadmap now says so, with the
+evidence, so the next reader does not build it twice. What remains there is the owner's machine
+(the generation plan) and D24.
+
+---
+
 ## Transformation Phase 10 — every Studio dropdown was invisible in dark mode (2026-09-05, seventh batch)
 
 The owner opened the category filter on `/studio/products` with the OS in dark mode and got a
