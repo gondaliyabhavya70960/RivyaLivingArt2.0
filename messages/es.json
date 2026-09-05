@@ -112,7 +112,7 @@
     },
     "hero": {
       "eyebrow": "encargos de gran formato · arte en resina · hecho a medida",
-      "headline": "Lujo líquido, moldeado para siempre.",
+      "headline": "Fundido para el espacio en el que vivirá.",
       "lead": "Rivya Living Art crea arte en resina a gran escala por encargo — mesas, paneles murales y piezas de preservación, diseñados en torno a la sala donde van a vivir — junto a una colección de piezas más pequeñas listas para encargar. Vertidas a mano en Surat; el pedido se concreta por WhatsApp.",
       "ctaExplore": "Explora la colección",
       "ctaBespoke": "Encargar una pieza",
@@ -256,7 +256,7 @@
       "heading": "Hecho a tu historia",
       "body": "Tus flores, tus nombres, tus fechas — preservados en resina como una pieza que nadie más puede tener. Un encargo a medida empieza y termina en una sola conversación de WhatsApp.",
       "cta": "Iniciar un encargo",
-      "imageAlt": "Manos colocando pétalos de guirnalda nupcial en un molde de silicona",
+      "imageAlt": "Manos enguantadas colocando pétalos de caléndula y rosa dentro de un molde de silicona vacío",
       "eyebrow": "encargos a medida",
       "lineFlowers": "Tus flores.",
       "lineNames": "Tus nombres.",
@@ -304,7 +304,8 @@
       "words": "palabras amables",
       "largeFormat": "gran formato",
       "furniture": "mobiliario",
-      "rooms": "en la habitación"
+      "rooms": "en la habitación",
+      "workshops": "Talleres"
     },
     "manifesto": {
       "line1": "Objetos hechos despacio.",
@@ -389,6 +390,13 @@
         "caption": "Una pieza por encargo, mostrada en un dormitorio.",
         "alt": "Copos de pan de oro flotando en resina azul translúcida asentándose, usada aquí como imagen de concepto para un dormitorio."
       }
+    },
+    "workshops": {
+      "eyebrow": "en el banco",
+      "heading": "Haz tu propia colada",
+      "body": "Una tarde en el banco del estudio en Surat: tú mezclas la resina, eliges los pigmentos y haces la colada. Todo está dispuesto antes de que llegues, no hace falta experiencia previa y te vas con la pieza que has hecho.",
+      "cta": "Ver las sesiones",
+      "imageAlt": "Una mesa larga de estudio preparada para ocho puestos, con vasos de mezcla, guantes, botes de pigmento y moldes vacíos en fila"
     }
   },
   "Process": {
@@ -458,7 +466,7 @@
       "eyebrow": "materiales",
       "headingEndure": "Materiales elegidos para durar.",
       "intro": "Resina de calidad de museo, estable a los UV. Pigmentos y metales elegidos por cómo envejecen, no solo por cómo salen en la foto.",
-      "alt1": "Resina epoxi transparente atrapando la luz en pleno vertido",
+      "alt1": "Epoxi de zafiro profundo cayendo en un molde redondo y poco profundo",
       "alt2": "La veta de una madera noble curada, sellada bajo una superficie de resina",
       "alt3": "Vasos de mezcla con resina zafiro y pigmento mineral suelto sobre el banco",
       "alt4": "Pétalos preservados entre capas de resina curada"
@@ -492,14 +500,14 @@
     "hero": {
       "eyebrow": "el estudio",
       "headline": "Donde la resina se encuentra con la devoción.",
-      "lead": "Rivya Living Art es un estudio de arte en resina por encargo en la India: una pequeña práctica dedicada a guardar lo que más importa en una profundidad transparente como el cristal: tus flores, tus fotografías, tus momentos más importantes."
+      "lead": "Rivya Living Art es un estudio de arte en resina hecho por encargo en Surat, India: una práctica pequeña dedicada a guardar lo que más importa en una profundidad transparente como el vidrio — tu varmala nupcial, tus fotografías, tus hitos."
     },
     "story": {
       "heading": "Nuestra historia",
       "imageAlt": "Un marco de resina con flores preservadas hecho a mano en el estudio de Rivya Living Art",
       "p1": "Rivya Living Art comenzó como el estudio de una sola persona: una única mesa de trabajo y una fascinación silenciosa por lo que ocurre cuando la luz atraviesa la resina vertida. Ha crecido encargo a encargo, pero sigue trabajando como empezó: una pieza a la vez, con cada etapa pasando por las mismas manos cuidadosas.",
       "p2": "La paleta vino del mar. El zafiro, el azul celeste y los azules de océano profundo recorren casi todo lo que creamos: colores con verdadera profundidad, superpuestos como el agua superpone la luz. El dorado aparece solo como un detalle: un destello en un borde, una fina vena a través del azul.",
-      "p3": "No producimos en masa ni mantenemos inventario. Cada encargo comienza como una conversación por WhatsApp —tu idea, tus referencias, tu presupuesto— y termina como una única pieza que no existe en ningún otro lugar del mundo.",
+      "p3": "No fabricamos en serie ni mantenemos inventario. Cada encargo empieza como una conversación por WhatsApp: tu idea, tus referencias, tu presupuesto. Una varmala que preservar después de la boda, una pieza para el rincón de pooja, un marco alrededor de una sola fotografía — y termina como un objeto único que no existe en ningún otro lugar del mundo.",
       "eyebrow": "nuestra historia"
     },
     "values": {
@@ -529,9 +537,9 @@
     "chapters": {
       "embedTitle": "Engastado en oro y pétalos",
       "embedCopy": "Flores, pan de oro y objetos con historia se colocan a mano entre las capas — cada elemento sellado exactamente donde debe reposar, para que la pieza guarde un momento y no solo un material.",
-      "alt1": "Resina de un zafiro profundo en pleno vertido, extendiéndose por un molde redondo",
+      "alt1": "Resina de zafiro profundo cayendo en una cinta continua dentro de un molde redondo y poco profundo",
       "alt2": "Copos de pan de oro flotando en resina azul translúcida que se asienta",
-      "alt3": "El estudio de noche: moldes recién vertidos curando bajo la luz cálida de una lámpara de trabajo",
+      "alt3": "Moldes ya vertidos curando durante la noche bajo una única lámpara cálida en el estudio a oscuras",
       "alt4": "Gotas de agua sobre resina pulida a espejo, con copos de oro debajo"
     },
     "sustain": {
@@ -549,7 +557,7 @@
     },
     "cta": {
       "heading": "Comienza tu encargo",
-      "body": "Cuéntanos qué te gustaría conservar para siempre: le daremos forma en azul, dorado y resina transparente como el cristal. Una joya que conservarás para siempre.",
+      "body": "Cuéntanos qué quieres conservar y lo daremos forma en azul, oro y resina transparente. Una pieza, hecha una sola vez, para transmitirla.",
       "planCustom": "Planea un encargo a medida"
     },
     "chapterLabels": {
@@ -564,11 +572,12 @@
     "studio": {
       "eyebrow": "dónde trabajamos",
       "heading": "El banco, los moldes, la luz.",
-      "body": "Una sola sala en la India donde cada encargo se mezcla, se vierte, se cura y se termina. Nada se manda fuera para fabricarlo.",
+      "body": "Una sala en Surat donde cada encargo se mezcla, se vierte, se cura y se acaba. Nada se envía fuera para fabricarse.",
       "addressLabel": "Dirección",
       "alt1": "El banco del estudio con moldes y vasos de mezcla",
       "alt2": "Moldes llenos curando toda la noche bajo una cálida lámpara de trabajo",
-      "alt3": "Una tabla y un cuenco acabados de resina y teca sobre la mesa del taller"
+      "alt3": "Una tabla y un cuenco acabados de resina y teca sobre la mesa del taller",
+      "hoursLabel": "Horario"
     }
   },
   "Workshops": {
@@ -724,7 +733,8 @@
         "how": "Cómo funciona",
         "brief": "Tu planteamiento",
         "questions": "Preguntas",
-        "work": "Trabajo reciente"
+        "work": "Trabajo reciente",
+        "words": "En sus palabras"
       }
     },
     "form": {

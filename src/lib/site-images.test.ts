@@ -115,8 +115,11 @@ describe("alt keys", () => {
 
   it("covers the slots that carry real descriptions", () => {
     const withAlt = SLOTS.filter((s) => s.altKey);
-    // 42 + A2's ten homepage furniture/rooms slots + A4's four process.step7–10 slots.
-    expect(withAlt.length).toBe(56);
+    // 42 + A2's ten homepage furniture/rooms slots + A4's four process.step7–10
+    // slots + 2 on 2026-09-05: `home.collections.create`, the one collection
+    // tile with no category row behind it, and `home.workshops`, the new
+    // homepage band pointing at /workshops.
+    expect(withAlt.length).toBe(58);
   });
 });
 
@@ -148,7 +151,10 @@ describe("needsMobileCrop", () => {
     const wide = SLOTS.filter((s) => needsMobileCrop(s.ratio));
     // 13 since /large-resin-art: its hero is a 16:9 full-bleed band, and a
     // 16:9 crop on a 390px phone keeps a sliver of the frame's height.
-    expect(wide.length).toBe(13);
+    // 14 since the homepage workshops band (2026-09-05), declared 16:9 to
+    // match `workshop-table.avif`'s own ratio rather than cropping a
+    // purpose-built master to fit a slot.
+    expect(wide.length).toBe(14);
   });
 });
 

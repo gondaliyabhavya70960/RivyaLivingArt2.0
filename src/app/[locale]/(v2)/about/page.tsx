@@ -61,10 +61,12 @@ const MATERIAL_ALT_KEYS = [
  * 1. Hero — full-screen, mono `THE STUDIO`, *Where resin meets reverence.*
  *    The texture band behind it is the page's LCP, so the heading stays
  *    static — nothing here may delay or animate the LCP element (Part 14).
- * 2. The story in four chapters — THE BEGINNING · THE MATERIAL · THE
+ * 2. The story in THREE chapters — THE BEGINNING · THE MATERIAL · THE
  *    PHILOSOPHY, large editorial type at a 68ch measure, with what the studio
  *    holds to carried inside the philosophy chapter as mono numerals rather
- *    than the old four icon cards (§3.7 forbids an icon per value).
+ *    than the old four icon cards (§3.7 forbids an icon per value). It carries
+ *    no photograph: `about.chapter1–4` belong to the craft band at item 4,
+ *    which is where the registry now records them too.
  * 3. THE MAKER — the fourth chapter, given a portrait and its own band.
  * 4. The craft — **one** vertical sticky story (it used to render twice,
  *    heading and all) that links out to the full process.
@@ -74,15 +76,23 @@ const MATERIAL_ALT_KEYS = [
  *    grid with a crossfaded hover-macro card each. Order and visibility come
  *    from `getPageSections("materials")` — the SAME arrangeable list
  *    Process's own materials band reads, so moving one here moves it there.
- * 6. The studio — three photographs, and the address when the owner has
- *    filled one. Never a placeholder (Part 0).
+ * 6. The studio — three photographs, and the address and opening hours when
+ *    the owner has filled them. Never a placeholder (Part 0): an unset field
+ *    yields no row at all.
+ * 7. The closing invitation — the last word and the commission button, on a
+ *    sand ground so nothing dark meets the obsidian footer.
  *
  * Every OTHER band's words rise in on scroll (`Reveal`) — never the hero, and
  * never wrapped around a photograph (`MeniscusImage` already owns its own
  * reveal, and `Reveal` fading its wrapper in as well would double up).
  *
  * Band rhythm (§3.1): dark hero → story → maker → dark craft → materials →
- * studio → dark close. Three dark bands, none adjacent.
+ * studio → SAND close. TWO dark bands in <main>, never adjacent — the closing
+ * invitation is deliberately light, because the footer below it is obsidian
+ * and a dark close would put three dark grounds in a row down the bottom of
+ * the page. `craft` cannot be dragged against the footer either: `closing` is
+ * `movable: false` at the last index and `applyReorder` pins an immovable
+ * section there whatever the board asks.
  */
 export default async function AboutPage({
   params,
@@ -203,20 +213,37 @@ export default async function AboutPage({
     };
   });
 
-  /* Part 0 — the address is printed only when the owner has actually set it;
-     an unset field yields no row rather than a placeholder. Opening hours
-     have no field in the data model, so the page does not claim any. */
+  /* Part 0 — each fact is printed only when the owner has actually set it; an
+     unset field yields no row rather than a placeholder.
+
+     Opening hours were missing here on the grounds that "the data model has no
+     field for them", which stopped being true when `SiteSettings.businessHours`
+     landed: it is owner-editable free text, `toOpeningHours` already parses it
+     into the LocalBusiness JSON-LD in [locale]/layout.tsx, and it reached
+     Google without ever reaching the visitor standing outside the door. It is
+     printed VERBATIM here — `toOpeningHours`'s normalisation exists to satisfy
+     schema.org, and "Mo-Sa 10:00-19:00" is not how a person reads a sign.
+     `readBusinessHours` has already dropped every row missing either half. */
   const address = settings.address.trim();
-  const studioFacts = address
-    ? [
-        {
-          label: t("studio.addressLabel"),
-          value: address,
-          href: settings.mapsUrl || undefined,
-          newTabLabel: settings.mapsUrl ? tCommon("openInNewTab") : undefined,
-        },
-      ]
-    : [];
+  const businessHours = settings.businessHours
+    .map((row) => `${row.days} ${row.hours}`.trim())
+    .filter(Boolean)
+    .join(" · ");
+  const studioFacts = [
+    ...(address
+      ? [
+          {
+            label: t("studio.addressLabel"),
+            value: address,
+            href: settings.mapsUrl || undefined,
+            newTabLabel: settings.mapsUrl ? tCommon("openInNewTab") : undefined,
+          },
+        ]
+      : []),
+    ...(businessHours
+      ? [{ label: t("studio.hoursLabel"), value: businessHours }]
+      : []),
+  ];
 
   const sectionNodes: Record<string, ReactNode> = {
     /* ════════ 01 · Hero — full-screen, dark ════════

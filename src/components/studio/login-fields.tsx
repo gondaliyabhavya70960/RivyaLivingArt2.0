@@ -80,14 +80,16 @@ export function LoginFields() {
 /**
  * §12.1 rate-limited state — a live `Try again in 4:32` countdown.
  *
- * ⚠ Currently unreachable, on purpose. `rateLimitDurable` DOES return
- * `retryAfterSeconds` (src/lib/rate-limit.ts), but `authorize()` in
- * src/lib/auth.ts collapses "throttled" and "wrong password" into the same
- * `return null`, and the login Server Action turns every `AuthError` into
- * `?error=1`. Surfacing the number would mean changing the auth flow, which is
- * out of scope for this redesign — so the screen shows the generic message
- * instead, and this component sits ready behind `?retryAfter=<seconds>` for
- * whoever is allowed to thread the value through.
+ * WIRED. This comment used to say the component was unreachable on purpose;
+ * that stopped being true when the login Server Action learned to ask the
+ * counters. `authorize()` is still a bare `null` for a throttled attempt
+ * exactly as it is for a wrong password — that is what stops a lockout
+ * becoming an account-existence oracle — but the action calls
+ * `loginLockoutSeconds` separately AFTER its own attempt has failed and been
+ * recorded, then redirects to `?retryAfter=<seconds>`, which is what this
+ * renders on (src/app/studio/login/page.tsx). Nothing an attacker can see
+ * changed: the number is only ever produced for an attempt that already
+ * failed.
  *
  * The tick lives in an interval (never a setState in an effect body) and the
  * countdown is derived from a deadline captured at mount, so a backgrounded

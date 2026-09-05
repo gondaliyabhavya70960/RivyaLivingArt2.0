@@ -181,25 +181,6 @@ export default async function LargeResinArtPage({
     localize(faq, locale, TRANSLATABLE_FIELDS.faq),
   );
 
-  /* The rail skips a tick for a section that renders nothing — CureMark.id is
-     fed straight to getElementById, so a tick for a null section points at
-     nothing at all. */
-  const cureMarks: CureMark[] = sections
-    .filter(
-      (s) =>
-        s.visible &&
-        s.cureLabelKey &&
-        (s.key !== "gallery" || pieces.length > 0) &&
-        (s.key !== "work" || workPieces.length > 0) &&
-        (s.key !== "words" || words.length > 0) &&
-        (s.key !== "faq" || faqs.length > 0),
-    )
-    .map((s) => ({
-      id: s.key,
-      label: t(s.cureLabelKey as "cure.scale"),
-      ...(s.dark ? { dark: true } : {}),
-    }));
-
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -827,6 +808,28 @@ export default async function LargeResinArtPage({
       </section>
     ),
   };
+
+  /**
+   * The rail skips a tick for a section that renders NOTHING — `CureMark.id`
+   * is fed straight to `getElementById`, and when the lookup misses `CureLine`
+   * falls back to even division, so a stale tick does not break, it lies.
+   *
+   * Asked of the built nodes rather than of the data, which is why this sits
+   * below them. It used to be a hand-written list of four `s.key !== "x" ||
+   * rows.length > 0` clauses, and that list had already drifted: `gallery`
+   * renders an INVITATION when there are no large pieces — a real
+   * `<section id="gallery">` — so the clause suppressed a tick for a section
+   * that is on the page. `work`, `words` and `faq` are ternaries that really
+   * do collapse to null. Asking `sectionNodes` answers all four correctly and
+   * cannot be forgotten when a fifth conditional section is added.
+   */
+  const cureMarks: CureMark[] = sections
+    .filter((s) => s.visible && s.cureLabelKey && sectionNodes[s.key] != null)
+    .map((s) => ({
+      id: s.key,
+      label: t(s.cureLabelKey as "cure.scale"),
+      ...(s.dark ? { dark: true } : {}),
+    }));
 
   return (
     <>

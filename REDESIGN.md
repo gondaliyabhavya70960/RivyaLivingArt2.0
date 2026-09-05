@@ -435,6 +435,26 @@ One component, two placements only (footer, journal index) — it currently appe
 
 Current content is valuable; the hierarchy has to be rebuilt. Thirteen sections, two of them `major`.
 
+> **Recorded divergences (2026-09-05).** The shipped page is SEVENTEEN sections
+> and one `major`, and the difference was never written down, so every reader of
+> this Part measured the page against a sentence it had outgrown.
+>
+> - `largeFormat`, `furniture`, `rooms` and `words` were added after this Part
+>   was written. `furniture` and `rooms` ship `defaultVisible: false`, so the
+>   default page is fifteen; four more are `conditional` and render nothing on
+>   an empty database, so a fresh install is eleven.
+> - §01 is spec'd `major` and does not carry the `section-major` class: it is
+>   `min-h-svh` with its own padding, and the class's vertical rhythm would
+>   fight that. The consequence is measurable — `redesign-audit.mjs` counts
+>   `major` by class, so it sees one where the spec allocates two — and it is
+>   deliberate. Both `major` slots are spoken for (§01 and §08); a new band
+>   claiming the "spare" one is spending a slot this Part already assigned.
+> - §01's display line reads **Cast for the room it will live in.** on the
+>   shipped site, not the line below. Owner decision, 2026-09-05: the studio
+>   makes to order for a specific space, and the headline now says so.
+>   `Liquid luxury, cast forever.` survives as the name of the design system
+>   (Part 3) and in the §5.8 brand-storytelling note above.
+
 ### 01 · Fullscreen hero — `major`
 Height `100svh`. Full-bleed cinematic visual, dark gradient overlay `rgba(8,10,14,.6)`. **Text bottom-left, not centred.**
 

@@ -218,10 +218,10 @@ describe("the promoted partition the fetch scripts read", () => {
   });
 });
 
-describe("the 28 entries in docs/media-v3-manifest.json", () => {
+describe("the 55 entries in docs/media-v3-manifest.json", () => {
   const entries = plannedEntries(manifest);
 
-  it("are all generated but none promoted — the CDN is what is missing, not the render", () => {
+  it("split cleanly into batch D (generated) and batch E (awaiting a run), none promoted", () => {
     // This assertion used to read `.planned === entries.length`, under a
     // comment saying a failure would be good news. It failed on 2026-09-04 for
     // exactly that reason: all 28 were generated in-session through the
@@ -230,13 +230,32 @@ describe("the 28 entries in docs/media-v3-manifest.json", () => {
     // bundled-media.test.ts demand its master ON DISK, and the master cannot be
     // built where the CDN answers 403. So the queue's honest state is
     // "generated, awaiting a promote on a machine that can download".
+    // Batch E (2026-09-05) then added 29 more entries that have NOT been
+    // rendered, so the queue is deliberately mixed from here on: `generated`
+    // rows carry candidate URLs and want a promote, `planned` rows still want
+    // a generation run. Asserting the split rather than a single total is what
+    // keeps `--planned`'s two instructions honest — telling an owner to
+    // generate something already rendered is the one wrong instruction here
+    // that costs money.
     const tally = tallyPlanned(entries);
-    expect(tally.generated).toBe(entries.length);
-    expect(tally.planned).toBe(0);
+    expect(tally.generated + tally.planned).toBe(entries.length);
+    expect(tally.generated).toBeGreaterThan(0);
+    // "None promoted" has to be asserted through the states a promoted row
+    // WOULD land in — `tallyPlanned` has no `promoted` bucket, because a row
+    // that has left "planned" is described by how far along the build it is
+    // (incomplete · unculled · ready), never by the flag alone.
+    expect(tally.incomplete + tally.unculled + tally.ready).toBe(0);
     for (const entry of entries) {
-      expect((entry.candidates ?? []).length, entry.id).toBeGreaterThan(0);
       expect(entry.keeper, entry.id).toBeNull();
       expect(entry.status, entry.id).toBe("planned");
+      // A `generated` row must carry candidates; a `planned` row must not
+      // pretend to.
+      const cands = (entry.candidates ?? []).length;
+      if (tallyPlanned([entry]).generated === 1) {
+        expect(cands, entry.id).toBeGreaterThan(0);
+      } else {
+        expect(cands, entry.id).toBe(0);
+      }
     }
   });
 

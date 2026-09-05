@@ -273,6 +273,16 @@ const HOME: readonly SectionDef[] = [
     cureLabelKey: "cure.bespoke",
   },
   {
+    key: "workshops",
+    label: "Workshops",
+    description: "The invitation to come and pour one yourself.",
+    hideable: true,
+    movable: true,
+    copyPrefixes: ["Home.workshops"],
+    imageKeys: ["home.workshops"],
+    cureLabelKey: "cure.workshops",
+  },
+  {
     key: "print",
     label: "Print studio",
     description: "The 3D-printing block.",
@@ -349,17 +359,21 @@ const ABOUT: readonly SectionDef[] = [
   },
   {
     key: "story",
+    // The story band and the craft band below had each other's copy prefixes
+    // and image keys, and this row's description described the craft band.
+    // Nothing broke — `copyPrefixes` and `imageKeys` have one consumer each,
+    // both of them `.length` for the "N copy groups · N pictures" counts on
+    // the sections board (page-sections-studio.ts) — but the board is where
+    // an owner decides which row to open, so it was telling them the story
+    // band owned four photographs it does not render and the craft band owned
+    // none of the four it does.
     label: "The story",
-    description: "Four chapters, each with a picture.",
+    description:
+      "Three chapters of running prose, with what the studio holds to inside the third.",
     hideable: true,
     movable: true,
-    copyPrefixes: ["About.story", "About.chapters", "About.chapterLabels"],
-    imageKeys: [
-      "about.chapter1",
-      "about.chapter2",
-      "about.chapter3",
-      "about.chapter4",
-    ],
+    copyPrefixes: ["About.story", "About.chapterLabels", "About.values"],
+    imageKeys: [],
   },
   {
     key: "maker",
@@ -373,11 +387,23 @@ const ABOUT: readonly SectionDef[] = [
   {
     key: "craft",
     label: "The craft",
-    description: "The sticky chapter story, and the link into Process.",
+    description:
+      "The sticky four-panel story — pour, embed, cure, polish — and the link into Process.",
+    // CraftChapters renders `data-theme="navy"` on an obsidian ground
+    // (storefront/craft-chapters.tsx:104), so this band IS dark. Without the
+    // flag `describeArrangementProblem` counted About as having one dark band
+    // when it ships two, and would have allowed an arrangement that put a
+    // second dark band directly against it — the one thing §3.1 forbids.
+    dark: true,
     hideable: true,
     movable: true,
-    copyPrefixes: ["About.craft"],
-    imageKeys: [],
+    copyPrefixes: ["About.craft", "About.chapters"],
+    imageKeys: [
+      "about.chapter1",
+      "about.chapter2",
+      "about.chapter3",
+      "about.chapter4",
+    ],
   },
   {
     key: "materials",
@@ -424,7 +450,9 @@ const PROCESS: readonly SectionDef[] = [
     movable: false,
     ownsH1: true,
     copyPrefixes: ["Process.hero"],
-    imageKeys: ["process.hero"],
+    // `process.hero` is not a slot and never was — the band is the process
+    // film, whose two registry entries are the clip and the frame cut from it.
+    imageKeys: ["process.heroVideo", "process.heroPoster"],
   },
   {
     key: "stages",
@@ -672,6 +700,7 @@ const MATERIALS_LIST: readonly SectionDef[] = [
 const CUSTOM_ORDER: readonly SectionDef[] = [
   {
     key: "commission",
+    cureLabelKey: "page.cure.commission",
     label: "Hero",
     description: "The split-screen opening and the page's heading.",
     dark: true,
@@ -683,6 +712,7 @@ const CUSTOM_ORDER: readonly SectionDef[] = [
   },
   {
     key: "kinds",
+    cureLabelKey: "page.cure.kinds",
     label: "What people commission",
     description: "The four kinds of commission, as tiles.",
     hideable: true,
@@ -692,6 +722,7 @@ const CUSTOM_ORDER: readonly SectionDef[] = [
   },
   {
     key: "how",
+    cureLabelKey: "page.cure.how",
     label: "How a commission runs",
     description: "The four steps from brief to delivery.",
     hideable: true,
@@ -701,41 +732,47 @@ const CUSTOM_ORDER: readonly SectionDef[] = [
   },
   {
     key: "brief",
+    cureLabelKey: "page.cure.brief",
     label: "The brief",
     description: "The form itself — where a commission actually starts.",
     hideable: false,
     movable: false,
-    copyPrefixes: ["CustomOrder.page.brief", "CustomOrder.form"],
+    copyPrefixes: ["CustomOrder.page.form", "CustomOrder.form"],
     imageKeys: [],
   },
   {
     key: "questions",
+    cureLabelKey: "page.cure.questions",
     label: "Questions",
     description: "Questions answered on the FAQ, shown here too.",
     hideable: true,
     movable: true,
     conditional: true,
-    copyPrefixes: ["CustomOrder.page.faq"],
+    // The band is the FAQ page's own opening, shown here — it carries no
+    // CustomOrder copy of its own beyond the "view all" link.
+    copyPrefixes: ["Faq.hero"],
     imageKeys: [],
   },
   {
     key: "work",
+    cureLabelKey: "page.cure.work",
     label: "Commissioned before",
     description: "A gallery of finished commissions.",
     hideable: true,
     movable: true,
     conditional: true,
-    copyPrefixes: ["CustomOrder.page.work"],
+    copyPrefixes: ["CustomOrder.page.seeCommissions", "Portfolio.hero"],
     imageKeys: [],
   },
   {
     key: "words",
+    cureLabelKey: "page.cure.words",
     label: "In their words",
     description: "What previous clients said.",
     hideable: true,
     movable: true,
     conditional: true,
-    copyPrefixes: ["CustomOrder.page.testimonials"],
+    copyPrefixes: ["CustomOrder.page.proof"],
     imageKeys: [],
   },
 ];
@@ -750,7 +787,7 @@ const CONTACT: readonly SectionDef[] = [
     hideable: false,
     movable: false,
     ownsH1: true,
-    copyPrefixes: ["Contact.hero"],
+    copyPrefixes: ["Contact.page.hero"],
     imageKeys: ["contact.hero"],
   },
   {
@@ -759,7 +796,7 @@ const CONTACT: readonly SectionDef[] = [
     description: "WhatsApp, phone, email and the studio address.",
     hideable: true,
     movable: true,
-    copyPrefixes: ["Contact.channels"],
+    copyPrefixes: ["Contact.page.channels"],
     imageKeys: [],
   },
   {
@@ -768,7 +805,7 @@ const CONTACT: readonly SectionDef[] = [
     description: "The message form — the reason the page exists.",
     hideable: false,
     movable: false,
-    copyPrefixes: ["Contact.form"],
+    copyPrefixes: ["Contact.page.form", "Contact.form"],
     imageKeys: [],
   },
   {
@@ -778,7 +815,7 @@ const CONTACT: readonly SectionDef[] = [
     hideable: true,
     movable: true,
     conditional: true,
-    copyPrefixes: ["Contact.faq"],
+    copyPrefixes: ["Contact.page.faq"],
     imageKeys: [],
   },
 ];
@@ -812,13 +849,23 @@ const WORKSHOPS: readonly SectionDef[] = [
     imageKeys: [],
   },
   {
+    // `Workshops.why` and `Workshops.session` were never keys in
+    // messages/en.json — the band renders `Workshops.intro.*` and
+    // `Workshops.experience.*`. The prefixes are read for one thing, the
+    // "N copy groups" count on the sections board, so the wrong name did not
+    // throw; it just counted the wrong tree, and would have kept counting it
+    // if anything ever filtered on the field.
     key: "why",
     label: "Why come",
     description: "Three reasons, each with a photograph.",
     hideable: true,
     movable: true,
-    copyPrefixes: ["Workshops.why"],
-    imageKeys: [],
+    copyPrefixes: ["Workshops.intro"],
+    imageKeys: [
+      "workshops.benefit1",
+      "workshops.benefit2",
+      "workshops.benefit3",
+    ],
   },
   {
     key: "session",
@@ -826,7 +873,7 @@ const WORKSHOPS: readonly SectionDef[] = [
     description: "The workshop beat by beat.",
     hideable: true,
     movable: true,
-    copyPrefixes: ["Workshops.session"],
+    copyPrefixes: ["Workshops.experience"],
     imageKeys: [],
   },
   {
@@ -855,7 +902,12 @@ const WORKSHOPS: readonly SectionDef[] = [
     hideable: true,
     movable: true,
     copyPrefixes: ["Workshops.room"],
-    imageKeys: [],
+    imageKeys: [
+      "workshops.room1",
+      "workshops.room2",
+      "workshops.room3",
+      "workshops.room4",
+    ],
   },
 ];
 

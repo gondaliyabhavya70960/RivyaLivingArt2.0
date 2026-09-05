@@ -12,8 +12,14 @@ export const metadata: Metadata = SHARED_METADATA;
  * Studio ROOT layout (the app has per-tree root layouts so the public
  * [locale] tree can server-render `<html lang/dir>` per locale — I18N-901).
  * The admin is English-only, so a fixed lang="en" is correct here. The
- * `.studio-v2` scope ships light-only in Phase 4 — a studio dark mode is a
- * tracked Phase 7 item. The (dashboard) shell and auth pages nest below.
+ * `.studio-v2` scope carries a live `prefers-color-scheme: dark` block
+ * (globals.css) that re-points --bg/--surface/--text/--border/--focus and the
+ * four named palette tokens the Studio's own surfaces consume, so this tree
+ * follows the operating system rather than shipping light-only. Anything
+ * styled here has to hold in BOTH schemes — which is why Studio seams use
+ * `border-border` and never the storefront's `rule` utility, whose --hairline
+ * is a dark line that disappears on obsidian. The (dashboard) shell and the
+ * auth pages nest below.
  */
 export default function StudioRootLayout({
   children,

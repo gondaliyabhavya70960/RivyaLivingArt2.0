@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1297 slots · 0 flagged as unreachable from any component.
+ * 1305 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -250,6 +250,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Home.cure.largeFormat","group":"Homepage","section":"cure","label":"Large format","kind":"body","tier":"editorial","max":400},
   {"key":"Home.cure.furniture","group":"Homepage","section":"cure","label":"Furniture","kind":"body","tier":"editorial","max":400},
   {"key":"Home.cure.rooms","group":"Homepage","section":"cure","label":"Rooms","kind":"body","tier":"editorial","max":400},
+  {"key":"Home.cure.workshops","group":"Homepage","section":"cure","label":"Workshops","kind":"body","tier":"editorial","max":400},
   {"key":"Home.manifesto.line1","group":"Homepage","section":"manifesto","label":"Line 1","kind":"body","tier":"editorial","max":400},
   {"key":"Home.manifesto.line2","group":"Homepage","section":"manifesto","label":"Line 2","kind":"body","tier":"editorial","max":400},
   {"key":"Home.manifesto.body","group":"Homepage","section":"manifesto","label":"Body","kind":"body","tier":"editorial","max":400},
@@ -302,6 +303,11 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Home.rooms.bedroom.title","group":"Homepage","section":"rooms","label":"Title","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.rooms.bedroom.caption","group":"Homepage","section":"rooms","label":"Caption","kind":"micro","tier":"interface","max":200},
   {"key":"Home.rooms.bedroom.alt","group":"Homepage","section":"rooms","label":"Alt","kind":"alt","tier":"editorial","max":160},
+  {"key":"Home.workshops.eyebrow","group":"Homepage","section":"workshops","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Home.workshops.heading","group":"Homepage","section":"workshops","label":"Heading","kind":"heading","tier":"editorial","max":80},
+  {"key":"Home.workshops.body","group":"Homepage","section":"workshops","label":"Body","kind":"body","tier":"editorial","max":400},
+  {"key":"Home.workshops.cta","group":"Homepage","section":"workshops","label":"Cta","kind":"cta","tier":"editorial","max":60},
+  {"key":"Home.workshops.imageAlt","group":"Homepage","section":"workshops","label":"Image alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Process.meta.title","group":"Process","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Process.meta.description","group":"Process","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Process.hero.eyebrow","group":"Process","section":"hero","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
@@ -442,6 +448,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"About.studio.alt1","group":"About","section":"studio","label":"Alt 1","kind":"body","tier":"editorial","max":400},
   {"key":"About.studio.alt2","group":"About","section":"studio","label":"Alt 2","kind":"body","tier":"editorial","max":400},
   {"key":"About.studio.alt3","group":"About","section":"studio","label":"Alt 3","kind":"body","tier":"editorial","max":400},
+  {"key":"About.studio.hoursLabel","group":"About","section":"studio","label":"Hours label","kind":"label","tier":"editorial","max":60},
   {"key":"Workshops.meta.title","group":"Workshops","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Workshops.meta.description","group":"Workshops","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Workshops.hero.eyebrow","group":"Workshops","section":"hero","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
@@ -553,6 +560,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"CustomOrder.page.cure.brief","group":"Commission","section":"page","label":"Brief","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.page.cure.questions","group":"Commission","section":"page","label":"Questions","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.page.cure.work","group":"Commission","section":"page","label":"Work","kind":"body","tier":"editorial","max":400},
+  {"key":"CustomOrder.page.cure.words","group":"Commission","section":"page","label":"Words","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.form.designIdeaLabel","group":"Commission","section":"form","label":"Design idea label","kind":"label","tier":"editorial","max":60},
   {"key":"CustomOrder.form.designIdeaPlaceholder","group":"Commission","section":"form","label":"Design idea placeholder","kind":"micro","tier":"interface","max":200},
   {"key":"CustomOrder.form.materialLabel","group":"Commission","section":"form","label":"Material label","kind":"label","tier":"editorial","max":60},

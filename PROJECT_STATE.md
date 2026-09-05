@@ -28,26 +28,41 @@ Completed:                Phases 1b–17 of the master prompt: 13 batches (B0 ·
                           writer, demo-lander noindex/mark, whole-file isolation guard, VIDEO picker
                           in three forms, hero LQIP, demo badge on two lists, card image role, fixture
                           rebalance, one lead-time key, sheet status enums, four new smoke checks
-In Progress:              nothing in flight. Owner-machine follow-ups: fetch the planned Higgsfield
-                          sets in docs/media-v3-manifest.json (the CDN refuses the sandbox; the
-                          fetch script iterates `assets` only, so promote each planned entry first);
-                          replace the generated maker portrait with a photograph; add `.env.example`
-                          (`.env*` edits are denied here); a by-eye reduced-motion pass over the A2/A3/
-                          C2 mounts; turn SiteSettings.demoContentPublic on only as a deliberate act;
-                          measure Lighthouse on the PDP (`LH_BASE=… node scripts/lighthouse-audit.mjs
-                          demo-product-001`) — it scores 0 in this sandbox, so the 85/95 gate cannot be
-                          added to ci.yml until the owner reports real numbers.
+In Progress:              the 2026-09-05 content batch (homepage workshops band + hero headline +
+                          cure-rail fix, About copy and hours, the Studio auth screens, and six
+                          registry rows that named copy trees and slots that do not exist).
+                          Owner-machine follow-ups: fetch the 55 planned Higgsfield sets in
+                          docs/media-v3-manifest.json (the CDN refuses the sandbox; promote each
+                          planned entry first, then cull a keeper, then build — NO generated
+                          picture has reached the site and none can from here); generate the last
+                          12 of batch E (the workspace is out of credits and the account's
+                          "365 Unlimited" model subscriptions are NOT reachable through the MCP
+                          API); look at the 43 generated stills and 3 loops, which nobody has;
+                          replace the generated maker portrait with a photograph (§15.2); add
+                          `.env.example` (`.env*` edits are denied here); a by-eye reduced-motion
+                          pass over the A2/A3/C2 mounts; turn SiteSettings.demoContentPublic on
+                          only as a deliberate act; fill SiteSettings.address so /contact states a
+                          city; take the FAQ corpus past six questions in /studio/faqs (the seed
+                          file is not a deploy path); write the /workshops per-beat copy, which is
+                          operational detail about a real service and therefore the owner's words;
+                          set Category.image for gift-collections and print-decor on the live
+                          database (the SEED default now points at the v3 masters, but a seeded row
+                          is never overwritten). Lighthouse on the PDP is MEASURED and gated:
+                          home 98/97, PLP 98/100, PDP 99/100.
                           PRs #43, #44 and #45 are MERGED (main = 9d2ba69)
 Next Exact Task:          none from the plan. Everything the 2026-09-04 audit listed as pending is
                           either closed on PRs #43–#45 or an owner-machine follow-up above. A next
                           session starts from `docs/transformation-roadmap.md` (status) and CHANGELOG's
-                          newest entry, not from the plan file. Newest entry: the Lighthouse PDP gate
-                          (the PDP measures 99 perf / 100 a11y — the local zeros were BASE_URL pointing
-                          at a dead port, not a sandbox limit) and all 28 planned images generated but
-                          NOT built. Before it: the header-contrast rule no longer reports its own
-                          cross-fade — CI 149 failed /contact on a tree that passed on main (149 red,
-                          150 green, identical trees), because the rule read `data-ink` and the pixels
-                          at two different moments.
+                          newest entry, not from the plan file. Newest entry: the 2026-09-05 content
+                          batch — the homepage gained a workshops band and a new h1, the cure rail on
+                          three pages stopped describing sections that render nothing, About names
+                          Surat and prints the opening hours it was only sending to Google, and two
+                          new registry guards caught eight rows naming copy trees and image slots that
+                          do not exist. Before it: the Lighthouse PDP gate (99 perf / 100 a11y — the
+                          local zeros were BASE_URL pointing at a dead port, not a sandbox limit),
+                          all 28 batch-D images generated but NOT built, and the header-contrast rule
+                          no longer reporting its own cross-fade (CI 149 red / 150 green on identical
+                          trees).
 Files Created:            11 migration dirs (20260904100000 … 20260904110000) · src/lib/
                           {content-status,demo-clause,demo-content,activity-snapshot,
                           process-steps}.ts (+ tests) · tests/db/{testimonials-gate,demo-gate}.test.ts

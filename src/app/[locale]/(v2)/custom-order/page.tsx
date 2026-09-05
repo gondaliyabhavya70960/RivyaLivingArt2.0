@@ -128,6 +128,7 @@ export default async function CustomOrderPage({
 
   const [
     t,
+    tRoot,
     tHow,
     tProcess,
     tFaq,
@@ -138,6 +139,10 @@ export default async function CustomOrderPage({
     sections,
   ] = await Promise.all([
     getTranslations("CustomOrder.page"),
+    // Rooted at the namespace, not the page, because `cureLabelKey` is
+    // resolved as `<PascalCasePage>.<key>` (page-sections.test.ts) and the
+    // rail below reads its labels straight off the manifest.
+    getTranslations("CustomOrder"),
     getTranslations("Home.how"),
     getTranslations("Process.timeline"),
     getTranslations("Faq"),
@@ -223,18 +228,6 @@ export default async function CustomOrderPage({
     { title: t("step2Title"), body: t("step2Body") },
     { title: t("step3Title"), body: t("step3Body") },
     { title: tProcess("step6Title"), body: tProcess("step6Copy") },
-  ];
-
-  /** §2.6 — one tick per section boundary, labelled in mono. */
-  const cureMarks: CureMark[] = [
-    { id: "commission", label: t("cure.commission"), dark: true },
-    { id: "kinds", label: t("cure.kinds") },
-    { id: "how", label: t("cure.how") },
-    { id: "brief", label: t("cure.brief") },
-    ...(faqs.length > 0
-      ? [{ id: "questions", label: t("cure.questions") }]
-      : []),
-    ...(gallery.length > 0 ? [{ id: "work", label: t("cure.work") }] : []),
   ];
 
   const sectionNodes: Record<string, ReactNode> = {
@@ -508,6 +501,34 @@ export default async function CustomOrderPage({
         </section>
       ) : null,
   };
+
+  /**
+   * §2.6 — one tick per section boundary, labelled in mono.
+   *
+   * GENERATED from the resolved manifest and the built nodes, the way the
+   * homepage and /large-resin-art already do it. It used to be a literal array
+   * of six entries, which was wrong in three separate ways the moment the
+   * sections board shipped: it ignored `visible`, so a section an owner hid
+   * kept its tick; it ignored order, so a reorder left the rail describing the
+   * old page; and it had no entry for `words` at all, so the testimonial band
+   * has been tickless since it was added. Asking `sectionNodes` covers the
+   * conditional sections too — `questions`, `work` and `words` are ternaries
+   * that collapse to null on a database with no FAQs, no portfolio and no
+   * testimonials, and a tick whose `getElementById` misses does not break,
+   * it silently redistributes the whole rail by even division.
+   */
+  const cureMarks: CureMark[] = sections
+    .filter(
+      (section) =>
+        section.visible &&
+        section.cureLabelKey &&
+        sectionNodes[section.key] != null,
+    )
+    .map((section) => ({
+      id: section.key,
+      label: tRoot(section.cureLabelKey as "page.cure.commission"),
+      ...(section.dark ? { dark: true } : {}),
+    }));
 
   return (
     <>

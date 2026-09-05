@@ -112,7 +112,7 @@
     },
     "hero": {
       "eyebrow": "large-format commissions · resin art · made to order",
-      "headline": "Liquid luxury, cast forever.",
+      "headline": "Cast for the room it will live in.",
       "lead": "Rivya Living Art makes large resin work to commission — tables, wall panels and preservation pieces designed around the room they will live in — alongside a collection of smaller pieces ready to order. Poured by hand in Surat, finalised over WhatsApp.",
       "ctaExplore": "Explore the collection",
       "ctaBespoke": "Commission a piece",
@@ -248,7 +248,7 @@
       "heading": "Made to your story",
       "body": "Your flowers, your names, your dates — preserved in resin as a piece no one else can own. A custom commission starts and finishes in one WhatsApp conversation.",
       "cta": "Start a commission",
-      "imageAlt": "Hands placing wedding-garland petals into a silicone mold",
+      "imageAlt": "Gloved hands arranging marigold and rose petals inside an empty silicone mould",
       "eyebrow": "bespoke commissions",
       "lineFlowers": "Your flowers.",
       "lineNames": "Your names.",
@@ -304,7 +304,8 @@
       "words": "kind words",
       "largeFormat": "large format",
       "furniture": "furniture",
-      "rooms": "in the room"
+      "rooms": "in the room",
+      "workshops": "Workshops"
     },
     "manifesto": {
       "line1": "Objects made slowly.",
@@ -389,6 +390,13 @@
         "caption": "A commissioned piece, pictured in a bedroom.",
         "alt": "Gold leaf flakes drifting inside settling translucent blue resin, standing in as a concept image for a bedroom."
       }
+    },
+    "workshops": {
+      "eyebrow": "at the bench",
+      "heading": "Pour one yourself",
+      "body": "An afternoon at the studio bench in Surat: you mix the resin, choose the pigments and make the pour. Everything is laid out before you arrive, no experience is needed, and you leave with the piece you made.",
+      "cta": "See the sessions",
+      "imageAlt": "A long studio table set for eight places, with mixing cups, gloves, pigment jars and empty moulds laid out in a row"
     }
   },
   "Process": {
@@ -458,7 +466,7 @@
       "eyebrow": "materials",
       "headingEndure": "Materials chosen to endure.",
       "intro": "Museum-grade, UV-stable resin. Pigments and metals selected for how they age, not just how they photograph.",
-      "alt1": "Clear epoxy resin catching the light mid-pour",
+      "alt1": "Deep sapphire epoxy pouring into a shallow round mould",
       "alt2": "Seasoned hardwood grain sealed under a resin surface",
       "alt3": "Mixing cups of sapphire resin and loose mineral pigment on the bench",
       "alt4": "Preserved petals set between cured resin layers"
@@ -492,14 +500,14 @@
     "hero": {
       "eyebrow": "the studio",
       "headline": "Where resin meets reverence.",
-      "lead": "Rivya Living Art is a made-to-order resin art studio in India — a small practice devoted to holding what matters most in glass-clear depth: your flowers, your photographs, your milestones."
+      "lead": "Rivya Living Art is a made-to-order resin art studio in Surat, India — a small practice devoted to holding what matters most in glass-clear depth: your wedding varmala, your photographs, your milestones."
     },
     "story": {
       "heading": "Our story",
       "imageAlt": "A preserved-flower resin frame handcrafted in the Rivya Living Art studio",
       "p1": "Rivya Living Art began as a one-artist studio — a single workbench and a quiet fascination with what happens when light passes through poured resin. It has grown commission by commission, yet it still works the way it started: one piece at a time, every stage passing through the same careful hands.",
       "p2": "The palette came from the sea. Sapphire, azure and deep-ocean blues run through nearly everything we make — colours with real depth, layered the way water layers light. Gold appears only as a garnish: a glint along an edge, a fine vein through the blue.",
-      "p3": "We don't mass-produce, and we keep no inventory. Each commission begins as a conversation on WhatsApp — your idea, your references, your budget — and ends as a single piece that exists nowhere else in the world.",
+      "p3": "We don't mass-produce, and we keep no inventory. Each commission begins as a conversation on WhatsApp — your idea, your references, your budget. A varmala to preserve after the wedding, a piece for the pooja room, a frame around one photograph — and it ends as a single object that exists nowhere else in the world.",
       "eyebrow": "our story"
     },
     "values": {
@@ -529,9 +537,9 @@
     "chapters": {
       "embedTitle": "Set in gold and petals",
       "embedCopy": "Flowers, gold leaf and keepsakes are placed by hand between layers — each element sealed exactly where it should rest, so the piece holds a moment and not just a material.",
-      "alt1": "Deep sapphire resin mid-pour, spreading across a round mold",
+      "alt1": "Deep sapphire resin pouring in one unbroken ribbon into a shallow round mould",
       "alt2": "Gold leaf flakes drifting inside settling translucent blue resin",
-      "alt3": "The studio at night — poured molds curing under a warm work lamp",
+      "alt3": "Poured moulds curing overnight under a single warm work lamp in the dark studio",
       "alt4": "Water beading on a mirror-polished resin surface, gold flakes below"
     },
     "sustain": {
@@ -549,7 +557,7 @@
     },
     "cta": {
       "heading": "Begin your commission",
-      "body": "Tell us what you'd like to keep forever — we'll shape it in blue, gold and glass-clear resin. An heirloom you'll keep forever.",
+      "body": "Tell us what you'd like to keep — we'll shape it in blue, gold and glass-clear resin. One piece, made once, yours to pass on.",
       "planCustom": "Plan a custom order"
     },
     "chapterLabels": {
@@ -564,11 +572,12 @@
     "studio": {
       "eyebrow": "where we work",
       "heading": "The bench, the moulds, the light.",
-      "body": "One room in India where every commission is mixed, poured, cured and finished. Nothing is sent out to be made elsewhere.",
+      "body": "One room in Surat where every commission is mixed, poured, cured and finished. Nothing is sent out to be made elsewhere.",
       "addressLabel": "Address",
       "alt1": "The studio bench laid out with moulds and mixing cups",
       "alt2": "Filled moulds curing overnight under a warm work lamp",
-      "alt3": "A finished resin-and-teak board and bowl on the studio table"
+      "alt3": "A finished resin-and-teak board and bowl on the studio table",
+      "hoursLabel": "Opening hours"
     }
   },
   "Workshops": {
@@ -724,7 +733,8 @@
         "how": "How it runs",
         "brief": "Your brief",
         "questions": "Questions",
-        "work": "Recent work"
+        "work": "Recent work",
+        "words": "In their words"
       }
     },
     "form": {
