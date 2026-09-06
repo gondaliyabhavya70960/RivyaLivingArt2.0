@@ -38,12 +38,17 @@ edits are not in it yet. The spec's word "live" is read as "the current draft, w
 trip" — a frame that rendered the storefront from the form's unsaved values would be a second
 renderer of the product page to keep true, and is not this item.
 
-### Lazy, because hidden is not gone
+### Hidden is not gone — and lazy did not help
 The aside is rendered at every width so the layout is right at first paint — no measuring step,
-no one-column flash — which means a phone editing a product would otherwise also fetch the whole
-product page into a frame it cannot see. The frame is `loading="lazy"`, and a lazy iframe that
-never intersects never fetches; measured below, the hidden aside at 1280 and 390 holds a frame
-whose document is still `about:blank`.
+no one-column flash — which means a phone editing a product would also fetch the whole product
+page into a frame it cannot see. The first cut put `loading="lazy"` on the frame and assumed a
+frame that never intersects never fetches. **Measured, it does**: at 1280 with the sidebar open
+and at 390, Playwright found the product page loaded inside the hidden aside. Chromium treats a
+hidden frame as a communication channel — the tracking-pixel shape — and loads it eagerly on
+purpose. So the frame now mounts only while its column actually has layout: `useIsDisplayed`
+reads `offsetParent` through `useSyncExternalStore` with a `ResizeObserver` (the shape the repo
+prefers to a state-setting effect), and the re-run shows zero product frames at 1280 and 390 and
+the draft fetched fresh the moment the column appears.
 
 ### The footer's unsaved-changes indicator
 §12.5 names one. Both editors' sticky footers now carry it, as an always-mounted `role="status"`
@@ -52,10 +57,24 @@ rather than appearing, because a live region that arrives with its text is the o
 do not read.
 
 ### Verified
-Typecheck, lint, the unit suite and `copy:check` clean; production build against a local
-Postgres. A Playwright probe drove the product and journal editors in both colour schemes:
-the measurements are recorded in the commit that follows this one, once the pass over 1440 with the
-sidebar, 1280 with and without it, and 390 has run in both colour schemes.
+Typecheck, lint, the 700-test unit suite and `copy:check` clean; production build against a local
+Postgres; the Studio audit clean over both edit routes at 1440 and 390. A Playwright probe drove
+the product and journal editors in both colour schemes and read the layout back:
+
+- **1440, sidebar open** (content 1174 wide): the aside is `block` and `sticky`, 416 wide, the
+  frame 390 wide with the product page's own `h1` inside it, the footer's Preview button hidden.
+  Typing sets the footer's status to "Unsaved changes" and the column's note to "Unsaved edits
+  are not here yet"; reverting clears both. Save remounts the frame (a marker set on the old
+  element is gone) and the reloaded page carries the title. Tablet opens the dialog at 768;
+  Escape closes it. Scrolled 900px, the aside sits at `top: 80` with its bottom at 876 in a
+  900px viewport — it was 908 before the height correction.
+- **1280, sidebar open** (content 1014): the aside is `display: none`, the Preview button shows,
+  and there are zero product frames in the page and zero `iframe` elements in the aside.
+  Collapsing the sidebar in place docks the column at 822 and the frame mounts and loads the
+  page; expanding it again removes the frame.
+- **1280, rail** (content 1190) and **390**: docked with the page loaded, and single-column with
+  no frame, respectively. No horizontal overflow at any width; no page errors in either scheme.
+- **Journal, 1440**: the same column, framing `/blog/demo-post-030` with the post's `h1`.
 
 ## Transformation Phase 11 — the hand-rolled forms learn to point at the field (2026-09-05, fourth batch)
 

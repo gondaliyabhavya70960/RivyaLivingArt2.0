@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { ExternalLink, Eye, RotateCw } from "lucide-react";
 
 import {
@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useIsDisplayed } from "@/hooks/use-is-displayed";
 import { cn } from "@/lib/utils";
 
 /**
@@ -190,10 +191,15 @@ export function DraftPreview({
  * keep true, and the spec's word is read as "the current draft, without a
  * round trip", which this is.
  *
- * The iframe is `loading="lazy"`. `EditorSplit` hides the aside with
- * `display: none` below its container threshold and a lazy iframe that never
- * intersects never fetches, so a phone editing a product does not also load
- * the whole product page it cannot see. Without lazy loading it would.
+ * The frame mounts only while the column is actually displayed.
+ * `EditorSplit` hides the aside with `display: none` below its container
+ * threshold, and the first version relied on `loading="lazy"` to keep the
+ * hidden frame from fetching — which Chromium does not honour for hidden
+ * frames (measured: the 1280-with-sidebar and 390 layouts had loaded the
+ * product page into a frame nobody could see). `useIsDisplayed` reads the
+ * truth from layout, so a phone editing a product fetches nothing extra, and
+ * a column that appears on a resize or a sidebar collapse fetches the draft
+ * fresh.
  */
 export function DraftPreviewPanel({
   path,
@@ -208,6 +214,8 @@ export function DraftPreviewPanel({
   dirty: boolean;
 }) {
   const headingId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const shown = useIsDisplayed(rootRef);
   const [reloads, setReloads] = useState(0);
   const [open, setOpen] = useState(false);
   const [width, setWidth] = useState<PreviewWidth>(768);
@@ -221,6 +229,7 @@ export function DraftPreviewPanel({
 
   return (
     <div
+      ref={rootRef}
       aria-labelledby={headingId}
       className="rounded-card border border-border bg-card p-3 shadow-e1"
     >
@@ -252,17 +261,19 @@ export function DraftPreviewPanel({
       </p>
 
       <div className="mt-3 overflow-hidden rounded-card border border-border bg-background">
-        <iframe
-          // Keyed on the save count and the reload button, so each save (and
-          // each press) refetches the draft rather than showing the render the
-          // column opened with.
-          key={`${version}-${reloads}`}
-          src={src}
-          loading="lazy"
-          title={`Draft preview of ${path} at ${DOCKED_WIDTH} pixels wide`}
-          className="block h-[min(844px,calc(100svh-17rem))] border-0 bg-white"
-          style={{ width: DOCKED_WIDTH }}
-        />
+        {shown && (
+          <iframe
+            // Keyed on the save count and the reload button, so each save (and
+            // each press) refetches the draft rather than showing the render
+            // the column opened with. The height keeps the whole panel inside
+            // a 900px-tall viewport once it is stuck at `top-20`.
+            key={`${version}-${reloads}`}
+            src={src}
+            title={`Draft preview of ${path} at ${DOCKED_WIDTH} pixels wide`}
+            className="block h-[min(844px,calc(100svh-19rem))] border-0 bg-white"
+            style={{ width: DOCKED_WIDTH }}
+          />
+        )}
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 px-1">
