@@ -16,7 +16,11 @@ import {
 } from "@/actions/blog";
 import { uploadMediaFiles } from "@/actions/media";
 import { MediaPicker } from "@/components/studio/media/media-picker";
-import { DraftPreview } from "@/components/studio/draft-preview";
+import {
+  DraftPreview,
+  DraftPreviewPanel,
+} from "@/components/studio/draft-preview";
+import { EditorSplit } from "@/components/studio/editor-split";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -166,6 +170,8 @@ export function BlogPostForm({
   const router = useRouter();
 
   const [saving, setSaving] = useState(false);
+  /* Counts successful saves; the docked preview is keyed on it and reloads. */
+  const [savedVersion, setSavedVersion] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -286,6 +292,7 @@ export function BlogPostForm({
       return;
     }
     draft.discard();
+    setSavedVersion((version) => version + 1);
     toast.success(post ? "Post saved." : "Post created.");
     if (!post && result.data) {
       router.push(`/studio/blog/${result.data.id}`);
@@ -310,187 +317,260 @@ export function BlogPostForm({
     router.refresh();
   }
 
+  const dirty = isDirty && !saving;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
-      <LocalDraftBar
-        savedAt={draft.savedAt}
-        onRestore={draft.restore}
-        onDiscard={draft.discard}
-      />
-
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList aria-label="Post sections">
-          {TABS.map((entry) => (
-            <TabsTrigger key={entry.value} value={entry.value}>
-              {entry.label}
-              {errored.has(entry.value) && (
-                <>
-                  <span
-                    aria-hidden
-                    className="size-1.5 rounded-full bg-destructive"
-                  />
-                  <span className="sr-only"> (has an error)</span>
-                </>
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {/* `forceMount` on every panel — the rich-text editor and the file
-            input hold real state that a Radix unmount-on-hide would throw
-            away mid-edit (product-form.tsx precedent). */}
-        <TabsContent forceMount value="content" className="space-y-6">
-          <FormSection title="Story">
-            <div className="space-y-1.5">
-              <Label htmlFor="post-title">Title</Label>
-              <Input
-                id="post-title"
-                aria-invalid={!!errors.title}
-                aria-describedby={errors.title ? "post-title-error" : undefined}
-                {...register("title")}
-              />
-              <FieldError id="post-title-error">
-                {errors.title?.message}
-              </FieldError>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="post-excerpt">Excerpt</Label>
-              <Textarea
-                id="post-excerpt"
-                rows={3}
-                placeholder="A short teaser shown on the blog index and in link previews."
-                {...register("excerpt")}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Content</Label>
-              <Controller
-                control={control}
-                name="content"
-                render={({ field }) => (
-                  <RichTextEditor
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Write your story…"
-                  />
-                )}
-              />
-            </div>
-          </FormSection>
-
-          {/* Translations live with the content they translate — same
-              placement as product-form's "details" tab. */}
-          <Controller
-            control={control}
-            name="translations"
-            render={({ field }) => (
-              <TranslationsSection
-                value={field.value}
-                onChange={field.onChange}
-                idPrefix="post"
-                fields={[
-                  {
-                    name: "title",
-                    label: "Title",
-                    kind: "text",
-                    base: titleBase,
-                  },
-                  {
-                    name: "excerpt",
-                    label: "Excerpt",
-                    kind: "textarea",
-                    base: excerptBase,
-                  },
-                  { name: "content", label: "Content", kind: "richtext" },
-                  {
-                    name: "seoTitle",
-                    label: "SEO title",
-                    kind: "text",
-                    base: seoTitleBase,
-                  },
-                  {
-                    name: "seoDescription",
-                    label: "SEO description",
-                    kind: "textarea",
-                    base: seoDescBase,
-                  },
-                ]}
-              />
-            )}
+    /* REDESIGN.md §12.5: "editor left, preview right". The right column is
+       the saved draft in a phone frame, docked when the content area is wide
+       enough for both (a container query, so it follows the sidebar's
+       collapse); narrower, the footer's Preview button and its dialog carry
+       on. A new post has no page yet. */
+    <EditorSplit
+      aside={
+        post && (
+          <DraftPreviewPanel
+            path={`/blog/${post.slug}`}
+            version={savedVersion}
+            dirty={dirty}
           />
-        </TabsContent>
+        )
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+        />
 
-        <TabsContent forceMount value="media" className="space-y-6">
-          <FormSection title="Cover">
-            <div className="space-y-1.5">
-              <Label htmlFor="post-cover">Cover image URL</Label>
-              <div className="flex flex-wrap items-center gap-2">
+        <Tabs value={tab} onValueChange={setTab}>
+          <TabsList aria-label="Post sections">
+            {TABS.map((entry) => (
+              <TabsTrigger key={entry.value} value={entry.value}>
+                {entry.label}
+                {errored.has(entry.value) && (
+                  <>
+                    <span
+                      aria-hidden
+                      className="size-1.5 rounded-full bg-destructive"
+                    />
+                    <span className="sr-only"> (has an error)</span>
+                  </>
+                )}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* `forceMount` on every panel — the rich-text editor and the file
+              input hold real state that a Radix unmount-on-hide would throw
+              away mid-edit (product-form.tsx precedent). */}
+          <TabsContent forceMount value="content" className="space-y-6">
+            <FormSection title="Story">
+              <div className="space-y-1.5">
+                <Label htmlFor="post-title">Title</Label>
                 <Input
-                  id="post-cover"
-                  placeholder="https://…"
-                  className="min-w-64 flex-1"
-                  aria-invalid={!!errors.coverImage}
-                  aria-describedby={
-                    errors.coverImage ? "post-cover-error" : undefined
-                  }
-                  {...register("coverImage")}
+                  id="post-title"
+                  aria-invalid={!!errors.title}
+                  aria-describedby={errors.title ? "post-title-error" : undefined}
+                  {...register("title")}
                 />
-                <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-input border border-border px-4 text-small font-medium text-foreground outline-none hover:bg-foreground/5 focus-within:ring-2 focus-within:ring-focus">
-                  <ImagePlus aria-hidden strokeWidth={1.5} className="size-4" />
-                  {uploading ? "Uploading…" : "Upload"}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="sr-only"
-                    disabled={uploading}
-                    onChange={(e) => handleCoverUpload(e.target.files)}
-                  />
-                </label>
-                <MediaPicker
-                  defaultFolder="blog"
-                  onSelect={(item) =>
-                    setValue("coverImage", item.url, {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    })
-                  }
+                <FieldError id="post-title-error">
+                  {errors.title?.message}
+                </FieldError>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="post-excerpt">Excerpt</Label>
+                <Textarea
+                  id="post-excerpt"
+                  rows={3}
+                  placeholder="A short teaser shown on the blog index and in link previews."
+                  {...register("excerpt")}
                 />
               </div>
-              <FieldError id="post-cover-error">
-                {errors.coverImage?.message}
-              </FieldError>
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="post-author">Author name</Label>
-              <Input
-                id="post-author"
-                aria-invalid={!!errors.authorName}
-                aria-describedby={
-                  errors.authorName ? "post-author-error" : undefined
-                }
-                {...register("authorName")}
-              />
-              <FieldError id="post-author-error">
-                {errors.authorName?.message}
-              </FieldError>
-            </div>
-          </FormSection>
-        </TabsContent>
-
-        <TabsContent forceMount value="taxonomy" className="space-y-6">
-          <FormSection
-            title="Organisation"
-            description="Category and tags drive the public blog's browsing and filtering."
-          >
-            <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label>Category</Label>
+                <Label>Content</Label>
                 <Controller
                   control={control}
-                  name="blogCategoryId"
+                  name="content"
+                  render={({ field }) => (
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Write your story…"
+                    />
+                  )}
+                />
+              </div>
+            </FormSection>
+
+            {/* Translations live with the content they translate — same
+                placement as product-form's "details" tab. */}
+            <Controller
+              control={control}
+              name="translations"
+              render={({ field }) => (
+                <TranslationsSection
+                  value={field.value}
+                  onChange={field.onChange}
+                  idPrefix="post"
+                  fields={[
+                    {
+                      name: "title",
+                      label: "Title",
+                      kind: "text",
+                      base: titleBase,
+                    },
+                    {
+                      name: "excerpt",
+                      label: "Excerpt",
+                      kind: "textarea",
+                      base: excerptBase,
+                    },
+                    { name: "content", label: "Content", kind: "richtext" },
+                    {
+                      name: "seoTitle",
+                      label: "SEO title",
+                      kind: "text",
+                      base: seoTitleBase,
+                    },
+                    {
+                      name: "seoDescription",
+                      label: "SEO description",
+                      kind: "textarea",
+                      base: seoDescBase,
+                    },
+                  ]}
+                />
+              )}
+            />
+          </TabsContent>
+
+          <TabsContent forceMount value="media" className="space-y-6">
+            <FormSection title="Cover">
+              <div className="space-y-1.5">
+                <Label htmlFor="post-cover">Cover image URL</Label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Input
+                    id="post-cover"
+                    placeholder="https://…"
+                    className="min-w-64 flex-1"
+                    aria-invalid={!!errors.coverImage}
+                    aria-describedby={
+                      errors.coverImage ? "post-cover-error" : undefined
+                    }
+                    {...register("coverImage")}
+                  />
+                  <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-input border border-border px-4 text-small font-medium text-foreground outline-none hover:bg-foreground/5 focus-within:ring-2 focus-within:ring-focus">
+                    <ImagePlus aria-hidden strokeWidth={1.5} className="size-4" />
+                    {uploading ? "Uploading…" : "Upload"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      disabled={uploading}
+                      onChange={(e) => handleCoverUpload(e.target.files)}
+                    />
+                  </label>
+                  <MediaPicker
+                    defaultFolder="blog"
+                    onSelect={(item) =>
+                      setValue("coverImage", item.url, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                  />
+                </div>
+                <FieldError id="post-cover-error">
+                  {errors.coverImage?.message}
+                </FieldError>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="post-author">Author name</Label>
+                <Input
+                  id="post-author"
+                  aria-invalid={!!errors.authorName}
+                  aria-describedby={
+                    errors.authorName ? "post-author-error" : undefined
+                  }
+                  {...register("authorName")}
+                />
+                <FieldError id="post-author-error">
+                  {errors.authorName?.message}
+                </FieldError>
+              </div>
+            </FormSection>
+          </TabsContent>
+
+          <TabsContent forceMount value="taxonomy" className="space-y-6">
+            <FormSection
+              title="Organisation"
+              description="Category and tags drive the public blog's browsing and filtering."
+            >
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label>Category</Label>
+                  <Controller
+                    control={control}
+                    name="blogCategoryId"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value || NONE_CATEGORY}
+                        onValueChange={(value) =>
+                          field.onChange(value === NONE_CATEGORY ? "" : value)
+                        }
+                      >
+                        <SelectTrigger className="w-full" aria-label="Category">
+                          <SelectValue placeholder="No category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={NONE_CATEGORY}>
+                            No category
+                          </SelectItem>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label>Status</Label>
+                  <Controller
+                    control={control}
+                    name="status"
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full" aria-label="Status">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="DRAFT">Draft</SelectItem>
+                          <SelectItem value="REVIEW">Review</SelectItem>
+                          <SelectItem value="PUBLISHED">Published</SelectItem>
+                          <SelectItem value="ARCHIVED">Archived</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Related collection</Label>
+                <p className="text-xs text-muted-foreground">
+                  Feeds the related-collections strip on the published article.
+                </p>
+                <Controller
+                  control={control}
+                  name="categoryId"
                   render={({ field }) => (
                     <Select
                       value={field.value || NONE_CATEGORY}
@@ -498,16 +578,19 @@ export function BlogPostForm({
                         field.onChange(value === NONE_CATEGORY ? "" : value)
                       }
                     >
-                      <SelectTrigger className="w-full" aria-label="Category">
-                        <SelectValue placeholder="No category" />
+                      <SelectTrigger
+                        className="w-full"
+                        aria-label="Related collection"
+                      >
+                        <SelectValue placeholder="No related collection" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value={NONE_CATEGORY}>
-                          No category
+                          No related collection
                         </SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
+                        {collections.map((collection) => (
+                          <SelectItem key={collection.id} value={collection.id}>
+                            {collection.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -517,163 +600,127 @@ export function BlogPostForm({
               </div>
 
               <div className="space-y-1.5">
-                <Label>Status</Label>
-                <Controller
-                  control={control}
-                  name="status"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full" aria-label="Status">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="DRAFT">Draft</SelectItem>
-                        <SelectItem value="REVIEW">Review</SelectItem>
-                        <SelectItem value="PUBLISHED">Published</SelectItem>
-                        <SelectItem value="ARCHIVED">Archived</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
+                <Label>Tags</Label>
+                {tags.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No tags yet — create some under Blog → Tags.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => {
+                      const active = tagIds.includes(tag.id);
+                      return (
+                        <button
+                          key={tag.id}
+                          type="button"
+                          onClick={() => toggleTag(tag.id)}
+                          aria-pressed={active}
+                          className={
+                            active
+                              ? "rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-e1 transition-colors"
+                              : "rounded-full border border-foreground/15 px-4 py-1.5 text-sm text-foreground/70 transition-colors hover:border-sapphire-ink/40 hover:text-sapphire-ink"
+                          }
+                        >
+                          {tag.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="post-published-at">Publish date</Label>
+                <Input
+                  id="post-published-at"
+                  type="datetime-local"
+                  className="w-fit"
+                  {...register("publishedAt")}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave empty to stamp the moment of publishing automatically.
+                </p>
+              </div>
+            </FormSection>
+          </TabsContent>
+
+          <TabsContent forceMount value="seo" className="space-y-6">
+            <FormSection title="SEO">
+              <div className="space-y-1.5">
+                <Label htmlFor="post-seo-title">SEO title</Label>
+                <Input id="post-seo-title" {...register("seoTitle")} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="post-seo-description">SEO description</Label>
+                <Textarea
+                  id="post-seo-description"
+                  rows={3}
+                  {...register("seoDescription")}
                 />
               </div>
-            </div>
+            </FormSection>
+          </TabsContent>
+        </Tabs>
 
-            <div className="space-y-1.5">
-              <Label>Related collection</Label>
-              <p className="text-xs text-muted-foreground">
-                Feeds the related-collections strip on the published article.
-              </p>
-              <Controller
-                control={control}
-                name="categoryId"
-                render={({ field }) => (
-                  <Select
-                    value={field.value || NONE_CATEGORY}
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_CATEGORY ? "" : value)
-                    }
-                  >
-                    <SelectTrigger
-                      className="w-full"
-                      aria-label="Related collection"
-                    >
-                      <SelectValue placeholder="No related collection" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={NONE_CATEGORY}>
-                        No related collection
-                      </SelectItem>
-                      {collections.map((collection) => (
-                        <SelectItem key={collection.id} value={collection.id}>
-                          {collection.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Tags</Label>
-              {tags.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No tags yet — create some under Blog → Tags.
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => {
-                    const active = tagIds.includes(tag.id);
-                    return (
-                      <button
-                        key={tag.id}
-                        type="button"
-                        onClick={() => toggleTag(tag.id)}
-                        aria-pressed={active}
-                        className={
-                          active
-                            ? "rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-e1 transition-colors"
-                            : "rounded-full border border-foreground/15 px-4 py-1.5 text-sm text-foreground/70 transition-colors hover:border-sapphire-ink/40 hover:text-sapphire-ink"
-                        }
-                      >
-                        {tag.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="post-published-at">Publish date</Label>
-              <Input
-                id="post-published-at"
-                type="datetime-local"
-                className="w-fit"
-                {...register("publishedAt")}
-              />
-              <p className="text-xs text-muted-foreground">
-                Leave empty to stamp the moment of publishing automatically.
-              </p>
-            </div>
-          </FormSection>
-        </TabsContent>
-
-        <TabsContent forceMount value="seo" className="space-y-6">
-          <FormSection title="SEO">
-            <div className="space-y-1.5">
-              <Label htmlFor="post-seo-title">SEO title</Label>
-              <Input id="post-seo-title" {...register("seoTitle")} />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="post-seo-description">SEO description</Label>
-              <Textarea
-                id="post-seo-description"
-                rows={3}
-                {...register("seoDescription")}
-              />
-            </div>
-          </FormSection>
-        </TabsContent>
-      </Tabs>
-
-      {/* Sticky save bar */}
-      <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">
-        <div>
-          {post && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              disabled={deleting || saving}
-              onClick={() => setDeleteOpen(true)}
-              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+        {/* Sticky save bar */}
+        <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">
+          <div className="flex flex-wrap items-center gap-3">
+            {post && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={deleting || saving}
+                onClick={() => setDeleteOpen(true)}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash2 /> Delete
+              </Button>
+            )}
+            {/* §12.5's unsaved-changes indicator — an always-mounted live
+                region, so the first edit is announced once and a save clears
+                it. */}
+            <span
+              role="status"
+              className="u-micro inline-flex items-center gap-2 text-graphite"
             >
-              <Trash2 /> Delete
+              {dirty && (
+                <>
+                  <span
+                    aria-hidden
+                    className="size-1.5 rounded-full bg-warning"
+                  />
+                  Unsaved changes
+                </>
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {post && (
+              // Enables Next draft mode via the staff-gated route handler and
+              // frames the public page (audit C2); the dialog keeps the new-tab
+              // link inside it, so nothing is lost. Hidden once the docked
+              // column is showing — one preview affordance at a time.
+              <DraftPreview
+                path={`/blog/${post.slug}`}
+                className="@5xl/editor:hidden"
+              />
+            )}
+            <Button type="submit" disabled={saving || uploading}>
+              {saving ? "Saving…" : "Save"}
             </Button>
-          )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {post && (
-            // Enables Next draft mode via the staff-gated route handler and
-            // frames the public page (audit C2); the dialog keeps the new-tab
-            // link inside it, so nothing is lost.
-            <DraftPreview path={`/blog/${post.slug}`} />
-          )}
-          <Button type="submit" disabled={saving || uploading}>
-            {saving ? "Saving…" : "Save"}
-          </Button>
-        </div>
-      </div>
 
-      <ConfirmDeleteDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        count={1}
-        noun="post"
-        busy={deleting}
-        onConfirm={handleDelete}
-      />
-    </form>
+        <ConfirmDeleteDialog
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          count={1}
+          noun="post"
+          busy={deleting}
+          onConfirm={handleDelete}
+        />
+      </form>
+    </EditorSplit>
   );
 }

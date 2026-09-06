@@ -10,7 +10,11 @@ import { deleteProducts, upsertProduct } from "@/actions/products";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
-import { DraftPreview } from "@/components/studio/draft-preview";
+import {
+  DraftPreview,
+  DraftPreviewPanel,
+} from "@/components/studio/draft-preview";
+import { EditorSplit } from "@/components/studio/editor-split";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
@@ -106,6 +110,8 @@ export function ProductForm({
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  /* Counts successful saves; the docked preview is keyed on it and reloads. */
+  const [savedVersion, setSavedVersion] = useState(0);
 
   const methods = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -149,6 +155,7 @@ export function ProductForm({
       return;
     }
     draft.discard();
+    setSavedVersion((version) => version + 1);
     toast.success(product ? "Product saved." : "Product created.");
     if (!product && result.data) {
       router.push(`/studio/products/${result.data.id}`);
@@ -173,114 +180,155 @@ export function ProductForm({
     router.refresh();
   }
 
+  const dirty = methods.formState.isDirty && !saving;
+
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
-        className="space-y-6"
+      {/* REDESIGN.md §12.5: "two columns — information left, live preview
+          right". The right column is the saved draft in a phone frame, docked
+          when the content area is wide enough for both (a container query,
+          so it follows the sidebar's collapse); narrower, the footer's Preview
+          button and its dialog carry on. A new product has no page yet. */}
+      <EditorSplit
+        aside={
+          product && (
+            <DraftPreviewPanel
+              path={`/product/${product.slug}`}
+              version={savedVersion}
+              dirty={dirty}
+            />
+          )
+        }
       >
-        <LocalDraftBar
-          savedAt={draft.savedAt}
-          onRestore={draft.restore}
-          onDiscard={draft.discard}
-        />
+        <form
+          onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
+          className="space-y-6"
+        >
+          <LocalDraftBar
+            savedAt={draft.savedAt}
+            onRestore={draft.restore}
+            onDiscard={draft.discard}
+          />
 
-        {product?.needsRewrite && <RewriteWarning />}
-        {product?.importSource && <ProvenanceSection product={product} />}
+          {product?.needsRewrite && <RewriteWarning />}
+          {product?.importSource && <ProvenanceSection product={product} />}
 
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList aria-label="Product sections">
-            {TABS.map((entry) => (
-              <TabsTrigger key={entry.value} value={entry.value}>
-                {entry.label}
-                {errored.has(entry.value) && (
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList aria-label="Product sections">
+              {TABS.map((entry) => (
+                <TabsTrigger key={entry.value} value={entry.value}>
+                  {entry.label}
+                  {errored.has(entry.value) && (
+                    <>
+                      <span
+                        aria-hidden
+                        className="size-1.5 rounded-full bg-destructive"
+                      />
+                      <span className="sr-only"> (has an error)</span>
+                    </>
+                  )}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {/* `forceMount` on every panel, which is the whole reason this is
+                safe. Radix unmounts an inactive tab by default; these panels
+                hold registered form fields, an in-flight upload and a rich-text
+                editor, and unmounting them on a tab change would throw away
+                editor instances and upload state mid-edit. Mounted-but-`hidden`
+                keeps the DOM and the accessibility tree honest. */}
+            <TabsContent forceMount value="general" className="space-y-6">
+              <EssentialsSection categories={categories} />
+              {/* Sections below swap their resin flavor for print fields when
+                  the product is tier 4 or filed in a print-group category
+                  (M-A3). */}
+              <PricingSpecsSection categories={categories} />
+              <PrintProductionSection categories={categories} />
+              <OccasionsSection categories={categories} />
+            </TabsContent>
+
+            <TabsContent forceMount value="images" className="space-y-6">
+              <MediaSection uploading={uploading} setUploading={setUploading} />
+            </TabsContent>
+
+            <TabsContent forceMount value="customization" className="space-y-6">
+              <CustomizationFieldsSection categories={categories} />
+            </TabsContent>
+
+            <TabsContent forceMount value="details" className="space-y-6">
+              <LexicalSection />
+              <ProvenanceLinksSection />
+              <CareNotesSection categories={categories} />
+              <ProductTranslationsSection />
+            </TabsContent>
+
+            <TabsContent forceMount value="seo" className="space-y-6">
+              <SeoSection slug={product?.slug} />
+            </TabsContent>
+          </Tabs>
+
+          {/* Sticky save bar */}
+          <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">
+            <div className="flex flex-wrap items-center gap-3">
+              {product && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={deleting || saving}
+                  onClick={() => setDeleteOpen(true)}
+                  className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Trash2 /> Delete
+                </Button>
+              )}
+              {/* §12.5's unsaved-changes indicator. A live region that is
+                  always mounted, so the first edit is announced once and a
+                  save clears it — rather than a node that appears from
+                  nowhere, which screen readers do not read. */}
+              <span
+                role="status"
+                className="u-micro inline-flex items-center gap-2 text-graphite"
+              >
+                {dirty && (
                   <>
                     <span
                       aria-hidden
-                      className="size-1.5 rounded-full bg-destructive"
+                      className="size-1.5 rounded-full bg-warning"
                     />
-                    <span className="sr-only"> (has an error)</span>
+                    Unsaved changes
                   </>
                 )}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {/* `forceMount` on every panel, which is the whole reason this is
-              safe. Radix unmounts an inactive tab by default; these panels
-              hold registered form fields, an in-flight upload and a rich-text
-              editor, and unmounting them on a tab change would throw away
-              editor instances and upload state mid-edit. Mounted-but-`hidden`
-              keeps the DOM and the accessibility tree honest. */}
-          <TabsContent forceMount value="general" className="space-y-6">
-            <EssentialsSection categories={categories} />
-            {/* Sections below swap their resin flavor for print fields when
-                the product is tier 4 or filed in a print-group category
-                (M-A3). */}
-            <PricingSpecsSection categories={categories} />
-            <PrintProductionSection categories={categories} />
-            <OccasionsSection categories={categories} />
-          </TabsContent>
-
-          <TabsContent forceMount value="images" className="space-y-6">
-            <MediaSection uploading={uploading} setUploading={setUploading} />
-          </TabsContent>
-
-          <TabsContent forceMount value="customization" className="space-y-6">
-            <CustomizationFieldsSection categories={categories} />
-          </TabsContent>
-
-          <TabsContent forceMount value="details" className="space-y-6">
-            <LexicalSection />
-            <ProvenanceLinksSection />
-            <CareNotesSection categories={categories} />
-            <ProductTranslationsSection />
-          </TabsContent>
-
-          <TabsContent forceMount value="seo" className="space-y-6">
-            <SeoSection slug={product?.slug} />
-          </TabsContent>
-        </Tabs>
-
-        {/* Sticky save bar */}
-        <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">
-          <div>
-            {product && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                disabled={deleting || saving}
-                onClick={() => setDeleteOpen(true)}
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-              >
-                <Trash2 /> Delete
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {product && (
+                // Enables Next draft mode via the staff-gated route handler and
+                // frames the public page (audit C2). The dialog keeps the
+                // new-tab link inside it, so nothing is lost. Hidden once the
+                // docked column is showing — one preview affordance at a time.
+                <DraftPreview
+                  path={`/product/${product.slug}`}
+                  className="@5xl/editor:hidden"
+                />
+              )}
+              <Button type="submit" disabled={saving || uploading}>
+                {saving ? "Saving…" : "Save"}
               </Button>
-            )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {product && (
-              // Enables Next draft mode via the staff-gated route handler and
-              // frames the public page (audit C2). The dialog keeps the
-              // new-tab link inside it, so nothing is lost.
-              <DraftPreview path={`/product/${product.slug}`} />
-            )}
-            <Button type="submit" disabled={saving || uploading}>
-              {saving ? "Saving…" : "Save"}
-            </Button>
-          </div>
-        </div>
 
-        <ConfirmDeleteDialog
-          open={deleteOpen}
-          onOpenChange={setDeleteOpen}
-          count={1}
-          noun="Product"
-          busy={deleting}
-          onConfirm={handleDelete}
-          extraWarning="Its gallery images are removed from storage too."
-        />
-      </form>
+          <ConfirmDeleteDialog
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+            count={1}
+            noun="Product"
+            busy={deleting}
+            onConfirm={handleDelete}
+            extraWarning="Its gallery images are removed from storage too."
+          />
+        </form>
+      </EditorSplit>
     </FormProvider>
   );
 }
