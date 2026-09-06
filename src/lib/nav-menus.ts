@@ -159,6 +159,32 @@ export function describeHrefProblem(href: string): string | null {
   return `There is no page at ${path}. Pick one of the site's pages, or paste a full https:// address.`;
 }
 
+/** The longest label the header and the drawer will set in one line. */
+export const NAV_LABEL_MAX = 60;
+
+/**
+ * Why a link's words are refused, phrased for the person who typed them —
+ * the label counterpart of `describeHrefProblem`, and for the same reason:
+ * the Server Action's schema and the board's inline error must be ONE rule,
+ * or the board says "fine" and the save comes back as "Something went wrong".
+ *
+ * `allowEmpty` is for the per-row editor, where clearing the words is a
+ * meaningful act (it drops the override and the catalogue wording returns);
+ * a NEW link has no catalogue wording to fall back to, so there empty is a
+ * refusal.
+ */
+export function describeLabelProblem(
+  label: string,
+  { allowEmpty = false }: { allowEmpty?: boolean } = {},
+): string | null {
+  const trimmed = label.trim();
+  if (!trimmed) return allowEmpty ? null : "Give the link some words";
+  if (trimmed.length > NAV_LABEL_MAX) {
+    return `Keep a navigation label under ${NAV_LABEL_MAX} characters`;
+  }
+  return null;
+}
+
 /** Resolve a stored label blob for one locale; empty means "use the catalogue". */
 export function resolveNavLabel(
   label: unknown,
