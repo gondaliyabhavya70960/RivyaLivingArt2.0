@@ -5,6 +5,77 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 11 — the editor gets its second column (2026-09-06, fifth batch)
+
+REDESIGN.md §12.5 describes the product editor as "two columns — information left, live preview
+right" and the journal editor as "editor left, preview right". Both had the tabs, the sticky
+footer and — since 2026-09-03 — the device-frame draft preview, but the preview lived behind a
+**Preview** button in the footer: a dialog, opened on purpose, closed to keep editing. The
+roadmap's remaining product-form line was "two columns with the draft preview", and this batch
+is that line: the preview becomes a docked column beside the form on both editors.
+
+### The split is a container query, not a breakpoint
+`EditorSplit` lays the form and an `aside` out as two columns when its own CONTAINER is 64rem
+(`@5xl`) or wider. The Studio's content area is the viewport minus a sidebar that is 256px, or
+80px once the owner collapses it to the rail, so a 1280px laptop has 960px of room with the panel
+open and 1136px with the rail. A viewport breakpoint would have had to pick one of those and be
+wrong for the other; measuring the container is right for both, and the same editor docks the
+preview at 1440 with the panel, undocks it at 1280 with the panel, and docks it again at 1280 with
+the rail. This is the repo's first container query — Tailwind v4 carries them in core, named here
+(`@container/editor`) so a section that later declares a container of its own cannot capture the
+variant. Below the threshold the aside is `display: none`, the footer's Preview button stays, and
+the dialog carries on exactly as before; above it the button hides, so there is one preview
+affordance at a time.
+
+### What the column shows, and what it says about itself
+`DraftPreviewPanel` is the phone width (390), 1:1 — the 2026-09-03 rule that a scaled preview
+hides the crowding it exists to reveal still holds, which is also why the column cannot hold the
+tablet and desktop widths: those two buttons open the existing dialog at 768 and 1280 instead.
+The frame is keyed on the editor's count of successful saves, so **every save reloads the
+draft**, plus a reload button for the case where the page changed under it. The note under the
+heading is the honest sentence a draft preview can say: it shows the last save, and unsaved
+edits are not in it yet. The spec's word "live" is read as "the current draft, without a round
+trip" — a frame that rendered the storefront from the form's unsaved values would be a second
+renderer of the product page to keep true, and is not this item.
+
+### Hidden is not gone — and lazy did not help
+The aside is rendered at every width so the layout is right at first paint — no measuring step,
+no one-column flash — which means a phone editing a product would also fetch the whole product
+page into a frame it cannot see. The first cut put `loading="lazy"` on the frame and assumed a
+frame that never intersects never fetches. **Measured, it does**: at 1280 with the sidebar open
+and at 390, Playwright found the product page loaded inside the hidden aside. Chromium treats a
+hidden frame as a communication channel — the tracking-pixel shape — and loads it eagerly on
+purpose. So the frame now mounts only while its column actually has layout: `useIsDisplayed`
+reads `offsetParent` through `useSyncExternalStore` with a `ResizeObserver` (the shape the repo
+prefers to a state-setting effect), and the re-run shows zero product frames at 1280 and 390 and
+the draft fetched fresh the moment the column appears.
+
+### The footer's unsaved-changes indicator
+§12.5 names one. Both editors' sticky footers now carry it, as an always-mounted `role="status"`
+region that reads "Unsaved changes" while the form is dirty and empties on save — mounted always
+rather than appearing, because a live region that arrives with its text is the one screen readers
+do not read.
+
+### Verified
+Typecheck, lint, the 700-test unit suite and `copy:check` clean; production build against a local
+Postgres; the Studio audit clean over both edit routes at 1440 and 390. A Playwright probe drove
+the product and journal editors in both colour schemes and read the layout back:
+
+- **1440, sidebar open** (content 1174 wide): the aside is `block` and `sticky`, 416 wide, the
+  frame 390 wide with the product page's own `h1` inside it, the footer's Preview button hidden.
+  Typing sets the footer's status to "Unsaved changes" and the column's note to "Unsaved edits
+  are not here yet"; reverting clears both. Save remounts the frame (a marker set on the old
+  element is gone) and the reloaded page carries the title. Tablet opens the dialog at 768;
+  Escape closes it. Scrolled 900px, the aside sits at `top: 80` with its bottom at 876 in a
+  900px viewport — it was 908 before the height correction.
+- **1280, sidebar open** (content 1014): the aside is `display: none`, the Preview button shows,
+  and there are zero product frames in the page and zero `iframe` elements in the aside.
+  Collapsing the sidebar in place docks the column at 822 and the frame mounts and loads the
+  page; expanding it again removes the frame.
+- **1280, rail** (content 1190) and **390**: docked with the page loaded, and single-column with
+  no frame, respectively. No horizontal overflow at any width; no page errors in either scheme.
+- **Journal, 1440**: the same column, framing `/blog/demo-post-030` with the post's `h1`.
+
 ## Transformation Phase 11 — the hand-rolled forms learn to point at the field (2026-09-05, fourth batch)
 
 Phase 11's last ungated bullet: "`FieldError` everywhere, helper text." The Studio forms built on
