@@ -1,3 +1,5 @@
+import { normalizeSiteUrl } from "@/lib/site-url";
+
 /**
  * Fall back when a variable is absent OR declared with no value.
  *
@@ -34,12 +36,21 @@ export const SITE = {
    *
    * Normalised here rather than at the call sites, because the next one added
    * would not know to do it.
+   *
+   * `normalizeSiteUrl` carries that rule now, along with the one a trailing
+   * slash is only half of: a value pasted from a hosting dashboard is a bare
+   * host, `www.rivyalivingart.com`, and `new URL(SITE.url)` in
+   * `shared-metadata.ts` throws on it — a failed build rather than a wrong
+   * link. A scheme-less host becomes `https://…`; anything still unusable is
+   * treated as unset, so the fallback below applies.
    */
-  url: envOr(
-    process.env.NEXT_PUBLIC_SITE_URL,
+  url:
+    normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
     "https://www.rivyalivingart.com",
-  ).replace(/\/+$/, ""),
-  whatsappNumber: envOr(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "917096036250"),
+  whatsappNumber: envOr(
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
+    "917096036250",
+  ),
   phoneDisplay: "+91 7096036250",
   phoneTel: "+917096036250",
   email: "gondaliyabhavya70960@gmail.com",
@@ -120,7 +131,11 @@ export const FOOTER_LINKS = {
       label: "Stories",
       href: "/blog?category=behind-the-studio",
     },
-    { key: "journalGuides", label: "Guides", href: "/blog?category=gift-guides" },
+    {
+      key: "journalGuides",
+      label: "Guides",
+      href: "/blog?category=gift-guides",
+    },
   ],
   legal: [
     { key: "privacy", label: "Privacy Policy", href: "/privacy" },

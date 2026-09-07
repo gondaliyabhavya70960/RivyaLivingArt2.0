@@ -113,13 +113,44 @@ describe("SITE public-value fallbacks", () => {
     ]) {
       const site = await load({ NEXT_PUBLIC_SITE_URL: given });
       expect(site.url).toBe("https://example.com");
-      expect(`${site.url}/#organization`).toBe("https://example.com/#organization");
+      expect(`${site.url}/#organization`).toBe(
+        "https://example.com/#organization",
+      );
     }
   });
 
   it("leaves a correctly-formed origin alone", async () => {
     const site = await load({ NEXT_PUBLIC_SITE_URL: "https://example.com" });
     expect(site.url).toBe("https://example.com");
+  });
+
+  it("repairs a scheme-less host instead of shipping a relative canonical", async () => {
+    // A dashboard shows the domain without a scheme, so that is what gets
+    // pasted. Left as-is, `${SITE.url}/shop` is a relative path in every
+    // canonical, sitemap entry, JSON-LD @id and OG image URL — and
+    // `new URL(SITE.url)` in shared-metadata.ts throws outright.
+    const site = await load({
+      NEXT_PUBLIC_SITE_URL: "www.rivyalivingart.com",
+    });
+    expect(site.url).toBe("https://www.rivyalivingart.com");
+  });
+
+  it("falls back rather than throwing on a value beyond repair", async () => {
+    const site = await load({ NEXT_PUBLIC_SITE_URL: "https://" });
+    expect(site.url).toBe("https://www.rivyalivingart.com");
+  });
+
+  it("always yields an origin metadataBase can parse", async () => {
+    for (const given of [
+      "",
+      "www.rivyalivingart.com",
+      "https://example.com/",
+      "https://",
+      "not a url at all",
+    ]) {
+      const site = await load({ NEXT_PUBLIC_SITE_URL: given });
+      expect(() => new URL(site.url)).not.toThrow();
+    }
   });
 
   it("never yields an empty url or number, whatever the input", async () => {
@@ -131,5 +162,47 @@ describe("SITE public-value fallbacks", () => {
       expect(site.url).not.toBe("");
       expect(site.whatsappNumber).not.toBe("");
     }
+  });
+});
+
+/**
+ * The half of the failure that had nothing to do with `SITE`.
+ *
+ * `env.ts` is imported by `db.ts`, so its module-load throw is not a scoped
+ * error — it is every route that touches the database, which during
+ * `next build` means page-data collection for the whole app. A production
+ * deploy died on `NEXT_PUBLIC_SITE_URL: Invalid URL` for a variable that is
+ * declared optional and that no caller reads off `env`.
+ *
+ * Required vars must still fail loudly; this pins the line between the two.
+ */
+describe("env module load", () => {
+  const load = async (patch: Record<string, string>) => {
+    const previous = { ...process.env };
+    Object.assign(process.env, patch);
+    vi.resetModules();
+    try {
+      return await import("@/lib/env");
+    } finally {
+      process.env = previous;
+    }
+  };
+
+  it("does not throw on a site URL it cannot use, and normalises one it can", async () => {
+    const repaired = await load({
+      NEXT_PUBLIC_SITE_URL: "www.rivyalivingart.com",
+    });
+    expect(repaired.env.NEXT_PUBLIC_SITE_URL).toBe(
+      "https://www.rivyalivingart.com",
+    );
+
+    const unusable = await load({ NEXT_PUBLIC_SITE_URL: "https://" });
+    expect(unusable.env.NEXT_PUBLIC_SITE_URL).toBeUndefined();
+  });
+
+  it("still refuses to boot without a required var", async () => {
+    await expect(load({ DATABASE_URL: "" })).rejects.toThrow(
+      /DATABASE_URL is required/,
+    );
   });
 });
