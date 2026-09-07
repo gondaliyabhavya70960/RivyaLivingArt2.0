@@ -340,9 +340,22 @@ describe("when a page is live", () => {
     expect(isLive(page, at("2026-11-08T07:00:01Z"))).toBe(true);
   });
 
-  it("names the three states the studio shows", () => {
+  it("names the five states the studio shows", () => {
     expect(scheduleState({ status: "DRAFT", publishAt: null }, now)).toBe(
       "draft",
+    );
+    // D14's two states are named, not folded into "draft" (2026-09-07): a
+    // page waiting for a second look and one taken down on purpose read
+    // differently in the list, though neither is public — and a future
+    // publishAt on either does not make it "scheduled".
+    expect(
+      scheduleState(
+        { status: "REVIEW", publishAt: at("2026-12-01T00:00:00Z") },
+        now,
+      ),
+    ).toBe("review");
+    expect(scheduleState({ status: "ARCHIVED", publishAt: null }, now)).toBe(
+      "archived",
     );
     expect(scheduleState({ status: "PUBLISHED", publishAt: null }, now)).toBe(
       "live",

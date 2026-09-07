@@ -32,12 +32,22 @@ export function isLive(
 }
 
 /** What the studio calls the page's state, derived rather than stored. */
-export type ScheduleState = "draft" | "scheduled" | "live";
+export type ScheduleState =
+  | "draft"
+  | "review"
+  | "archived"
+  | "scheduled"
+  | "live";
 
 export function scheduleState(
   page: { status: string; publishAt: Date | null },
   now: Date = new Date(),
 ): ScheduleState {
+  // The two D14 states are named rather than folded into "draft": a page
+  // waiting for a second look and one taken down on purpose are different
+  // things to the person reading the list, even though neither is public.
+  if (page.status === "REVIEW") return "review";
+  if (page.status === "ARCHIVED") return "archived";
   if (page.status !== "PUBLISHED") return "draft";
   return isLive(page, now) ? "live" : "scheduled";
 }

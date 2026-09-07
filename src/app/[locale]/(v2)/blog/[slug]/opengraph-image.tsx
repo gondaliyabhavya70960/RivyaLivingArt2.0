@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og";
 import { ogBrand } from "@/app/og-brand";
 import { SITE } from "@/lib/constants";
 import { db } from "@/lib/db";
+import { demoWhere } from "@/lib/demo-content";
 import { BRAND, mineralAlpha } from "@/lib/brand-colors";
 
 // Prisma needs Node — the default edge runtime cannot open the pg pool.
@@ -35,8 +36,11 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
 export default async function OpengraphImage({ params }: ImageProps) {
   const brand = await ogBrand();
   const { slug } = await params;
-  const post = await db.blogPost.findUnique({
-    where: { slug },
+  // Every public reader selects PUBLISHED and spreads the demo clause; this
+  // one did neither, so a draft, a row in review or an archived one rendered
+  // its title at a guessable URL. It falls back to the brand card instead.
+  const post = await db.blogPost.findFirst({
+    where: { slug, status: "PUBLISHED", ...(await demoWhere()) },
     select: { title: true, publishedAt: true, createdAt: true },
   });
 

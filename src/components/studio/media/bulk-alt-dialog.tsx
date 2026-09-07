@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 
 /**
  * The BulkBar's "Description" action (batch D · media system) — the SAME
@@ -35,6 +36,7 @@ export function BulkAltDialog({
 }) {
   const [alt, setAlt] = useState("");
   const [busy, setBusy] = useState(false);
+  const [dismissRef, dismissProps] = useDismissGuard(busy);
 
   async function handleSave() {
     setBusy(true);
@@ -60,7 +62,7 @@ export function BulkAltDialog({
         if (!busy) onOpenChange(next);
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" ref={dismissRef} {...dismissProps}>
         <DialogHeader>
           <DialogTitle>
             Describe {ids.length} {ids.length === 1 ? "picture" : "pictures"}

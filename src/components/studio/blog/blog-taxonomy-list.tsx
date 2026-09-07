@@ -14,6 +14,7 @@ import {
   upsertBlogCategory,
   upsertTag,
 } from "@/actions/blog";
+import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 import { useSelection } from "@/hooks/use-selection";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -80,6 +81,10 @@ export function BlogTaxonomyList({
   const [editing, setEditing] = useState<TaxonomyRow | null>(null);
   const [draft, setDraft] = useState<TranslationsValue>({});
   const [saving, setSaving] = useState(false);
+  // The per-language names dialog holds eight typed fields; a stray Escape
+  // or a click beside it must not throw them away (the same guard the
+  // category and FAQ dialogs carry).
+  const [dismissRef, dismissProps] = useDismissGuard(saving);
 
   const isCategory = kind === "category";
   const nounPlural = isCategory ? "categories" : "tags";
@@ -299,7 +304,11 @@ export function BlogTaxonomyList({
           if (!open) setEditing(null);
         }}
       >
-        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+        <DialogContent
+          className="max-h-[85vh] max-w-2xl overflow-y-auto"
+          ref={dismissRef}
+          {...dismissProps}
+        >
           <DialogHeader>
             <DialogTitle>
               {isCategory ? "Category" : "Tag"} name in other languages

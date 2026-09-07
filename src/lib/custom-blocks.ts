@@ -11,10 +11,13 @@
  *
  * The price of that is layout rot: a page whose blocks are arbitrary drifts
  * away from the design the moment two of them disagree. The guard is the
- * catalogue's SIZE. Six types. Each one validated by a Zod schema, each field
- * declared, each ground computed rather than chosen. Adding a seventh is a
- * decision to maintain a seventh through the next redesign — take it
- * deliberately or not at all.
+ * catalogue's SIZE. Sixteen types — six at first, ten added one decision at
+ * a time in the Phase 11 growth (readers of existing content, film, and
+ * picture blocks), the count asserted by `custom-blocks.test.ts` so the next
+ * one is also a decision. Each one validated by a Zod schema, each field
+ * declared, each ground computed rather than chosen. Adding a seventeenth is
+ * a decision to maintain it through the next redesign — take it deliberately
+ * or not at all.
  *
  * Plain module, no server imports: the studio editor and the storefront
  * renderer both read it.
@@ -87,7 +90,7 @@ const richText = z
   .record(z.string(), z.unknown())
   .default(() => ({ type: "doc", content: [] }));
 
-/* ═══════════════════════ the six blocks ═══════════════════════ */
+/* ═══════════════════════ the blocks — the original six first ═══════════════════════ */
 
 export const heroSchema = z.object({
   image: imageUrl,

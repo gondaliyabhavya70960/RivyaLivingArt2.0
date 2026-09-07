@@ -33,11 +33,12 @@ import { cn } from "@/lib/utils";
  * One block's fields.
  *
  * Written as an explicit switch rather than a generic renderer driven by field
- * descriptors. Six blocks is small enough that the switch reads faster than
- * the abstraction, and the fields genuinely differ: a product grid needs a
- * mode and a slug list, a picture block needs a library picker, the FAQ block
- * needs the questions that already exist. A descriptor language rich enough
- * for all of that is a worse thing to maintain than six small forms.
+ * descriptors. Sixteen blocks is still small enough that the switch reads
+ * faster than the abstraction, and the fields genuinely differ: a product
+ * grid needs a mode and a slug list, a picture block needs a library picker,
+ * a film block a video picker and a poster, the FAQ block needs the questions
+ * that already exist. A descriptor language rich enough for all of that is a
+ * worse thing to maintain than sixteen small forms.
  */
 export function BlockFields({
   block,
@@ -557,6 +558,11 @@ export function BlockFields({
             label="Video"
             value={String(data.videoUrl ?? "")}
             onChange={(v) => set("videoUrl", v)}
+            // A picked film's library poster fills an EMPTY poster field —
+            // never one the owner already chose.
+            onPoster={(url) => {
+              if (!data.posterUrl) set("posterUrl", url);
+            }}
           />
           <ImageField
             id={id("posterUrl")}
@@ -663,6 +669,11 @@ export function BlockFields({
             label="Video"
             value={String(data.videoUrl ?? "")}
             onChange={(v) => set("videoUrl", v)}
+            // A picked film's library poster fills an EMPTY poster field —
+            // never one the owner already chose.
+            onPoster={(url) => {
+              if (!data.posterUrl) set("posterUrl", url);
+            }}
           />
           <ImageField
             id={id("posterUrl")}
@@ -780,11 +791,15 @@ function VideoField({
   label,
   value,
   onChange,
+  onPoster,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (url: string) => void;
+  /** The library poster of a picked film, when it has one — the caller
+   *  decides whether an empty poster field takes it. */
+  onPoster?: (url: string) => void;
 }) {
   return (
     <div className="space-y-2">
@@ -796,7 +811,13 @@ function VideoField({
           placeholder="Choose from the library, or paste a full https:// address"
           onChange={(e) => onChange(e.target.value)}
         />
-        <MediaPicker accept="VIDEO" onSelect={(item) => onChange(item.url)} />
+        <MediaPicker
+          accept="VIDEO"
+          onSelect={(item) => {
+            onChange(item.url);
+            if (item.posterUrl) onPoster?.(item.posterUrl);
+          }}
+        />
         {value && (
           <Button
             type="button"

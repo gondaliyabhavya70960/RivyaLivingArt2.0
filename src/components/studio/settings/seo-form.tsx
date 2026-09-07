@@ -129,7 +129,8 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
               label="Default OG image"
               value={field.value}
               onChange={field.onChange}
-              accept="image/*"
+              library="IMAGE"
+                accept="image/*"
               help="The image shown when a link to the site is shared — 1200×630 works best."
               error={errors.ogImage?.message}
             />

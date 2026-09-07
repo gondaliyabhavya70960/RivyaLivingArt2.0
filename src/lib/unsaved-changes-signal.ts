@@ -30,6 +30,9 @@ let pending: string | null = null;
 /** Recomputed on every change so `getSnapshot` can return a stable reference —
  *  returning a fresh object each call makes React loop. */
 let snapshot: UnsavedChangesSnapshot = { dirty: false, pending: null };
+/** One object, not one per call — React compares server snapshots by
+ *  reference and warns (then re-renders) when they differ. */
+const SERVER_SNAPSHOT: UnsavedChangesSnapshot = { dirty: false, pending: null };
 
 function emit() {
   snapshot = { dirty: dirtyCount > 0, pending };
@@ -48,7 +51,7 @@ export const unsavedChanges = {
   },
   /** The server renders nothing dirty and nothing pending. */
   getServerSnapshot(): UnsavedChangesSnapshot {
-    return { dirty: false, pending: null };
+    return SERVER_SNAPSHOT;
   },
 
   /** Read without subscribing — for the event listeners, which are not React. */

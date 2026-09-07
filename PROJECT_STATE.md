@@ -211,7 +211,9 @@ SESSION CHECKPOINT block above); what remains of Phase 1a (D18, D22, D23, D24, D
 phase waits on the decisions in `docs/transformation-roadmap.md` §2–§3. Phase 2f #2 (Tiptap walk in `media-usages.ts`) is DONE — see
 Phase 2f below; the earlier text of this section was stale.
 
-Also open: Phase 2e's five owner decisions, and D7–D28 from the transformation audit.
+Also open: Phase 2e's five owner decisions. The audit's D7–D27 gates were answered on 2026-09-04
+(CHANGELOG, batch B0); what each phase still owes is tracked line by line in
+`docs/transformation-roadmap.md` — Phase 11's reading against HEAD of 2026-09-07 is the latest.
 
 ---
 

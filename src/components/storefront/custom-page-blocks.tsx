@@ -66,7 +66,7 @@ import { cn } from "@/lib/utils";
  * assembling a lander picks what goes on it and in what order; they do not
  * pick how it looks, because that is how a page stops matching the site.
  *
- * Server components: the six original blocks take their extra data
+ * Server components: the blocks that read existing content take their extra data
  * (products, FAQs, rendered rich text) pre-resolved through
  * `resolveBlockExtras` — `custom-page-data.ts` batches every block's query
  * into one `Promise.all` per page so a six-block lander costs one round trip,
@@ -186,7 +186,7 @@ function BlockCta({
   );
 }
 
-/* ═══════════════════════ the six ═══════════════════════ */
+/* ═══════════════════════ the blocks — the original six first ═══════════════════════ */
 
 function HeroBlock({
   id,

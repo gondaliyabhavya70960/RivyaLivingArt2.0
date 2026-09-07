@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FieldValues, UseFormReset, UseFormWatch } from "react-hook-form";
 
 import {
@@ -84,6 +84,12 @@ export function useLocalDraft<T extends FieldValues>({
   ) as LocalDraftRecord<T> | null;
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Bumped on every Restore. `reset()` repopulates every registered input,
+  // but an editor that reads its value ONCE on mount (the Tiptap body,
+  // which says so in its own header) keeps showing the old text — so the
+  // form keys those editors on this and they remount with the restored
+  // value. Everything else ignores it.
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
     if (!enabled) return;
@@ -117,11 +123,14 @@ export function useLocalDraft<T extends FieldValues>({
   function restore() {
     if (!record) return;
     reset(record.values, { keepDefaultValues: false });
+    setVersion((current) => current + 1);
   }
 
   return {
     hasDraft: record !== null,
     savedAt: record?.savedAt ?? null,
+    /** Count of restores — key a mount-once editor on it. */
+    version,
     restore,
     discard,
   };

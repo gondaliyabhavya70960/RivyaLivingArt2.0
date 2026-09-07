@@ -19,6 +19,8 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
 
 const STATE_LABEL = {
   draft: "Draft",
+  review: "In review",
+  archived: "Archived",
   scheduled: "Scheduled",
   live: "Live",
 } as const;
@@ -62,7 +64,9 @@ export default async function CustomPagesPage({
       {allPages.some((p) => p.isDemo) && (
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <Link
-            href={demoOnly ? "/studio/custom-pages" : "/studio/custom-pages?demo=1"}
+            href={
+              demoOnly ? "/studio/custom-pages" : "/studio/custom-pages?demo=1"
+            }
             aria-pressed={demoOnly}
             role="button"
             className={

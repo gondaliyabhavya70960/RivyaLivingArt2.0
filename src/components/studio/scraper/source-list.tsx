@@ -22,6 +22,7 @@ import { EmptyState } from "@/components/studio/page-header";
 import { FieldError } from "@/components/studio/field-error";
 import { FieldHint, describedBy } from "@/components/studio/field-hint";
 import { Pagination, PAGE_SIZE, usePagination } from "@/components/studio/pagination";
+import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -172,6 +173,10 @@ function AddSourceBody({
   const [supply, setSupply] = useState(false);
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<BulkAddReport | null>(null);
+  // Blocks Escape and outside-clicks once something has been typed, not
+  // only during the save — the "only while busy" pair this replaces let a
+  // pasted list of URLs vanish on a stray key.
+  const [dismissRef, dismissProps] = useDismissGuard(busy);
   const [errors, setErrors] = useState<{
     urls?: string;
     vertical?: string;
@@ -233,11 +238,7 @@ function AddSourceBody({
   }
 
   return (
-    <DialogContent
-      className="max-w-md"
-      onInteractOutside={(e) => busy && e.preventDefault()}
-      onEscapeKeyDown={(e) => busy && e.preventDefault()}
-    >
+    <DialogContent className="max-w-md" ref={dismissRef} {...dismissProps}>
       <DialogHeader>
         <DialogTitle>Add sources</DialogTitle>
         <DialogDescription>

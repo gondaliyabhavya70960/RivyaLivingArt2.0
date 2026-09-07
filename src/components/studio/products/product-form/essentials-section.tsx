@@ -35,7 +35,9 @@ export function EssentialsSection({
           aria-describedby={errors.title ? "product-title-error" : undefined}
           {...register("title")}
         />
-        <FieldError id="product-title-error">{errors.title?.message}</FieldError>
+        <FieldError id="product-title-error">
+          {errors.title?.message}
+        </FieldError>
       </div>
 
       <div className="space-y-1.5">
@@ -58,7 +60,11 @@ export function EssentialsSection({
 
       <div className="space-y-1.5">
         <Label htmlFor="product-description">Description</Label>
-        <Textarea id="product-description" rows={8} {...register("description")} />
+        <Textarea
+          id="product-description"
+          rows={8}
+          {...register("description")}
+        />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -107,7 +113,9 @@ export function EssentialsSection({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="DRAFT">Draft</SelectItem>
+                  <SelectItem value="REVIEW">Review</SelectItem>
                   <SelectItem value="PUBLISHED">Published</SelectItem>
+                  <SelectItem value="ARCHIVED">Archived</SelectItem>
                 </SelectContent>
               </Select>
             )}

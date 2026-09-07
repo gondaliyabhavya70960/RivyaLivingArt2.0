@@ -84,6 +84,7 @@ export function PageForm({ page }: { page: PageFormInitial }) {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -121,6 +122,10 @@ export function PageForm({ page }: { page: PageFormInitial }) {
       toast.error(result.error);
       return;
     }
+    // The save is the new baseline: `isDirty` compares against the values
+    // the form mounted with, and this form is edit-only, so without the
+    // reset the navigation guard stayed armed after every save.
+    reset(values);
     toast.success("Page saved.");
     router.refresh();
   }

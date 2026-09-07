@@ -101,9 +101,11 @@ export type UpsertTestimonialInput = z.input<typeof upsertSchema>;
  * order.
  *
  * `describeTestimonialProblem` runs BEFORE the write and, when it returns a
- * reason, the row is never touched — the message comes straight back as the
- * action's error rather than a generic "something went wrong", so a refused
- * publish tells the owner exactly what to fix. See that function's own
+ * reason, the row is never touched. The throw reaches the caller as
+ * `runAction`'s generic "Something went wrong" — it maps every message but
+ * "Unauthorized" to that — which is why the form runs the same rule before
+ * calling here and lands the reason on its Permission control; this refusal
+ * is the last line, not the one the owner reads. See that function's own
  * JSDoc for the one case it deliberately does NOT catch: a back-filled live
  * testimonial nobody has opened since the guard shipped.
  */

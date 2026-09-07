@@ -23,19 +23,22 @@ import {
 import { FormSection } from "./form-section";
 import { Model3dUrlField, VideoUrlField } from "./spec-fields";
 import { IMAGE_ROLE_OPTIONS, type FormValues } from "./schema";
+import { useIsPrintProduct } from "./use-print-product";
 
 /** Gallery image upload/order/alt + video and 3D-model URLs. */
 export function MediaSection({
+  categories,
   uploading,
   setUploading,
 }: {
+  categories: { id: string; slug: string }[];
   uploading: boolean;
   setUploading: (value: boolean) => void;
 }) {
   const { register, control } = useFormContext<FormValues>();
   const imagesArray = useFieldArray({ control, name: "images" });
   const watchedImages = useWatch({ control, name: "images" });
-  const tier = useWatch({ control, name: "tier" });
+  const isPrint = useIsPrintProduct(categories);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleUpload(files: FileList | null) {
@@ -179,9 +182,13 @@ export function MediaSection({
         </div>
       )}
 
-      {/* Tier 4 moves these into the dedicated 3D-printing section —
-          each field is only ever mounted once. */}
-      {tier !== "4" && (
+      {/* A print product carries these in its dedicated 3D-printing section
+          instead, so each field is mounted once. The SAME predicate as that
+          section — tier 4 OR a print-group category — because gating on the
+          tier alone mounted both copies for a print product filed without
+          the tier: two inputs with one id, and a label pointing at the
+          wrong one. */}
+      {!isPrint && (
         <div className="grid gap-5 sm:grid-cols-2">
           <VideoUrlField />
           <Model3dUrlField />
