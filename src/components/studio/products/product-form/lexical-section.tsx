@@ -114,6 +114,11 @@ export function LexicalSection() {
           </button>
         ))}
       </div>
+      {/* The Add row button and the suggestion chips keep working past the
+          cap, so the array-level refusal can only be reported here. */}
+      <FieldError id="product-lexical-error">
+        {errors.lexical?.root?.message ?? errors.lexical?.message}
+      </FieldError>
     </FormSection>
   );
 }

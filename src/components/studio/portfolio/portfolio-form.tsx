@@ -839,18 +839,36 @@ export function PortfolioForm({
                       className="aspect-square w-full rounded-lg border border-border object-cover"
                     />
                     <Input
+                      id={`portfolio-image-alt-${index}`}
                       aria-label={`Alt text for image ${index + 1}`}
                       placeholder="Alt text"
+                      aria-invalid={!!errors.images?.[index]?.alt}
+                      aria-describedby={describedBy(
+                        errors.images?.[index]?.alt &&
+                          `portfolio-image-alt-${index}-error`,
+                      )}
                       {...register(`images.${index}.alt`)}
                     />
+                    <FieldError id={`portfolio-image-alt-${index}-error`}>
+                      {errors.images?.[index]?.alt?.message}
+                    </FieldError>
                     {/* Alt describes the picture for someone who cannot see
                         it; the caption tells every reader something the
                         picture does not. Both, or either, or neither. */}
                     <Input
+                      id={`portfolio-image-caption-${index}`}
                       aria-label={`Caption for image ${index + 1}`}
                       placeholder="Caption (printed beside the plate number)"
+                      aria-invalid={!!errors.images?.[index]?.caption}
+                      aria-describedby={describedBy(
+                        errors.images?.[index]?.caption &&
+                          `portfolio-image-caption-${index}-error`,
+                      )}
                       {...register(`images.${index}.caption`)}
                     />
+                    <FieldError id={`portfolio-image-caption-${index}-error`}>
+                      {errors.images?.[index]?.caption?.message}
+                    </FieldError>
                     <Button
                       type="button"
                       variant="ghost"

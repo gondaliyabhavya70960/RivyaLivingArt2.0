@@ -73,6 +73,15 @@ SEO fields, the journal's excerpt and SEO title, and the portfolio's result type
 the product's image alt text, help text and lexical rows, were wired before the second round, which
 passed 23 of 23.
 
+A third round came from auditing the schemas mechanically rather than by eye: a script that walks
+every capped field in the eight client schemas and asks whether a `FieldError` is bound to it found
+eight more with none — the settings opening-hours cells, the landing page's address and sharing
+picture, the testimonial's photograph and installation URLs, the portfolio's image alt and caption,
+and the two ARRAY-level caps (the product's lexical rows and its linked products), which no single
+control owns and which are now reported under their sections. Two fields it flagged are genuinely
+unreachable and were left alone: a boolean caught by the schema-level refine, and a rating that
+comes from a widget offering only one to five.
+
 ## Transformation Phase 11 — every Studio form gets its local draft (2026-09-07, seventh batch)
 
 The roadmap's autosave line was done on the three long editors and open on eight other forms:

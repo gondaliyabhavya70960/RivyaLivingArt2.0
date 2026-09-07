@@ -609,14 +609,32 @@ export function SettingsForm({
                     className="w-full sm:w-44"
                     placeholder="Mon–Sat"
                     aria-label={`Days, row ${index + 1}`}
+                    aria-invalid={!!errors.businessHours?.[index]?.days}
+                    aria-describedby={describedBy(
+                      errors.businessHours?.[index]?.days &&
+                        `settings-hours-days-${index}-error`,
+                    )}
                     {...register(`businessHours.${index}.days` as const)}
                   />
                   <Input
                     className="w-full sm:w-48"
                     placeholder="10:00–19:00"
                     aria-label={`Hours, row ${index + 1}`}
+                    aria-invalid={!!errors.businessHours?.[index]?.hours}
+                    aria-describedby={describedBy(
+                      errors.businessHours?.[index]?.hours &&
+                        `settings-hours-hours-${index}-error`,
+                    )}
                     {...register(`businessHours.${index}.hours` as const)}
                   />
+                  <div className="w-full">
+                    <FieldError id={`settings-hours-days-${index}-error`}>
+                      {errors.businessHours?.[index]?.days?.message}
+                    </FieldError>
+                    <FieldError id={`settings-hours-hours-${index}-error`}>
+                      {errors.businessHours?.[index]?.hours?.message}
+                    </FieldError>
+                  </div>
                   <Button
                     type="button"
                     size="sm"

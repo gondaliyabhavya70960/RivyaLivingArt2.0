@@ -217,8 +217,11 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
             <Input
               id="cp-slug"
               placeholder="diwali-2026"
+              aria-invalid={!!errors.slug}
+              aria-describedby={describedBy(errors.slug && "cp-slug-error")}
               {...register("slug")}
             />
+            <FieldError id="cp-slug-error">{errors.slug?.message}</FieldError>
             <p className="text-xs text-graphite">
               Leave it blank to build one from the title
               {title ? ` — “${title}” would become a URL under /p/.` : "."}
@@ -325,6 +328,10 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="Shown when the link is pasted into a chat"
+                  aria-invalid={!!errors.ogImage}
+                  aria-describedby={describedBy(
+                    errors.ogImage && "cp-og-error",
+                  )}
                 />
                 <MediaPicker onSelect={(item) => field.onChange(item.url)} />
                 {field.value && (
@@ -338,6 +345,9 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
                   </Button>
                 )}
               </div>
+              <FieldError id="cp-og-error">
+                {errors.ogImage?.message}
+              </FieldError>
             </div>
           )}
         />

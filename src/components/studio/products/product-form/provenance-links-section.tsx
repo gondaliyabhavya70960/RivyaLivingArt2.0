@@ -7,7 +7,9 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { searchProductsForLink } from "@/actions/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 
 import type { FormValues } from "./schema";
 
@@ -25,7 +27,10 @@ const TIER_LABELS: Record<number, string> = {
  * owner-picked here — never inferred — so the provenance story stays true.
  */
 export function ProvenanceLinksSection() {
-  const { control } = useFormContext<FormValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   const links = useFieldArray({ control, name: "madeWith" });
   const [q, setQ] = useState("");
   const [results, setResults] = useState<
@@ -141,6 +146,14 @@ export function ProvenanceLinksSection() {
             ))}
         </ul>
       )}
+      {/* The picker appends without a limit, so the array cap can only be
+          reported here — no single control owns it. */}
+      <FieldError id="product-made-with-error">
+        {errors.madeWith?.root?.message ?? errors.madeWith?.message}
+      </FieldError>
+      <p className="text-xs text-muted-foreground">
+        Up to {PRODUCT_LIMITS.madeWithRows} links.
+      </p>
     </FormSection>
   );
 }

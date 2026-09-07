@@ -862,8 +862,19 @@ export function TestimonialForm({
                   className="min-w-56 flex-1"
                   placeholder="https://… or /uploads/…"
                   aria-label="Photograph URL"
+                  id="testimonial-avatar-url"
+                  aria-invalid={!!formState.errors.avatarUrl}
+                  aria-describedby={describedBy(
+                    formState.errors.avatarUrl &&
+                      "testimonial-avatar-url-error",
+                  )}
                   {...register("avatarUrl")}
                 />
+                <div className="w-full">
+                  <FieldError id="testimonial-avatar-url-error">
+                    {formState.errors.avatarUrl?.message}
+                  </FieldError>
+                </div>
                 <MediaPicker
                   defaultFolder="site"
                   onSelect={(item) => {
@@ -895,8 +906,19 @@ export function TestimonialForm({
                   className="min-w-56 flex-1"
                   placeholder="https://… or /uploads/…"
                   aria-label="Installation photo URL"
+                  id="testimonial-installation-url"
+                  aria-invalid={!!formState.errors.installationImageUrl}
+                  aria-describedby={describedBy(
+                    formState.errors.installationImageUrl &&
+                      "testimonial-installation-url-error",
+                  )}
                   {...register("installationImageUrl")}
                 />
+                <div className="w-full">
+                  <FieldError id="testimonial-installation-url-error">
+                    {formState.errors.installationImageUrl?.message}
+                  </FieldError>
+                </div>
                 <MediaPicker
                   defaultFolder="site"
                   onSelect={(item) => {
