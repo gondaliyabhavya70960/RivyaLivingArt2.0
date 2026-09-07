@@ -15,8 +15,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 /**
- * Spec-mandated bulk-delete warning. States the exact count and type;
- * for more than 10 items the user must type DELETE to arm the button.
+ * Spec-mandated bulk-delete warning. States the exact count and type; for
+ * anything bulk — two rows or more — the user must type DELETE to arm the
+ * button (REDESIGN.md §12.5: "behind a typed confirmation for anything
+ * bulk"). It used to arm only above ten, which left a nine-row delete one
+ * click away; a single row stays one click, because that is not bulk.
  */
 export function ConfirmDeleteDialog({
   open,
@@ -37,7 +40,7 @@ export function ConfirmDeleteDialog({
   extraWarning?: string;
 }) {
   const [typed, setTyped] = useState("");
-  const needsTyping = count > 10;
+  const needsTyping = count > 1;
   const armed = !needsTyping || typed.trim().toUpperCase() === "DELETE";
   const plural =
     count === 1

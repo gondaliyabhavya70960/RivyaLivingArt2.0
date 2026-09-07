@@ -104,13 +104,44 @@ product's 3D-model URL were claimed by no tab, so a refusal on either switched t
 none; the portfolio's location and year set `aria-invalid` but never pointed at their message; the
 landing page's title did neither. All four are wired.
 
+A sixth reader walked the audit's Phase 11 rows and §12.5 itself, and its cheapest ungated finds
+are in this batch too. The roadmap strikes "guard on dialog CRUD" as done, and the hook's own header
+named the journal taxonomy among the dialogs it covered — but three typed-into dialogs still closed
+on a stray Escape: the per-language names on a journal category or tag, the scraper's Add sources
+(which kept the exact "only while busy" pair the hook was written to replace) and the media
+library's bulk description. All three carry `useDismissGuard` now, and the header lists them. The
+landing-page editor offered two of D14's four states, the same hole as the product editor; it
+offers the four, and the list names a page in review or archived instead of calling both "Draft"
+(`scheduleState` gains the two states, with a test). REDESIGN.md §12.5 asks for "a typed
+confirmation for anything bulk" and the confirm dialog armed the DELETE box only above ten rows,
+so a nine-row delete was one click; it arms at two, and a single row stays one click because that
+is not bulk. The activity log stores each writer's previous state (up to 8 KB, audit row 71) and
+showed it as an 80-character truncation with no way to read the rest; a cut record now opens into
+the full, pretty-printed JSON in place. And the standalone Site Images board had no way to its
+publish history — only the composer's header button reached it — so each group's header carries
+the same History button for the same surface key, beside rather than inside the publish bar, which
+renders nothing when nothing is staged. The process board's docstring claimed "revision history
+comes free from the board it shares"; the sections action writes no revision, so it says so now.
+The browser pass over the guarded bulk-description dialog then caught one more: the bulk bar
+clears the selection on Escape (Part 17 — a persistent toolbar over a table is a layer), and its
+window-level listener fired for an Escape pressed INSIDE a dialog the bar had opened, so closing the
+Move or Description dialog with the keyboard — or having the guard refuse it — also dropped the
+rows behind it. The bar now ignores an Escape another layer has already answered (Radix marks
+the keydown it dismisses with; the guard marks the one it refuses) or that came from inside a
+dialog. One hygiene find on the way: the dismiss guard's source held a raw NUL byte — the
+separator it joins field values on — so git treated the file as binary and had hidden every diff
+of it from review since it landed; the separator is the same character written as an escape.
+
 **What stays open, recorded on the roadmap with its size:** the local-draft hook on the five
 remaining react-hook-form forms (testimonial, landing page, legal page, settings, SEO — S each) and
 a value-shaped variant of it for the three `useState` dialogs; REDESIGN.md §12.5's footer verbs,
 Discard · Save draft · Publish, on the product and journal editors (client-only, designed against
 four states); the demo lander fixture, which carries none of six of the ten new blocks, so CI's
-sweeps never render them; a by-id reader for the testimonial block, which scans a 500-row pool. **What
-stays a decision:** the per-row draft column (no `draft` column exists on Product, BlogPost or
+sweeps never render them; a by-id reader for the testimonial block, which scans a 500-row pool; §12.5's sortable
+product columns, which re-order the 50 rows on screen rather than the catalogue (M); and §12.5's
+portfolio thumbnail grid, which exists only as the phone fallback under a table (M). **What
+stays a decision:** revisioning section arrangements (`publishSections` writes no
+`ContentRevision`, and giving it one is a Server Action change), the per-row draft column (no `draft` column exists on Product, BlogPost or
 Portfolio, and a database-backed Save draft needs one, additively, per entity), `BlogPost.publishedAt`
 as a visibility gate (a future-dated post is live today, and hiding it changes what visitors see),
 and a picker beside the 3D-model field, which needs `listMediaForPicker`'s IMAGE/VIDEO enum widened

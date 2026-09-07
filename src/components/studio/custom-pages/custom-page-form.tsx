@@ -195,7 +195,11 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
             className="h-10 w-full rounded-input border border-border bg-transparent px-3 text-small"
           >
             <option value="DRAFT">Draft — only you can see it</option>
+            <option value="REVIEW">
+              In review — waiting for a second look
+            </option>
             <option value="PUBLISHED">Published</option>
+            <option value="ARCHIVED">Archived — kept, no longer shown</option>
           </select>
         </div>
 

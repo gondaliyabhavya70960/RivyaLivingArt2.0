@@ -27,6 +27,7 @@ import {
   setSiteImageMobile,
 } from "@/actions/site-images";
 import { publishSurface } from "@/actions/publish";
+import { RevisionHistory } from "@/components/studio/publish/revision-history";
 import { setSiteCopy } from "@/actions/site-copy";
 import { Input } from "@/components/ui/input";
 import { defaultLocale } from "@/i18n/config";
@@ -182,10 +183,17 @@ export function SiteImageBoard({
               >
                 {group.group}
               </h2>
-              <GroupPublish
-                group={group.group}
-                pending={group.slots.filter((s) => s.unpublished).length}
-              />
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Beside, not inside, the publish bar: that bar renders
+                    nothing when nothing is staged, which is exactly when
+                    history is wanted. The composer's header has the same
+                    button for the same surface key. */}
+                <RevisionHistory surface={group.group} />
+                <GroupPublish
+                  group={group.group}
+                  pending={group.slots.filter((s) => s.unpublished).length}
+                />
+              </div>
             </div>
           )}
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

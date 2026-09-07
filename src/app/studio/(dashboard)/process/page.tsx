@@ -18,9 +18,13 @@ const PAGE_KEY = "process-steps" as const;
  *
  * This is the same `SectionsBoard` `/studio/sections` renders, filtered to
  * one page key and given its own route (roadmap decision 1): every field
- * here already exists as a copy key and an image slot, and draft/publish/
- * revision history come free from the board it shares — a second
- * implementation would only be a second place for the two to drift apart.
+ * here already exists as a copy key and an image slot, and draft/publish
+ * come free from the board it shares — a second implementation would only
+ * be a second place for the two to drift apart. (Arrangements are not
+ * revisioned: `publishSections` writes no `ContentRevision`, so the history
+ * button on the copy composer covers this surface's words and pictures,
+ * not its order. Giving it one is a Server Action change, recorded on the
+ * roadmap as a decision.)
  * A `describeArrangementProblem` guard refuses to hide all ten (a process
  * page cannot lose every stage); the board surfaces that refusal same as it
  * does the dark-band rules.

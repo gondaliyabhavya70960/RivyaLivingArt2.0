@@ -45,6 +45,18 @@ function compactMeta(meta: unknown): string {
   return str.length > 80 ? `${str.slice(0, 80)}…` : str;
 }
 
+/**
+ * The whole record, pretty-printed, when the compact form cut it — the
+ * previous-state snapshot the writers store (audit row 71) is up to 8 KB,
+ * and a truncated line is stored evidence nobody can read. Null when the
+ * compact form already shows everything.
+ */
+function fullMeta(meta: unknown): string | null {
+  const str = JSON.stringify(meta);
+  if (!str || str.length <= 80) return null;
+  return JSON.stringify(meta, null, 2);
+}
+
 function truncateId(id: string | null): string {
   if (!id) return "—";
   return id.length > 12 ? `${id.slice(0, 12)}…` : id;
@@ -174,6 +186,7 @@ export default async function ActivityPage({
     entity: log.entity,
     entityId: log.entityId,
     meta: compactMeta(log.meta),
+    metaFull: fullMeta(log.meta),
   }));
 
   /**
@@ -305,9 +318,22 @@ export default async function ActivityPage({
                       {truncateId(row.entityId)}
                     </td>
                     <td className="max-w-xs px-4 py-3">
-                      <code className="block truncate font-mono text-xs text-muted-foreground">
-                        {row.meta}
-                      </code>
+                      {row.metaFull ? (
+                        <details className="group">
+                          <summary className="cursor-pointer list-none rounded-input outline-none focus-visible:ring-2 focus-visible:ring-focus">
+                            <code className="block truncate font-mono text-xs text-muted-foreground group-open:whitespace-normal">
+                              {row.meta}
+                            </code>
+                          </summary>
+                          <pre className="mt-2 max-h-80 overflow-auto rounded-input border border-border bg-muted/40 p-2 font-mono text-xs whitespace-pre-wrap text-foreground">
+                            {row.metaFull}
+                          </pre>
+                        </details>
+                      ) : (
+                        <code className="block truncate font-mono text-xs text-muted-foreground">
+                          {row.meta}
+                        </code>
+                      )}
                     </td>
                   </StudioRow>
                 ))}

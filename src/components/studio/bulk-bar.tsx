@@ -41,6 +41,19 @@ export function BulkBar({
         : null;
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
+      // An Escape that a layer above the bar has already answered is not
+      // ours: Radix marks the keydown it dismisses a dialog with, and the
+      // dismiss guard marks the one it refuses. Without this, Escape inside
+      // the Move or Description dialog closed (or was refused by) the dialog
+      // AND dropped the selection behind it, so the rows had to be found and
+      // ticked again. The target check covers a layer that does not mark it.
+      if (event.defaultPrevented) return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest('[role="dialog"], [role="alertdialog"]')
+      ) {
+        return;
+      }
       const target = opener.current;
       onClear();
       if (target && document.contains(target)) target.focus();
