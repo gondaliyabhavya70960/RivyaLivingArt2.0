@@ -32,6 +32,9 @@ export function ProvenanceLinksSection() {
     formState: { errors },
   } = useFormContext<FormValues>();
   const links = useFieldArray({ control, name: "madeWith" });
+  // The picker appends without a limit, so it stops offering rows at the cap
+  // rather than letting a Save be refused for a link already on screen.
+  const atCap = links.fields.length >= PRODUCT_LIMITS.madeWithRows;
   const [q, setQ] = useState("");
   const [results, setResults] = useState<
     { id: string; title: string; tier: number | null }[]
@@ -117,7 +120,13 @@ export function ProvenanceLinksSection() {
       </div>
       {error && <p className="text-sm text-alert">{error}</p>}
 
-      {results.length > 0 && (
+      {atCap && (
+        <p className="text-xs text-muted-foreground">
+          {PRODUCT_LIMITS.madeWithRows} links is the limit — remove one to add
+          another.
+        </p>
+      )}
+      {results.length > 0 && !atCap && (
         <ul className="space-y-1">
           {results
             .filter((row) => !links.fields.some((f) => f.linkId === row.id))

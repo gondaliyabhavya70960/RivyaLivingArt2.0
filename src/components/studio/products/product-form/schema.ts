@@ -126,6 +126,10 @@ const priceString = z
 
 const optionalUrl = z.union([z.literal(""), z.url("Enter a valid URL.")]);
 
+/** A lexical row the payload builder will actually send (see below). */
+const sentLexicalRow = (row: { label: string; value: string }) =>
+  Boolean(row.label.trim() && row.value.trim());
+
 /**
  * The caps `upsertProductSchema` in `src/actions/products.ts` enforces, read
  * from the same module so the two cannot drift.
@@ -178,8 +182,14 @@ export const formSchema = z
             ),
         }),
       )
-      .max(
-        PRODUCT_LIMITS.lexicalRows,
+      // Counted the way the payload counts it. `buildUpsertPayload` drops
+      // rows missing a label or a value before sending, so a bare `.max()`
+      // here would refuse eight filled rows plus one the owner added and
+      // left blank — a save the action accepts. `Add row` and the suggestion
+      // chips both append exactly such a row.
+      .refine(
+        (rows) =>
+          rows.filter(sentLexicalRow).length <= PRODUCT_LIMITS.lexicalRows,
         `Up to ${PRODUCT_LIMITS.lexicalRows} specification rows.`,
       ),
     madeWith: z
@@ -309,8 +319,8 @@ export function buildUpsertPayload(
       (OCCASIONS as readonly string[]).includes(o),
     ),
     lexical: values.lexical
-      .map((row) => ({ label: row.label.trim(), value: row.value.trim() }))
-      .filter((row) => row.label && row.value),
+      .filter(sentLexicalRow)
+      .map((row) => ({ label: row.label.trim(), value: row.value.trim() })),
     madeWithIds: values.madeWith.map((row) => row.linkId),
     careNotes: values.careNotes || undefined,
     categoryId: values.categoryId,

@@ -60,7 +60,7 @@ const formSchema = z.object({
     ),
   slug: capped(CUSTOM_PAGE_LIMITS.slug, "the address"),
   status: z.enum(CONTENT_STATUSES),
-  publishAt: z.string(),
+  publishAt: capped(CUSTOM_PAGE_LIMITS.publishAt, "the go-live date"),
   noindex: z.boolean(),
   seoTitle: capped(CUSTOM_PAGE_LIMITS.seoTitle, "the SEO title"),
   seoDescription: capped(

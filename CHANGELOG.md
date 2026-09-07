@@ -13,14 +13,16 @@ with no field named — the same class the 2026-09-05 batch closed on the `useSt
 editors, sixty-odd rules, and between them the client schemas carried **two** `.max()` calls.
 
 ### What an owner actually saw, measured before anything changed
-Two symptoms, depending on how the action parses. `settings`, `pages`, `blog`, `custom-pages` and
-`portfolio` use `safeParse` and return `issues[0].message`, so zod's own English reached the toast:
+Two symptoms, depending on how the action parses. Seven of the eight —
+`settings`, `pages`, `blog`, `custom-pages`, `portfolio` and `products` — use `safeParse` and
+return `issues[0].message`, so zod's own English reached the toast:
 typing 400 characters into the default SEO title and pressing Save fired the request and came back
 with **"Too big: expected string to have <=300 characters"** — no field named, and a number that
 appears nowhere on that screen (the counters there are the 60/160 search-result budgets). Nothing
-was marked, focus did not move. `testimonials` and `products` use `.parse()` inside `runAction`,
-which turns every throw into **"Something went wrong. Please try again."** — the testimonial's nine
-caps and its four media-URL rules were all reachable by typing and none could be told apart.
+was marked, focus did not move. `testimonials` alone uses `.parse()` inside `runAction`, which
+turns every throw into **"Something went wrong. Please try again."** — its nine caps and its four
+media-URL rules were all reachable by typing and none could be told apart. (An earlier draft of this
+entry said `products` did the same; it does not, and the adversarial pass caught the claim.)
 
 ### One module, because a copy cannot be tested
 Every cap now lives in `src/lib/studio-limits.ts` and BOTH sides import it — the eight actions and
@@ -81,6 +83,22 @@ and the two ARRAY-level caps (the product's lexical rows and its linked products
 control owns and which are now reported under their sections. Two fields it flagged are genuinely
 unreachable and were left alone: a boolean caught by the schema-level refine, and a rating that
 comes from a widget offering only one to five.
+
+### What the adversarial pass found
+Four independent lenses over the batch. Three findings held, and one of them was a regression this
+batch introduced. **The product's lexical cap counted the wrong rows:** the client counted the rows
+on screen while the action counts the rows the payload SENDS, and `buildUpsertPayload` drops any
+row missing a label or a value — which is exactly what "Add row" and the suggestion chips append.
+Eight filled rows plus one blank was refused by the form and accepted by the action, and before this
+batch that save had worked. It now counts what it sends, the way the portfolio's tags already did,
+with five unit tests over the boundary. **The linked-products picker** kept offering rows past its
+own limit, so it stops at the cap rather than letting a Save be refused for a link already on
+screen. **The landing page's go-live date** was the one capped action field left unmirrored;
+unreachable through a `datetime-local` control, but the whole argument for the shared module is that
+an unmirrored cap rots, so it is mirrored.
+
+The pass also corrected a claim in this entry: `products` does not parse inside `runAction`, only
+`testimonials` does. The sentence above says so now.
 
 ## Transformation Phase 11 — every Studio form gets its local draft (2026-09-07, seventh batch)
 
