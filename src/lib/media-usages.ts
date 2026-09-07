@@ -15,8 +15,10 @@ import { extractTiptapImageUrls } from "@/lib/tiptap-media";
  * media, testimonial avatars/installation photos/films/posters, the site
  * logo/hero, the named editorial slots
  * behind /studio/site-images (the desktop and mobile crop of both the live and
- * the STAGED value), landing-page social images and block pictures, and Tiptap
- * rich-text body images (blog posts, legal pages, richText landing blocks) — so
+ * the STAGED value), landing-page social images and block media — pictures,
+ * the film and poster of the two video blocks, every frame of the three
+ * gallery blocks — and Tiptap rich-text body images (blog posts, legal pages,
+ * richText landing blocks) — so
  * a delete never silently 404s the live site (ENG-806 / UIUX-605).
  *
  * "Live content" includes what is staged. On the draft surfaces a save writes

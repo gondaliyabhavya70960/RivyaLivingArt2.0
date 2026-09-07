@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MediaPicker } from "@/components/studio/media/media-picker";
 import { FieldError } from "./form-section";
 import type { FormValues } from "./schema";
 
@@ -76,18 +77,33 @@ export function VideoUrlField({
 }) {
   const {
     register,
+    setValue,
     formState: { errors },
   } = useFormContext<FormValues>();
   return (
     <div className="space-y-1.5">
       <Label htmlFor="product-video">Video URL</Label>
-      <Input
-        id="product-video"
-        placeholder="https://…"
-        aria-invalid={!!errors.videoUrl}
-        aria-describedby={errors.videoUrl ? "product-video-error" : undefined}
-        {...register("videoUrl")}
-      />
+      {/* A film from the media library, or a pasted address — the pair the
+          testimonial form and the film blocks already carry. The picker lists
+          videos only and writes through setValue, so the form goes dirty and
+          the unsaved-changes guard knows. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          id="product-video"
+          className="min-w-56 flex-1"
+          placeholder="Choose from the library, or paste a full https:// address"
+          aria-invalid={!!errors.videoUrl}
+          aria-describedby={errors.videoUrl ? "product-video-error" : undefined}
+          {...register("videoUrl")}
+        />
+        <MediaPicker
+          accept="VIDEO"
+          defaultFolder="products"
+          onSelect={(item) =>
+            setValue("videoUrl", item.url, { shouldDirty: true })
+          }
+        />
+      </div>
       <p className="text-xs text-muted-foreground">{hint}</p>
       <FieldError id="product-video-error">{errors.videoUrl?.message}</FieldError>
     </div>

@@ -33,11 +33,12 @@ import { cn } from "@/lib/utils";
  * One block's fields.
  *
  * Written as an explicit switch rather than a generic renderer driven by field
- * descriptors. Six blocks is small enough that the switch reads faster than
- * the abstraction, and the fields genuinely differ: a product grid needs a
- * mode and a slug list, a picture block needs a library picker, the FAQ block
- * needs the questions that already exist. A descriptor language rich enough
- * for all of that is a worse thing to maintain than six small forms.
+ * descriptors. Sixteen blocks is still small enough that the switch reads
+ * faster than the abstraction, and the fields genuinely differ: a product
+ * grid needs a mode and a slug list, a picture block needs a library picker,
+ * a film block a video picker and a poster, the FAQ block needs the questions
+ * that already exist. A descriptor language rich enough for all of that is a
+ * worse thing to maintain than sixteen small forms.
  */
 export function BlockFields({
   block,

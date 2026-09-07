@@ -770,7 +770,11 @@ function SlotCard({ slot }: { slot: SiteImageRow }) {
             <Upload aria-hidden className="size-4" />
             Upload
           </Button>
+          {/* The hero-video slot lists films, every other slot pictures.
+              `video` reads the current file's extension — the same test the
+              board already uses to hide the focal and crop controls on it. */}
           <MediaPicker
+            accept={video ? "VIDEO" : "IMAGE"}
             defaultFolder="site"
             triggerLabel="From library"
             onSelect={(item) => void apply(item.url, item.id)}

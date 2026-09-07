@@ -5,6 +5,36 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 11 — the film fields the video picker missed, and the roadmap read against HEAD (2026-09-07, sixth batch)
+
+### Three inputs that could only be pasted into
+The media picker has listed videos since batch D (`MediaPicker accept="VIDEO"`, 2026-09-04), and
+that batch wired it into "the three film fields written before it landed" — the testimonial's
+video, and the video hero and video-and-words blocks. Three more film fields were left as bare
+address boxes: the product's **Video URL** (the Images tab, and the tier-4 print section that
+shares the field), the portfolio case's **Video URL**, and the site-images board's **Hero video**
+slot, whose *From library* button listed pictures for a slot that can only hold a film. All
+three now carry the same pair the testimonial form has — the input and a *Choose video* button
+that lists the library's films and writes the URL through `setValue` so the form goes dirty and
+the unsaved-changes guard knows. The board's button reads the slot's current file to decide what
+to list, the same test it already used to hide the focal and crop controls on a film.
+
+### Verified
+Typecheck, lint and the 700-test unit suite clean on this tree. The browser pass over the three
+pickers — the dialog listing a film beside each input, a pick writing the URL and dirtying the
+form, and the board's picture slots still listing pictures — is recorded in the commit that
+follows, once the production build it runs against has finished.
+
+### The rest of Phase 11, read against HEAD
+Two lines the roadmap still carried as open were shipped by the content series on 2026-09-04 and
+are struck with evidence: the picker's video mode (above), and the whole D15 block line — all ten
+named blocks are in `CUSTOM_BLOCK_TYPES` (`custom-blocks.ts:295-304`) with an editor branch, a
+renderer and `media-usages.ts:296-325` walking the film, the poster and every gallery frame, the
+catalogue closed at sixteen by `custom-blocks.test.ts:53`. Five comments still described the
+catalogue as six types and the walker's docstring still said "block pictures"; they now say
+sixteen, and films, posters and gallery frames. The remaining Phase 11 lines are read against HEAD
+in the reconciliation that follows.
+
 ## Transformation Phase 11 — the editor gets its second column (2026-09-06, fifth batch)
 
 REDESIGN.md §12.5 describes the product editor as "two columns — information left, live preview

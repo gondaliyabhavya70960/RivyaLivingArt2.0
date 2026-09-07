@@ -687,15 +687,27 @@ export function PortfolioForm({
 
             <div className="space-y-1.5">
               <Label htmlFor="portfolio-video">Video URL</Label>
-              <Input
-                id="portfolio-video"
-                placeholder="https://…"
-                aria-invalid={!!errors.videoUrl}
-                aria-describedby={
-                  errors.videoUrl ? "portfolio-video-error" : undefined
-                }
-                {...register("videoUrl")}
-              />
+              {/* A film from the media library, or a pasted address — the
+                  pair the testimonial form and the film blocks carry. */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  id="portfolio-video"
+                  className="min-w-56 flex-1"
+                  placeholder="Choose from the library, or paste a full https:// address"
+                  aria-invalid={!!errors.videoUrl}
+                  aria-describedby={
+                    errors.videoUrl ? "portfolio-video-error" : undefined
+                  }
+                  {...register("videoUrl")}
+                />
+                <MediaPicker
+                  accept="VIDEO"
+                  defaultFolder="portfolio"
+                  onSelect={(item) =>
+                    setValue("videoUrl", item.url, { shouldDirty: true })
+                  }
+                />
+              </div>
               <p className="text-xs text-muted-foreground">
                 A short making-of or reveal clip, shown with the case study.
               </p>
