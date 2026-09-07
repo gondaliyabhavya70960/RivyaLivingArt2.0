@@ -161,9 +161,18 @@ Studio audit swept the composer with no `?tab=`, so its Pictures and Order panel
 and axe never saw them — the route list carries both tabs. What the pass found and left open is on
 the roadmap: the react-hook-form editors mirror none of their actions' length caps, so an over-long
 value comes back as a raw zod message in a toast with no field named; the category's SEO pair is not
-per-locale; the composer's surface↔page join has no test; and one decision, that the list's bulk
+per-locale; the composer's surface↔page join has no test; and two decisions: the list's bulk
 status writer does not stamp `ownerTouched`, so the deploy-time sheet fill can re-publish an
-archived row.
+archived row; and the product's and portfolio's video URL validators — form and action alike —
+accept only absolute URLs, while the library the new picker reads can hold site-root paths (local
+storage, the demo set), so such a pick is refused at Save with "Enter a valid URL." where the
+testimonial's validator already accepts a leading slash. Production Blob URLs pass; widening the
+pair is additive on both sides but the action half is a Server Action input change. The same pass
+then measured two holes in the navigation guard the roadmap struck as done: the command palette
+navigates with `router.push`, past the guard's click listener, and left a dirty form with no
+question — it hands the destination to the guard's dialog now — and Browser Back was never covered
+despite the hook's `popstate` handler, because Next's own listener unmounts the form first; the
+dead handler is removed, the hook's header says so, and Back is open on the roadmap.
 
 **What stays open, recorded on the roadmap with its size:** the local-draft hook on the five
 remaining react-hook-form forms (testimonial, landing page, legal page, settings, SEO — S each) and
@@ -1566,6 +1575,8 @@ kind. Seven forms carried this: blog, custom pages, portfolio, settings, SEO, pr
 The guard now also intercepts in-app navigation. Next's App Router has no `router.events` to
 subscribe to and `next/link` navigates on click, so the interception is a capture-phase listener on
 the document — catching the click before it reaches the link. Browser Back is covered via `popstate`.
+(Corrected 2026-09-07: it was not — Next's own `popstate` listener unmounts the form first; the dead
+handler is removed and Back is recorded as open. See the Phase 11 sixth-batch entry.)
 
 What it deliberately does NOT intercept, because each is the owner asking for something else:
 modified clicks (⌘/ctrl/shift/alt, middle button — those open a new tab and leave the form alone),

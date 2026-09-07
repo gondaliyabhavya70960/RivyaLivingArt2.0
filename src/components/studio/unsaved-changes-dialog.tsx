@@ -41,12 +41,6 @@ export function UnsavedChangesDialog() {
   const leave = () => {
     const href = unsavedChanges.confirm();
     if (!href) return;
-    if (href === "__back__") {
-      // The popstate handler pushed the entry back to hold position; going
-      // back twice lands where the visitor was actually headed.
-      history.go(-2);
-      return;
-    }
     router.push(href);
   };
 

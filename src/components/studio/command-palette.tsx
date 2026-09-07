@@ -19,6 +19,7 @@ import { SECTIONS } from "@/components/studio/sidebar";
 import type { Role } from "@/generated/prisma/client";
 import { useOverlayOpen } from "@/hooks/use-overlay-signal";
 import { studioPaletteSignal } from "@/lib/studio-palette-signal";
+import { unsavedChanges } from "@/lib/unsaved-changes-signal";
 
 /**
  * ⌘K command palette — REDESIGN.md §12.2 ("shared ⌘K command palette with the
@@ -91,6 +92,14 @@ export function CommandPalette({ role }: { role: Role }) {
   const go = (href: string) => {
     studioPaletteSignal.close();
     setQuery("");
+    // The palette navigates with router.push, which the unsaved-changes
+    // guard's click listener never sees — so a dirty form went with no
+    // question asked. Hand the destination to the guard's dialog instead;
+    // its "leave" pushes the same href.
+    if (unsavedChanges.isDirty()) {
+      unsavedChanges.ask(href);
+      return;
+    }
     router.push(href);
   };
 

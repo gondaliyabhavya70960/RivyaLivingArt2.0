@@ -31,9 +31,15 @@ import { unsavedChanges } from "@/lib/unsaved-changes-signal";
  * - anything inside `[data-unsaved-allow]`, the opt-out for a form's own
  *   Cancel link, which means to discard.
  *
- * Browser Back is handled too, via `popstate`: the history entry is pushed
- * back so the page stays put while the question is asked. Answering "leave"
- * there returns to the previous entry.
+ * **Browser Back is NOT covered**, and a `popstate` handler that claimed to
+ * cover it was removed on 2026-09-07 after being measured dead: Next's app
+ * router registers its own `popstate` listener at mount, so it runs first
+ * and has unmounted the form — whose cleanup clears the dirty count — before
+ * this hook's listener fires. Covering Back needs a same-URL sentinel entry
+ * pushed when the form goes dirty, so the pop lands on an identical entry
+ * and nothing unmounts; that is recorded as open on the roadmap rather than
+ * shipped half-working. The command palette, which navigates with
+ * `router.push`, asks the same question itself before it goes.
  *
  * The confirmation itself is `<UnsavedChangesDialog/>`, mounted once in the
  * dashboard layout — an ancestor of every form, so it cannot be rendered from
@@ -95,21 +101,11 @@ export function useUnsavedChangesGuard(isDirty: boolean) {
       unsavedChanges.ask(url.pathname + url.search + url.hash);
     };
 
-    const onPopState = () => {
-      if (!unsavedChanges.isDirty()) return;
-      // Put the entry back so the page does not move while we ask. Answering
-      // "leave" in the dialog calls history.back() again.
-      history.pushState(null, "", window.location.href);
-      unsavedChanges.ask("__back__");
-    };
-
     window.addEventListener("beforeunload", onBeforeUnload);
     document.addEventListener("click", onClick, true);
-    window.addEventListener("popstate", onPopState);
     return () => {
       window.removeEventListener("beforeunload", onBeforeUnload);
       document.removeEventListener("click", onClick, true);
-      window.removeEventListener("popstate", onPopState);
     };
   }, [isDirty]);
 }
