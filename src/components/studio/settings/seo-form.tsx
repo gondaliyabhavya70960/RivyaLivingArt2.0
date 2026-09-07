@@ -17,6 +17,7 @@ import type { SiteSettingsValues } from "@/components/studio/settings/site-setti
 import { FieldError } from "@/components/studio/field-error";
 import { describedBy } from "@/components/studio/field-hint";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { scrollToFirstErrorIfUnfocused } from "@/components/studio/scroll-to-first-error";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import {
@@ -104,6 +105,9 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
     const elsewhere = describePassedThroughSettings(settings);
     if (elsewhere) {
       setBlocked(elsewhere);
+      // The only Save button is a sticky bar visible from every scroll
+      // position, so the alert can render far above the fold.
+      scrollToFirstErrorIfUnfocused("studio-seo-form");
       return;
     }
     setBlocked(null);
@@ -134,6 +138,7 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
 
   return (
     <form
+      id="studio-seo-form"
       onSubmit={handleSubmit(onSubmit)}
       className="rounded-card border border-border bg-card p-6 shadow-e1"
     >

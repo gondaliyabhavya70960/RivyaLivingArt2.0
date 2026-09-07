@@ -17,6 +17,7 @@ import {
 } from "@/components/studio/draft-preview";
 import { EditorSplit } from "@/components/studio/editor-split";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { scrollToFirstErrorIfUnfocused } from "@/components/studio/scroll-to-first-error";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import {
@@ -163,10 +164,15 @@ export function ProductForm({
   );
 
   /** A refused submit lands the owner ON the problem rather than nowhere. */
+
   function onInvalid(errors: Record<string, unknown>) {
     const first = Object.keys(errors)[0];
     const target = first ? tabForField(first, isPrint) : undefined;
     if (target) setTab(target);
+    // An array-level refusal (the lexical rows, the linked products) has no
+    // input for RHF to focus, so nothing scrolls and the message can sit far
+    // below the fold while the sticky Save bar stays in view.
+    scrollToFirstErrorIfUnfocused("studio-product-form");
   }
 
   async function onSubmit(values: FormValues) {
@@ -234,6 +240,7 @@ export function ProductForm({
         }
       >
         <form
+          id="studio-product-form"
           onSubmit={methods.handleSubmit(onSubmit, onInvalid)}
           className="space-y-6"
         >

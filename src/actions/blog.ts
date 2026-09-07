@@ -291,7 +291,11 @@ export async function setBlogPostsStatus(
 
 // ————————————————————— Categories & tags —————————————————————
 
-const nameSchema = z.string().trim().min(1, "Name is required.").max(120);
+const nameSchema = z
+  .string()
+  .trim()
+  .min(1, "Name is required.")
+  .max(BLOG_LIMITS.taxonomyName);
 
 /**
  * Create-if-missing by name: two names that slugify identically are the

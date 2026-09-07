@@ -100,6 +100,27 @@ an unmirrored cap rots, so it is mirrored.
 The pass also corrected a claim in this entry: `products` does not parse inside `runAction`, only
 `testimonials` does. The sentence above says so now.
 
+Its other two lenses went after the gates rather than the code, and were right to. **A refusal that
+renders off screen is still a refusal nobody sees:** an array-level error has no input for React
+Hook Form to focus, and the two cross-form guards render an alert above a form whose only Save
+button is a sticky bar — measured at 1,500px below the fold. A small helper now brings the first
+message into view, two frames late, and only once React Hook Form's own focus pass has failed to
+reach an errored control. **The drift walk was reading thirteen named schema declarations**, which
+let seven literal caps sit just outside the slices it read — one of them backing the journal's
+inline taxonomy create form, a live instance of the same defect in a ninth form nobody had counted.
+That form now mirrors its cap; the walk reads whole files and every remaining literal is named with
+its reason. **Three module entries were dead**, so their rule was duplicated in exactly the way the
+module exists to prevent: the product's minimum title length and the portfolio's year pattern are
+read from it now. The opening-hours guard named the days limit whichever column overflowed, which
+is wrong the moment the two diverge. And the pin test covered sixteen of sixty-five numbers; it
+covers all of them.
+
+The gap those lenses really found was that **nothing gated the defect class this batch introduced.**
+`studio-field-messages.test.ts` walks every rule in the eight client schemas and fails when one has
+no message bound to it, with an escape list that must name a reason and is itself checked. It found
+a real gap on its first run — the landing page's go-live date, capped two commits earlier and never
+wired.
+
 ## Transformation Phase 11 — every Studio form gets its local draft (2026-09-07, seventh batch)
 
 The roadmap's autosave line was done on the three long editors and open on eight other forms:

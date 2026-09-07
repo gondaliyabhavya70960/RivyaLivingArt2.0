@@ -146,7 +146,10 @@ const capped = (max: number, what: string) =>
 
 export const formSchema = z
   .object({
-    title: z.string().trim().min(2, "Title needs at least 2 characters."),
+    title: z
+      .string()
+      .trim()
+      .min(PRODUCT_LIMITS.titleMin, "Title needs at least 2 characters."),
     displayName: capped(PRODUCT_LIMITS.displayName, "the display name"),
     shortTagline: capped(PRODUCT_LIMITS.shortTagline, "the tagline"),
     description: z.string(),

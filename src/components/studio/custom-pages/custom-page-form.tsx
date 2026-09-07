@@ -255,8 +255,15 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
           <Input
             id="cp-publish-at"
             type="datetime-local"
+            aria-invalid={!!errors.publishAt}
+            aria-describedby={describedBy(
+              errors.publishAt && "cp-publish-at-error",
+            )}
             {...register("publishAt")}
           />
+          <FieldError id="cp-publish-at-error">
+            {errors.publishAt?.message}
+          </FieldError>
           <p className="text-xs text-graphite">
             {status === "PUBLISHED" && publishAt
               ? "The page will appear at this moment and not before."

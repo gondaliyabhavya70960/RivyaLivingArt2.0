@@ -62,7 +62,10 @@ const customFieldSchema = z.object({
 const upsertProductSchema = z
   .object({
     id: z.string().min(1).optional(),
-    title: z.string().trim().min(2, "Title needs at least 2 characters."),
+    title: z
+      .string()
+      .trim()
+      .min(PRODUCT_LIMITS.titleMin, "Title needs at least 2 characters."),
     displayName: z.string().max(PRODUCT_LIMITS.displayName).optional(),
     shortTagline: z.string().max(PRODUCT_LIMITS.shortTagline).optional(),
     description: z.string().optional(),

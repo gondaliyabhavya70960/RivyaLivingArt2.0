@@ -3,10 +3,15 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+  BLOG_LIMITS,
+  CUSTOM_PAGE_LIMITS,
   describePassedThroughSeo,
   describePassedThroughSettings,
   PAGE_LIMITS,
+  PORTFOLIO_LIMITS,
+  PRODUCT_LIMITS,
   SETTINGS_LIMITS,
+  TESTIMONIAL_LIMITS,
   tooLong,
   WHATSAPP_NUMBER_PATTERN,
 } from "./studio-limits";
@@ -83,7 +88,18 @@ describe("describePassedThroughSettings", () => {
       ...good,
       businessHours: [{ days: "x".repeat(61), hours: "" }],
     });
-    expect(message).toContain("an opening-hours row");
+    expect(message).toContain("an opening-hours days cell");
+  });
+
+  it("names the column that actually overflowed", () => {
+    // The two limits are equal today; saying "days" for an over-long hours
+    // cell would be wrong the moment they diverge, which is the change the
+    // shared module exists to make safe.
+    const message = describePassedThroughSettings({
+      ...good,
+      businessHours: [{ days: "Mon-Fri", hours: "x".repeat(61) }],
+    });
+    expect(message).toContain("an opening-hours hours cell");
   });
 });
 
@@ -112,48 +128,58 @@ describe("describePassedThroughSeo", () => {
  * nothing to catch it. The only defence is that both sides read the SAME
  * constant, so this asserts the converted schemas hold no bare number.
  */
-describe("the converted action schemas carry no literal cap", () => {
-  const CONVERTED: { file: string; schema: string }[] = [
-    { file: "settings.ts", schema: "settingsSchema" },
-    { file: "settings.ts", schema: "defaultSeoSchema" },
-    { file: "pages.ts", schema: "upsertSchema" },
-    { file: "products.ts", schema: "upsertProductSchema" },
-    { file: "products.ts", schema: "imageSchema" },
-    { file: "products.ts", schema: "customFieldSchema" },
-    { file: "testimonials.ts", schema: "upsertSchema" },
-    { file: "testimonials.ts", schema: "urlFieldSchema" },
-    { file: "custom-pages.ts", schema: "pageSchema" },
-    { file: "blog.ts", schema: "upsertPostSchema" },
-    { file: "portfolio.ts", schema: "upsertPortfolioSchema" },
-    { file: "portfolio.ts", schema: "resultsMetaSchema" },
-    { file: "portfolio.ts", schema: "imageSchema" },
+describe("no literal cap survives in an editor's action", () => {
+  /**
+   * Whole-file, not per-schema. The first cut walked thirteen named schema
+   * declarations, which let seven literal `.max()` calls sit just outside the
+   * slices it read — one of them (`nameSchema` in blog.ts) backing a real
+   * create form with no client mirror, a live instance of the defect this
+   * module exists to close. Found by the adversarial pass. Everything that
+   * stays a literal has to be named here, with the reason.
+   */
+  const ALLOWED: Record<string, string[]> = {
+    "settings.ts": [
+      "maxCreates — the sheet-fill policy form, not a Studio editor",
+      "sheetId — the sheet-ids form, not a Studio editor",
+    ],
+    "products.ts": [
+      "search query cap — a typed query, never stored",
+      "slug length inside that array",
+      "slug array length — a machine-built list, never typed",
+      "second search query cap",
+    ],
+    "testimonials.ts": ["searchSchema — the link picker's typed query"],
+  };
+
+  const FILES = [
+    "settings.ts",
+    "pages.ts",
+    "products.ts",
+    "testimonials.ts",
+    "custom-pages.ts",
+    "blog.ts",
+    "portfolio.ts",
   ];
 
-  /** One declaration, from `const <name> = z` to the next top-level one. */
-  function declaration(source: string, name: string): string {
-    const start = source.indexOf(`const ${name} = z`);
-    expect(start).toBeGreaterThan(-1);
-    const rest = source.slice(start + 1);
-    const next = rest.search(/\n(?:export |const |function |\/\*\*)/);
-    return next === -1 ? rest : rest.slice(0, next);
-  }
-
-  it.each(CONVERTED)("$file › $schema", ({ file, schema }) => {
+  it.each(FILES)("%s", (file) => {
     const source = readFileSync(
       join(process.cwd(), "src", "actions", file),
       "utf8",
     );
-    // `.min(1)` is the non-empty idiom, not a length anyone tunes; only the
-    // caps have to be shared.
-    expect(declaration(source, schema).match(/\.max\(\s*\d/g) ?? []).toEqual(
-      [],
-    );
+    const literals = source.match(/\.max\(\s*\d/g) ?? [];
+    expect(literals.length).toBe((ALLOWED[file] ?? []).length);
   });
 });
 
 describe("the limits are the numbers the actions enforced before the move", () => {
-  it("keeps every value that was a literal", () => {
-    expect(SETTINGS_LIMITS).toMatchObject({
+  /**
+   * A transcription anchor for the move itself: both sides now read the same
+   * constant, so the two cannot drift — but a typo made WHILE moving them
+   * would have shifted the boundary silently. Every value, not a sample.
+   */
+  it("pins every entry", () => {
+    expect(SETTINGS_LIMITS).toEqual({
+      mode: "trimmed",
       brandName: 120,
       tagline: 300,
       announcement: 300,
@@ -166,12 +192,78 @@ describe("the limits are the numbers the actions enforced before the move", () =
       seoTitle: 300,
       seoDescription: 500,
     });
-    expect(PAGE_LIMITS).toMatchObject({
+    expect(PAGE_LIMITS).toEqual({
+      mode: "trimmed",
       slug: 120,
       title: 200,
       titleMin: 2,
       seoTitle: 300,
       seoDescription: 500,
+    });
+    expect(CUSTOM_PAGE_LIMITS).toEqual({
+      mode: "trimmed",
+      slug: 120,
+      title: 200,
+      titleMin: 2,
+      publishAt: 40,
+      seoTitle: 300,
+      seoDescription: 500,
+      ogImage: 600,
+    });
+    expect(BLOG_LIMITS).toEqual({
+      mode: "trimmed",
+      taxonomyName: 120,
+      title: 200,
+      titleMin: 2,
+      excerpt: 600,
+      authorName: 120,
+      seoTitle: 300,
+      seoDescription: 500,
+    });
+    expect(TESTIMONIAL_LIMITS).toEqual({
+      mode: "trimmed",
+      name: 120,
+      location: 120,
+      quote: 2000,
+      designation: 160,
+      category: 120,
+      language: 20,
+      productTitle: 200,
+      purchaseType: 60,
+      internalNotes: 10_000,
+      url: 2048,
+      ratingMin: 1,
+      ratingMax: 5,
+    });
+    expect(PRODUCT_LIMITS).toEqual({
+      mode: "raw",
+      titleMin: 2,
+      displayName: 120,
+      shortTagline: 300,
+      timeline: 300,
+      materials: 500,
+      dimensions: 300,
+      seoTitle: 300,
+      seoDescription: 500,
+      imageAlt: 300,
+      lexicalLabel: 40,
+      lexicalValue: 300,
+      lexicalRows: 8,
+      madeWithRows: 12,
+      customFieldHelpText: 500,
+      tierMin: 1,
+      tierMax: 4,
+    });
+    expect(PORTFOLIO_LIMITS).toEqual({
+      mode: "raw",
+      titleMin: 2,
+      location: 120,
+      imageAlt: 300,
+      imageCaption: 300,
+      metaText: 300,
+      metaComplexity: 60,
+      metaTag: 60,
+      metaTags: 12,
     });
   });
 });

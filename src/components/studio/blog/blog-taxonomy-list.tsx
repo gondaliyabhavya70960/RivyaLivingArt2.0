@@ -21,6 +21,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
+import { BLOG_LIMITS, tooLong } from "@/lib/studio-limits";
 import { EmptyState } from "@/components/studio/page-header";
 import {
   Pagination,
@@ -75,6 +78,7 @@ export function BlogTaxonomyList({
   const selection = useSelection(rowIds);
 
   const [name, setName] = useState("");
+  const [nameError, setNameError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -116,9 +120,17 @@ export function BlogTaxonomyList({
     e.preventDefault();
     const trimmed = name.trim();
     if (!trimmed) {
-      toast.error("Name is required.");
+      setNameError("Name is required.");
       return;
     }
+    // The action's own cap, mirrored so it lands on the field. Without it
+    // `upsertBlogCategory` refuses with zod's "Too big: expected string to
+    // have <=120 characters" in a toast naming nothing.
+    if (trimmed.length > BLOG_LIMITS.taxonomyName) {
+      setNameError(tooLong("the name", BLOG_LIMITS.taxonomyName));
+      return;
+    }
+    setNameError(null);
     setCreating(true);
     const result = isCategory
       ? await upsertBlogCategory(trimmed)
@@ -166,15 +178,24 @@ export function BlogTaxonomyList({
         className="mb-4 flex flex-wrap items-center gap-2"
       >
         <Input
+          id="blog-taxonomy-name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (nameError) setNameError(null);
+          }}
           placeholder={isCategory ? "New category name…" : "New tag name…"}
           aria-label={isCategory ? "New category name" : "New tag name"}
+          aria-invalid={!!nameError}
+          aria-describedby={describedBy(nameError && "blog-taxonomy-name-error")}
           className="h-10 w-64"
         />
         <Button type="submit" size="sm" disabled={creating}>
           <Plus /> {creating ? "Adding…" : "Add"}
         </Button>
+        <div className="w-full">
+          <FieldError id="blog-taxonomy-name-error">{nameError}</FieldError>
+        </div>
       </form>
 
       {rows.length === 0 ? (

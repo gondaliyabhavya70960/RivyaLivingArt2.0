@@ -63,6 +63,8 @@ export const CUSTOM_PAGE_LIMITS = {
 
 export const BLOG_LIMITS = {
   mode: TRIMMED,
+  /** The journal's own taxonomy names, created inline on /studio/blog. */
+  taxonomyName: 120,
   title: 200,
   titleMin: 2,
   excerpt: 600,
@@ -189,12 +191,18 @@ export function describePassedThroughSettings(values: {
       values.defaultCareNotes,
       SETTINGS_LIMITS.careNotes,
     ) ??
+    // Named per column: the two limits are equal today, and saying "days"
+    // for an over-long hours cell would be wrong the moment they diverge —
+    // which is exactly the change this module exists to make safe.
     (values.businessHours.some(
-      (row) =>
-        row.days.trim().length > SETTINGS_LIMITS.businessHoursDays ||
-        row.hours.trim().length > SETTINGS_LIMITS.businessHoursHours,
+      (row) => row.days.trim().length > SETTINGS_LIMITS.businessHoursDays,
     )
-      ? `an opening-hours row is over its ${SETTINGS_LIMITS.businessHoursDays}-character limit`
+      ? `an opening-hours days cell is over its ${SETTINGS_LIMITS.businessHoursDays}-character limit`
+      : null) ??
+    (values.businessHours.some(
+      (row) => row.hours.trim().length > SETTINGS_LIMITS.businessHoursHours,
+    )
+      ? `an opening-hours hours cell is over its ${SETTINGS_LIMITS.businessHoursHours}-character limit`
       : null) ??
     (WHATSAPP_NUMBER_PATTERN.test(values.whatsappNumber.trim())
       ? null

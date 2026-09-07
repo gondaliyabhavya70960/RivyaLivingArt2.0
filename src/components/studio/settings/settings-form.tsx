@@ -19,6 +19,7 @@ import { FieldError } from "@/components/studio/field-error";
 import { describedBy } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { scrollToFirstErrorIfUnfocused } from "@/components/studio/scroll-to-first-error";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import {
@@ -228,6 +229,9 @@ export function SettingsForm({
     const elsewhere = describePassedThroughSeo(settings.defaultSeo);
     if (elsewhere) {
       setBlocked(elsewhere);
+      // The only Save button is a sticky bar visible from every scroll
+      // position, so the alert can render far above the fold.
+      scrollToFirstErrorIfUnfocused("studio-settings-form");
       return;
     }
     setBlocked(null);
@@ -281,7 +285,11 @@ export function SettingsForm({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        id="studio-settings-form"
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
         {blocked && (
           <p
             role="alert"

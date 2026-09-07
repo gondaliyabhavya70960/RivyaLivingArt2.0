@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
-import { PORTFOLIO_LIMITS } from "@/lib/studio-limits";
+import {
+  PORTFOLIO_LIMITS,
+  YEAR_MESSAGE,
+  YEAR_PATTERN,
+} from "@/lib/studio-limits";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
 import { normalizeTranslations, TRANSLATABLE_FIELDS } from "@/lib/localize";
@@ -67,10 +71,7 @@ const upsertPortfolioSchema = z.object({
   clientNote: z.string().optional(),
   location: z.string().max(PORTFOLIO_LIMITS.location).optional(),
   year: z
-    .union([
-      z.literal(""),
-      z.string().regex(/^\d{4}$/, "Enter a 4-digit year."),
-    ])
+    .union([z.literal(""), z.string().regex(YEAR_PATTERN, YEAR_MESSAGE)])
     .optional(),
   beforeImageUrl: optionalUrl,
   afterImageUrl: optionalUrl,

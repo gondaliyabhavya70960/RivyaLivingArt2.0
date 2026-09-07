@@ -56,7 +56,12 @@ import { toTranslationsRecord } from "@/lib/translations-form";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { CONTENT_STATUSES } from "@/lib/content-status";
-import { PORTFOLIO_LIMITS, tooLong } from "@/lib/studio-limits";
+import {
+  PORTFOLIO_LIMITS,
+  tooLong,
+  YEAR_MESSAGE,
+  YEAR_PATTERN,
+} from "@/lib/studio-limits";
 
 // ————————————————————— Types & schema —————————————————————
 
@@ -133,7 +138,7 @@ const formSchema = z.object({
     ),
   year: z
     .string()
-    .refine((v) => v === "" || /^\d{4}$/.test(v), "Enter a 4-digit year."),
+    .refine((v) => v === "" || YEAR_PATTERN.test(v), YEAR_MESSAGE),
   categoryId: z.string(),
   status: z.enum(CONTENT_STATUSES),
   beforeImageUrl: optionalUrl,
