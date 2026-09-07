@@ -207,7 +207,10 @@ export function ResearchFormDialog({
       {/* Keyed by row AND by open state: Radix unmounts the CONTENT on close,
           not this body, so the create dialog's typed fields used to survive a
           Cancel and greet the next open — the local draft keeps that copy
-          now, offered rather than imposed. */}
+          now, offered rather than imposed. Closing re-keys the body as
+          well, which cuts the content's exit animation short — the edit
+          instance already did that at HEAD when its key fell back to "new",
+          and reduced motion has no exit to cut. */}
       <ResearchFormBody
         key={`${record?.id ?? "new"}:${open ? "open" : "closed"}`}
         record={record}
@@ -267,7 +270,8 @@ function ResearchFormBody({
   const isEdit = Boolean(record);
 
   // Value-shaped local draft over the thirteen typed fields (see
-  // faq-list.tsx for the shape and why); the errors are not part of it.
+  // faq-list.tsx for the shape and why); the errors are not part of it,
+  // and a Restore clears them — the next submit re-judges everything.
   const draftValues = useMemo<ResearchDraft>(
     () => ({
       source,
@@ -333,6 +337,7 @@ function ResearchFormBody({
       setNotes(v.notes);
       setExtractedAt(v.extractedAt);
       setStatus(v.status);
+      setErrors({});
     },
     enabled: !busy && !saved,
   });
@@ -431,6 +436,8 @@ function ResearchFormBody({
           savedAt={draft.savedAt}
           onRestore={draft.restore}
           onDiscard={draft.discard}
+          disabled={busy}
+          paused={draft.paused}
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">

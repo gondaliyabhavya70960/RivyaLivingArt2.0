@@ -502,6 +502,8 @@ export function TestimonialForm({
           savedAt={draft.savedAt}
           onRestore={restoreDraft}
           onDiscard={draft.discard}
+          disabled={saving}
+          paused={draft.paused}
         />
         {testimonial?.isDemo && (
           <div className="rounded-card border border-hairline-dk bg-card px-4 py-3 text-sm text-muted-foreground">

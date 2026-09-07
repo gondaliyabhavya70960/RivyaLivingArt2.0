@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  coerceDraftValues,
   draftStorageKey,
   parseDraft,
   sameDraftValues,
@@ -96,5 +97,71 @@ describe("sameDraftValues", () => {
     expect(sameDraftValues({ ...initial, visible: false }, initial)).toBe(
       false,
     );
+  });
+});
+
+describe("coerceDraftValues", () => {
+  const baseline = {
+    name: "Vases",
+    description: "",
+    visible: true,
+    tags: [] as string[],
+    translations: {} as Record<string, unknown>,
+  };
+
+  it("returns the baseline untouched for anything that is not an object", () => {
+    expect(coerceDraftValues(baseline, null)).toEqual(baseline);
+    expect(coerceDraftValues(baseline, "x")).toEqual(baseline);
+    expect(coerceDraftValues(baseline, [])).toEqual(baseline);
+  });
+
+  it("drops a key the form no longer has", () => {
+    const out = coerceDraftValues(baseline, { ...baseline, retired: "old" });
+    expect(out).toEqual(baseline);
+    expect("retired" in out).toBe(false);
+  });
+
+  it("fills a key the draft lacks or holds as undefined from the baseline", () => {
+    expect(
+      coerceDraftValues(baseline, { name: "Trays", visible: undefined }),
+    ).toEqual({ ...baseline, name: "Trays" });
+  });
+
+  it("keeps the baseline where the stored kind differs", () => {
+    expect(
+      coerceDraftValues(baseline, {
+        visible: "yes",
+        tags: "a,b",
+        name: 7,
+        description: null,
+      }),
+    ).toEqual(baseline);
+  });
+
+  it("takes a stored value when the baseline says nothing about its kind", () => {
+    const loose = {
+      note: undefined as string | undefined,
+      link: null as unknown,
+    };
+    expect(coerceDraftValues(loose, { note: "n", link: { id: "x" } })).toEqual({
+      note: "n",
+      link: { id: "x" },
+    });
+  });
+
+  it("lets a nested record replace an empty one and a string survive", () => {
+    const out = coerceDraftValues(baseline, {
+      translations: { hi: { name: "x" } },
+      description: "d",
+      tags: ["a"],
+    });
+    expect(out.translations).toEqual({ hi: { name: "x" } });
+    expect(out.description).toBe("d");
+    expect(out.tags).toEqual(["a"]);
+  });
+
+  it("is draft-equal to the baseline when nothing stored survived", () => {
+    const out = coerceDraftValues(baseline, { visible: "yes", gone: 1 });
+    expect(sameDraftValues(out, baseline)).toBe(true);
   });
 });

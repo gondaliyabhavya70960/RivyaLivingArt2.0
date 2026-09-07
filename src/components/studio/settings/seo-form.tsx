@@ -106,6 +106,8 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
         savedAt={draft.savedAt}
         onRestore={draft.restore}
         onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
       />
       <h2 className="font-display text-lg text-foreground">Site-wide defaults</h2>
       <p className="mt-1 text-sm text-muted-foreground">

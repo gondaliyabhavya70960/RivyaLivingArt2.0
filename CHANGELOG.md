@@ -37,11 +37,14 @@ be noise within a day; and `initial` is read once, on mount, because the bodies 
 open and that moment is the baseline. A pre-existing draft is offered, never applied; Cancel keeps
 it (the dismiss guard already stops an accidental close, so a deliberate Cancel is the person
 saying put it aside, and the copy costs nothing to discard next time); a successful save clears it
-and switches the hook off for the close animation. The store — the listener set, the snapshot
-cache, the read through `useSyncExternalStore` — moved out of `useLocalDraft` into shared
-internals both hooks use; the three editors' behaviour is byte-for-byte what it was.
-`sameDraftValues`, the order-insensitive deep equality behind the first rule, lives in
-`lib/local-draft.ts` with five tests.
+and switches the hook off for the render between the save and the close. The store — the listener
+set, the snapshot cache, the read through `useSyncExternalStore` — moved out of `useLocalDraft`
+into shared internals both hooks use. The three editors keep their five-line call sites; what
+changed for them is all in Restore and Discard and is listed below (Restore keeps the mount
+baseline, Discard cancels a pending write, Restore folds the record onto the values on screen, a
+foreign draft is never written over, a pending write is flushed on leave, and the bar is off
+during a save). `sameDraftValues`, the order-insensitive deep equality behind the first rule,
+lives in `lib/local-draft.ts` with five tests.
 
 ### What the reading and the browser fixed on the way
 Restore replaced the form's defaults with the restored values, so a restored draft read as SAVED —
@@ -57,14 +60,38 @@ scraper's Add sources dialog already used, and the local draft is what keeps the
 category dialog ran to 1348px in a 900px viewport with no ceiling and no scroll, so Cancel and
 Create sat below a laptop's fold with no way to reach them; it has the 85vh ceiling the FAQ and
 research dialogs had. A deleted row's draft is discarded rather than left as an orphan under an id
-never reused. And the bar's header claimed it showed a draft "newer than what the form mounted
+never reused — from the editors' own Delete and from the three lists' bulk delete alike (the
+lists reached the store directly; the first cut only covered the editors). A Restore in the three
+dialogs clears the field errors it may have fixed, since the next submit re-judges them anyway.
+Restore trusted the stored record's shape: `parseDraft` checks the envelope, not the values, so a
+draft written before a field was added or renamed restored `undefined` into that field — a
+controlled input turned uncontrolled, and the next submit threw at its `.trim()` (the react-hook-form
+hook had the same hole through `reset`). Both hooks now fold the record onto the form's current
+shape first (`coerceDraftValues`: a key the form no longer has is dropped; a key it has gained, or
+whose stored value is missing or of another kind, keeps the form's own value — the editors fold
+onto the values on screen, the dialogs onto what they opened with), and a draft with nothing
+usable in it is discarded by Restore itself instead of lingering (the first cut left that to the
+write effect, which an all-string dialog like research never re-runs when its setters are handed
+values equal to state). **Three more from the adversarial pass over the design, all measured in
+the browser:** the write path had no gate, so on a row holding a crash's draft the first stray
+keystroke into the autofocused field replaced that draft 800 ms later, with no Discard pressed —
+a draft the mount did not write is now never written over (it is the person's to Restore or
+Discard; until then their typing is not autosaved, the bar says so, and after either it is, with
+the next change, so Discard does not see the bar come straight back); the bar's Restore and
+Discard stayed live while a save was in flight, when a Restore would repaint the form with values
+the request did not carry and the ok branch would then discard them — both buttons are off with
+the form's own for that window; and Cancel or the ✕ inside the debounce dropped the last 800 ms
+of typing, the end of a transcription, because the unmount cleanup only cancelled the pending
+write — both hooks flush it on leave now (a successful save discards first, so nothing is flushed
+behind it; a hard reload runs no cleanup and still loses that window). And
+the bar's header claimed it showed a draft "newer than what the form mounted
 with" — the hook makes no such comparison, so the header says what is true and the comparison is
 recorded as open on the roadmap.
 
 ### Verified
-Typecheck, lint and the unit suite (705 tests — the five new ones cover `sameDraftValues`)
-clean; production build against a local Postgres. Three Playwright passes at 1440×900, drafts
-cleared from storage before each. **The five editors:** on a new testimonial, the demo lander's
+Typecheck, lint and the unit suite (712 tests — the twelve new ones cover `sameDraftValues` and
+`coerceDraftValues`) clean; production build against a local Postgres. Seven Playwright passes at
+1440×900, drafts cleared from storage before each. **The five editors:** on a new testimonial, the demo lander's
 metadata, settings, SEO and a legal page, one edit is in `localStorage` under the right key
 (`studio:draft:testimonial:new`, `…:custom-page:demo-lander`, `…:settings:singleton`,
 `…:seo:singleton`, `…:page:<id>`) within 1.5 s; after a reload the field is back to the saved value
@@ -77,9 +104,23 @@ fills it, Discard clears key and bar; typed again and undone to the opening valu
 mount wrote is removed. **An existing FAQ:** the draft is keyed by its row id; a different row
 opens with no bar and its own text; back on the first row the bar shows, Restore fills, Discard
 clears. **A save:** creating an FAQ with a draft pending removes the key, closes the dialog, and
-the next New FAQ opens with no bar and empty fields. No page errors in any pass. The first pass is
-what caught two of the fixes above — the draft resurrected by its own Restore, and the category
-dialog's buttons below the fold — and the second confirmed both closed.
+the next New FAQ opens with no bar and empty fields. **The bulk delete:** an FAQ created, drafted
+on and bulk-deleted from the list leaves no key behind; in the research dialog an empty submit
+puts "Source is required." and "Title is required." on screen and Restore takes both off with
+`aria-invalid`. **Shape drift:** a hand-planted SEO draft with a retired key, no description and a
+number for the image restores the title, keeps the row's description and image, and is rewritten
+well-shaped; the same on the FAQ dialog; one with nothing usable is gone after Restore, on the
+all-string research dialog too. **The gate:** on an FAQ row and on the SEO form, a stray
+keystroke over a foreign draft leaves the stored draft untouched after 1.5 s, Restore brings the
+draft back over the stray character, Discard empties the slot and it stays empty, and the next
+keystroke writes again; the bar's paused line shows over the foreign draft and not over a draft
+this mount wrote. **The save window:** with the server action delayed 2.5 s, Restore, Discard and
+the submit are all disabled mid-save and the draft is gone after. **The flush:** typing then
+Cancel, or the ✕, within the debounce leaves the typing in the draft; typing then a sidebar
+click, "Discard and leave", from the SEO form likewise; an untouched open and Cancel writes
+nothing. No page errors in any pass. The first pass is what caught two of the fixes above — the
+draft resurrected by its own Restore, and the category dialog's buttons below the fold — and the
+later passes confirmed each fix closed.
 
 ## Transformation Phase 11 — the film fields the video picker missed, and the roadmap read against HEAD (2026-09-07, sixth batch)
 

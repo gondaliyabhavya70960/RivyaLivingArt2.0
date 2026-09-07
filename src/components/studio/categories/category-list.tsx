@@ -37,9 +37,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TranslationsSection } from "@/components/studio/translations-section";
 import { useSelection } from "@/hooks/use-selection";
+import { draftStorageKey } from "@/lib/local-draft";
 import { slugify } from "@/lib/slug";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { useDismissGuard } from "@/hooks/use-dismiss-guard";
+import { removeDraft } from "@/hooks/use-local-draft";
 import { useLocalDraftValue } from "@/hooks/use-local-draft-value";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 
@@ -73,7 +75,10 @@ function CategoryFormDialog({
           not this body, so the create dialog's typed fields used to survive a
           Cancel and greet the next open — the local draft keeps that copy
           now, offered rather than imposed. The source-list dialog keys the
-          same way. */}
+          same way. Closing re-keys the body as
+          well, which cuts the content's exit animation short — the edit
+          instance already did that at HEAD when its key fell back to "new",
+          and reduced motion has no exit to cut. */}
       <CategoryFormBody
         key={`${category?.id ?? "new"}:${open ? "open" : "closed"}`}
         category={category}
@@ -152,6 +157,7 @@ function CategoryFormBody({
       setSeoDescription(v.seoDescription);
       setVisible(v.visible);
       setTranslations(v.translations);
+      setNameError(null);
     },
     enabled: !busy && !saved,
   });
@@ -216,6 +222,8 @@ function CategoryFormBody({
           savedAt={draft.savedAt}
           onRestore={draft.restore}
           onDiscard={draft.discard}
+          disabled={busy}
+          paused={draft.paused}
         />
         <div className="space-y-1.5">
           <Label htmlFor="category-name">Name</Label>
@@ -387,11 +395,13 @@ export function CategoryList({ categories }: { categories: CategoryRow[] }) {
 
   async function handleDelete() {
     const count = selection.count;
+    const ids = selection.ids;
     setDeleting(true);
-    const res = await deleteCategories(selection.ids);
+    const res = await deleteCategories(ids);
     setDeleting(false);
     setConfirmOpen(false);
     if (res.ok) {
+      for (const id of ids) removeDraft(draftStorageKey("category", id));
       toast.success(
         `Deleted ${count} ${count === 1 ? "category" : "categories"}.`,
       );

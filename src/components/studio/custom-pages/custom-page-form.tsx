@@ -11,8 +11,8 @@ import { toast } from "sonner";
 import { deleteCustomPage, upsertCustomPage } from "@/actions/custom-pages";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
-import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { FormSection } from "@/components/studio/form-section";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { MediaPicker } from "@/components/studio/media/media-picker";
 import { TranslationsSection } from "@/components/studio/translations-section";
 import { useLocalDraft } from "@/hooks/use-local-draft";
@@ -93,8 +93,6 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
 
   useUnsavedChangesGuard(isDirty && !saving);
 
-  // `useWatch` rather than `watch()` — the repo lints the latter out
-  // (react-hooks/incompatible-library) because it cannot be memoized safely.
   // The page's metadata gets the same local safety net the long editors
   // carry; blocks are saved one by one on the board and are not in it.
   const draft = useLocalDraft<FormValues>({
@@ -105,6 +103,8 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
     enabled: !saving,
   });
 
+  // `useWatch` rather than `watch()` — the repo lints the latter out
+  // (react-hooks/incompatible-library) because it cannot be memoized safely.
   const status = useWatch({ control, name: "status" });
   const publishAt = useWatch({ control, name: "publishAt" });
   const title = useWatch({ control, name: "title" });
@@ -163,6 +163,8 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
         savedAt={draft.savedAt}
         onRestore={draft.restore}
         onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
       />
       <FormSection
         title="The page"

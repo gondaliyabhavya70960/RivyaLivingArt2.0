@@ -11,6 +11,7 @@ import {
   deleteResearchRecords,
   setResearchStatus,
 } from "@/actions/research";
+import { draftStorageKey } from "@/lib/local-draft";
 import type { ResearchStatus } from "@/lib/research";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
@@ -26,6 +27,7 @@ import {
   type ResearchRow,
 } from "@/components/studio/research/research-form";
 import { SortHead, useSort } from "@/components/studio/sort-header";
+import { removeDraft } from "@/hooks/use-local-draft";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -128,14 +130,16 @@ export function ResearchList({ records }: { records: ResearchRow[] }) {
 
   async function handleDelete() {
     const count = selection.count;
+    const ids = selection.ids;
     setBusy(true);
-    const res = await deleteResearchRecords(selection.ids);
+    const res = await deleteResearchRecords(ids);
     setBusy(false);
     setConfirmOpen(false);
     if (!res.ok) {
       toast.error(res.error);
       return;
     }
+    for (const id of ids) removeDraft(draftStorageKey("research", id));
     toast.success(`Deleted ${count} ${count === 1 ? "record" : "records"}.`);
     selection.clear();
     router.refresh();

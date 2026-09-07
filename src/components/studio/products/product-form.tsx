@@ -241,6 +241,8 @@ export function ProductForm({
             savedAt={draft.savedAt}
             onRestore={draft.restore}
             onDiscard={draft.discard}
+            disabled={saving}
+            paused={draft.paused}
           />
 
           {product?.needsRewrite && <RewriteWarning />}

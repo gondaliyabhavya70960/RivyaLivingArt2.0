@@ -430,6 +430,8 @@ export function PortfolioForm({
         savedAt={draft.savedAt}
         onRestore={draft.restore}
         onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
       />
 
       <Tabs value={tab} onValueChange={setTab}>
