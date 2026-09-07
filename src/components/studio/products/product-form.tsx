@@ -76,7 +76,11 @@ const TABS = [
       "confirmRewrite",
     ],
   },
-  { value: "images", label: "Images", fields: ["images", "videoUrl"] },
+  {
+    value: "images",
+    label: "Images",
+    fields: ["images", "videoUrl", "model3dUrl"],
+  },
   { value: "customization", label: "Customization", fields: ["customFields"] },
   {
     value: "details",
@@ -148,13 +152,20 @@ export function ProductForm({
   async function onSubmit(values: FormValues) {
     setSaving(true);
     const result = await upsertProduct(buildUpsertPayload(values, product));
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    // The save is the new baseline. `isDirty` compares against the values
+    // the form MOUNTED with, so without this the unsaved-changes indicator
+    // and the navigation guard stayed armed after a successful save in edit
+    // mode. Done while autosave is still off (`enabled: !saving`), so the
+    // reset cannot be mistaken for an edit and written back as a draft.
+    methods.reset(values);
     draft.discard();
+    setSaving(false);
     setSavedVersion((version) => version + 1);
     toast.success(product ? "Product saved." : "Product created.");
     if (!product && result.data) {
@@ -248,7 +259,11 @@ export function ProductForm({
             </TabsContent>
 
             <TabsContent forceMount value="images" className="space-y-6">
-              <MediaSection uploading={uploading} setUploading={setUploading} />
+              <MediaSection
+                categories={categories}
+                uploading={uploading}
+                setUploading={setUploading}
+              />
             </TabsContent>
 
             <TabsContent forceMount value="customization" className="space-y-6">

@@ -20,7 +20,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CONTENT_STATUSES, type ContentStatusValue } from "@/lib/content-status";
+import {
+  CONTENT_STATUSES,
+  type ContentStatusValue,
+} from "@/lib/content-status";
 
 export type CustomPageFormInitial = {
   id: string;
@@ -143,8 +146,13 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
       >
         <div className="space-y-2">
           <Label htmlFor="cp-title">Title</Label>
-          <Input id="cp-title" {...register("title")} />
-          <FieldError>{errors.title?.message}</FieldError>
+          <Input
+            id="cp-title"
+            aria-invalid={errors.title ? true : undefined}
+            aria-describedby={errors.title ? "cp-title-error" : undefined}
+            {...register("title")}
+          />
+          <FieldError id="cp-title-error">{errors.title?.message}</FieldError>
         </div>
 
         {page ? (

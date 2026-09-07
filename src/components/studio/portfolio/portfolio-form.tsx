@@ -242,6 +242,7 @@ export function PortfolioForm({
   });
 
   useUnsavedChangesGuard(isDirty && !saving);
+  const dirty = isDirty && !saving;
 
   const draft = useLocalDraft<FormValues>({
     key: "portfolio",
@@ -384,13 +385,17 @@ export function PortfolioForm({
     };
 
     const result = await upsertPortfolio(payload);
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    // The save is the new baseline — see product-form.tsx for why, and why
+    // it happens before autosave is re-enabled.
+    reset(values);
     draft.discard();
+    setSaving(false);
     toast.success(
       portfolio ? "Portfolio piece saved." : "Portfolio piece created.",
     );
@@ -508,6 +513,9 @@ export function PortfolioForm({
                   id="portfolio-location"
                   placeholder="Surat"
                   aria-invalid={!!errors.location}
+                  aria-describedby={
+                    errors.location ? "portfolio-location-error" : undefined
+                  }
                   {...register("location")}
                 />
                 <FieldError id="portfolio-location-error">
@@ -521,6 +529,9 @@ export function PortfolioForm({
                   inputMode="numeric"
                   placeholder="2026"
                   aria-invalid={!!errors.year}
+                  aria-describedby={
+                    errors.year ? "portfolio-year-error" : undefined
+                  }
                   {...register("year")}
                 />
                 <FieldError id="portfolio-year-error">
@@ -971,7 +982,7 @@ export function PortfolioForm({
 
       {/* Sticky save bar */}
       <div className="sticky bottom-4 z-30 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4 shadow-e2">
-        <div>
+        <div className="flex flex-wrap items-center gap-3">
           {portfolio && (
             <Button
               type="button"
@@ -984,6 +995,23 @@ export function PortfolioForm({
               <Trash2 /> Delete
             </Button>
           )}
+          {/* The same always-mounted live region the product and journal
+              footers carry (§12.5) — the third form on this footer pattern
+              had no indicator at all. */}
+          <span
+            role="status"
+            className="u-micro inline-flex items-center gap-2 text-graphite"
+          >
+            {dirty && (
+              <>
+                <span
+                  aria-hidden
+                  className="size-1.5 rounded-full bg-warning"
+                />
+                Unsaved changes
+              </>
+            )}
+          </span>
         </div>
         <div className="flex items-center gap-2">
           {portfolio && <DraftPreview path={`/portfolio/${portfolio.slug}`} />}

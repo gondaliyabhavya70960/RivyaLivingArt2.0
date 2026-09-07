@@ -98,7 +98,7 @@ const TABS = [
     label: "Content",
     fields: ["title", "excerpt", "content"],
   },
-  { value: "media", label: "Media", fields: ["coverImage"] },
+  { value: "media", label: "Media", fields: ["coverImage", "authorName"] },
   {
     value: "taxonomy",
     label: "Taxonomy",
@@ -285,13 +285,20 @@ export function BlogPostForm({
     };
 
     const result = await upsertBlogPost(payload);
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    // The save is the new baseline. `isDirty` compares against the values
+    // the form MOUNTED with, so without this the unsaved-changes indicator
+    // and the navigation guard stayed armed after a successful save in edit
+    // mode. Done while autosave is still off (`enabled: !saving`), so the
+    // reset cannot be mistaken for an edit and written back as a draft.
+    reset(values);
     draft.discard();
+    setSaving(false);
     setSavedVersion((version) => version + 1);
     toast.success(post ? "Post saved." : "Post created.");
     if (!post && result.data) {
@@ -371,7 +378,9 @@ export function BlogPostForm({
                 <Input
                   id="post-title"
                   aria-invalid={!!errors.title}
-                  aria-describedby={errors.title ? "post-title-error" : undefined}
+                  aria-describedby={
+                    errors.title ? "post-title-error" : undefined
+                  }
                   {...register("title")}
                 />
                 <FieldError id="post-title-error">
@@ -395,7 +404,11 @@ export function BlogPostForm({
                   control={control}
                   name="content"
                   render={({ field }) => (
+                    // Keyed on the local draft's restore count: the editor
+                    // reads `value` once on mount, so Restore has to remount
+                    // it to show the restored body.
                     <RichTextEditor
+                      key={draft.version}
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Write your story…"
@@ -412,6 +425,7 @@ export function BlogPostForm({
               name="translations"
               render={({ field }) => (
                 <TranslationsSection
+                  key={draft.version}
                   value={field.value}
                   onChange={field.onChange}
                   idPrefix="post"
@@ -463,7 +477,11 @@ export function BlogPostForm({
                     {...register("coverImage")}
                   />
                   <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-input border border-border px-4 text-small font-medium text-foreground outline-none hover:bg-foreground/5 focus-within:ring-2 focus-within:ring-focus">
-                    <ImagePlus aria-hidden strokeWidth={1.5} className="size-4" />
+                    <ImagePlus
+                      aria-hidden
+                      strokeWidth={1.5}
+                      className="size-4"
+                    />
                     {uploading ? "Uploading…" : "Upload"}
                     <input
                       type="file"
@@ -547,7 +565,10 @@ export function BlogPostForm({
                     control={control}
                     name="status"
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="w-full" aria-label="Status">
                           <SelectValue placeholder="Status" />
                         </SelectTrigger>
