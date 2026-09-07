@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { normalizeSiteUrl } from "@/lib/site-url";
+
 /**
  * Centralized environment validation (ENG-002). Required vars are parsed once
  * at module load — importing this from db.ts means a missing/typo'd config
@@ -30,7 +32,17 @@ const schema = z.object({
   AUTH_TRUST_HOST: z.string().optional(),
 
   // Public (build-time inlined) — optional; constants.ts supplies fallbacks.
-  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+  //
+  // Repaired, not refused. This was `z.string().url()`, and a value pasted
+  // from a hosting dashboard as a bare host (`www.rivyalivingart.com`) failed
+  // it with `Invalid URL`. Because `db.ts` imports this module, that killed
+  // the entire production build during page-data collection — over an
+  // OPTIONAL variable that nothing reads off `env`, that `constants.ts` has a
+  // fallback for, and whose only real consumer already tolerates a malformed
+  // value at runtime. A validator that can only ever take the site down is
+  // not a guard; `normalizeSiteUrl` fixes the common typo and reports the
+  // rest as unset (see the warning in loadEnv).
+  NEXT_PUBLIC_SITE_URL: z.string().optional().transform(normalizeSiteUrl),
   NEXT_PUBLIC_WHATSAPP_NUMBER: z.string().optional(),
   // Marketing tags — off unless set (MKT-002).
   NEXT_PUBLIC_META_PIXEL_ID: z.string().optional(),
@@ -79,7 +91,8 @@ export function withoutBlanks(
 }
 
 function loadEnv() {
-  const parsed = schema.safeParse(withoutBlanks(process.env));
+  const source = withoutBlanks(process.env);
+  const parsed = schema.safeParse(source);
   if (!parsed.success) {
     const issues = parsed.error.issues
       .map((i) => `  - ${i.path.join(".") || "(root)"}: ${i.message}`)
@@ -88,6 +101,19 @@ function loadEnv() {
       `Invalid environment configuration — fix these before the app can start:\n${issues}`,
     );
   }
+  // An unusable NEXT_PUBLIC_SITE_URL is now non-fatal, so it has to be
+  // audible: the site comes up on the fallback origin, which is right for a
+  // deploy that never set the variable and wrong for one that meant to. The
+  // build log is where an operator is already looking when a deploy behaves
+  // oddly, and this is the only place that knows both values.
+  if (source.NEXT_PUBLIC_SITE_URL && !parsed.data.NEXT_PUBLIC_SITE_URL) {
+    console.warn(
+      `NEXT_PUBLIC_SITE_URL is not a usable origin (${source.NEXT_PUBLIC_SITE_URL}) — ` +
+        "ignoring it and falling back to the default in src/lib/constants.ts. " +
+        "Set it to a full origin, e.g. https://www.rivyalivingart.com.",
+    );
+  }
+
   // Auth.js refuses untrusted hosts at request time (UntrustedHost), which
   // reads as a broken login rather than a config error. Vercel is trusted
   // automatically (VERCEL=1); every other production deploy must opt in

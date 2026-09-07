@@ -5,6 +5,90 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Fix — the site URL an operator pastes is repaired, not refused (2026-09-07)
+
+Production failed on `NEXT_PUBLIC_SITE_URL: Invalid URL`, thrown from `src/lib/env.ts:87` during
+`Collecting page data` and reported against two share-card routes:
+
+    Error: Failed to collect page data for /[locale]/blog/[slug]/opengraph-image-t4foih
+
+This is the **second** deploy this one variable has taken down, and the first fix predicted the
+shape of the second: the 2026-08 entry recorded a value added in a hosting dashboard with nothing
+in the box (`""` → `.url()` → `Invalid URL`) and closed it with `withoutBlanks`. This time the box
+was not empty — it held the domain the way a dashboard *displays* it, with no scheme:
+`www.rivyalivingart.com`. Same variable, same message, same dead build.
+
+### Reproduced before anything was changed
+`NEXT_PUBLIC_SITE_URL=www.rivyalivingart.com npm run build` against a throwaway Postgres reproduces
+the deploy log line for line — `✓ Compiled successfully`, then the same two
+`Failed to collect configuration` errors and the same `Invalid URL`. On the fixed tree the same
+command exits 0 and generates all 415 static pages.
+
+### Two independent throws, one value
+Relaxing the validator alone would have moved the failure, not removed it.
+
+1. **`env.ts`** declared `NEXT_PUBLIC_SITE_URL: z.string().url().optional()` and threw at module
+   load. `db.ts` imports `env`, so that throw is not scoped to one route — it is every route that
+   touches the database, which during `next build` is the whole app.
+2. **`shared-metadata.ts`** calls `new URL(SITE.url)` for `metadataBase`, and `SITE.url` took the
+   raw value through `envOr`. A scheme-less host throws there too, one build stage later.
+
+And had both been merely tolerated, `${SITE.url}/path` — ~30 call sites — would have emitted a
+*relative* string as every canonical, sitemap entry, JSON-LD `@id` and OG image URL.
+
+### The validator could only ever have taken the site down
+`env` exposes exactly two values to callers: `DATABASE_URL` (`db.ts`) and `AUTH_SECRET`
+(`form-token.ts`). Nothing reads `env.NEXT_PUBLIC_SITE_URL`; `constants.ts` reads
+`process.env` directly, because it is bundled into client components and cannot import a
+server-only module. So the `.url()` refinement on an **optional** variable that no caller consumes
+and that already has a working fallback had one reachable effect: failing builds. It was the only
+optional key in the schema carrying a refinement, and therefore the only one that could.
+
+### `normalizeSiteUrl` — one rule, both sides of the client boundary
+`src/lib/site-url.ts` is pure and dependency-free so `env.ts` and `constants.ts` can share it
+rather than disagree about what a value means (the old comment in `constants.ts` says outright that
+it "repeats the rule locally"). It repairs rather than validates: trim, add the missing scheme
+(`http` for `localhost`/`127.0.0.1`, which is what INSTALL.md documents; `https` otherwise), drop a
+query or hash, strip trailing slashes — keeping the rule that shipped 14 double slashes onto the
+live homepage. What it cannot repair it reports as `undefined`, i.e. the same as unset, so the
+caller's fallback applies and the build lives.
+
+Two cases were found by the tests rather than by reasoning, and both would have served the site
+from the wrong origin silently:
+
+- `mailto:hi@example.com` carries no `://`, so prefixing a scheme yields
+  `https://mailto:hi@example.com` — which parses cleanly as `example.com` with a username. Rejected
+  on `parsed.username || parsed.password`: an origin never has credentials.
+- `/relative/path` became `https://relative/path`, a hostname invented from a path's first segment.
+  A lone leading slash is now refused; `//host`, the protocol-relative form, is still repaired.
+
+### Loud, since it is no longer fatal
+An unusable value is now a `console.warn` from `loadEnv` naming the variable, the value and the
+fallback. The build log is where an operator is already looking, and this is the only place that
+knows both the value given and the origin actually used. A repairable value warns about nothing —
+verified: the build above logged no warning, and the rendered `en.html` carries
+`rel="canonical" href="https://www.rivyalivingart.com"` and the `#organization` `@id` to match.
+
+Required variables are unchanged: a blank `DATABASE_URL` still refuses to boot, pinned by a test.
+
+### Verified
+`npm run typecheck` ✓ · `npm run lint` ✓ · `npm run test` — 757 tests, 72 files, all passing (25 of
+them new or extended, across `site-url.test.ts` and `env.test.ts`) · `npm run build` with
+`NEXT_PUBLIC_SITE_URL=www.rivyalivingart.com` ✓ where it failed before the change.
+
+### Not addressed here, and why
+The same deploy log carries four deprecation notices. Three are informational (transitive
+`rimraf`/`glob`/`inflight`/`fstream`, npm's `allow-scripts` prompt, Prisma advertising an 8.0.0
+**release candidate**). The fourth is not: `pg-connection-string` warns that `sslmode=require` is
+currently an alias for `verify-full` and will adopt weaker libpq semantics in `pg` v9 — a silent
+loss of certificate verification on a future dependency bump. The fix is one character class in
+`DATABASE_URL` (`sslmode=verify-full`), which is a hosting-dashboard change and not this repo's to
+make; rewriting the connection string in code would cover the app but not the `prisma migrate
+deploy` step that reads the variable directly, and partial coverage of a TLS setting is worse than
+none.
+
+---
+
 ## Transformation Phase 11 — the editors refuse in the field, not in a toast (2026-09-07, eighth batch)
 
 The roadmap's first still-open Phase 11 line: "the react-hook-form editors mirror none of their
