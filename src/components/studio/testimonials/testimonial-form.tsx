@@ -761,9 +761,18 @@ export function TestimonialForm({
                   <MediaPicker
                     accept="VIDEO"
                     defaultFolder="site"
-                    onSelect={(item) =>
-                      setValue("videoUrl", item.url, { shouldDirty: true })
-                    }
+                    onSelect={(item) => {
+                      setValue("videoUrl", item.url, { shouldDirty: true });
+                      // The library keeps the poster captured for a film
+                      // beside it; offer it rather than asking for the same
+                      // frame again — and only into an empty field, never
+                      // over a poster the owner chose.
+                      if (item.posterUrl && !methods.getValues("videoPosterUrl")) {
+                        setValue("videoPosterUrl", item.posterUrl, {
+                          shouldDirty: true,
+                        });
+                      }
+                    }}
                   />
                 </div>
               </div>

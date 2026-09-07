@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FieldError } from "@/components/studio/field-error";
+import { MediaPicker } from "@/components/studio/media/media-picker";
 
 /**
  * URL input with an Upload button — files land in the media library's
- * "site" folder and the returned URL replaces the field value.
+ * "site" folder and the returned URL replaces the field value — and, when the
+ * field says what it holds, a library picker for a file already uploaded.
  */
 export function UploadUrlField({
   id,
@@ -23,6 +25,7 @@ export function UploadUrlField({
   placeholder = "https://…",
   help,
   error,
+  library,
 }: {
   id: string;
   label: string;
@@ -33,6 +36,12 @@ export function UploadUrlField({
   placeholder?: string;
   help?: string;
   error?: string;
+  /**
+   * What the media-library picker beside the Upload button lists. Omit it
+   * and there is no picker — every one of these fields wants one, but the
+   * kind is the field's to say, not this component's to guess from `accept`.
+   */
+  library?: "IMAGE" | "VIDEO";
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -90,6 +99,13 @@ export function UploadUrlField({
         >
           <Upload /> {uploading ? "Uploading…" : "Upload"}
         </Button>
+        {library && (
+          <MediaPicker
+            accept={library}
+            defaultFolder="site"
+            onSelect={(item) => onChange(item.url)}
+          />
+        )}
       </div>
       {help && <p className="text-xs text-muted-foreground">{help}</p>}
       {/* The SEO form's only error path. As a bare paragraph it was neither

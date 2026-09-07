@@ -215,6 +215,7 @@ export function SettingsForm({
                 label="Logo URL"
                 value={field.value}
                 onChange={field.onChange}
+                library="IMAGE"
                 accept="image/*"
                 error={errors.logoUrl?.message}
               />
@@ -230,6 +231,7 @@ export function SettingsForm({
                 label="Favicon"
                 value={field.value}
                 onChange={field.onChange}
+                library="IMAGE"
                 accept="image/png,image/webp,image/avif"
                 help="The little icon in a browser tab. Square, at least 96×96. Left blank, the one that ships with the site is used."
                 error={errors.faviconUrl?.message}
@@ -246,6 +248,7 @@ export function SettingsForm({
                 label="Phone home-screen icon"
                 value={field.value}
                 onChange={field.onChange}
+                library="IMAGE"
                 accept="image/png,image/webp,image/avif"
                 help="Shown when someone adds the site to a phone home screen. Square, 180×180 or larger."
                 error={errors.appIconUrl?.message}
@@ -262,6 +265,7 @@ export function SettingsForm({
                 label="Hero video URL"
                 value={field.value}
                 onChange={field.onChange}
+                library="VIDEO"
                 accept="video/mp4,video/webm"
                 help="Plays behind the homepage hero — MP4 or WebM, up to 16 MB."
                 error={errors.heroVideoUrl?.message}

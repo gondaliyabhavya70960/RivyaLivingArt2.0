@@ -770,11 +770,14 @@ function SlotCard({ slot }: { slot: SiteImageRow }) {
             <Upload aria-hidden className="size-4" />
             Upload
           </Button>
-          {/* The hero-video slot lists films, every other slot pictures.
-              `video` reads the current file's extension — the same test the
-              board already uses to hide the focal and crop controls on it. */}
+          {/* The hero-video slot lists films, every other slot pictures —
+              keyed on the REGISTRY's fallback, not the current file: an owner
+              who once mis-applies a picture to the film slot would otherwise
+              be offered pictures from then on and could never choose the film
+              back. (`video`, read off the current file, still decides the
+              focal and crop controls, which are about what is showing.) */}
           <MediaPicker
-            accept={video ? "VIDEO" : "IMAGE"}
+            accept={isVideo(slot.fallback) ? "VIDEO" : "IMAGE"}
             defaultFolder="site"
             triggerLabel="From library"
             onSelect={(item) => void apply(item.url, item.id)}

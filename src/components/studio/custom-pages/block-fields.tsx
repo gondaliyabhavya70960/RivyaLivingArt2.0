@@ -558,6 +558,11 @@ export function BlockFields({
             label="Video"
             value={String(data.videoUrl ?? "")}
             onChange={(v) => set("videoUrl", v)}
+            // A picked film's library poster fills an EMPTY poster field —
+            // never one the owner already chose.
+            onPoster={(url) => {
+              if (!data.posterUrl) set("posterUrl", url);
+            }}
           />
           <ImageField
             id={id("posterUrl")}
@@ -664,6 +669,11 @@ export function BlockFields({
             label="Video"
             value={String(data.videoUrl ?? "")}
             onChange={(v) => set("videoUrl", v)}
+            // A picked film's library poster fills an EMPTY poster field —
+            // never one the owner already chose.
+            onPoster={(url) => {
+              if (!data.posterUrl) set("posterUrl", url);
+            }}
           />
           <ImageField
             id={id("posterUrl")}
@@ -781,11 +791,15 @@ function VideoField({
   label,
   value,
   onChange,
+  onPoster,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (url: string) => void;
+  /** The library poster of a picked film, when it has one — the caller
+   *  decides whether an empty poster field takes it. */
+  onPoster?: (url: string) => void;
 }) {
   return (
     <div className="space-y-2">
@@ -797,7 +811,13 @@ function VideoField({
           placeholder="Choose from the library, or paste a full https:// address"
           onChange={(e) => onChange(e.target.value)}
         />
-        <MediaPicker accept="VIDEO" onSelect={(item) => onChange(item.url)} />
+        <MediaPicker
+          accept="VIDEO"
+          onSelect={(item) => {
+            onChange(item.url);
+            if (item.posterUrl) onPoster?.(item.posterUrl);
+          }}
+        />
         {value && (
           <Button
             type="button"
