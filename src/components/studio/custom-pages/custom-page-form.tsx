@@ -11,12 +11,14 @@ import { toast } from "sonner";
 import { deleteCustomPage, upsertCustomPage } from "@/actions/custom-pages";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { MediaPicker } from "@/components/studio/media/media-picker";
 import { TranslationsSection } from "@/components/studio/translations-section";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
+import { CUSTOM_PAGE_LIMITS, tooLong } from "@/lib/studio-limits";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,15 +43,31 @@ export type CustomPageFormInitial = {
   translations: unknown;
 };
 
+// `pageSchema`'s caps in `src/actions/custom-pages.ts`, from the same module
+// so they cannot drift, and `.trim()` first because that action trims before
+// it counts. `slug` is mirrored because this form DOES send it on create.
+const capped = (max: number, what: string) =>
+  z.string().trim().max(max, tooLong(what, max));
+
 const formSchema = z.object({
-  title: z.string().trim().min(2, "Give the page a title."),
-  slug: z.string(),
+  title: z
+    .string()
+    .trim()
+    .min(2, "Give the page a title.")
+    .max(
+      CUSTOM_PAGE_LIMITS.title,
+      tooLong("the title", CUSTOM_PAGE_LIMITS.title),
+    ),
+  slug: capped(CUSTOM_PAGE_LIMITS.slug, "the address"),
   status: z.enum(CONTENT_STATUSES),
-  publishAt: z.string(),
+  publishAt: capped(CUSTOM_PAGE_LIMITS.publishAt, "the go-live date"),
   noindex: z.boolean(),
-  seoTitle: z.string(),
-  seoDescription: z.string(),
-  ogImage: z.string(),
+  seoTitle: capped(CUSTOM_PAGE_LIMITS.seoTitle, "the SEO title"),
+  seoDescription: capped(
+    CUSTOM_PAGE_LIMITS.seoDescription,
+    "the SEO description",
+  ),
+  ogImage: capped(CUSTOM_PAGE_LIMITS.ogImage, "the sharing image address"),
   translations: z.record(z.string(), z.record(z.string(), z.unknown())),
 });
 
@@ -199,8 +217,11 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
             <Input
               id="cp-slug"
               placeholder="diwali-2026"
+              aria-invalid={!!errors.slug}
+              aria-describedby={describedBy(errors.slug && "cp-slug-error")}
               {...register("slug")}
             />
+            <FieldError id="cp-slug-error">{errors.slug?.message}</FieldError>
             <p className="text-xs text-graphite">
               Leave it blank to build one from the title
               {title ? ` — “${title}” would become a URL under /p/.` : "."}
@@ -234,8 +255,15 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
           <Input
             id="cp-publish-at"
             type="datetime-local"
+            aria-invalid={!!errors.publishAt}
+            aria-describedby={describedBy(
+              errors.publishAt && "cp-publish-at-error",
+            )}
             {...register("publishAt")}
           />
+          <FieldError id="cp-publish-at-error">
+            {errors.publishAt?.message}
+          </FieldError>
           <p className="text-xs text-graphite">
             {status === "PUBLISHED" && publishAt
               ? "The page will appear at this moment and not before."
@@ -268,15 +296,32 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
       >
         <div className="space-y-2">
           <Label htmlFor="cp-seo-title">Search title</Label>
-          <Input id="cp-seo-title" {...register("seoTitle")} />
+          <Input
+            id="cp-seo-title"
+            aria-invalid={!!errors.seoTitle}
+            aria-describedby={describedBy(
+              errors.seoTitle && "cp-seo-title-error",
+            )}
+            {...register("seoTitle")}
+          />
+          <FieldError id="cp-seo-title-error">
+            {errors.seoTitle?.message}
+          </FieldError>
         </div>
         <div className="space-y-2">
           <Label htmlFor="cp-seo-description">Search description</Label>
           <Textarea
             id="cp-seo-description"
             rows={3}
+            aria-invalid={!!errors.seoDescription}
+            aria-describedby={describedBy(
+              errors.seoDescription && "cp-seo-description-error",
+            )}
             {...register("seoDescription")}
           />
+          <FieldError id="cp-seo-description-error">
+            {errors.seoDescription?.message}
+          </FieldError>
         </div>
         <Controller
           control={control}
@@ -290,6 +335,10 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="Shown when the link is pasted into a chat"
+                  aria-invalid={!!errors.ogImage}
+                  aria-describedby={describedBy(
+                    errors.ogImage && "cp-og-error",
+                  )}
                 />
                 <MediaPicker onSelect={(item) => field.onChange(item.url)} />
                 {field.value && (
@@ -303,6 +352,9 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
                   </Button>
                 )}
               </div>
+              <FieldError id="cp-og-error">
+                {errors.ogImage?.message}
+              </FieldError>
             </div>
           )}
         />

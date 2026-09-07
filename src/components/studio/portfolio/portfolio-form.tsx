@@ -38,6 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DraftPreview } from "@/components/studio/draft-preview";
 import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { MediaPicker } from "@/components/studio/media/media-picker";
@@ -55,6 +56,12 @@ import { toTranslationsRecord } from "@/lib/translations-form";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { CONTENT_STATUSES } from "@/lib/content-status";
+import {
+  PORTFOLIO_LIMITS,
+  tooLong,
+  YEAR_MESSAGE,
+  YEAR_PATTERN,
+} from "@/lib/studio-limits";
 
 // ————————————————————— Types & schema —————————————————————
 
@@ -98,33 +105,83 @@ const NO_CATEGORY = "NONE";
 
 const optionalUrl = z.union([z.literal(""), z.url("Enter a valid URL.")]);
 
+/**
+ * `upsertPortfolioSchema`'s caps in `src/actions/portfolio.ts`, from the same
+ * module so they cannot drift.
+ *
+ * NO `.trim()`: that action counts the RAW string on every field but the
+ * result tags, so trimming here would accept lengths it refuses.
+ */
+const metaText = (what: string) =>
+  z
+    .string()
+    .max(PORTFOLIO_LIMITS.metaText, tooLong(what, PORTFOLIO_LIMITS.metaText));
+
+/** The same split the payload builder uses, so the rules judge what is sent. */
+const splitTags = (raw: string) =>
+  raw
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
 const formSchema = z.object({
   title: z.string().trim().min(2, "Title needs at least 2 characters."),
   story: z.string(),
   brief: z.string(),
   process: z.string(),
   clientNote: z.string(),
-  location: z.string().max(120, "Keep the location under 120 characters."),
+  location: z
+    .string()
+    .max(
+      PORTFOLIO_LIMITS.location,
+      tooLong("the location", PORTFOLIO_LIMITS.location),
+    ),
   year: z
     .string()
-    .refine((v) => v === "" || /^\d{4}$/.test(v), "Enter a 4-digit year."),
+    .refine((v) => v === "" || YEAR_PATTERN.test(v), YEAR_MESSAGE),
   categoryId: z.string(),
   status: z.enum(CONTENT_STATUSES),
   beforeImageUrl: optionalUrl,
   afterImageUrl: optionalUrl,
   videoUrl: optionalUrl,
-  metaType: z.string(),
-  metaMaterial: z.string(),
-  metaSize: z.string(),
-  metaTimeline: z.string(),
-  metaTechnique: z.string(),
-  metaComplexity: z.string(),
-  metaTags: z.string(),
+  metaType: metaText("the type"),
+  metaMaterial: metaText("the material"),
+  metaSize: metaText("the size"),
+  metaTimeline: metaText("the timeline"),
+  metaTechnique: metaText("the technique"),
+  metaComplexity: z
+    .string()
+    .max(
+      PORTFOLIO_LIMITS.metaComplexity,
+      tooLong("the complexity", PORTFOLIO_LIMITS.metaComplexity),
+    ),
+  // Comma-separated here, an array in the action — so the rules are judged
+  // against the SPLIT value, exactly as the payload builder splits it.
+  metaTags: z
+    .string()
+    .refine(
+      (v) => splitTags(v).length <= PORTFOLIO_LIMITS.metaTags,
+      `Up to ${PORTFOLIO_LIMITS.metaTags} tags.`,
+    )
+    .refine(
+      (v) => splitTags(v).every((t) => t.length <= PORTFOLIO_LIMITS.metaTag),
+      tooLong("each tag", PORTFOLIO_LIMITS.metaTag),
+    ),
   images: z.array(
     z.object({
       url: z.string().min(1),
-      alt: z.string(),
-      caption: z.string(),
+      alt: z
+        .string()
+        .max(
+          PORTFOLIO_LIMITS.imageAlt,
+          tooLong("alt text", PORTFOLIO_LIMITS.imageAlt),
+        ),
+      caption: z
+        .string()
+        .max(
+          PORTFOLIO_LIMITS.imageCaption,
+          tooLong("a caption", PORTFOLIO_LIMITS.imageCaption),
+        ),
       translations: z.record(z.string(), z.record(z.string(), z.unknown())),
     }),
   ),
@@ -787,18 +844,36 @@ export function PortfolioForm({
                       className="aspect-square w-full rounded-lg border border-border object-cover"
                     />
                     <Input
+                      id={`portfolio-image-alt-${index}`}
                       aria-label={`Alt text for image ${index + 1}`}
                       placeholder="Alt text"
+                      aria-invalid={!!errors.images?.[index]?.alt}
+                      aria-describedby={describedBy(
+                        errors.images?.[index]?.alt &&
+                          `portfolio-image-alt-${index}-error`,
+                      )}
                       {...register(`images.${index}.alt`)}
                     />
+                    <FieldError id={`portfolio-image-alt-${index}-error`}>
+                      {errors.images?.[index]?.alt?.message}
+                    </FieldError>
                     {/* Alt describes the picture for someone who cannot see
                         it; the caption tells every reader something the
                         picture does not. Both, or either, or neither. */}
                     <Input
+                      id={`portfolio-image-caption-${index}`}
                       aria-label={`Caption for image ${index + 1}`}
                       placeholder="Caption (printed beside the plate number)"
+                      aria-invalid={!!errors.images?.[index]?.caption}
+                      aria-describedby={describedBy(
+                        errors.images?.[index]?.caption &&
+                          `portfolio-image-caption-${index}-error`,
+                      )}
                       {...register(`images.${index}.caption`)}
                     />
+                    <FieldError id={`portfolio-image-caption-${index}-error`}>
+                      {errors.images?.[index]?.caption?.message}
+                    </FieldError>
                     <Button
                       type="button"
                       variant="ghost"
@@ -878,56 +953,105 @@ export function PortfolioForm({
                 <Input
                   id="portfolio-meta-type"
                   placeholder="e.g. Wedding preservation"
+                  aria-invalid={!!errors.metaType}
+                  aria-describedby={describedBy(
+                    errors.metaType && "portfolio-meta-type-error",
+                  )}
                   {...register("metaType")}
                 />
+                <FieldError id="portfolio-meta-type-error">
+                  {errors.metaType?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="portfolio-meta-material">Material</Label>
                 <Input
                   id="portfolio-meta-material"
                   placeholder="e.g. Epoxy resin, bridal florals"
+                  aria-invalid={!!errors.metaMaterial}
+                  aria-describedby={describedBy(
+                    errors.metaMaterial && "portfolio-meta-material-error",
+                  )}
                   {...register("metaMaterial")}
                 />
+                <FieldError id="portfolio-meta-material-error">
+                  {errors.metaMaterial?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="portfolio-meta-size">Size</Label>
                 <Input
                   id="portfolio-meta-size"
                   placeholder='e.g. 12" × 16" block'
+                  aria-invalid={!!errors.metaSize}
+                  aria-describedby={describedBy(
+                    errors.metaSize && "portfolio-meta-size-error",
+                  )}
                   {...register("metaSize")}
                 />
+                <FieldError id="portfolio-meta-size-error">
+                  {errors.metaSize?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="portfolio-meta-timeline">Timeline</Label>
                 <Input
                   id="portfolio-meta-timeline"
                   placeholder="e.g. 6 weeks"
+                  aria-invalid={!!errors.metaTimeline}
+                  aria-describedby={describedBy(
+                    errors.metaTimeline && "portfolio-meta-timeline-error",
+                  )}
                   {...register("metaTimeline")}
                 />
+                <FieldError id="portfolio-meta-timeline-error">
+                  {errors.metaTimeline?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="portfolio-meta-technique">Technique</Label>
                 <Input
                   id="portfolio-meta-technique"
                   placeholder="e.g. Botanical preservation casting"
+                  aria-invalid={!!errors.metaTechnique}
+                  aria-describedby={describedBy(
+                    errors.metaTechnique && "portfolio-meta-technique-error",
+                  )}
                   {...register("metaTechnique")}
                 />
+                <FieldError id="portfolio-meta-technique-error">
+                  {errors.metaTechnique?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="portfolio-meta-complexity">Complexity</Label>
                 <Input
                   id="portfolio-meta-complexity"
                   placeholder="e.g. Signature / High / Moderate"
+                  aria-invalid={!!errors.metaComplexity}
+                  aria-describedby={describedBy(
+                    errors.metaComplexity && "portfolio-meta-complexity-error",
+                  )}
                   {...register("metaComplexity")}
                 />
+                <FieldError id="portfolio-meta-complexity-error">
+                  {errors.metaComplexity?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="portfolio-meta-tags">Tags</Label>
                 <Input
                   id="portfolio-meta-tags"
                   placeholder="comma separated — e.g. varmala, wedding, preservation"
+                  aria-invalid={!!errors.metaTags}
+                  aria-describedby={describedBy(
+                    errors.metaTags && "portfolio-meta-tags-error",
+                  )}
                   {...register("metaTags")}
                 />
+                <FieldError id="portfolio-meta-tags-error">
+                  {errors.metaTags?.message}
+                </FieldError>
               </div>
             </div>
           </FormSection>

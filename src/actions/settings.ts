@@ -4,6 +4,11 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 
 import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
+import {
+  SETTINGS_LIMITS,
+  WHATSAPP_NUMBER_MESSAGE,
+  WHATSAPP_NUMBER_PATTERN,
+} from "@/lib/studio-limits";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { SITE_SETTINGS_TAG } from "@/lib/site-settings";
@@ -26,19 +31,23 @@ const socialsSchema = z.object({
 });
 
 const defaultSeoSchema = z.object({
-  title: z.string().trim().max(300).optional(),
-  description: z.string().trim().max(500).optional(),
+  title: z.string().trim().max(SETTINGS_LIMITS.seoTitle).optional(),
+  description: z.string().trim().max(SETTINGS_LIMITS.seoDescription).optional(),
   ogImage: optionalUrl,
 });
 
 const settingsSchema = z.object({
-  brandName: z.string().trim().min(1, "Brand name is required.").max(120),
-  tagline: z.string().trim().max(300),
+  brandName: z
+    .string()
+    .trim()
+    .min(1, "Brand name is required.")
+    .max(SETTINGS_LIMITS.brandName),
+  tagline: z.string().trim().max(SETTINGS_LIMITS.tagline),
   logoUrl: optionalUrl,
   faviconUrl: optionalUrl,
   appIconUrl: optionalUrl,
   heroVideoUrl: optionalUrl,
-  announcement: z.string().trim().max(300).optional(),
+  announcement: z.string().trim().max(SETTINGS_LIMITS.announcement).optional(),
   /** Optional link for the announcement strip. */
   announcementHref: z
     .union([z.literal(""), z.url("Enter a valid URL.")])
@@ -50,29 +59,26 @@ const settingsSchema = z.object({
   businessHours: z
     .array(
       z.object({
-        days: z.string().trim().max(60),
-        hours: z.string().trim().max(60),
+        days: z.string().trim().max(SETTINGS_LIMITS.businessHoursDays),
+        hours: z.string().trim().max(SETTINGS_LIMITS.businessHoursHours),
       }),
     )
     .optional(),
-  responseNote: z.string().trim().max(200).optional(),
+  responseNote: z.string().trim().max(SETTINGS_LIMITS.responseNote).optional(),
   chartTimezone: z.enum(["UTC", "IST"]).optional(),
-  phone: z.string().trim().max(40),
+  phone: z.string().trim().max(SETTINGS_LIMITS.phone),
   // Becomes the wa.me/<number> order link — wa.me only accepts the bare
   // international number: digits with country code, no "+", spaces or dashes.
   whatsappNumber: z
     .string()
     .trim()
-    .regex(
-      /^[0-9]{8,15}$/,
-      "WhatsApp number must be 8–15 digits including the country code, with no + or spaces (it becomes the wa.me link).",
-    ),
+    .regex(WHATSAPP_NUMBER_PATTERN, WHATSAPP_NUMBER_MESSAGE),
   email: z.union([z.literal(""), z.email("Enter a valid email address.")]),
   mapsUrl: z.union([z.literal(""), z.url("Enter a valid URL.")]),
-  address: z.string().trim().max(2000),
+  address: z.string().trim().max(SETTINGS_LIMITS.address),
   socials: socialsSchema,
   defaultSeo: defaultSeoSchema,
-  defaultCareNotes: z.string().trim().max(5000).optional(),
+  defaultCareNotes: z.string().trim().max(SETTINGS_LIMITS.careNotes).optional(),
 });
 
 export type UpdateSiteSettingsInput = z.input<typeof settingsSchema>;

@@ -7,7 +7,9 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { searchProductsForLink } from "@/actions/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 
 import type { FormValues } from "./schema";
 
@@ -25,8 +27,14 @@ const TIER_LABELS: Record<number, string> = {
  * owner-picked here — never inferred — so the provenance story stays true.
  */
 export function ProvenanceLinksSection() {
-  const { control } = useFormContext<FormValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   const links = useFieldArray({ control, name: "madeWith" });
+  // The picker appends without a limit, so it stops offering rows at the cap
+  // rather than letting a Save be refused for a link already on screen.
+  const atCap = links.fields.length >= PRODUCT_LIMITS.madeWithRows;
   const [q, setQ] = useState("");
   const [results, setResults] = useState<
     { id: string; title: string; tier: number | null }[]
@@ -112,7 +120,13 @@ export function ProvenanceLinksSection() {
       </div>
       {error && <p className="text-sm text-alert">{error}</p>}
 
-      {results.length > 0 && (
+      {atCap && (
+        <p className="text-xs text-muted-foreground">
+          {PRODUCT_LIMITS.madeWithRows} links is the limit — remove one to add
+          another.
+        </p>
+      )}
+      {results.length > 0 && !atCap && (
         <ul className="space-y-1">
           {results
             .filter((row) => !links.fields.some((f) => f.linkId === row.id))
@@ -141,6 +155,14 @@ export function ProvenanceLinksSection() {
             ))}
         </ul>
       )}
+      {/* The picker appends without a limit, so the array cap can only be
+          reported here — no single control owns it. */}
+      <FieldError id="product-made-with-error">
+        {errors.madeWith?.root?.message ?? errors.madeWith?.message}
+      </FieldError>
+      <p className="text-xs text-muted-foreground">
+        Up to {PRODUCT_LIMITS.madeWithRows} links.
+      </p>
     </FormSection>
   );
 }

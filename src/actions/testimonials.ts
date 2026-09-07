@@ -10,6 +10,7 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
+import { TESTIMONIAL_LIMITS } from "@/lib/studio-limits";
 import { logActivity, snapshotBefore } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { isOptimizableImageSrc } from "@/lib/image-src";
@@ -55,7 +56,7 @@ const SNAPSHOT_FIELDS = [
 const urlFieldSchema = z
   .string()
   .trim()
-  .max(2048)
+  .max(TESTIMONIAL_LIMITS.url)
   .optional()
   .refine(
     (v) => !v || v.startsWith("/") || isOptimizableImageSrc(v),
@@ -64,10 +65,22 @@ const urlFieldSchema = z
 
 const upsertSchema = z.object({
   id: z.string().min(1).optional(),
-  name: z.string().trim().min(1, "Name is required").max(120),
-  location: z.string().trim().max(120).optional(),
-  quote: z.string().trim().min(1, "Quote is required").max(2000),
-  rating: z.number().int().min(1).max(5),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(TESTIMONIAL_LIMITS.name),
+  location: z.string().trim().max(TESTIMONIAL_LIMITS.location).optional(),
+  quote: z
+    .string()
+    .trim()
+    .min(1, "Quote is required")
+    .max(TESTIMONIAL_LIMITS.quote),
+  rating: z
+    .number()
+    .int()
+    .min(TESTIMONIAL_LIMITS.ratingMin)
+    .max(TESTIMONIAL_LIMITS.ratingMax),
   avatarUrl: urlFieldSchema,
   translations: z
     .record(z.string(), z.record(z.string(), z.unknown()))
@@ -75,22 +88,34 @@ const upsertSchema = z.object({
 
   status: z.enum(STATUSES).default("DRAFT"),
   featured: z.boolean().default(false),
-  designation: z.string().trim().max(160).optional(),
-  category: z.string().trim().max(120).optional(),
+  designation: z.string().trim().max(TESTIMONIAL_LIMITS.designation).optional(),
+  category: z.string().trim().max(TESTIMONIAL_LIMITS.category).optional(),
   /** ISO date string, or null to clear. Omitted leaves it untouched on
    *  update and unset on create. */
   givenAt: z.string().trim().min(1).nullable().optional(),
-  language: z.string().trim().max(20).optional(),
+  language: z.string().trim().max(TESTIMONIAL_LIMITS.language).optional(),
   productId: z.string().min(1).nullable().optional(),
   portfolioId: z.string().min(1).nullable().optional(),
-  productTitle: z.string().trim().max(200).optional(),
-  purchaseType: z.string().trim().max(60).optional(),
+  productTitle: z
+    .string()
+    .trim()
+    .max(TESTIMONIAL_LIMITS.productTitle)
+    .optional(),
+  purchaseType: z
+    .string()
+    .trim()
+    .max(TESTIMONIAL_LIMITS.purchaseType)
+    .optional(),
   mediaId: z.string().min(1).nullable().optional(),
   installationImageUrl: urlFieldSchema,
   installationMediaId: z.string().min(1).nullable().optional(),
   videoUrl: urlFieldSchema,
   videoPosterUrl: urlFieldSchema,
-  internalNotes: z.string().trim().max(10_000).optional(),
+  internalNotes: z
+    .string()
+    .trim()
+    .max(TESTIMONIAL_LIMITS.internalNotes)
+    .optional(),
   permissionStatus: z.enum(PERMISSIONS).default("UNKNOWN"),
 });
 

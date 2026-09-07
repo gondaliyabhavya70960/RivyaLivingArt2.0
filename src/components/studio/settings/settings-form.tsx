@@ -16,10 +16,18 @@ import { UploadUrlField } from "@/components/studio/settings/upload-url-field";
 import { DemoContentSection } from "@/components/studio/settings/demo-content-section";
 import type { SiteSettingsValues } from "@/components/studio/settings/site-settings-values";
 import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { scrollToFirstErrorIfUnfocused } from "@/components/studio/scroll-to-first-error";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
+import {
+  describePassedThroughSeo,
+  SETTINGS_LIMITS,
+  tooLong,
+  WHATSAPP_NUMBER_PATTERN,
+} from "@/lib/studio-limits";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,36 +44,105 @@ import { Textarea } from "@/components/ui/textarea";
 
 const optionalUrl = z.union([z.literal(""), z.url("Enter a valid URL.")]);
 
+// Every cap here is `settingsSchema`'s in `src/actions/settings.ts`, read
+// from the same module so the two cannot drift, and `.trim()` first because
+// the action trims before it counts — a bare `.max()` would refuse a value
+// with trailing spaces that the action accepts. The URL fields are
+// deliberately uncapped: the action puts no `.max()` on them either, and
+// inventing one here would refuse what the server takes.
 const formSchema = z.object({
-  brandName: z.string().trim().min(1, "Brand name is required."),
-  tagline: z.string(),
+  brandName: z
+    .string()
+    .trim()
+    .min(1, "Brand name is required.")
+    .max(
+      SETTINGS_LIMITS.brandName,
+      tooLong("the brand name", SETTINGS_LIMITS.brandName),
+    ),
+  tagline: z
+    .string()
+    .trim()
+    .max(
+      SETTINGS_LIMITS.tagline,
+      tooLong("the tagline", SETTINGS_LIMITS.tagline),
+    ),
   logoUrl: optionalUrl,
   faviconUrl: optionalUrl,
   appIconUrl: optionalUrl,
   heroVideoUrl: optionalUrl,
-  announcement: z.string(),
+  announcement: z
+    .string()
+    .trim()
+    .max(
+      SETTINGS_LIMITS.announcement,
+      tooLong("the announcement", SETTINGS_LIMITS.announcement),
+    ),
   announcementHref: z.union([z.literal(""), z.url("Enter a valid URL.")]),
   announcementStartsAt: z.string(),
   announcementEndsAt: z.string(),
-  businessHours: z.array(z.object({ days: z.string(), hours: z.string() })),
-  responseNote: z.string(),
+  // Judged row by row, including rows the action would later drop for being
+  // half-empty: it parses BEFORE it filters, so a half-empty row with an
+  // over-long cell is refused there too.
+  businessHours: z.array(
+    z.object({
+      days: z
+        .string()
+        .trim()
+        .max(
+          SETTINGS_LIMITS.businessHoursDays,
+          tooLong("the days column", SETTINGS_LIMITS.businessHoursDays),
+        ),
+      hours: z
+        .string()
+        .trim()
+        .max(
+          SETTINGS_LIMITS.businessHoursHours,
+          tooLong("the hours column", SETTINGS_LIMITS.businessHoursHours),
+        ),
+    }),
+  ),
+  responseNote: z
+    .string()
+    .trim()
+    .max(
+      SETTINGS_LIMITS.responseNote,
+      tooLong("the response note", SETTINGS_LIMITS.responseNote),
+    ),
   chartTimezone: z.enum(["UTC", "IST"]),
-  phone: z.string(),
+  phone: z
+    .string()
+    .trim()
+    .max(
+      SETTINGS_LIMITS.phone,
+      tooLong("the phone number", SETTINGS_LIMITS.phone),
+    ),
   whatsappNumber: z
     .string()
     .trim()
     .regex(
-      /^[0-9]{8,15}$/,
+      WHATSAPP_NUMBER_PATTERN,
       "8–15 digits including the country code, no + or spaces — e.g. 917096036250.",
     ),
   email: z.union([z.literal(""), z.email("Enter a valid email address.")]),
   mapsUrl: optionalUrl,
-  address: z.string(),
+  address: z
+    .string()
+    .trim()
+    .max(
+      SETTINGS_LIMITS.address,
+      tooLong("the address", SETTINGS_LIMITS.address),
+    ),
   instagram: optionalUrl,
   facebook: optionalUrl,
   youtube: optionalUrl,
   pinterest: optionalUrl,
-  defaultCareNotes: z.string(),
+  defaultCareNotes: z
+    .string()
+    .trim()
+    .max(
+      SETTINGS_LIMITS.careNotes,
+      tooLong("the care notes", SETTINGS_LIMITS.careNotes),
+    ),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -86,6 +163,8 @@ export function SettingsForm({
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  /** A problem in the SEO half this form submits but does not show. */
+  const [blocked, setBlocked] = useState<string | null>(null);
 
   const {
     register,
@@ -144,6 +223,18 @@ export function SettingsForm({
   const whatsappNumber = useWatch({ control, name: "whatsappNumber" });
 
   async function onSubmit(values: FormValues) {
+    // This form passes `defaultSeo` back untouched, so a value set on the SEO
+    // page can refuse the save here with a message about a field that is not
+    // on this screen. Name the screen instead.
+    const elsewhere = describePassedThroughSeo(settings.defaultSeo);
+    if (elsewhere) {
+      setBlocked(elsewhere);
+      // The only Save button is a sticky bar visible from every scroll
+      // position, so the alert can render far above the fold.
+      scrollToFirstErrorIfUnfocused("studio-settings-form");
+      return;
+    }
+    setBlocked(null);
     setSaving(true);
 
     const payload: UpdateSiteSettingsInput = {
@@ -194,7 +285,19 @@ export function SettingsForm({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        id="studio-settings-form"
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
+        {blocked && (
+          <p
+            role="alert"
+            className="rounded-card border border-alert/30 bg-alert/5 px-4 py-3 text-small text-foreground"
+          >
+            {blocked}
+          </p>
+        )}
         <LocalDraftBar
           savedAt={draft.savedAt}
           onRestore={draft.restore}
@@ -227,8 +330,15 @@ export function SettingsForm({
               <Input
                 id="settings-tagline"
                 placeholder="Handcrafted resin art, made to order."
+                aria-invalid={!!errors.tagline}
+                aria-describedby={describedBy(
+                  errors.tagline && "settings-tagline-error",
+                )}
                 {...register("tagline")}
               />
+              <FieldError id="settings-tagline-error">
+                {errors.tagline?.message}
+              </FieldError>
             </div>
           </div>
 
@@ -310,9 +420,20 @@ export function SettingsForm({
               placeholder={
                 "Made-to-order luxury resin art — every order finalized on WhatsApp\nOne message per line — the bar rotates through them"
               }
+              aria-invalid={!!errors.announcement}
+              aria-describedby={describedBy(
+                "settings-announcement-hint",
+                errors.announcement && "settings-announcement-error",
+              )}
               {...register("announcement")}
             />
-            <p className="text-xs text-muted-foreground">
+            <FieldError id="settings-announcement-error">
+              {errors.announcement?.message}
+            </FieldError>
+            <p
+              id="settings-announcement-hint"
+              className="text-xs text-muted-foreground"
+            >
               One message per line — the top-of-page bar rotates through them
               (B1). Leave empty to fall back to the stock line.
             </p>
@@ -395,9 +516,20 @@ export function SettingsForm({
               <Input
                 id="settings-phone"
                 placeholder="+91 70960 36250"
+                aria-invalid={!!errors.phone}
+                aria-describedby={describedBy(
+                  "settings-phone-hint",
+                  errors.phone && "settings-phone-error",
+                )}
                 {...register("phone")}
               />
-              <p className="text-xs text-muted-foreground">
+              <FieldError id="settings-phone-error">
+                {errors.phone?.message}
+              </FieldError>
+              <p
+                id="settings-phone-hint"
+                className="text-xs text-muted-foreground"
+              >
                 Shown to visitors as-is — any format works here.
               </p>
             </div>
@@ -465,8 +597,15 @@ export function SettingsForm({
               id="settings-address"
               rows={3}
               placeholder="Studio address shown in the footer and on the contact page."
+              aria-invalid={!!errors.address}
+              aria-describedby={describedBy(
+                errors.address && "settings-address-error",
+              )}
               {...register("address")}
             />
+            <FieldError id="settings-address-error">
+              {errors.address?.message}
+            </FieldError>
           </div>
 
           <div className="space-y-1.5">
@@ -478,14 +617,32 @@ export function SettingsForm({
                     className="w-full sm:w-44"
                     placeholder="Mon–Sat"
                     aria-label={`Days, row ${index + 1}`}
+                    aria-invalid={!!errors.businessHours?.[index]?.days}
+                    aria-describedby={describedBy(
+                      errors.businessHours?.[index]?.days &&
+                        `settings-hours-days-${index}-error`,
+                    )}
                     {...register(`businessHours.${index}.days` as const)}
                   />
                   <Input
                     className="w-full sm:w-48"
                     placeholder="10:00–19:00"
                     aria-label={`Hours, row ${index + 1}`}
+                    aria-invalid={!!errors.businessHours?.[index]?.hours}
+                    aria-describedby={describedBy(
+                      errors.businessHours?.[index]?.hours &&
+                        `settings-hours-hours-${index}-error`,
+                    )}
                     {...register(`businessHours.${index}.hours` as const)}
                   />
+                  <div className="w-full">
+                    <FieldError id={`settings-hours-days-${index}-error`}>
+                      {errors.businessHours?.[index]?.days?.message}
+                    </FieldError>
+                    <FieldError id={`settings-hours-hours-${index}-error`}>
+                      {errors.businessHours?.[index]?.hours?.message}
+                    </FieldError>
+                  </div>
                   <Button
                     type="button"
                     size="sm"
@@ -518,9 +675,20 @@ export function SettingsForm({
             <Input
               id="settings-response-note"
               placeholder="We usually reply within 4 hours."
+              aria-invalid={!!errors.responseNote}
+              aria-describedby={describedBy(
+                "settings-response-note-hint",
+                errors.responseNote && "settings-response-note-error",
+              )}
               {...register("responseNote")}
             />
-            <p className="text-xs text-muted-foreground">
+            <FieldError id="settings-response-note-error">
+              {errors.responseNote?.message}
+            </FieldError>
+            <p
+              id="settings-response-note-hint"
+              className="text-xs text-muted-foreground"
+            >
               Shown beside the WhatsApp call to action. Only promise what the
               studio can keep — it is the first thing a customer measures you
               by.
@@ -604,9 +772,20 @@ export function SettingsForm({
             <Textarea
               id="settings-care-notes"
               rows={4}
+              aria-invalid={!!errors.defaultCareNotes}
+              aria-describedby={describedBy(
+                "settings-care-notes-hint",
+                errors.defaultCareNotes && "settings-care-notes-error",
+              )}
               {...register("defaultCareNotes")}
             />
-            <p className="text-xs text-muted-foreground">
+            <FieldError id="settings-care-notes-error">
+              {errors.defaultCareNotes?.message}
+            </FieldError>
+            <p
+              id="settings-care-notes-hint"
+              className="text-xs text-muted-foreground"
+            >
               Products without their own care notes fall back to this text.
             </p>
           </div>

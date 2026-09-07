@@ -9,6 +9,7 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
+import { BLOG_LIMITS } from "@/lib/studio-limits";
 import { logActivity, snapshotBefore } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
@@ -36,13 +37,17 @@ const upsertPostSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(2, "Title needs at least 2 characters.")
-    .max(200),
-  excerpt: z.string().trim().max(600).optional(),
+    .min(BLOG_LIMITS.titleMin, "Title needs at least 2 characters.")
+    .max(BLOG_LIMITS.title),
+  excerpt: z.string().trim().max(BLOG_LIMITS.excerpt).optional(),
   /** Tiptap document JSON. */
   content: z.record(z.string(), z.unknown()),
   coverImage: optionalUrl,
-  authorName: z.string().trim().min(1, "Author name is required.").max(120),
+  authorName: z
+    .string()
+    .trim()
+    .min(1, "Author name is required.")
+    .max(BLOG_LIMITS.authorName),
   blogCategoryId: z.string().min(1).nullable().optional(),
   /** B0's `BlogPost.categoryId` → shop `Category` — the "Related collection"
    *  select (11: Taxonomy tab), distinct from `blogCategoryId` above (the
@@ -51,8 +56,8 @@ const upsertPostSchema = z.object({
   tagIds: z.array(z.string().min(1)).default([]),
   status: z.enum(CONTENT_STATUSES),
   publishedAt: z.iso.datetime("Invalid publish date.").nullable().optional(),
-  seoTitle: z.string().trim().max(300).optional(),
-  seoDescription: z.string().trim().max(500).optional(),
+  seoTitle: z.string().trim().max(BLOG_LIMITS.seoTitle).optional(),
+  seoDescription: z.string().trim().max(BLOG_LIMITS.seoDescription).optional(),
   translations: z
     .record(z.string(), z.record(z.string(), z.unknown()))
     .optional(),
@@ -286,7 +291,11 @@ export async function setBlogPostsStatus(
 
 // ————————————————————— Categories & tags —————————————————————
 
-const nameSchema = z.string().trim().min(1, "Name is required.").max(120);
+const nameSchema = z
+  .string()
+  .trim()
+  .min(1, "Name is required.")
+  .max(BLOG_LIMITS.taxonomyName);
 
 /**
  * Create-if-missing by name: two names that slugify identically are the

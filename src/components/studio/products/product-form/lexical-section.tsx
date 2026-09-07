@@ -5,6 +5,8 @@ import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { groupForTier } from "@/lib/catalog-taxonomy";
 
@@ -24,7 +26,11 @@ const SUGGESTED_LABELS = {
 } as const;
 
 export function LexicalSection() {
-  const { control, register } = useFormContext<FormValues>();
+  const {
+    control,
+    register,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   const rows = useFieldArray({ control, name: "lexical" });
   const tier = useWatch({ control, name: "tier" });
   const lexicalValues = useWatch({ control, name: "lexical" }) ?? [];
@@ -42,19 +48,38 @@ export function LexicalSection() {
       </p>
 
       {rows.fields.map((field, index) => (
-        <div key={field.id} className="flex items-start gap-2">
+        <div key={field.id} className="flex flex-wrap items-start gap-2">
           <Input
             id={`product-lexical-label-${index}`}
             placeholder="Label"
             aria-label={`Lexical label ${index + 1}`}
             className="w-40 shrink-0"
+            aria-invalid={!!errors.lexical?.[index]?.label}
+            aria-describedby={describedBy(
+              errors.lexical?.[index]?.label &&
+                `product-lexical-label-${index}-error`,
+            )}
             {...register(`lexical.${index}.label`)}
           />
           <Input
+            id={`product-lexical-value-${index}`}
             placeholder="Value"
             aria-label={`Lexical value ${index + 1}`}
+            aria-invalid={!!errors.lexical?.[index]?.value}
+            aria-describedby={describedBy(
+              errors.lexical?.[index]?.value &&
+                `product-lexical-value-${index}-error`,
+            )}
             {...register(`lexical.${index}.value`)}
           />
+          <div className="w-full">
+            <FieldError id={`product-lexical-label-${index}-error`}>
+              {errors.lexical?.[index]?.label?.message}
+            </FieldError>
+            <FieldError id={`product-lexical-value-${index}-error`}>
+              {errors.lexical?.[index]?.value?.message}
+            </FieldError>
+          </div>
           <Button
             type="button"
             variant="ghost"
@@ -89,6 +114,11 @@ export function LexicalSection() {
           </button>
         ))}
       </div>
+      {/* The Add row button and the suggestion chips keep working past the
+          cap, so the array-level refusal can only be reported here. */}
+      <FieldError id="product-lexical-error">
+        {errors.lexical?.root?.message ?? errors.lexical?.message}
+      </FieldError>
     </FormSection>
   );
 }

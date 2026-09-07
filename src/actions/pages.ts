@@ -10,6 +10,7 @@ import {
   type ActionResult,
 } from "@/actions/helpers";
 import { isLegalPageSlug } from "@/components/studio/pages/legal";
+import { PAGE_LIMITS } from "@/lib/studio-limits";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
@@ -22,16 +23,16 @@ const STUDIO_PATH = "/studio/pages";
 const upsertSchema = z.object({
   id: z.string().min(1).optional(),
   /** Only read on create — existing slugs are immutable. */
-  slug: z.string().trim().max(120).optional(),
+  slug: z.string().trim().max(PAGE_LIMITS.slug).optional(),
   title: z
     .string()
     .trim()
-    .min(2, "Title needs at least 2 characters.")
-    .max(200),
+    .min(PAGE_LIMITS.titleMin, "Title needs at least 2 characters.")
+    .max(PAGE_LIMITS.title),
   /** Tiptap document JSON. */
   content: z.record(z.string(), z.unknown()),
-  seoTitle: z.string().trim().max(300).optional(),
-  seoDescription: z.string().trim().max(500).optional(),
+  seoTitle: z.string().trim().max(PAGE_LIMITS.seoTitle).optional(),
+  seoDescription: z.string().trim().max(PAGE_LIMITS.seoDescription).optional(),
   translations: z
     .record(z.string(), z.record(z.string(), z.unknown()))
     .optional(),

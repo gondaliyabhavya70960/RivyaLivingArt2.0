@@ -38,11 +38,13 @@ import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { RichTextEditor } from "@/components/studio/rich-text-editor";
 import { TranslationsSection } from "@/components/studio/translations-section";
 import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { CONTENT_STATUSES } from "@/lib/content-status";
+import { BLOG_LIMITS, tooLong } from "@/lib/studio-limits";
 
 // ————————————————————— Types & schema —————————————————————
 
@@ -70,19 +72,36 @@ export type BlogPostFormInitial = {
 
 const optionalUrl = z.union([z.literal(""), z.url("Enter a valid URL.")]);
 
+// `upsertPostSchema`'s caps in `src/actions/blog.ts`, from the same module so
+// they cannot drift, and `.trim()` first because that action trims before it
+// counts.
+const capped = (max: number, what: string) =>
+  z.string().trim().max(max, tooLong(what, max));
+
 const formSchema = z.object({
-  title: z.string().trim().min(2, "Title needs at least 2 characters."),
-  excerpt: z.string(),
+  title: z
+    .string()
+    .trim()
+    .min(2, "Title needs at least 2 characters.")
+    .max(BLOG_LIMITS.title, tooLong("the title", BLOG_LIMITS.title)),
+  excerpt: capped(BLOG_LIMITS.excerpt, "the excerpt"),
   content: z.record(z.string(), z.unknown()),
   coverImage: optionalUrl,
-  authorName: z.string().trim().min(1, "Author name is required."),
+  authorName: z
+    .string()
+    .trim()
+    .min(1, "Author name is required.")
+    .max(
+      BLOG_LIMITS.authorName,
+      tooLong("the author name", BLOG_LIMITS.authorName),
+    ),
   blogCategoryId: z.string(),
   categoryId: z.string(),
   tagIds: z.array(z.string()),
   status: z.enum(CONTENT_STATUSES),
   publishedAt: z.string(),
-  seoTitle: z.string(),
-  seoDescription: z.string(),
+  seoTitle: capped(BLOG_LIMITS.seoTitle, "the SEO title"),
+  seoDescription: capped(BLOG_LIMITS.seoDescription, "the SEO description"),
   translations: z.record(z.string(), z.record(z.string(), z.unknown())),
 });
 
@@ -398,8 +417,15 @@ export function BlogPostForm({
                   id="post-excerpt"
                   rows={3}
                   placeholder="A short teaser shown on the blog index and in link previews."
+                  aria-invalid={!!errors.excerpt}
+                  aria-describedby={describedBy(
+                    errors.excerpt && "post-excerpt-error",
+                  )}
                   {...register("excerpt")}
                 />
+                <FieldError id="post-excerpt-error">
+                  {errors.excerpt?.message}
+                </FieldError>
               </div>
 
               <div className="space-y-1.5">
@@ -673,15 +699,32 @@ export function BlogPostForm({
             <FormSection title="SEO">
               <div className="space-y-1.5">
                 <Label htmlFor="post-seo-title">SEO title</Label>
-                <Input id="post-seo-title" {...register("seoTitle")} />
+                <Input
+                  id="post-seo-title"
+                  aria-invalid={!!errors.seoTitle}
+                  aria-describedby={describedBy(
+                    errors.seoTitle && "post-seo-title-error",
+                  )}
+                  {...register("seoTitle")}
+                />
+                <FieldError id="post-seo-title-error">
+                  {errors.seoTitle?.message}
+                </FieldError>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="post-seo-description">SEO description</Label>
                 <Textarea
                   id="post-seo-description"
                   rows={3}
+                  aria-invalid={!!errors.seoDescription}
+                  aria-describedby={describedBy(
+                    errors.seoDescription && "post-seo-description-error",
+                  )}
                   {...register("seoDescription")}
                 />
+                <FieldError id="post-seo-description-error">
+                  {errors.seoDescription?.message}
+                </FieldError>
               </div>
             </FormSection>
           </TabsContent>

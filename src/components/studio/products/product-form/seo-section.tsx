@@ -3,6 +3,8 @@ import { SerpPreview } from "@/components/studio/seo/serp-preview";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { describedBy, FieldHint } from "@/components/studio/field-hint";
+import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 import { FormSection, FieldError } from "./form-section";
 import type { FormValues } from "./schema";
 
@@ -29,15 +31,45 @@ export function SeoSection({ slug }: { slug?: string }) {
     <FormSection title="SEO">
       <div className="space-y-1.5">
         <Label htmlFor="product-seo-title">SEO title</Label>
-        <Input id="product-seo-title" {...register("seoTitle")} />
+        <Input
+          id="product-seo-title"
+          aria-invalid={!!errors.seoTitle}
+          aria-describedby={describedBy(
+            "product-seo-title-hint",
+            errors.seoTitle && "product-seo-title-error",
+          )}
+          {...register("seoTitle")}
+        />
+        <FieldError id="product-seo-title-error">
+          {errors.seoTitle?.message}
+        </FieldError>
+        {/* Two numbers live under this field: the cap the action refuses at,
+            and the ~60 the preview below counts against. One sentence, so a
+            "300" beside a "60" does not read as a contradiction. */}
+        <FieldHint id="product-seo-title-hint">
+          Up to {PRODUCT_LIMITS.seoTitle} characters; search results show about
+          60.
+        </FieldHint>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="product-seo-description">SEO description</Label>
         <Textarea
           id="product-seo-description"
           rows={3}
+          aria-invalid={!!errors.seoDescription}
+          aria-describedby={describedBy(
+            "product-seo-description-hint",
+            errors.seoDescription && "product-seo-description-error",
+          )}
           {...register("seoDescription")}
         />
+        <FieldError id="product-seo-description-error">
+          {errors.seoDescription?.message}
+        </FieldError>
+        <FieldHint id="product-seo-description-hint">
+          Up to {PRODUCT_LIMITS.seoDescription} characters; search results show
+          about 160.
+        </FieldHint>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="product-og-image">OG image URL</Label>

@@ -2,6 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MediaPicker } from "@/components/studio/media/media-picker";
+import { describedBy } from "@/components/studio/field-hint";
 import { FieldError } from "./form-section";
 import type { FormValues } from "./schema";
 
@@ -13,16 +14,31 @@ import type { FormValues } from "./schema";
  */
 
 export function TimelineField({ hint }: { hint?: string }) {
-  const { register } = useFormContext<FormValues>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   return (
     <div className="space-y-1.5">
       <Label htmlFor="product-timeline">Timeline</Label>
       <Input
         id="product-timeline"
         placeholder="e.g. 2–3 weeks"
+        aria-invalid={!!errors.timeline}
+        aria-describedby={describedBy(
+          hint && "product-timeline-hint",
+          errors.timeline && "product-timeline-error",
+        )}
         {...register("timeline")}
       />
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      <FieldError id="product-timeline-error">
+        {errors.timeline?.message}
+      </FieldError>
+      {hint && (
+        <p id="product-timeline-hint" className="text-xs text-muted-foreground">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -34,16 +50,34 @@ export function MaterialsField({
   hint?: string;
   placeholder?: string;
 }) {
-  const { register } = useFormContext<FormValues>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   return (
     <div className="space-y-1.5">
       <Label htmlFor="product-materials">Materials</Label>
       <Input
         id="product-materials"
         placeholder={placeholder}
+        aria-invalid={!!errors.materials}
+        aria-describedby={describedBy(
+          hint && "product-materials-hint",
+          errors.materials && "product-materials-error",
+        )}
         {...register("materials")}
       />
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      <FieldError id="product-materials-error">
+        {errors.materials?.message}
+      </FieldError>
+      {hint && (
+        <p
+          id="product-materials-hint"
+          className="text-xs text-muted-foreground"
+        >
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -57,16 +91,34 @@ export function DimensionsField({
   placeholder?: string;
   hint?: string;
 }) {
-  const { register } = useFormContext<FormValues>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   return (
     <div className="space-y-1.5">
       <Label htmlFor="product-dimensions">{label}</Label>
       <Input
         id="product-dimensions"
         placeholder={placeholder}
+        aria-invalid={!!errors.dimensions}
+        aria-describedby={describedBy(
+          hint && "product-dimensions-hint",
+          errors.dimensions && "product-dimensions-error",
+        )}
         {...register("dimensions")}
       />
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      <FieldError id="product-dimensions-error">
+        {errors.dimensions?.message}
+      </FieldError>
+      {hint && (
+        <p
+          id="product-dimensions-hint"
+          className="text-xs text-muted-foreground"
+        >
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
