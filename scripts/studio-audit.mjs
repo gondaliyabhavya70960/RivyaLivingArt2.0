@@ -30,6 +30,9 @@ const DEFAULT_ROUTES = [
   "/studio/media",
   "/studio/site-images",
   "/studio/site-copy",
+  // The composer's other two tabs: hidden panels are outside axe's reach.
+  "/studio/site-copy?tab=pictures",
+  "/studio/site-copy?tab=order",
   "/studio/sections",
   "/studio/navigation",
   "/studio/forms",

@@ -138,7 +138,13 @@ const RAIL_SELECT = {
   videoUrl: true,
   isDemo: true,
   category: {
-    select: { slug: true, name: true, description: true, translations: true },
+    select: {
+      slug: true,
+      name: true,
+      description: true,
+      translations: true,
+      visible: true,
+    },
   },
   images: {
     select: { url: true, alt: true, role: true },
@@ -434,7 +440,11 @@ export default async function ProductPage({ params }: PageProps) {
       showPrice: row.showPrice,
       categoryName: lc.name,
       image: image
-        ? { url: image.url, alt: image.alt || lp.title, role: image.role ?? null }
+        ? {
+            url: image.url,
+            alt: image.alt || lp.title,
+            role: image.role ?? null,
+          }
         : null,
       hoverImage: hoverImage
         ? {
@@ -570,10 +580,16 @@ export default async function ProductPage({ params }: PageProps) {
   const hasDetails = detailPanels.length > 0 || faqPanels.length > 0;
 
   /* ——— navigation + actions ——— */
+  // A hidden shelf (D7) is treated as unset rather than linked: its page
+  // 404s, so the crumb, the BreadcrumbList item built from it and the
+  // related band's button all go — the same rule the journal applies.
+  const categoryVisible = product.category.visible;
   const breadcrumbs = [
     { label: tCommon("home"), href: "/" },
     { label: tNav("shop"), href: "/shop" },
-    { label: category.name, href: `/shop/${product.category.slug}` },
+    ...(categoryVisible
+      ? [{ label: category.name, href: `/shop/${product.category.slug}` }]
+      : []),
   ];
   const breadcrumbItems = [
     ...breadcrumbs.map((crumb) => ({ label: crumb.label, href: crumb.href })),
@@ -1106,11 +1122,13 @@ export default async function ProductPage({ params }: PageProps) {
                     eyebrow={tp("relatedEyebrow", { category: category.name })}
                     title={tp("relatedHeading")}
                     action={
-                      <Button asChild variant="secondary" size="sm">
-                        <Link href={`/shop/${product.category.slug}`}>
-                          {tp("sections.viewCollection")}
-                        </Link>
-                      </Button>
+                      categoryVisible ? (
+                        <Button asChild variant="secondary" size="sm">
+                          <Link href={`/shop/${product.category.slug}`}>
+                            {tp("sections.viewCollection")}
+                          </Link>
+                        </Button>
+                      ) : undefined
                     }
                   />
                   <div className="hidden md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-10">

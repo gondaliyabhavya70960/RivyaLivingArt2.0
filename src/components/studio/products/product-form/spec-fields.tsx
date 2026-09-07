@@ -6,9 +6,10 @@ import { FieldError } from "./form-section";
 import type { FormValues } from "./schema";
 
 /**
- * Spec and media-URL fields shared between their home sections and the tier-4
+ * Spec and media-URL fields shared between their home sections and the
  * "3D printing" section. Each field registers exactly once: the sections swap
- * on the tier value, so only one instance of a field is ever mounted.
+ * on the print predicate (tier 4, or a print-group category — see
+ * `useIsPrintProduct`), so only one instance of a field is ever mounted.
  */
 
 export function TimelineField({ hint }: { hint?: string }) {
@@ -105,7 +106,9 @@ export function VideoUrlField({
         />
       </div>
       <p className="text-xs text-muted-foreground">{hint}</p>
-      <FieldError id="product-video-error">{errors.videoUrl?.message}</FieldError>
+      <FieldError id="product-video-error">
+        {errors.videoUrl?.message}
+      </FieldError>
     </div>
   );
 }

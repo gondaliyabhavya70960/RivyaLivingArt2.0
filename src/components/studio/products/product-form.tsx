@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { groupForCategorySlug } from "@/lib/catalog-taxonomy";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -51,6 +52,12 @@ export type { ProductFormInitial } from "./product-form/schema";
  * with nothing on screen to explain why — the classic way tabbed forms strand
  * people. `onInvalid` below reads the first errored field, finds its tab and
  * switches to it, and every tab with an error is marked in the strip.
+ *
+ * One pair moves: a PRINT product (tier 4, or a print-group category) carries
+ * its video and 3D-model URLs in the General tab's 3D-printing section rather
+ * than under Images, so `tabForField` takes that predicate — otherwise a bad
+ * URL switched to a tab that did not hold the field and focused an input
+ * inside a hidden panel, which is exactly the stranding this map prevents.
  */
 const TABS = [
   {
@@ -95,8 +102,11 @@ const TABS = [
 ] as const;
 
 /** The tab a field belongs to, or undefined for a field no tab claims. */
-function tabForField(field: string): string | undefined {
+function tabForField(field: string, isPrint: boolean): string | undefined {
   const root = field.split(".")[0];
+  if (isPrint && (root === "videoUrl" || root === "model3dUrl")) {
+    return "general";
+  }
   return TABS.find((tab) => (tab.fields as readonly string[]).includes(root))
     ?.value;
 }
@@ -134,18 +144,28 @@ export function ProductForm({
 
   const [tab, setTab] = useState<string>(TABS[0].value);
 
+  // The same predicate `useIsPrintProduct` applies inside the sections; it
+  // cannot be called here, above the FormProvider, so it is read off
+  // `methods.control` directly.
+  const tier = useWatch({ control: methods.control, name: "tier" });
+  const categoryId = useWatch({ control: methods.control, name: "categoryId" });
+  const categorySlug = categories.find((c) => c.id === categoryId)?.slug;
+  const isPrint =
+    tier === "4" ||
+    (categorySlug ? groupForCategorySlug(categorySlug) === "print" : false);
+
   /* Which tabs are holding an error right now, so the strip can say so
      without the owner opening each one to look. */
   const errored = new Set(
     Object.keys(methods.formState.errors)
-      .map(tabForField)
+      .map((field) => tabForField(field, isPrint))
       .filter((value): value is string => Boolean(value)),
   );
 
   /** A refused submit lands the owner ON the problem rather than nowhere. */
   function onInvalid(errors: Record<string, unknown>) {
     const first = Object.keys(errors)[0];
-    const target = first ? tabForField(first) : undefined;
+    const target = first ? tabForField(first, isPrint) : undefined;
     if (target) setTab(target);
   }
 

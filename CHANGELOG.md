@@ -132,6 +132,39 @@ dialog. One hygiene find on the way: the dismiss guard's source held a raw NUL b
 separator it joins field values on — so git treated the file as binary and had hidden every diff
 of it from review since it landed; the separator is the same character written as an escape.
 
+### The reading, read adversarially
+Every finding above was then handed to refuters told to break it against HEAD. Fifty verdicts: every
+struck roadmap line survived, and the refutations that landed were of the readers' pre-fix claims,
+each correcting to done. Four verdicts found what the readers had missed, and those are fixed here
+too, each reproduced before and after. The product form's tab map, which this batch had just made
+consistent, was consistent for the wrong product: a print product carries its video and 3D-model
+URLs in the General tab's 3D-printing section, and the map filed them under Images, so a bad URL
+switched to a tab without the field and focused an input inside a hidden panel — the stranding the
+map exists to prevent. `tabForField` takes the print predicate now. The testimonial form's headline
+rule — no publish without permission GRANTED — ran only inside the action, which throws, and
+`runAction` turns every throw but "Unauthorized" into "Something went wrong"; two docstrings said
+the message came straight back, and neither was true. The form runs the same rule before the action
+and lands the reason on the Permission control, the way the sections and block boards run theirs.
+The legal-page form had the same stale-baseline defect as the three editors fixed above, with no
+create path to hide it. And three public readers nobody had grepped — the social-image routes for a
+product, a post and a case — selected by slug alone, so a draft's title would render at a guessable
+URL; they select PUBLISHED and spread the demo clause like every other public reader. Verifying
+that in the browser found the larger fact: those three routes are unreachable at any URL today —
+they live under `[locale]`, the proxy exempts `opengraph-image` from its locale rewrite and
+redirects the prefixed form back to the bare one, so both paths 404 — and every page's `og:image`
+points at its cover or slot picture instead. They are dead routes; whether to wire or delete them is
+recorded as a decision. Two more from the
+same pass: the product page reached its category through the relation without `visible` and linked
+a hidden shelf from the breadcrumb, the BreadcrumbList and the related band's button, three links
+to a 404 — a hidden category is treated as unset now, the rule the journal already applied; and the
+Studio audit swept the composer with no `?tab=`, so its Pictures and Order panels rendered hidden
+and axe never saw them — the route list carries both tabs. What the pass found and left open is on
+the roadmap: the react-hook-form editors mirror none of their actions' length caps, so an over-long
+value comes back as a raw zod message in a toast with no field named; the category's SEO pair is not
+per-locale; the composer's surface↔page join has no test; and one decision, that the list's bulk
+status writer does not stamp `ownerTouched`, so the deploy-time sheet fill can re-publish an
+archived row.
+
 **What stays open, recorded on the roadmap with its size:** the local-draft hook on the five
 remaining react-hook-form forms (testimonial, landing page, legal page, settings, SEO — S each) and
 a value-shaped variant of it for the three `useState` dialogs; REDESIGN.md §12.5's footer verbs,

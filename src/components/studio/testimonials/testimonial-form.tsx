@@ -20,6 +20,7 @@ import { MediaPicker } from "@/components/studio/media/media-picker";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DraftPreview } from "@/components/studio/draft-preview";
 import { FieldError } from "@/components/studio/field-error";
+import { describeTestimonialProblem } from "@/lib/testimonials-rules";
 import { FormSection } from "@/components/studio/form-section";
 import {
   PERMISSION_LABELS,
@@ -371,6 +372,25 @@ export function TestimonialForm({
   }
 
   async function onSubmit(values: FormValues) {
+    // The action refuses PUBLISHED without permission GRANTED by throwing,
+    // and `runAction` reports every throw as "Something went wrong" — so the
+    // rule runs here first, the way the sections and block boards run
+    // theirs, and lands on the Permission control. Name and quote are
+    // already required by the client schema, so this can only be that rule.
+    const problem = describeTestimonialProblem({
+      name: values.name,
+      quote: values.quote,
+      status: values.status,
+      permissionStatus: values.permissionStatus,
+    });
+    if (problem) {
+      methods.setError("permissionStatus", {
+        type: "manual",
+        message: problem,
+      });
+      setTab("review");
+      return;
+    }
     setSaving(true);
     const result = await upsertTestimonial(
       buildUpsertPayload(values, testimonial?.id),
@@ -767,7 +787,10 @@ export function TestimonialForm({
                       // beside it; offer it rather than asking for the same
                       // frame again — and only into an empty field, never
                       // over a poster the owner chose.
-                      if (item.posterUrl && !methods.getValues("videoPosterUrl")) {
+                      if (
+                        item.posterUrl &&
+                        !methods.getValues("videoPosterUrl")
+                      ) {
                         setValue("videoPosterUrl", item.posterUrl, {
                           shouldDirty: true,
                         });
@@ -850,6 +873,14 @@ export function TestimonialForm({
                         <SelectTrigger
                           className="w-full"
                           aria-label="Permission"
+                          aria-invalid={
+                            formState.errors.permissionStatus ? true : undefined
+                          }
+                          aria-describedby={
+                            formState.errors.permissionStatus
+                              ? "testimonial-permission-error"
+                              : undefined
+                          }
                         >
                           <SelectValue placeholder="Permission" />
                         </SelectTrigger>
@@ -866,6 +897,9 @@ export function TestimonialForm({
                   <p className="text-xs text-muted-foreground">
                     Publishing is refused until this reads Granted.
                   </p>
+                  <FieldError id="testimonial-permission-error">
+                    {formState.errors.permissionStatus?.message}
+                  </FieldError>
                 </div>
               </div>
 
