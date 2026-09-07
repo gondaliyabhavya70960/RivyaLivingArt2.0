@@ -20,10 +20,14 @@ the unsaved-changes guard knows. The board's button reads the slot's current fil
 to list, the same test it already used to hide the focal and crop controls on a film.
 
 ### Verified
-Typecheck, lint and the 700-test unit suite clean on this tree. The browser pass over the three
-pickers — the dialog listing a film beside each input, a pick writing the URL and dirtying the
-form, and the board's picture slots still listing pictures — is recorded in the commit that
-follows, once the production build it runs against has finished.
+Typecheck, lint and the 700-test unit suite clean; production build against a local Postgres. A
+Playwright pass at 1440×900, with three video rows seeded into the local library and removed
+after: beside the product's Video URL, *Choose video* opens the dialog reading "Pick a video
+already in the library" with the one film in it, a pick writes `/media/v3/process-pour.mp4` into
+the input, closes the dialog and sets the footer to "Unsaved changes"; the portfolio's field does
+the same and its local draft bar reports the unsaved edit. On the board, the **Hero video** card's
+*From library* lists the film, and the **Hero poster** card beside it still reads "Pick an image"
+and lists pictures. No page errors.
 
 ### The rest of Phase 11, read against HEAD
 Two lines the roadmap still carried as open were shipped by the content series on 2026-09-04 and
