@@ -19,6 +19,21 @@ that lists the library's films and writes the URL through `setValue` so the form
 the unsaved-changes guard knows. The board's button reads the slot's current file to decide what
 to list, the same test it already used to hide the focal and crop controls on a film.
 
+### Four more, found by reading the picker's reach against every media field
+The same reading was then run over every field in the Studio that stores a picture or a film,
+and found four more gaps, each closed the same way. **The testimonial's video** had the picker but
+dropped the poster the library keeps beside a film: a pick now offers that poster into an EMPTY
+poster field — never over one the owner chose, which the pass below checks by choosing one and
+picking again. **The two film blocks** (video hero, video and words) had the same shape:
+`VideoField` gains an `onPoster` callback and both editors prefill an empty poster from the picked
+film. **Site settings and SEO** hold five media fields — logo, favicon, app icon, hero video and the
+sharing image — through `UploadUrlField`, which offered Upload and nothing else; it takes a
+`library` kind now, and the five list pictures or films accordingly. And **the site-images board's**
+new *Choose video* keyed on the slot's CURRENT file: an owner who once mis-applied a picture to the
+film slot would have been offered pictures from then on and could never choose the film back. It
+keys on the registry's fallback instead, which is what says what the slot IS; the current file
+still decides the focal and crop controls, which are about what is showing.
+
 ### Verified
 Typecheck, lint and the 700-test unit suite clean; production build against a local Postgres. A
 Playwright pass at 1440×900, with three video rows seeded into the local library and removed
@@ -29,6 +44,24 @@ the same and its local draft bar reports the unsaved edit. On the board, the **H
 *From library* lists the film, and the **Hero poster** card beside it still reads "Pick an image"
 and lists pictures. No page errors.
 
+A second pass for the four reach fixes, with a film row carrying a poster seeded into the "site"
+folder: on a new testimonial, *Choose video* writes the film's URL and its poster into the two
+fields; with the poster then changed by hand, a second pick leaves it alone. On the demo lander's
+video-and-words block, a pick with the poster filled keeps it, and a pick after clearing the poster
+fills it from the film — the editor was opened and closed, the row not saved, and the database row
+read back unchanged. On settings, *Choose video* beside the hero video lists the one film and the
+three *From library* buttons beside the logo, favicon and app icon read "Pick an image"; the SEO
+sharing image's does the same; on the board, Hero video lists the film and Hero poster pictures.
+
+A third pass for the defects the reconciliation below found, against the rebuilt server: on the
+demo product, one edit shows "Unsaved changes", Save clears it, and a click on the sidebar's
+Products link then navigates without the unsaved-changes dialog; the status Select lists Draft,
+Review, Published, Archived; switching the category to a print category with the tier left at 1
+mounts one `#product-video` and one `#product-model3d`, not two. On the demo post, text typed into
+the rich-text body is in the local draft within two seconds, is gone after a reload, and is back in
+the editor after Restore; Discard clears the draft. On a new portfolio case, an edit shows
+"Unsaved changes" and reverting it clears the indicator. No page errors in any pass.
+
 ### The rest of Phase 11, read against HEAD
 Two lines the roadmap still carried as open were shipped by the content series on 2026-09-04 and
 are struck with evidence: the picker's video mode (above), and the whole D15 block line — all ten
@@ -36,8 +69,52 @@ named blocks are in `CUSTOM_BLOCK_TYPES` (`custom-blocks.ts:295-304`) with an ed
 renderer and `media-usages.ts:296-325` walking the film, the poster and every gallery frame, the
 catalogue closed at sixteen by `custom-blocks.test.ts:53`. Five comments still described the
 catalogue as six types and the walker's docstring still said "block pictures"; they now say
-sixteen, and films, posters and gallery frames. The remaining Phase 11 lines are read against HEAD
-in the reconciliation that follows.
+sixteen, and films, posters and gallery frames.
+
+The remaining two lines were then read the same way — five readers over the local-draft hook,
+the footers, the D7/D14/D16 gates and every react-hook-form editor's error wiring, each finding
+carrying file:line evidence and re-checked here before anything changed. **What the reading found
+done:** the autosave line, on exactly the three forms it was scoped to (`useLocalDraft` on the
+product, journal and portfolio forms, never the database); D7's Category `seoTitle`,
+`seoDescription` and `visible` (migration `20260904104000`, the editor controls, every public reader
+and the category page's `noindex`/404 on a hidden shelf); D16's `/studio/process` and
+`/studio/materials` as the sections board pre-filtered; and D14 everywhere but one place. The
+roadmap's lines 204 and 207 are struck with that evidence, and its gates line says the four gates
+were answered on 2026-09-04.
+
+**What the reading found broken, and this batch fixes.** The one D14 hole: the product editor's
+status Select offered Draft and Published only, so a product moved to Review or Archived from the
+list's bulk bar opened with a Select whose value matched no option — it lists the four now, in the
+order the journal's does. Two defects in the batch before this one and the local-draft work it sits
+on: the unsaved-changes indicator, and the navigation guard behind it, stayed armed after a
+successful save in edit mode, because `isDirty` compares against the values the form MOUNTED with
+and nothing reset that baseline (the create path escaped only because `router.push` remounts the
+form); the three forms now `reset(values)` after a successful save, before autosave is re-enabled,
+so the reset cannot be mistaken for an edit and written back as a draft. And Restore on the
+journal form repopulated every input except the one that matters most — the rich-text body, whose
+editor reads its value once on mount and says so in its own header; the hook now counts restores
+and the form keys the body editor and the translations section on that count, so Restore remounts
+them with the restored text. The portfolio footer, the third form on the same footer pattern, had
+no indicator at all and has the same always-mounted live region now. Four smaller findings from the
+error-wiring reader: a print-group product filed without tier 4 mounted the video and 3D-model
+fields twice — once in the Images tab, once in the print section, two inputs with one id and a
+label pointing at the wrong one — because the Images tab gated on the tier alone; it now uses the
+same `useIsPrintProduct` predicate the print section does. The journal's author name and the
+product's 3D-model URL were claimed by no tab, so a refusal on either switched to no tab and dotted
+none; the portfolio's location and year set `aria-invalid` but never pointed at their message; the
+landing page's title did neither. All four are wired.
+
+**What stays open, recorded on the roadmap with its size:** the local-draft hook on the five
+remaining react-hook-form forms (testimonial, landing page, legal page, settings, SEO — S each) and
+a value-shaped variant of it for the three `useState` dialogs; REDESIGN.md §12.5's footer verbs,
+Discard · Save draft · Publish, on the product and journal editors (client-only, designed against
+four states); the demo lander fixture, which carries none of six of the ten new blocks, so CI's
+sweeps never render them; a by-id reader for the testimonial block, which scans a 500-row pool. **What
+stays a decision:** the per-row draft column (no `draft` column exists on Product, BlogPost or
+Portfolio, and a database-backed Save draft needs one, additively, per entity), `BlogPost.publishedAt`
+as a visibility gate (a future-dated post is live today, and hiding it changes what visitors see),
+and a picker beside the 3D-model field, which needs `listMediaForPicker`'s IMAGE/VIDEO enum widened
+— an additive Server Action input change, so a decision rather than a batch.
 
 ## Transformation Phase 11 — the editor gets its second column (2026-09-06, fifth batch)
 
