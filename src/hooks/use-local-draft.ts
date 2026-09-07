@@ -10,14 +10,16 @@ import {
   type LocalDraftRecord,
 } from "@/lib/local-draft";
 
-const DEBOUNCE_MS = 800;
+export const DRAFT_DEBOUNCE_MS = 800;
 
 /**
- * Local-only autosave for the product/blog/portfolio forms (10 remnants: "no
- * autosave"). Debounces every RHF value change into
+ * Local-only autosave for the studio's react-hook-form editors (10 remnants:
+ * "no autosave"). Debounces every RHF value change into
  * `localStorage["studio:draft:<entity>:<id|new>"]` — never the database, and
  * never sent anywhere. `<LocalDraftBar/>` reads `hasDraft`/`savedAt` off the
- * same hook to offer Restore/Discard.
+ * same hook to offer Restore/Discard. The `useState` dialogs (FAQ, category,
+ * research) use the value-shaped sibling `useLocalDraftValue`, which shares
+ * the store below.
  *
  * Read as an EXTERNAL STORE (`useSyncExternalStore`), the pattern
  * `use-column-visibility.ts` and `SavedViews` already use: no effect
@@ -59,6 +61,38 @@ function notify() {
   for (const listener of listeners) listener();
 }
 
+/** The stored draft under `storageKey`, read as an external store. */
+export function useDraftRecord<T>(
+  storageKey: string,
+): LocalDraftRecord<T> | null {
+  return useSyncExternalStore(
+    subscribe,
+    () => readRecord(storageKey),
+    () => null,
+  ) as LocalDraftRecord<T> | null;
+}
+
+/** Write `values` under `storageKey` and tell every subscriber. */
+export function writeDraft<T>(storageKey: string, values: T): void {
+  try {
+    localStorage.setItem(storageKey, serializeDraft(values));
+  } catch {
+    // Storage write blocked (private mode, quota) — the edit just isn't
+    // backed up locally; the real Save still works.
+  }
+  notify();
+}
+
+/** Remove the draft under `storageKey` and tell every subscriber. */
+export function removeDraft(storageKey: string): void {
+  try {
+    localStorage.removeItem(storageKey);
+  } catch {
+    // Nothing to clear if storage was never reachable.
+  }
+  notify();
+}
+
 export function useLocalDraft<T extends FieldValues>({
   key: entity,
   id,
@@ -66,7 +100,7 @@ export function useLocalDraft<T extends FieldValues>({
   reset,
   enabled = true,
 }: {
-  /** Entity name — `"product"`, `"blog"`, `"portfolio"`. */
+  /** Entity name — `"product"`, `"blog"`, `"portfolio"`, … */
   key: string;
   /** The row's id, or `undefined` on the create form. */
   id: string | undefined;
@@ -76,12 +110,7 @@ export function useLocalDraft<T extends FieldValues>({
   enabled?: boolean;
 }) {
   const storageKey = draftStorageKey(entity, id);
-
-  const record = useSyncExternalStore(
-    subscribe,
-    () => readRecord(storageKey),
-    () => null,
-  ) as LocalDraftRecord<T> | null;
+  const record = useDraftRecord<T>(storageKey);
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Bumped on every Restore. `reset()` repopulates every registered input,
@@ -96,14 +125,8 @@ export function useLocalDraft<T extends FieldValues>({
     const subscription = watch((values) => {
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => {
-        try {
-          localStorage.setItem(storageKey, serializeDraft(values));
-        } catch {
-          // Storage write blocked (private mode, quota) — the edit just
-          // isn't backed up locally; the real Save still works.
-        }
-        notify();
-      }, DEBOUNCE_MS);
+        writeDraft(storageKey, values);
+      }, DRAFT_DEBOUNCE_MS);
     });
     return () => {
       subscription.unsubscribe();
@@ -112,17 +135,22 @@ export function useLocalDraft<T extends FieldValues>({
   }, [enabled, storageKey, watch]);
 
   function discard() {
-    try {
-      localStorage.removeItem(storageKey);
-    } catch {
-      // Nothing to clear if storage was never reachable.
-    }
-    notify();
+    // A write still pending in the debounce would put the draft straight
+    // back — `reset()` on Restore notifies `watch`, so a Discard within
+    // 800 ms of a Restore used to be undone by its own restore. Measured.
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    removeDraft(storageKey);
   }
 
   function restore() {
     if (!record) return;
-    reset(record.values, { keepDefaultValues: false });
+    // Keep the values the form MOUNTED with as the defaults: the restored
+    // edit is unsaved with respect to the database, so `isDirty` must read
+    // true afterwards — the footer says "Unsaved changes" and the navigation
+    // guard stays armed. Replacing the defaults (the first cut) made a
+    // restored draft look saved until the next keystroke.
+    reset(record.values, { keepDefaultValues: true });
     setVersion((current) => current + 1);
   }
 

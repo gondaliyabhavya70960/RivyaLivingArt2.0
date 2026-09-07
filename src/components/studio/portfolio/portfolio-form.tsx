@@ -417,6 +417,8 @@ export function PortfolioForm({
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Portfolio piece deleted.");
     router.push("/studio/portfolio");
     router.refresh();

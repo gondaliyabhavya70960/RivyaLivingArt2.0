@@ -2,8 +2,11 @@
 
 /**
  * "You have unsaved edits from <time> — Restore · Discard", banked above a
- * product/blog/portfolio form when `useLocalDraft` finds a local autosave
- * newer than what the form mounted with. `role="status"` — this is
+ * Studio form when `useLocalDraft` (or `useLocalDraftValue`) finds a local
+ * autosave for this row. It is offered, never applied: the hook does not
+ * compare the draft's time with the row's last save, so a draft abandoned on
+ * one device can be older than a save made on another — the time in the bar
+ * is what the person has to judge it by. `role="status"` — this is
  * information, not an interruption, and it must not steal focus.
  *
  * Renders nothing when there is no draft, so it never sits alongside a form

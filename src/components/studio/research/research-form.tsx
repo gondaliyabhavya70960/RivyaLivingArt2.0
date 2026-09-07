@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useDismissGuard } from "@/hooks/use-dismiss-guard";
+import { useLocalDraftValue } from "@/hooks/use-local-draft-value";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 
 export type ResearchRow = {
   id: string;
@@ -202,16 +204,35 @@ export function ResearchFormDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Radix unmounts content on close, so keying the body by record
-          resets field state on every open without any effect. */}
+      {/* Keyed by row AND by open state: Radix unmounts the CONTENT on close,
+          not this body, so the create dialog's typed fields used to survive a
+          Cancel and greet the next open — the local draft keeps that copy
+          now, offered rather than imposed. */}
       <ResearchFormBody
-        key={record?.id ?? "new"}
+        key={`${record?.id ?? "new"}:${open ? "open" : "closed"}`}
         record={record}
         onOpenChange={onOpenChange}
       />
     </Dialog>
   );
 }
+
+/** What the dialog's local draft carries — the typed fields, not the errors. */
+type ResearchDraft = {
+  source: string;
+  url: string;
+  title: string;
+  category: string;
+  materials: string;
+  dimensions: string;
+  price: string;
+  imagesText: string;
+  description: string;
+  tagsText: string;
+  notes: string;
+  extractedAt: string;
+  status: ResearchStatus;
+};
 
 function ResearchFormBody({
   record,
@@ -241,8 +262,80 @@ function ResearchFormBody({
     record?.status ?? "RESEARCH",
   );
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [errors, setErrors] = useState<Problems>({});
   const isEdit = Boolean(record);
+
+  // Value-shaped local draft over the thirteen typed fields (see
+  // faq-list.tsx for the shape and why); the errors are not part of it.
+  const draftValues = useMemo<ResearchDraft>(
+    () => ({
+      source,
+      url,
+      title,
+      category,
+      materials,
+      dimensions,
+      price,
+      imagesText,
+      description,
+      tagsText,
+      notes,
+      extractedAt,
+      status,
+    }),
+    [
+      source,
+      url,
+      title,
+      category,
+      materials,
+      dimensions,
+      price,
+      imagesText,
+      description,
+      tagsText,
+      notes,
+      extractedAt,
+      status,
+    ],
+  );
+  const draft = useLocalDraftValue<ResearchDraft>({
+    key: "research",
+    id: record?.id,
+    values: draftValues,
+    initial: {
+      source: record?.source ?? "",
+      url: record?.url ?? "",
+      title: record?.title ?? "",
+      category: record?.category ?? "",
+      materials: record?.materials ?? "",
+      dimensions: record?.dimensions ?? "",
+      price: record?.price ?? "",
+      imagesText: (record?.images ?? []).join("\n"),
+      description: record?.description ?? "",
+      tagsText: (record?.tags ?? []).join(", "),
+      notes: record?.notes ?? "",
+      extractedAt: record?.extractedAtInput ?? "",
+      status: record?.status ?? "RESEARCH",
+    },
+    apply: (v) => {
+      setSource(v.source);
+      setUrl(v.url);
+      setTitle(v.title);
+      setCategory(v.category);
+      setMaterials(v.materials);
+      setDimensions(v.dimensions);
+      setPrice(v.price);
+      setImagesText(v.imagesText);
+      setDescription(v.description);
+      setTagsText(v.tagsText);
+      setNotes(v.notes);
+      setExtractedAt(v.extractedAt);
+      setStatus(v.status);
+    },
+    enabled: !busy && !saved,
+  });
 
   /** An edit clears that field's error; the next submit re-judges everything. */
   function clear(key: FieldKey) {
@@ -301,6 +394,8 @@ function ResearchFormBody({
     });
     setBusy(false);
     if (res.ok) {
+      setSaved(true);
+      draft.discard();
       toast.success(
         isEdit ? "Research record updated." : "Research record added.",
       );
@@ -332,6 +427,11 @@ function ResearchFormBody({
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="research-source">Source</Label>

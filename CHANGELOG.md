@@ -5,6 +5,82 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 11 — every Studio form gets its local draft (2026-09-07, seventh batch)
+
+The roadmap's autosave line was done on the three long editors and open on eight other forms:
+five react-hook-form editors that needed the same five lines, and three dialogs — FAQ, category,
+research — whose fields are a dozen `useState` setters and no form library, so the hook typed on
+`watch`/`reset` could not be attached. This batch is that line, closed.
+
+### Five editors, the same five lines
+The testimonial, landing-page, legal-page, settings and SEO forms mount `useLocalDraft` exactly as
+the product, journal and portfolio forms do: the hook after the guard, the bar as the form's first
+child, `draft.discard()` in the successful-save branch after the baseline reset, autosave off
+while a save is in flight. Two of them needed one thing more. The testimonial's two link pickers
+keep their display — the linked product's or case study's title — beside the form rather than in
+it, so a bare restore would have shown the row's link while the draft's id was what got saved; the
+form's Restore brings the pickers along, and where the restored id is neither the row's link nor
+the one on screen the picker shows a plain placeholder the owner can re-pick over. The legal pages'
+rich-text body and their translations strip read their value once on mount, so both are keyed on
+the restore count, as the journal's are. Settings and SEO are one row each, so their slot is an
+explicit `singleton` rather than the create form's `new`. The landing page's draft covers its
+metadata; its blocks are saved one at a time on the board and are outside the form.
+
+### Three dialogs, and the hook they needed
+`useLocalDraftValue` is the value-shaped sibling: the dialog hands over its current `values`
+object each render, the `initial` values it opened with, and an `apply()` that fans a restored
+record back into its setters. Same storage key, same serialisation, same bar. Two rules the
+react-hook-form hook never needed: a draft equal to what the dialog opened with is never written,
+and one this mount wrote is removed again if the edit is undone — without that, every dialog
+opened and closed would leave a "you have unsaved edits" bar for the next open, and the bar would
+be noise within a day; and `initial` is read once, on mount, because the bodies remount on every
+open and that moment is the baseline. A pre-existing draft is offered, never applied; Cancel keeps
+it (the dismiss guard already stops an accidental close, so a deliberate Cancel is the person
+saying put it aside, and the copy costs nothing to discard next time); a successful save clears it
+and switches the hook off for the close animation. The store — the listener set, the snapshot
+cache, the read through `useSyncExternalStore` — moved out of `useLocalDraft` into shared
+internals both hooks use; the three editors' behaviour is byte-for-byte what it was.
+`sameDraftValues`, the order-insensitive deep equality behind the first rule, lives in
+`lib/local-draft.ts` with five tests.
+
+### What the reading and the browser fixed on the way
+Restore replaced the form's defaults with the restored values, so a restored draft read as SAVED —
+`isDirty` false, no "Unsaved changes", the navigation guard disarmed — until the next keystroke,
+though the database held none of it; it keeps the mount baseline now (`keepDefaultValues`), and a
+restored edit is unsaved until saved. Discard could be undone by its own Restore: `reset()`
+notifies `watch`, the debounce scheduled a write, and a Discard inside that 800 ms window was
+followed by the draft coming straight back — measured in the first browser pass; Discard cancels a
+pending write in both hooks. The three dialog bodies were keyed by row on the belief that Radix
+unmounts them on close; it unmounts the CONTENT, not the body, so the create dialogs' typed fields
+survived a Cancel and greeted the next open — they are keyed by open state too, the shape the
+scraper's Add sources dialog already used, and the local draft is what keeps the copy. The
+category dialog ran to 1348px in a 900px viewport with no ceiling and no scroll, so Cancel and
+Create sat below a laptop's fold with no way to reach them; it has the 85vh ceiling the FAQ and
+research dialogs had. A deleted row's draft is discarded rather than left as an orphan under an id
+never reused. And the bar's header claimed it showed a draft "newer than what the form mounted
+with" — the hook makes no such comparison, so the header says what is true and the comparison is
+recorded as open on the roadmap.
+
+### Verified
+Typecheck, lint and the unit suite (705 tests — the five new ones cover `sameDraftValues`)
+clean; production build against a local Postgres. Three Playwright passes at 1440×900, drafts
+cleared from storage before each. **The five editors:** on a new testimonial, the demo lander's
+metadata, settings, SEO and a legal page, one edit is in `localStorage` under the right key
+(`studio:draft:testimonial:new`, `…:custom-page:demo-lander`, `…:settings:singleton`,
+`…:seo:singleton`, `…:page:<id>`) within 1.5 s; after a reload the field is back to the saved value
+and the bar reads "You have unsaved edits"; Restore repopulates the field — on the legal page the
+text typed into the rich-text body too; Discard removes the key and the bar. On the legal page a
+save with a draft pending shows "Page saved.", removes the key and the bar, and the edit was
+reverted after. **The three dialogs**, each on its create form: opened and closed untouched, no
+key; typed, then Cancel, the key stays; reopened, the bar shows and the field is empty; Restore
+fills it, Discard clears key and bar; typed again and undone to the opening value, the key this
+mount wrote is removed. **An existing FAQ:** the draft is keyed by its row id; a different row
+opens with no bar and its own text; back on the first row the bar shows, Restore fills, Discard
+clears. **A save:** creating an FAQ with a draft pending removes the key, closes the dialog, and
+the next New FAQ opens with no bar and empty fields. No page errors in any pass. The first pass is
+what caught two of the fixes above — the draft resurrected by its own Restore, and the category
+dialog's buttons below the fold — and the second confirmed both closed.
+
 ## Transformation Phase 11 — the film fields the video picker missed, and the roadmap read against HEAD (2026-09-07, sixth batch)
 
 ### Three inputs that could only be pasted into

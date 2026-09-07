@@ -17,6 +17,8 @@ import { DemoContentSection } from "@/components/studio/settings/demo-content-se
 import type { SiteSettingsValues } from "@/components/studio/settings/site-settings-values";
 import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,6 +91,8 @@ export function SettingsForm({
     register,
     control,
     handleSubmit,
+    reset,
+    watch,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -123,6 +127,16 @@ export function SettingsForm({
   });
 
   useUnsavedChangesGuard(isDirty && !saving);
+
+  // One settings row, so one draft slot: an explicit id rather than the
+  // create form's "new".
+  const draft = useLocalDraft<FormValues>({
+    key: "settings",
+    id: "singleton",
+    watch,
+    reset,
+    enabled: !saving,
+  });
 
   /** Opening-hours rows. A blank row is seeded above so adding is typing. */
   const hourRows = useFieldArray({ control, name: "businessHours" });
@@ -163,12 +177,17 @@ export function SettingsForm({
     };
 
     const result = await updateSiteSettings(payload);
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    // The save is the new baseline (see product-form.tsx), reset while
+    // autosave is still off so it is never written back as a draft.
+    reset(values);
+    draft.discard();
+    setSaving(false);
     toast.success("Settings saved.");
     router.refresh();
   }
@@ -176,6 +195,11 @@ export function SettingsForm({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+        />
         {/* (a) Brand */}
         <FormSection
           title="Brand"

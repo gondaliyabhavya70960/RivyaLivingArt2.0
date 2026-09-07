@@ -46,6 +46,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useSelection } from "@/hooks/use-selection";
 import { useDismissGuard } from "@/hooks/use-dismiss-guard";
+import { useLocalDraftValue } from "@/hooks/use-local-draft-value";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 
 export type FaqRow = {
   id: string;
@@ -74,16 +76,25 @@ function FaqFormDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Radix unmounts content on close, so keying the body by faq
-          resets field state on every open without any effect. */}
+      {/* Keyed by row AND by open state: Radix unmounts the CONTENT on close,
+          not this body, so the create dialog's typed fields used to survive a
+          Cancel and greet the next open — the local draft keeps that copy
+          now, offered rather than imposed. */}
       <FaqFormBody
-        key={faq?.id ?? "new"}
+        key={`${faq?.id ?? "new"}:${open ? "open" : "closed"}`}
         faq={faq}
         onOpenChange={onOpenChange}
       />
     </Dialog>
   );
 }
+
+/** What the dialog's local draft carries — the typed fields, not the errors. */
+type FaqDraft = {
+  question: string;
+  answer: string;
+  translations: TranslationsValue;
+};
 
 function FaqFormBody({
   faq,
@@ -101,7 +112,33 @@ function FaqFormBody({
     toTranslationsRecord(faq?.translations),
   );
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
   const isEdit = Boolean(faq);
+
+  // The same local safety net the editors carry, value-shaped because this
+  // dialog is three setters and no form library. Off once saved: the body
+  // is still mounted for the close animation, and must not write the
+  // just-discarded draft back.
+  const draftValues = useMemo<FaqDraft>(
+    () => ({ question, answer, translations }),
+    [question, answer, translations],
+  );
+  const draft = useLocalDraftValue<FaqDraft>({
+    key: "faq",
+    id: faq?.id,
+    values: draftValues,
+    initial: {
+      question: faq?.question ?? "",
+      answer: faq?.answer ?? "",
+      translations: toTranslationsRecord(faq?.translations),
+    },
+    apply: (v) => {
+      setQuestion(v.question);
+      setAnswer(v.answer);
+      setTranslations(v.translations);
+    },
+    enabled: !busy && !saved,
+  });
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -128,6 +165,8 @@ function FaqFormBody({
     });
     setBusy(false);
     if (res.ok) {
+      setSaved(true);
+      draft.discard();
       toast.success(isEdit ? "FAQ updated." : "FAQ created.");
       onOpenChange(false);
       router.refresh();
@@ -156,6 +195,11 @@ function FaqFormBody({
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+        />
         <div className="space-y-1.5">
           <Label htmlFor="faq-question">Question</Label>
           <Input

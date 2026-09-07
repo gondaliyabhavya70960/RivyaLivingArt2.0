@@ -40,6 +40,8 @@ import { useSelection } from "@/hooks/use-selection";
 import { slugify } from "@/lib/slug";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { useDismissGuard } from "@/hooks/use-dismiss-guard";
+import { useLocalDraftValue } from "@/hooks/use-local-draft-value";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 
 export type CategoryRow = {
   id: string;
@@ -67,16 +69,30 @@ function CategoryFormDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Radix unmounts content on close, so keying the body by category
-          resets field state on every open without any effect. */}
+      {/* Keyed by row AND by open state: Radix unmounts the CONTENT on close,
+          not this body, so the create dialog's typed fields used to survive a
+          Cancel and greet the next open — the local draft keeps that copy
+          now, offered rather than imposed. The source-list dialog keys the
+          same way. */}
       <CategoryFormBody
-        key={category?.id ?? "new"}
+        key={`${category?.id ?? "new"}:${open ? "open" : "closed"}`}
         category={category}
         onOpenChange={onOpenChange}
       />
     </Dialog>
   );
 }
+
+/** What the dialog's local draft carries — the typed fields, not the error. */
+type CategoryDraft = {
+  name: string;
+  description: string;
+  image: string;
+  seoTitle: string;
+  seoDescription: string;
+  visible: boolean;
+  translations: ReturnType<typeof toTranslationsRecord>;
+};
 
 function CategoryFormBody({
   category,
@@ -99,7 +115,46 @@ function CategoryFormBody({
     toTranslationsRecord(category?.translations),
   );
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
   const isEdit = Boolean(category);
+
+  // Value-shaped local draft (see faq-list.tsx for the shape and why).
+  const draftValues = useMemo<CategoryDraft>(
+    () => ({
+      name,
+      description,
+      image,
+      seoTitle,
+      seoDescription,
+      visible,
+      translations,
+    }),
+    [name, description, image, seoTitle, seoDescription, visible, translations],
+  );
+  const draft = useLocalDraftValue<CategoryDraft>({
+    key: "category",
+    id: category?.id,
+    values: draftValues,
+    initial: {
+      name: category?.name ?? "",
+      description: category?.description ?? "",
+      image: category?.image ?? "",
+      seoTitle: category?.seoTitle ?? "",
+      seoDescription: category?.seoDescription ?? "",
+      visible: category?.visible ?? true,
+      translations: toTranslationsRecord(category?.translations),
+    },
+    apply: (v) => {
+      setName(v.name);
+      setDescription(v.description);
+      setImage(v.image);
+      setSeoTitle(v.seoTitle);
+      setSeoDescription(v.seoDescription);
+      setVisible(v.visible);
+      setTranslations(v.translations);
+    },
+    enabled: !busy && !saved,
+  });
 
   const slugPreview = category ? category.slug : slugify(name);
 
@@ -123,6 +178,8 @@ function CategoryFormBody({
     });
     setBusy(false);
     if (res.ok) {
+      setSaved(true);
+      draft.discard();
       toast.success(isEdit ? "Category updated." : "Category created.");
       onOpenChange(false);
       router.refresh();
@@ -136,7 +193,15 @@ function CategoryFormBody({
   const [dismissRef, dismissProps] = useDismissGuard(busy);
 
   return (
-    <DialogContent className="max-w-md" ref={dismissRef} {...dismissProps}>
+    <DialogContent
+      // Seven fields plus the translations strip run to ~1350px; without a
+      // ceiling the centred dialog put Cancel and Create below the fold of a
+      // 900px laptop with no way to scroll to them. Same ceiling as the FAQ
+      // and research dialogs.
+      className="max-h-[85vh] max-w-md overflow-y-auto"
+      ref={dismissRef}
+      {...dismissProps}
+    >
       <DialogHeader>
         <DialogTitle>{isEdit ? "Edit category" : "New category"}</DialogTitle>
         <DialogDescription>
@@ -147,6 +212,11 @@ function CategoryFormBody({
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+        />
         <div className="space-y-1.5">
           <Label htmlFor="category-name">Name</Label>
           <Input

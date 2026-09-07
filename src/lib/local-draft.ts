@@ -57,3 +57,41 @@ export function parseDraft<T>(raw: string | null): LocalDraftRecord<T> | null {
   }
   return { savedAt: record.savedAt, values: record.values as T };
 }
+
+/**
+ * Are two draft value objects the same edit? Order-insensitive for object
+ * keys and blind to keys holding `undefined` — a draft round-trips through
+ * JSON, which drops those, so a form's `{ note: undefined }` and a restored
+ * `{}` are one value, not two. Arrays keep their order: a reordered list IS
+ * an edit. Used to keep a value-shaped form from writing a draft that says
+ * nothing (equal to what it opened with).
+ */
+export function sameDraftValues(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+      return false;
+    }
+    return a.every((item, index) => sameDraftValues(item, b[index]));
+  }
+  if (
+    typeof a !== "object" ||
+    typeof b !== "object" ||
+    a === null ||
+    b === null
+  ) {
+    return false;
+  }
+  const left = a as Record<string, unknown>;
+  const right = b as Record<string, unknown>;
+  const keysOf = (o: Record<string, unknown>) =>
+    Object.keys(o)
+      .filter((k) => o[k] !== undefined)
+      .sort();
+  const leftKeys = keysOf(left);
+  const rightKeys = keysOf(right);
+  if (leftKeys.length !== rightKeys.length) return false;
+  return leftKeys.every(
+    (k, i) => k === rightKeys[i] && sameDraftValues(left[k], right[k]),
+  );
+}

@@ -206,6 +206,8 @@ export function ProductForm({
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Product deleted.");
     router.push("/studio/products");
     router.refresh();

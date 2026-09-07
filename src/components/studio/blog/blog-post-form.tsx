@@ -319,6 +319,8 @@ export function BlogPostForm({
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Post deleted.");
     router.push("/studio/blog");
     router.refresh();
