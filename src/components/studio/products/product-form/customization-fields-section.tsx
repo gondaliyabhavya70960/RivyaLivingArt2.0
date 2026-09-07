@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { describedBy } from "@/components/studio/field-hint";
 import { FormSection, FieldError } from "./form-section";
 import { FIELD_TYPES, FIELD_TYPE_LABEL, typeHasOptions, type FormValues } from "./schema";
 
@@ -108,8 +109,16 @@ export function CustomizationFieldsSection({
                   <Input
                     id={`field-help-${index}`}
                     placeholder="Shown under the field on the product page"
+                    aria-invalid={!!errors.customFields?.[index]?.helpText}
+                    aria-describedby={describedBy(
+                      errors.customFields?.[index]?.helpText &&
+                        `field-help-${index}-error`,
+                    )}
                     {...register(`customFields.${index}.helpText`)}
                   />
+                  <FieldError id={`field-help-${index}-error`}>
+                    {errors.customFields?.[index]?.helpText?.message}
+                  </FieldError>
                 </div>
 
                 <div className="flex items-center justify-between">

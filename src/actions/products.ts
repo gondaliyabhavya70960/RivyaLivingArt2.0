@@ -3,6 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
+import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 import { db } from "@/lib/db";
 import { CATALOG_NAV_TAG } from "@/lib/catalog-nav";
 import { SHOP_FIRST_PAGE_TAG } from "@/lib/shop";
@@ -42,7 +43,7 @@ const PRODUCT_IMAGE_ROLES = ["HERO", "DETAIL", "IN_ROOM", "PROCESS"] as const;
 
 const imageSchema = z.object({
   url: z.string().min(1),
-  alt: z.string().max(300).default(""),
+  alt: z.string().max(PRODUCT_LIMITS.imageAlt).default(""),
   order: z.number().int().nonnegative(),
   /** What the shot is FOR (11: MediaSection's per-image role select) —
    *  optional, so an unset image behaves exactly as it always has. */
@@ -54,7 +55,7 @@ const customFieldSchema = z.object({
   type: z.enum(["SELECT", "TEXT", "SWATCH", "SIZE", "NUMBER", "FILE"]),
   options: z.array(z.string().trim().min(1)).default([]),
   required: z.boolean().default(false),
-  helpText: z.string().max(500).optional(),
+  helpText: z.string().max(PRODUCT_LIMITS.customFieldHelpText).optional(),
   order: z.number().int().nonnegative(),
 });
 
@@ -62,35 +63,44 @@ const upsertProductSchema = z
   .object({
     id: z.string().min(1).optional(),
     title: z.string().trim().min(2, "Title needs at least 2 characters."),
-    displayName: z.string().max(120).optional(),
-    shortTagline: z.string().max(300).optional(),
+    displayName: z.string().max(PRODUCT_LIMITS.displayName).optional(),
+    shortTagline: z.string().max(PRODUCT_LIMITS.shortTagline).optional(),
     description: z.string().optional(),
     priceMin: z.number().int().nonnegative().nullable().optional(),
     priceMax: z.number().int().nonnegative().nullable().optional(),
     showPrice: z.boolean(),
     inStock: z.boolean().default(true),
-    tier: z.number().int().min(1).max(4).nullable().default(null),
-    timeline: z.string().max(300).optional(),
-    materials: z.string().max(500).optional(),
-    dimensions: z.string().max(300).optional(),
+    tier: z
+      .number()
+      .int()
+      .min(PRODUCT_LIMITS.tierMin)
+      .max(PRODUCT_LIMITS.tierMax)
+      .nullable()
+      .default(null),
+    timeline: z.string().max(PRODUCT_LIMITS.timeline).optional(),
+    materials: z.string().max(PRODUCT_LIMITS.materials).optional(),
+    dimensions: z.string().max(PRODUCT_LIMITS.dimensions).optional(),
     occasions: z.array(z.enum(OCCASIONS)).default([]),
     lexical: z
       .array(
         z.object({
-          label: z.string().trim().min(1).max(40),
-          value: z.string().trim().min(1).max(300),
+          label: z.string().trim().min(1).max(PRODUCT_LIMITS.lexicalLabel),
+          value: z.string().trim().min(1).max(PRODUCT_LIMITS.lexicalValue),
         }),
       )
-      .max(8)
+      .max(PRODUCT_LIMITS.lexicalRows)
       .default([]),
-    madeWithIds: z.array(z.string().min(1)).max(12).default([]),
+    madeWithIds: z
+      .array(z.string().min(1))
+      .max(PRODUCT_LIMITS.madeWithRows)
+      .default([]),
     careNotes: z.string().optional(),
     categoryId: z.string().min(1, "Pick a category."),
     featured: z.boolean(),
     videoUrl: optionalUrl,
     model3dUrl: optionalUrl,
-    seoTitle: z.string().max(300).optional(),
-    seoDescription: z.string().max(500).optional(),
+    seoTitle: z.string().max(PRODUCT_LIMITS.seoTitle).optional(),
+    seoDescription: z.string().max(PRODUCT_LIMITS.seoDescription).optional(),
     ogImage: optionalUrl,
     translations: z
       .record(z.string(), z.record(z.string(), z.unknown()))

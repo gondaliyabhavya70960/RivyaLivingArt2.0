@@ -5,6 +5,74 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Transformation Phase 11 — the editors refuse in the field, not in a toast (2026-09-07, eighth batch)
+
+The roadmap's first still-open Phase 11 line: "the react-hook-form editors mirror none of their
+actions' length caps … so an over-long value is refused server-side as a raw zod message in a toast
+with no field named — the same class the 2026-09-05 batch closed on the `useState` forms". Eight
+editors, sixty-odd rules, and between them the client schemas carried **two** `.max()` calls.
+
+### What an owner actually saw, measured before anything changed
+Two symptoms, depending on how the action parses. `settings`, `pages`, `blog`, `custom-pages` and
+`portfolio` use `safeParse` and return `issues[0].message`, so zod's own English reached the toast:
+typing 400 characters into the default SEO title and pressing Save fired the request and came back
+with **"Too big: expected string to have <=300 characters"** — no field named, and a number that
+appears nowhere on that screen (the counters there are the 60/160 search-result budgets). Nothing
+was marked, focus did not move. `testimonials` and `products` use `.parse()` inside `runAction`,
+which turns every throw into **"Something went wrong. Please try again."** — the testimonial's nine
+caps and its four media-URL rules were all reachable by typing and none could be told apart.
+
+### One module, because a copy cannot be tested
+Every cap now lives in `src/lib/studio-limits.ts` and BOTH sides import it — the eight actions and
+the eight client schemas. That is not tidiness. A file carrying `"use server"` may export only
+async functions, so an action cannot hand its schema or even its numbers to a test; a cap copied
+into a form could rot for a release with nothing to catch it. The repo already learned this the
+hard way — `src/lib/research.ts` exists because a constant exported from an action arrived in a
+client component as a server-reference proxy and took `/studio/research` down while every gate
+stayed green — and `server-action-exports.test.ts` has guarded the rule since. A new test walks the
+thirteen schema declarations across the eight action files and fails on a literal cap, so the next
+one has to go through the module too.
+
+### The trim asymmetry, which a uniform mirror would have got wrong
+`settings`, `pages`, `blog`, `custom-pages` and `testimonials` declare `z.string().trim().max(n)`;
+`products` and `portfolio` declare `z.string().max(n)`. Measured, not assumed: 300 characters plus
+one trailing space passes the first group and is refused by the second. A blanket `.trim().max()`
+on the client would have accepted what the product action refuses, and a blanket `.max()` would
+have refused what settings accepts — the same defect, reintroduced from the other side. Each field
+is mirrored the way its own action counts, and the module says which mode each entity uses.
+`lexical` is the one field inside `products` that does trim, and it is mirrored trimmed.
+
+### The refusal that named a field on another page
+The two settings editors submit each other's fields: `/studio/seo` sends the whole `SiteSettings`
+row back with only `defaultSeo` replaced, and `/studio/settings` sends `defaultSeo` back untouched.
+The action reports only its FIRST issue in schema key order, and `defaultSeo` is the twentieth of
+twenty-one keys — so on a row whose WhatsApp number has never been filled, **every** SEO save is
+refused with "WhatsApp number must be 8–15 digits…", about a field on a different screen, with
+nothing on the SEO page to fix. Both forms now check the half they do not render before calling the
+action and say which screen to go to instead of passing on a message the owner cannot act on.
+
+### Also closed
+The testimonial's four media fields mirror the host rule (`isOptimizableImageSrc`), so a URL from
+another site is refused where it was typed rather than as "Something went wrong". The product
+editor's SEO pair carries a hint reconciling the cap with the preview's 60/160 budget, since a bare
+"300" beside a "60" reads as a contradiction. Nine fields that had nowhere to put a message got a
+`FieldError`, and the announcement, phone, response-note and care-notes hints gained ids so a
+screen reader hears them. React Hook Form's own focus-on-error does the rest: every capped field is
+`register()`ed, so the first refusal takes focus without a line of new code.
+
+### Verified
+Typecheck, lint over the whole repo and the unit suite (734 tests — twenty-two new ones cover the
+message builder, the WhatsApp pattern, both cross-form guards and the drift walk) clean; production
+build against a local Postgres. **23 cases in the browser at 1440×900, one per capped field across
+all eight editors**, each filled to the cap plus one character and submitted: every one shows the
+message under the field, sets `aria-invalid`, fires **no request at all** (the refusal is now
+client-side — counted, not inferred), and raises no toast. Two rounds were needed. The first found
+seven fields whose schema refused but whose render had no `FieldError` — a silent refusal, worse
+than the toast it replaced — on the testimonial's location and internal notes, both landing-page
+SEO fields, the journal's excerpt and SEO title, and the portfolio's result type. All seven, plus
+the product's image alt text, help text and lexical rows, were wired before the second round, which
+passed 23 of 23.
+
 ## Transformation Phase 11 — every Studio form gets its local draft (2026-09-07, seventh batch)
 
 The roadmap's autosave line was done on the three long editors and open on eight other forms:

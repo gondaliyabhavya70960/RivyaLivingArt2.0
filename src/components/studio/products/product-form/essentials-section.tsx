@@ -10,6 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { describedBy, FieldHint } from "@/components/studio/field-hint";
+import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 import { FormSection, FieldError } from "./form-section";
 import type { FormValues } from "./schema";
 
@@ -45,8 +47,19 @@ export function EssentialsSection({
         <Input
           id="product-display-name"
           placeholder="Short editorial name for cards — blank derives one from the title"
+          aria-invalid={!!errors.displayName}
+          aria-describedby={describedBy(
+            "product-display-name-hint",
+            errors.displayName && "product-display-name-error",
+          )}
           {...register("displayName")}
         />
+        <FieldError id="product-display-name-error">
+          {errors.displayName?.message}
+        </FieldError>
+        <FieldHint id="product-display-name-hint">
+          Up to {PRODUCT_LIMITS.displayName} characters.
+        </FieldHint>
       </div>
 
       <div className="space-y-1.5">
@@ -54,8 +67,15 @@ export function EssentialsSection({
         <Input
           id="product-tagline"
           placeholder="One line under the title on the product page"
+          aria-invalid={!!errors.shortTagline}
+          aria-describedby={describedBy(
+            errors.shortTagline && "product-tagline-error",
+          )}
           {...register("shortTagline")}
         />
+        <FieldError id="product-tagline-error">
+          {errors.shortTagline?.message}
+        </FieldError>
       </div>
 
       <div className="space-y-1.5">

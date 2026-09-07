@@ -20,6 +20,7 @@ import { MediaPicker } from "@/components/studio/media/media-picker";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DraftPreview } from "@/components/studio/draft-preview";
 import { FieldError } from "@/components/studio/field-error";
+import { describedBy } from "@/components/studio/field-hint";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { describeTestimonialProblem } from "@/lib/testimonials-rules";
 import { FormSection } from "@/components/studio/form-section";
@@ -47,6 +48,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { isOptimizableImageSrc, isRenderableSrc } from "@/lib/image-src";
+import { TESTIMONIAL_LIMITS, tooLong } from "@/lib/studio-limits";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import type {
   PermissionStatus,
@@ -100,29 +102,77 @@ export type TestimonialFormInitial = {
   isDemo: boolean;
 };
 
+/**
+ * Every rule `upsertSchema` in `src/actions/testimonials.ts` enforces, from
+ * the same module so the two cannot drift, and `.trim()` first because that
+ * action trims before it counts.
+ *
+ * This form had the worst symptom of the eight: `upsertTestimonial` parses
+ * with `.parse()` INSIDE `runAction`, so a refusal throws and comes back as
+ * "Something went wrong. Please try again." — not even zod's own English. Nine
+ * length caps and the four media fields' host rule were all reachable by
+ * typing and none of them could be told apart.
+ */
+const cappedText = (max: number, what: string) =>
+  z.string().trim().max(max, tooLong(what, max));
+
+/** Mirrors `urlFieldSchema`: our own files, or a host next/image can render. */
+const mediaUrl = z
+  .string()
+  .trim()
+  .max(TESTIMONIAL_LIMITS.url, tooLong("the address", TESTIMONIAL_LIMITS.url))
+  .refine(
+    (v) => !v || v.startsWith("/") || isOptimizableImageSrc(v),
+    "Upload the file or pick it from the library — a URL from another site cannot be rendered.",
+  );
+
 const formSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
-  location: z.string(),
-  quote: z.string().trim().min(1, "Quote is required"),
-  rating: z.number().int().min(1).max(5),
-  avatarUrl: z.string(),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(TESTIMONIAL_LIMITS.name, tooLong("the name", TESTIMONIAL_LIMITS.name)),
+  location: cappedText(TESTIMONIAL_LIMITS.location, "the location"),
+  quote: z
+    .string()
+    .trim()
+    .min(1, "Quote is required")
+    .max(
+      TESTIMONIAL_LIMITS.quote,
+      tooLong("the quote", TESTIMONIAL_LIMITS.quote),
+    ),
+  rating: z
+    .number()
+    .int()
+    .min(TESTIMONIAL_LIMITS.ratingMin)
+    .max(TESTIMONIAL_LIMITS.ratingMax),
+  avatarUrl: mediaUrl,
   mediaId: z.string(),
   translations: z.record(z.string(), z.record(z.string(), z.unknown())),
   status: z.enum(STATUSES),
   featured: z.boolean(),
-  designation: z.string(),
-  category: z.string(),
+  designation: cappedText(TESTIMONIAL_LIMITS.designation, "the designation"),
+  category: cappedText(TESTIMONIAL_LIMITS.category, "the category"),
   givenAt: z.string(),
-  language: z.string(),
+  language: cappedText(TESTIMONIAL_LIMITS.language, "the language"),
   productId: z.string(),
   portfolioId: z.string(),
-  productTitle: z.string(),
-  purchaseType: z.string(),
-  installationImageUrl: z.string(),
+  productTitle: cappedText(
+    TESTIMONIAL_LIMITS.productTitle,
+    "the product title",
+  ),
+  purchaseType: cappedText(
+    TESTIMONIAL_LIMITS.purchaseType,
+    "the purchase type",
+  ),
+  installationImageUrl: mediaUrl,
   installationMediaId: z.string(),
-  videoUrl: z.string(),
-  videoPosterUrl: z.string(),
-  internalNotes: z.string(),
+  videoUrl: mediaUrl,
+  videoPosterUrl: mediaUrl,
+  internalNotes: cappedText(
+    TESTIMONIAL_LIMITS.internalNotes,
+    "the internal notes",
+  ),
   permissionStatus: z.enum(PERMISSIONS),
 });
 
@@ -601,8 +651,15 @@ export function TestimonialForm({
                   <Input
                     id="testimonial-language"
                     placeholder="e.g. hi, gu, en"
+                    aria-invalid={!!formState.errors.language}
+                    aria-describedby={describedBy(
+                      formState.errors.language && "testimonial-language-error",
+                    )}
                     {...register("language")}
                   />
+                  <FieldError id="testimonial-language-error">
+                    {formState.errors.language?.message}
+                  </FieldError>
                   <p className="text-xs text-muted-foreground">
                     The language the quote was given in, if not English.
                   </p>
@@ -669,8 +726,15 @@ export function TestimonialForm({
                   <Input
                     id="testimonial-location"
                     placeholder="Mumbai"
+                    aria-invalid={!!formState.errors.location}
+                    aria-describedby={describedBy(
+                      formState.errors.location && "testimonial-location-error",
+                    )}
                     {...register("location")}
                   />
+                  <FieldError id="testimonial-location-error">
+                    {formState.errors.location?.message}
+                  </FieldError>
                 </div>
               </div>
 
@@ -680,8 +744,16 @@ export function TestimonialForm({
                   <Input
                     id="testimonial-designation"
                     placeholder="Interior designer, Surat"
+                    aria-invalid={!!formState.errors.designation}
+                    aria-describedby={describedBy(
+                      formState.errors.designation &&
+                        "testimonial-designation-error",
+                    )}
                     {...register("designation")}
                   />
+                  <FieldError id="testimonial-designation-error">
+                    {formState.errors.designation?.message}
+                  </FieldError>
                   <p className="text-xs text-muted-foreground">
                     The line under the name.
                   </p>
@@ -691,8 +763,15 @@ export function TestimonialForm({
                   <Input
                     id="testimonial-category"
                     placeholder="e.g. varmala-preservation"
+                    aria-invalid={!!formState.errors.category}
+                    aria-describedby={describedBy(
+                      formState.errors.category && "testimonial-category-error",
+                    )}
                     {...register("category")}
                   />
+                  <FieldError id="testimonial-category-error">
+                    {formState.errors.category?.message}
+                  </FieldError>
                   <p className="text-xs text-muted-foreground">
                     A category slug, for a per-collection words wall.
                   </p>
@@ -738,8 +817,16 @@ export function TestimonialForm({
                 <Input
                   id="testimonial-product-title"
                   placeholder="e.g. a custom varmala frame"
+                  aria-invalid={!!formState.errors.productTitle}
+                  aria-describedby={describedBy(
+                    formState.errors.productTitle &&
+                      "testimonial-product-title-error",
+                  )}
                   {...register("productTitle")}
                 />
+                <FieldError id="testimonial-product-title-error">
+                  {formState.errors.productTitle?.message}
+                </FieldError>
                 <p className="text-xs text-muted-foreground">
                   Shown when the words are about a commission rather than a
                   catalogue product — ignored once a product is linked above.
@@ -751,8 +838,16 @@ export function TestimonialForm({
                 <Input
                   id="testimonial-purchase-type"
                   placeholder="commission, catalogue, or workshop"
+                  aria-invalid={!!formState.errors.purchaseType}
+                  aria-describedby={describedBy(
+                    formState.errors.purchaseType &&
+                      "testimonial-purchase-type-error",
+                  )}
                   {...register("purchaseType")}
                 />
+                <FieldError id="testimonial-purchase-type-error">
+                  {formState.errors.purchaseType?.message}
+                </FieldError>
               </div>
             </FormSection>
           </TabsContent>
@@ -839,8 +934,16 @@ export function TestimonialForm({
                     id="testimonial-video-url"
                     className="min-w-56 flex-1"
                     placeholder="https://… or /uploads/…"
+                    aria-invalid={!!formState.errors.videoUrl}
+                    aria-describedby={describedBy(
+                      formState.errors.videoUrl &&
+                        "testimonial-video-url-error",
+                    )}
                     {...register("videoUrl")}
                   />
+                  <FieldError id="testimonial-video-url-error">
+                    {formState.errors.videoUrl?.message}
+                  </FieldError>
                   <MediaPicker
                     accept="VIDEO"
                     defaultFolder="site"
@@ -869,8 +972,16 @@ export function TestimonialForm({
                     id="testimonial-video-poster"
                     className="min-w-56 flex-1"
                     placeholder="https://… or /uploads/…"
+                    aria-invalid={!!formState.errors.videoPosterUrl}
+                    aria-describedby={describedBy(
+                      formState.errors.videoPosterUrl &&
+                        "testimonial-video-poster-error",
+                    )}
                     {...register("videoPosterUrl")}
                   />
+                  <FieldError id="testimonial-video-poster-error">
+                    {formState.errors.videoPosterUrl?.message}
+                  </FieldError>
                   <MediaPicker
                     defaultFolder="site"
                     onSelect={(item) =>
@@ -994,8 +1105,16 @@ export function TestimonialForm({
                   id="testimonial-internal-notes"
                   rows={4}
                   placeholder="Staff-only — how this was collected, follow-ups, anything not for the storefront."
+                  aria-invalid={!!formState.errors.internalNotes}
+                  aria-describedby={describedBy(
+                    formState.errors.internalNotes &&
+                      "testimonial-internal-notes-error",
+                  )}
                   {...register("internalNotes")}
                 />
+                <FieldError id="testimonial-internal-notes-error">
+                  {formState.errors.internalNotes?.message}
+                </FieldError>
                 <p className="text-xs text-muted-foreground">
                   Never shown to visitors.
                 </p>

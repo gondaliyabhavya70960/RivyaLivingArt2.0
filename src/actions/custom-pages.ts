@@ -17,6 +17,7 @@ import {
   isCustomBlockType,
   type CustomBlockType,
 } from "@/lib/custom-blocks";
+import { CUSTOM_PAGE_LIMITS } from "@/lib/studio-limits";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { CUSTOM_PAGE_TRANSLATABLE } from "@/lib/custom-pages";
@@ -52,15 +53,23 @@ function revalidate(slug?: string) {
 const pageSchema = z.object({
   id: z.string().min(1).optional(),
   /** Read on create only — a live URL must not move under a customer. */
-  slug: z.string().trim().max(120).optional(),
-  title: z.string().trim().min(2, "Give the page a title.").max(200),
+  slug: z.string().trim().max(CUSTOM_PAGE_LIMITS.slug).optional(),
+  title: z
+    .string()
+    .trim()
+    .min(CUSTOM_PAGE_LIMITS.titleMin, "Give the page a title.")
+    .max(CUSTOM_PAGE_LIMITS.title),
   status: z.enum(CONTENT_STATUSES).default("DRAFT"),
   /** ISO string from the form's datetime-local input, or empty for "now". */
-  publishAt: z.string().trim().max(40).optional(),
+  publishAt: z.string().trim().max(CUSTOM_PAGE_LIMITS.publishAt).optional(),
   noindex: z.boolean().default(false),
-  seoTitle: z.string().trim().max(300).optional(),
-  seoDescription: z.string().trim().max(500).optional(),
-  ogImage: z.string().trim().max(600).optional(),
+  seoTitle: z.string().trim().max(CUSTOM_PAGE_LIMITS.seoTitle).optional(),
+  seoDescription: z
+    .string()
+    .trim()
+    .max(CUSTOM_PAGE_LIMITS.seoDescription)
+    .optional(),
+  ogImage: z.string().trim().max(CUSTOM_PAGE_LIMITS.ogImage).optional(),
   translations: z
     .record(z.string(), z.record(z.string(), z.unknown()))
     .optional(),

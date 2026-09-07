@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { deletePages, upsertPage, type UpsertPageInput } from "@/actions/pages";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
+import { describedBy, FieldHint } from "@/components/studio/field-hint";
 import { FormSection } from "@/components/studio/form-section";
 import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { useLocalDraft } from "@/hooks/use-local-draft";
@@ -18,6 +19,7 @@ import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { isLegalPageSlug } from "@/components/studio/pages/legal";
 import { RichTextEditor } from "@/components/studio/rich-text-editor";
 import { TranslationsSection } from "@/components/studio/translations-section";
+import { PAGE_LIMITS, tooLong } from "@/lib/studio-limits";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,12 +41,36 @@ export type PageFormInitial = {
   translations: unknown;
 };
 
+// The caps `upsertSchema` in `src/actions/pages.ts` enforces, read from the
+// same module so they cannot drift, and `.trim()` first because the action
+// trims before it counts. Without them the action refuses with zod's own
+// English — "Too big: expected string to have <=300 characters" — in a toast
+// that names no field, and only ever reports its FIRST issue, so a page with
+// two over-long fields takes two saves to discover both.
+//
+// `slug` stays uncapped on purpose: this form never sends it (the address is
+// read-only here), and `content` and the translations are uncapped in the
+// action too — a legal policy is exactly the document an invented cap would
+// break.
 const formSchema = z.object({
-  title: z.string().trim().min(2, "Title needs at least 2 characters."),
+  title: z
+    .string()
+    .trim()
+    .min(2, "Title needs at least 2 characters.")
+    .max(PAGE_LIMITS.title, tooLong("the title", PAGE_LIMITS.title)),
   slug: z.string(),
   content: z.record(z.string(), z.unknown()),
-  seoTitle: z.string(),
-  seoDescription: z.string(),
+  seoTitle: z
+    .string()
+    .trim()
+    .max(PAGE_LIMITS.seoTitle, tooLong("the SEO title", PAGE_LIMITS.seoTitle)),
+  seoDescription: z
+    .string()
+    .trim()
+    .max(
+      PAGE_LIMITS.seoDescription,
+      tooLong("the SEO description", PAGE_LIMITS.seoDescription),
+    ),
   translations: z.record(z.string(), z.record(z.string(), z.unknown())),
 });
 
@@ -231,15 +257,42 @@ export function PageForm({ page }: { page: PageFormInitial }) {
       >
         <div className="space-y-1.5">
           <Label htmlFor="page-seo-title">SEO title</Label>
-          <Input id="page-seo-title" {...register("seoTitle")} />
+          <Input
+            id="page-seo-title"
+            aria-invalid={!!errors.seoTitle}
+            aria-describedby={describedBy(
+              "page-seo-title-hint",
+              errors.seoTitle && "page-seo-title-error",
+            )}
+            {...register("seoTitle")}
+          />
+          <FieldError id="page-seo-title-error">
+            {errors.seoTitle?.message}
+          </FieldError>
+          <FieldHint id="page-seo-title-hint">
+            Up to {PAGE_LIMITS.seoTitle} characters. Left blank, the page title
+            above is used.
+          </FieldHint>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="page-seo-description">SEO description</Label>
           <Textarea
             id="page-seo-description"
             rows={3}
+            aria-invalid={!!errors.seoDescription}
+            aria-describedby={describedBy(
+              "page-seo-description-hint",
+              errors.seoDescription && "page-seo-description-error",
+            )}
             {...register("seoDescription")}
           />
+          <FieldError id="page-seo-description-error">
+            {errors.seoDescription?.message}
+          </FieldError>
+          <FieldHint id="page-seo-description-hint">
+            Up to {PAGE_LIMITS.seoDescription} characters. Left blank, the page
+            ships with no meta description.
+          </FieldHint>
         </div>
       </FormSection>
 

@@ -20,7 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormSection } from "./form-section";
+import { describedBy } from "@/components/studio/field-hint";
+import { FieldError, FormSection } from "./form-section";
 import { Model3dUrlField, VideoUrlField } from "./spec-fields";
 import { IMAGE_ROLE_OPTIONS, type FormValues } from "./schema";
 import { useIsPrintProduct } from "./use-print-product";
@@ -35,7 +36,11 @@ export function MediaSection({
   uploading: boolean;
   setUploading: (value: boolean) => void;
 }) {
-  const { register, control } = useFormContext<FormValues>();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext<FormValues>();
   const imagesArray = useFieldArray({ control, name: "images" });
   const watchedImages = useWatch({ control, name: "images" });
   const isPrint = useIsPrintProduct(categories);
@@ -116,10 +121,19 @@ export function MediaSection({
                 className="aspect-square w-full rounded-lg border border-border object-cover"
               />
               <Input
+                id={`product-image-alt-${index}`}
                 aria-label={`Alt text for image ${index + 1}`}
                 placeholder="Alt text"
+                aria-invalid={!!errors.images?.[index]?.alt}
+                aria-describedby={describedBy(
+                  errors.images?.[index]?.alt &&
+                    `product-image-alt-${index}-error`,
+                )}
                 {...register(`images.${index}.alt`)}
               />
+              <FieldError id={`product-image-alt-${index}-error`}>
+                {errors.images?.[index]?.alt?.message}
+              </FieldError>
               <Controller
                 control={control}
                 name={`images.${index}.role`}

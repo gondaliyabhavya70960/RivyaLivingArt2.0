@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
+import { PORTFOLIO_LIMITS } from "@/lib/studio-limits";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
 import { normalizeTranslations, TRANSLATABLE_FIELDS } from "@/lib/localize";
@@ -29,10 +30,10 @@ const optionalUrl = z
 
 const imageSchema = z.object({
   url: z.string().min(1),
-  alt: z.string().max(300).default(""),
+  alt: z.string().max(PORTFOLIO_LIMITS.imageAlt).default(""),
   /// What this frame shows, in the owner's words — printed beside the plate
   /// number on the piece's page. Empty is stored as NULL, not "".
-  caption: z.string().max(300).default(""),
+  caption: z.string().max(PORTFOLIO_LIMITS.imageCaption).default(""),
   /// Per-locale { caption }. The gallery is written replace-all, so these
   /// travel with the row on every save or they would be dropped by it.
   translations: z.unknown().optional(),
@@ -41,24 +42,30 @@ const imageSchema = z.object({
 
 /** ADM-style case study meta — free-text, all optional. */
 const resultsMetaSchema = z.object({
-  type: z.string().max(300).optional(),
-  material: z.string().max(300).optional(),
-  size: z.string().max(300).optional(),
-  timeline: z.string().max(300).optional(),
-  technique: z.string().max(300).optional(),
-  complexity: z.string().max(60).optional(),
+  type: z.string().max(PORTFOLIO_LIMITS.metaText).optional(),
+  material: z.string().max(PORTFOLIO_LIMITS.metaText).optional(),
+  size: z.string().max(PORTFOLIO_LIMITS.metaText).optional(),
+  timeline: z.string().max(PORTFOLIO_LIMITS.metaText).optional(),
+  technique: z.string().max(PORTFOLIO_LIMITS.metaText).optional(),
+  complexity: z.string().max(PORTFOLIO_LIMITS.metaComplexity).optional(),
   /** Quiet hairline chips on the public case page. */
-  tags: z.array(z.string().trim().min(1).max(60)).max(12).optional(),
+  tags: z
+    .array(z.string().trim().min(1).max(PORTFOLIO_LIMITS.metaTag))
+    .max(PORTFOLIO_LIMITS.metaTags)
+    .optional(),
 });
 
 const upsertPortfolioSchema = z.object({
   id: z.string().min(1).optional(),
-  title: z.string().trim().min(2, "Title needs at least 2 characters."),
+  title: z
+    .string()
+    .trim()
+    .min(PORTFOLIO_LIMITS.titleMin, "Title needs at least 2 characters."),
   story: z.string(),
   brief: z.string().optional(),
   process: z.string().optional(),
   clientNote: z.string().optional(),
-  location: z.string().max(120).optional(),
+  location: z.string().max(PORTFOLIO_LIMITS.location).optional(),
   year: z
     .union([
       z.literal(""),

@@ -11,6 +11,7 @@ import {
 } from "@/components/studio/products/occasions";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { CONTENT_STATUSES } from "@/lib/content-status";
+import { PRODUCT_LIMITS, tooLong } from "@/lib/studio-limits";
 
 // ————————————————————— Initial (server) shape —————————————————————
 
@@ -125,11 +126,25 @@ const priceString = z
 
 const optionalUrl = z.union([z.literal(""), z.url("Enter a valid URL.")]);
 
+/**
+ * The caps `upsertProductSchema` in `src/actions/products.ts` enforces, read
+ * from the same module so the two cannot drift.
+ *
+ * NOTE THE MISSING `.trim()`. This action counts the RAW string —
+ * `z.string().max(300)`, not `.trim().max(300)` — unlike settings, pages,
+ * blog and the testimonial. Trimming here would accept a value the action
+ * refuses: 300 characters plus a trailing space passes a trimmed cap and is
+ * refused by a raw one. Measured, not assumed. `lexical` is the exception
+ * inside this action and does trim, so it is mirrored trimmed below.
+ */
+const capped = (max: number, what: string) =>
+  z.string().max(max, tooLong(what, max));
+
 export const formSchema = z
   .object({
     title: z.string().trim().min(2, "Title needs at least 2 characters."),
-    displayName: z.string(),
-    shortTagline: z.string(),
+    displayName: capped(PRODUCT_LIMITS.displayName, "the display name"),
+    shortTagline: capped(PRODUCT_LIMITS.shortTagline, "the tagline"),
     description: z.string(),
     categoryId: z.string().min(1, "Pick a category."),
     featured: z.boolean(),
@@ -139,23 +154,51 @@ export const formSchema = z
     showPrice: z.boolean(),
     inStock: z.boolean(),
     tier: z.enum(["none", "1", "2", "3", "4"]),
-    timeline: z.string(),
-    materials: z.string(),
-    dimensions: z.string(),
+    timeline: capped(PRODUCT_LIMITS.timeline, "the timeline"),
+    materials: capped(PRODUCT_LIMITS.materials, "materials"),
+    dimensions: capped(PRODUCT_LIMITS.dimensions, "dimensions"),
     occasions: z.array(z.string()),
-    lexical: z.array(z.object({ label: z.string(), value: z.string() })),
-    madeWith: z.array(
-      z.object({
-        linkId: z.string().min(1),
-        title: z.string(),
-        tier: z.number().nullable(),
-      }),
-    ),
+    lexical: z
+      .array(
+        z.object({
+          // The one place this action trims before it counts.
+          label: z
+            .string()
+            .trim()
+            .max(
+              PRODUCT_LIMITS.lexicalLabel,
+              tooLong("a label", PRODUCT_LIMITS.lexicalLabel),
+            ),
+          value: z
+            .string()
+            .trim()
+            .max(
+              PRODUCT_LIMITS.lexicalValue,
+              tooLong("a value", PRODUCT_LIMITS.lexicalValue),
+            ),
+        }),
+      )
+      .max(
+        PRODUCT_LIMITS.lexicalRows,
+        `Up to ${PRODUCT_LIMITS.lexicalRows} specification rows.`,
+      ),
+    madeWith: z
+      .array(
+        z.object({
+          linkId: z.string().min(1),
+          title: z.string(),
+          tier: z.number().nullable(),
+        }),
+      )
+      .max(
+        PRODUCT_LIMITS.madeWithRows,
+        `Up to ${PRODUCT_LIMITS.madeWithRows} linked products.`,
+      ),
     careNotes: z.string(),
     images: z.array(
       z.object({
         url: z.string().min(1),
-        alt: z.string(),
+        alt: capped(PRODUCT_LIMITS.imageAlt, "alt text"),
         role: z.enum(["none", "HERO", "DETAIL", "IN_ROOM", "PROCESS"]),
       }),
     ),
@@ -167,11 +210,14 @@ export const formSchema = z
         type: z.enum(FIELD_TYPES),
         options: z.string(),
         required: z.boolean(),
-        helpText: z.string(),
+        helpText: capped(PRODUCT_LIMITS.customFieldHelpText, "the help text"),
       }),
     ),
-    seoTitle: z.string(),
-    seoDescription: z.string(),
+    seoTitle: capped(PRODUCT_LIMITS.seoTitle, "the SEO title"),
+    seoDescription: capped(
+      PRODUCT_LIMITS.seoDescription,
+      "the SEO description",
+    ),
     ogImage: optionalUrl,
     translations: z.record(z.string(), z.record(z.string(), z.unknown())),
     confirmRewrite: z.boolean(),
