@@ -12,8 +12,10 @@ import { deleteCustomPage, upsertCustomPage } from "@/actions/custom-pages";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { MediaPicker } from "@/components/studio/media/media-picker";
 import { TranslationsSection } from "@/components/studio/translations-section";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { Button } from "@/components/ui/button";
@@ -73,6 +75,7 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
     handleSubmit,
     formState: { errors, isDirty },
     reset,
+    watch,
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,6 +92,16 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
   });
 
   useUnsavedChangesGuard(isDirty && !saving);
+
+  // The page's metadata gets the same local safety net the long editors
+  // carry; blocks are saved one by one on the board and are not in it.
+  const draft = useLocalDraft<FormValues>({
+    key: "custom-page",
+    id: page?.id,
+    watch,
+    reset,
+    enabled: !saving,
+  });
 
   // `useWatch` rather than `watch()` — the repo lints the latter out
   // (react-hooks/incompatible-library) because it cannot be memoized safely.
@@ -110,13 +123,17 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
       ogImage: values.ogImage,
       translations: values.translations,
     });
-    setSaving(false);
-
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    // Baseline and discard while autosave is still off: `reset()` notifies
+    // `watch`, and an active subscription would write the draft back 800 ms
+    // after the discard (see product-form.tsx).
     reset(values);
+    draft.discard();
+    setSaving(false);
     toast.success("Saved.");
     if (!page && result.data) {
       router.push(`/studio/custom-pages/${result.data.id}`);
@@ -134,12 +151,21 @@ export function CustomPageForm({ page }: { page?: CustomPageFormInitial }) {
       toast.error(result.error);
       return;
     }
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Page deleted.");
     router.push("/studio/custom-pages");
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <LocalDraftBar
+        savedAt={draft.savedAt}
+        onRestore={draft.restore}
+        onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
+      />
       <FormSection
         title="The page"
         description="The title is what search results and the browser tab show. The address is minted once and never moves — a link in a customer's inbox has to keep working."

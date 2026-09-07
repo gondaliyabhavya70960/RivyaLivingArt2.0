@@ -12,6 +12,8 @@ import { deletePages, upsertPage, type UpsertPageInput } from "@/actions/pages";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { isLegalPageSlug } from "@/components/studio/pages/legal";
 import { RichTextEditor } from "@/components/studio/rich-text-editor";
@@ -85,6 +87,7 @@ export function PageForm({ page }: { page: PageFormInitial }) {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -99,6 +102,16 @@ export function PageForm({ page }: { page: PageFormInitial }) {
   });
 
   useUnsavedChangesGuard(isDirty && !saving);
+
+  // The two legal pages are exactly the long-form prose a closed tab loses;
+  // the same local safety net the journal carries.
+  const draft = useLocalDraft<FormValues>({
+    key: "page",
+    id: page.id,
+    watch,
+    reset,
+    enabled: !saving,
+  });
 
   const watchedTitle = useWatch({ control, name: "title" });
 
@@ -116,16 +129,20 @@ export function PageForm({ page }: { page: PageFormInitial }) {
     };
 
     const result = await upsertPage(payload);
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
     // The save is the new baseline: `isDirty` compares against the values
     // the form mounted with, and this form is edit-only, so without the
-    // reset the navigation guard stayed armed after every save.
+    // reset the navigation guard stayed armed after every save. Reset and
+    // discard while autosave is still off, so the reset's own `watch`
+    // notification cannot write the draft back after the discard.
     reset(values);
+    draft.discard();
+    setSaving(false);
     toast.success("Page saved.");
     router.refresh();
   }
@@ -140,6 +157,8 @@ export function PageForm({ page }: { page: PageFormInitial }) {
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Page deleted.");
     router.push("/studio/pages");
     router.refresh();
@@ -147,6 +166,13 @@ export function PageForm({ page }: { page: PageFormInitial }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <LocalDraftBar
+        savedAt={draft.savedAt}
+        onRestore={draft.restore}
+        onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
+      />
       {/* (a) Content */}
       <FormSection title="Content">
         <div className="space-y-1.5">
@@ -185,7 +211,10 @@ export function PageForm({ page }: { page: PageFormInitial }) {
             control={control}
             name="content"
             render={({ field }) => (
+              // Keyed on the draft's restore count: the editor reads `value`
+              // once on mount, so Restore remounts it with the restored body.
               <RichTextEditor
+                key={draft.version}
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="Write the page content…"
@@ -220,6 +249,7 @@ export function PageForm({ page }: { page: PageFormInitial }) {
         name="translations"
         render={({ field }) => (
           <TranslationsSection
+            key={draft.version}
             value={field.value}
             onChange={field.onChange}
             idPrefix="page"

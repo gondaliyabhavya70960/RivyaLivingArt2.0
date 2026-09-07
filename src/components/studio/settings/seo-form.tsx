@@ -14,6 +14,8 @@ import {
 import { SerpPreview } from "@/components/studio/seo/serp-preview";
 import { UploadUrlField } from "@/components/studio/settings/upload-url-field";
 import type { SiteSettingsValues } from "@/components/studio/settings/site-settings-values";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +42,8 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
     register,
     control,
     handleSubmit,
+    reset,
+    watch,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -51,6 +55,14 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
   });
 
   useUnsavedChangesGuard(isDirty && !saving);
+
+  const draft = useLocalDraft<FormValues>({
+    key: "seo",
+    id: "singleton",
+    watch,
+    reset,
+    enabled: !saving,
+  });
 
   // Watched rather than read on submit: the whole point is seeing the budget
   // blow while typing, not after saving. `useWatch` rather than `watch()` —
@@ -72,12 +84,15 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
     };
 
     const result = await updateSiteSettings(payload);
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    reset(values);
+    draft.discard();
+    setSaving(false);
     toast.success("Default SEO saved.");
     router.refresh();
   }
@@ -87,6 +102,13 @@ export function SeoForm({ settings }: { settings: SiteSettingsValues }) {
       onSubmit={handleSubmit(onSubmit)}
       className="rounded-card border border-border bg-card p-6 shadow-e1"
     >
+      <LocalDraftBar
+        savedAt={draft.savedAt}
+        onRestore={draft.restore}
+        onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
+      />
       <h2 className="font-display text-lg text-foreground">Site-wide defaults</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Used when a page/product has no specific SEO fields.

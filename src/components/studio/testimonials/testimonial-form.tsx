@@ -20,6 +20,7 @@ import { MediaPicker } from "@/components/studio/media/media-picker";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DraftPreview } from "@/components/studio/draft-preview";
 import { FieldError } from "@/components/studio/field-error";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 import { describeTestimonialProblem } from "@/lib/testimonials-rules";
 import { FormSection } from "@/components/studio/form-section";
 import {
@@ -43,6 +44,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 import { useUnsavedChangesGuard } from "@/hooks/use-unsaved-changes-guard";
 import { isOptimizableImageSrc, isRenderableSrc } from "@/lib/image-src";
 import { toTranslationsRecord } from "@/lib/translations-form";
@@ -353,10 +355,57 @@ export function TestimonialForm({
 
   useUnsavedChangesGuard(formState.isDirty && !saving);
 
+  // The same local safety net the product, journal and portfolio editors
+  // carry: every change lands in this browser 800 ms later, never the
+  // database, and a closed tab mid-transcription is no longer a lost quote.
+  const draft = useLocalDraft<FormValues>({
+    key: "testimonial",
+    id: testimonial?.id,
+    watch: methods.watch,
+    reset: methods.reset,
+    enabled: !saving,
+  });
+
   const [productLink, setProductLink] = useState(testimonial?.product ?? null);
   const [portfolioLink, setPortfolioLink] = useState(
     testimonial?.portfolio ?? null,
   );
+
+  /**
+   * Restore, then bring the two link pickers with it. Their display state
+   * (the linked row's title) lives beside the form rather than in it — the
+   * form holds only the ids — so `reset()` alone would leave the Links tab
+   * showing the row's current link while the draft's id was what got saved.
+   * The draft cannot carry a title; when the restored id is neither the
+   * row's link nor the one on screen, the picker shows a plain placeholder
+   * the owner can re-pick over.
+   */
+  function restoreDraft() {
+    draft.restore();
+    const productId = methods.getValues("productId");
+    setProductLink(
+      !productId
+        ? null
+        : testimonial?.product?.id === productId
+          ? testimonial.product
+          : productLink?.id === productId
+            ? productLink
+            : { id: productId, title: "Linked product (restored from draft)" },
+    );
+    const portfolioId = methods.getValues("portfolioId");
+    setPortfolioLink(
+      !portfolioId
+        ? null
+        : testimonial?.portfolio?.id === portfolioId
+          ? testimonial.portfolio
+          : portfolioLink?.id === portfolioId
+            ? portfolioLink
+            : {
+                id: portfolioId,
+                title: "Linked case study (restored from draft)",
+              },
+    );
+  }
 
   const [tab, setTab] = useState<string>(TABS[0].value);
   const errored = new Set(
@@ -395,12 +444,17 @@ export function TestimonialForm({
     const result = await upsertTestimonial(
       buildUpsertPayload(values, testimonial?.id),
     );
-    setSaving(false);
 
     if (!result.ok) {
+      setSaving(false);
       toast.error(result.error);
       return;
     }
+    // The save is the new baseline (see product-form.tsx), reset while
+    // autosave is still off so it is never written back as a draft.
+    methods.reset(values);
+    draft.discard();
+    setSaving(false);
     toast.success(isEdit ? "Testimonial saved." : "Testimonial created.");
     if (!isEdit && result.data) {
       router.push(`/studio/testimonials/${result.data.id}`);
@@ -419,6 +473,8 @@ export function TestimonialForm({
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Testimonial deleted.");
     router.push("/studio/testimonials");
     router.refresh();
@@ -442,6 +498,13 @@ export function TestimonialForm({
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={restoreDraft}
+          onDiscard={draft.discard}
+          disabled={saving}
+          paused={draft.paused}
+        />
         {testimonial?.isDemo && (
           <div className="rounded-card border border-hairline-dk bg-card px-4 py-3 text-sm text-muted-foreground">
             This is a seeded demo row, not a customer&apos;s words — see the

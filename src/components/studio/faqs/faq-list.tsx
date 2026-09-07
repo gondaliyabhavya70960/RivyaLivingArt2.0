@@ -21,6 +21,7 @@ import {
   TranslationsSection,
   type TranslationsValue,
 } from "@/components/studio/translations-section";
+import { draftStorageKey } from "@/lib/local-draft";
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
@@ -46,6 +47,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useSelection } from "@/hooks/use-selection";
 import { useDismissGuard } from "@/hooks/use-dismiss-guard";
+import { removeDraft } from "@/hooks/use-local-draft";
+import { useLocalDraftValue } from "@/hooks/use-local-draft-value";
+import { LocalDraftBar } from "@/components/studio/local-draft-bar";
 
 export type FaqRow = {
   id: string;
@@ -74,16 +78,28 @@ function FaqFormDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Radix unmounts content on close, so keying the body by faq
-          resets field state on every open without any effect. */}
+      {/* Keyed by row AND by open state: Radix unmounts the CONTENT on close,
+          not this body, so the create dialog's typed fields used to survive a
+          Cancel and greet the next open — the local draft keeps that copy
+          now, offered rather than imposed. Closing re-keys the body as
+          well, which cuts the content's exit animation short — the edit
+          instance already did that at HEAD when its key fell back to "new",
+          and reduced motion has no exit to cut. */}
       <FaqFormBody
-        key={faq?.id ?? "new"}
+        key={`${faq?.id ?? "new"}:${open ? "open" : "closed"}`}
         faq={faq}
         onOpenChange={onOpenChange}
       />
     </Dialog>
   );
 }
+
+/** What the dialog's local draft carries — the typed fields, not the errors. */
+type FaqDraft = {
+  question: string;
+  answer: string;
+  translations: TranslationsValue;
+};
 
 function FaqFormBody({
   faq,
@@ -101,7 +117,37 @@ function FaqFormBody({
     toTranslationsRecord(faq?.translations),
   );
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
   const isEdit = Boolean(faq);
+
+  // The same local safety net the editors carry, value-shaped because this
+  // dialog is three setters and no form library. Off once saved: the render
+  // between the save and the close must not write the just-discarded draft
+  // back (the body remounts on close, but only because those two updates
+  // batch — the flag does not rely on it). Restore also clears the field
+  // errors: they belong to the copy on screen, and the next submit re-judges.
+  const draftValues = useMemo<FaqDraft>(
+    () => ({ question, answer, translations }),
+    [question, answer, translations],
+  );
+  const draft = useLocalDraftValue<FaqDraft>({
+    key: "faq",
+    id: faq?.id,
+    values: draftValues,
+    initial: {
+      question: faq?.question ?? "",
+      answer: faq?.answer ?? "",
+      translations: toTranslationsRecord(faq?.translations),
+    },
+    apply: (v) => {
+      setQuestion(v.question);
+      setAnswer(v.answer);
+      setTranslations(v.translations);
+      setQuestionError(null);
+      setAnswerError(null);
+    },
+    enabled: !busy && !saved,
+  });
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -128,6 +174,8 @@ function FaqFormBody({
     });
     setBusy(false);
     if (res.ok) {
+      setSaved(true);
+      draft.discard();
       toast.success(isEdit ? "FAQ updated." : "FAQ created.");
       onOpenChange(false);
       router.refresh();
@@ -156,6 +204,13 @@ function FaqFormBody({
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <LocalDraftBar
+          savedAt={draft.savedAt}
+          onRestore={draft.restore}
+          onDiscard={draft.discard}
+          disabled={busy}
+          paused={draft.paused}
+        />
         <div className="space-y-1.5">
           <Label htmlFor="faq-question">Question</Label>
           <Input
@@ -308,11 +363,15 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
 
   async function handleDelete() {
     const count = selection.count;
+    const ids = selection.ids;
     setDeleting(true);
-    const res = await deleteFaqs(selection.ids);
+    const res = await deleteFaqs(ids);
     setDeleting(false);
     setConfirmOpen(false);
     if (res.ok) {
+      // A deleted row's local draft would otherwise sit under an id nothing
+      // mounts again; the editors' own Delete does the same through the hook.
+      for (const id of ids) removeDraft(draftStorageKey("faq", id));
       toast.success(`Deleted ${count} ${count === 1 ? "FAQ" : "FAQs"}.`);
       selection.clear();
       router.refresh();

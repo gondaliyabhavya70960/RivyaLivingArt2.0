@@ -319,6 +319,8 @@ export function BlogPostForm({
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Post deleted.");
     router.push("/studio/blog");
     router.refresh();
@@ -348,6 +350,8 @@ export function BlogPostForm({
           savedAt={draft.savedAt}
           onRestore={draft.restore}
           onDiscard={draft.discard}
+          disabled={saving}
+          paused={draft.paused}
         />
 
         <Tabs value={tab} onValueChange={setTab}>

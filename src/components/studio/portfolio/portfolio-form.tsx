@@ -417,6 +417,8 @@ export function PortfolioForm({
       return;
     }
     setDeleteOpen(false);
+    // The row is gone; its draft would only ever be an orphan in storage.
+    draft.discard();
     toast.success("Portfolio piece deleted.");
     router.push("/studio/portfolio");
     router.refresh();
@@ -428,6 +430,8 @@ export function PortfolioForm({
         savedAt={draft.savedAt}
         onRestore={draft.restore}
         onDiscard={draft.discard}
+        disabled={saving}
+        paused={draft.paused}
       />
 
       <Tabs value={tab} onValueChange={setTab}>
