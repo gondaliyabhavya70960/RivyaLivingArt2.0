@@ -28,7 +28,7 @@ Project → **Settings → Environment Variables** (all environments unless note
 | Variable | Value |
 |---|---|
 | `AUTH_SECRET` | Output of `npx auth secret` (any strong random string) |
-| `AUTH_URL` | `https://www.rivyalivingart.com` (Production) |
+| `AUTH_URL` | `https://www.rivyalivingart.com` (Production) — **the scheme is not optional**: Auth.js calls `new URL()` on this value inside the middleware, so a bare `rivyalivingart.com` used to 500 every `/studio` route while the public site stayed up. It is repaired and warned about now (`src/lib/auth.config.ts`); set it correctly anyway, or leave it unset and let the request host answer |
 | `ADMIN_EMAIL` | `gondaliyabhavya70960@gmail.com` — seed-only: creates the admin login |
 | `ADMIN_PASSWORD` | A strong password — seed-only |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `917096036250` |
@@ -75,7 +75,7 @@ Notes:
 1. Project → **Domains** → Add → `www.rivyalivingart.com`.
 2. At the DNS provider for `bhavyagondaliya.co.in`, add the **CNAME** record Vercel shows: host `store` → `cname.vercel-dns.com` (Vercel displays the exact target — use what the dashboard says).
 3. Wait for DNS + automatic HTTPS to go green in the dashboard.
-4. Confirm `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` both say `https://www.rivyalivingart.com` — login and wa.me messages depend on them.
+4. Confirm `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` both say `https://www.rivyalivingart.com`, **with the `https://`** — login and wa.me messages depend on them, and a scheme-less host is what took `/studio` down (docs/troubleshooting.md).
 
 ## 8. Verify the deployment
 
