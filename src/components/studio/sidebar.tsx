@@ -11,6 +11,7 @@ import {
   HelpCircle,
   Image as ImageIcon,
   Images,
+  Download,
   Import,
   Inbox,
   LayoutDashboard,
@@ -121,6 +122,7 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
     items: [
       { label: "Sheet Import", href: "/studio/sheet-import", icon: Import },
       { label: "Bulk Import", href: "/studio/import", icon: Import },
+      { label: "Exports", href: "/studio/exports", icon: Download },
       { label: "Product Scraper", href: "/studio/scraper", icon: Radar },
       // SEO edits SiteSettings (site-wide fallback metadata) — a settings
       // surface, so it follows the settings rule: admins only.

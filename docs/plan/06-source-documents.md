@@ -45,8 +45,9 @@ Two different products.
 | CSP carries a blanket `img-src … https:` | ✅ Verified — `next.config.ts:55`, commented as needed for the imported four-tier catalog | Tighten to Blob + known hosts once image mirroring is universal |
 | Forced locale redirect, no consent | ✅ Verified — `src/i18n/routing.ts:23` `localeDetection: true` | Replace with a consent-based switcher (W3) |
 | ResinRiva brand remnants | ✅ Verified — `src/ResinRivaFavicon.svg`, `src/ResinRivaLogo.svg` | Purge in the design-system PR |
-| Product images hot-linked to Shopify CDN, 404ing in production | ⚠️ **Not yet verified** | Verify before scheduling; if true it outranks everything in workstream A |
-| "Showing 24 of 1,000" browse cap | ⚠️ Not verified — no such constant found | Re-check against the live shop before acting |
+| Product images hot-linked to Shopify CDN | ✅ **Verified** — `/shop/drinkware-barware` serves all 3 products' images as raw `<img src="https://cdn.shopify.com/…">` | See §7 — the diagnosis is not the one the brief gave |
+| …and 404ing in production | ❌ **Did not reproduce** — all 6 hot-linked images returned **200** on 2026-09-14 | Not an outage. The exposure is structural, not current |
+| "Showing 24 of 1,000" browse cap | ❌ Did not reproduce — the live category reads "3 pieces" and no such constant exists | Drop it |
 | `exceljs` + `papaparse` already present | ✅ Verified | ✅ **Used** — the new export needs no package |
 | Client-polling scrape loop | ✅ Verified — `use-scrape-runner.ts` polls `continueScrapeJob` | Cron drain, per `02-scraper-rebuild.md` §3 |
 
@@ -124,3 +125,57 @@ must stay until the owner has exported once from the new route and archived the
 spreadsheet ([`03-sheets-removal.md`](03-sheets-removal.md) §4). The Studio
 Export Center UI, the resin ontology, durable orchestration, the Drive asset
 pipeline and both redesigns remain as planned, still gated on D25–D29.
+
+---
+
+## 7. The product-image finding, and what it changes
+
+Checked against the live site on 2026-09-14, because one brief called it a
+production outage and the other forbids the obvious fix.
+
+**What is true.** `/shop/drinkware-barware` renders each product's photograph
+as a raw `<img src="https://cdn.shopify.com/s/files/…">`. They bypass
+`next/image` entirely — which is why they do not appear in a `url=` scan of the
+markup — so they get no AVIF/WebP negotiation, no responsive `srcset` and no
+lazy-loading. The page's own category tiles, by contrast, come from Cloudinary
+and Vercel Blob and *are* optimised.
+
+**What is not true.** They are not broken. All six returned `200`. The brief
+that called this "broken product imagery in production — hot-linked Shopify CDN
+URLs return 404; grid cards render alt-text placeholders" was either observing a
+different product, a different day, or a different repository.
+
+**Why it happens, and why it is not a bug.** It is deliberate, documented
+degradation. `isOptimizableImageSrc` (`src/lib/image-src.ts`) allows only
+Cloudinary, Vercel Blob and `kanhakreation.com`, mirroring
+`next.config.ts`'s `remotePatterns`; anything else renders unoptimised rather
+than throwing, because — in that file's own words — *"bulk-imported products
+can legitimately carry a source-store URL when an image mirror fails
+(mirrorProductImage keeps the original URL by design), and such a URL must
+degrade to an unoptimized `<img>`, not crash the page."*
+
+So the raw `<img>` is the safety net working. What it reveals is that **the
+mirror has not covered these products** — three of three on that page are still
+served from the supplier's CDN.
+
+**This resolves the conflict flagged in §4, and not in the direction that
+section assumed.** The older-repo brief's position — competitor imagery is
+never downloaded, cached or re-hosted — is already *not* this repository's
+architecture: `src/lib/catalog-mirror.ts` and `/api/cron/mirror-images` exist
+precisely to copy catalogue images into Blob under `catalog/`, and
+`isOptimizableImageSrc` has a dedicated branch for them. The decision was taken
+before either brief was written.
+
+That makes the current state worse than **either** brief's position: the images
+are not mirrored (so Rivya has no control over them, pays no optimisation, and
+depends on a third party's CDN staying up) yet they are displayed (so the
+exposure of serving a competitor's photographs is already taken). Whichever way
+the owner wants to go — finish the mirror, or stop showing these products —
+standing still is the one option that has the costs of both.
+
+**Recommendation:** treat this as a data-coverage question, not a redesign one.
+Before any image work in workstream A, measure how many catalogue products
+still carry an unmirrored third-party URL. That number decides whether this is
+a cron that needs finishing or a catalogue-segregation decision
+(`RivyaLivingArt-Implementation-Plan.md` §6.3). It was not measured here
+because it needs database access this session does not have.
