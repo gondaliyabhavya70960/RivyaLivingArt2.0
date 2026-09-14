@@ -67,15 +67,35 @@ export type AdapterContext = {
 export type Adapter = (ctx: AdapterContext) => Promise<AdapterPage>;
 
 /**
- * User-Agent for all upstream fetches. Defaults to a mainstream desktop
- * browser string because many storefronts (Cloudflare / Shopify bot
- * protection) 403 an identifying bot UA and return nothing. Override with
- * SCRAPER_USER_AGENT to present a different identity (e.g. the transparent
- * research-bot string) without a code change. robots.txt is honored either
- * way — see lib/scraper/robots.ts.
+ * Our product token. `robots.ts` matches `User-agent:` groups against it, and
+ * the User-Agent below announces it — one constant, because a crawler that
+ * obeys rules written for a name it never sends is only theoretically polite.
  */
-const DEFAULT_SCRAPER_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36";
+export const SCRAPER_BOT_TOKEN = "RivyaLivingArtResearchBot";
+
+/**
+ * User-Agent for all upstream fetches.
+ *
+ * This used to default to a Chrome string, for a reason its own comment
+ * stated plainly: "many storefronts (Cloudflare / Shopify bot protection) 403
+ * an identifying bot UA and return nothing". That is the definition of a
+ * stealth mechanism — the 403 IS the site's answer, and dressing up as a
+ * browser to get a different one is evading an access control rather than
+ * honouring it. It also made `robots.ts` incoherent: a site operator could
+ * write a rule for `RivyaLivingArtResearchBot` and never see that name in
+ * their logs, so they had no way to rate-limit us, contact us, or block us
+ * short of blocking Chrome.
+ *
+ * So the default identifies us and carries a contact URL, per RFC 9309 §2.2.1
+ * convention. Sources that refuse an honest crawler are sources this project
+ * does not scrape — that is `manual_research` mode's entire purpose
+ * (docs/plan/02-scraper-rebuild.md §5), not a problem to route around.
+ *
+ * SCRAPER_USER_AGENT still overrides it, because an operator may need to add
+ * a more specific contact address. It is not an invitation to put the browser
+ * string back.
+ */
+const DEFAULT_SCRAPER_UA = `${SCRAPER_BOT_TOKEN}/1.0 (+https://rivyalivingart.com/contact)`;
 
 export const SCRAPER_UA =
   process.env.SCRAPER_USER_AGENT?.trim() || DEFAULT_SCRAPER_UA;

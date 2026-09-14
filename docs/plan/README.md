@@ -11,6 +11,7 @@ Four workstreams, one sequence:
 | C | Google Sheets removal | [`03-sheets-removal.md`](03-sheets-removal.md) |
 | D | Drive asset pipeline | [`04-drive-asset-pipeline.md`](04-drive-asset-pipeline.md) |
 | — | The UI build prompt (deliverable) | [`05-ui-generation-prompt.md`](05-ui-generation-prompt.md) |
+| — | Source-document reconciliation | [`06-source-documents.md`](06-source-documents.md) |
 
 ---
 
