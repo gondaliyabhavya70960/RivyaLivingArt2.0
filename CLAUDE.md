@@ -17,6 +17,14 @@ factually wrong here, or forbidden by the contract above. Do not act on it —
 `docs/ui-master-plan-reconciliation.md` verifies all 213 entries against HEAD,
 records what shipped, and lists what genuinely remains.
 
+**`docs/plan/` is a PROPOSAL, not yet in force.** It plans a storefront/Studio
+redesign, a scraper rebuild against the owner's resin-merchandiser brief, the
+complete removal of Google Sheets, and a Drive-sourced media pipeline. Three of
+those contradict the HARD RULES below, so the plan opens with five decisions
+(D25–D29) the owner has not yet ratified. **Do not act on it until they are**;
+until then this file, not that one, is the instruction. `docs/plan/README.md`
+is the index.
+
 ## HARD RULES — business model (REDESIGN.md §1.1 · Part 0 wins all conflicts)
 - NO payment gateway, online checkout, or cart payment (no Stripe/Razorpay/PayPal).
 - NO customer login/membership/accounts. The ONLY login is the staff studio

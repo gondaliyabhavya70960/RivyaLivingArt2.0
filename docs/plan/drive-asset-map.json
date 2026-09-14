@@ -1,0 +1,862 @@
+{
+  "$comment": "Generated 2026-09-14. Maps every GENERATED plannedSets candidate in docs/media-v3-manifest.json to its file in the owner Google Drive folder 1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW (Higgsfield Originals). Filenames are the Higgsfield CDN basenames verbatim, which is what makes the match exact. Use these driveFileIds to build masters without touching the CDN, which answers 403 to the agent proxy.",
+  "driveFolderId": "1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW",
+  "entries": [
+    {
+      "id": "bench-dining-slab",
+      "set": "bench-concepts",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 2400,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "f4766588-de1e-43a1-a7fa-5b2bffaf95fb",
+          "file": "hf_20260904_105039_f4766588-de1e-43a1-a7fa-5b2bffaf95fb.png",
+          "driveFileId": "1ltp1XDXxTeZtv8U7kJPGgfg-Jzipm8Tc"
+        },
+        {
+          "variant": "b",
+          "jobId": "4368445d-b354-42c7-81f6-264016ff3447",
+          "file": "hf_20260904_105039_4368445d-b354-42c7-81f6-264016ff3447.png",
+          "driveFileId": "18icMa3oTvOfvBEhDfwZJhVyNl3yKj3LL"
+        }
+      ]
+    },
+    {
+      "id": "bench-coffee-top",
+      "set": "bench-concepts",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "e234bbd6-418b-4e77-8644-de1a0744ad04",
+          "file": "hf_20260904_105349_e234bbd6-418b-4e77-8644-de1a0744ad04.png",
+          "driveFileId": "1QR-3QT_198K8pBYjJ5kasgt6MSQNpk_1"
+        },
+        {
+          "variant": "b",
+          "jobId": "45ea9964-8c68-4d05-9a5f-fb6376728af0",
+          "file": "hf_20260904_105348_45ea9964-8c68-4d05-9a5f-fb6376728af0.png",
+          "driveFileId": "1UyHvuVz-jMiAoeCKPJIJT3yzXxpugP4w"
+        }
+      ]
+    },
+    {
+      "id": "bench-side-top",
+      "set": "bench-concepts",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "14cd74a5-9d40-4e3f-8f30-03329f8ab1cf",
+          "file": "hf_20260904_105348_14cd74a5-9d40-4e3f-8f30-03329f8ab1cf.png",
+          "driveFileId": "1e1ranAPgih82MxP81eVgRnD0QQqJ9iwy"
+        },
+        {
+          "variant": "b",
+          "jobId": "e9bbac1e-aa69-431d-ab94-3e2dbbe2b7fb",
+          "file": "hf_20260904_105348_e9bbac1e-aa69-431d-ab94-3e2dbbe2b7fb.png",
+          "driveFileId": "1WnZDGtIE47boOQP_1VisWiA4v3UAl4zf"
+        }
+      ]
+    },
+    {
+      "id": "bench-console-plank",
+      "set": "bench-concepts",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "36de4af4-cfa2-4d6e-8eb2-30648878e5b7",
+          "file": "hf_20260904_105348_36de4af4-cfa2-4d6e-8eb2-30648878e5b7.png",
+          "driveFileId": "1vvAEYKrq8tFVgIIXjoVsfhS_pFAjPYNj"
+        },
+        {
+          "variant": "b",
+          "jobId": "f9ce3c90-ea0f-4c2c-aa7f-b1272fafcb58",
+          "file": "hf_20260904_105348_f9ce3c90-ea0f-4c2c-aa7f-b1272fafcb58.png",
+          "driveFileId": "1uCSK4RMQIIdSvOeXJXoUnhMv_dF6UvCT"
+        }
+      ]
+    },
+    {
+      "id": "bench-chair-seat",
+      "set": "bench-concepts",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "ad93f1fb-2751-4668-ac81-6a9f78a77b96",
+          "file": "hf_20260904_105348_ad93f1fb-2751-4668-ac81-6a9f78a77b96.png",
+          "driveFileId": "1kBNHlt-Pk8LPBxiPSnPmhsV9uKRUeV7g"
+        },
+        {
+          "variant": "b",
+          "jobId": "943feabf-cfac-4f83-a339-2c280b7d7876",
+          "file": "hf_20260904_105348_943feabf-cfac-4f83-a339-2c280b7d7876.png",
+          "driveFileId": "1HlMIdPBSMAdLd3XzJlGrIrBeMMisZZ-M"
+        }
+      ]
+    },
+    {
+      "id": "bench-plank",
+      "set": "bench-concepts",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "9c917fff-d810-4fe4-ada6-da0884af7c4f",
+          "file": "hf_20260904_105348_9c917fff-d810-4fe4-ada6-da0884af7c4f.png",
+          "driveFileId": "1za87JahN3aT-4zArFgzbGvb7MxQQVhYF"
+        },
+        {
+          "variant": "b",
+          "jobId": "d20430b8-189c-42e5-a7f2-419ec1ec8ae2",
+          "file": "hf_20260904_105348_d20430b8-189c-42e5-a7f2-419ec1ec8ae2.png",
+          "driveFileId": "12ki5o_5GtY9zcyz9EKTg89SggI2W34TB"
+        }
+      ]
+    },
+    {
+      "id": "art-wall-panel",
+      "set": "large-art",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "5a959b58-7020-4edd-a87b-61d456eb621e",
+          "file": "hf_20260904_105423_5a959b58-7020-4edd-a87b-61d456eb621e.png",
+          "driveFileId": "1wxXofyhtH0Pbl9K8Fl8Dc5etC9s_QaEh"
+        },
+        {
+          "variant": "b",
+          "jobId": "616eaf0b-8075-473c-9281-b8decb48ebad",
+          "file": "hf_20260904_105422_616eaf0b-8075-473c-9281-b8decb48ebad.png",
+          "driveFileId": "17_W8hiM6Ib4fVECZq3s3MQxIFK6YQw33"
+        }
+      ]
+    },
+    {
+      "id": "art-ocean-layers",
+      "set": "large-art",
+      "status": "planned",
+      "ratio": "3:2",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "82d8b535-12dc-4704-b89e-3702b5bced7f",
+          "file": "hf_20260904_105422_82d8b535-12dc-4704-b89e-3702b5bced7f.png",
+          "driveFileId": "1FXvhULt62mV9ysFkW0-N2ejMeT8X3Oni"
+        },
+        {
+          "variant": "b",
+          "jobId": "f50e4450-7f27-4491-9400-15358ef36fb6",
+          "file": "hf_20260904_105422_f50e4450-7f27-4491-9400-15358ef36fb6.png",
+          "driveFileId": "17HLLtgNiFEQHeXBFGRl7EqDs_FOLDPn-"
+        }
+      ]
+    },
+    {
+      "id": "art-landscape-horizon",
+      "set": "large-art",
+      "status": "planned",
+      "ratio": "21:9",
+      "targetWidth": 2400,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "99598b9a-43c0-48f4-8289-4decf062ec50",
+          "file": "hf_20260904_105423_99598b9a-43c0-48f4-8289-4decf062ec50.png",
+          "driveFileId": "17X744uGcdgD0SvOUmSkXYJl8asKNjCbL"
+        },
+        {
+          "variant": "b",
+          "jobId": "1f2fcf05-9c70-480c-9210-38307114ce85",
+          "file": "hf_20260904_105422_1f2fcf05-9c70-480c-9210-38307114ce85.png",
+          "driveFileId": "1Kjajz16W3OCp2ObW-6WQ2_xVIAPMzNLd"
+        }
+      ]
+    },
+    {
+      "id": "art-abstract-square",
+      "set": "large-art",
+      "status": "planned",
+      "ratio": "1:1",
+      "targetWidth": 900,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "0f17b3c9-0760-46bc-926a-942adef77f20",
+          "file": "hf_20260904_105422_0f17b3c9-0760-46bc-926a-942adef77f20.png",
+          "driveFileId": "1kuLqKRYYEynkU4_uxrqu-pqqvueZ0Xhi"
+        },
+        {
+          "variant": "b",
+          "jobId": "2c9b3342-36c9-4bad-ad41-dfed745a1e91",
+          "file": "hf_20260904_105422_2c9b3342-36c9-4bad-ad41-dfed745a1e91.png",
+          "driveFileId": "1g0w_5JIYN36b6HzVWH3UK_ODrRI-RHP3"
+        }
+      ]
+    },
+    {
+      "id": "room-living-concept",
+      "set": "concept-rooms",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "f55cebfa-0546-49c3-ba9b-f5698a3640f8",
+          "file": "hf_20260904_105423_f55cebfa-0546-49c3-ba9b-f5698a3640f8.png",
+          "driveFileId": "1LipwF-lemmOjaiX0ehDJHN4whtbh_LFv"
+        },
+        {
+          "variant": "b",
+          "jobId": "2c123620-de85-4473-8359-78495d1f504d",
+          "file": "hf_20260904_105423_2c123620-de85-4473-8359-78495d1f504d.png",
+          "driveFileId": "1DrLD1YQdpeZobJajaS0bW4T7LqpDoAhQ"
+        }
+      ]
+    },
+    {
+      "id": "room-dining-concept",
+      "set": "concept-rooms",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "cbc1dfcc-0c46-4fcf-a575-d05029a8bfbc",
+          "file": "hf_20260904_105458_cbc1dfcc-0c46-4fcf-a575-d05029a8bfbc.png",
+          "driveFileId": "1RPtlcV_ZUWDURWtKG4IZLlNVtNhRrWdy"
+        },
+        {
+          "variant": "b",
+          "jobId": "93fad1b4-a80b-47b3-ac12-a8e984b96ea3",
+          "file": "hf_20260904_105458_93fad1b4-a80b-47b3-ac12-a8e984b96ea3.png",
+          "driveFileId": "1jXwKz0H4VGXcg_By-A4GlNl_T4aUqCK5"
+        }
+      ]
+    },
+    {
+      "id": "room-study-concept",
+      "set": "concept-rooms",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "cf830d55-e0e2-4676-814c-8bd0cef279cb",
+          "file": "hf_20260904_105458_cf830d55-e0e2-4676-814c-8bd0cef279cb.png",
+          "driveFileId": "1YmXA_AxuMsuVF6qFGcAqge7ui1d5k_TX"
+        },
+        {
+          "variant": "b",
+          "jobId": "a6cdabea-2adf-400d-aaa8-2be77e728577",
+          "file": "hf_20260904_110044_a6cdabea-2adf-400d-aaa8-2be77e728577.png",
+          "driveFileId": "1s4KCSxk8G4I63gsUPnyDRXS0FOf9ceHU"
+        }
+      ]
+    },
+    {
+      "id": "room-bedroom-concept",
+      "set": "concept-rooms",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "35d88d74-85b9-4eb8-a72e-71975d0784b4",
+          "file": "hf_20260904_110044_35d88d74-85b9-4eb8-a72e-71975d0784b4.png",
+          "driveFileId": "1ZeeamJIoPEgGTcejOv_oXqMI8NycRn6m"
+        },
+        {
+          "variant": "b",
+          "jobId": "437fe62e-b6f4-4add-9028-fc5e5f57bc88",
+          "file": "hf_20260904_105458_437fe62e-b6f4-4add-9028-fc5e5f57bc88.png",
+          "driveFileId": "1wl7j1_n4yGIKS9v8ibpCNvlrV311Ivyq"
+        }
+      ]
+    },
+    {
+      "id": "process-wood-prep",
+      "set": "process-actions",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "cf03b00e-aea5-4477-b900-79ce078b3fe0",
+          "file": "hf_20260904_105458_cf03b00e-aea5-4477-b900-79ce078b3fe0.png",
+          "driveFileId": "16fYRADtXElG9fREacYCZNDuffIJrDqvA"
+        },
+        {
+          "variant": "b",
+          "jobId": "f6f5581d-e461-4e99-99cf-df9c560ff96e",
+          "file": "hf_20260904_105458_f6f5581d-e461-4e99-99cf-df9c560ff96e.png",
+          "driveFileId": "1NK0GoA9PfRHbZWNmRETd7EgGaeTZ80tF"
+        }
+      ]
+    },
+    {
+      "id": "process-pigment-mix",
+      "set": "process-actions",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "29be3b34-be93-43bc-a0a2-f1c5f27d1b46",
+          "file": "hf_20260904_105458_29be3b34-be93-43bc-a0a2-f1c5f27d1b46.png",
+          "driveFileId": "1i-lyFTznf74JvUyRMQmt_8kjeSMUjG6V"
+        },
+        {
+          "variant": "b",
+          "jobId": "3ea2a0fc-d4cf-4064-baa7-691081e25373",
+          "file": "hf_20260904_105458_3ea2a0fc-d4cf-4064-baa7-691081e25373.png",
+          "driveFileId": "1K242iME19dhMittkRFVbmzRSsv9GaqcP"
+        }
+      ]
+    },
+    {
+      "id": "process-sanding",
+      "set": "process-actions",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "19d33f63-e469-4f15-bd96-bdd1fed17ac4",
+          "file": "hf_20260904_110116_19d33f63-e469-4f15-bd96-bdd1fed17ac4.png",
+          "driveFileId": "178XwQmw0oYscu86QRxiRARP6X1DO2Og3"
+        },
+        {
+          "variant": "b",
+          "jobId": "eea68767-0b52-420a-b2e9-058bc02aa708",
+          "file": "hf_20260904_105522_eea68767-0b52-420a-b2e9-058bc02aa708.png",
+          "driveFileId": "1fBR0gppYACjvR8jxwRLhmaLRGbxXikDO"
+        }
+      ]
+    },
+    {
+      "id": "process-polishing",
+      "set": "process-actions",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "6f0139ec-619d-4226-8bcc-4149878f0bf3",
+          "file": "hf_20260904_105522_6f0139ec-619d-4226-8bcc-4149878f0bf3.png",
+          "driveFileId": "1srdvymTXjdDt36jMCEHavJrz_vk-jcpY"
+        },
+        {
+          "variant": "b",
+          "jobId": "ee7397f2-94d9-486d-85c5-f5bf1f971ad7",
+          "file": "hf_20260904_110044_ee7397f2-94d9-486d-85c5-f5bf1f971ad7.png",
+          "driveFileId": "13hx1mqzFPdEbjB34i4TB9YXVKXUTtOXY"
+        }
+      ]
+    },
+    {
+      "id": "process-finishing",
+      "set": "process-actions",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "274b07c9-90c3-477b-8c69-da364a5be823",
+          "file": "hf_20260904_105522_274b07c9-90c3-477b-8c69-da364a5be823.png",
+          "driveFileId": "19fx7Moe220c2Ybt9i_8Yvl2BF8XvZCtt"
+        },
+        {
+          "variant": "b",
+          "jobId": "0c467b20-ef29-4e19-92fe-4234e2cf5282",
+          "file": "hf_20260904_105522_0c467b20-ef29-4e19-92fe-4234e2cf5282.png",
+          "driveFileId": "15vuplftrxmr_pcdVqdkZHJWMKqgtSCjg"
+        }
+      ]
+    },
+    {
+      "id": "home-hero-mobile",
+      "set": "mobile-crops",
+      "status": "planned",
+      "ratio": "9:16",
+      "targetWidth": 1080,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "a8d411a6-0453-40b2-bfbb-281734967d18",
+          "file": "hf_20260904_110044_a8d411a6-0453-40b2-bfbb-281734967d18.png",
+          "driveFileId": "1vlLeDZp5KjcqN6GeSbD-3MBw6OhawD_M"
+        },
+        {
+          "variant": "b",
+          "jobId": "eb765534-2824-4286-90dc-9b0bbab6b209",
+          "file": "hf_20260904_105522_eb765534-2824-4286-90dc-9b0bbab6b209.png",
+          "driveFileId": "1zq_N5kS9UJ2ZYlFzqZ0pcdTx5yBrWXYa"
+        }
+      ]
+    },
+    {
+      "id": "about-hero-mobile",
+      "set": "mobile-crops",
+      "status": "planned",
+      "ratio": "9:16",
+      "targetWidth": 1080,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "8a6e3f5a-d502-4405-952a-21420be84f2d",
+          "file": "hf_20260904_105554_8a6e3f5a-d502-4405-952a-21420be84f2d.png",
+          "driveFileId": "1VhnkNmcdAC-rF9WiSJH59r6XTSrTKV3q"
+        },
+        {
+          "variant": "b",
+          "jobId": "ba154716-4d34-4392-b1a1-d5c90e34e6c1",
+          "file": "hf_20260904_105554_ba154716-4d34-4392-b1a1-d5c90e34e6c1.png",
+          "driveFileId": "1564Abuf8dUtSgjD8SvcVPOJOnSaFgwTJ"
+        }
+      ]
+    },
+    {
+      "id": "large-format-hero-mobile",
+      "set": "mobile-crops",
+      "status": "planned",
+      "ratio": "9:16",
+      "targetWidth": 1080,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "547d8387-8205-45ab-8517-0d0165806a7b",
+          "file": "hf_20260904_105554_547d8387-8205-45ab-8517-0d0165806a7b.png",
+          "driveFileId": "1aY-iMFPg_Ybwo94cjAq6xDitfHSyUcRq"
+        },
+        {
+          "variant": "b",
+          "jobId": "b368607c-2ff1-4fc7-83c7-3ff89424b907",
+          "file": "hf_20260904_105554_b368607c-2ff1-4fc7-83c7-3ff89424b907.png",
+          "driveFileId": "1psk0WNMNRWAVreB8g3RU_Fhd9d0uf0GN"
+        }
+      ]
+    },
+    {
+      "id": "process-hero-poster-mobile",
+      "set": "mobile-crops",
+      "status": "planned",
+      "ratio": "9:16",
+      "targetWidth": 1080,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "fdda2a71-676c-4722-aa7d-f86c1f255d53",
+          "file": "hf_20260904_105554_fdda2a71-676c-4722-aa7d-f86c1f255d53.png",
+          "driveFileId": "1wv1mrWeG17lWn0NhSc_WQ1ESy462xccA"
+        },
+        {
+          "variant": "b",
+          "jobId": "f3acd574-2e6e-4230-be06-fd482d98cf92",
+          "file": "hf_20260904_105554_f3acd574-2e6e-4230-be06-fd482d98cf92.png",
+          "driveFileId": "1Q2x75fYyLKL4TNAQYY6EkvBrndtBkGdx"
+        }
+      ]
+    },
+    {
+      "id": "workshops-hero-mobile",
+      "set": "mobile-crops",
+      "status": "planned",
+      "ratio": "9:16",
+      "targetWidth": 1080,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "2313ce9d-80b6-45bf-9f50-1b9a20140d3d",
+          "file": "hf_20260904_105554_2313ce9d-80b6-45bf-9f50-1b9a20140d3d.png",
+          "driveFileId": "1WyLpi2XQsJNRRBQRHilxUadzOvawxdzp"
+        },
+        {
+          "variant": "b",
+          "jobId": "fe222bd6-e74f-4495-8d86-019940565b06",
+          "file": "hf_20260904_105554_fe222bd6-e74f-4495-8d86-019940565b06.png",
+          "driveFileId": "1Hbj8mQkfqNOiGjC_aJ4dY6jv8W-ujm_0"
+        }
+      ]
+    },
+    {
+      "id": "portfolio-hero-mobile",
+      "set": "mobile-crops",
+      "status": "planned",
+      "ratio": "9:16",
+      "targetWidth": 1080,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "03ce8334-07e9-44b5-8f20-5331b3093a82",
+          "file": "hf_20260904_105554_03ce8334-07e9-44b5-8f20-5331b3093a82.png",
+          "driveFileId": "1hZBTHtH3n_11XdWKKu85842bIZRFj5N_"
+        },
+        {
+          "variant": "b",
+          "jobId": "3aa0b9ac-4f83-4765-9a67-37704aee769f",
+          "file": "hf_20260904_105554_3aa0b9ac-4f83-4765-9a67-37704aee769f.png",
+          "driveFileId": "1ik-cvzwcMOBJchwHOjL-BFx0IG0SYVlX"
+        }
+      ]
+    },
+    {
+      "id": "video-hero-pour-loop",
+      "set": "video",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1920,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "68d5cfae-d0fd-4be1-a8d6-937bb6825773",
+          "file": "hf_20260904_122203_68d5cfae-d0fd-4be1-a8d6-937bb6825773.mp4",
+          "driveFileId": "1SPNOIZ5HYec9KlhCs5J3i04Era7kugf8"
+        },
+        {
+          "variant": "b",
+          "jobId": "e5af8152-7bfc-41b9-ac2e-e0ae63943856",
+          "file": "hf_20260904_105654_e5af8152-7bfc-41b9-ac2e-e0ae63943856.mp4",
+          "driveFileId": "1I-Hsb75CRp3YOWk7R67i7aKGyy4gCjjj"
+        }
+      ]
+    },
+    {
+      "id": "video-macro-gild",
+      "set": "video",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1920,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "c9d86230-7be9-42e9-9a93-293e7cb0a8cb",
+          "file": "hf_20260904_122203_c9d86230-7be9-42e9-9a93-293e7cb0a8cb.mp4",
+          "driveFileId": "19ws6XN-YraX7YEtgO7NaGoaHng7onDU6"
+        },
+        {
+          "variant": "b",
+          "jobId": "db94fcf1-b131-4e35-a697-5a6b69814c4a",
+          "file": "hf_20260904_105654_db94fcf1-b131-4e35-a697-5a6b69814c4a.mp4",
+          "driveFileId": "1X1AqAw9WtnW5bO81sJAw8oFXZBH8HnXt"
+        }
+      ]
+    },
+    {
+      "id": "video-workshop-dolly",
+      "set": "video",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1920,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "b6c6efd5-ee11-43b2-9549-d80b3188c25f",
+          "file": "hf_20260904_122203_b6c6efd5-ee11-43b2-9549-d80b3188c25f.mp4",
+          "driveFileId": "13SKDWEF2o6JqSjnTYTZOp8LW2eyPw4-M"
+        },
+        {
+          "variant": "b",
+          "jobId": "904600d1-68d6-4f59-bcda-fe691ec5a807",
+          "file": "hf_20260904_105654_904600d1-68d6-4f59-bcda-fe691ec5a807.mp4",
+          "driveFileId": "10-AMEBqXahCPt4hvhmajGvb_FZ1PIai0"
+        }
+      ]
+    },
+    {
+      "id": "varmala-fresh-garland",
+      "set": "varmala-preservation",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "6306c12d-ec00-461d-b8f3-6e2e95d16ab9",
+          "file": "hf_20260905_052143_6306c12d-ec00-461d-b8f3-6e2e95d16ab9.png",
+          "driveFileId": "1oplUOZOTtJCuTVkJAfZDr627SeGMwRNm"
+        }
+      ]
+    },
+    {
+      "id": "varmala-petal-sort",
+      "set": "varmala-preservation",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "c10e38a4-c012-40bd-9445-6b2ecce10eea",
+          "file": "hf_20260905_052142_c10e38a4-c012-40bd-9445-6b2ecce10eea.png",
+          "driveFileId": "1_r4B6vW-pHXXK965pIi2kzihWNkbJkMn"
+        }
+      ]
+    },
+    {
+      "id": "varmala-press-stack",
+      "set": "varmala-preservation",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "43c3f515-d448-45be-9092-c306829c22c1",
+          "file": "hf_20260905_052142_43c3f515-d448-45be-9092-c306829c22c1.png",
+          "driveFileId": "1dneBBs5h8CGJL8JxZGohaee4m0UdpmIW"
+        }
+      ]
+    },
+    {
+      "id": "varmala-layer-pour",
+      "set": "varmala-preservation",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "2c3bf902-db34-40f1-b6ef-c65b99a2036a",
+          "file": "hf_20260905_052142_2c3bf902-db34-40f1-b6ef-c65b99a2036a.png",
+          "driveFileId": "1mho93gTiG7IQqbhMAOL1iPPXFQqdmGVl"
+        }
+      ]
+    },
+    {
+      "id": "varmala-block-cure",
+      "set": "varmala-preservation",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "e2787c86-9110-4e92-b87a-425859ab0462",
+          "file": "hf_20260905_052142_e2787c86-9110-4e92-b87a-425859ab0462.png",
+          "driveFileId": "1or1x7QubZBuzuG5wDpu7zOB9i0eyYKQg"
+        }
+      ]
+    },
+    {
+      "id": "gift-hamper-open",
+      "set": "gifting",
+      "status": "planned",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "f1d306d5-c226-46f8-b2f6-d591782e50a3",
+          "file": "hf_20260905_052142_f1d306d5-c226-46f8-b2f6-d591782e50a3.png",
+          "driveFileId": "1zpraWFzEmsmIAn1RaGxCH78Aq6DKJPii"
+        }
+      ]
+    },
+    {
+      "id": "gift-wrap-hands",
+      "set": "gifting",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "53b89baf-53c9-4a94-8d40-788efaf42aaa",
+          "file": "hf_20260905_052142_53b89baf-53c9-4a94-8d40-788efaf42aaa.png",
+          "driveFileId": "1bQvEUaT-K5Qgc24T4-xO8MimuIxsabwi"
+        }
+      ]
+    },
+    {
+      "id": "gift-corporate-row",
+      "set": "gifting",
+      "status": "planned",
+      "ratio": "3:2",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "50c6dc07-0132-4b60-b2a2-48d7262df8c8",
+          "file": "hf_20260905_052142_50c6dc07-0132-4b60-b2a2-48d7262df8c8.png",
+          "driveFileId": "1vRPnDdo8mB6G1WfYkruhN2ZWQwf0qHE5"
+        }
+      ]
+    },
+    {
+      "id": "gift-engraved-blank",
+      "set": "gifting",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "1ea402d8-0a80-42a4-af4f-805a3cabd911",
+          "file": "hf_20260905_052142_1ea402d8-0a80-42a4-af4f-805a3cabd911.png",
+          "driveFileId": "1LGnTkG2bo9vvjVghIgMte8UdCxR_krqG"
+        }
+      ]
+    },
+    {
+      "id": "gift-festive-thali",
+      "set": "gifting",
+      "status": "planned",
+      "ratio": "3:4",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "88a39d6d-a1f9-4ff0-949b-a5ed1b1903ce",
+          "file": "hf_20260905_052142_88a39d6d-a1f9-4ff0-949b-a5ed1b1903ce.png",
+          "driveFileId": "1_-D8j_4e-YSU1LC_SrJrq4sTGfSWrshH"
+        }
+      ]
+    },
+    {
+      "id": "gift-desk-set",
+      "set": "gifting",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "f816d31a-e099-4acb-bebc-d6e5ae850acc",
+          "file": "hf_20260905_052218_f816d31a-e099-4acb-bebc-d6e5ae850acc.png",
+          "driveFileId": "1IO_sIdfZN12SonY7GeCWQs7HbyotFoo3"
+        }
+      ]
+    },
+    {
+      "id": "workshop-demo-hands",
+      "set": "workshops",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "9d7d7086-a7fa-43bd-a806-dd3d549c441c",
+          "file": "hf_20260905_052218_9d7d7086-a7fa-43bd-a806-dd3d549c441c.png",
+          "driveFileId": "1krKS_4DD6pU3xvaxjNSHl_QGIkAAsV2M"
+        }
+      ]
+    },
+    {
+      "id": "workshop-private-evening",
+      "set": "workshops",
+      "status": "planned",
+      "ratio": "16:9",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "01fa3484-4dd0-485f-b33f-51f8f04bf9ad",
+          "file": "hf_20260905_052218_01fa3484-4dd0-485f-b33f-51f8f04bf9ad.png",
+          "driveFileId": "1sMqlfF0O46lE3T8xO1lIz_uVO8pQj9CQ"
+        }
+      ]
+    },
+    {
+      "id": "atelier-tool-wall",
+      "set": "atelier",
+      "status": "planned",
+      "ratio": "4:3",
+      "targetWidth": 1800,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "6040ceaf-8ae7-4bad-8de6-b9657875831b",
+          "file": "hf_20260905_052219_6040ceaf-8ae7-4bad-8de6-b9657875831b.png",
+          "driveFileId": "1IRn75yPdksBs-n5J24Bgt2bfAIsoVYh_"
+        }
+      ]
+    },
+    {
+      "id": "atelier-cure-room",
+      "set": "atelier",
+      "status": "planned",
+      "ratio": "4:5",
+      "targetWidth": 1200,
+      "keeper": null,
+      "candidates": [
+        {
+          "variant": "a",
+          "jobId": "9d17d752-ea55-48da-8ac5-faad62819583",
+          "file": "hf_20260905_052218_9d17d752-ea55-48da-8ac5-faad62819583.png",
+          "driveFileId": "1hRy3-NtTbkHrDRBjonzyTxroh3zu0cdR"
+        }
+      ]
+    }
+  ]
+}
