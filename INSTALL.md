@@ -33,7 +33,7 @@ cp .env.example .env
 |---|---|
 | `DATABASE_URL` | **Option A — local Postgres:** create a database and use e.g. `postgresql://rivya:rivya_dev@localhost:5432/rivya`. **Option B — Neon via Vercel:** `vercel link`, then `vercel env pull .env` (auto-injected by the Neon native integration). |
 | `AUTH_SECRET` | Generate with `npx auth secret` (it appends the value to `.env.local` — move it into `.env`). |
-| `AUTH_URL` | Leave unset (or `http://localhost:3000`) for local dev; Auth.js detects localhost. Production uses `https://www.rivyalivingart.com`. |
+| `AUTH_URL` | Leave unset (or `http://localhost:3000`) for local dev; Auth.js detects localhost. Production uses `https://www.rivyalivingart.com` — **include the scheme**: Auth.js calls `new URL()` on this value inside the middleware, and a bare host once 500'd every `/studio` route in production. |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Your studio login. **Used only by the seed script** to create the admin user. |
 | `BLOB_READ_WRITE_TOKEN` | Leave empty locally — uploads fall back to local disk automatically (see §7). |
 | `RESEND_API_KEY` | Optional — email via Resend: contact-form + order notifications and password-reset delivery. Skipping it is fine; forms still save inquiries and reset links are logged to the server console. |

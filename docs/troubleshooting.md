@@ -4,6 +4,34 @@ Symptoms, causes, and what to do — in rough order of how often they happen.
 
 ---
 
+## /studio answers "Internal Server Error" while the public site is fine
+
+**Cause.** `AUTH_URL` (or the legacy `NEXTAUTH_URL`) is set to a bare host —
+`rivyalivingart.com` — rather than a full origin. That is the form a hosting
+dashboard displays a domain in, so it is the form that gets pasted. Auth.js
+calls `new URL()` on the raw value in the middleware, `new URL()` needs a
+scheme, and the middleware is what guards `/studio/:path*` — so every studio
+route 500s and nothing else on the site changes. The public routes take the
+next-intl branch of `src/proxy.ts`, which never constructs an auth URL.
+
+**Confirm it.** Vercel → Project → **Logs** (or Observability → Errors):
+`Error running the exported Web Handler: TypeError: Invalid URL` on route
+`/middleware`, with `input: '<your domain>'` naming the pasted value.
+
+**Do.** Project → Settings → Environment Variables → set `AUTH_URL` to
+`https://www.rivyalivingart.com` (scheme included) in **every** environment
+that has it, delete any `NEXTAUTH_URL`, and redeploy. Deleting `AUTH_URL`
+outright also works on Vercel: with no value Auth.js reads the origin from
+`x-forwarded-host`.
+
+Since this shipped, `src/lib/auth.config.ts` repairs the value at module load
+— a pasted bare host is read as `https://<host>` and an unusable one is
+ignored, each with a warning in the runtime log naming the variable. The env
+var is still worth fixing so the warning stops; it can no longer take the
+studio down.
+
+---
+
 ## "Sheet sync not configured"
 
 **Cause.** No `GOOGLE_SERVICE_ACCOUNT_JSON` (or `_KEY_B64`) and
