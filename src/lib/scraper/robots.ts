@@ -5,11 +5,18 @@
  * `$` end-anchors; longest matching rule wins, ties favour Allow. Fails OPEN
  * (allows) when robots.txt is missing or unreachable, per convention.
  */
-import { SCRAPER_UA } from "@/lib/scraper/types";
+import { SCRAPER_BOT_TOKEN, SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
 
-/** Our product token, for matching `User-agent:` groups. */
-const BOT_TOKEN = "rivyalivingartresearchbot";
+/**
+ * Our product token, for matching `User-agent:` groups.
+ *
+ * Derived from the constant the User-Agent header is built from rather than
+ * typed a second time: the name we obey rules for and the name we announce
+ * must be the same name, and two string literals drift the moment one is
+ * edited. robots.txt agent values are lowercased before comparison.
+ */
+const BOT_TOKEN = SCRAPER_BOT_TOKEN.toLowerCase();
 
 type Rule = { pattern: string; allow: boolean };
 
@@ -59,7 +66,8 @@ function parseRobots(text: string): Rule[] {
     collecting = false; // any non-user-agent line ends the header
     if (!groupApplies) continue;
     if (field === "disallow") applicable.push({ pattern: value, allow: false });
-    else if (field === "allow") applicable.push({ pattern: value, allow: true });
+    else if (field === "allow")
+      applicable.push({ pattern: value, allow: true });
   }
   return applicable;
 }

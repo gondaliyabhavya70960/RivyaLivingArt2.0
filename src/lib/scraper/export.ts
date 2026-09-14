@@ -4,6 +4,7 @@
  * column C is externalId; the sheet sync relies on that when it merges by
  * `${sourceKey}|${externalId}`.
  */
+import { toCsvDocument } from "@/lib/export/csv";
 
 /** EXACT ScrapeDeck v4 column order — never reorder, only append. */
 export const SCRAPEDECK_COLUMNS = [
@@ -120,15 +121,13 @@ export function rowToScrapeDeck(p: ScrapeDeckProduct): string[] {
  * Then apply RFC-4180 quoting. Only the CSV download passes through here; the
  * Google Sheet sync uses valueInputOption RAW and is unaffected.
  */
-function csvCell(value: string): string {
-  const guarded = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
-  return /[",\r\n]/.test(guarded)
-    ? `"${guarded.replaceAll('"', '""')}"`
-    : guarded;
-}
-
-/** Full CSV document: header row + data rows, CRLF line endings. */
+/**
+ * Full CSV document: header row + data rows, CRLF line endings.
+ *
+ * The quoting and the formula-injection guard live in `@/lib/export/csv` so
+ * that this download and the Studio exports cannot disagree about how a cell
+ * containing a comma is written. Behaviour here is unchanged.
+ */
 export function toCsv(rows: string[][]): string {
-  const lines = [Array.from<string>(SCRAPEDECK_COLUMNS), ...rows];
-  return lines.map((row) => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+  return toCsvDocument(SCRAPEDECK_COLUMNS, rows);
 }
