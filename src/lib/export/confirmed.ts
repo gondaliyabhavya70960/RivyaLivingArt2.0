@@ -16,9 +16,13 @@
  * labels — a spreadsheet header that reads "Price Min" is a column nobody can
  * write a formula against twice.
  *
- * Pure: no Prisma import, no database, no workbook library. The shaping rules
+ * Pure: no Prisma import, no database, no workbook library. (The one import
+ * below is TYPE-ONLY and resolves through `product-size-tier.ts`, which is
+ * itself pure — it erases at compile and adds no runtime edge.) The shaping rules
  * are the interesting part, so they live where a test can reach them.
  */
+
+import type { ProductSizeTier } from "@/lib/product-size-tier";
 
 /**
  * How a price should be read — the brief's central rule made into data.
@@ -58,6 +62,7 @@ export const CONFIRMED_EXPORT_COLUMNS = [
   "dimensions_raw",
   "source_name",
   "source_product_id",
+  "product_tier",
   "tier",
   "needs_rewrite",
   "hero_image_url",
@@ -90,6 +95,8 @@ export type ConfirmedExportProduct = {
   dimensions: string | null;
   importSource: string | null;
   importRef: string | null;
+  /** The owner's product tier. Empty for a row nobody has filed yet. */
+  sizeTier: ProductSizeTier | null;
   tier: number | null;
   needsRewrite: boolean;
   /** First gallery image by `order`, or null when the product has none. */
@@ -164,6 +171,9 @@ export function confirmedProductToRow(p: ConfirmedExportProduct): string[] {
     p.dimensions ?? "",
     p.importSource ?? "",
     p.importRef ?? "",
+    // The column Bulk Import reads back under the same name, so an export can
+    // be edited in a spreadsheet and re-imported without losing the tier.
+    p.sizeTier ?? "",
     num(p.tier),
     p.needsRewrite ? "true" : "false",
     p.heroImageUrl ?? "",

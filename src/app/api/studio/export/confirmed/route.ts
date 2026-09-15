@@ -55,6 +55,7 @@ export async function GET(request: Request): Promise<Response> {
       dimensions: true,
       importSource: true,
       importRef: true,
+      sizeTier: true,
       tier: true,
       needsRewrite: true,
       confirmedAt: true,

@@ -11,6 +11,7 @@ import {
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
+import { parseSizeTierCell } from "@/lib/product-size-tier";
 import { decideMerge, type MergeAction } from "@/lib/scraper/merge-policy";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import {
@@ -643,8 +644,14 @@ async function importProductRow(
   // create the schema defaults apply (tier null, inStock true).
   const tier = tier0;
   const inStock = inStock0;
+  // product_tier reads the same way: empty means "no opinion", so a re-import
+  // of an older export never un-tiers a product the owner filed in the studio.
+  // It is a DIFFERENT column from `tier` above — that one is where the row
+  // came from, this one is what the piece is.
+  const sizeTier = parseSizeTierCell(row.product_tier);
   const base = {
     ...(tier !== null && tier >= 1 && tier <= 4 ? { tier } : {}),
+    ...(sizeTier !== null ? { sizeTier } : {}),
     ...(inStock !== null ? { inStock } : {}),
     title: row.title.trim(),
     shortTagline: nullIfEmpty(row.short_tagline),

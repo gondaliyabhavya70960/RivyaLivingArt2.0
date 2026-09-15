@@ -31,12 +31,14 @@ export default async function ProductsPage({
     status?: string;
     category?: string;
     tier?: string;
+    sizeTier?: string;
     stock?: string;
     demo?: string;
     page?: string;
   }>;
 }) {
-  const { q, status, category, tier, stock, demo, page } = await searchParams;
+  const { q, status, category, tier, sizeTier, stock, demo, page } =
+    await searchParams;
 
   // One validated filter shape drives the where clause here AND the bulk
   // actions' select-all-matching path (audit L-AD1) — see product-filter.ts.
@@ -45,6 +47,7 @@ export default async function ProductsPage({
     status,
     category,
     tier,
+    sizeTier,
     stock,
     demo,
   });
@@ -104,6 +107,7 @@ export default async function ProductsPage({
         featured: true,
         needsRewrite: true,
         tier: true,
+        sizeTier: true,
         inStock: true,
         importSource: true,
         updatedAt: true,
@@ -134,6 +138,7 @@ export default async function ProductsPage({
       featured: product.featured,
       needsRewrite: product.needsRewrite,
       tier: product.tier,
+      sizeTier: product.sizeTier,
       inStock: product.inStock,
       imported,
       // Sheet-demoted drafts (audit M-A1): a tiered sheet row sitting in DRAFT

@@ -34,6 +34,7 @@ function product(
     dimensions: "2100 × 900 × 760 mm",
     importSource: null,
     importRef: null,
+    sizeTier: "LARGE_FORMAT",
     tier: 1,
     needsRewrite: false,
     heroImageUrl: "/media/v3/hero.avif",

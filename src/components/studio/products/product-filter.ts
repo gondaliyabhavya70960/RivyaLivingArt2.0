@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Prisma } from "@/generated/prisma/client";
+import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
 
 /**
  * The studio product list's filter contract — ONE definition shared by the
@@ -31,6 +32,19 @@ export const productListFilterSchema = z.object({
   /** Category id (cuid) from the category filter select. */
   category: z.string().trim().min(1).max(64).optional().catch(undefined),
   tier: z.enum(["1", "2", "3", "4"]).optional().catch(undefined),
+  /**
+   * The owner's product tier, plus "NONE" for the rows that have none.
+   *
+   * "NONE" IS THE POINT OF THIS FILTER, not an afterthought. The column
+   * shipped nullable against a catalogue of ~4,385 existing rows, so the
+   * backlog IS the default state; a filter that could only select the three
+   * tiers would show the owner everything they have already done and nothing
+   * they still have to do.
+   */
+  sizeTier: z
+    .enum(["NONE", ...PRODUCT_SIZE_TIERS])
+    .optional()
+    .catch(undefined),
   stock: z.enum(["in", "out"]).optional().catch(undefined),
   /** "1" narrows to Content Lab fixtures (`isDemo: true`) — 10 remnants'
    *  demo filter, present on every list that carries `isDemo` rows. */
@@ -47,6 +61,7 @@ export function parseProductListFilter(raw: {
   status?: string;
   category?: string;
   tier?: string;
+  sizeTier?: string;
   stock?: string;
   demo?: string;
 }): ProductListFilter {
@@ -71,6 +86,14 @@ export function buildProductWhere(
     ...(status !== "ALL" ? { status } : {}),
     ...(filter.category ? { categoryId: filter.category } : {}),
     ...(filter.tier ? { tier: Number(filter.tier) } : {}),
+    // `sizeTier: null` is a REAL clause, so it cannot ride the truthiness
+    // pattern the rest of this object uses — "NONE" has to be matched before
+    // the generic branch or the untiered backlog is unselectable.
+    ...(filter.sizeTier === "NONE"
+      ? { sizeTier: null }
+      : filter.sizeTier
+        ? { sizeTier: filter.sizeTier }
+        : {}),
     ...(filter.stock === "in" ? { inStock: true } : {}),
     ...(filter.stock === "out" ? { inStock: false } : {}),
     ...(filter.demo === "1" ? { isDemo: true } : {}),

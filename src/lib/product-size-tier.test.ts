@@ -3,8 +3,11 @@ import { describe, expect, it } from "vitest";
 import { ProductSizeTier } from "@/generated/prisma/enums";
 import {
   describeSizeTierPublishProblem,
+  parseSizeTierCell,
   PRODUCT_SIZE_TIERS,
+  SIZE_TIER_CELL_VALUES,
   SIZE_TIER_EXAMPLES,
+  SIZE_TIER_SHORT,
   SIZE_TIER_FORM_VALUES,
   SIZE_TIER_NAME,
   SIZE_TIER_NUMBER,
@@ -30,8 +33,20 @@ describe("the tier list is not a hand-written copy", () => {
     for (const tier of PRODUCT_SIZE_TIERS) {
       expect(SIZE_TIER_NAME[tier]).toBeTruthy();
       expect(SIZE_TIER_EXAMPLES[tier]).toBeTruthy();
+      expect(SIZE_TIER_SHORT[tier]).toBeTruthy();
       expect(SIZE_TIER_NUMBER[tier]).toBeGreaterThan(0);
     }
+  });
+
+  it("keeps the short labels to one word, which is why they exist", () => {
+    // They exist because the four-word names pushed /studio/products to
+    // 1450px in a 1440px viewport and the studio audit failed the route.
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(SIZE_TIER_SHORT[tier].split(/\s+/)).toHaveLength(1);
+    }
+    expect(new Set(Object.values(SIZE_TIER_SHORT)).size).toBe(
+      PRODUCT_SIZE_TIERS.length,
+    );
   });
 
   it("numbers them large → small, which is the owner's own order", () => {
@@ -149,5 +164,50 @@ describe("describeSizeTierPublishProblem", () => {
       sizeTier: null,
     });
     expect(message).not.toMatch(/_FORMAT/);
+  });
+});
+
+describe("parseSizeTierCell — the Bulk Import column", () => {
+  it("takes the short word, which is what an owner types", () => {
+    expect(parseSizeTierCell("LARGE")).toBe("LARGE_FORMAT");
+    expect(parseSizeTierCell("medium")).toBe("MEDIUM_FORMAT");
+    expect(parseSizeTierCell("  Small  ")).toBe("SMALL_FORMAT");
+  });
+
+  it("takes the full enum name too, for a re-imported export", () => {
+    // The confirmed export writes `product_tier` as the enum name, and the
+    // whole point of that column is that the file can be edited in a
+    // spreadsheet and fed straight back through Bulk Import.
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(parseSizeTierCell(tier)).toBe(tier);
+      expect(parseSizeTierCell(tier.toLowerCase())).toBe(tier);
+    }
+  });
+
+  it("normalises a space or a hyphen, which a spreadsheet will produce", () => {
+    expect(parseSizeTierCell("large format")).toBe("LARGE_FORMAT");
+    expect(parseSizeTierCell("SMALL-FORMAT")).toBe("SMALL_FORMAT");
+  });
+
+  it("returns null for empty, which the importer reads as 'no opinion'", () => {
+    // Load-bearing: an empty cell must NOT clear a tier the owner set in the
+    // studio, so the importer omits the field entirely when this is null.
+    expect(parseSizeTierCell("")).toBeNull();
+    expect(parseSizeTierCell("   ")).toBeNull();
+    expect(parseSizeTierCell(undefined)).toBeNull();
+    expect(parseSizeTierCell(null)).toBeNull();
+  });
+
+  it("returns null for a value it does not recognise, rather than guessing", () => {
+    expect(parseSizeTierCell("huge")).toBeNull();
+    expect(parseSizeTierCell("1")).toBeNull();
+    expect(parseSizeTierCell("XL_FORMAT")).toBeNull();
+  });
+
+  it("advertises every spelling it accepts", () => {
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(SIZE_TIER_CELL_VALUES).toContain(tier);
+      expect(SIZE_TIER_CELL_VALUES).toContain(tier.replace("_FORMAT", ""));
+    }
   });
 });

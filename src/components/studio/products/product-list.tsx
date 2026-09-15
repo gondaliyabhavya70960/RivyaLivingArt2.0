@@ -9,17 +9,25 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search, Star } from "lucide-react";
 import { toast } from "sonner";
-import type { ContentStatus } from "@/generated/prisma/enums";
+import type { ContentStatus, ProductSizeTier } from "@/generated/prisma/enums";
 import {
   confirmProducts,
   deleteProducts,
   setProductsCategory,
+  setProductsSizeTier,
   setProductsStatus,
   toggleFeatured,
   unconfirmProducts,
   type BulkProductTarget,
 } from "@/actions/products";
 import { formatPriceBand } from "@/lib/utils";
+import {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_NAME,
+  SIZE_TIER_NUMBER,
+  SIZE_TIER_SHORT,
+  sizeTierStudioLabel,
+} from "@/lib/product-size-tier";
 import { useColumnVisibility } from "@/hooks/use-column-visibility";
 import { useSelection } from "@/hooks/use-selection";
 import { Badge } from "@/components/ui/badge";
@@ -57,8 +65,10 @@ export type ProductRow = {
   isDemo: boolean;
   featured: boolean;
   needsRewrite: boolean;
-  /** Owner-sheet tier (1-4) or null for studio-made products. */
+  /** Owner-sheet IMPORT tier (1-4) or null for studio-made products. */
   tier: number | null;
+  /** The owner's product tier. Null is the backlog this list has to surface. */
+  sizeTier: ProductSizeTier | null;
   inStock: boolean;
   /** True when the row came from the scheduled sheet import. */
   imported: boolean;
@@ -97,6 +107,7 @@ const STATUS_BADGE_LABEL: Record<ContentStatus, string> = {
 const PRODUCT_COLUMNS: ColumnDef[] = [
   { key: "category", label: "Category" },
   { key: "price", label: "Price" },
+  { key: "sizeTier", label: "Product tier" },
   // Label only — the KEY stays "tier" because saved views persist it.
   { key: "tier", label: "Import tier" },
   { key: "stock", label: "Stock" },
@@ -148,6 +159,7 @@ export function ProductList({
   // unticking any row drops straight back to page-scoped selection.
   const [allMatching, setAllMatching] = useState(false);
   const [bulkCategory, setBulkCategory] = useState("");
+  const [bulkSizeTier, setBulkSizeTier] = useState("");
 
   // The current server page, sorted client-side (SortHead sorts what is
   // ON SCREEN — the catalog itself is server-paginated, so a "global" sort
@@ -166,6 +178,11 @@ export function ProductList({
           return row.categoryName;
         case "price":
           return row.priceMin;
+        case "sizeTier":
+          // Sorts on the owner's own 1-2-3 ordering, so LARGE leads and the
+          // untiered backlog sorts together at one end rather than by the
+          // alphabetical accident of LARGE_/MEDIUM_/SMALL_.
+          return row.sizeTier ? SIZE_TIER_NUMBER[row.sizeTier] : null;
         case "tier":
           return row.tier;
         case "stock":
@@ -194,6 +211,7 @@ export function ProductList({
 
   const categoryFilter = searchParams.get("category") ?? "ALL";
   const tierFilter = searchParams.get("tier") ?? "ALL";
+  const sizeTierFilter = searchParams.get("sizeTier") ?? "ALL";
   const stockFilter = searchParams.get("stock") ?? "ALL";
   const demoFilter = searchParams.get("demo") === "1";
 
@@ -340,6 +358,27 @@ export function ProductList({
     router.refresh();
   }
 
+  async function handleSizeTier(sizeTier: string) {
+    setBulkSizeTier(sizeTier);
+    setBusy(true);
+    const result = await setProductsSizeTier(bulkTarget, sizeTier);
+    setBusy(false);
+    setBulkSizeTier("");
+
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    const moved = result.data?.updated ?? 0;
+    const name =
+      SIZE_TIER_NAME[sizeTier as ProductSizeTier] ?? "the selected tier";
+    toast.success(
+      `Filed ${formatCount(moved)} product${moved === 1 ? "" : "s"} under ${name}.`,
+    );
+    clearSelection();
+    router.refresh();
+  }
+
   async function handleFeature(product: ProductRow) {
     const result = await toggleFeatured(product.id, !product.featured);
     if (!result.ok) {
@@ -437,6 +476,28 @@ export function ProductList({
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={sizeTierFilter}
+          onValueChange={(value) =>
+            updateParams({ sizeTier: value === "ALL" ? undefined : value })
+          }
+        >
+          <SelectTrigger aria-label="Filter by product tier">
+            <SelectValue placeholder="Product tier" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All product tiers</SelectItem>
+            {/* The backlog, first in the list, because on a catalogue this
+                column arrived after it is the answer for nearly every row. */}
+            <SelectItem value="NONE">No tier yet</SelectItem>
+            {PRODUCT_SIZE_TIERS.map((tier) => (
+              <SelectItem key={tier} value={tier}>
+                {sizeTierStudioLabel(tier)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -649,8 +710,19 @@ export function ProductList({
                     />
                   )}
                   <th className="py-3 pe-4">Status</th>
+                  {/* pe-2, not the pe-4 every other column uses. At 1440 the
+                      content rail leaves this table 1151px and its intrinsic
+                      width with both tier columns is 1161 — the studio audit
+                      failed /studio/products at exactly 1450-in-1440 when the
+                      product-tier column was added. Eight pixels off each of
+                      these two is the whole margin. Adding a THIRTEENTH column
+                      needs a real answer (a default-hidden column, or moving
+                      the scroll region past xl), not more shaving. */}
+                  {columns.isVisible("sizeTier") && (
+                    <th className="py-3 pe-2">Product tier</th>
+                  )}
                   {columns.isVisible("tier") && (
-                    <th className="py-3 pe-4">Tier</th>
+                    <th className="py-3 pe-2">Import tier</th>
                   )}
                   {columns.isVisible("stock") && (
                     <th className="py-3 pe-4">Stock</th>
@@ -748,8 +820,24 @@ export function ProductList({
                         {STATUS_BADGE_LABEL[product.status]}
                       </Badge>
                     </td>
+                    {columns.isVisible("sizeTier") && (
+                      <td className="py-3 pe-2 whitespace-nowrap">
+                        {product.sizeTier ? (
+                          <span
+                            className="text-graphite"
+                            title={SIZE_TIER_NAME[product.sizeTier]}
+                          >
+                            {SIZE_TIER_SHORT[product.sizeTier]}
+                          </span>
+                        ) : (
+                          // Named, not a dash. This is the backlog, and a row
+                          // that reads "—" looks finished.
+                          <Badge variant="secondary">No tier yet</Badge>
+                        )}
+                      </td>
+                    )}
                     {columns.isVisible("tier") && (
-                      <td className="u-num py-3 pe-4 whitespace-nowrap text-graphite">
+                      <td className="u-num py-3 pe-2 whitespace-nowrap text-graphite">
                         {product.tier ? (
                           <Badge variant="outline">
                             T{product.tier}
@@ -875,6 +963,30 @@ export function ProductList({
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={bulkSizeTier}
+          onValueChange={(value) => {
+            if (!busy && value) void handleSizeTier(value);
+          }}
+        >
+          <SelectTrigger
+            size="sm"
+            aria-label="Set product tier"
+            className="h-8 w-44 text-sm"
+          >
+            <SelectValue placeholder="Set product tier…" />
+          </SelectTrigger>
+          <SelectContent>
+            {/* No "— none" option. Clearing a filtered selection of thousands
+                on one misclick is not a correction anyone asked for, and the
+                product form already clears the one row where it is. */}
+            {PRODUCT_SIZE_TIERS.map((tier) => (
+              <SelectItem key={tier} value={tier}>
+                {sizeTierStudioLabel(tier)}
               </SelectItem>
             ))}
           </SelectContent>
