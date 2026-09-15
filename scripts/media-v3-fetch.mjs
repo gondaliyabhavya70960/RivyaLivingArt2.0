@@ -59,6 +59,7 @@ import {
   promotedStills,
   tallyPlanned,
 } from "./lib/media-v3-planned.mjs";
+import { driveMirrorFor } from "./lib/media-v3-drive.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const MANIFEST = join(ROOT, "docs/media-v3-manifest.json");
@@ -123,13 +124,75 @@ function assetsForRun() {
   return [...manifest.assets, ...promoted];
 }
 
+/**
+ * The rows the CULL step covers: everything `assetsForRun()` returns, plus the
+ * generated-but-unpromoted planned stills.
+ *
+ * Promotion is deliberately NOT a prerequisite for looking at candidates. The
+ * documented order used to be promote → cull → build, but `--promote` is what
+ * makes `bundled-media.test.ts` demand a master on disk, so promoting first
+ * turns the build red for as long as the cull takes — and it asks an owner to
+ * commit to a row before seeing the two frames they are choosing between.
+ * Culling first inverts nothing else: the build step below still reads only
+ * promoted rows, so an unpromoted row can be reviewed without entering the
+ * pipeline.
+ *
+ * SET F's loops are excluded — a promoted loop is built by
+ * media-v3-video-fetch.mjs, and an .mp4 through sharp is a crash, not a cell.
+ */
+function cullTargets() {
+  const promotedIds = new Set(assetsForRun().map((a) => a.id));
+  const awaitingCull = plannedEntries(manifest).filter(
+    (entry) =>
+      isPlanned(entry) &&
+      !promotedIds.has(entry.id) &&
+      (entry.candidates?.length ?? 0) > 0 &&
+      !entry.candidates.some((c) => String(c.url).endsWith(".mp4")),
+  );
+  return [...assetsForRun(), ...awaitingCull];
+}
+
 /** AVIF quality by role. Macros and tiles sit in small columns and can take a
  *  lower number than a full-bleed band, where banding in a dark gradient shows. */
 const QUALITY = { "16:9": 50, "21:9": 50, "3:4": 52, "4:5": 52, "1:1": 52 };
 
+/**
+ * A candidate's bytes, from the CDN the manifest records — or, when that is
+ * unreachable, from the owner's Drive copy of the same file.
+ *
+ * The CDN is tried first and stays authoritative: the mirror exists because
+ * this project's agent proxy is denied by organization policy (403), not
+ * because the recorded URLs are wrong. Where the CDN answers, nothing changes.
+ *
+ * The fallback is what makes the queue buildable at all from here — see
+ * scripts/lib/media-v3-drive.mjs for why the filename match is exact.
+ */
 async function fetchBuffer(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} — ${url}`);
+  let firstError;
+  try {
+    const res = await fetch(url);
+    if (res.ok) return Buffer.from(await res.arrayBuffer());
+    firstError = `${res.status} ${res.statusText}`;
+  } catch (err) {
+    firstError = err.message;
+  }
+
+  const mirror = driveMirrorFor(url);
+  if (!mirror) {
+    throw new Error(
+      `${firstError} — ${url}\n` +
+        `    No Drive mirror for this file in docs/plan/drive-asset-map.json.`,
+    );
+  }
+
+  const res = await fetch(mirror);
+  if (!res.ok) {
+    throw new Error(
+      `${firstError} — ${url}\n` +
+        `    Drive mirror also failed: ${res.status} ${res.statusText}`,
+    );
+  }
+  process.stdout.write(`    (via Drive mirror)\n`);
   return Buffer.from(await res.arrayBuffer());
 }
 
@@ -145,16 +208,28 @@ function write(file, buf) {
  */
 async function buildContactSheet() {
   mkdirSync(SHEET_DIR, { recursive: true });
+  /** Candidates that could not be fetched — reported, never silently dropped. */
+  const unreachable = [];
   const rows = [];
-  for (const asset of assetsForRun()) {
+  for (const asset of cullTargets()) {
     const cells = [];
     for (const cand of asset.candidates) {
       const name = `${asset.id}-${cand.variant}.avif`;
       const path = join(SHEET_DIR, name);
       if (!existsSync(path) || force) {
         process.stdout.write(`  ↓ ${name}\n`);
-        const src = await fetchBuffer(cand.url);
-        write(path, await sharp(src).resize({ width: 640 }).avif({ quality: 55 }).toBuffer());
+        try {
+          const src = await fetchBuffer(cand.url);
+          write(path, await sharp(src).resize({ width: 640 }).avif({ quality: 55 }).toBuffer());
+        } catch (err) {
+          /* One unreachable candidate must not abort a seventy-file run. The
+             24 built assets are the expected case: their masters are already
+             committed and their CDN candidates are behind the 403, so there is
+             nothing to re-cull and nothing to mirror. Skipping leaves them out
+             of the sheet, which is correct — they have keepers already. */
+          unreachable.push(`${name} — ${String(err.message).split("\n")[0]}`);
+          continue;
+        }
       }
       cells.push(
         // A promoted row's candidates come from a pasted URL, which may carry
@@ -162,6 +237,7 @@ async function buildContactSheet() {
         `<figure><img src="${name}" alt=""><figcaption>${cand.variant}${cand.jobId ? ` · ${cand.jobId.slice(0, 8)}` : ""}</figcaption></figure>`,
       );
     }
+    if (cells.length === 0) continue;
     rows.push(
       `<section><h2>${asset.id} <small>${asset.ratio} · ${asset.placement}</small></h2><div class="row">${cells.join("")}</div></section>`,
     );
@@ -177,6 +253,10 @@ img{width:100%;border-radius:2px;display:block}figcaption{color:#a9b4bc;font-siz
   );
   await writeReviewSheets();
 
+  if (unreachable.length) {
+    console.log(`\n${unreachable.length} candidate(s) could not be fetched:`);
+    for (const line of unreachable) console.log(`  · ${line}`);
+  }
   console.log(`\nContact sheet: ${join(SHEET_DIR, "index.html")}`);
   console.log(`Committed review sheets: ${REVIEW_DIR}`);
   console.log('Set "keeper": "a" | "b" on each asset in docs/media-v3-manifest.json, then re-run without --candidates.');
@@ -195,7 +275,7 @@ async function writeReviewSheets() {
   const CELL = 460;
   const LABEL = 26;
 
-  const assets = assetsForRun();
+  const assets = cullTargets();
   const sets = [...new Set(assets.map((a) => a.set))];
   for (const set of sets) {
     const cells = [];
