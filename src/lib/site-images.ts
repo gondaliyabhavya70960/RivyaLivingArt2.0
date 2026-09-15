@@ -155,7 +155,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Why · Bespoke",
     where: "Homepage · Why Rivya Living Art, second of four",
     ratio: "4:5",
-    fallback: "/media/v3/tile-preserve.avif",
+    fallback: "/media/v3/varmala-fresh-garland.avif",
     altKey: "Home.why.proof.bespoke.alt",
   },
   {
@@ -251,7 +251,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Rooms · Living room",
     where: "Homepage · In the room, first tile",
     ratio: "4:3",
-    fallback: "/media/v3/hero-pour.avif",
+    fallback: "/media/v3/room-living-concept.avif",
     note: "Concept imagery — captioned as a concept on the page (D5).",
     altKey: "Home.rooms.living.alt",
   },
@@ -261,7 +261,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Rooms · Dining room",
     where: "Homepage · In the room, second tile",
     ratio: "4:3",
-    fallback: "/media/v3/texture-band.avif",
+    fallback: "/media/v3/room-dining-concept.avif",
     note: "Concept imagery — captioned as a concept on the page (D5).",
     altKey: "Home.rooms.dining.alt",
   },
@@ -271,7 +271,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Rooms · Study",
     where: "Homepage · In the room, third tile",
     ratio: "4:3",
-    fallback: "/media/v3/studio-interior.avif",
+    fallback: "/media/v3/room-study-concept.avif",
     note: "Concept imagery — captioned as a concept on the page (D5).",
     altKey: "Home.rooms.study.alt",
   },
@@ -281,7 +281,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Rooms · Bedroom",
     where: "Homepage · In the room, fourth tile",
     ratio: "4:3",
-    fallback: "/media/v3/story-gild.avif",
+    fallback: "/media/v3/room-bedroom-concept.avif",
     note: "Concept imagery — captioned as a concept on the page (D5).",
     altKey: "Home.rooms.bedroom.alt",
   },
@@ -402,7 +402,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Craft chapter 3 · cure",
     where: "About · the craft, third panel",
     ratio: "4:5",
-    fallback: "/media/v3/story-cure.avif",
+    fallback: "/media/v3/atelier-cure-room.avif",
     altKey: "About.chapters.alt3",
   },
   {
@@ -425,7 +425,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Studio photo 1",
     where: "About · the studio, photo strip",
     ratio: "4:5",
-    fallback: "/media/v3/workshop-table.avif",
+    fallback: "/media/v3/atelier-tool-wall.avif",
     altKey: "About.studio.alt1",
   },
   {
@@ -454,7 +454,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Large format · hero",
     where: "Large resin art, full-bleed behind the headline",
     ratio: "16:9",
-    fallback: "/media/v3/studio-interior.avif",
+    fallback: "/media/v3/varmala-layer-pour.avif",
     note: "This is the page's LCP. It must show the WORK — the bench, the formwork, a pour — never a finished piece presented as a commission we delivered (§15.2). The shipped file is shared with /contact's hero; replacing it is the first thing worth doing here.",
   },
   {
@@ -463,7 +463,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Large format · tables and surfaces",
     where: "Large resin art · four kinds of large work, first tile",
     ratio: "4:5",
-    fallback: "/media/v3/tile-live.avif",
+    fallback: "/media/v3/bench-coffee-top.avif",
     altKey: "LargeFormat.scope.k1Alt",
   },
   {
@@ -472,7 +472,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Large format · wall panels",
     where: "Large resin art · four kinds of large work, second tile",
     ratio: "4:5",
-    fallback: "/media/v3/macro-epoxy.avif",
+    fallback: "/media/v3/art-wall-panel.avif",
     altKey: "LargeFormat.scope.k2Alt",
   },
   {
@@ -490,7 +490,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Large format · preservation at scale",
     where: "Large resin art · four kinds of large work, fourth tile",
     ratio: "4:5",
-    fallback: "/media/v3/tile-preserve.avif",
+    fallback: "/media/v3/varmala-press-stack.avif",
     altKey: "LargeFormat.scope.k4Alt",
   },
 
@@ -568,7 +568,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Step 6",
     where: "Process · the ten stages",
     ratio: "4:5",
-    fallback: "/media/v3/tile-gift.avif",
+    fallback: "/media/v3/varmala-petal-sort.avif",
     altKey: "Process.timeline.step6Alt",
   },
   {
@@ -577,7 +577,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Step 7",
     where: "Process · the ten stages",
     ratio: "4:5",
-    fallback: "/media/v3/story-polish.avif",
+    fallback: "/media/v3/process-wood-prep.avif",
     altKey: "Process.timeline.step7Alt",
   },
   {
@@ -586,7 +586,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Step 8",
     where: "Process · the ten stages",
     ratio: "4:5",
-    fallback: "/media/v3/texture-band.avif",
+    fallback: "/media/v3/process-pigment-mix.avif",
     altKey: "Process.timeline.step8Alt",
   },
   {
@@ -595,7 +595,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Step 9",
     where: "Process · the ten stages",
     ratio: "4:5",
-    fallback: "/media/v3/macro-epoxy.avif",
+    fallback: "/media/v3/process-sanding.avif",
     altKey: "Process.timeline.step9Alt",
   },
   {
@@ -604,7 +604,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Step 10",
     where: "Process · the ten stages",
     ratio: "4:5",
-    fallback: "/media/v3/tile-live.avif",
+    fallback: "/media/v3/process-polishing.avif",
     altKey: "Process.timeline.step10Alt",
   },
   {
@@ -663,7 +663,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Reason 1",
     where: "Workshops · the three reasons to come",
     ratio: "4:5",
-    fallback: "/media/v3/workshop-private.avif",
+    fallback: "/media/v3/workshop-demo-hands.avif",
     altKey: "Workshops.intro.alt1",
   },
   {
@@ -690,7 +690,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Private workshop band",
     where: "Workshops · private sessions, behind the dark band at 30% opacity",
     ratio: "16:9",
-    fallback: "/media/v3/workshop-private.avif",
+    fallback: "/media/v3/workshop-private-evening.avif",
   },
   {
     key: "workshops.room1",
@@ -736,7 +736,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Hero",
     where: "Commission a piece, the left half of the split hero",
     ratio: "4:5",
-    fallback: "/media/v3/tile-preserve.avif",
+    fallback: "/media/v3/varmala-block-cure.avif",
     altKey: "CustomOrder.page.heroImageAlt",
   },
   {
@@ -762,7 +762,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Editorial break",
     where: "Shop · the full-width break after the third row of products",
     ratio: "3:2",
-    fallback: "/media/v3/story-cure.avif",
+    fallback: "/media/v3/art-ocean-layers.avif",
     altKey: "Shop.editorialBreak.imageAlt",
   },
   {

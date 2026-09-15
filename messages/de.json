@@ -212,7 +212,7 @@
         "bespoke": {
           "label": "Maßgefertigt",
           "copy": "Um Ihre Geschichte gebaut, nicht um einen Katalog.",
-          "alt": "Konservierte Blüten in einem klaren Resin-Block"
+          "alt": "Eine frische Varmala-Girlande aus Rosen und Ringelblumen neben einer Schere"
         },
         "slowMade": {
           "label": "Langsam gemacht",
@@ -373,22 +373,22 @@
       "living": {
         "title": "Wohnzimmer",
         "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Wohnzimmer.",
-        "alt": "Harz, das in einem langsamen, gleichmäßigen Strahl gegossen wird, hier als Konzeptbild für ein Wohnzimmer."
+        "alt": "Ein Wohnzimmer mit einer einzelnen Harz-Wandtafel über einem niedrigen Sofa"
       },
       "dining": {
         "title": "Esszimmer",
         "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Esszimmer.",
-        "alt": "Ein Makroband aus geschichteter Harzstruktur, hier als Konzeptbild für ein Esszimmer."
+        "alt": "Ein Esszimmer mit einer Harztafel an der Wand über dem Tisch"
       },
       "study": {
         "title": "Arbeitszimmer",
         "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Arbeitszimmer.",
-        "alt": "Gefüllte Gussformen härten über Nacht unter einer warmen Arbeitsleuchte, hier als Konzeptbild für ein Arbeitszimmer."
+        "alt": "Ein Arbeitszimmer mit einer großen Harztafel über dem Schreibtisch"
       },
       "bedroom": {
         "title": "Schlafzimmer",
         "caption": "Ein in Auftrag gegebenes Stück, dargestellt in einem Schlafzimmer.",
-        "alt": "Goldflocken treiben in sich setzendem, durchscheinendem blauem Harz, hier als Konzeptbild für ein Schlafzimmer."
+        "alt": "Ein Schlafzimmer mit einer gerahmten Harztafel über dem Bett"
       }
     },
     "workshops": {
@@ -435,23 +435,23 @@
       "step3Alt": "Blattgoldflocken, schwebend in absetzendem blauem Harz",
       "step4Alt": "Tiefes Saphir-Resin mitten im Guss, das sich in einer runden Gussform ausbreitet",
       "step5Alt": "Behandschuhte Hände bearbeiten blaues Harz mit einem Präzisions-Heißluftgebläse",
-      "step6Alt": "Fertige Harzstücke, arrangiert in einer ausgekleideten Geschenkschachtel",
+      "step6Alt": "Blütenblätter in Reihen auf Papier gelegt und mit einer Pinzette sortiert",
       "step7Title": "Oberflächenveredelung",
       "step7Copy": "Ist das Stück vollständig ausgehärtet, wird es von Körnung 400 bis 3000 geschliffen und dann poliert, bis die Oberfläche wie Glas wirkt und die Tiefe darunter völlig klar hervortritt.",
       "step7Meta": "Körnung 400 → 3000",
-      "step7Alt": "Wassertropfen auf einer spiegelglatt polierten Harzoberfläche, darunter schwebende Goldflocken",
+      "step7Alt": "Ein Handhobel und gelockte Späne auf einer Holzbohle an der Werkbank",
       "step8Title": "Handveredelung",
       "step8Copy": "Beschläge, Haken oder Standfüße werden angebracht und von Hand geprüft, und jede Kante wird ein letztes Mal überarbeitet, bevor ein Stück als fertig gilt.",
       "step8Meta": "Von Hand ausgestattet",
-      "step8Alt": "Eine champagnerfarbene Goldader zieht sich durch eine von Hand veredelte Harzoberfläche",
+      "step8Alt": "Blaues Pigment, das in einem Becher auf der Waage in klares Harz einzieht",
       "step9Title": "Qualitätsprüfung",
       "step9Copy": "Das fertige Stück wird Kante für Kante mit dem Auftrag abgeglichen, und Sie erhalten Fotos davon zur eigenen Freigabe, bevor irgendetwas verschickt wird.",
       "step9Meta": "Fotos vor dem Versand",
-      "step9Alt": "Die abgeschrägte Kante einer ausgehärteten Epoxidplatte im Licht",
+      "step9Alt": "Ein Schleifklotz auf einer nass geschliffenen Harzoberfläche",
       "step10Title": "Lieferung",
       "step10Copy": "Nach Freigabe wird das Stück bruchsicher verpackt und mit nachverfolgbarem Versand überallhin in Indien verschickt. Das Studio bietet keine Montage an – mit der Lieferung endet der Auftrag.",
       "step10Meta": "Nachverfolgbar, überallhin in Indien",
-      "step10Alt": "Ein fertiges Tablett und eine Schale aus Harz und Teakholz, bereit, das Studio zu verlassen"
+      "step10Alt": "Ein Polierpad, das eine ausgehärtete Harzoberfläche auf Hochglanz bringt"
     },
     "materials": {
       "heading": "Woraus Ihr Stück besteht",
@@ -539,7 +539,7 @@
       "embedCopy": "Blüten, Blattgold und Erinnerungsstücke werden von Hand zwischen die Schichten gelegt — jedes Element genau dort versiegelt, wo es ruhen soll. So bewahrt das Stück einen Moment, nicht nur ein Material.",
       "alt1": "Tiefblaues saphirfarbenes Resin, das in einem einzigen ununterbrochenen Band in eine flache runde Form läuft",
       "alt2": "Blattgoldflocken schweben in absetzendem, durchscheinend blauem Harz",
-      "alt3": "Gegossene Formen, die über Nacht unter einer einzelnen warmen Werklampe im dunklen Atelier aushärten",
+      "alt3": "Regale voller gefüllter Formen, die im dunklen Aushärteraum auf Stahlböden aushärten",
       "alt4": "Wasserperlen auf spiegelblank poliertem Harz, Goldflocken darunter"
     },
     "sustain": {
@@ -574,7 +574,7 @@
       "heading": "Die Werkbank, die Formen, das Licht.",
       "body": "Ein Raum in Surat, in dem jeder Auftrag gemischt, gegossen, ausgehärtet und finissiert wird. Nichts wird zur Fertigung ausgelagert.",
       "addressLabel": "Adresse",
-      "alt1": "Die Werkbank mit Gussformen und Mischbechern",
+      "alt1": "Eine Lochwand mit Heißluftpistolen, Spachteln und Waagen über der Studiowerkbank",
       "alt2": "Gefüllte Gussformen härten über Nacht unter einer warmen Arbeitslampe aus",
       "alt3": "Ein fertiges Brett und eine Schale aus Harz und Teak auf dem Studiotisch",
       "hoursLabel": "Öffnungszeiten"
@@ -600,7 +600,7 @@
       "point3Title": "Ideal für Einsteiger",
       "point3Copy": "Keine Vorkenntnisse nötig. Neulinge sind unsere liebsten Gäste, und private Sessions lassen sich für jedes Tempo und jeden Anlass arrangieren.",
       "eyebrow": "warum kommen",
-      "alt1": "Eine kleine Gruppe arbeitet an der Werkbank",
+      "alt1": "Behandschuhte Hände rund um eine Werkbank, während Harz in eine kleine Form gegossen wird",
       "alt2": "Pigmente, Gussformen und Werkzeuge bereit für eine Session",
       "alt3": "Ein erster Guss breitet sich in einer Gussform aus"
     },
@@ -1046,7 +1046,7 @@
       "heading": "Von Hand gegossen, ausgehärtet und veredelt.",
       "body": "Jedes Stück hier wartet seine eigene Aushärtung ab, bevor es jemand anfasst. Deshalb bewegt sich der Katalog in dem Tempo, das er hat.",
       "cta": "Sehen, wie es entsteht",
-      "imageAlt": "Ein Resin-Guss härtet im Atelierlicht aus, seine Oberfläche beruhigt sich noch."
+      "imageAlt": "Ein geschichteter Harzblock, der wie Meerestiefe wirkt, mit hellen Bändern im Blau"
     },
     "sortName": "Name",
     "quickViewLabel": "Schnellansicht"
@@ -1563,16 +1563,16 @@
       "intro": "Der Maßstab verändert das Machen, nicht die Methode. Das sind die Formen, die ein großes Briefing meist annimmt — Ihres muss keine davon sein.",
       "k1Title": "Tische und Flächen",
       "k1Copy": "Ess- und Couchtische, Arbeitsplatten, Regale und Konsolen — Resin gegen abgelagertes Holz gegossen, dann von Hand geebnet und poliert.",
-      "k1Alt": "Ein Servierbrett aus Resin und Teak, angelehnt an eine flache runde Resin-Schale, beide in tiefem Blau gegossen",
+      "k1Alt": "Eine runde Couchtischplatte beim Guss, in einer runden Form verspannt, während sich blaues Harz an das Holz legt",
       "k2Title": "Wandpaneele und große Kunst",
       "k2Copy": "Ein einzelnes Paneel oder ein Satz, der zusammen hängt, gegossen nach den Proportionen der Wand statt nach einem Standardrahmen.",
-      "k2Alt": "Die abgeschrägte Kante einer Platte aus ausgehärtetem klarem Resin, die ein schmales Saphirband bricht",
+      "k2Alt": "Eine große Wandtafel aus Harz, an eine Studiowand gelehnt, mit heller Ader in tiefem Blau",
       "k3Title": "Skulpturale Stücke und Objekte",
       "k3Copy": "Freistehende Formen, Sockelstücke und lichtfangende Blöcke, in Schichten aufgebaut, damit die Tiefe noch quer durch den Raum lesbar bleibt.",
       "k3Alt": "Gegossene Resin-Formen härten unter einer einzelnen warmen Arbeitslampe in einem dunklen Atelier aus",
       "k4Title": "Konservierung im großen Maßstab",
       "k4Copy": "Blüten, Stoff und Erinnerungsstücke, eingesetzt in ein Stück, das groß genug ist, um damit zu leben — erst vorbereitet und stabilisiert, dann umgossen.",
-      "k4Alt": "Ein flacher runder Block aus klarem Resin mit tiefer Saphirtiefe, darin gepresste Ringelblumen- und Rosenblätter",
+      "k4Alt": "Ein Stapel datierter Blütenpressen auf der Werkbank, gepresste Blütenblätter zwischen den Brettern",
       "materials": "Epoxidharz in Künstlerqualität, Mineralpigmente, abgelagertes Holz und konservierte Botanik — dieselben Materialien wie bei den kleinen Arbeiten, nur mehr davon."
     },
     "how": {
