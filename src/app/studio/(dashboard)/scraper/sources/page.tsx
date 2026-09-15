@@ -80,6 +80,9 @@ export default async function ScrapeSourcesPage({
 
   const counts: TierCounts = {
     all: 0,
+    LARGE_FORMAT: 0,
+    MEDIUM_FORMAT: 0,
+    SMALL_FORMAT: 0,
     OWNER: 0,
     RESIN_GOODS: 0,
     SUPPLIES: 0,

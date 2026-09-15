@@ -115,10 +115,13 @@ const PLATFORM_BADGE: Record<
 };
 
 const TIER_LABELS: Record<ScrapeTier, string> = {
-  OWNER: "Tier 1 — Owner",
-  RESIN_GOODS: "Tier 2 — Resin goods",
-  SUPPLIES: "Tier 3 — Supplies",
-  PRINT3D: "Tier 4 — 3D print",
+  LARGE_FORMAT: "Tier 1 — Large",
+  MEDIUM_FORMAT: "Tier 2 — Medium",
+  SMALL_FORMAT: "Tier 3 — Small",
+  OWNER: "Owner's list (retired)",
+  RESIN_GOODS: "Resin goods (retired)",
+  SUPPLIES: "Supplies (retired)",
+  PRINT3D: "3D print (retired)",
 };
 
 function JobStatusBadge({ status }: { status: ScrapeJobStatus }) {

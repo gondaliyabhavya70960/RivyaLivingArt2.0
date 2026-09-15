@@ -662,7 +662,26 @@ model DeletedImport {
 
 // ————————————————————— Product Scraper —————————————————————
 
+/// What SIZE of work a source is registered for (owner's taxonomy,
+/// 2026-09-15). The business is large-format resin art, and its three
+/// segments are the tiers the owner actually thinks in:
+///
+///   LARGE_FORMAT   furniture, side tables, river tables
+///   MEDIUM_FORMAT  varmala preservation, wall clocks, engagement trays
+///   SMALL_FORMAT   rakhis, jewellery
+///
+/// The four values below them are the PREVIOUS taxonomy, which sorted by
+/// provenance rather than size. They are kept because rows in the database
+/// still carry them and removing an enum value is a destructive migration —
+/// and because `TIER_NUMBER` maps exactly those four onto `Product.tier`, the
+/// integer the catalog-fill CSVs write. The size tiers map onto NOTHING there
+/// on purpose: a source filed under one never came from `data/tiers/*.csv.gz`,
+/// so giving it a number would make a purge delete CSV-imported products that
+/// have nothing to do with it.
 enum ScrapeTier {
+  LARGE_FORMAT
+  MEDIUM_FORMAT
+  SMALL_FORMAT
   OWNER
   RESIN_GOODS
   SUPPLIES
