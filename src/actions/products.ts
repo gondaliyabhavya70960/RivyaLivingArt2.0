@@ -4,6 +4,10 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
 import { PRODUCT_LIMITS } from "@/lib/studio-limits";
+import {
+  describeSizeTierPublishProblem,
+  PRODUCT_SIZE_TIERS,
+} from "@/lib/product-size-tier";
 import { db } from "@/lib/db";
 import { CATALOG_NAV_TAG } from "@/lib/catalog-nav";
 import { SHOP_FIRST_PAGE_TAG } from "@/lib/shop";
@@ -79,6 +83,10 @@ const upsertProductSchema = z
       .max(PRODUCT_LIMITS.tierMax)
       .nullable()
       .default(null),
+    // The owner's size architecture — a different column from `tier` above,
+    // which is import provenance. Nullable: three writers create products
+    // without passing this form, so the studio enforces it at PUBLISH.
+    sizeTier: z.enum(PRODUCT_SIZE_TIERS).nullable().default(null),
     timeline: z.string().max(PRODUCT_LIMITS.timeline).optional(),
     materials: z.string().max(PRODUCT_LIMITS.materials).optional(),
     dimensions: z.string().max(PRODUCT_LIMITS.dimensions).optional(),
@@ -283,6 +291,17 @@ export async function upsertProduct(
     };
   }
 
+  // PUBLISH GUARD — nothing NEW reaches the storefront without a size tier.
+  // Scoped to the transition rather than the state on purpose: the column is
+  // new, so the whole existing catalogue is untiered, and refusing every save
+  // of an already-published row would lock the owner out of editing any of it.
+  const sizeTierProblem = describeSizeTierPublishProblem({
+    nextStatus: data.status,
+    currentStatus: existing?.status ?? null,
+    sizeTier: data.sizeTier,
+  });
+  if (sizeTierProblem) return { ok: false, error: sizeTierProblem };
+
   // Prune per-locale overrides to known locales + translatable fields; an empty
   // result writes SQL NULL so the column stays clean (public site unchanged).
   const normalizedTranslations = normalizeTranslations(
@@ -305,6 +324,7 @@ export async function upsertProduct(
       showPrice: data.showPrice,
       inStock: data.inStock,
       tier: data.tier,
+      sizeTier: data.sizeTier,
       timeline: nullIfEmpty(data.timeline),
       materials: nullIfEmpty(data.materials),
       dimensions: nullIfEmpty(data.dimensions),
@@ -490,7 +510,13 @@ async function resolveTargetIds(
 export async function setProductsStatus(
   target: BulkProductTarget,
   status: ContentStatusValue,
-): Promise<ActionResult<{ updated: number; skippedRewrite: number }>> {
+): Promise<
+  ActionResult<{
+    updated: number;
+    skippedRewrite: number;
+    skippedUntiered: number;
+  }>
+> {
   const session = await requireStaff();
 
   const parsedStatus = z.enum(CONTENT_STATUSES).safeParse(status);
@@ -503,6 +529,7 @@ export async function setProductsStatus(
   return runAction(async () => {
     let targetIds = resolved.ids;
     let skippedRewrite = 0;
+    let skippedUntiered = 0;
 
     if (parsedStatus.data === "PUBLISHED") {
       // Scraped reference content is never bulk-published silently.
@@ -513,6 +540,23 @@ export async function setProductsStatus(
       const blockedIds = new Set(blocked.map((p) => p.id));
       skippedRewrite = blockedIds.size;
       targetIds = targetIds.filter((id) => !blockedIds.has(id));
+
+      // The same publish guard the single-product form applies, and scoped the
+      // same way — `status: { not: "PUBLISHED" }` makes this the TRANSITION,
+      // not the state. A row that is already live stays live: this action is
+      // also how the owner re-publishes a batch, and refusing that would make
+      // a new column retroactively unpublish the catalogue.
+      const untiered = await db.product.findMany({
+        where: {
+          id: { in: targetIds },
+          sizeTier: null,
+          status: { not: "PUBLISHED" },
+        },
+        select: { id: true },
+      });
+      const untieredIds = new Set(untiered.map((p) => p.id));
+      skippedUntiered = untieredIds.size;
+      targetIds = targetIds.filter((id) => !untieredIds.has(id));
     }
 
     const updated =
@@ -529,7 +573,7 @@ export async function setProductsStatus(
       userId: session.user.id,
       action: parsedStatus.data === "PUBLISHED" ? "publish" : "unpublish",
       entity: "Product",
-      meta: { count: updated, skippedRewrite },
+      meta: { count: updated, skippedRewrite, skippedUntiered },
     });
 
     revalidatePath("/studio/products");
@@ -542,7 +586,7 @@ export async function setProductsStatus(
     revalidateTag(CATALOG_NAV_TAG, "max");
     revalidateTag(SHOP_FIRST_PAGE_TAG, "max");
     // (publish/unpublish changes the mega-menu per-category counts).
-    return { updated, skippedRewrite };
+    return { updated, skippedRewrite, skippedUntiered };
   });
 }
 

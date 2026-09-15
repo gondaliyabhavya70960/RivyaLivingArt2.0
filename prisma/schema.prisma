@@ -110,7 +110,21 @@ model Product {
   importRef      String?
   /// Owner-sheet tier (1 owner · 2 resin goods · 3 supplies · 4 3D-print).
   /// Null for products created in the studio by hand.
+  ///
+  /// THIS IS PROVENANCE, NOT SIZE — where the row came from. The owner's
+  /// three-tier product architecture lives in `sizeTier` below, on its own
+  /// column, because this one is an indexed Int the shop's default sort and
+  /// nine other readers already depend on.
   tier           Int?
+  /// The owner's three-tier product architecture
+  /// (docs/plan/07-three-tier-architecture.md): what a finished piece IS.
+  ///
+  /// NULLABLE ON PURPOSE. Three writers create products without passing the
+  /// studio form — the scraper's promote, Bulk Import, and `tier-fill.ts` on
+  /// every deploy — so a NOT NULL DEFAULT would both break backward
+  /// compatibility and invent the answer. "Mandatory" is enforced where a
+  /// human is present: the studio refuses to PUBLISH an untiered product.
+  sizeTier       ProductSizeTier?
   /// Sheet `status` mapped: active → true, out_of_stock → false.
   inStock        Boolean              @default(true)
   /// contentHash of the imported sheet row — lets re-imports skip unchanged
@@ -148,8 +162,27 @@ model Product {
   @@index([status, createdAt])
   @@index([status, priceMin])
   @@index([tier, status])
+  @@index([sizeTier, status])
   // The confirmed list is read as a whole every time it is synced.
   @@index([confirmedAt])
+}
+
+/// The owner's three-tier product architecture, supplied 2026-09-15 and in
+/// force (docs/plan/07-three-tier-architecture.md). Three customer intents
+/// with different price ladders, customization depth and interface density —
+/// NOT three filters on one grid.
+///
+///   LARGE_FORMAT   Collectible Furniture & Spatial Art
+///   MEDIUM_FORMAT  Memory & Celebration Art
+///   SMALL_FORMAT   Personal Art & Gifting
+///
+/// Deliberately NOT the same type as `ScrapeTier`, which shares these three
+/// names and means something else: which supplier list we went looking in. A
+/// large-format supplier sells small pieces too.
+enum ProductSizeTier {
+  LARGE_FORMAT
+  MEDIUM_FORMAT
+  SMALL_FORMAT
 }
 
 /// What a product photograph shows, so the page can pick the in-room frame.

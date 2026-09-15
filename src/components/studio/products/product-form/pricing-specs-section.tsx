@@ -104,7 +104,12 @@ export function PricingSpecsSection({
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label>Tier</Label>
+          {/* "Import tier", not "Tier". Essentials now carries PRODUCT TIER —
+              the owner's three-world architecture — and two selects on one
+              page both called "Tier" is a question an owner should never have
+              to answer twice. This one is provenance: which CSV the row came
+              from. It is not the same fact and it is not editable content. */}
+          <Label>Import tier</Label>
           <Controller
             control={control}
             name="tier"
@@ -113,9 +118,9 @@ export function PricingSpecsSection({
                 <SelectTrigger
                   ref={field.ref}
                   className="w-full"
-                  aria-label="Tier"
+                  aria-label="Import tier"
                 >
-                  <SelectValue placeholder="Tier" />
+                  <SelectValue placeholder="Import tier" />
                 </SelectTrigger>
                 <SelectContent>
                   {TIER_OPTIONS.map((option) => (
@@ -128,8 +133,9 @@ export function PricingSpecsSection({
             )}
           />
           <p className="text-xs text-muted-foreground">
-            Owner-sheet catalog tier. Tier 4 (or a 3D-print category) swaps in
-            the 3D-printing section below.
+            Where this row came from in the owner sheet — provenance, not the
+            product tier in Essentials. Tier 4 (or a 3D-print category) swaps
+            in the 3D-printing section below.
           </p>
         </div>
         <div className="space-y-1.5 sm:pt-6">

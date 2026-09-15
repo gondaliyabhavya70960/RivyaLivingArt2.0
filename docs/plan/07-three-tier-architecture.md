@@ -198,14 +198,27 @@ without the thing that writes it.
    documentation table, `PROJECT_STATE.md`'s checkpoint. Done, 2026-09-15.
 1. **`ScrapeTier` gains the three size values** — done, 2026-09-15, with the ten
    reference sources filed under them.
-2. **`Product.sizeTier`, with its Studio control, and no storefront consumer.**
-   A hand-written additive migration: `CREATE TYPE "ProductSizeTier"`, a
-   nullable column, `CREATE INDEX "Product_sizeTier_status_idx"`. **Never
-   `prisma migrate diff`** — it re-proposes dropping the three trgm search
-   indexes, which `schema.prisma` does not model. **No backfill statement**: it
-   would run against production on push, before any screen exists to check it.
-   The control ships in the same PR, because a column with no writer is a
-   defect. Refused on PUBLISH, not on save.
+2. **`Product.sizeTier`, with its Studio control, and no storefront consumer** —
+   done, 2026-09-15. A hand-written additive migration: `CREATE TYPE
+   "ProductSizeTier"`, a nullable column, `CREATE INDEX
+   "Product_sizeTier_status_idx"`, and **no backfill statement** — it would run
+   against production on push, before any screen existed to check it. (`prisma
+   migrate diff` was not used to write it and must not be: it re-proposes
+   dropping the three trgm search indexes, which `schema.prisma` does not
+   model.) The control shipped in the same PR, in Essentials, because a column
+   with no writer is a defect.
+
+   **The refusal is scoped to the publish TRANSITION, not the state**, and that
+   is the difference between a guardrail and a lockout: the column is new, so
+   every one of the ~4,385 rows already in the catalogue is untiered, and
+   refusing every save of an already-published product would stop the owner
+   editing any of them with no bulk tool yet built. Nothing NEW goes live
+   untiered; what is already live keeps saving. Both the product form and the
+   bulk status action apply it, and the bulk toast names the reason.
+
+   Also here: the old `Product.tier` control is relabelled **"Import tier"**.
+   Two selects on one page both called "Tier" is a question an owner should
+   never have to answer twice.
 3. **Make the untiered backlog visible and bulk-fixable, before anything renders
    it.** A `sizeTier` filter with an explicit "No tier yet" option on the product
    list, a bulk action in the shape of `setProductsCategory`, a

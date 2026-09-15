@@ -71,11 +71,23 @@ expensive trap in that workstream:
   It is indexed and it is read by `shop.ts`'s DEFAULT SORT, `search-query.ts`'s
   group ranking, `groupForTier`, the import validator, the confirmed export and
   the demo fixtures' zod shape. **Where a product CAME FROM.**
-- `Product.sizeTier` — the size taxonomy, a nullable `ProductSizeTier` enum.
-  **What a piece IS.** Nullable and refused on PUBLISH rather than on save,
-  because three writers create products without passing the product form (the
-  scraper's promote, Bulk Import, and `tier-fill.ts` on every deploy) and a
-  `NOT NULL DEFAULT` would break backward compatibility and invent data at once.
+- `Product.sizeTier` — the size taxonomy, a nullable `ProductSizeTier` enum,
+  shipped 2026-09-15. **What a piece IS.** Nullable because three writers create
+  products without passing the product form (the scraper's promote, Bulk Import,
+  and `tier-fill.ts` on every deploy) and a `NOT NULL DEFAULT` would break
+  backward compatibility and invent data at once. The vocabulary lives once, in
+  `src/lib/product-size-tier.ts`, and a test pins that tuple against the
+  generated Prisma enum — the scrape-tier list reached FIVE hand-written copies
+  before anyone noticed, and the fifth is why three new tiers once shipped
+  invisible.
+  **The publish refusal is scoped to the TRANSITION, not the state.**
+  `describeSizeTierPublishProblem` allows a save of an already-PUBLISHED row and
+  refuses only a move INTO published. That is deliberate and load-bearing: the
+  column is new, so all ~4,385 catalogue rows are untiered, and refusing every
+  save would have stopped the owner editing any of them before a bulk tool
+  existed — a guardrail that turns into a lockout. Both `upsertProduct` and
+  `setProductsStatus` apply it; the bulk toast names the reason rather than
+  reporting a bare "skipped 12".
 - `ScrapeSource.tier` — `ScrapeTier`, which supplier list we went looking in.
   Its three SIZE values map to NULL in `TIER_NUMBER` precisely because the four
   old values map onto `Product.tier`'s integers, and numbering a size tier would

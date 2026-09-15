@@ -5,6 +5,86 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E step 2 — `Product.sizeTier`, and the studio control that writes it (2026-09-15)
+
+The owner's three-tier product architecture gets its column. Additive migration, a
+control in the product form's Essentials, a publish refusal on both write paths, and
+nothing on the storefront yet — a tier that renders before the catalogue can be tiered
+renders an empty world.
+
+### A new column, because `Product.tier` is taken
+
+`schema.prisma` already declares `tier Int?` — the owner-sheet import tier — indexed and
+read by `shop.ts`'s default sort and nine other places. Retyping it would be a rename of
+an indexed column live queries sort on, and it would reach production **on push**. So:
+
+    ProductSizeTier { LARGE_FORMAT · MEDIUM_FORMAT · SMALL_FORMAT }
+    Product.sizeTier  ProductSizeTier?   @@index([sizeTier, status])
+
+Three columns now carry the word "tier" and `CLAUDE.md` names all three: `Product.tier` is
+where a row CAME FROM, `Product.sizeTier` is what a piece IS, `ScrapeSource.tier` is which
+supplier list we went looking in.
+
+**The migration is hand-written and carries no backfill.** Not one `UPDATE`. There is no
+rule that could assign a tier without inventing it, and this file runs against production
+before any screen exists to check what it did. `prisma migrate diff` was not used to
+generate it and must not be — it re-proposes dropping `Product_{title,shortTagline,
+description}_trgm_idx`, which `schema.prisma` does not model.
+
+### The refusal is scoped to the transition, and that is the whole design
+
+"Every product carries a mandatory tier" cannot be a `NOT NULL DEFAULT`: three writers
+create products without passing the studio form — the scraper's promote, Bulk Import, and
+`tier-fill.ts` on **every deploy** over thousands of rows — so the constraint would break
+backward compatibility and invent the answer in the same statement.
+
+So the column is nullable and `describeSizeTierPublishProblem` refuses a move **into**
+PUBLISHED. It deliberately ALLOWS saving a row that is already published:
+
+> The column is new, so all ~4,385 rows in the catalogue are untiered. Refusing every save
+> of an already-published product would have stopped the owner editing any of them until
+> all of them were tiered — with no bulk tool built yet to do it. A guardrail that turns
+> into a lockout is a bug. Nothing NEW goes live untiered; what is already live keeps
+> saving, and step 3 is the filter and the bulk action that clear the backlog.
+
+Both write paths apply it: `upsertProduct`, and `setProductsStatus`, where the bulk skip
+is filtered as `sizeTier: null AND status != PUBLISHED` for the same reason. The toast now
+names **both** skip reasons — "Skipped 3 that still need a rewrite of scraped content, and
+9 with no product tier set". "Skipped 12" with no reason is the message that sends an
+owner looking for a bug that is a guardrail.
+
+### One tuple, and a test that fails when someone forgets it
+
+`src/lib/product-size-tier.ts` is the only place the list lives; the zod enums, the select
+options, the labels and the form mappers all derive from it. `product-size-tier.test.ts`
+pins the tuple against the generated Prisma enum — **verified by mutation**: dropping
+`SMALL_FORMAT` from the tuple fails two tests and the typecheck. That guard exists because
+the scrape-tier list reached five hand-written copies, and the fifth (a `TIER_ORDER` array)
+is why three new tiers shipped invisible last week.
+
+### Also: "Tier" is now "Import tier"
+
+With a **Product tier** select in Essentials, leaving the provenance select in Pricing &
+specs labelled "Tier" put two questions with the same name on one page. It is relabelled
+in the form and in the product list's column menu and filter. **Keys are untouched** — the
+column key stays `tier` because saved views persist it.
+
+### Verified
+
+typecheck · lint · 849 unit tests (14 new, one existing fixture updated) · 51 db tests ·
+a real `npm run build` against local Postgres · `studio-audit.mjs` clean at 1440 **and**
+390 across 39 routes · `npm run test:e2e` **36/36**, product create → edit → delete
+included. Then driven by hand in a real browser against the built server: the select
+renders all four options with the right labels, the hint changes with the choice, and
+saving a PUBLISHED product with no tier returns exactly the refusal — screenshotted, not
+assumed.
+
+Applied to a local database and checked in `psql`: the type has its three labels, the
+column and `Product_sizeTier_status_idx` exist, and `migrate diff` against the datasource
+reports no `sizeTier` drift — only the three known unmodelled trgm indexes.
+
+---
+
 ## Workstream E step 0 — the three-tier product architecture, made findable (2026-09-15)
 
 The owner's product architecture — **Collectible Furniture & Spatial Art** · **Memory &

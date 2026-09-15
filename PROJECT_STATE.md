@@ -16,17 +16,22 @@ Current Phase:            docs/plan workstream E — THE THREE-TIER PRODUCT ARCH
                           customer intents with different price ladders, customization depth and
                           interface density, sharing one brand language. NOT three filters.
                           Branch claude/peaceful-cannon-7dck80; main = d9eac25.
-Done in workstream E:     step 0 (docs — this block, docs/plan/README.md, AGENTS.md, README.md);
-                          step 1 (ScrapeTier gained LARGE_FORMAT/MEDIUM_FORMAT/SMALL_FORMAT and
-                          the owner's ten reference sources, PR #78). Before it: the registry was
-                          emptied from 115 sources to the owner's own 8 (PRs #76, #77).
-Next Exact Task:          step 2 — Product.sizeTier. A new nullable enum ProductSizeTier on a NEW
-                          column; `Product.tier` is TAKEN (owner-sheet import tier 1-4, indexed
-                          Int, read by the shop's default sort and nine others) and retyping it
-                          would reach production on push. Hand-write the migration — `prisma
-                          migrate diff` re-proposes dropping the three trgm search indexes. NO
-                          backfill statement. Ship the Studio control in the SAME PR: a column
-                          with no writer is a defect. Refuse on PUBLISH, not on save.
+Done in workstream E:     step 0 (docs — this block, docs/plan/README.md, AGENTS.md, README.md,
+                          redesign-contract.md, scraper.md); step 1 (ScrapeTier gained
+                          LARGE_FORMAT/MEDIUM_FORMAT/SMALL_FORMAT and the owner's ten reference
+                          sources, PR #78); step 2 (Product.sizeTier — the nullable
+                          ProductSizeTier column, its index, the studio control in Essentials,
+                          the publish refusal on both the form and the bulk action, and the old
+                          Product.tier control relabelled "Import tier"). Before all of it: the
+                          registry was emptied from 115 sources to the owner's own 8 (PRs #76,
+                          #77).
+Next Exact Task:          step 3 — make the untiered backlog visible and bulk-fixable BEFORE
+                          anything renders a tier. A sizeTier filter on the product list with an
+                          explicit "No tier yet" option, a bulk action in the shape of
+                          setProductsCategory, a /studio/content-gaps card, and the two writers
+                          the studio guard cannot reach: a Bulk Import column and the matching
+                          export column, both or neither. Then step 4 (demo fixtures, BEFORE any
+                          component, or every variant ships unseen by every CI gate).
 Open owner actions:       (1) /studio/scraper/sources — the three "Remove all resin goods /
                           supplies / 3d print" buttons; 107 de-seeded sources are still live DB
                           rows, because applySeedSources only upserts and a deploy that silently

@@ -97,7 +97,8 @@ const STATUS_BADGE_LABEL: Record<ContentStatus, string> = {
 const PRODUCT_COLUMNS: ColumnDef[] = [
   { key: "category", label: "Category" },
   { key: "price", label: "Price" },
-  { key: "tier", label: "Tier" },
+  // Label only — the KEY stays "tier" because saved views persist it.
+  { key: "tier", label: "Import tier" },
   { key: "stock", label: "Stock" },
   { key: "featured", label: "Featured" },
   { key: "updated", label: "Updated" },
@@ -268,11 +269,23 @@ export function ProductList({
       toast.error(result.error);
       return;
     }
-    const { updated = 0, skippedRewrite = 0 } = result.data ?? {};
+    const {
+      updated = 0,
+      skippedRewrite = 0,
+      skippedUntiered = 0,
+    } = result.data ?? {};
     if (status === "PUBLISHED") {
-      if (skippedRewrite > 0) {
+      // Both reasons are named. "Skipped 12" with no reason is the toast that
+      // sends an owner to look for a bug that is a guardrail.
+      const skipped = [
+        skippedRewrite > 0 &&
+          `${formatCount(skippedRewrite)} that still need${skippedRewrite === 1 ? "s" : ""} a rewrite of scraped content`,
+        skippedUntiered > 0 &&
+          `${formatCount(skippedUntiered)} with no product tier set`,
+      ].filter((line): line is string => typeof line === "string");
+      if (skipped.length > 0) {
         toast.warning(
-          `Published ${formatCount(updated)} product${updated === 1 ? "" : "s"}. Skipped ${formatCount(skippedRewrite)} that still need${skippedRewrite === 1 ? "s" : ""} a rewrite of scraped content.`,
+          `Published ${formatCount(updated)} product${updated === 1 ? "" : "s"}. Skipped ${skipped.join(", and ")}.`,
         );
       } else {
         toast.success(
@@ -435,8 +448,8 @@ export function ProductList({
             updateParams({ tier: value === "ALL" ? undefined : value })
           }
         >
-          <SelectTrigger aria-label="Filter by sheet tier">
-            <SelectValue placeholder="Tier" />
+          <SelectTrigger aria-label="Filter by import tier">
+            <SelectValue placeholder="Import tier" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">All tiers</SelectItem>
