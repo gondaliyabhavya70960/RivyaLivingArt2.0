@@ -128,6 +128,9 @@ export default async function ScraperPage() {
   };
 
   const tierCounts: TierCounts = {
+    LARGE_FORMAT: 0,
+    MEDIUM_FORMAT: 0,
+    SMALL_FORMAT: 0,
     OWNER: 0,
     RESIN_GOODS: 0,
     SUPPLIES: 0,

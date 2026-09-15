@@ -25,6 +25,7 @@ import {
   partitionByInFlight,
 } from "@/lib/scraper/run-scope";
 import { describeBlockedRun } from "@/lib/scraper/breaker";
+import { SCRAPE_TIERS } from "@/lib/scraper/purge";
 import {
   AUTOMATABLE_SOURCE_WHERE,
   describeUnauthorizedRun,
@@ -58,7 +59,7 @@ const createJobSchema = z
   .object({
     sourceId: z.string().min(1).optional(),
     inputUrl: z.string().trim().min(1).max(2048).optional(),
-    tier: z.enum(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D"]).optional(),
+    tier: z.enum(SCRAPE_TIERS).optional(),
     // SOURCE crawls the whole registered site (or, with no sourceId, the
     // pasted URL as a new one). CATEGORY paginates one listing page; URL
     // fetches one product page via the JSON-LD path regardless of platform —
@@ -314,11 +315,20 @@ export async function continueScrapeJob(
   });
 }
 
+/**
+ * Fan-out order. The owner's size tiers come first, largest work first,
+ * because that is the order the business cares about; the retired provenance
+ * tiers follow, so a source still filed under one is queued last rather than
+ * skipped.
+ */
 const TIER_RANK: Record<ScrapeTier, number> = {
-  OWNER: 0,
-  RESIN_GOODS: 1,
-  SUPPLIES: 2,
-  PRINT3D: 3,
+  LARGE_FORMAT: 0,
+  MEDIUM_FORMAT: 1,
+  SMALL_FORMAT: 2,
+  OWNER: 3,
+  RESIN_GOODS: 4,
+  SUPPLIES: 5,
+  PRINT3D: 6,
 };
 
 /**

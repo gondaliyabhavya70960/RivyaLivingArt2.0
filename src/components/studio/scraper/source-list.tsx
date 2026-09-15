@@ -57,6 +57,7 @@ import {
   NEEDS_ATTENTION,
   type SourceHealth,
 } from "@/lib/scraper/health";
+import { SCRAPE_TIERS } from "@/lib/scraper/purge";
 import { cn } from "@/lib/utils";
 
 export type SourceRow = {
@@ -96,6 +97,9 @@ export type SourceRow = {
 };
 
 const TIER_SHORT: Record<ScrapeTier, string> = {
+  LARGE_FORMAT: "Large",
+  MEDIUM_FORMAT: "Medium",
+  SMALL_FORMAT: "Small",
   OWNER: "Owner",
   RESIN_GOODS: "Resin",
   SUPPLIES: "Supplies",
@@ -128,18 +132,21 @@ function HealthBadge({ health, title }: { health: SourceHealth; title?: string }
 
 export type TierCounts = { all: number } & Record<ScrapeTier, number>;
 
-const TIER_ORDER: ScrapeTier[] = [
-  "OWNER",
-  "RESIN_GOODS",
-  "SUPPLIES",
-  "PRINT3D",
-];
+/**
+ * Tab order: the owner's size tiers first, then the retired provenance ones.
+ * The old four stay visible because rows in the database still carry them —
+ * hiding a tab would hide those sources rather than retire them.
+ */
+const TIER_ORDER: ScrapeTier[] = [...SCRAPE_TIERS];
 
 const TIER_LABELS: Record<ScrapeTier, string> = {
-  OWNER: "Tier 1 — Owner's list",
-  RESIN_GOODS: "Tier 2 — Resin goods",
-  SUPPLIES: "Tier 3 — Supplies",
-  PRINT3D: "Tier 4 — 3D print",
+  LARGE_FORMAT: "Tier 1 — Large (furniture, tables)",
+  MEDIUM_FORMAT: "Tier 2 — Medium (varmala, clocks, trays)",
+  SMALL_FORMAT: "Tier 3 — Small (rakhis, jewellery)",
+  OWNER: "Owner's list (retired)",
+  RESIN_GOODS: "Resin goods (retired)",
+  SUPPLIES: "Supplies (retired)",
+  PRINT3D: "3D print (retired)",
 };
 
 const PLATFORM_BADGE: Record<

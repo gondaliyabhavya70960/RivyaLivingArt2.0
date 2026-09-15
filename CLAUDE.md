@@ -48,6 +48,17 @@ storefront/Studio redesign, a scraper rebuild against the owner's
 resin-merchandiser brief, the complete removal of Google Sheets, and a
 Drive-sourced media pipeline. `docs/plan/README.md` is the index.
 
+**THE THREE-TIER PRODUCT ARCHITECTURE is in force** and is the newest thing
+here: `docs/plan/07-three-tier-architecture.md`. Large (collectible furniture
+and spatial art) · Medium (memory and celebration art) · Small (personal art
+and gifting) are three customer intents with different journeys, customization
+depth and interface density — not three category filters. Read it before
+touching product cards, the PDP, navigation or the scraper's classification.
+**One part of that brief conflicts with Part 0 and Part 0 wins:** its Tier 03
+flow says "Add to Cart / Checkout", and this project has no cart, no checkout
+and no customer accounts. Tier 03 is fast ORDERING through WhatsApp, not fast
+checkout; the conflict is recorded in the doc rather than quietly resolved.
+
 On 2026-09-15 the owner delegated decisions D25–D29 ("decide by yourself and go
 to the next step") rather than answering them individually, so the plan's own
 recommendations stand as the ratified positions. **Shipped so far:** workstream
@@ -475,7 +486,19 @@ below are the ones that are expensive to rediscover.
   catalogue re-created 4,000 DIFFERENT products. So a `--confirm` run also
   switches `catalogFill*` off, and `tier-fill.test.ts` pins both halves.
   Inquiries and testimonials are `SetNull` and survive every purge.
-- **The registry was emptied back to the owner's own 8 on 2026-09-15.** It was
+- **`ScrapeTier` now carries the owner's SIZE taxonomy** (2026-09-15):
+  `LARGE_FORMAT` · `MEDIUM_FORMAT` · `SMALL_FORMAT`, ahead of the four retired
+  provenance values. **`TIER_NUMBER` maps the size tiers to `null` and that is
+  load-bearing**: those numbers are not labels, they are `Product.tier` values
+  written by the catalog-fill importer from `data/tiers/*.csv.gz`
+  (`Tier1_Owner.csv.gz` → 1). A size tier never came from one of those files,
+  so numbering `LARGE_FORMAT: 1` "to keep the sequence tidy" would make purging
+  large-format sources delete every product imported from Tier 1. `tierNumbersFor`
+  drops the nulls, and a test pins the rule with that reason.
+- **The registry was emptied back to the owner's own 8 on 2026-09-15**, then the
+  owner's ten reference sites were filed under the size tiers — all
+  `enabled: false` and PENDING, so nothing collects until reviewed.
+  The full history: It was
   115. All three non-owner tiers went, on the owner's instruction, because the
   business is LARGE-FORMAT RESIN ART: 20 SUPPLIES and 29 PRINT3D first (by the
   registry's own tiering, neither raw materials nor 3D printing is resin art),

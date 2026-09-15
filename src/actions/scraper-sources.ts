@@ -12,7 +12,7 @@ import {
   isBlockedMarketplace,
   normalizeBaseUrl,
 } from "@/lib/scraper/fingerprint";
-import { TIER_NUMBER } from "@/lib/scraper/purge";
+import { SCRAPE_TIERS, tierNumbersFor } from "@/lib/scraper/purge";
 import { applySeedSources } from "@/lib/scraper/seed-sources";
 import { slugify } from "@/lib/slug";
 
@@ -51,7 +51,7 @@ export async function seedScrapeSources(): Promise<
 
 const addSchema = z.object({
   url: z.string().trim().min(1, "URL is required").max(2048),
-  tier: z.enum(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D"]),
+  tier: z.enum(SCRAPE_TIERS),
   vertical: z.string().trim().min(1).max(60),
   country: z.string().trim().min(1).max(20),
   supply: z.boolean(),
@@ -144,7 +144,7 @@ const bulkAddSchema = z.object({
     .array(z.string().trim().min(1).max(2048))
     .min(1, "Add at least one URL")
     .max(25, "Add up to 25 URLs at a time"),
-  tier: z.enum(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D"]),
+  tier: z.enum(SCRAPE_TIERS),
   vertical: z.string().trim().min(1).max(60),
   country: z.string().trim().min(1).max(20),
   supply: z.boolean(),
@@ -481,7 +481,7 @@ export async function verifyScrapeSource(
 
 /** Bulk delete. Jobs keep running history — ScrapeJob.sourceId is SetNull. */
 const purgeSchema = z.object({
-  tier: z.enum(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D"]).optional(),
+  tier: z.enum(SCRAPE_TIERS).optional(),
   ids: z.array(z.string().min(1)).max(500).optional(),
   deleteCatalogProducts: z.boolean().default(false),
 });
@@ -510,13 +510,9 @@ export async function previewSourcePurge(
       select: { key: true, tier: true },
     });
     const keys = sources.map((s) => s.key);
-    const tierNumbers = [
-      ...new Set(
-        (parsed.tier ? [parsed.tier] : sources.map((s) => s.tier)).map(
-          (t) => TIER_NUMBER[t],
-        ),
-      ),
-    ];
+    const tierNumbers = tierNumbersFor(
+      parsed.tier ? [parsed.tier] : sources.map((s) => s.tier),
+    );
     if (keys.length === 0) {
       return {
         sources: 0,
@@ -607,7 +603,7 @@ export async function purgeScrapeSources(
     let catalogProducts = 0;
     if (parsed.deleteCatalogProducts) {
       const importSources = [...keys, ...keys.map((k) => `sheet:${k}`)];
-      const tierNumbers = [...new Set(tiers.map((t) => TIER_NUMBER[t]))];
+      const tierNumbers = tierNumbersFor(tiers);
       const catalogWhere = {
         OR: [
           { importSource: { in: importSources } },

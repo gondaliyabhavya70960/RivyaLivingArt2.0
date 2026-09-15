@@ -37,15 +37,77 @@ export type PurgeCounts = {
  * earlier — on this database that was 2,500 of 3,500 rows, silently left
  * behind by a purge that reported success.
  */
-export const TIER_NUMBER: Record<ScrapeTier, number> = {
+/**
+ * Every tier value, in the order the owner thinks about them: size tiers
+ * first, largest first, then the retired provenance ones.
+ *
+ * Exported as a tuple so the zod schemas in the actions can be built from it.
+ * They used to spell the four values out inline in four places, which is three
+ * chances to forget one when the enum grows — and a forgotten one is a tier an
+ * operator can see in the UI but cannot save.
+ */
+export const SCRAPE_TIERS = [
+  "LARGE_FORMAT",
+  "MEDIUM_FORMAT",
+  "SMALL_FORMAT",
+  "OWNER",
+  "RESIN_GOODS",
+  "SUPPLIES",
+  "PRINT3D",
+] as const satisfies readonly ScrapeTier[];
+
+/**
+ * A scrape tier's matching `Product.tier`, or null when it has none.
+ *
+ * THIS IS A BRIDGE BETWEEN TWO DIFFERENT TIER SYSTEMS and the null is the
+ * whole point. `Product.tier` is an integer written by the catalog-fill
+ * importer from the committed CSVs — `Tier1_Owner.csv.gz` writes 1,
+ * `Tier2_ResinGoods.csv.gz` writes 2, and so on. The purge uses that number to
+ * catch catalog products whose `importSource` no longer matches any live
+ * source key.
+ *
+ * The four PROVENANCE tiers line up with those files one-for-one, because they
+ * were named after them. The three SIZE tiers do not line up with anything: a
+ * source filed under LARGE_FORMAT never came from `data/tiers/*.csv.gz`, so it
+ * must contribute NO number. Giving it one — say LARGE_FORMAT: 1 — would make
+ * purging large-format sources delete every product imported from
+ * `Tier1_Owner.csv.gz`, which has nothing to do with them. Callers therefore
+ * filter the nulls out rather than defaulting them.
+ */
+export const TIER_NUMBER: Record<ScrapeTier, number | null> = {
+  LARGE_FORMAT: null,
+  MEDIUM_FORMAT: null,
+  SMALL_FORMAT: null,
   OWNER: 1,
   RESIN_GOODS: 2,
   SUPPLIES: 3,
   PRINT3D: 4,
 };
 
+/**
+ * The `Product.tier` numbers a set of scrape tiers maps onto — size tiers
+ * dropped, duplicates collapsed.
+ *
+ * Exists so no caller has to remember that the map is partial. Returning an
+ * empty array is meaningful: it says "these sources correspond to no
+ * catalog-fill tier", and the purge must then match on `importSource` alone
+ * rather than widening to every product.
+ */
+export function tierNumbersFor(tiers: readonly ScrapeTier[]): number[] {
+  return [
+    ...new Set(
+      tiers
+        .map((t) => TIER_NUMBER[t])
+        .filter((n): n is number => n !== null),
+    ),
+  ];
+}
+
 /** Tiers by the words the owner uses for them. */
 export const TIER_LABEL: Record<ScrapeTier, string> = {
+  LARGE_FORMAT: "Large — furniture & tables",
+  MEDIUM_FORMAT: "Medium — varmala, clocks, trays",
+  SMALL_FORMAT: "Small — rakhis & jewellery",
   OWNER: "Owner",
   RESIN_GOODS: "Resin goods",
   SUPPLIES: "Supplies",

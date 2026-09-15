@@ -5,6 +5,7 @@ import {
   isEmptyPurge,
   TIER_LABEL,
   TIER_NUMBER,
+  tierNumbersFor,
 } from "@/lib/scraper/purge";
 
 const COUNTS = {
@@ -84,16 +85,19 @@ describe("isEmptyPurge", () => {
 describe("TIER_LABEL", () => {
   it("names every tier — an unlabelled button is unpressable", () => {
     expect(Object.keys(TIER_LABEL).sort()).toEqual([
+      "LARGE_FORMAT",
+      "MEDIUM_FORMAT",
       "OWNER",
       "PRINT3D",
       "RESIN_GOODS",
+      "SMALL_FORMAT",
       "SUPPLIES",
     ]);
   });
 });
 
 describe("TIER_NUMBER", () => {
-  it("maps every scrape tier to the catalog tier column", () => {
+  it("maps the four PROVENANCE tiers onto the catalog tier column", () => {
     // `Product.tier` is the only link back to a tier once the ScrapeSource row
     // is gone. On a real database 2,500 of 3,500 goods/supplies products had
     // no surviving source key — matching on importSource alone left every one
@@ -102,8 +106,39 @@ describe("TIER_NUMBER", () => {
     expect(TIER_NUMBER.RESIN_GOODS).toBe(2);
     expect(TIER_NUMBER.SUPPLIES).toBe(3);
     expect(TIER_NUMBER.PRINT3D).toBe(4);
-    expect(new Set(Object.values(TIER_NUMBER)).size).toBe(
-      Object.keys(TIER_NUMBER).length,
-    );
+  });
+
+  it("maps the SIZE tiers onto nothing, which is the dangerous half", () => {
+    // These numbers are not labels, they are `Product.tier` values written by
+    // the catalog-fill importer from data/tiers/*.csv.gz. A size tier never
+    // came from one of those files. Numbering LARGE_FORMAT 1 to "keep the
+    // sequence tidy" would make purging large-format sources delete every
+    // product imported from Tier1_Owner.csv.gz.
+    expect(TIER_NUMBER.LARGE_FORMAT).toBeNull();
+    expect(TIER_NUMBER.MEDIUM_FORMAT).toBeNull();
+    expect(TIER_NUMBER.SMALL_FORMAT).toBeNull();
+  });
+
+  it("gives no two provenance tiers the same number", () => {
+    const numbers = Object.values(TIER_NUMBER).filter((n) => n !== null);
+    expect(new Set(numbers).size).toBe(numbers.length);
+  });
+});
+
+describe("tierNumbersFor", () => {
+  it("drops the size tiers and keeps the rest", () => {
+    expect(tierNumbersFor(["LARGE_FORMAT", "OWNER", "SUPPLIES"])).toEqual([
+      1, 3,
+    ]);
+  });
+
+  it("returns nothing at all for a size-only selection", () => {
+    // Meaningful, not a bug: it tells the purge to match on importSource alone
+    // rather than widening to a catalog tier these sources never wrote to.
+    expect(tierNumbersFor(["LARGE_FORMAT", "MEDIUM_FORMAT"])).toEqual([]);
+  });
+
+  it("collapses duplicates", () => {
+    expect(tierNumbersFor(["OWNER", "OWNER"])).toEqual([1]);
   });
 });

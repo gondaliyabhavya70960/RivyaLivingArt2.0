@@ -50,6 +50,9 @@ const PLATFORM_BADGE: Record<
 };
 
 const TIER_SHORT: Record<ScrapeTier, string> = {
+  LARGE_FORMAT: "Large",
+  MEDIUM_FORMAT: "Medium",
+  SMALL_FORMAT: "Small",
   OWNER: "Owner",
   RESIN_GOODS: "Resin",
   SUPPLIES: "Supplies",
