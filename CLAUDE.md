@@ -378,6 +378,25 @@ below are the ones that are expensive to rediscover.
   only when the price moves. A gap between points means the price held.
 
 ### Design QA (needs a running server)
+
+**A session without `DATABASE_URL` can still run all of these.** `npm run build`
+needs a database, so for a long time a session without one could not run a
+single gate in the definition of done — it could only push and hope. It does not
+have to: the PR's own **Vercel preview deployment** is a running server built
+from the commit under test, and `scripts/preview-proxy.mjs` turns it into a
+plain `http://localhost:3000` origin by holding the `_vercel_share` cookie and
+replaying it.
+
+    NODE_USE_ENV_PROXY=1 node scripts/preview-proxy.mjs "<shareable url>" &
+    BASE_URL=http://localhost:3000 node scripts/redesign-audit.mjs "$ROUTES"
+
+Use the DEPLOYMENT url (`<project>-<hash>-<team>.vercel.app`), not the branch
+alias — a share token minted for the alias bounces to the Vercel login page.
+The script's header records what a green run does NOT cover: third-party asset
+hosts (the browser fetches those directly, not through the proxy) and the five
+demo detail routes (they need the seeded demo set, which the preview's database
+may not carry — leave those to CI). Audit the 13 public routes here.
+
 The first two run in CI over the 13 public routes plus the five demo detail
 routes (`/product/demo-product-001`, `/shop/gift-collections`,
 `/blog/demo-post-001`, `/portfolio/demo-case-001`, `/p/demo-lander` — seeded by
