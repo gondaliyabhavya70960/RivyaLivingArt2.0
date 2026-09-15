@@ -53,6 +53,11 @@ import { isPathAllowed } from "@/lib/scraper/robots";
 import { normalizeBaseUrl, normalizePageUrl } from "@/lib/scraper/fingerprint";
 import { contentHash } from "@/lib/scraper/hash";
 import {
+  derivePriceBasis,
+  priceForBasis,
+  toMinorUnits,
+} from "@/lib/scraper/price-basis";
+import {
   MAX_PAGES_PER_JOB,
   PAGES_PER_INVOCATION,
   type RichProduct,
@@ -365,23 +370,71 @@ async function recordResearchSnapshots(
   });
   const idByExternalId = new Map(identities.map((r) => [r.externalId, r.id]));
 
-  await db.productSnapshot.createMany({
-    data: worth.flatMap((product) => {
+  // One create per snapshot rather than a createMany, because each snapshot's
+  // variants hang off its id. Nested writes keep that in a single statement
+  // per product instead of a second round trip.
+  await db.$transaction(
+    worth.flatMap((product) => {
       const researchProductId = idByExternalId.get(product.externalId);
       const hash = ctx.hashByExternalId.get(product.externalId);
       if (!researchProductId || !hash) return [];
       return [
-        {
-          researchProductId,
-          jobId,
-          capturedAt: ctx.seenAt,
-          contentHash: hash,
-          // What the adapter read, before normalization — the claim the
-          // source made, not our interpretation of it.
-          rawPayload: product as unknown as Prisma.InputJsonValue,
-        },
+        db.productSnapshot.create({
+          data: {
+            researchProductId,
+            jobId,
+            capturedAt: ctx.seenAt,
+            contentHash: hash,
+            // What the adapter read, before normalization — the claim the
+            // source made, not our interpretation of it.
+            rawPayload: product as unknown as Prisma.InputJsonValue,
+            variants: { create: variantRowsFor(product) },
+          },
+          select: { id: true },
+        }),
       ];
     }),
+  );
+}
+
+/**
+ * A snapshot's variant rows, with each one's price basis decided (phase 6b).
+ *
+ * An adapter that surfaced no variants still yields ONE row, built from the
+ * product's own price. That is not padding: a product with a single implicit
+ * option is the common case, and a bespoke piece with no price at all is the
+ * case this whole table exists to stop becoming a zero.
+ *
+ * The basis is read from the product's TEXT as well as its price, so
+ * "price on request" beside a placeholder number is honoured. Every row runs
+ * through `priceForBasis`, which is what guarantees a QUOTE_ONLY row carries
+ * NULL and never 0.
+ */
+function variantRowsFor(
+  product: RichProduct,
+): Prisma.ProductVariantCreateWithoutSnapshotInput[] {
+  const text = [product.title, product.shortTagline, product.description]
+    .filter(Boolean)
+    .join(" \n ");
+
+  const source =
+    product.variants && product.variants.length > 0
+      ? product.variants
+      : [{ priceMajor: product.priceMin ?? null }];
+
+  return source.map((variant) => {
+    const priceMinor = toMinorUnits(variant.priceMajor);
+    const basis = derivePriceBasis({ priceMinor, text });
+    return {
+      label: variant.label ?? null,
+      optionsJson: (variant.options ?? {}) as Prisma.InputJsonValue,
+      priceMinor: priceForBasis(basis, priceMinor),
+      currency: product.currency,
+      priceBasis: basis,
+      available:
+        variant.available ??
+        (product.status ? product.status === "active" : null),
+    };
   });
 }
 

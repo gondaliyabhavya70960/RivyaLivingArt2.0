@@ -3,6 +3,24 @@
  * platform's payload into this shape; the staging table, CSV export and
  * Google Sheet all speak it. Merge key: `${sourceKey}|${externalId}`.
  */
+/**
+ * One purchasable option, as the source published it (phase 6b).
+ *
+ * Every adapter already parses this and used to discard it, keeping only a
+ * min and a max. `priceMajor` is in the source's own major units and may be
+ * null — which is not the same as zero, and is what `derivePriceBasis` reads
+ * to decide QUOTE_ONLY. See `price-basis.ts`.
+ */
+export type ScrapedVariant = {
+  /** "Small / Indigo", or undefined when the product has one implicit option. */
+  label?: string;
+  /** The option axes the source named, e.g. { Size: "Small" }. */
+  options?: Record<string, string>;
+  /** Major units, or null when the source published no parseable price. */
+  priceMajor: number | null;
+  available?: boolean;
+};
+
 export type RichProduct = {
   externalId: string;
   url: string;
@@ -29,6 +47,12 @@ export type RichProduct = {
   fields: Record<string, unknown>;
   seoTitle?: string;
   seoDescription?: string;
+  /**
+   * The options behind `priceMin`/`priceMax`. Optional so an adapter that
+   * cannot see variants stays valid; `upsertPage` falls back to one implicit
+   * variant built from the product's own price.
+   */
+  variants?: ScrapedVariant[];
 };
 
 export type AdapterPage = {

@@ -469,6 +469,22 @@ migrate diff` proposed dropping `Product_{title,shortTagline,description}_trgm_i
   which `schema.prisma` does not model, so `diff` reads them as drift.
   Shipping it would have deleted the storefront's search indexes in
   production. B2's migration is hand-written for exactly that reason.
+- **Quote-only is not free** (B3a, 2026-09-15). Every `ProductVariant` carries
+  a `PriceBasis` (`PER_PIECE` · `PER_AREA` · `STARTING_FROM` · `QUOTE_ONLY`),
+  and a QUOTE_ONLY row stores a **NULL price, never 0** — `priceForBasis` in
+  `price-basis.ts` is the one place that rule lives. Aggregates must exclude it
+  **by clause** (`priceBasis: { not: "QUOTE_ONLY" }`), never by filtering
+  zeros: a zero meaning "no price" cannot be told from a zero meaning "free",
+  and a supplier can publish the second. Before this, a bespoke studio with no
+  published price and an adapter that failed to parse one were the same thing
+  — `priceMin: undefined` with `showPrice: true` hardcoded in all three
+  adapters.
+- **The adapters always parsed variants and threw them away.** Shopify's
+  `variants[]`, WooCommerce's `price_range`, JSON-LD's `offers[]` all collapsed
+  to a min and a max. They now also surface `RichProduct.variants`, written to
+  `ProductVariant` alongside each snapshot. An adapter that sees none still
+  yields ONE implicit variant, because a product with no price is the case the
+  table exists to hold.
 - **Price history is append-only**, written on first sighting and thereafter
   only when the price moves. A gap between points means the price held.
 

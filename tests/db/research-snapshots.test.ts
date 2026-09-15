@@ -131,3 +131,117 @@ describe.skipIf(!db)("research identity + snapshots", () => {
     expect(all[0].canonicalUrl).toBe("https://example.test/p/1-indigo");
   });
 });
+
+/**
+ * Phase 6b's whole point, against the database: a product a studio quotes on
+ * enquiry must land as QUOTE_ONLY with a NULL price — never 0, never absent.
+ */
+describe.skipIf(!db)("variants and price basis", () => {
+  const QUOTE_SOURCE = "quote-only-test";
+  let jobId: string;
+
+  beforeAll(async () => {
+    if (!db) return;
+    await db.researchProduct.deleteMany({ where: { sourceKey: QUOTE_SOURCE } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: QUOTE_SOURCE } });
+    const source = await db.scrapeSource.findFirstOrThrow({ select: { id: true } });
+    const job = await db.scrapeJob.create({
+      data: {
+        source: { connect: { id: source.id } },
+        sourceKey: QUOTE_SOURCE,
+        sourceName: QUOTE_SOURCE,
+        vertical: "RESIN",
+        platform: "JSONLD",
+        scope: "SOURCE",
+        status: "RUNNING",
+        inputUrl: "https://example.test",
+      },
+      select: { id: true },
+    });
+    jobId = job.id;
+  });
+
+  async function variantsFor(externalId: string) {
+    const identity = await db!.researchProduct.findUniqueOrThrow({
+      where: { sourceKey_externalId: { sourceKey: QUOTE_SOURCE, externalId } },
+      select: { id: true },
+    });
+    const snapshot = await db!.productSnapshot.findFirstOrThrow({
+      where: { researchProductId: identity.id },
+      orderBy: { capturedAt: "desc" },
+      select: { id: true },
+    });
+    return db!.productVariant.findMany({
+      where: { snapshotId: snapshot.id },
+      orderBy: { label: "asc" },
+      select: { label: true, priceMinor: true, priceBasis: true, optionsJson: true },
+    });
+  }
+
+  it("a bespoke piece with no price is QUOTE_ONLY with a NULL price, not 0", async () => {
+    const { upsertPageForTest } = await import("@/lib/scraper/job-runner");
+    await upsertPageForTest(jobId, QUOTE_SOURCE, [
+      {
+        externalId: "bespoke-1",
+        url: "https://example.test/p/bespoke",
+        sourceKey: QUOTE_SOURCE,
+        vertical: "resin",
+        currency: "INR",
+        title: "Bespoke river dining table",
+        slug: "bespoke-river-dining-table",
+        description: "Made to order. Price on request.",
+        images: [],
+        imageAlts: [],
+        fields: {},
+      },
+    ]);
+    const rows = await variantsFor("bespoke-1");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].priceBasis).toBe("QUOTE_ONLY");
+    expect(rows[0].priceMinor).toBeNull();
+    // The distinction the table exists for.
+    expect(rows[0].priceMinor).not.toBe(0);
+  });
+
+  it("a priced product keeps one row per option, in minor units", async () => {
+    const { upsertPageForTest } = await import("@/lib/scraper/job-runner");
+    await upsertPageForTest(jobId, QUOTE_SOURCE, [
+      {
+        externalId: "coaster-1",
+        url: "https://example.test/p/coaster",
+        sourceKey: QUOTE_SOURCE,
+        vertical: "resin",
+        currency: "INR",
+        title: "Resin Coaster Set",
+        slug: "resin-coaster-set",
+        priceMin: 1499,
+        images: [],
+        imageAlts: [],
+        fields: {},
+        variants: [
+          { label: "Set of 2", priceMajor: 1499, options: { Size: "2" } },
+          { label: "Set of 4", priceMajor: 2499, options: { Size: "4" } },
+        ],
+      },
+    ]);
+    const rows = await variantsFor("coaster-1");
+    expect(rows).toHaveLength(2);
+    expect(rows.map((r) => r.priceMinor)).toEqual([149900, 249900]);
+    expect(rows.every((r) => r.priceBasis === "PER_PIECE")).toBe(true);
+    expect(rows[0].optionsJson).toEqual({ Size: "2" });
+  });
+
+  it("QUOTE_ONLY is excluded BY CLAUSE, and the average is unpolluted", async () => {
+    // The query analytics will run (B8): exclude the basis, never filter zeros.
+    const agg = await db!.productVariant.aggregate({
+      where: {
+        snapshot: { researchProduct: { sourceKey: QUOTE_SOURCE } },
+        priceBasis: { not: "QUOTE_ONLY" },
+      },
+      _avg: { priceMinor: true },
+      _count: { _all: true },
+    });
+    expect(agg._count._all).toBe(2);
+    expect(agg._avg.priceMinor).toBe((149900 + 249900) / 2);
+  });
+});

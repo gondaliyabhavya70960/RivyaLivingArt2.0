@@ -901,9 +901,59 @@ model ProductSnapshot {
   capturedAt        DateTime        @default(now())
   contentHash       String
   rawPayload        Json
+  variants          ProductVariant[]
 
   @@index([researchProductId, capturedAt])
   @@index([contentHash])
+}
+
+/// What a scraped price MEANS. See `src/lib/scraper/price-basis.ts`.
+///
+/// `QUOTE_ONLY` carries a NULL price, never a zero, and every numeric
+/// aggregate must exclude it BY CLAUSE (`priceBasis <> 'QUOTE_ONLY'`) rather
+/// than by filtering zeros — a zero that means "no price" cannot be told from
+/// a zero that means "free", and a supplier can publish the second one.
+enum PriceBasis {
+  PER_PIECE
+  PER_AREA
+  STARTING_FROM
+  QUOTE_ONLY
+}
+
+/// One purchasable option of a product, as a snapshot saw it (phase 6b).
+///
+/// All three adapters already parse this — Shopify's `variants[]`,
+/// WooCommerce's `prices.price_range`, JSON-LD's `offers[]` — and then throw
+/// everything but a min and a max away. A product's options, their individual
+/// prices and their availability are exactly what a merchandiser compares, so
+/// they are kept here instead.
+///
+/// Scoped to the SNAPSHOT, not the identity: a variant list is what the source
+/// said at a moment. Snapshots are written only when content changes, so
+/// variants follow the same rhythm.
+model ProductVariant {
+  id                String          @id @default(cuid())
+  snapshotId        String
+  snapshot          ProductSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  /// The option as the source labels it ("Small / Indigo"), or null when the
+  /// product has exactly one implicit variant.
+  label             String?
+  /// The option axes the source published, e.g. {"Size":"Small"}.
+  optionsJson       Json            @default("{}")
+  /// MINOR units (paise), so no float ever reaches the database. NULL for
+  /// QUOTE_ONLY — that is the rule this table exists to hold.
+  priceMinor        Int?
+  currency          String          @default("INR")
+  priceBasis        PriceBasis      @default(PER_PIECE)
+  available         Boolean?
+  /// A reference row is one kept for CONTEXT rather than comparison — a
+  /// marketplace listing, a B2B MOQ price. `referenceReason` says which, and
+  /// analytics leave these out of benchmarks (B6).
+  isReference       Boolean         @default(false)
+  referenceReason   String?
+
+  @@index([snapshotId])
+  @@index([priceBasis])
 }
 
 /// A field that could not be extracted, recorded rather than silently nulled.
