@@ -19,7 +19,7 @@ function Checkbox({
         // through a pseudo-element, which is WCAG 2.2 §2.5.8's minimum and
         // the difference between selecting a row and mis-tapping it on a
         // phone in the workshop. `relative` and `before:` cost no layout.
-        "peer relative size-4 shrink-0 rounded-[4px] border border-input bg-transparent shadow-e1 transition-colors before:absolute before:left-1/2 before:top-1/2 before:size-6 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none aria-invalid:border-destructive data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+        "peer relative size-4 shrink-0 rounded-[4px] border border-input bg-transparent shadow-e1 transition-colors before:absolute before:left-1/2 before:top-1/2 before:size-6 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none aria-invalid:border-destructive data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         className,
       )}
       {...props}

@@ -201,7 +201,17 @@ state) · `duration-(--dur-fast|--dur-base|--dur-slow|--dur-reveal)`.
   1px hairlines. **No shimmer.** Never a spinner where a skeleton will do.
 - **Focus** — 2px sapphire ring at 3px offset (champagne inside dark bands),
   never removed.
-- **Disabled** — 40% opacity + a stated reason.
+- **Disabled** — 40% opacity + a stated reason. **Both halves are now
+  enforced.** The opacity had drifted to three values across 27 declarations —
+  16 of them at shadcn's default 50% in the vendored `ui/*` primitives, which
+  nobody chose, so a disabled control in the Studio's draft bar sat at 50% next
+  to one on the board at 40%. `disabled-state.test.ts` fails on any opacity
+  utility whose variant mentions a disabled state and is not 40, whichever
+  spelling it uses (`disabled:`, `aria-disabled:`, `peer-disabled:`,
+  `data-[disabled]:`, `group-data-[disabled=true]:`) — so the next primitive
+  vendored in at 50% fails rather than lands. The reason half was already held:
+  `Button` takes a `reason`, and the one disabled `<Button>` on the storefront
+  carries it.
 - **Success** — explicit confirmation, `role="status"`.
 
 An accordion, tab or panel **with no content must not render.**

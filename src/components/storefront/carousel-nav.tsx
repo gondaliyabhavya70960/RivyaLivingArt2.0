@@ -41,7 +41,7 @@ export function CarouselNav({
     "inline-flex size-12 items-center justify-center rounded-full border border-hairline bg-transparent text-ink outline-none " +
     "transition-[border-color,color] duration-(--dur-fast) ease-(--ease-luxury) " +
     "hover:border-ink/40 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 " +
-    "disabled:pointer-events-none disabled:opacity-30 " +
+    "disabled:pointer-events-none disabled:opacity-40 " +
     "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 " +
     "in-data-[theme=navy]:border-hairline-dk in-data-[theme=navy]:text-mineral in-data-[theme=navy]:hover:border-mineral/40";
 
