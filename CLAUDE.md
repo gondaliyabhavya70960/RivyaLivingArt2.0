@@ -445,6 +445,47 @@ below are the ones that are expensive to rediscover.
 - **Price history is append-only**, written on first sighting and thereafter
   only when the price moves. A gap between points means the price held.
 
+### Running the Studio locally — a session CAN do this
+
+The preview proxy below serves the 13 PUBLIC routes. It cannot reach the Studio:
+every `/studio` route sits behind `requireStaffPage`, and a share token is not a
+staff session. That is why "needs the owner's eye" was written against the Studio
+work for so long. It does not: this container has Postgres 16 and a Chromium, so
+a session can stand the whole thing up and drive it with a real login.
+
+    # 1. a throwaway database (initdb refuses to run as root, hence `su postgres`)
+    rm -rf /var/tmp/pg && mkdir -p /var/tmp/pg && chown postgres /var/tmp/pg
+    su postgres -c "/usr/lib/postgresql/16/bin/initdb -D /var/tmp/pg -U ci --auth=trust"
+    su postgres -c "/usr/lib/postgresql/16/bin/pg_ctl -D /var/tmp/pg \
+      -o '-p 5433 -k /var/tmp/pg' -l /var/tmp/pg.log start"
+    su postgres -c "/usr/lib/postgresql/16/bin/createdb -h /var/tmp/pg -p 5433 -U ci rivya_test"
+    export DATABASE_URL="postgresql://ci@localhost:5433/rivya_test?host=/var/tmp/pg"
+
+    # 2. AUTH_TRUST_HOST is REQUIRED off Vercel — env.ts throws without it and
+    #    the build dies at "Failed to collect page data for /_not-found".
+    export AUTH_SECRET=… NEXTAUTH_SECRET=$AUTH_SECRET AUTH_TRUST_HOST=true
+    export NEXTAUTH_URL=http://localhost:3000 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+    npm run build && npx next start -p 3000        # build runs migrate + bootstrap
+
+    # 3. content and a staff row, then the audits
+    npx tsx prisma/seed.ts && npm run seed:demo    # base seed FIRST — demo needs its categories
+    #  … upsert a User with `bcrypt.hash(pw, 12)` into `hashedPassword`, role ADMIN
+    BASE_URL=http://localhost:3000 STUDIO_EMAIL=… STUDIO_PASSWORD=… \
+      node scripts/studio-audit.mjs [--w 390]
+
+`NO_PROXY=localhost,127.0.0.1` on anything that fetches, or the agent proxy
+intercepts it. Scratch scripts go in `scripts/` — `tsx` resolves `@/` from the
+tsconfig, so a script in `/tmp` cannot import the generated Prisma client — and
+are deleted before committing. `tsx` transpiles to CJS, so **no top-level await**
+in one.
+
+**What this unlocked, on 2026-09-15:** `studio-audit.mjs` clean over 38 routes at
+1440 and 390; the whole of plan §4.2/§4.3 checked by staging a real draft and
+reading what the screens rendered (both were already built — see the corrections
+in `docs/plan/01-redesign-main-and-studio.md`); and `prisma/import-tiers.ts` run
+for real, which is how the purge script's tier-cap behaviour was found. None of
+that was reachable by reading source.
+
 ### Design QA (needs a running server)
 
 **A session without `DATABASE_URL` can still run all of these.** `npm run build`
