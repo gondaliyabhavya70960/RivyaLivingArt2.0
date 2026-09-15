@@ -212,7 +212,7 @@
         "bespoke": {
           "label": "Bespoke",
           "copy": "Built around your story, not a catalogue.",
-          "alt": "Preserved flowers set inside a clear resin block"
+          "alt": "A fresh varmala garland of roses and marigolds beside a pair of shears"
         },
         "slowMade": {
           "label": "Slow made",
@@ -373,22 +373,22 @@
       "living": {
         "title": "Living room",
         "caption": "A commissioned piece, pictured in a living room setting.",
-        "alt": "Resin being poured in a slow, steady stream, standing in as a concept image for a living room."
+        "alt": "A living room with a single resin wall panel above a low sofa"
       },
       "dining": {
         "title": "Dining room",
         "caption": "A commissioned piece, pictured in a dining room setting.",
-        "alt": "A macro band of layered resin texture, standing in as a concept image for a dining room."
+        "alt": "A dining room with a resin wall panel on the wall above the table"
       },
       "study": {
         "title": "Study",
         "caption": "A commissioned piece, pictured in a study.",
-        "alt": "Filled moulds curing overnight under a warm work lamp, standing in as a concept image for a study."
+        "alt": "A study with a large resin panel above the desk"
       },
       "bedroom": {
         "title": "Bedroom",
         "caption": "A commissioned piece, pictured in a bedroom.",
-        "alt": "Gold leaf flakes drifting inside settling translucent blue resin, standing in as a concept image for a bedroom."
+        "alt": "A bedroom with a framed resin panel above the bed"
       }
     },
     "workshops": {
@@ -435,23 +435,23 @@
       "step3Alt": "Gold leaf flakes suspended in settling blue resin",
       "step4Alt": "Deep sapphire resin mid-pour, spreading across a round mould",
       "step5Alt": "Gloved hands working blue resin with a precision heat gun",
-      "step6Alt": "Finished resin pieces arranged in a lined gift box",
+      "step6Alt": "Petals laid out in rows on paper and sorted with tweezers",
       "step7Title": "Surface refinement",
       "step7Copy": "Once fully cured, the piece is sanded from 400 up to 3000 grit, then polished until the surface reads like glass and the depth beneath it is fully clear.",
       "step7Meta": "400 → 3000 grit",
-      "step7Alt": "Water beading on a mirror-polished resin surface, gold flakes suspended beneath",
+      "step7Alt": "A hand plane and curled shavings on a timber slab at the bench",
       "step8Title": "Hand finishing",
       "step8Copy": "Hardware, hooks or stands are fitted and checked by hand, and every edge is gone over once more before a piece is called finished.",
       "step8Meta": "Fitted by hand",
-      "step8Alt": "A champagne gold vein running through a hand-finished resin surface",
+      "step8Alt": "Blue pigment swirling into clear resin in a beaker on a scale",
       "step9Title": "Quality inspection",
       "step9Copy": "The finished piece is checked edge to edge against the brief, and you receive photographs of it for your own approval before anything ships.",
       "step9Meta": "Photos before it ships",
-      "step9Alt": "The bevelled edge of a cured epoxy slab catching the light",
+      "step9Alt": "A sanding block resting on a wet-sanded resin surface",
       "step10Title": "Delivery",
       "step10Copy": "Once approved, the piece is packed fragile-proof and sent with tracked shipping, anywhere in India. The studio does not offer installation — delivery is where the commission ends.",
       "step10Meta": "Tracked, anywhere in India",
-      "step10Alt": "A finished resin-and-teak serving board and bowl, ready to leave the studio"
+      "step10Alt": "A polishing pad buffing a cured resin surface to a gloss"
     },
     "materials": {
       "heading": "What your piece is made of",
@@ -539,7 +539,7 @@
       "embedCopy": "Flowers, gold leaf and keepsakes are placed by hand between layers — each element sealed exactly where it should rest, so the piece holds a moment and not just a material.",
       "alt1": "Deep sapphire resin pouring in one unbroken ribbon into a shallow round mould",
       "alt2": "Gold leaf flakes drifting inside settling translucent blue resin",
-      "alt3": "Poured moulds curing overnight under a single warm work lamp in the dark studio",
+      "alt3": "Racks of filled moulds curing on steel shelves in the dark cure room",
       "alt4": "Water beading on a mirror-polished resin surface, gold flakes below"
     },
     "sustain": {
@@ -574,7 +574,7 @@
       "heading": "The bench, the moulds, the light.",
       "body": "One room in Surat where every commission is mixed, poured, cured and finished. Nothing is sent out to be made elsewhere.",
       "addressLabel": "Address",
-      "alt1": "The studio bench laid out with moulds and mixing cups",
+      "alt1": "A pegboard wall of heat guns, spreaders and scales above the studio bench",
       "alt2": "Filled moulds curing overnight under a warm work lamp",
       "alt3": "A finished resin-and-teak board and bowl on the studio table",
       "hoursLabel": "Opening hours"
@@ -600,7 +600,7 @@
       "point3Title": "Beginner-friendly",
       "point3Copy": "No experience needed. First-timers are our favourite students, and private sessions can be arranged for any pace or occasion.",
       "eyebrow": "why come",
-      "alt1": "A small group working at the studio bench",
+      "alt1": "Gloved hands around a bench as resin is poured into a small mould",
       "alt2": "Pigments, moulds and tools laid out ready for a session",
       "alt3": "A first pour spreading across a mould"
     },
@@ -1047,7 +1047,7 @@
       "heading": "Poured, cured and finished by hand.",
       "body": "Every piece here waits out its own cure before anyone touches it. That is why the catalogue moves at the speed it does.",
       "cta": "See how it is made",
-      "imageAlt": "A resin pour curing under studio light, its surface still settling."
+      "imageAlt": "A layered resin block read as ocean depth, pale bands running through blue"
     },
     "quickViewLabel": "Quick view"
   },
@@ -1563,16 +1563,16 @@
       "intro": "Scale changes the making, not the method. These are the shapes a large brief usually takes — yours does not have to be one of them.",
       "k1Title": "Tables and surfaces",
       "k1Copy": "Dining and centre tables, counters, shelves and console tops — resin poured against seasoned wood, then levelled and polished by hand.",
-      "k1Alt": "A resin and teak serving board leaning against a low round resin bowl, both poured in deep blue",
+      "k1Alt": "A round coffee-table top mid-pour, clamped in a circular form as blue resin settles against the timber",
       "k2Title": "Wall panels and large art",
       "k2Copy": "A single panel or a set that hangs together, poured to the proportions of the wall it is made for rather than to a standard frame size.",
-      "k2Alt": "The bevelled edge of a slab of cured clear resin, refracting a thin band of sapphire",
+      "k2Alt": "A large resin wall panel leaning against a studio wall, a pale vein running through deep blue",
       "k3Title": "Sculptural pieces and objets",
       "k3Copy": "Free-standing forms, plinth pieces and light-catching blocks, built up in layers so the depth still reads from across a room.",
       "k3Alt": "Poured resin moulds curing under a single warm work lamp in a dark studio",
       "k4Title": "Preservation at scale",
       "k4Copy": "Flowers, fabric and keepsakes set into a piece large enough to live with — prepared and stabilised first, then poured around.",
-      "k4Alt": "A shallow round block of clear resin with deep sapphire depth, pressed marigold and rose petals suspended inside it",
+      "k4Alt": "A stack of dated flower presses on the bench, pressed petals visible between the boards",
       "materials": "Art-grade epoxy resin, mineral pigments, seasoned wood and preserved botanicals — the same materials as the small work, in more of it."
     },
     "how": {

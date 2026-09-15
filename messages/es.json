@@ -212,7 +212,7 @@
         "bespoke": {
           "label": "A medida",
           "copy": "Creada en torno a tu historia, no a un catálogo.",
-          "alt": "Flores preservadas dentro de un bloque de resina transparente"
+          "alt": "Una guirnalda varmala fresca de rosas y caléndulas junto a unas tijeras"
         },
         "slowMade": {
           "label": "Hecho despacio",
@@ -373,22 +373,22 @@
       "living": {
         "title": "Salón",
         "caption": "Una pieza por encargo, mostrada en un salón.",
-        "alt": "Resina vertida en un chorro lento y constante, usada aquí como imagen de concepto para un salón."
+        "alt": "Un salón con un único panel mural de resina sobre un sofá bajo"
       },
       "dining": {
         "title": "Comedor",
         "caption": "Una pieza por encargo, mostrada en un comedor.",
-        "alt": "Una banda macro de textura de resina en capas, usada aquí como imagen de concepto para un comedor."
+        "alt": "Un comedor con un panel de resina en la pared sobre la mesa"
       },
       "study": {
         "title": "Estudio",
         "caption": "Una pieza por encargo, mostrada en un estudio.",
-        "alt": "Moldes llenos curando durante la noche bajo una lámpara de trabajo cálida, usada aquí como imagen de concepto para un estudio."
+        "alt": "Un estudio con un gran panel de resina sobre el escritorio"
       },
       "bedroom": {
         "title": "Dormitorio",
         "caption": "Una pieza por encargo, mostrada en un dormitorio.",
-        "alt": "Copos de pan de oro flotando en resina azul translúcida asentándose, usada aquí como imagen de concepto para un dormitorio."
+        "alt": "Un dormitorio con un panel de resina enmarcado sobre la cama"
       }
     },
     "workshops": {
@@ -435,23 +435,23 @@
       "step3Alt": "Copos de pan de oro suspendidos en resina azul que se asienta",
       "step4Alt": "Resina de zafiro profundo en pleno vertido, extendiéndose por un molde redondo",
       "step5Alt": "Manos enguantadas trabajan resina azul con una pistola de calor de precisión",
-      "step6Alt": "Piezas de resina acabadas dispuestas en una caja de regalo forrada",
+      "step6Alt": "Pétalos dispuestos en hileras sobre papel y clasificados con pinzas",
       "step7Title": "Refinado de la superficie",
       "step7Copy": "Una vez curada por completo, la pieza se lija desde el grano 400 hasta el 3000 y luego se pule hasta que la superficie parece cristal y la profundidad que hay debajo queda totalmente clara.",
       "step7Meta": "Grano 400 → 3000",
-      "step7Alt": "Gotas de agua sobre una superficie de resina pulida como espejo, con motas de oro suspendidas debajo",
+      "step7Alt": "Un cepillo de mano y virutas rizadas sobre un tablón en el banco",
       "step8Title": "Acabado a mano",
       "step8Copy": "Herrajes, ganchos o soportes se colocan y se revisan a mano, y cada borde se repasa una vez más antes de que una pieza se considere terminada.",
       "step8Meta": "Acabado a mano",
-      "step8Alt": "Una veta dorada color champán recorre una superficie de resina acabada a mano",
+      "step8Alt": "Pigmento azul disolviéndose en resina transparente en un vaso sobre una balanza",
       "step9Title": "Inspección de calidad",
       "step9Copy": "La pieza terminada se revisa borde a borde frente al encargo, y recibes fotografías suyas para tu propia aprobación antes de que se envíe nada.",
       "step9Meta": "Fotos antes del envío",
-      "step9Alt": "El borde biselado de una plancha de epoxi curada captando la luz",
+      "step9Alt": "Un taco de lijar apoyado sobre una superficie de resina lijada en húmedo",
       "step10Title": "Entrega",
       "step10Copy": "Una vez aprobada, la pieza se embala a prueba de roturas y se envía con seguimiento a cualquier punto de la India. El estudio no ofrece instalación — la entrega es donde termina el encargo.",
       "step10Meta": "Con seguimiento, a cualquier punto de la India",
-      "step10Alt": "Una bandeja y un cuenco de resina y teca terminados, listos para salir del estudio"
+      "step10Alt": "Una boina de pulido abrillantando una superficie de resina curada"
     },
     "materials": {
       "heading": "De qué está hecha tu pieza",
@@ -539,7 +539,7 @@
       "embedCopy": "Flores, pan de oro y objetos con historia se colocan a mano entre las capas — cada elemento sellado exactamente donde debe reposar, para que la pieza guarde un momento y no solo un material.",
       "alt1": "Resina de zafiro profundo cayendo en una cinta continua dentro de un molde redondo y poco profundo",
       "alt2": "Copos de pan de oro flotando en resina azul translúcida que se asienta",
-      "alt3": "Moldes ya vertidos curando durante la noche bajo una única lámpara cálida en el estudio a oscuras",
+      "alt3": "Estanterías de acero con moldes llenos curando en la sala de curado a oscuras",
       "alt4": "Gotas de agua sobre resina pulida a espejo, con copos de oro debajo"
     },
     "sustain": {
@@ -574,7 +574,7 @@
       "heading": "El banco, los moldes, la luz.",
       "body": "Una sala en Surat donde cada encargo se mezcla, se vierte, se cura y se acaba. Nada se envía fuera para fabricarse.",
       "addressLabel": "Dirección",
-      "alt1": "El banco del estudio con moldes y vasos de mezcla",
+      "alt1": "Un panel perforado con pistolas de calor, espátulas y balanzas sobre el banco del taller",
       "alt2": "Moldes llenos curando toda la noche bajo una cálida lámpara de trabajo",
       "alt3": "Una tabla y un cuenco acabados de resina y teca sobre la mesa del taller",
       "hoursLabel": "Horario"
@@ -600,7 +600,7 @@
       "point3Title": "Perfecto para principiantes",
       "point3Copy": "No necesitas experiencia. Quienes vienen por primera vez son nuestros alumnos favoritos, y organizamos sesiones privadas a tu ritmo o para cualquier ocasión.",
       "eyebrow": "por qué venir",
-      "alt1": "Un grupo reducido trabajando en el banco del estudio",
+      "alt1": "Manos enguantadas alrededor de un banco mientras se vierte resina en un molde pequeño",
       "alt2": "Pigmentos, moldes y herramientas listos para una sesión",
       "alt3": "Un primer vertido extendiéndose por un molde"
     },
@@ -1046,7 +1046,7 @@
       "heading": "Vertida, curada y terminada a mano.",
       "body": "Cada pieza aquí espera a que termine su propio curado antes de que nadie la toque. Por eso el catálogo avanza al ritmo que avanza.",
       "cta": "Ve cómo se hace",
-      "imageAlt": "Un vertido de resina curando bajo la luz del estudio, con la superficie aún asentándose."
+      "imageAlt": "Un bloque de resina en capas que se lee como profundidad marina, con bandas claras entre el azul"
     },
     "sortName": "Nombre",
     "quickViewLabel": "Vista rápida"
@@ -1563,16 +1563,16 @@
       "intro": "La escala cambia la ejecución, no el método. Estas son las formas que suele tomar un encargo grande — el tuyo no tiene por qué ser una de ellas.",
       "k1Title": "Mesas y superficies",
       "k1Copy": "Mesas de comedor y de centro, encimeras, estantes y consolas — resina vertida contra madera curada, luego nivelada y pulida a mano.",
-      "k1Alt": "Una tabla de servir de resina y teca apoyada en un cuenco bajo y redondo de resina, ambos vertidos en azul profundo",
+      "k1Alt": "Un tablero redondo de mesa de centro durante el vertido, sujeto en un molde circular mientras la resina azul se asienta contra la madera",
       "k2Title": "Paneles murales y arte grande",
       "k2Copy": "Un panel único o un conjunto que cuelga junto, vertido según las proporciones del muro al que se destina y no según un marco estándar.",
-      "k2Alt": "El canto biselado de una placa de resina transparente curada, refractando una fina banda de zafiro",
+      "k2Alt": "Un gran panel mural de resina apoyado en la pared del taller, con una veta clara sobre azul profundo",
       "k3Title": "Piezas escultóricas y objetos",
       "k3Copy": "Formas exentas, piezas de peana y bloques que atrapan la luz, levantados por capas para que la profundidad siga leyéndose desde el otro lado de la sala.",
       "k3Alt": "Moldes de resina vertida curándose bajo una única lámpara de trabajo cálida en un taller oscuro",
       "k4Title": "Preservación a gran escala",
       "k4Copy": "Flores, tejido y recuerdos fijados en una pieza lo bastante grande para convivir con ella — preparados y estabilizados primero, y vertidos alrededor después.",
-      "k4Alt": "Un bloque redondo y bajo de resina transparente con profundidad de zafiro, con pétalos prensados de caléndula y rosa suspendidos dentro",
+      "k4Alt": "Una pila de prensas de flores fechadas sobre el banco, con pétalos prensados visibles entre las tablas",
       "materials": "Resina epoxi de calidad artística, pigmentos minerales, madera curada y botánica preservada — los mismos materiales que en la obra pequeña, en mayor cantidad."
     },
     "how": {

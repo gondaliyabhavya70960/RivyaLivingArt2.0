@@ -212,7 +212,7 @@
         "bespoke": {
           "label": "Sur mesure",
           "copy": "Construite autour de votre histoire, pas d'un catalogue.",
-          "alt": "Des fleurs préservées serties dans un bloc de résine limpide"
+          "alt": "Une guirlande varmala fraîche de roses et d'œillets d'Inde à côté d'une paire de ciseaux"
         },
         "slowMade": {
           "label": "Fait lentement",
@@ -373,22 +373,22 @@
       "living": {
         "title": "Salon",
         "caption": "Une pièce sur commande, représentée dans un salon.",
-        "alt": "De la résine coulée en un filet lent et régulier, utilisé ici comme image de concept pour un salon."
+        "alt": "Un salon avec un unique panneau mural en résine au-dessus d'un canapé bas"
       },
       "dining": {
         "title": "Salle à manger",
         "caption": "Une pièce sur commande, représentée dans une salle à manger.",
-        "alt": "Une bande macro de texture de résine en couches, utilisé ici comme image de concept pour une salle à manger."
+        "alt": "Une salle à manger avec un panneau en résine au mur au-dessus de la table"
       },
       "study": {
         "title": "Bureau",
         "caption": "Une pièce sur commande, représentée dans un bureau.",
-        "alt": "Des moules remplis durcissant toute la nuit sous une lampe de travail chaude, utilisé ici comme image de concept pour un bureau."
+        "alt": "Un bureau avec un grand panneau en résine au-dessus du plan de travail"
       },
       "bedroom": {
         "title": "Chambre",
         "caption": "Une pièce sur commande, représentée dans une chambre.",
-        "alt": "Des paillettes d'or dérivant dans une résine bleue translucide qui se stabilise, utilisé ici comme image de concept pour une chambre."
+        "alt": "Une chambre avec un panneau en résine encadré au-dessus du lit"
       }
     },
     "workshops": {
@@ -435,23 +435,23 @@
       "step3Alt": "Des paillettes d'or en suspension dans une résine bleue qui se stabilise",
       "step4Alt": "Une résine saphir profond en pleine coulée, s'étalant dans un moule rond",
       "step5Alt": "Des mains gantées travaillent la résine bleue au pistolet à air chaud",
-      "step6Alt": "Des pièces en résine finies disposées dans un coffret doublé",
+      "step6Alt": "Des pétales disposés en rangées sur du papier et triés à la pince",
       "step7Title": "Affinage de la surface",
       "step7Copy": "Une fois entièrement durcie, la pièce est poncée du grain 400 jusqu'au grain 3000, puis polie jusqu'à ce que la surface paraisse du verre et que la profondeur en dessous soit parfaitement nette.",
       "step7Meta": "Grain 400 → 3000",
-      "step7Alt": "Des gouttes d'eau sur une surface de résine polie miroir, avec des paillettes d'or en suspension en dessous",
+      "step7Alt": "Un rabot à main et des copeaux enroulés sur un plateau de bois à l'établi",
       "step8Title": "Finition à la main",
       "step8Copy": "Ferrures, crochets ou pieds sont posés et vérifiés à la main, et chaque arête est reprise une dernière fois avant qu'une pièce ne soit déclarée terminée.",
       "step8Meta": "Finition à la main",
-      "step8Alt": "Une veine d'or champagne traverse une surface de résine finie à la main",
+      "step8Alt": "Un pigment bleu se diffusant dans de la résine claire, dans un bécher posé sur une balance",
       "step9Title": "Contrôle qualité",
       "step9Copy": "La pièce terminée est vérifiée bord à bord au regard du brief, et vous recevez des photos pour validation avant tout envoi.",
       "step9Meta": "Photos avant expédition",
-      "step9Alt": "Le bord biseauté d'une plaque d'époxy durcie captant la lumière",
+      "step9Alt": "Une cale à poncer posée sur une surface de résine poncée à l'eau",
       "step10Title": "Livraison",
       "step10Copy": "Une fois validée, la pièce est emballée contre la casse et expédiée avec suivi partout en Inde. Le studio ne propose pas de pose — la livraison marque la fin de la commande.",
       "step10Meta": "Suivi, partout en Inde",
-      "step10Alt": "Un plateau de service et un bol en résine et teck terminés, prêts à quitter le studio"
+      "step10Alt": "Un tampon de lustrage faisant briller une surface de résine durcie"
     },
     "materials": {
       "heading": "Ce qui compose votre pièce",
@@ -539,7 +539,7 @@
       "embedCopy": "Fleurs, feuilles d'or et souvenirs sont déposés à la main entre les couches — chaque élément scellé exactement là où il doit reposer, pour que la pièce garde un instant, et pas seulement une matière.",
       "alt1": "Résine d'un saphir profond coulant en un ruban ininterrompu dans un moule rond et peu profond",
       "alt2": "Des paillettes de feuille d'or flottant dans une résine bleue translucide",
-      "alt3": "Des moules coulés durcissant toute la nuit sous une seule lampe d'atelier chaude, dans l'obscurité",
+      "alt3": "Des étagères d'acier chargées de moules remplis qui durcissent dans la salle de séchage sombre",
       "alt4": "Des gouttes d'eau sur une résine polie miroir, paillettes d'or en dessous"
     },
     "sustain": {
@@ -574,7 +574,7 @@
       "heading": "L'établi, les moules, la lumière.",
       "body": "Une pièce à Surat où chaque commande est mélangée, coulée, durcie et finie. Rien n'est confié à l'extérieur.",
       "addressLabel": "Adresse",
-      "alt1": "L'établi de l'atelier garni de moules et de gobelets doseurs",
+      "alt1": "Un panneau perforé garni de pistolets à air chaud, de spatules et de balances au-dessus de l'établi",
       "alt2": "Des moules remplis durcissent la nuit sous une lampe d'atelier chaleureuse",
       "alt3": "Une planche et un bol finis en résine et teck sur la table de l'atelier",
       "hoursLabel": "Horaires"
@@ -600,7 +600,7 @@
       "point3Title": "Accessible aux débutants",
       "point3Copy": "Aucune expérience requise. Les débutants sont nos élèves préférés, et des séances privées peuvent être organisées, à votre rythme et pour chaque occasion.",
       "eyebrow": "pourquoi venir",
-      "alt1": "Un petit groupe travaille à l'établi de l'atelier",
+      "alt1": "Des mains gantées autour d'un établi pendant qu'on coule de la résine dans un petit moule",
       "alt2": "Pigments, moules et outils disposés, prêts pour une séance",
       "alt3": "Une première coulée s'étale dans un moule"
     },
@@ -1046,7 +1046,7 @@
       "heading": "Coulée, durcie et finie à la main.",
       "body": "Chaque pièce ici attend la fin de son propre durcissement avant qu'on y touche. C'est pourquoi le catalogue avance à ce rythme.",
       "cta": "Voir comment c'est fait",
-      "imageAlt": "Une coulée de résine durcit sous la lumière de l'atelier, sa surface encore en train de se poser."
+      "imageAlt": "Un bloc de résine stratifié qui évoque la profondeur marine, des bandes claires traversant le bleu"
     },
     "sortName": "Nom",
     "quickViewLabel": "Aperçu rapide"
@@ -1563,16 +1563,16 @@
       "intro": "L'échelle change la fabrication, pas la méthode. Voici les formes que prend le plus souvent un grand projet — le vôtre n'a pas à en être une.",
       "k1Title": "Tables et plateaux",
       "k1Copy": "Tables de repas et basses, plans de travail, étagères et dessus de console — résine coulée contre un bois affiné, puis dressée et polie à la main.",
-      "k1Alt": "Une planche de service en résine et teck appuyée contre un bol bas et rond en résine, tous deux coulés en bleu profond",
+      "k1Alt": "Un plateau rond de table basse en cours de coulée, serré dans un moule circulaire tandis que la résine bleue se pose contre le bois",
       "k2Title": "Panneaux muraux et grandes pièces",
       "k2Copy": "Un panneau seul ou un ensemble qui s'accroche d'un tenant, coulé aux proportions du mur auquel il est destiné plutôt qu'à un format de cadre standard.",
-      "k2Alt": "Le chant biseauté d'une plaque de résine transparente durcie, réfractant une fine bande de saphir",
+      "k2Alt": "Un grand panneau mural en résine adossé au mur de l'atelier, une veine claire dans un bleu profond",
       "k3Title": "Pièces sculpturales et objets",
       "k3Copy": "Formes libres, pièces de socle et blocs qui captent la lumière, montés en couches pour que la profondeur se lise encore d'un bout à l'autre de la pièce.",
       "k3Alt": "Des moules de résine coulée durcissant sous une unique lampe d'atelier chaude dans un atelier sombre",
       "k4Title": "La conservation à grande échelle",
       "k4Copy": "Fleurs, tissus et souvenirs pris dans une pièce assez grande pour vivre avec — préparés et stabilisés d'abord, puis coulés autour.",
-      "k4Alt": "Un bloc rond et plat de résine transparente à la profondeur saphir, avec des pétales de souci et de rose pressés en suspension",
+      "k4Alt": "Une pile de presses à fleurs datées sur l'établi, pétales pressés visibles entre les planches",
       "materials": "Résine époxy de qualité artistique, pigments minéraux, bois affiné et végétaux conservés — les mêmes matériaux que pour les petites pièces, en plus grande quantité."
     },
     "how": {
