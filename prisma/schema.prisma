@@ -843,27 +843,6 @@ model ScrapedProduct {
   @@index([jobId])
 }
 
-/// One push of rows to the owner's sheet (B0 · sheets): the history the
-/// sheet-import screen shows. No URL columns.
-///
-/// KEPT DELIBERATELY until the drop migration. Google Sheets is gone and this
-/// table has no writer and no reader on any request path — only the one-off
-/// `scripts/export-sheets-history.ts`. Removing it from the schema now would
-/// break that script while its data is still the only copy in production, so
-/// it leaves in the same PR that drops the table.
-model SheetSyncRun {
-  id         String    @id @default(cuid())
-  direction  String
-  tab        String
-  rows       Int       @default(0)
-  status     String
-  error      String?
-  startedAt  DateTime  @default(now())
-  finishedAt DateTime?
-
-  @@index([startedAt])
-}
-
 /// Stable identity for one product across every scrape that ever saw it
 /// (workstream B, phase 6a).
 ///
