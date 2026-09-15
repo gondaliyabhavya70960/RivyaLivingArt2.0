@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { SEED_SOURCES, seedSourceUpsertData } from "./seed-data";
+import {
+  SEED_SOURCES,
+  seedSourceUpsertData,
+  type SeedSource,
+} from "./seed-data";
 
 const repoRoot = path.resolve(__dirname, "../../..");
 const read = (p: string) => readFileSync(path.join(repoRoot, p), "utf8");
@@ -47,14 +51,28 @@ describe("seedSourceUpsertData", () => {
   });
 
   it("never downgrades a platform that was verified live", () => {
-    const shopify = SEED_SOURCES.find((s) => s.platform === "SHOPIFY")!;
-    const verified = seedSourceUpsertData(shopify, {
+    // Built here rather than hunted out of SEED_SOURCES: this is a test of the
+    // function, and coupling it to which companies happen to be registered
+    // made it fail the day the registry was narrowed to the owner's own list.
+    const seed: SeedSource = {
+      key: "platform-precedence-test",
+      name: "Platform Precedence Test",
+      baseUrl: "https://platform-precedence.test",
+      tier: "RESIN_GOODS",
+      vertical: "resin",
+      country: "IN",
+      platform: "SHOPIFY",
+      supply: false,
+      enabled: true,
+    };
+
+    const verified = seedSourceUpsertData(seed, {
       platform: "WOOCOMMERCE",
       verifiedAt: new Date(),
     });
     expect(verified.update).not.toHaveProperty("platform");
 
-    const unverified = seedSourceUpsertData(shopify, {
+    const unverified = seedSourceUpsertData(seed, {
       platform: "UNKNOWN",
       verifiedAt: null,
     });
