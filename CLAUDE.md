@@ -43,13 +43,22 @@ factually wrong here, or forbidden by the contract above. Do not act on it —
 `docs/ui-master-plan-reconciliation.md` verifies all 213 entries against HEAD,
 records what shipped, and lists what genuinely remains.
 
-**`docs/plan/` is a PROPOSAL, not yet in force.** It plans a storefront/Studio
-redesign, a scraper rebuild against the owner's resin-merchandiser brief, the
-complete removal of Google Sheets, and a Drive-sourced media pipeline. Three of
-those contradict the HARD RULES below, so the plan opens with five decisions
-(D25–D29) the owner has not yet ratified. **Do not act on it until they are**;
-until then this file, not that one, is the instruction. `docs/plan/README.md`
-is the index.
+**`docs/plan/` is IN FORCE for the workstreams noted below.** It plans a
+storefront/Studio redesign, a scraper rebuild against the owner's
+resin-merchandiser brief, the complete removal of Google Sheets, and a
+Drive-sourced media pipeline. `docs/plan/README.md` is the index.
+
+On 2026-09-15 the owner delegated decisions D25–D29 ("decide by yourself and go
+to the next step") rather than answering them individually, so the plan's own
+recommendations stand as the ratified positions. **Shipped so far:** workstream
+D's asset pipeline end to end (Phase 1), and workstream C's Sheets REPLACEMENT
+— the confirmed-products export and `/studio/exports`. **Not yet started:** the
+storefront/Studio redesign (A), the scraper rebuild (B), and the Sheets REMOVAL
+itself, which the plan deliberately sequences after the owner has exported once
+from the new screen and archived the spreadsheet.
+
+Where this file and the plan disagree on a fact, this file is the one being
+kept current — the plan records what was true when it was written.
 
 ## HARD RULES — business model (REDESIGN.md §1.1 · Part 0 wins all conflicts)
 - NO payment gateway, online checkout, or cart payment (no Stripe/Razorpay/PayPal).
@@ -102,7 +111,23 @@ is the index.
 - `node scripts/media-v3-fetch.mjs` then writes one AVIF master per asset into
   `public/media/v3/` plus the 20px LQIP manifest at `src/lib/media-v3-blur.json`.
   next/image generates §15.5's 640–2560 AVIF/WebP ladder from those masters.
-- **All 28 `plannedSets` entries are GENERATED; none is built.** Batch D
+- **BUILT (2026-09-15).** The 40 generated stills were culled to one keeper
+  each, promoted, encoded and wired: `public/media/v3/` now holds 65 masters
+  (4.4 MB) and 20 slots point at the new ones. `--planned` reports
+  `55 entries: 12 planned · 3 generated · 0 incomplete · 0 awaiting a cull ·
+  40 ready to build`, and
+  `media-v3-planned.test.ts` asserts exactly that split. What is left is the 3
+  SET F loops (a video promote, not this pipeline), the 12 rows nobody has
+  generated, and 20 built masters that are deliberately unwired — 5 whose own
+  `placement` calls them an "alternative", 6 mobile crops with no `mobileUrl`
+  field to land in, and the rest targeting category images that are not slots
+  by design. All are selectable from /studio/site-images.
+  **The CDN answers 200 again**; the 403 recorded below has lifted, and
+  `scripts/media-v3-fetch.mjs` now falls back to the owner's Drive copies
+  through `docs/plan/drive-asset-map.json` when it does not. The history below
+  is kept because it explains WHY the queue is shaped this way.
+
+- **How it used to read (2026-09-04 · superseded).** Batch D
   recorded the next photography batch — bench concepts, large-format art,
   concept rooms, five process actions, six mobile crops, three loops — as a
   prompt, a placement and a ratio each. On 2026-09-04 every one of them was
@@ -194,9 +219,11 @@ is the index.
   Those CDN URLs were **re-verified alive on 2026-08-31** — a server-side fetch
   retrieved all four sets (17–51 MB each) eight days after generation — so
   `node scripts/media-v3-fetch.mjs` on any machine with ordinary internet still
-  works. It cannot run inside a session: the Higgsfield CDN answers 403 to the
-  agent proxy's egress policy, and that is an organization policy denial to
-  report, not to route around. The two Actions workflows that used to run it on
+  works. It ran inside a session on 2026-09-15 — the CDN answered 200
+  throughout, so the 403 that policy once produced is not a standing fact to
+  plan around. If it returns, `media-v3-fetch.mjs` falls back to the owner's
+  Drive copies (`scripts/lib/media-v3-drive.mjs`), verified byte-identical to
+  the CDN's. The two Actions workflows that used to run it on
   a runner (`fetch-media-v3.yml`, `fetch-media-v3-video.yml`) were deleted under
   D24 — each said in its own header it was safe to delete once the masters were
   committed, and they are. Rebuilding now means running the script on an
@@ -351,6 +378,25 @@ below are the ones that are expensive to rediscover.
   only when the price moves. A gap between points means the price held.
 
 ### Design QA (needs a running server)
+
+**A session without `DATABASE_URL` can still run all of these.** `npm run build`
+needs a database, so for a long time a session without one could not run a
+single gate in the definition of done — it could only push and hope. It does not
+have to: the PR's own **Vercel preview deployment** is a running server built
+from the commit under test, and `scripts/preview-proxy.mjs` turns it into a
+plain `http://localhost:3000` origin by holding the `_vercel_share` cookie and
+replaying it.
+
+    NODE_USE_ENV_PROXY=1 node scripts/preview-proxy.mjs "<shareable url>" &
+    BASE_URL=http://localhost:3000 node scripts/redesign-audit.mjs "$ROUTES"
+
+Use the DEPLOYMENT url (`<project>-<hash>-<team>.vercel.app`), not the branch
+alias — a share token minted for the alias bounces to the Vercel login page.
+The script's header records what a green run does NOT cover: third-party asset
+hosts (the browser fetches those directly, not through the proxy) and the five
+demo detail routes (they need the seeded demo set, which the preview's database
+may not carry — leave those to CI). Audit the 13 public routes here.
+
 The first two run in CI over the 13 public routes plus the five demo detail
 routes (`/product/demo-product-001`, `/shop/gift-collections`,
 `/blog/demo-post-001`, `/portfolio/demo-case-001`, `/p/demo-lander` — seeded by

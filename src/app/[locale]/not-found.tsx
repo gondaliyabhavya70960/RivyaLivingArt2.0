@@ -117,7 +117,7 @@ export function NotFoundPanel({
               <span aria-hidden className="block h-px w-6 bg-champagne" />
               {copy.eyebrow}
             </p>
-            <h1 className="max-w-[12ch] font-display text-h1 leading-[1.02] tracking-display text-mineral">
+            <h1 className="max-w-[12ch] font-display text-h1 leading-h1 tracking-display text-mineral">
               {copy.heading}
             </h1>
             <p className="u-lede font-body text-body leading-relaxed text-mist">

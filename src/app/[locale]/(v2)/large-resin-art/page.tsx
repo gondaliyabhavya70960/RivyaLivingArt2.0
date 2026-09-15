@@ -266,7 +266,7 @@ export default async function LargeResinArtPage({
           </div>
           <h1
             id="large-format-heading"
-            className="sf-hero-rise max-w-[14ch] font-display text-hero leading-[0.95] tracking-display"
+            className="sf-hero-rise max-w-[14ch] font-display text-hero leading-hero tracking-display"
             style={{ "--i": 2 } as CSSProperties}
           >
             {t("hero.headline")}
@@ -783,7 +783,7 @@ export default async function LargeResinArtPage({
         <div className="u-shell flex flex-col items-start gap-8">
           <h2
             id="commission-heading"
-            className="max-w-[18ch] font-display text-h1 leading-[1.02] tracking-display text-ink"
+            className="max-w-[18ch] font-display text-h1 leading-h1 tracking-display text-ink"
           >
             {t("cta.heading")}
           </h2>

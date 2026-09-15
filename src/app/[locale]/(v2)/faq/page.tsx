@@ -122,7 +122,7 @@ export default async function FaqPage({
               <Eyebrow>{t("heroEyebrow")}</Eyebrow>
               <h1
                 id="faq-heading"
-                className="max-w-[13ch] font-display text-h1 leading-[1.02] tracking-display"
+                className="max-w-[13ch] font-display text-h1 leading-h1 tracking-display"
               >
                 {t("heroHeadline")}
               </h1>
@@ -203,7 +203,7 @@ export default async function FaqPage({
         <div className="u-shell flex flex-col gap-8">
           <h2
             id="faq-close-heading"
-            className="max-w-[14ch] font-display text-h2 leading-[1.04] tracking-display"
+            className="max-w-[14ch] font-display text-h2 leading-h2 tracking-display"
           >
             {t("closingHeading")}
           </h2>

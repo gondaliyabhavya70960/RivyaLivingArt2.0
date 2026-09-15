@@ -360,7 +360,7 @@ export default async function Home({
 
           <h1
             id="hero-heading"
-            className="sf-hero-rise max-w-[14ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="sf-hero-rise max-w-[14ch] font-display text-hero leading-hero tracking-display text-mineral"
             style={{ "--i": 1 } as CSSProperties}
           >
             {t("hero.headline")}
@@ -431,7 +431,7 @@ export default async function Home({
               continues past it. */}
           <h2
             id="manifesto-heading"
-            className="sf-manifesto-brighten max-w-[18ch] font-display text-h1 leading-[1.05] tracking-display text-balance"
+            className="sf-manifesto-brighten max-w-[18ch] font-display text-h1 leading-h1 tracking-display text-balance"
           >
             {t("manifesto.line1")}
             <br />
@@ -705,7 +705,7 @@ export default async function Home({
             <Eyebrow>{t("maker.eyebrow")}</Eyebrow>
             <h2
               id="maker-heading"
-              className="max-w-[16ch] font-display text-h2 leading-[1.08] tracking-display"
+              className="max-w-[16ch] font-display text-h2 leading-h2 tracking-display"
             >
               {t("maker.heading")}
             </h2>
@@ -935,11 +935,11 @@ export default async function Home({
           </Eyebrow>
           <h2
             id="bespoke-heading"
-            className="max-w-[14ch] font-display text-h1 leading-[1.02] tracking-display text-mineral"
+            className="max-w-[14ch] font-display text-h1 leading-h1 tracking-display text-mineral"
           >
             {t("custom.heading")}
           </h2>
-          <p className="font-display text-h3 leading-[1.3] text-mineral/90">
+          <p className="font-display text-h3 leading-statement text-mineral/90">
             {t("custom.lineFlowers")}
             <br />
             {t("custom.lineNames")}
@@ -990,7 +990,7 @@ export default async function Home({
             <Eyebrow>{t("workshops.eyebrow")}</Eyebrow>
             <h2
               id="workshops-heading"
-              className="max-w-[16ch] font-display text-h2 leading-[1.08] tracking-display"
+              className="max-w-[16ch] font-display text-h2 leading-h2 tracking-display"
             >
               {t("workshops.heading")}
             </h2>
@@ -1038,7 +1038,7 @@ export default async function Home({
             <Eyebrow>{t("printStudio.eyebrow")}</Eyebrow>
             <h2
               id="print-heading"
-              className="max-w-[14ch] font-display text-h2 leading-[1.08] tracking-display"
+              className="max-w-[14ch] font-display text-h2 leading-h2 tracking-display"
             >
               {t("printStudio.headingLine1")}
               <br />
@@ -1230,7 +1230,7 @@ export default async function Home({
               {featuredPost.category ? (
                 <p className="u-micro">{featuredPost.category}</p>
               ) : null}
-              <h3 className="font-display text-h3 leading-[1.15] text-ink">
+              <h3 className="font-display text-h3 leading-h3 text-ink">
                 <Link
                   href={`/blog/${featuredPost.slug}`}
                   className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
@@ -1299,7 +1299,7 @@ export default async function Home({
           <Reveal>
             <h2
               id="closing-heading"
-              className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
+              className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display"
             >
               {t("cta.headingLine1")}
               <br />

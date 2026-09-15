@@ -41,7 +41,7 @@ const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
  * render mechanism itself is untouched.
  */
 const PROSE_LEGAL = [
-  "u-prose font-body text-body leading-[1.8] text-graphite",
+  "u-prose font-body text-body leading-longform text-graphite",
   "[&_h2]:font-display [&_h2]:tracking-display [&_h2]:mt-12 [&_h2]:scroll-mt-32 [&_h2]:border-t [&_h2]:border-hairline [&_h2]:pt-8 [&_h2]:text-h3 [&_h2]:leading-snug [&_h2]:text-ink",
   "[&_h3]:font-display [&_h3]:tracking-display [&_h3]:mt-10 [&_h3]:scroll-mt-32 [&_h3]:text-25 [&_h3]:leading-snug [&_h3]:text-ink",
   "[&_p]:mt-4",
@@ -179,7 +179,7 @@ export default async function PrivacyPage({
             <Eyebrow>{t("eyebrow")}</Eyebrow>
             <h1
               id="legal-heading"
-              className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
+              className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display"
             >
               {page.title}
             </h1>

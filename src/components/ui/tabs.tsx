@@ -77,7 +77,7 @@ export function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex min-h-11 items-center gap-1.5 text-sm outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none",
+        "inline-flex min-h-11 items-center gap-1.5 text-sm outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none",
         variant === "underline"
           ? // A constant transparent border keeps activation from shifting the
             // row, and the weight bump means state is never colour-only.

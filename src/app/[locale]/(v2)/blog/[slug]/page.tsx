@@ -97,7 +97,7 @@ const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
  *   lands the heading below the sticky header rather than under it.
  */
 const PROSE_ARTICLE = [
-  "u-prose font-body text-body leading-[1.85] text-graphite",
+  "u-prose font-body text-body leading-longform text-graphite",
   /* No display-faced opening paragraph: the masthead standfirst already
      carries that register, and two serif intros in a row read as an error. */
   "[&>p:first-child]:mt-0",
@@ -108,7 +108,7 @@ const PROSE_ARTICLE = [
   "[&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:ps-6",
   "[&_a]:rounded-input [&_a]:text-sapphire [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
   /* The pull-quote (§11.9). */
-  "[&_blockquote]:mt-12 [&_blockquote]:border-t [&_blockquote]:border-champagne [&_blockquote]:pt-6 [&_blockquote]:font-display [&_blockquote]:text-h3 [&_blockquote]:leading-[1.25] [&_blockquote]:tracking-display [&_blockquote]:text-ink",
+  "[&_blockquote]:mt-12 [&_blockquote]:border-t [&_blockquote]:border-champagne [&_blockquote]:pt-6 [&_blockquote]:font-display [&_blockquote]:text-h3 [&_blockquote]:leading-statement [&_blockquote]:tracking-display [&_blockquote]:text-ink",
   "[&_blockquote_p]:mt-0",
   "[&_hr]:my-12 [&_hr]:border-hairline",
   "[&_img]:mt-8 [&_img]:max-w-full [&_img]:rounded-image",
@@ -550,12 +550,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           </Eyebrow>
           <h1
             id="article-heading"
-            className="max-w-[20ch] font-display text-h1 leading-[1.03] tracking-display"
+            className="max-w-[20ch] font-display text-h1 leading-h1 tracking-display"
           >
             {lp.title}
           </h1>
           {lp.excerpt ? (
-            <p className="u-prose font-display text-h3 leading-[1.35] text-ink">
+            <p className="u-prose font-display text-h3 leading-statement text-ink">
               {lp.excerpt}
             </p>
           ) : null}
@@ -771,7 +771,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                         <DemoMark label={tCommon("demoMark")} />
                       ) : null}
                     </p>
-                    <h3 className="font-display text-h3 leading-[1.14] tracking-display text-ink">
+                    <h3 className="font-display text-h3 leading-h3 tracking-display text-ink">
                       <Link
                         href={`/blog/${relatedPost.slug}`}
                         className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
@@ -820,7 +820,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <Eyebrow rule={false}>{tCustom("heroEyebrow")}</Eyebrow>
           <h2
             id="article-cta-heading"
-            className="max-w-[14ch] font-display text-h2 leading-[1.04] tracking-display text-ink"
+            className="max-w-[14ch] font-display text-h2 leading-h2 tracking-display text-ink"
           >
             {tCustom("heroHeadline")}
           </h2>

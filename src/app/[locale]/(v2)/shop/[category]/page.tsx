@@ -390,7 +390,7 @@ export default async function ShopCategoryPage({
           <p className="u-micro text-champagne">{groupLabels[group]}</p>
           <h1
             id="collection-heading"
-            className="max-w-[16ch] font-display text-hero leading-[0.98] tracking-display text-mineral"
+            className="max-w-[16ch] font-display text-hero leading-hero tracking-display text-mineral"
           >
             {category.name}
           </h1>
@@ -411,7 +411,7 @@ export default async function ShopCategoryPage({
           <div className="u-shell grid gap-8 lg:grid-cols-12">
             <Reveal className="flex flex-col gap-5 lg:col-span-7">
               <Eyebrow>{t("collection.aboutEyebrow")}</Eyebrow>
-              <p className="u-prose font-body text-h3 leading-[1.35] text-ink">
+              <p className="u-prose font-body text-h3 leading-statement text-ink">
                 {category.description}
               </p>
             </Reveal>
@@ -566,7 +566,7 @@ export default async function ShopCategoryPage({
             <Eyebrow>{t("collection.commissionEyebrow")}</Eyebrow>
             <h2
               id="collection-commission-heading"
-              className="max-w-[18ch] font-display text-h3 leading-[1.1] tracking-display text-ink"
+              className="max-w-[18ch] font-display text-h3 leading-h3 tracking-display text-ink"
             >
               {t("collection.commissionHeading", { collection: category.name })}
             </h2>

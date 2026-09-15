@@ -131,7 +131,7 @@ export default async function WhatsappOrderPage({
         {/* ————— the statement ————— */}
         <div className="flex flex-col gap-6 lg:col-span-7">
           <Eyebrow>{message ? t("eyebrowSaved") : t("eyebrowExpired")}</Eyebrow>
-          <h1 className="max-w-[16ch] font-display text-h1 leading-[1.04] tracking-display text-ink">
+          <h1 className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display text-ink">
             {heading}
           </h1>
           {inquiry ? (

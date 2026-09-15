@@ -122,6 +122,59 @@
      overridden, and Part 17's "an unmirrored RTL is worse than none" is why. */
   --tracking-micro: 0.14em;
 
+  /* ————— v4 · Leading ————————————————————————————————————————————
+     Part 3.2 sets the SIZES and leaves the leading to each call site, and
+     the call sites answered 21 different ways. Measured across src/ before
+     this block existed: 79 raw `leading-[…]` literals, of which
+
+       text-hero  0.95 ×7   0.98 ×1
+       text-h1    1.02 ×14  1.04 ×3  1.05 ×2  1.03 ×1
+       text-h2    1.08 ×10  1.06 ×3  1.05 ×3  1.04 ×2  1.10 ×1
+       text-h3    1.15 ×9   1.10 ×5  1.35 ×4  1.14 ×2  1.30/1.25/1.12/1.05 ×1
+       u-prose    1.80 ×3   1.85 ×1
+
+     One intended value per role, plus drift. The modal value in each row IS
+     the intention — these five tokens are those five numbers, named, so the
+     next heading inherits a decision instead of making one. Nothing here is
+     a new value: naming them changed no rendered pixel, and the call sites
+     that already used them were converted in the same commit.
+
+     The remainder are NOT converted. A heading set at 1.04 where the role
+     says 1.02 is either a considered exception or a slip, and telling those
+     apart is a design judgement (workstream A2, the typography contrast
+     pass) rather than a find-and-replace. `type-scale.test.ts` ratchets the
+     count so the pile cannot grow while that decision is pending.
+
+     `--leading-body` is not from that survey — it is the 1.65 that
+     globals.css has always set on `body`, moved here so the site's single
+     most-used leading is a token like the other five rather than a literal
+     in a base rule. `--leading-longform` is the deliberately looser measure
+     for a full page of prose (terms, privacy, a journal post, a custom-page
+     rich-text block), where 1.65 is too tight to read a screenful of.
+
+     Names deliberately avoid Tailwind's own leading-* scale: `relaxed`
+     (1.625) has 120 call sites here and `snug`/`tight`/`none` another 53.
+     Redefining one of those would re-leading the Studio by side effect. */
+  --leading-hero: 0.95;
+  --leading-h1: 1.02;
+  --leading-h2: 1.08;
+  --leading-h3: 1.15;
+  --leading-body: 1.65;
+  --leading-longform: 1.8;
+
+  /* The seventh role, and the one the first survey missed by keying on size
+     instead of on what the element IS. Five call sites set display-scale type
+     at 1.30–1.35, and not one of them is a heading: a journal excerpt, a case
+     study's statement, its pull-quote, a category lede, the homepage's
+     bespoke statement, and the journal body's `<blockquote>` — every one a
+     `<p>` or a `<blockquote>`, nearly all of them `u-prose`.
+
+     Display type set as a PARAGRAPH TO READ is its own job. `leading-h3`
+     (1.15) is a heading's leading and reads as a cramped wall at four lines;
+     `leading-longform` (1.8) is a body measure and falls apart at 36px. 1.35
+     is the value four of the five already chose. */
+  --leading-statement: 1.35;
+
   /* ————— Part 3.3 · Grid ————————————————————————————————————————— */
   --shell-max: 1440px;
   --shell-pad: clamp(

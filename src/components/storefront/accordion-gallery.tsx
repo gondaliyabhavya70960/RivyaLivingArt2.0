@@ -184,7 +184,7 @@ export function AccordionGallery({
                     — {expanded ? labels.collapse : labels.expand}
                   </span>
                 </span>
-                <span className="mt-2 font-display text-h3 leading-[1.1] text-mineral">
+                <span className="mt-2 font-display text-h3 leading-h3 text-mineral">
                   {item.title}
                 </span>
               </button>

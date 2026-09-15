@@ -22,22 +22,22 @@ inventing a third answer.
 
 ## 2. Colour — `src/styles/tokens.css`
 
-| Utility | Role |
-|---|---|
-| `obsidian` | hero, footer, premium sections, Studio UI, dark product presentation |
-| `deep-ocean` | brand backgrounds, highlighted sections, resin storytelling |
-| `sapphire` / `sapphire-hi` | primary action, links, cure-line fill, focus / hover only |
-| `mineral` | light page ground |
-| `sand` | warm neutral — alternate section ground, card surface |
-| `champagne` | accent: tiny highlights, active states, micro-labels, hairlines |
-| `champagne-ink` | champagne as TEXT on a light ground (champagne itself is 2.35:1 there) |
-| `sapphire-ink` | sapphire as TEXT or an indicator icon — sapphire itself on light; the Studio's dark scheme lifts it to `#5fafd6` (raw sapphire is 2.2:1 on obsidian). Never a fill |
-| `ink` | body text on light |
-| `graphite` | secondary text, all mono metadata |
-| `mist` | secondary text on dark |
-| `hairline` / `hairline-dk` | every divider, light / dark |
-| `whatsapp` / `whatsapp-deep` | WhatsApp accent / WhatsApp button fill (AA with white) |
-| `alert` · `success` | errors and destructive · success and in-stock |
+| Utility                      | Role                                                                                                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `obsidian`                   | hero, footer, premium sections, Studio UI, dark product presentation                                                                                               |
+| `deep-ocean`                 | brand backgrounds, highlighted sections, resin storytelling                                                                                                        |
+| `sapphire` / `sapphire-hi`   | primary action, links, cure-line fill, focus / hover only                                                                                                          |
+| `mineral`                    | light page ground                                                                                                                                                  |
+| `sand`                       | warm neutral — alternate section ground, card surface                                                                                                              |
+| `champagne`                  | accent: tiny highlights, active states, micro-labels, hairlines                                                                                                    |
+| `champagne-ink`              | champagne as TEXT on a light ground (champagne itself is 2.35:1 there)                                                                                             |
+| `sapphire-ink`               | sapphire as TEXT or an indicator icon — sapphire itself on light; the Studio's dark scheme lifts it to `#5fafd6` (raw sapphire is 2.2:1 on obsidian). Never a fill |
+| `ink`                        | body text on light                                                                                                                                                 |
+| `graphite`                   | secondary text, all mono metadata                                                                                                                                  |
+| `mist`                       | secondary text on dark                                                                                                                                             |
+| `hairline` / `hairline-dk`   | every divider, light / dark                                                                                                                                        |
+| `whatsapp` / `whatsapp-deep` | WhatsApp accent / WhatsApp button fill (AA with white)                                                                                                             |
+| `alert` · `success`          | errors and destructive · success and in-stock                                                                                                                      |
 
 Use them as Tailwind utilities: `bg-obsidian`, `text-graphite`,
 `border-hairline`, `text-champagne`. **No raw hex in components, ever.**
@@ -57,11 +57,11 @@ resolve correctly:
 
 ## 3. Type — `font-display` · `font-body` · `font-mono`
 
-| Face | Utility | Used for |
-|---|---|---|
-| Instrument Serif | `font-display` | hero, section headings, campaign statements, pull-quotes |
-| Inter | `font-body` | navigation, product info, buttons, forms, paragraphs |
-| JetBrains Mono | `font-mono` | **every** price, count, date, dimension, project number, cure time, timer, spec value, eyebrow |
+| Face             | Utility        | Used for                                                                                       |
+| ---------------- | -------------- | ---------------------------------------------------------------------------------------------- |
+| Instrument Serif | `font-display` | hero, section headings, campaign statements, pull-quotes                                       |
+| Inter            | `font-body`    | navigation, product info, buttons, forms, paragraphs                                           |
+| JetBrains Mono   | `font-mono`    | **every** price, count, date, dimension, project number, cure time, timer, spec value, eyebrow |
 
 Sizes: `text-hero` · `text-h1` · `text-h2` · `text-h3` · `text-body` ·
 `text-small` · `text-micro`. All are `clamp()`d — one scale, no mobile fork.
@@ -77,6 +77,61 @@ Composite utilities:
 - `u-prose` — 68ch measure. `u-lede` — 52ch, for section intros.
 
 Sentence case for headings and buttons. UPPERCASE only for `u-micro`.
+
+### Leading — the v4 scale
+
+| Utility             | Value | Role                                                                                                   |
+| ------------------- | ----- | ------------------------------------------------------------------------------------------------------ |
+| `leading-hero`      | 0.95  | `text-hero`                                                                                            |
+| `leading-h1`        | 1.02  | `text-h1`                                                                                              |
+| `leading-h2`        | 1.08  | `text-h2`                                                                                              |
+| `leading-h3`        | 1.15  | `text-h3`                                                                                              |
+| `leading-body`      | 1.65  | the `body` default — inherit it, don't restate it                                                      |
+| `leading-longform`  | 1.8   | a full page of prose: terms, privacy, a journal post, a rich-text block                                |
+| `leading-statement` | 1.35  | display-scale type set as a paragraph to **read** — an excerpt, a lede, a pull-quote. Never a heading. |
+
+**Never write `leading-[…]` for one of those seven values.** They render
+identically, so no gate but `type-scale.test.ts` would ever notice, and the
+literal is what the next heading copies.
+
+**Leading follows the size it is applied to.** Three components pinned one value
+across two or three sizes (`SectionHeading`, the PDP's `h1` that steps down a
+scale on a long imported title, the portfolio tile) — a flat rhythm dressed as a
+system. Where a component picks its size at runtime, it picks the leading in the
+same expression.
+
+Exactly **one** raw literal survives in `src/`, and it is an exception with a
+reason rather than a leftover: `studio/page-header.tsx`. The storefront's 1.15
+is an editorial value, and Part 12 asks the Studio for a _functional
+counterpoint_ — every panel screen opens with that line directly above a dense
+table, where 1.15 costs a row. (The Studio's login card has no table under it
+and takes `leading-h3` like any other heading; density is the distinction, not
+the route tree.) A Studio leading scale is **A7**'s to define.
+`type-scale.test.ts` asserts the survivor is that file, so the budget cannot
+quietly move to a storefront hero.
+
+Tailwind's own `leading-relaxed`/`snug`/`tight`/`none` are untouched and stay
+available; the Studio is built on them.
+
+### Surveyed and deliberately NOT tokenised
+
+Recorded so the next pass does not re-open them:
+
+- **Aspect ratios** (`aspect-[4/5]` ×33, `[4/3]` ×27, `[16/10]` ×7, `[3/4]` ×4).
+  71 literals, but no drift — 4/5 is always 4/5, and the ratio a slot crops to
+  already lives in `site-images.ts`. A name would add a lookup and remove
+  nothing.
+- **Headline measures** (`max-w-[14ch]` … `max-w-[20ch]`). Sixteen values, but a
+  measure is chosen against the length of the actual headline; collapsing them
+  would be a redesign, not a rename. `u-prose` (68ch) and `u-lede` (52ch) remain
+  the only two named measures.
+- **Tracking** (`tracking-[0.08em]` … `[0.22em]`, 17 literals). The natural
+  names — `wide`, `wider`, `widest` — are Tailwind built-ins with 14 call sites
+  here, so tokenising means either colliding or inventing worse names. Not worth
+  it for 17 sites.
+- **State and elevation tokens** for the primitives (A3). Surveyed: the repo has
+  two `color-mix` call sites in total and no `animate-pulse` in the storefront
+  skeletons. There is no repetition to name yet.
 
 ## 4. Layout
 
@@ -146,7 +201,17 @@ state) · `duration-(--dur-fast|--dur-base|--dur-slow|--dur-reveal)`.
   1px hairlines. **No shimmer.** Never a spinner where a skeleton will do.
 - **Focus** — 2px sapphire ring at 3px offset (champagne inside dark bands),
   never removed.
-- **Disabled** — 40% opacity + a stated reason.
+- **Disabled** — 40% opacity + a stated reason. **Both halves are now
+  enforced.** The opacity had drifted to three values across 27 declarations —
+  16 of them at shadcn's default 50% in the vendored `ui/*` primitives, which
+  nobody chose, so a disabled control in the Studio's draft bar sat at 50% next
+  to one on the board at 40%. `disabled-state.test.ts` fails on any opacity
+  utility whose variant mentions a disabled state and is not 40, whichever
+  spelling it uses (`disabled:`, `aria-disabled:`, `peer-disabled:`,
+  `data-[disabled]:`, `group-data-[disabled=true]:`) — so the next primitive
+  vendored in at 50% fails rather than lands. The reason half was already held:
+  `Button` takes a `reason`, and the one disabled `<Button>` on the storefront
+  carries it.
 - **Success** — explicit confirmation, `role="status"`.
 
 An accordion, tab or panel **with no content must not render.**

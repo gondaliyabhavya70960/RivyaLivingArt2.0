@@ -180,7 +180,7 @@ export default async function ProcessPage({
           <h1
             id="process-heading"
             style={{ "--i": 1 } as CSSProperties}
-            className="sf-hero-rise max-w-[12ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="sf-hero-rise max-w-[12ch] font-display text-hero leading-hero tracking-display text-mineral"
           >
             {t("hero.headline")}
           </h1>
@@ -233,7 +233,7 @@ export default async function ProcessPage({
 
                   <div className="flex flex-col gap-4 lg:col-span-6 lg:col-start-7 lg:min-h-[64svh] lg:justify-center">
                     <p className="u-micro">{number}</p>
-                    <h3 className="font-display text-h3 leading-[1.15] text-ink">
+                    <h3 className="font-display text-h3 leading-h3 text-ink">
                       {t(`timeline.${step.key}Title`)}
                     </h3>
                     <p className="u-prose font-body text-body leading-relaxed text-graphite">
@@ -301,7 +301,7 @@ export default async function ProcessPage({
                 className="flex flex-col gap-4 border-t border-hairline pt-8"
               >
                 <p className="u-micro">{t(`timelines.${band.key}Title`)}</p>
-                <p className="font-display text-h2 leading-[1.05] tracking-display text-ink">
+                <p className="font-display text-h2 leading-h2 tracking-display text-ink">
                   <span className="u-num">{band.value}</span>
                 </p>
                 <p className="u-prose font-body text-body leading-relaxed text-graphite">
@@ -343,7 +343,7 @@ export default async function ProcessPage({
         <div className="u-shell flex flex-col gap-8">
           <h2
             id="process-cta-heading"
-            className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
+            className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display"
           >
             {t("cta.heading")}
           </h2>

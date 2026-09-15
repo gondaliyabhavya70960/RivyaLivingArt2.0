@@ -363,7 +363,7 @@ export default async function ShopPage({
           />
           <h1
             id="shop-heading"
-            className="font-display text-h1 leading-[1.04] tracking-display text-ink"
+            className="font-display text-h1 leading-h1 tracking-display text-ink"
           >
             {t("collectionTitle")}
           </h1>
@@ -483,7 +483,7 @@ export default async function ShopPage({
               />
               <div className="flex flex-col gap-4 md:col-span-6 md:col-start-7">
                 <Eyebrow>{t("editorialBreak.eyebrow")}</Eyebrow>
-                <p className="max-w-[20ch] font-display text-h3 leading-[1.12] tracking-display text-ink">
+                <p className="max-w-[20ch] font-display text-h3 leading-h3 tracking-display text-ink">
                   {t("editorialBreak.heading")}
                 </p>
                 <p className="u-lede font-body text-small text-graphite">

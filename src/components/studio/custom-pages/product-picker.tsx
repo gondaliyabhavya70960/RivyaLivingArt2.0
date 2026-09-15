@@ -240,7 +240,7 @@ export function ProductPicker({
                       type="button"
                       disabled={already}
                       onClick={() => add(r.slug)}
-                      className="flex w-full items-center gap-2 rounded p-1 text-start hover:bg-muted disabled:opacity-50"
+                      className="flex w-full items-center gap-2 rounded p-1 text-start hover:bg-muted disabled:opacity-40"
                     >
                       {r.image ? (
                         <span className="relative size-10 shrink-0 overflow-hidden rounded">

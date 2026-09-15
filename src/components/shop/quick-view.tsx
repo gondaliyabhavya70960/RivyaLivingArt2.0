@@ -106,7 +106,7 @@ export function QuickView({
           {item.categoryName ? (
             <p className="u-micro">{item.categoryName}</p>
           ) : null}
-          <h2 className="font-display text-h3 leading-[1.1] tracking-display text-ink">
+          <h2 className="font-display text-h3 leading-h3 tracking-display text-ink">
             {item.displayTitle}
           </h2>
           <p className="u-num text-18 text-ink">{priceLabel}</p>

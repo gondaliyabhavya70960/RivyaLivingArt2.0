@@ -1276,7 +1276,7 @@ function CollectionSlugPicker({
                   "inline-flex h-9 items-center rounded-full border px-3 text-small transition-colors",
                   already
                     ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border text-muted-foreground hover:text-foreground disabled:opacity-50",
+                    : "border-border text-muted-foreground hover:text-foreground disabled:opacity-40",
                 )}
               >
                 {option.name}

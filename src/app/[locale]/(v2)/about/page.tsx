@@ -277,7 +277,7 @@ export default async function AboutPage({
           </Eyebrow>
           <h1
             id="about-heading"
-            className="max-w-[14ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="max-w-[14ch] font-display text-hero leading-hero tracking-display text-mineral"
           >
             {t("hero.headline")}
           </h1>
@@ -322,7 +322,7 @@ export default async function AboutPage({
                           headings, campaign statements and pull-quotes, not for
                           four paragraphs of body copy at display contrast. "Large"
                           is delivered by size, measure and leading instead. */}
-                    <p className="u-prose font-body text-20 leading-[1.7] text-ink">
+                    <p className="u-prose font-body text-20 leading-longform text-ink">
                       {chapter.body}
                     </p>
 
@@ -379,7 +379,7 @@ export default async function AboutPage({
               <Eyebrow>{t("chapterLabels.maker")}</Eyebrow>
               <h2
                 id="maker-heading"
-                className="font-display text-h2 leading-[1.05] tracking-display"
+                className="font-display text-h2 leading-h2 tracking-display"
               >
                 {t("maker.name")}
               </h2>
@@ -485,7 +485,7 @@ export default async function AboutPage({
         <div className="u-shell flex flex-col gap-8">
           <h2
             id="about-cta-heading"
-            className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display"
+            className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display"
           >
             {t("cta.heading")}
           </h2>

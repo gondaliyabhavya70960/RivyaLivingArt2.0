@@ -218,7 +218,7 @@ export function NewsletterSignup({
       className={cn("grid gap-8 lg:grid-cols-12 lg:items-start", className)}
     >
       <div className="flex flex-col gap-4 lg:col-span-6">
-        <h2 className="max-w-[16ch] font-display text-h2 leading-[1.06] tracking-display text-ink in-data-[theme=navy]:text-mineral">
+        <h2 className="max-w-[16ch] font-display text-h2 leading-h2 tracking-display text-ink in-data-[theme=navy]:text-mineral">
           {t("heading")}
         </h2>
         <p className="u-lede font-body text-body text-graphite in-data-[theme=navy]:text-mist">
@@ -230,7 +230,7 @@ export function NewsletterSignup({
           <div className="flex flex-col gap-3">
             <p
               role="status"
-              className="font-display text-h3 leading-[1.15] text-ink in-data-[theme=navy]:text-mineral"
+              className="font-display text-h3 leading-h3 text-ink in-data-[theme=navy]:text-mineral"
             >
               {confirmation}
             </p>

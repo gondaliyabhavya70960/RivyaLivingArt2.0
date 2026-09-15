@@ -288,7 +288,7 @@ export function PourCureShowcase({
           </p>
           <h2
             id={headingId ?? "showcase-heading-static"}
-            className="mt-4 max-w-xl font-display text-h2 leading-[1.08] tracking-display text-mineral"
+            className="mt-4 max-w-xl font-display text-h2 leading-h2 tracking-display text-mineral"
           >
             {heading}
           </h2>
@@ -361,7 +361,7 @@ export function PourCureShowcase({
             </p>
             <h2
               id={headingId ?? "showcase-heading"}
-              className="mt-4 max-w-xl font-display text-h2 leading-[1.08] tracking-display text-mineral"
+              className="mt-4 max-w-xl font-display text-h2 leading-h2 tracking-display text-mineral"
             >
               {heading}
             </h2>

@@ -56,7 +56,7 @@ export function LocalDraftBar({
           type="button"
           onClick={onRestore}
           disabled={disabled}
-          className="inline-flex min-h-11 items-center rounded-input font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-50 disabled:hover:no-underline"
+          className="inline-flex min-h-11 items-center rounded-input font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-40 disabled:hover:no-underline"
         >
           Restore
         </button>
@@ -64,7 +64,7 @@ export function LocalDraftBar({
           type="button"
           onClick={onDiscard}
           disabled={disabled}
-          className="inline-flex min-h-11 items-center rounded-input text-graphite underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-50 disabled:hover:no-underline"
+          className="inline-flex min-h-11 items-center rounded-input text-graphite underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-40 disabled:hover:no-underline"
         >
           Discard
         </button>

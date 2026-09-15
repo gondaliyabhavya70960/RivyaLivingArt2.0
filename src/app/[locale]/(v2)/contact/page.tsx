@@ -160,7 +160,7 @@ export default async function ContactPage({
             </Eyebrow>
             <h1
               id="contact-heading"
-              className="max-w-[16ch] font-display text-h1 leading-[1.04] tracking-display text-mineral"
+              className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display text-mineral"
             >
               {t("heroHeadline")}
             </h1>
@@ -197,7 +197,7 @@ export default async function ContactPage({
                 <span aria-hidden>·</span>
                 <span className="text-graphite">{t("whatsappMeta")}</span>
               </p>
-              <p className="font-display text-h2 leading-[1.06] tracking-display text-ink">
+              <p className="font-display text-h2 leading-h2 tracking-display text-ink">
                 {t("whatsappHeadline")}
               </p>
               <p className="u-prose font-body text-body leading-relaxed text-graphite">

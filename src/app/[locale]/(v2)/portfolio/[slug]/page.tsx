@@ -590,7 +590,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
 
           <h1
             id="case-heading"
-            className="max-w-[16ch] font-display text-h1 leading-[1.02] tracking-display text-mineral"
+            className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display text-mineral"
           >
             {lp.title}
           </h1>
@@ -613,7 +613,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             <Eyebrow>{t("eyebrowStory")}</Eyebrow>
             <h2
               id="story-heading"
-              className="font-display text-h2 leading-[1.08] tracking-display text-balance"
+              className="font-display text-h2 leading-h2 tracking-display text-balance"
             >
               {t("storyHeading")}
             </h2>
@@ -673,7 +673,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             {briefParagraphs.map((paragraph, i) => (
               <p
                 key={i}
-                className="u-prose font-display text-h3 leading-[1.35] whitespace-pre-line text-ink"
+                className="u-prose font-display text-h3 leading-statement whitespace-pre-line text-ink"
               >
                 {paragraph}
               </p>
@@ -700,7 +700,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             </Eyebrow>
             <h2
               id="material-heading"
-              className="max-w-[18ch] font-display text-h2 leading-[1.08] tracking-display text-mineral"
+              className="max-w-[18ch] font-display text-h2 leading-h2 tracking-display text-mineral"
             >
               {material}
             </h2>
@@ -783,7 +783,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 <figcaption className="u-micro">
                   {t("caseStudy.clientHeading")}
                 </figcaption>
-                <blockquote className="u-prose font-display text-h3 leading-[1.35] whitespace-pre-line text-ink">
+                <blockquote className="u-prose font-display text-h3 leading-statement whitespace-pre-line text-ink">
                   {clientNote}
                 </blockquote>
               </figure>

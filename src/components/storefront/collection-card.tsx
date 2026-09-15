@@ -94,7 +94,7 @@ export function CollectionCard({
           className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-5 md:p-6"
         >
           <p className="u-micro text-champagne">{name}</p>
-          <h3 className="font-display text-h3 leading-[1.1] text-mineral">
+          <h3 className="font-display text-h3 leading-h3 text-mineral">
             <Link
               href={href}
               className="inline-flex items-baseline gap-2 outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
