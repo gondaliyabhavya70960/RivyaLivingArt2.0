@@ -12,8 +12,8 @@ import { toast } from "sonner";
 
 import {
   continueScrapeJob,
-  type ScrapeJobSnapshot,
 } from "@/actions/scraper-jobs";
+import type { ScrapeJobSnapshot } from "@/lib/scraper/job-runner";
 
 /**
  * The scrape runner as one module-scoped store, shared by every screen under

@@ -120,6 +120,26 @@ the dashboard, walk to a source's own page, and it is still running when you
 get there — the loop used to die with whichever component started it. A
 `beforeunload` guard warns while a run is active.
 
+### …and it survives the tab closing (B1, 2026-09-15)
+
+It did not used to. That poll loop was the ONLY caller of `continueScrapeJob`,
+so a job advanced only while somebody had the scraper page open: close the
+laptop mid-source and the crawl stopped there. `cursorPage` made it resumable
+and nothing resumed it.
+
+`/api/cron/scrape-drain` (every 10 minutes, `vercel.json`) now drives the same
+advance server-side. The logic moved out of the `"use server"` action into
+`src/lib/scraper/job-runner.ts` — **an export of a `"use server"` module is a
+callable server action**, so a session-free `advanceScrapeJob` could not live
+beside `continueScrapeJob` without becoming an unauthenticated "crawl this site
+for me" endpoint. The action and the route each authorize for themselves; the
+route takes the cron's `Bearer CRON_SECRET` or a staff session.
+
+**It only touches jobs nobody is driving** — heartbeat idle for two minutes —
+and never demo rows. The per-page compare-and-swap on `cursorPage` already
+makes concurrent advances SAFE; the idle rule is about politeness, since what
+a CAS cannot undo is the HTTP request already sent to a supplier.
+
 ### The circuit breaker
 
 Five consecutive failed jobs pauses a source. A paused source refuses new jobs

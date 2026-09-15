@@ -1,6 +1,16 @@
 {
   "crons": [
-    { "path": "/api/cron/mirror-images", "schedule": "30 2 * * *" },
-    { "path": "/api/cron/publish-scheduled", "schedule": "0 * * * *" }
+    {
+      "path": "/api/cron/mirror-images",
+      "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/cron/publish-scheduled",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/scrape-drain",
+      "schedule": "*/10 * * * *"
+    }
   ]
 }
