@@ -5,6 +5,65 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E step 3 — the untiered backlog, made visible and fixable (2026-09-15)
+
+`Product.sizeTier` shipped nullable against a catalogue of ~4,485 rows, so on the day it
+landed the backlog was the entire catalogue. This is the pass that makes it something an
+owner can clear, and it lands **before** anything renders a tier on purpose.
+
+### Four surfaces, one filter value doing the work
+
+- **"No tier yet" is the FIRST option** in the product list's new Product tier filter, not
+  an afterthought at the bottom. A filter that could only select the three tiers would
+  show the owner everything they have already done and nothing they still have to do.
+- **Bulk "Set product tier"**, in the shape of `setProductsCategory` — and deliberately
+  with **no "— none"**. Un-tiering a filtered selection of thousands on one misclick is
+  not a correction anyone asked for; the product form already clears the one row where it
+  is a real one.
+- **A `/studio/content-gaps` card**, counting the whole backlog rather than only published
+  rows, linking straight to `?sizeTier=NONE&status=ALL`.
+- **A Product tier column** beside the renamed Import tier one, showing `No tier yet` as a
+  badge rather than a dash — a row that reads "—" looks finished.
+
+### `sizeTier: null` could not ride the truthiness pattern
+
+Every other clause in `buildProductWhere` is `...(filter.x ? { x } : {})`. `null` is a
+real clause and a falsy value, so a "NONE" that fell through to that branch would apply
+**no filter at all** — showing the whole catalogue and calling it the backlog. It is
+matched first, and `product-filter.test.ts` pins it. **Verified by mutation**: replacing
+the branch with the naive one-liner fails two of its eight tests.
+
+### Both writers the Studio guard cannot reach
+
+A `product_tier` column on the Bulk Import template **and** the matching column on the
+confirmed export — both or neither, so a file can be exported, edited in a spreadsheet and
+re-imported without losing the tier. `parseSizeTierCell` accepts the short word (`LARGE`)
+as well as the enum name, because the person filling this column in is in a spreadsheet
+and `MEDIUM_FORMAT` is a database identifier leaking into an owner's tool. An **empty cell
+means "no opinion"** and is omitted from the write, exactly as `in_stock` already behaves,
+so re-importing an older export never un-tiers a product the owner filed in the studio.
+
+### The table ran out of room, and the gate caught it
+
+A twelfth column pushed `/studio/products` to **1450px in a 1440px viewport** and
+`studio-audit.mjs` failed the route — measured, not predicted. Two fixes, both kept: the
+column renders a one-word label (`Collectible` · `Memory` · `Personal`, full name in the
+`title`) rather than the four-word customer name, and the two tier columns take `pe-2`
+where every other column takes `pe-4`. That is 16px against a 10px deficit. A thirteenth
+column needs a real answer — a default-hidden column, or moving the scroll region past
+`xl` — and the comment at the call site says so, because this margin is now spent.
+
+### Verified
+
+typecheck · lint · **863 unit tests** (14 new across two files) · 51 db tests ·
+copy:check · a real build · `studio-audit.mjs` clean at 1440 **and** 390 across 39 routes ·
+`test:e2e` **36/36**. Then driven by hand against the built server: the content-gaps card
+and its deep link, the filter reading "No tier yet" over 50 backlog rows, the bulk control
+offering exactly three tiers, the toast reading "Filed 2 products under Memory &
+Celebration Art", and those two rows appearing under the MEDIUM filter afterwards.
+
+---
+
 ## Workstream E step 2 — `Product.sizeTier`, and the studio control that writes it (2026-09-15)
 
 The owner's three-tier product architecture gets its column. Additive migration, a

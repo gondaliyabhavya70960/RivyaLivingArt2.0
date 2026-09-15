@@ -54,6 +54,13 @@ export default async function ContentGapsPage() {
       orderBy: { createdAt: "desc" },
       select: { id: true, title: true },
     }),
+    noSizeTier: db.product.count({ where: { sizeTier: null } }),
+    noSizeTierSamples: db.product.findMany({
+      where: { sizeTier: null },
+      take: SAMPLE_TAKE,
+      orderBy: { updatedAt: "desc" },
+      select: { id: true, title: true },
+    }),
     noImages: db.product.count({
       where: { ...published, images: { none: {} } },
     }),
@@ -146,6 +153,8 @@ export default async function ContentGapsPage() {
     noDescriptionSamples,
     noImages,
     noImagesSamples,
+    noSizeTier,
+    noSizeTierSamples,
     needsRewrite,
     needsRewriteSamples,
     longTitleNoDisplay,
@@ -179,6 +188,15 @@ export default async function ContentGapsPage() {
     }));
 
   const gaps: Gap[] = [
+    {
+      key: "size-tier",
+      title: "Products with no product tier",
+      why: "Every piece belongs to one of the three worlds — collectible, memory or personal — and the tier decides how it is presented and where it is found. A draft cannot be published without one. NOT filtered to published rows: the point of this card is the whole backlog.",
+      count: noSizeTier,
+      href: "/studio/products?sizeTier=NONE&status=ALL",
+      hrefLabel: "Products with no tier",
+      samples: productSamples(noSizeTierSamples),
+    },
     {
       key: "descriptions",
       title: "Products without a description",

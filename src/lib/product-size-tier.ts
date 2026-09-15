@@ -1,5 +1,10 @@
 import type { ContentStatus, ProductSizeTier } from "@/generated/prisma/enums";
 
+/** Re-exported so a consumer can name the type without reaching for the
+ *  generated client — `export/confirmed.ts` is pure by contract. Type-only,
+ *  so it erases at compile and adds no runtime edge. */
+export type { ProductSizeTier };
+
 /**
  * THE OWNER'S THREE-TIER PRODUCT ARCHITECTURE.
  * docs/plan/07-three-tier-architecture.md — supplied 2026-09-15, in force.
@@ -37,6 +42,21 @@ export const SIZE_TIER_NAME: Record<ProductSizeTier, string> = {
   LARGE_FORMAT: "Collectible Furniture & Spatial Art",
   MEDIUM_FORMAT: "Memory & Celebration Art",
   SMALL_FORMAT: "Personal Art & Gifting",
+};
+
+/**
+ * One word per tier, for a dense table cell.
+ *
+ * `SIZE_TIER_NAME` is four words long and the studio's product list already
+ * runs to the edge of 1440px — adding the full name as a column pushed it to
+ * 1450 and the studio audit failed the route. A list cell is not where a
+ * customer-facing name earns its keep; the form, the filter and the bulk
+ * control all carry the full one.
+ */
+export const SIZE_TIER_SHORT: Record<ProductSizeTier, string> = {
+  LARGE_FORMAT: "Collectible",
+  MEDIUM_FORMAT: "Memory",
+  SMALL_FORMAT: "Personal",
 };
 
 /** The work each tier covers, for the studio's field hint. */
@@ -119,3 +139,36 @@ export function describeSizeTierPublishProblem(input: {
   if (input.currentStatus === "PUBLISHED") return null;
   return "Pick a product tier before publishing — collectible, memory or personal. It decides how this piece is presented and how it is found.";
 }
+
+/**
+ * A spreadsheet cell → a tier, for Bulk Import.
+ *
+ * ACCEPTS THE SHORT WORD AS WELL AS THE ENUM NAME, case-insensitively, and
+ * that is not laxness: the person filling this column is typing into a
+ * spreadsheet, and `MEDIUM_FORMAT` is a database identifier leaking into an
+ * owner's tool. "Large", "medium", "small" are the words the brief itself
+ * uses. Anything else returns null and the validator reports the row rather
+ * than guessing — the same shape as `parseBool`, which the importer already
+ * reads this way.
+ *
+ * An EMPTY cell also returns null. The importer distinguishes them by
+ * checking the raw string first, exactly as it does for `in_stock`: empty
+ * means "no opinion", so an update never clobbers a tier the owner set in
+ * the studio.
+ */
+export function parseSizeTierCell(
+  raw: string | null | undefined,
+): ProductSizeTier | null {
+  const value = raw?.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  if (!value) return null;
+  for (const tier of PRODUCT_SIZE_TIERS) {
+    if (value === tier || value === tier.replace("_FORMAT", "")) return tier;
+  }
+  return null;
+}
+
+/** The accepted spellings, for the importer's error message and its docs. */
+export const SIZE_TIER_CELL_VALUES = PRODUCT_SIZE_TIERS.flatMap((tier) => [
+  tier.replace("_FORMAT", ""),
+  tier,
+]).join(", ");

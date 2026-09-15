@@ -220,10 +220,28 @@ without the thing that writes it.
    Two selects on one page both called "Tier" is a question an owner should
    never have to answer twice.
 3. **Make the untiered backlog visible and bulk-fixable, before anything renders
-   it.** A `sizeTier` filter with an explicit "No tier yet" option on the product
-   list, a bulk action in the shape of `setProductsCategory`, a
-   `/studio/content-gaps` card — plus the two writers the Studio guard cannot
-   reach: a Bulk Import column and the matching export column, both or neither.
+   it** — done, 2026-09-15. A `sizeTier` filter whose FIRST option is
+   "No tier yet" (the backlog is the default state of a catalogue this column
+   arrived after, so a filter that could only select the three tiers would show
+   the owner everything already done and nothing left to do); a bulk
+   **Set product tier** in the shape of `setProductsCategory`, deliberately with
+   no "— none" (un-tiering thousands of rows on one misclick is not a
+   correction anyone asked for, and the product form clears the one row where
+   it is); a `/studio/content-gaps` card counting the whole backlog, not just
+   published rows, linking straight to `?sizeTier=NONE&status=ALL`; a
+   **Product tier** column beside the renamed **Import tier** one.
+
+   And the two writers the Studio guard cannot reach, both: a `product_tier`
+   Bulk Import column and the matching export column. `parseSizeTierCell` takes
+   the short word as well as the enum name, because the person filling it in is
+   in a spreadsheet and `MEDIUM_FORMAT` is a database identifier. An EMPTY cell
+   means "no opinion" and is omitted from the write — the same rule `in_stock`
+   already follows — so re-importing an older export never un-tiers a product.
+
+   **This is where the table ran out of room.** A twelfth column pushed
+   `/studio/products` to 1450px in a 1440px viewport and the studio audit
+   failed the route. Eight pixels off each tier column's trailing padding is
+   the whole margin; a thirteenth column needs a real answer, not more shaving.
 4. **Demo fixtures.** `sizeTier` across all 100 rows of
    `prisma/fixtures/demo/products.json` and the zod shape in `demo/fixtures.ts`,
    spread so at least a LARGE and a SMALL land on audited demo detail routes.

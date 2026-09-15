@@ -25,13 +25,17 @@ Done in workstream E:     step 0 (docs — this block, docs/plan/README.md, AGEN
                           Product.tier control relabelled "Import tier"). Before all of it: the
                           registry was emptied from 115 sources to the owner's own 8 (PRs #76,
                           #77).
-Next Exact Task:          step 3 — make the untiered backlog visible and bulk-fixable BEFORE
-                          anything renders a tier. A sizeTier filter on the product list with an
-                          explicit "No tier yet" option, a bulk action in the shape of
-                          setProductsCategory, a /studio/content-gaps card, and the two writers
-                          the studio guard cannot reach: a Bulk Import column and the matching
-                          export column, both or neither. Then step 4 (demo fixtures, BEFORE any
-                          component, or every variant ships unseen by every CI gate).
+                          Step 3 too: the "No tier yet" filter, the bulk Set product tier, the
+                          content-gaps card, the Product tier column, and the product_tier
+                          columns on Bulk Import and the confirmed export.
+Next Exact Task:          step 4 — demo fixtures. sizeTier across all 100 rows of
+                          prisma/fixtures/demo/products.json and the zod shape in
+                          src/lib/demo/fixtures.ts, spread so at least a LARGE and a SMALL land
+                          on the audited demo detail routes. BEFORE any component: the five demo
+                          detail routes are what CI sweeps, so a tier variant with no demo row
+                          carrying that tier ships unseen by every gate. Then step 5 (copy, nine
+                          locales, one nested block, before any component for the same reason
+                          i18n-missing --stale exists).
 Open owner actions:       (1) /studio/scraper/sources — the three "Remove all resin goods /
                           supplies / 3d print" buttons; 107 de-seeded sources are still live DB
                           rows, because applySeedSources only upserts and a deploy that silently

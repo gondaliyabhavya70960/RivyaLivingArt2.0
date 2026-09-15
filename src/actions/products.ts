@@ -7,6 +7,7 @@ import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 import {
   describeSizeTierPublishProblem,
   PRODUCT_SIZE_TIERS,
+  SIZE_TIER_NAME,
 } from "@/lib/product-size-tier";
 import { db } from "@/lib/db";
 import { CATALOG_NAV_TAG } from "@/lib/catalog-nav";
@@ -734,6 +735,59 @@ export async function setProductsCategory(
     revalidateTag(CATALOG_NAV_TAG, "max");
     revalidateTag(SHOP_FIRST_PAGE_TAG, "max");
     // (re-filing products changes the mega-menu per-category counts).
+    return { updated };
+  });
+}
+
+/**
+ * Bulk "Set product tier" — the tool that makes the size taxonomy reachable
+ * on a catalogue that already has ~4,385 rows in it.
+ *
+ * THE FORM ALONE WOULD NOT HAVE BEEN ENOUGH. `Product.sizeTier` shipped
+ * nullable because three writers create products without passing the studio
+ * form, so the backlog is not an edge case — on the day the column landed it
+ * was the entire catalogue. Tiering it one product at a time is not a job an
+ * owner does; pairing this with the list's "No tier yet" filter is what turns
+ * it into one pass per tier.
+ *
+ * Deliberately NOT clearable. A "— none" option here would let one misclick
+ * un-tier a filtered selection of thousands, and the single-product form
+ * already offers it for the one row where it is a real correction.
+ */
+export async function setProductsSizeTier(
+  target: BulkProductTarget,
+  sizeTier: string,
+): Promise<ActionResult<{ updated: number }>> {
+  const session = await requireStaff();
+
+  const parsedTier = z.enum(PRODUCT_SIZE_TIERS).safeParse(sizeTier);
+  if (!parsedTier.success) {
+    return { ok: false, error: "Invalid request." };
+  }
+  const resolved = await resolveTargetIds(target);
+  if ("error" in resolved) return { ok: false, error: resolved.error };
+
+  return runAction(async () => {
+    const { count: updated } = await db.product.updateMany({
+      where: { id: { in: resolved.ids } },
+      data: { sizeTier: parsedTier.data },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "bulk-size-tier",
+      entity: "Product",
+      meta: {
+        count: updated,
+        sizeTier: parsedTier.data,
+        sizeTierName: SIZE_TIER_NAME[parsedTier.data],
+      },
+    });
+
+    revalidatePath("/studio/products");
+    // No public reader branches on `sizeTier` yet — the storefront variants are
+    // later steps of docs/plan/07. When the first one ships, the PDP and shop
+    // invalidations that `setProductsCategory` performs belong here too.
     return { updated };
   });
 }
