@@ -143,6 +143,23 @@ function mapProduct(item: WooProduct, ctx: AdapterContext): RichProduct | null {
       tags: termNames(item.tags),
       attributes: attributeMap,
     },
+    // The Store API gives a range, not a variant list, so a ranged product
+    // becomes TWO rows — its floor and its ceiling — rather than one made-up
+    // midpoint. A single price is one implicit variant. Either way a product
+    // with no parseable price keeps a NULL, which is what QUOTE_ONLY reads
+    // (phase 6b).
+    variants:
+      priceMin !== undefined && priceMax !== undefined && priceMin !== priceMax
+        ? [
+            { label: "from", priceMajor: priceMin, available: item.is_in_stock },
+            { label: "to", priceMajor: priceMax, available: item.is_in_stock },
+          ]
+        : [
+            {
+              priceMajor: priceMin ?? null,
+              available: item.is_in_stock,
+            },
+          ],
   };
 }
 

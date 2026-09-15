@@ -28,6 +28,10 @@ const PAGE_SIZE = 250;
 const STRUCTURAL_STATUS = new Set([401, 403, 404, 410]);
 
 type ShopifyVariant = {
+  title?: string;
+  option1?: string | null;
+  option2?: string | null;
+  option3?: string | null;
   price?: string | number;
   available?: boolean;
 };
@@ -90,6 +94,25 @@ function mapProduct(
       productType: p.product_type,
       tags: p.tags,
     },
+    // The options behind priceMin/priceMax, which this adapter has always
+    // parsed and always thrown away (phase 6b). A variant whose price does
+    // not parse keeps a NULL rather than being dropped — "this option exists
+    // and has no published price" is the fact QUOTE_ONLY is derived from.
+    variants: variants.map((v) => {
+      const parsed = Number.parseFloat(String(v?.price));
+      const options: Record<string, string> = {};
+      for (const opt of [v?.option1, v?.option2, v?.option3]) {
+        if (typeof opt === "string" && opt.trim()) {
+          options[`option${Object.keys(options).length + 1}`] = opt.trim();
+        }
+      }
+      return {
+        label: typeof v?.title === "string" ? v.title : undefined,
+        options: Object.keys(options).length ? options : undefined,
+        priceMajor: Number.isFinite(parsed) ? parsed : null,
+        available: typeof v?.available === "boolean" ? v.available : undefined,
+      };
+    }),
   };
 }
 

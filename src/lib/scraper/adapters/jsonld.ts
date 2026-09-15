@@ -159,6 +159,13 @@ function mapProduct(
         : undefined,
     priceMin: prices.length ? Math.round(Math.min(...prices)) : undefined,
     priceMax: prices.length ? Math.round(Math.max(...prices)) : undefined,
+    // One row per offer the markup published; a page with no parseable offer
+    // still yields one variant carrying NULL, because "this product exists
+    // and names no price" is the fact QUOTE_ONLY is derived from and is the
+    // common shape for a bespoke studio (phase 6b).
+    variants: prices.length
+      ? prices.map((value) => ({ priceMajor: value }))
+      : [{ priceMajor: null }],
     showPrice: true,
     // No availability markup at all → assume purchasable rather than OOS.
     status: availability
