@@ -5,6 +5,77 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E step 0 — the three-tier product architecture, made findable (2026-09-15)
+
+The owner's product architecture — **Collectible Furniture & Spatial Art** · **Memory &
+Celebration Art** · **Personal Art & Gifting**, three customer intents rather than three
+filters — was written to `docs/plan/07-three-tier-architecture.md` and referenced from
+`CLAUDE.md`, and from nowhere else. This entry is the docs half of the owner's
+instruction to put it "in md and all also and in all main and primary place".
+
+### It was unreachable from every entry point but one
+
+Measured, not assumed. `docs/plan/README.md` — the index of the workstreams — contained
+zero occurrences of `07` or `three-tier`. `AGENTS.md`, `README.md` and `PROJECT_STATE.md`
+contained zero occurrences of `docs/plan` at all. An agent or a person following the
+repo's own "read these, in this order" table would never arrive at the document that
+governs what a product card is.
+
+So the architecture now appears in four places that a session actually opens:
+
+- **`docs/plan/README.md`** — workstream **E**, with the "not three filters" warning in
+  the index itself, and phase 9 in the sequence table.
+- **`AGENTS.md`** — a section immediately under the HARD RULES, with the tier table, the
+  three-columns-named-tier trap and the eleven recorded conflicts; plus two new rows in
+  the reading table.
+- **`README.md`** — the documentation table, and the "Website Structure" section, which
+  described the site's shape without it.
+- **`PROJECT_STATE.md`** — a current SESSION CHECKPOINT. The one that was there said
+  **"Next Exact Task: none from the plan"** and was dated 2026-09-04. It is kept, marked
+  superseded, and not rewritten: a dated record that gets edited stops being evidence
+  (D24).
+
+### The correction that made this step necessary
+
+An earlier draft of 07's own sequence said step 2 was *"`Product.tier` as the three-value
+taxonomy"*. **That column is taken and it means something else**: `schema.prisma:113`
+declares `tier Int?` — the owner-sheet import tier (1 owner · 2 resin goods · 3 supplies ·
+4 3D-print) — indexed as `@@index([tier, status])`, written by `tier-fill.ts` from
+`data/tiers/*.csv.gz`, and read by `shop.ts:189`'s DEFAULT SORT, `search-query.ts`'s group
+ranking, `groupForTier`, the Bulk Import validator, the confirmed-products export and the
+demo fixtures' zod shape.
+
+Retyping it is a rename of an indexed integer column that live queries sort on — which
+`CLAUDE.md` classes as unsafe, and which would reach production **on push**, not on merge.
+The size taxonomy therefore lands on a new nullable enum column, **`Product.sizeTier`**.
+`tier` is where a product came from; `sizeTier` is what it is; `ScrapeSource.tier` is which
+supplier list we went looking in. All three are now named and distinguished in `CLAUDE.md`,
+because three columns called "tier" is the trap that costs the next reader a day.
+
+### Eleven conflicts recorded rather than resolved quietly
+
+T1 — Tier 03's "Add to Cart / Checkout" — is **resolved**: Part 0 wins, and Tier 03 is
+fast WhatsApp ordering, not fast checkout. T2–T11 are open questions in 07's own table:
+the header nav's four items (REDESIGN.md §5.2 names them and the e2e smoke asserts them by
+label), seven proposed new product fields (§1.1 lists product data first under
+do-not-change), Tier 02's upload flow, a "made-to-order" field that `inStock` already
+means, "price on request" against the PDP's `AggregateOffer` and a hardcoded English
+`"Enquire"` outside next-intl, per-tier photography the asset queue cannot supply, a
+homepage band that would breach §3.1's dark-band rhythm, a "Consultation" CTA the `Inquiry`
+schema cannot record, and a `/collectible-design` route that `/large-resin-art` already is.
+
+Each stops at a question. None is built around.
+
+### Also corrected
+
+`AGENTS.md` said the database was **Neon**. It is Prisma Postgres at `db.prisma.io` — the
+build's own `db-preflight` prints the host on every deploy, and `CLAUDE.md` has said so
+since the migration hazard was written up.
+
+Docs only: no code, no schema, no migration.
+
+---
+
 ## Fix — the site URL an operator pastes is repaired, not refused (2026-09-07)
 
 Production failed on `NEXT_PUBLIC_SITE_URL: Invalid URL`, thrown from `src/lib/env.ts:87` during

@@ -9,6 +9,26 @@ How a competitor's storefront becomes a row you can review.
 
 ---
 
+## Two things called "tier", and a third in the catalogue
+
+Before anything below: `ScrapeSource.tier` (`ScrapeTier`) says **which supplier
+list we went looking in**. `Product.sizeTier` says **what a finished piece is**
+(the owner's three-tier product architecture,
+`docs/plan/07-three-tier-architecture.md`). `Product.tier` is neither — it is the
+owner-sheet import tier, an `Int?` the catalog-fill CSVs write.
+
+`ScrapeTier` carries the three size names — `LARGE_FORMAT`, `MEDIUM_FORMAT`,
+`SMALL_FORMAT` — alongside four retired values (`OWNER`, `RESIN_GOODS`,
+`SUPPLIES`, `PRINT3D`) that existing rows still use. **The size values map to
+NULL in `TIER_NUMBER`** (`src/lib/scraper/purge.ts`) on purpose: that map bridges
+a scrape tier onto `Product.tier`'s integer, and numbering a size tier would make
+a purge delete every product the CSV importer created under that number.
+
+A large-format supplier sells small pieces too, so a source's tier never decides a
+product's. The classifier does — planned in 07 step 6, as a pure suggestion from
+title, description, type, dimensions and category, always overridable, and never
+a publish path of its own.
+
 ## The shape
 
 ```

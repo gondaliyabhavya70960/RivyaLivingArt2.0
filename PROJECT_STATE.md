@@ -7,8 +7,52 @@
 
 ## SESSION CHECKPOINT
 
+```text
+Date:                     2026-09-15
+Current Phase:            docs/plan workstream E — THE THREE-TIER PRODUCT ARCHITECTURE
+                          (docs/plan/07-three-tier-architecture.md, supplied by the owner today
+                          and IN FORCE). Large = Collectible Furniture & Spatial Art · Medium =
+                          Memory & Celebration Art · Small = Personal Art & Gifting: three
+                          customer intents with different price ladders, customization depth and
+                          interface density, sharing one brand language. NOT three filters.
+                          Branch claude/peaceful-cannon-7dck80; main = d9eac25.
+Done in workstream E:     step 0 (docs — this block, docs/plan/README.md, AGENTS.md, README.md);
+                          step 1 (ScrapeTier gained LARGE_FORMAT/MEDIUM_FORMAT/SMALL_FORMAT and
+                          the owner's ten reference sources, PR #78). Before it: the registry was
+                          emptied from 115 sources to the owner's own 8 (PRs #76, #77).
+Next Exact Task:          step 2 — Product.sizeTier. A new nullable enum ProductSizeTier on a NEW
+                          column; `Product.tier` is TAKEN (owner-sheet import tier 1-4, indexed
+                          Int, read by the shop's default sort and nine others) and retyping it
+                          would reach production on push. Hand-write the migration — `prisma
+                          migrate diff` re-proposes dropping the three trgm search indexes. NO
+                          backfill statement. Ship the Studio control in the SAME PR: a column
+                          with no writer is a defect. Refuse on PUBLISH, not on save.
+Open owner actions:       (1) /studio/scraper/sources — the three "Remove all resin goods /
+                          supplies / 3d print" buttons; 107 de-seeded sources are still live DB
+                          rows, because applySeedSources only upserts and a deploy that silently
+                          deleted registry rows would be worse. (2) Actions → "Purge products" →
+                          Run workflow, typing DELETE — the catalogue purge has never actually
+                          run. (3) "Mark reviewed" on any source before a scrape will run: the
+                          policy gate fails closed and every row is PENDING.
+Open decisions (T2-T11):  eleven parts of the brief conflict with Part 0 or REDESIGN.md §1.1.
+                          All eleven are tabled in 07 rather than built around; T2-T11 are still
+                          open questions for the owner — the header nav's four
+                          items, seven proposed product fields, Tier 02's upload flow, a homepage
+                          band that would breach the dark-band rhythm, a CTA the Inquiry schema
+                          cannot record. T1 (Tier 03 "Add to Cart / Checkout") is RESOLVED: Part 0
+                          wins, it is WhatsApp ordering.
+Still open elsewhere:     workstream A's A8 Studio redesign; workstream B's B5-B9.
+```
+
+---
+
+## SESSION CHECKPOINT — 2026-09-04 (superseded, kept as history)
+
 The master prompt's §81 checkpoint (`docs/transformation-audit.md`, `docs/transformation-roadmap.md`).
 Updated at the end of every transformation phase. The narrative sections below it are history.
+**Superseded by the block above** — its "Next Exact Task: none from the plan" was true when it
+was written and is not now. It is not rewritten, because a dated record that gets edited stops
+being evidence (owner decision D24).
 
 ```text
 Current Phase:            Transformation COMPLETE — Phases 1b–17 of the master prompt built on PR #42
