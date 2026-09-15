@@ -52,6 +52,51 @@ const LIBRARIES = [
   { name: "lenis", markers: ["wheelMultiplier", "syncTouch", "virtualScroll"], min: 3 },
 ];
 
+/**
+ * Motion runtimes this project does not ship (owner decision D29).
+ *
+ * The budget is 45 KB gzipped and GSAP + Lenis already spend 49. There is no
+ * room for a second animation runtime, and `motion` alone is ~30 KB — so the
+ * question is not "does it fit" but "which one goes". That is an owner call,
+ * not something a component library decides by being convenient.
+ *
+ * This is checked against package.json rather than the bundle, because the
+ * marker table above only finds a library that is already installed AND whose
+ * minified internals still carry the name guessed for it. Nothing in it looked
+ * for framer-motion — so a new runtime could pass the very gate that exists to
+ * keep it out. A declared dependency is a fact, not a guess, and it fails on
+ * the commit that adds the package rather than on whichever later build
+ * finally grows past the ceiling.
+ *
+ * `three` is deliberately NOT listed. It is installed and it is a motion
+ * library, but it renders the PDP's 3D model behind a demand-loaded viewer
+ * that no other route pays for — an exception the budget was never meant to
+ * cover. Listing it would fail the gate for architecture that is correct.
+ */
+const BANNED_RUNTIMES = [
+  "motion",
+  "framer-motion",
+  "@react-spring/web",
+  "react-spring",
+  "@formkit/auto-animate",
+  "animejs",
+  "popmotion",
+  "react-motion",
+  "@motionone/dom",
+];
+
+/** Banned runtimes that are declared in package.json. Empty is the pass. */
+function bannedDependencies() {
+  const pkg = JSON.parse(
+    readFileSync(join(import.meta.dirname, "..", "package.json"), "utf8"),
+  );
+  const declared = new Set([
+    ...Object.keys(pkg.dependencies ?? {}),
+    ...Object.keys(pkg.devDependencies ?? {}),
+  ]);
+  return BANNED_RUNTIMES.filter((name) => declared.has(name));
+}
+
 function walk(dir) {
   let out = [];
   let entries;
@@ -66,6 +111,21 @@ function walk(dir) {
     else if (entry.endsWith(".js")) out.push(full);
   }
   return out;
+}
+
+/* The dependency guard runs FIRST, before the chunk walk. It needs no build,
+   so it still fires in a tree nobody has built yet — which is exactly when
+   somebody has just run `npm i motion` and not yet found out. */
+const banned = bannedDependencies();
+if (banned.length) {
+  console.error(
+    `\n✗ motion-budget: ${banned.join(", ")} in package.json.\n` +
+      `  This project ships GSAP + Lenis and they already spend the whole\n` +
+      `  49 KB ceiling. A second animation runtime is an owner decision\n` +
+      `  (D29), not a dependency — remove it, or change D29 and this list\n` +
+      `  in the same commit.`,
+  );
+  process.exit(1);
 }
 
 const files = walk(DIR);
