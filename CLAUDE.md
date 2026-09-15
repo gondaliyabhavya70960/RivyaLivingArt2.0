@@ -411,14 +411,18 @@ below are the ones that are expensive to rediscover.
   this repo reaches Google, and nothing WRITES to a spreadsheet.** The owner
   exports the confirmed list from `/studio/exports` as CSV or XLSX instead — on
   demand, rather than on every scrape.
-- **Two credential-free READS of a public sheet survive, deliberately.** Bulk
-  Import accepts a `docs.google.com/spreadsheets/…` link and fetches its CSV
-  export (`src/lib/import/parse.ts`), and `.github/workflows/fetch-tiers.yml`
-  curls the same export to refresh `data/tiers/*.csv.gz` — manual-only, not on
-  a schedule, whatever older copy says. Both are ordinary HTTP GETs of a
-  link-public document; neither is the integration that was removed. **Both
-  stop working the moment the owner un-shares the spreadsheet** (removal plan
-  step 6), which is a thing to tell them, not a bug to chase.
+- **Step 6 is DONE: the service account is revoked and the spreadsheet is
+  un-shared** (2026-09-15). Consequences, which were predicted and are not
+  bugs: `.github/workflows/fetch-tiers.yml` had no source left to read and was
+  deleted (`git log --diff-filter=D` recovers it), and `data/tiers/*.csv.gz`
+  are now the ONLY copy of the tier data — refreshing them means committing new
+  files, not running a workflow.
+- **Bulk Import's Google Sheet link still works and was NOT affected.**
+  `fetchGoogleSheetCsv` in `src/lib/import/parse.ts` takes ANY
+  `docs.google.com/spreadsheets/…` URL the operator pastes and fetches its
+  public CSV export; it never referenced the owner's own spreadsheet. Only that
+  one document became unreadable. (An earlier note here said step 6 would break
+  this feature — it does not.)
 - **What is still called "sheet" is NOT Google Sheets.** `/studio/catalog-fill`
   (was `/studio/sheet-import`) and `src/lib/import/tier-fill.ts` read committed
   CSVs from `data/tiers/*.csv.gz` and always did. The conflict queue that fill
@@ -449,6 +453,16 @@ below are the ones that are expensive to rediscover.
   catalogue re-created 4,000 DIFFERENT products. So a `--confirm` run also
   switches `catalogFill*` off, and `tier-fill.test.ts` pins both halves.
   Inquiries and testimonials are `SetNull` and survive every purge.
+- **The source registry is the owner's, already curated, and 115 strong**
+  (`src/lib/scraper/seed-data.ts`, seeded by `prisma/bootstrap.ts`): 56 Shopify,
+  23 WooCommerce, **36 UNKNOWN** — 31% that fingerprint at runtime and fail with
+  `CUSTOM_ADAPTER_MESSAGE` when a site has no JSON-LD product markup. So the
+  scraper rebuild's "add two new adapters" step does NOT mean picking new
+  companies to crawl: it means covering the platforms behind those 36. At least
+  one of them carries the note **"NO scrapeable catalog (verified:
+  enquiry-only). Do NOT scrape"**, which is why plan §5's `collectionMode` /
+  `policyReviewStatus` gate has to land BEFORE any new adapter — a registered
+  source is not an authorised one.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are

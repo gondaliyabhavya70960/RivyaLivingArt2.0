@@ -1,0 +1,92 @@
+# Empty the catalogue — the owner's "remove all products", run where a
+# production credential can legitimately live.
+#
+# DESTRUCTIVE. It deletes Product rows and cannot be undone. Read
+# `npm run products:purge`'s own header and ADMIN_GUIDE §20b before using it.
+#
+# WHY A WORKFLOW: the production DATABASE_URL exists only in Vercel's
+# environment — not in the repo, not in CI, not in any agent sandbox. This runs
+# it where a repo secret can hold the credential.
+#
+# THREE SAFETY RAILS, deliberately:
+#   1. It DRY RUNS by default. The default `confirm` value writes nothing and
+#      prints the full blast radius — how many products, what cascades, and
+#      what is kept.
+#   2. Writing requires typing DELETE, matching the Studio's own
+#      ConfirmDeleteDialog rule for anything bulk.
+#   3. It never runs on a push or a schedule. workflow_dispatch only.
+#
+# WHAT SURVIVES, every time: Inquiry.productId and Testimonial.productId are
+# SetNull, so every past WhatsApp order and every customer's words are kept and
+# merely unlinked. Blob images are counted and left alone.
+#
+# A --confirm run also switches the automatic catalog fill OFF, because
+# tombstones alone cannot empty Tiers 2-4 — their pools dwarf their caps, so
+# deleting the current selection just promotes the next rows on the following
+# deploy. That was measured, not assumed; see CLAUDE.md.
+name: Purge products (destructive, manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DELETE to actually delete. Anything else = dry run.'
+        required: true
+        default: 'dry run'
+        type: string
+      scope:
+        description: 'Which products'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - imported-only
+      keep_demo:
+        description: 'Spare the Content Lab demo set'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fail early with a useful message if the secret is missing
+        run: |
+          if [ -z "${{ secrets.PRODUCTION_DATABASE_URL }}" ]; then
+            echo "::error::PRODUCTION_DATABASE_URL is not set. Add it under Settings → Secrets and variables → Actions. Copy the value from Vercel → the project → Settings → Environment Variables → DATABASE_URL (Production)."
+            exit 1
+          fi
+
+      - name: Purge
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          CONFIRM: ${{ inputs.confirm }}
+          SCOPE: ${{ inputs.scope }}
+          KEEP_DEMO: ${{ inputs.keep_demo }}
+        run: |
+          ARGS=""
+          [ "$SCOPE" = "imported-only" ] && ARGS="$ARGS --imported-only"
+          [ "$KEEP_DEMO" = "true" ] && ARGS="$ARGS --keep-demo"
+
+          if [ "$CONFIRM" = "DELETE" ]; then
+            echo "::warning::Deleting for real. This cannot be undone."
+            npm run products:purge -- --confirm $ARGS
+          else
+            echo "DRY RUN — nothing will be written."
+            echo "Re-run with confirm=DELETE to actually delete."
+            npm run products:purge -- $ARGS
+          fi
