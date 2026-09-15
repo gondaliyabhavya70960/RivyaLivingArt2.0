@@ -20,6 +20,7 @@ import { HeroParallax } from "@/components/motion/hero-parallax";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import { PourCureShowcase } from "@/components/storefront/pour-cure-showcase";
 import { Reveal } from "@/components/motion/reveal";
+import { CANONICAL_CATEGORIES } from "@/lib/catalog-taxonomy";
 import { db } from "@/lib/db";
 import { FURNITURE_KINDS } from "@/lib/furniture-kinds";
 import {
@@ -266,8 +267,32 @@ export default async function Home({
   );
 
   const [heroPiece, ...supportingPieces] = catalog.items;
+  /* registry in code → override in the database → a TOTAL resolver. Every
+     other surface in this app follows that shape; this band did not. It read
+     `Category.image` alone, so a row whose image was never set fell straight
+     past the picture the repo ships to a two-letter monogram on a flat block —
+     and on the live site that was Gift and Print, two of the six commercial
+     doorways, because nothing had ever written the canonical seed (fixed in
+     `tier-fill.ts`, but only for rows created from here on).
+
+     The fallback order is the owner's value, then the canonical seed, then the
+     monogram. The monogram is still reachable — a category with no canonical
+     entry at all has nothing to fall back to — so a genuinely unpictured
+     doorway still announces itself. What it no longer does is announce a
+     picture that is sitting in `public/media/v3/`. */
+  const canonicalTileImage = new Map(
+    CANONICAL_CATEGORIES.map((c) => [c.slug, c.image ?? null]),
+  );
   const tileImages = new Map(
-    tileCategories.map((row) => [row.slug, row.image]),
+    tileCategories.map((row) => [
+      row.slug,
+      /* `||`, not `??`: the category editor normalises an emptied field to
+         null (`image: parsed.image || null`), but the importer and the
+         Cloudinary reconcile both write this column too, and an empty string
+         reaching here would pass `??` and render the monogram again — the
+         exact bug, one writer later. No image URL is legitimately falsy. */
+      row.image || canonicalTileImage.get(row.slug) || null,
+    ]),
   );
 
   const commissions = portfolioRows.map((piece) => {

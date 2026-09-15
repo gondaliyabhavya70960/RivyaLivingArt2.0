@@ -667,6 +667,20 @@ export async function runTierFill(
         description: cat.description,
         order: nextOrder++,
         translations: cat.translations,
+        /* `image` was defined on every canonical category and written by
+           nothing. This is the ONLY code path that creates those rows, so the
+           seed value — which catalog-taxonomy.ts's own comment calls "the
+           value a fresh environment seeds" — never reached the database, and
+           a fresh environment came up with `Category.image` null on all eight.
+           The homepage collections band paints that column, so two of its six
+           doorways rendered as a two-letter monogram on a flat block.
+
+           CREATE only, which is what makes it safe: the branch above returns
+           early for a row that already exists, so an owner's own image, or
+           one the Cloudinary reconcile put there, is never touched. Owner
+           edits outrank every writer (merge-policy.ts), and this writer never
+           gets the chance. */
+        image: cat.image,
       },
       select: { id: true },
     });
