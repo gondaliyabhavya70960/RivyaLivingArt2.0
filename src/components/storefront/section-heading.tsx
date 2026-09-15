@@ -104,7 +104,14 @@ export function SectionHeading({
         <Tag
           id={id}
           className={cn(
-            "font-display leading-[1.08] text-balance",
+            // One leading for three sizes: `size` picks text-h1, text-h2 or
+            // text-h3 on the line below, and all three get h2's 1.08. That is
+            // the "applied evenly" problem the v4 leading scale exists to
+            // name — converting the literal to the token did not fix it, and
+            // was not meant to. Whether an h1-scale section title should drop
+            // to `leading-h1` here is a design call, not a rename: workstream
+            // A2, the typography contrast pass.
+            "font-display leading-h2 text-balance",
             sizeClass,
             centred && "text-center",
           )}

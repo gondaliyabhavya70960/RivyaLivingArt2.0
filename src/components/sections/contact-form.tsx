@@ -163,7 +163,7 @@ export function ContactForm() {
         className="flex flex-col gap-6 border-s-2 border-success ps-6 outline-none md:ps-8"
       >
         <p className="u-micro text-champagne-ink">{t("successEyebrow")}</p>
-        <h3 className="font-display text-h3 leading-[1.15] tracking-display text-ink">
+        <h3 className="font-display text-h3 leading-h3 tracking-display text-ink">
           {t("successHeading")}
         </h3>
         <p className="u-prose font-body text-body leading-relaxed text-graphite">

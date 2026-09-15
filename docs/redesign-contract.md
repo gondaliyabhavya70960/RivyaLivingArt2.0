@@ -22,22 +22,22 @@ inventing a third answer.
 
 ## 2. Colour — `src/styles/tokens.css`
 
-| Utility | Role |
-|---|---|
-| `obsidian` | hero, footer, premium sections, Studio UI, dark product presentation |
-| `deep-ocean` | brand backgrounds, highlighted sections, resin storytelling |
-| `sapphire` / `sapphire-hi` | primary action, links, cure-line fill, focus / hover only |
-| `mineral` | light page ground |
-| `sand` | warm neutral — alternate section ground, card surface |
-| `champagne` | accent: tiny highlights, active states, micro-labels, hairlines |
-| `champagne-ink` | champagne as TEXT on a light ground (champagne itself is 2.35:1 there) |
-| `sapphire-ink` | sapphire as TEXT or an indicator icon — sapphire itself on light; the Studio's dark scheme lifts it to `#5fafd6` (raw sapphire is 2.2:1 on obsidian). Never a fill |
-| `ink` | body text on light |
-| `graphite` | secondary text, all mono metadata |
-| `mist` | secondary text on dark |
-| `hairline` / `hairline-dk` | every divider, light / dark |
-| `whatsapp` / `whatsapp-deep` | WhatsApp accent / WhatsApp button fill (AA with white) |
-| `alert` · `success` | errors and destructive · success and in-stock |
+| Utility                      | Role                                                                                                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `obsidian`                   | hero, footer, premium sections, Studio UI, dark product presentation                                                                                               |
+| `deep-ocean`                 | brand backgrounds, highlighted sections, resin storytelling                                                                                                        |
+| `sapphire` / `sapphire-hi`   | primary action, links, cure-line fill, focus / hover only                                                                                                          |
+| `mineral`                    | light page ground                                                                                                                                                  |
+| `sand`                       | warm neutral — alternate section ground, card surface                                                                                                              |
+| `champagne`                  | accent: tiny highlights, active states, micro-labels, hairlines                                                                                                    |
+| `champagne-ink`              | champagne as TEXT on a light ground (champagne itself is 2.35:1 there)                                                                                             |
+| `sapphire-ink`               | sapphire as TEXT or an indicator icon — sapphire itself on light; the Studio's dark scheme lifts it to `#5fafd6` (raw sapphire is 2.2:1 on obsidian). Never a fill |
+| `ink`                        | body text on light                                                                                                                                                 |
+| `graphite`                   | secondary text, all mono metadata                                                                                                                                  |
+| `mist`                       | secondary text on dark                                                                                                                                             |
+| `hairline` / `hairline-dk`   | every divider, light / dark                                                                                                                                        |
+| `whatsapp` / `whatsapp-deep` | WhatsApp accent / WhatsApp button fill (AA with white)                                                                                                             |
+| `alert` · `success`          | errors and destructive · success and in-stock                                                                                                                      |
 
 Use them as Tailwind utilities: `bg-obsidian`, `text-graphite`,
 `border-hairline`, `text-champagne`. **No raw hex in components, ever.**
@@ -57,11 +57,11 @@ resolve correctly:
 
 ## 3. Type — `font-display` · `font-body` · `font-mono`
 
-| Face | Utility | Used for |
-|---|---|---|
-| Instrument Serif | `font-display` | hero, section headings, campaign statements, pull-quotes |
-| Inter | `font-body` | navigation, product info, buttons, forms, paragraphs |
-| JetBrains Mono | `font-mono` | **every** price, count, date, dimension, project number, cure time, timer, spec value, eyebrow |
+| Face             | Utility        | Used for                                                                                       |
+| ---------------- | -------------- | ---------------------------------------------------------------------------------------------- |
+| Instrument Serif | `font-display` | hero, section headings, campaign statements, pull-quotes                                       |
+| Inter            | `font-body`    | navigation, product info, buttons, forms, paragraphs                                           |
+| JetBrains Mono   | `font-mono`    | **every** price, count, date, dimension, project number, cure time, timer, spec value, eyebrow |
 
 Sizes: `text-hero` · `text-h1` · `text-h2` · `text-h3` · `text-body` ·
 `text-small` · `text-micro`. All are `clamp()`d — one scale, no mobile fork.
@@ -77,6 +77,48 @@ Composite utilities:
 - `u-prose` — 68ch measure. `u-lede` — 52ch, for section intros.
 
 Sentence case for headings and buttons. UPPERCASE only for `u-micro`.
+
+### Leading — the v4 scale
+
+| Utility            | Value | Role                                                                    |
+| ------------------ | ----- | ----------------------------------------------------------------------- |
+| `leading-hero`     | 0.95  | `text-hero`                                                             |
+| `leading-h1`       | 1.02  | `text-h1`                                                               |
+| `leading-h2`       | 1.08  | `text-h2`                                                               |
+| `leading-h3`       | 1.15  | `text-h3`                                                               |
+| `leading-body`     | 1.65  | the `body` default — inherit it, don't restate it                       |
+| `leading-longform` | 1.8   | a full page of prose: terms, privacy, a journal post, a rich-text block |
+
+**Never write `leading-[…]` for one of those six values.** They render
+identically, so no gate but `type-scale.test.ts` would ever notice, and the
+literal is what the next heading copies.
+
+A heading that genuinely wants a different leading is still allowed a literal —
+35 of them survive today, each an A2 judgement call — but the raw count is
+ratcheted and may only fall.
+
+Tailwind's own `leading-relaxed`/`snug`/`tight`/`none` are untouched and stay
+available; the Studio is built on them.
+
+### Surveyed and deliberately NOT tokenised
+
+Recorded so the next pass does not re-open them:
+
+- **Aspect ratios** (`aspect-[4/5]` ×33, `[4/3]` ×27, `[16/10]` ×7, `[3/4]` ×4).
+  71 literals, but no drift — 4/5 is always 4/5, and the ratio a slot crops to
+  already lives in `site-images.ts`. A name would add a lookup and remove
+  nothing.
+- **Headline measures** (`max-w-[14ch]` … `max-w-[20ch]`). Sixteen values, but a
+  measure is chosen against the length of the actual headline; collapsing them
+  would be a redesign, not a rename. `u-prose` (68ch) and `u-lede` (52ch) remain
+  the only two named measures.
+- **Tracking** (`tracking-[0.08em]` … `[0.22em]`, 17 literals). The natural
+  names — `wide`, `wider`, `widest` — are Tailwind built-ins with 14 call sites
+  here, so tokenising means either colliding or inventing worse names. Not worth
+  it for 17 sites.
+- **State and elevation tokens** for the primitives (A3). Surveyed: the repo has
+  two `color-mix` call sites in total and no `animate-pulse` in the storefront
+  skeletons. There is no repetition to name yet.
 
 ## 4. Layout
 

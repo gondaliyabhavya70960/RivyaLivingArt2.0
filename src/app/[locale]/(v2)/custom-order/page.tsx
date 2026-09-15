@@ -277,7 +277,7 @@ export default async function CustomOrderPage({
             </Eyebrow>
             <h1
               id="commission-heading"
-              className="max-w-[14ch] font-display text-h1 leading-[1.02] tracking-display text-mineral"
+              className="max-w-[14ch] font-display text-h1 leading-h1 tracking-display text-mineral"
             >
               {t("heroHeadline")}
             </h1>

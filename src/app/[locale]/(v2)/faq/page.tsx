@@ -122,7 +122,7 @@ export default async function FaqPage({
               <Eyebrow>{t("heroEyebrow")}</Eyebrow>
               <h1
                 id="faq-heading"
-                className="max-w-[13ch] font-display text-h1 leading-[1.02] tracking-display"
+                className="max-w-[13ch] font-display text-h1 leading-h1 tracking-display"
               >
                 {t("heroHeadline")}
               </h1>

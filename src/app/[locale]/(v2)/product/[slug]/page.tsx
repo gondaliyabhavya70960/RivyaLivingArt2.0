@@ -875,7 +875,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <Eyebrow>{tp("roomContext.eyebrow")}</Eyebrow>
                 <h2
                   id="room-context-heading"
-                  className="font-display text-h2 leading-[1.08] tracking-display"
+                  className="font-display text-h2 leading-h2 tracking-display"
                 >
                   {tp("roomContext.heading")}
                 </h2>
@@ -950,7 +950,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <Eyebrow>{tp("sections.pieceEyebrow")}</Eyebrow>
                 <h2
                   id="piece-heading"
-                  className="font-display text-h2 leading-[1.08] tracking-display"
+                  className="font-display text-h2 leading-h2 tracking-display"
                 >
                   {t("aboutHeading")}
                 </h2>
@@ -1009,7 +1009,7 @@ export default async function ProductPage({ params }: PageProps) {
                     photograph on the end — §9.4's diagram alternates. */}
                 <div className="flex flex-col gap-8 lg:order-1 lg:col-span-6">
                   <Eyebrow>{tp("sections.detailsEyebrow")}</Eyebrow>
-                  <h2 className="font-display text-h2 leading-[1.08] tracking-display">
+                  <h2 className="font-display text-h2 leading-h2 tracking-display">
                     {tp("sections.detailsHeading")}
                   </h2>
                   <Accordion type="single" collapsible>

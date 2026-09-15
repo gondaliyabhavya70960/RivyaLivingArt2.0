@@ -497,7 +497,7 @@ export function CustomOrderForm({ options }: { options: FormOptionSet }) {
       <span aria-hidden className="u-micro text-champagne-ink">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <h3 className="font-display text-h3 leading-[1.15] tracking-display text-ink">
+      <h3 className="font-display text-h3 leading-h3 tracking-display text-ink">
         {t(`rail.${GROUPS[index].key}`)}
       </h3>
     </div>

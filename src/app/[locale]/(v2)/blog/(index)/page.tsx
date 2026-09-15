@@ -448,7 +448,7 @@ export default async function BlogPage({
               <Eyebrow>{t("heroEyebrow")}</Eyebrow>
               <h1
                 id="journal-heading"
-                className="max-w-[14ch] font-display text-h1 leading-[1.02] tracking-display"
+                className="max-w-[14ch] font-display text-h1 leading-h1 tracking-display"
               >
                 {t("heroHeadline")}
               </h1>

@@ -230,7 +230,7 @@ export function NewsletterSignup({
           <div className="flex flex-col gap-3">
             <p
               role="status"
-              className="font-display text-h3 leading-[1.15] text-ink in-data-[theme=navy]:text-mineral"
+              className="font-display text-h3 leading-h3 text-ink in-data-[theme=navy]:text-mineral"
             >
               {confirmation}
             </p>

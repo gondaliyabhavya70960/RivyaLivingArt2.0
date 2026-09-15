@@ -100,7 +100,7 @@ export type BlockExtras = {
  * the article shape without the article's drop cap.
  */
 const PROSE_BLOCK = [
-  "u-prose font-body text-body leading-[1.8] text-graphite",
+  "u-prose font-body text-body leading-longform text-graphite",
   "[&_h2]:font-display [&_h2]:tracking-display [&_h2]:mt-10 [&_h2]:text-h3 [&_h2]:leading-snug [&_h2]:text-ink",
   "[&_h3]:font-display [&_h3]:tracking-display [&_h3]:mt-8 [&_h3]:text-25 [&_h3]:leading-snug [&_h3]:text-ink",
   "[&_p]:mt-4",
@@ -249,7 +249,7 @@ function HeroBlock({
         {data.headline ? (
           <Tag
             id={headingId}
-            className="max-w-[16ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="max-w-[16ch] font-display text-hero leading-hero tracking-display text-mineral"
           >
             {data.headline}
           </Tag>
@@ -339,7 +339,7 @@ function VideoHeroBlock({
         {data.headline ? (
           <Tag
             id={headingId}
-            className="max-w-[16ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="max-w-[16ch] font-display text-hero leading-hero tracking-display text-mineral"
           >
             {data.headline}
           </Tag>

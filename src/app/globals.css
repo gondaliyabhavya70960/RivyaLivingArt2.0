@@ -114,6 +114,16 @@
   --text-76: var(--step-76);
   --tracking-display: var(--tracking-display);
 
+  /* v4 leading (tokens.css). Six roles, none of them a Tailwind built-in
+     name — `leading-relaxed` alone has 120 call sites and redefining it
+     would re-leading the Studio by side effect. */
+  --leading-hero: var(--leading-hero);
+  --leading-h1: var(--leading-h1);
+  --leading-h2: var(--leading-h2);
+  --leading-h3: var(--leading-h3);
+  --leading-body: var(--leading-body);
+  --leading-longform: var(--leading-longform);
+
   /* Font stacks. `--font-script` is defined per non-Latin locale by the
      [locale] layout (Noto Sans Devanagari/Gujarati/Arabic/JP/SC via
      next/font) so native glyphs get a real face after the Latin brand
@@ -277,7 +287,9 @@
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-body);
-    line-height: 1.65;
+    /* The site's default leading, and now a token like the other five — see
+       tokens.css "v4 · Leading". The value is unchanged. */
+    line-height: var(--leading-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }

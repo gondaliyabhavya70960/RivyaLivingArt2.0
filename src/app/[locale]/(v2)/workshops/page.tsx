@@ -186,7 +186,7 @@ export default async function WorkshopsPage({
           </Eyebrow>
           <h1
             id="workshops-heading"
-            className="max-w-[13ch] font-display text-hero leading-[0.95] tracking-display text-mineral"
+            className="max-w-[13ch] font-display text-hero leading-hero tracking-display text-mineral"
           >
             {t("hero.headline")}
           </h1>
@@ -250,7 +250,7 @@ export default async function WorkshopsPage({
                   className="aspect-[4/5] rounded-image"
                   imageClassName="object-cover"
                 />
-                <h3 className="font-display text-h3 leading-[1.15] text-ink">
+                <h3 className="font-display text-h3 leading-h3 text-ink">
                   {t(`intro.${benefit.key}Title`)}
                 </h3>
                 <p className="u-prose font-body text-body leading-relaxed text-graphite">
@@ -306,7 +306,7 @@ export default async function WorkshopsPage({
           {/* What the beat "take home" actually means. Mono numerals and
                   words — no icon per item (§3.7). */}
           <div className="flex flex-col gap-8 border-t border-hairline pt-10">
-            <h3 className="font-display text-h3 leading-[1.15] text-ink">
+            <h3 className="font-display text-h3 leading-h3 text-ink">
               {t("takeHome.heading")}
             </h3>
             <ul className="grid gap-8 md:grid-cols-3">
@@ -379,7 +379,7 @@ export default async function WorkshopsPage({
                     ) : null}
 
                     <div className="flex flex-col gap-2 md:col-span-5">
-                      <h3 className="font-display text-h3 leading-[1.15] text-ink">
+                      <h3 className="font-display text-h3 leading-h3 text-ink">
                         <Link
                           href={`/product/${workshop.slug}`}
                           className="rounded-input outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
@@ -494,7 +494,7 @@ export default async function WorkshopsPage({
           </Eyebrow>
           <h2
             id="private-heading"
-            className="max-w-[14ch] font-display text-h1 leading-[1.02] tracking-display text-mineral"
+            className="max-w-[14ch] font-display text-h1 leading-h1 tracking-display text-mineral"
           >
             {t("private.headingShort")}
           </h2>

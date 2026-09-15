@@ -188,7 +188,7 @@ export function CraftChapters({
                     per viewport, and the stage's level line plus the section
                     eyebrow already spend both. */}
                 <p className="u-micro">{numeral(index)}</p>
-                <h3 className="font-display text-h3 leading-[1.15] text-mineral">
+                <h3 className="font-display text-h3 leading-h3 text-mineral">
                   {chapter.title}
                 </h3>
                 <p className="u-prose font-body text-body leading-relaxed text-mist">
