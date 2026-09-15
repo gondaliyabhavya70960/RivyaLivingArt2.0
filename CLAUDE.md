@@ -389,6 +389,17 @@ below are the ones that are expensive to rediscover.
 - **One run per source.** A second Scrape returns the job already in flight
   rather than queueing a duplicate — that is what makes the action idempotent.
   `QUEUED` counts as in flight. Applies to the tier fan-out too.
+- **A scrape now finishes with the laptop closed** (B1, 2026-09-15). It used
+  not to: the `use-scrape-runner.ts` poll loop was the ONLY caller of
+  `continueScrapeJob`. `/api/cron/scrape-drain` (every 10 min, `vercel.json`)
+  drives the same advance server-side. The logic lives in
+  `src/lib/scraper/job-runner.ts`, NOT in the action — **an export of a
+  `"use server"` module is a callable server action**, so a session-free
+  `advanceScrapeJob` beside `continueScrapeJob` would be an unauthenticated
+  "crawl this site for me" endpoint. The drain takes only jobs whose heartbeat
+  has been idle two minutes and never `isDemo` rows; the per-page CAS on
+  `cursorPage` already makes concurrency safe, so the idle rule is politeness
+  — a CAS cannot un-send a request to a supplier.
 - **Five consecutive failures pauses a source.** Resume clears the pause AND
   the counter; a success resets it to zero rather than decaying.
 - **`CONFIRMED_PRODUCTS ≡ { p : p.confirmedAt IS NOT NULL }`.** Nothing but the
