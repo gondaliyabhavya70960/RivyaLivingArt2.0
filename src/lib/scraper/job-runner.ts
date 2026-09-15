@@ -302,6 +302,89 @@ async function recordPriceMoves(
   }
 }
 
+/**
+ * Keep `ResearchProduct` identity current and append a `ProductSnapshot` for
+ * anything that is new or has changed (workstream B, phase 6a).
+ *
+ * Runs alongside the `ScrapedProduct` upsert rather than replacing it: the
+ * promote path, the review grid and the quality queue all still read the
+ * staged row, and this phase changes none of them. What it adds is the thing
+ * an upsert destroys — the previous version.
+ *
+ * Every product on the page gets its `lastSeen` touched, because "we looked
+ * and it was still listed" is a fact worth keeping and is exactly what saves
+ * a snapshot from having to be written to record it.
+ */
+async function recordResearchSnapshots(
+  jobId: string,
+  sourceKey: string,
+  products: RichProduct[],
+  ctx: {
+    createdExternalIds: Set<string>;
+    changedExternalIds: Set<string>;
+    hashByExternalId: Map<string, string>;
+    seenAt: Date;
+  },
+): Promise<void> {
+  if (products.length === 0) return;
+
+  // Upsert identity for every product seen, changed or not. `canonicalUrl` is
+  // refreshed on purpose — a store that re-slugs a product has not given us a
+  // different product, and the unique key is (sourceKey, externalId).
+  await db.$transaction(
+    products.map((product) =>
+      db.researchProduct.upsert({
+        where: {
+          sourceKey_externalId: { sourceKey, externalId: product.externalId },
+        },
+        create: {
+          sourceKey,
+          externalId: product.externalId,
+          canonicalUrl: product.url,
+          firstSeen: ctx.seenAt,
+          lastSeen: ctx.seenAt,
+        },
+        update: { canonicalUrl: product.url, lastSeen: ctx.seenAt },
+      }),
+    ),
+  );
+
+  // Only new or changed rows get a snapshot. An unchanged row would write a
+  // byte-identical duplicate of the newest one, which is the "millions of
+  // rows a month" trade `PriceHistory` already refused.
+  const worth = products.filter(
+    (p) =>
+      ctx.createdExternalIds.has(p.externalId) ||
+      ctx.changedExternalIds.has(p.externalId),
+  );
+  if (worth.length === 0) return;
+
+  const identities = await db.researchProduct.findMany({
+    where: { sourceKey, externalId: { in: worth.map((p) => p.externalId) } },
+    select: { id: true, externalId: true },
+  });
+  const idByExternalId = new Map(identities.map((r) => [r.externalId, r.id]));
+
+  await db.productSnapshot.createMany({
+    data: worth.flatMap((product) => {
+      const researchProductId = idByExternalId.get(product.externalId);
+      const hash = ctx.hashByExternalId.get(product.externalId);
+      if (!researchProductId || !hash) return [];
+      return [
+        {
+          researchProductId,
+          jobId,
+          capturedAt: ctx.seenAt,
+          contentHash: hash,
+          // What the adapter read, before normalization — the claim the
+          // source made, not our interpretation of it.
+          rawPayload: product as unknown as Prisma.InputJsonValue,
+        },
+      ];
+    }),
+  });
+}
+
 async function upsertPage(
   jobId: string,
   sourceKey: string,
@@ -378,6 +461,27 @@ async function upsertPage(
     });
   }
 
+  // ——— Research identity + snapshots (workstream B, phase 6a) ———
+  //
+  // A DUAL WRITE, deliberately: `ScrapedProduct` above stays the promote
+  // path's input and is unchanged by this. What it cannot do is remember —
+  // it is upserted on (sourceKey, externalId), so a re-scrape overwrites the
+  // previous title, price and description. `ResearchProduct` is the identity
+  // that survives that, and `ProductSnapshot` is the history hanging off it.
+  //
+  // Snapshots are written on FIRST SIGHTING and thereafter only when the
+  // contentHash moves — the same rule, for the same reason, as the price
+  // history immediately below. Unchanged rows still bump `lastSeen`, which is
+  // what records that we looked and found it listed.
+  await recordResearchSnapshots(jobId, sourceKey, unique, {
+    createdExternalIds: new Set(creates.map((c) => c.externalId)),
+    changedExternalIds: new Set(changed.map((c) => c.product.externalId)),
+    hashByExternalId: new Map(
+      unique.map((p) => [p.externalId, contentHash(p)]),
+    ),
+    seenAt: now,
+  });
+
   // Price history. A point is written on first sighting, to anchor the series,
   // and thereafter only when the price actually MOVES.
   //
@@ -409,6 +513,14 @@ async function upsertPage(
 
   return { created, updated: changed.length };
 }
+
+/**
+ * `upsertPage` under test. The dual-write's whole contract is which rows land
+ * in two tables across successive scrapes, which no pure test can see —
+ * `job-runner.db.test.ts` drives this directly under `npm run test:db`.
+ * Exported for that and nothing else; the runner calls `upsertPage`.
+ */
+export const upsertPageForTest = upsertPage;
 
 /**
  * Advance one job by up to `PAGES_PER_INVOCATION` pages.

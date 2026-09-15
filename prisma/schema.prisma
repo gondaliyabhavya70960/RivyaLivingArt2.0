@@ -836,6 +836,76 @@ model ScrapedProduct {
   @@index([sheetSyncStatus])
 }
 
+/// Stable identity for one product across every scrape that ever saw it
+/// (workstream B, phase 6a).
+///
+/// `ScrapedProduct` is upserted on `(sourceKey, externalId)`, so it holds the
+/// LATEST state of a product and nothing else — re-scrape it and the previous
+/// title, price and description are gone. This row is the thing that persists:
+/// it outlives any individual staged row, any job, and any re-scrape, and it
+/// is what `ProductSnapshot` hangs history from.
+///
+/// The taxonomy columns the plan sketches here — `canonicalFamily`,
+/// `canonicalProductType`, `scaleClass`, `confidence` — are deliberately NOT
+/// in this migration. Nothing computes them until B4/B6, and a column declared
+/// with no writer is the exact shape of a defect this repo has already paid
+/// for once (`CANONICAL_CATEGORIES[].image`, declared for eight categories and
+/// written by nothing, which left two homepage doorways blank). Adding a
+/// nullable column later is the safe class of migration; adding it early and
+/// hoping is not.
+model ResearchProduct {
+  id           String            @id @default(cuid())
+  sourceKey    String
+  externalId   String
+  /// The canonical product URL as last seen. Mutable on purpose: a store that
+  /// re-slugs a product has not given us a different product.
+  canonicalUrl String
+  firstSeen    DateTime          @default(now())
+  /// Touched on EVERY sighting, changed or not. This is what answers "is this
+  /// product still listed?", which is why a snapshot does not have to be
+  /// written just to record that we looked.
+  lastSeen     DateTime          @default(now())
+  snapshots    ProductSnapshot[]
+
+  @@unique([sourceKey, externalId])
+  @@index([lastSeen])
+}
+
+/// One IMMUTABLE row per change to a product. Never edited, never deleted.
+///
+/// **Written on first sighting and thereafter only when `contentHash` moves**,
+/// which is the same rule `PriceHistory` already follows here and for the same
+/// reason its comment gives: a row per scrape per product would be millions of
+/// rows a month, nearly all identical to the one above. A gap between two
+/// snapshots means the source said the same thing throughout it, and
+/// `ResearchProduct.lastSeen` records that we kept looking.
+///
+/// (The phase-6a plan says "one row per successful scrape". This is a
+/// deliberate departure — the plan's own rule, that snapshots are append-only
+/// and never edited, is kept intact.)
+///
+/// `rawPayload` is the adapter's `RichProduct` for this item, BEFORE
+/// normalization — what the source said, in the shape the adapter read it.
+/// Not the HTTP body: storing ~35k product pages of HTML per scrape is a
+/// different feature with a different budget.
+///
+/// `jobId` is a plain id rather than a relation, exactly like
+/// `PriceHistory.scrapedProductId`: a job can be deleted to tidy the queue,
+/// and losing the history of what it captured with it would be a poor trade.
+model ProductSnapshot {
+  id                String          @id @default(cuid())
+  researchProductId String
+  researchProduct   ResearchProduct @relation(fields: [researchProductId], references: [id], onDelete: Cascade)
+  /// The job that captured it, when it came from one.
+  jobId             String?
+  capturedAt        DateTime        @default(now())
+  contentHash       String
+  rawPayload        Json
+
+  @@index([researchProductId, capturedAt])
+  @@index([contentHash])
+}
+
 /// A field that could not be extracted, recorded rather than silently nulled.
 ///
 /// "The price is missing" and "the price is null because nobody looked" are
