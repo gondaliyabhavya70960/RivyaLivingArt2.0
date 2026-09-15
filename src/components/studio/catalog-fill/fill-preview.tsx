@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Loader2, Play, Search } from "lucide-react";
 import { toast } from "sonner";
 
-import { previewSheetFill, runSheetFillNow } from "@/actions/sheet-fill";
-import { DroppedRows } from "@/components/studio/sheet-import/dropped-rows";
+import { previewCatalogFill, runCatalogFillNow } from "@/actions/catalog-fill";
+import { DroppedRows } from "@/components/studio/catalog-fill/dropped-rows";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -74,7 +74,7 @@ export function FillPreview() {
   async function handlePreview() {
     setPreviewing(true);
     setRunResult(null);
-    const res = await previewSheetFill();
+    const res = await previewCatalogFill();
     setPreviewing(false);
     if (!res.ok || !res.data) {
       toast.error(!res.ok ? res.error : "Could not preview the fill.");
@@ -88,7 +88,7 @@ export function FillPreview() {
 
   async function handleRun() {
     setRunning(true);
-    const res = await runSheetFillNow();
+    const res = await runCatalogFillNow();
     setRunning(false);
     setConfirmOpen(false);
     if (!res.ok || !res.data) {

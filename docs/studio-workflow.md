@@ -9,8 +9,8 @@ The path an operator actually walks, and what each screen is for.
   └ /review                      the staged queue — approve, reject, import
   └ /mapping                     source category → catalog category
   └ /quality                     what could not be extracted
-/studio/products                 the catalog — edit, confirm, sync to sheet
-/studio/sheet-import             fill the catalogue from the sheet
+/studio/products                 the catalog — edit and confirm
+/studio/catalog-fill             fill the catalogue from the tier CSVs
 /studio/content-gaps             what is missing across the whole catalogue
 /studio/activity                 who did what
 ```
@@ -19,7 +19,7 @@ The path an operator actually walks, and what each screen is for.
 
 ## A normal week
 
-**1 · Scrape a source.** `/studio/scraper` → pick one → *Scrape ‹name›*. It
+**1 · Scrape a source.** `/studio/scraper` → pick one → _Scrape ‹name›_. It
 resumes if interrupted; pressing again while it runs shows you the run rather
 than starting a second.
 
@@ -31,14 +31,16 @@ guard set — scraped titles and photographs are somebody else's copyrighted
 material until rewritten.
 
 **4 · Rewrite and edit.** `/studio/products`. Every save marks the row
-owner-touched, after which no scrape or sheet import will overwrite your
+owner-touched, after which no scrape or CSV import will overwrite your
 content or your images.
 
 **5 · Confirm.** Select the products that belong on the final list and press
 Confirm. Only those reach `CONFIRMED_PRODUCTS`.
 
-**6 · Push to the sheet** when you want it there — or set the source to *after
-every scrape* if you'd rather it happened by itself.
+**6 · Export the confirmed list** from `/studio/exports` as CSV or XLSX,
+whenever you want a file. (Until 2026-09-15 this step pushed the list into a
+Google Sheet; that integration is gone — you take a file on demand instead of
+it being written for you on every scrape.)
 
 ---
 
@@ -63,7 +65,7 @@ resolved automatically — that is a fact, not a judgement — but rows you
 
 Add a website, remove one, enable or disable it in bulk, and — per tier —
 **Remove all ‹tier›**, which takes the sources, their staged products, their
-jobs and their sheet rows together. Live catalog products are kept unless you
+jobs together. Live catalog products are kept unless you
 tick the opt-in. The confirmation names every number before you press it.
 
 ### `/studio/content-gaps`
@@ -78,20 +80,16 @@ Bulk actions accept either a selection **or the current filter** ("select all
 matching"), and every row is still checked individually — a filter cannot wave
 anything through.
 
-*Sync to sheet* pushes the whole catalogue into the **Added product in
-website** tab.
-
 ---
 
 ## Things the studio will refuse
 
-| It says | Because |
-| --- | --- |
-| "‹Source› is already being scraped" | One run per source. You are shown the run in flight. |
-| "Paused after 5 consecutive failed scrapes" | The circuit breaker. Check the site, then Resume. |
+| It says                                                         | Because                                                  |
+| --------------------------------------------------------------- | -------------------------------------------------------- |
+| "‹Source› is already being scraped"                             | One run per source. You are shown the run in flight.     |
+| "Paused after 5 consecutive failed scrapes"                     | The circuit breaker. Check the site, then Resume.        |
 | "‹Product› needs at least one image before it can be confirmed" | Confirmation validates first, and names what is missing. |
-| "Would create N products, over the limit of M" | The auto-fill blast-radius cap. Nothing was written. |
-| "Sheet sync not configured" | No service-account credentials in this environment. Scraping is unaffected. |
+| "Would create N products, over the limit of M"                  | The auto-fill blast-radius cap. Nothing was written.     |
 
 Each of these is a refusal with a reason. If you meet one that does not explain
 itself, that is a bug worth reporting.

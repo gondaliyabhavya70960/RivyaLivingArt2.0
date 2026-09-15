@@ -38,7 +38,7 @@ pg_restore --no-owner --dbname="$TARGET_DATABASE_URL" rivya-living-art-YYYYMMDD-
 
 ## 2. Media — Vercel Blob
 
-- Every **upload** (studio media, customer reference images) is tracked in the **`Media` table** (`url` + `pathname`). But the catalog-mirror pipeline (Sheet Import + the nightly cron) writes mirrored product images **only to `ProductImage.url`** — those blobs get no `Media` row. **The blob inventory is therefore `Media` PLUS the `ProductImage` rows whose `url` points at `*.public.blob.vercel-storage.com`.** A database backup includes both lists; the files themselves stay on Blob.
+- Every **upload** (studio media, customer reference images) is tracked in the **`Media` table** (`url` + `pathname`). But the catalog-mirror pipeline (Catalog fill + the nightly cron) writes mirrored product images **only to `ProductImage.url`** — those blobs get no `Media` row. **The blob inventory is therefore `Media` PLUS the `ProductImage` rows whose `url` points at `*.public.blob.vercel-storage.com`.** A database backup includes both lists; the files themselves stay on Blob.
 - To snapshot the files too, export the combined inventory and re-download: `psql "$DATABASE_URL" -c "\copy (select url from \"Media\" union select url from \"ProductImage\" where url like '%public.blob.vercel-storage.com%') to 'media-inventory.csv' csv header"` then fetch each `url` (they're public CDN URLs).
 - ⚠️ **Blob deletions are permanent.** When you delete media (or products/portfolio items, which clean up their files), the blob is gone — there is no recycle bin, and Neon PITR does **not** bring files back, only the database rows pointing at them. This is exactly why the Studio makes you type `DELETE` for bulk deletions of more than 10 items.
 
@@ -59,5 +59,5 @@ Practice once so a real recovery is boring:
 ## 5. What is NOT backed up automatically
 
 - **WhatsApp conversations** — the actual chats with customers live only in WhatsApp. The site keeps every generated order message (Inquiry rows), but negotiation history, payment confirmations, and photos sent in chat exist only on the phone. Use WhatsApp's own chat export/backup if you need them preserved.
-- **The scraper Google Sheet** (optional integration) — not covered by any of the above, but Google Drive keeps its own version history (File → Version history in Sheets).
+- **The scraper Google Sheet** — no longer written to by anything. The integration was removed on 2026-09-15; the spreadsheet is the owner's own document, with Google Drive's version history, and the sync history this repo held was archived to `docs/archive/` before the tables were dropped.
 - **Vercel env var values** — visible in the dashboard, but keep a private offline note of `AUTH_SECRET` and the optional API keys so a project re-creation is painless.

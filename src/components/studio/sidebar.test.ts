@@ -36,7 +36,7 @@ const navHrefs = [...source.matchAll(/href:\s*"(\/studio[^"]*)"/g)].map(
  * room:
  *   - `[id]`, `[key]` and `new` — a row you clicked, or a button you pressed;
  *   - the scraper's five workspaces — tabs inside `/studio/scraper`;
- *   - `sheet-import/conflicts` — opened from the sheet-import screen;
+ *   - `catalog-fill/conflicts` — opened from the catalog-fill screen;
  *   - `inquiries/[id]/card` — the printable card for one commission.
  * The auth routes (login, signup, forgot/reset password) live outside
  * `(dashboard)` entirely and are never in a signed-in shell.

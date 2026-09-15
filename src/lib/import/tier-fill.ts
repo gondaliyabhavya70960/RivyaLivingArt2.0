@@ -6,7 +6,7 @@ import { gunzipSync } from "node:zlib";
 import type { PrismaClient, Prisma } from "@/generated/prisma/client";
 import { parseCsv } from "@/lib/import/parse";
 import { slugify } from "@/lib/slug";
-import { DEFAULT_CARE_NOTES } from "@/lib/scraper/product-sheet";
+import { DEFAULT_CARE_NOTES } from "@/lib/scraper/product-enrich";
 import {
   CANONICAL_CATEGORIES,
   canonicalCategoryFor,
@@ -42,7 +42,7 @@ import { decideFillWrite, type FillPolicy } from "@/lib/import/fill-policy";
  * `dryRun` runs every read and every decision exactly as a real run would,
  * and skips every WRITE (category creation, the care-notes cleanup pass,
  * per-row create/update, the demote reconciliation, ImportConflict rows, and
- * the ImportRun/ActivityLog record) — so `previewSheetFill()` can show
+ * the ImportRun/ActivityLog record) — so `previewCatalogFill()` can show
  * accurate creates/updates/drops without touching the catalog.
  */
 
@@ -444,7 +444,7 @@ export type TierFillResult = {
 export type RunTierFillOptions = {
   trigger: TierFillTrigger;
   /** When true, every read and decision runs normally and every write is
-   *  skipped — used by previewSheetFill() to show what a real run would do. */
+   *  skipped — used by previewCatalogFill() to show what a real run would do. */
   dryRun?: boolean;
   policy: FillPolicy;
   db: PrismaClient;
@@ -1061,7 +1061,7 @@ export async function runTierFill(
       }
     }
 
-    // Reconcile: sheet-imported products of this tier that are no longer
+    // Reconcile: CSV-imported products of this tier that are no longer
     // in the selected set demote to DRAFT (never deleted — records, images
     // and any inquiries are preserved; owner-created products and the
     // owner-ready batch are never touched). Keeps the published counts at
@@ -1329,6 +1329,14 @@ export async function runTierFill(
           })),
         });
       }
+      /* `"sheet-import"` is a STORED value, not a name: every ActivityLog
+         row this importer has ever written carries it, and the catalog-fill
+         screen's "last run" reads it back. Renaming it here would orphan the
+         history from its reader — the same class of break as renaming a
+         column. `Product.importSource: "sheet:*"` is stored the same way, for
+         the same reason. Neither has anything to do with Google Sheets, which
+         is gone (plan C, 2026-09-15); both mean the `data/tiers/*.csv.gz`
+         fill. */
       await db.activityLog.create({
         data: {
           action: "sheet-import",

@@ -139,8 +139,7 @@ describe("no literal cap survives in an editor's action", () => {
    */
   const ALLOWED: Record<string, string[]> = {
     "settings.ts": [
-      "maxCreates — the sheet-fill policy form, not a Studio editor",
-      "sheetId — the sheet-ids form, not a Studio editor",
+      "maxCreates — the catalog-fill policy form, not a Studio editor",
     ],
     "products.ts": [
       "search query cap — a typed query, never stored",

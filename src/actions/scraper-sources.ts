@@ -12,14 +12,8 @@ import {
   isBlockedMarketplace,
   normalizeBaseUrl,
 } from "@/lib/scraper/fingerprint";
-import { SCRAPEDECK_COLUMNS } from "@/lib/scraper/export";
 import { TIER_NUMBER } from "@/lib/scraper/purge";
 import { applySeedSources } from "@/lib/scraper/seed-sources";
-import {
-  deleteRowsFromTab,
-  isSheetSyncConfigured,
-  TAB_BY_TIER,
-} from "@/lib/scraper/sheets";
 import { slugify } from "@/lib/slug";
 
 const STUDIO_PATH = "/studio/scraper/sources";
@@ -196,7 +190,11 @@ export async function addScrapeSources(
       try {
         baseUrl = normalizeBaseUrl(rawUrl);
       } catch {
-        preflight.push({ url: rawUrl, status: "invalid", message: "Not a valid URL" });
+        preflight.push({
+          url: rawUrl,
+          status: "invalid",
+          message: "Not a valid URL",
+        });
         continue;
       }
       if (isBlockedMarketplace(baseUrl)) {
@@ -245,10 +243,20 @@ export async function addScrapeSources(
         });
         if (existing) {
           updated += 1;
-          results.push({ url: host, status: "updated", platform, enabled: verified });
+          results.push({
+            url: host,
+            status: "updated",
+            platform,
+            enabled: verified,
+          });
         } else {
           added += 1;
-          results.push({ url: host, status: "added", platform, enabled: verified });
+          results.push({
+            url: host,
+            status: "added",
+            platform,
+            enabled: verified,
+          });
         }
       } catch (error) {
         results.push({
@@ -261,7 +269,10 @@ export async function addScrapeSources(
 
     const allResults = [...results, ...preflight];
     const failed = allResults.filter(
-      (r) => r.status === "invalid" || r.status === "blocked" || r.status === "error",
+      (r) =>
+        r.status === "invalid" ||
+        r.status === "blocked" ||
+        r.status === "error",
     ).length;
 
     await logActivity({
@@ -473,7 +484,9 @@ export async function previewSourcePurge(
       db.product.count({
         where: {
           OR: [
-            { importSource: { in: [...keys, ...keys.map((k) => `sheet:${k}`)] } },
+            {
+              importSource: { in: [...keys, ...keys.map((k) => `sheet:${k}`)] },
+            },
             ...(tierNumbers.length > 0 ? [{ tier: { in: tierNumbers } }] : []),
           ],
         },
@@ -516,7 +529,6 @@ export async function purgeScrapeSources(
     sources: number;
     stagedProducts: number;
     catalogProducts: number;
-    sheetRows: number;
   }>
 > {
   return runAction(async () => {
@@ -531,7 +543,7 @@ export async function purgeScrapeSources(
       select: { id: true, key: true, tier: true },
     });
     if (sources.length === 0) {
-      return { sources: 0, stagedProducts: 0, catalogProducts: 0, sheetRows: 0 };
+      return { sources: 0, stagedProducts: 0, catalogProducts: 0 };
     }
     const keys = sources.map((s) => s.key);
     const tiers = [...new Set(sources.map((s) => s.tier))];
@@ -572,30 +584,10 @@ export async function purgeScrapeSources(
       db.priceHistory.deleteMany({ where: { sourceKey: { in: keys } } }),
       db.validationFailure.deleteMany({ where: { sourceKey: { in: keys } } }),
       db.scrapeJob.deleteMany({ where: { sourceKey: { in: keys } } }),
-      db.scrapeSource.deleteMany({ where: { id: { in: sources.map((s) => s.id) } } }),
+      db.scrapeSource.deleteMany({
+        where: { id: { in: sources.map((s) => s.id) } },
+      }),
     ]);
-
-    // The sheet's scrape decks. Rows are keyed `sourceKey|externalId`, and the
-    // tier tab's first column IS sourceKey — so matching on it removes every
-    // row those sources ever produced.
-    let sheetRows = 0;
-    if (isSheetSyncConfigured()) {
-      for (const tier of tiers) {
-        try {
-          const res = await deleteRowsFromTab({
-            tab: TAB_BY_TIER[tier],
-            keys,
-            keyOf: (row) => row[0] ?? "",
-            columns: SCRAPEDECK_COLUMNS.length,
-          });
-          sheetRows += res.deleted;
-        } catch (error) {
-          // The database change already happened. Failing here would report a
-          // completed purge as an error; the sheet can be re-synced.
-          console.error(`purge: sheet cleanup failed for ${tier}:`, error);
-        }
-      }
-    }
 
     await logActivity({
       userId: session.user.id,
@@ -606,7 +598,6 @@ export async function purgeScrapeSources(
         keys,
         stagedProducts: staged.count,
         catalogProducts,
-        sheetRows,
         tier: parsed.tier ?? null,
       },
     });
@@ -615,7 +606,6 @@ export async function purgeScrapeSources(
       sources: keys.length,
       stagedProducts: staged.count,
       catalogProducts,
-      sheetRows,
     };
   });
 }

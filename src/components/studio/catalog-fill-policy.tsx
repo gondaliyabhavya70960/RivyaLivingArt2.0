@@ -4,20 +4,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { setSheetFillPolicy } from "@/actions/settings";
+import { setCatalogFillPolicy } from "@/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
 /**
- * The owner's control over the sheet → catalog fill.
+ * The owner's control over the CSV → catalog fill.
  *
  * The fill is not new — it has run on every deploy since it was written. This
  * screen is the first place it can be seen or stopped, so the copy says what
  * each switch actually does to a deploy rather than describing a feature.
  */
-export function SheetFillPolicy({
+export function CatalogFillPolicy({
   enabled,
   onDeploy,
   maxCreates,
@@ -40,7 +40,7 @@ export function SheetFillPolicy({
       return;
     }
     setBusy(true);
-    const res = await setSheetFillPolicy({
+    const res = await setCatalogFillPolicy({
       enabled: on,
       onDeploy: deploy,
       maxCreates: parsedCap,
@@ -58,14 +58,17 @@ export function SheetFillPolicy({
     <section className="rounded-card border border-border bg-card p-5 shadow-e1">
       <h2 className="font-medium text-foreground">Automatic fill</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        The sheet fills the catalogue on every deploy. These decide whether it
-        may, and how much it may add at once.
+        The tier CSVs fill the catalogue on every deploy. These decide whether
+        it may, and how much it may add at once.
       </p>
 
       <div className="mt-4 space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <Label htmlFor="fill-enabled" className="flex-1 flex-col items-start gap-0.5 font-normal">
-            Fill the catalogue from the sheet
+          <Label
+            htmlFor="fill-enabled"
+            className="flex-1 flex-col items-start gap-0.5 font-normal"
+          >
+            Fill the catalogue from the tier CSVs
             <span className="mt-0.5 block text-xs text-muted-foreground">
               Off stops it everywhere, deploys included.
             </span>
@@ -78,11 +81,14 @@ export function SheetFillPolicy({
         </div>
 
         <div className="flex items-start justify-between gap-4">
-          <Label htmlFor="fill-deploy" className="flex-1 flex-col items-start gap-0.5 font-normal">
+          <Label
+            htmlFor="fill-deploy"
+            className="flex-1 flex-col items-start gap-0.5 font-normal"
+          >
             Fill when the site deploys
             <span className="mt-0.5 block text-xs text-muted-foreground">
               Keep this on so a brand-new environment populates itself from the
-              sheet the first time it starts.
+              CSVs the first time it starts.
             </span>
           </Label>
           <Checkbox
@@ -94,10 +100,13 @@ export function SheetFillPolicy({
         </div>
 
         <div className="flex items-start justify-between gap-4">
-          <Label htmlFor="fill-cap" className="flex-1 flex-col items-start gap-0.5 font-normal">
+          <Label
+            htmlFor="fill-cap"
+            className="flex-1 flex-col items-start gap-0.5 font-normal"
+          >
             Stop if it would add more than
             <span className="mt-0.5 block text-xs text-muted-foreground">
-              Blank means no limit. A re-sorted or re-keyed sheet can otherwise
+              Blank means no limit. A re-sorted or re-keyed CSV can otherwise
               add thousands of products in one run; nothing is written when this
               trips.
             </span>

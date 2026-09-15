@@ -51,21 +51,28 @@ Drive-sourced media pipeline. `docs/plan/README.md` is the index.
 On 2026-09-15 the owner delegated decisions D25–D29 ("decide by yourself and go
 to the next step") rather than answering them individually, so the plan's own
 recommendations stand as the ratified positions. **Shipped so far:** workstream
-D's asset pipeline end to end (Phase 1), and workstream C's Sheets REPLACEMENT
-— the confirmed-products export and `/studio/exports`. **Not yet started:** the
-storefront/Studio redesign (A), the scraper rebuild (B), and the Sheets REMOVAL
-itself, which the plan deliberately sequences after the owner has exported once
-from the new screen and archived the spreadsheet.
+D's asset pipeline end to end (Phase 1); workstream C's Sheets REPLACEMENT (the
+confirmed-products export and `/studio/exports`) and then its REMOVAL — the
+push engine, the sync policy and the service-account client are deleted;
+workstream A's design-system layer (the v4 leading scale, one disabled state,
+the Studio's nav groups) and the homepage collections fix. **Not yet done:** the
+schema DROPS that finish the Sheets removal (their own PR, for the reason in the
+migration warning above), the scraper rebuild (B), and the Studio redesign (A8).
+
+**Before the drops can land the owner must run `npm run export:sheets-history`
+once** — `SheetSyncRun` is the only copy of the push history and the drop
+migration destroys it.
 
 Where this file and the plan disagree on a fact, this file is the one being
 kept current — the plan records what was true when it was written.
 
 ## HARD RULES — business model (REDESIGN.md §1.1 · Part 0 wins all conflicts)
+
 - NO payment gateway, online checkout, or cart payment (no Stripe/Razorpay/PayPal).
 - NO customer login/membership/accounts. The ONLY login is the staff studio
   (admin/editor roles) at /studio.
 - NO AI-invented products, ever. Catalog is filled ONLY by the owner via
-  scraper review+approval, Bulk Import (Google Sheets/CSV), or manual /studio adds.
+  scraper review+approval, Bulk Import (CSV/XLSX), or manual /studio adds.
 - Every order finalizes through WhatsApp: Place Order → generate order summary
   → save Inquiry record via Server Action → redirect to wa.me/917096036250
   with the complete pre-filled message.
@@ -74,12 +81,13 @@ kept current — the plan records what was true when it was written.
   behaviour, URLs and routes are off-limits (§1.1).
 
 ## Commands
+
 - dev: `npm run dev`
-- test: `npm run test`   (vitest unit suite over src/lib pure functions)
-- e2e smoke: `BASE_URL=… npm run test:e2e`   (the ten contract checks plus the
+- test: `npm run test` (vitest unit suite over src/lib pure functions)
+- e2e smoke: `BASE_URL=… npm run test:e2e` (the ten contract checks plus the
   search overlay, a shop facet, the demo PDP's order flow to wa.me with the
   `[DEMO] ` prefix, the locales, and — with `STUDIO_EMAIL`/`STUDIO_PASSWORD` —
-  the Studio login, a media upload, the sheet-fill preview, the testimonial
+  the Studio login, a media upload, the catalog-fill preview, the testimonial
   permission rule, a product's create → edit → delete, a page-builder block
   save on `/p/demo-lander`, a site-copy draft → Publish → Reset round trip and
   the scraper's refusal of an undetectable platform; database checks need
@@ -97,11 +105,41 @@ kept current — the plan records what was true when it was written.
   13 public routes plus the five demo detail routes, the RTL set, the keyboard
   paths (chrome overlays and the three lightboxes), the Studio audit at both
   widths and Lighthouse. All of it gates the build.
-- typecheck: `npm run typecheck`   (tsc --noEmit)
+- typecheck: `npm run typecheck` (tsc --noEmit)
+
+### A MIGRATION HERE IS A PRODUCTION MIGRATION, ON PUSH
+
+`npm run build` is `prisma migrate deploy && tsx prisma/bootstrap.ts &&
+next build`, and **Vercel runs it for PREVIEW deployments against the
+production database** (`db.prisma.io` — the build's own `db-preflight` prints
+the host every time; it is NOT Neon, whatever older comments say). So pushing a
+branch applies its migrations to production immediately — not on merge, not on
+deploy.
+
+**Every migration must therefore be backward compatible with the code that is
+CURRENTLY DEPLOYED, not merely non-destructive.** Between the preview build and
+the merge, production runs old code against the new schema.
+
+- Renaming a table or column is **not** safe. Use `@@map`/`@map` to rename in
+  Prisma-land only, and leave the database alone.
+- Dropping anything is **not** safe, and has no revert. A drop ships in its own
+  PR, merged and deployed only AFTER the PR that stops referencing the thing is
+  already live.
+- Adding a nullable column or a new table is safe.
+
+Learned the expensive way on 2026-09-15: a `SheetConflict → ImportConflict`
+rename reached production on push and broke the Studio's sheet-import screens,
+settings form and dashboard inbox for four minutes, until a revert migration
+landed. The storefront was unaffected — it queries none of those tables.
+
+Worth fixing properly rather than tiptoeing forever: give previews their own
+database, or gate `migrate deploy` on `VERCEL_ENV=production`. Neither is done.
+
 - lint: `npm run lint -- --fix`
-- build: `npm run build`   (runs prisma migrate deploy + bootstrap first — needs DATABASE_URL)
+- build: `npm run build` (runs prisma migrate deploy + bootstrap first — needs DATABASE_URL)
 
 ### Part 15 imagery (`docs/media-v3-manifest.json`)
+
 - The §15.4 asset set — six collection tiles, the pour/gild/cure/polish story,
   four material macros and ten atmospheric heroes — was generated through the
   Higgsfield MCP and is recorded, prompt by prompt, in the manifest. The masters
@@ -115,7 +153,7 @@ kept current — the plan records what was true when it was written.
   each, promoted, encoded and wired: `public/media/v3/` now holds 65 masters
   (4.4 MB) and 20 slots point at the new ones. `--planned` reports
   `55 entries: 12 planned · 3 generated · 0 incomplete · 0 awaiting a cull ·
-  40 ready to build`, and
+40 ready to build`, and
   `media-v3-planned.test.ts` asserts exactly that split. What is left is the 3
   SET F loops (a video promote, not this pipeline), the 12 rows nobody has
   generated, and 20 built masters that are deliberately unwired — 5 whose own
@@ -196,7 +234,7 @@ kept current — the plan records what was true when it was written.
   committed `blurDataURL` byte-for-byte for 24 of 25. The 25th is
   `process-pour-poster`, cut from the video by ffmpeg — it is the same frame
   within encoder noise (mean pixel difference 9.1 against its own file, versus
-  30.8 for the *nearest different* master and 55.4 median), not a different
+  30.8 for the _nearest different_ master and 55.4 median), not a different
   picture.
 - **Before this, everything was green while the site had no photography.** The
   resolver is total by construction, the build never resolves these runtime
@@ -256,18 +294,18 @@ the owner CHANGED. The resolver is total, so an empty table, a fresh database
 and an unreachable one all render the page the repo ships with rather than a
 blank one. Adding a surface means following this, not inventing a ninth shape.
 
-| Surface | Registry | Table | Resolver |
-|---|---|---|---|
-| `/studio/site-copy` | `site-copy.generated.ts` (1,297 slots; `npm run copy:registry`) | `SiteCopy` | `getSiteCopy()` |
-| `/studio/site-images` | `site-images.ts` (78 slots) | `SiteImage` | `getSiteImages()` |
-| `/studio/forms` | `form-options.ts` | `FormOption` | `getFormOptions()` |
-| `/studio/navigation` | `nav-menus.ts` | `NavMenu` · `NavItem` | `getNavMenus()` |
-| `/studio/sections` | `page-sections.ts` (7 pages) | `PageSection` | `getPageSections()` |
-| `/studio/process` · `/studio/materials` | `page-sections.ts` (`process-steps` ×10, `materials` ×4 — the same board pre-filtered) | `PageSection` | `getPageSections()` |
-| `/studio/custom-pages` | `custom-blocks.ts` (16 types) | `CustomPage` · `CustomBlock` | `getCustomPage()` |
-| `/studio/media` | — | `Media` | — |
-| `/studio/settings` · `/studio/seo` | `constants.ts` (fallbacks) | `SiteSettings` | `getSiteSettings()` |
-| `/studio/content-lab` | `prisma/fixtures/demo/*.json` (`src/lib/demo/`) | every content table, rows marked `isDemo` | `showDemoContent()` · `demoWhere()` |
+| Surface                                 | Registry                                                                               | Table                                     | Resolver                            |
+| --------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------- |
+| `/studio/site-copy`                     | `site-copy.generated.ts` (1,297 slots; `npm run copy:registry`)                        | `SiteCopy`                                | `getSiteCopy()`                     |
+| `/studio/site-images`                   | `site-images.ts` (78 slots)                                                            | `SiteImage`                               | `getSiteImages()`                   |
+| `/studio/forms`                         | `form-options.ts`                                                                      | `FormOption`                              | `getFormOptions()`                  |
+| `/studio/navigation`                    | `nav-menus.ts`                                                                         | `NavMenu` · `NavItem`                     | `getNavMenus()`                     |
+| `/studio/sections`                      | `page-sections.ts` (7 pages)                                                           | `PageSection`                             | `getPageSections()`                 |
+| `/studio/process` · `/studio/materials` | `page-sections.ts` (`process-steps` ×10, `materials` ×4 — the same board pre-filtered) | `PageSection`                             | `getPageSections()`                 |
+| `/studio/custom-pages`                  | `custom-blocks.ts` (16 types)                                                          | `CustomPage` · `CustomBlock`              | `getCustomPage()`                   |
+| `/studio/media`                         | —                                                                                      | `Media`                                   | —                                   |
+| `/studio/settings` · `/studio/seo`      | `constants.ts` (fallbacks)                                                             | `SiteSettings`                            | `getSiteSettings()`                 |
+| `/studio/content-lab`                   | `prisma/fixtures/demo/*.json` (`src/lib/demo/`)                                        | every content table, rows marked `isDemo` | `showDemoContent()` · `demoWhere()` |
 
 Four rules that hold across all of them:
 
@@ -294,8 +332,8 @@ Four rules that hold across all of them:
   Lab seeds fixtures with `isDemo: true`; every public reader spreads
   `demoWhere()` — rows show only when `SiteSettings.demoContentPublic` is on or
   `VERCEL_ENV` is not `production` — with `<DemoMark/>` and `noindex`, and the
-  sitemap, Product/Article/Review JSON-LD, the Google Sheet push and the image
-  mirror exclude them by clause regardless. A demo order is saved with
+  sitemap, Product/Article/Review JSON-LD and the image mirror exclude them by
+  clause regardless. A demo order is saved with
   `Inquiry.isDemo` and its WhatsApp message carries `[DEMO] `.
 - **A testimonial publishes only with permission.** `describeTestimonialProblem`
   refuses `PUBLISHED` unless `permissionStatus` is `GRANTED` (on a save — rows
@@ -306,6 +344,7 @@ Four rules that hold across all of them:
   break was silent — the worst 404'd only the phone layout.
 
 ### Site Images (`/studio/site-images`)
+
 - The storefront's editorial photography is no longer hardcoded. Every call
   site is a **named slot** in `src/lib/site-images.ts` (78 slots, 25 bundled
   files — the count grew from 62 with the furniture/rooms concept tiles and the
@@ -333,16 +372,16 @@ Four rules that hold across all of them:
   `CANONICAL_CATEGORIES[].image` (seed defaults for `Category.image`, already
   editable in the category editor).
 
-### The Product Scraper → Sheet → Studio pipeline
+### The Product Scraper → Studio pipeline
 
-Full docs in `docs/scraper.md`, `google-sheets.md`, `product-lifecycle.md`,
+Full docs in `docs/scraper.md`, `product-lifecycle.md`,
 `studio-workflow.md`, `source-adapters.md`, `troubleshooting.md`. The rules
 below are the ones that are expensive to rediscover.
 
 - **Staged rows are immutable.** `ScrapedProduct` is what the site said;
   promotion writes a separate catalog `Product`. Corrections never edit the
   staged row, so a normalisation change needs no re-scrape.
-- **Owner edits outrank every writer.** Both the sheet importer and the
+- **Owner edits outrank every writer.** Both the CSV importer and the
   scraper's promote path refresh availability ONLY when `ownerTouched` — never
   content, never images. The rule lives once, in `merge-policy.ts`, and is
   checked BEFORE `needsRewrite`. It used to be checked after, which silently
@@ -354,22 +393,41 @@ below are the ones that are expensive to rediscover.
   the counter; a success resets it to zero rather than decaying.
 - **`CONFIRMED_PRODUCTS ≡ { p : p.confirmedAt IS NOT NULL }`.** Nothing but the
   Confirm action sets it. There is no path from scrape to confirmed.
-- **Sheet writes go through one engine, gated by a per-source policy**
-  (`MANUAL` default · `ON_COMPLETE` · `OFF`). Two write paths into a shared
-  document is how rows get duplicated. A FAILED job never auto-pushes.
-- **Sheets being down never fails a scrape.** Rows mark `SYNC_PENDING`; the
-  retry re-pushes whole jobs, which the merge key makes free of charge.
-- **Sheet→catalog fill has run on every deploy since long before it was a
+- **THE GOOGLE SHEETS API INTEGRATION IS GONE** (plan C, 2026-09-15). The push
+  engine, the per-source `MANUAL`/`ON_COMPLETE`/`OFF` policy, the Sheet1
+  linking, the service-account client, the `SheetSyncRun` history screen and
+  the four `GOOGLE_*`/`*SHEET_ID` env vars were deleted. **No credential in
+  this repo reaches Google, and nothing WRITES to a spreadsheet.** The owner
+  exports the confirmed list from `/studio/exports` as CSV or XLSX instead — on
+  demand, rather than on every scrape.
+- **Two credential-free READS of a public sheet survive, deliberately.** Bulk
+  Import accepts a `docs.google.com/spreadsheets/…` link and fetches its CSV
+  export (`src/lib/import/parse.ts`), and `.github/workflows/fetch-tiers.yml`
+  curls the same export to refresh `data/tiers/*.csv.gz` — manual-only, not on
+  a schedule, whatever older copy says. Both are ordinary HTTP GETs of a
+  link-public document; neither is the integration that was removed. **Both
+  stop working the moment the owner un-shares the spreadsheet** (removal plan
+  step 6), which is a thing to tell them, not a bug to chase.
+- **What is still called "sheet" is NOT Google Sheets.** `/studio/catalog-fill`
+  (was `/studio/sheet-import`) and `src/lib/import/tier-fill.ts` read committed
+  CSVs from `data/tiers/*.csv.gz` and always did. The conflict queue that fill
+  writes was renamed `SheetConflict → ImportConflict` before the deletion,
+  precisely so nobody removing "the sheet things" takes the catalog importer
+  with it.
+- **Two `"sheet"` strings are STORED DATA and are frozen.** `ActivityLog.action
+= "sheet-import"` (written by `tier-fill.ts`, read back by the catalog-fill
+  screen's "last run") and `Product.importSource = "sheet:*"` (matched by
+  `startsWith` in half a dozen queries). Renaming either would orphan every
+  existing row from its reader — the same class of break as renaming a column.
+  Other action strings moved with the rename, so history holds both spellings.
+- **CSV→catalog fill has run on every deploy since long before it was a
   feature** (`bootstrap.ts` → `import-tiers.ts`). Its settings all default to
   that behaviour, so a fresh environment still self-populates on first boot.
   The blast-radius cap guards CREATES specifically — the direction that hurts.
-- **Deleting a product clears it from the website mirror and the confirmed tab,
-  never from the tier tabs.** Those record what a supplier's site said; a
-  deletion here does not un-happen the scrape.
-- **Sheet row deletion is not upsert-in-reverse.** It needs `deleteDimension`
-  and the tab's NUMERIC id, and rows must be removed in DESCENDING index order
-  — an ascending pass deletes the wrong rows from the second one onward, and
-  succeeds while doing it.
+- **Deleting a product never touches the staged scrape rows.** Those record
+  what a supplier's site said; a deletion here does not un-happen the scrape.
+  The `DeletedImport` tombstone written by the delete is what stops the next
+  CSV import resurrecting it.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are
@@ -413,6 +471,7 @@ afterwards, and downgrades to a NOTE when the state changed mid-measurement:
 `--dur-base`, and the route walk drags the hero through the header's band
 twice, so a late IntersectionObserver callback on a loaded runner used to be
 reported as a contrast failure no visitor could see.
+
 - `node scripts/redesign-audit.mjs "/en,/en/shop,…" [--w 390]` — REDESIGN.md
   Part 19.1 as an executable check: one `h1`, no duplicated section heading,
   max two `section-major`, max three dark bands and never adjacent, numbers in
@@ -447,6 +506,7 @@ reported as a contrast failure no visitor could see.
   nowhere else renders as its own path in eight languages.
 
 ## Stack
+
 Next.js App Router + TS, Tailwind v4 (v3 tokens in src/styles/tokens.css +
 the utility bridge in src/app/globals.css), shadcn/ui, Prisma + Postgres,
 Auth.js (STAFF ONLY, /studio), @vercel/blob uploads, WhatsApp deep-link
@@ -454,6 +514,7 @@ ordering (lib/whatsapp.ts), React Hook Form + Zod forms, Lenis + GSAP/
 ScrollTrigger for the two pinned scrubs.
 
 ## Design system — v3 "Liquid Luxury"
+
 - **Colour**: obsidian · deep-ocean · sapphire/-hi · mineral · sand ·
   champagne · ink · graphite · mist · hairline/-dk · whatsapp · alert ·
   success. Three AA companions exist because a palette role cannot carry text:
@@ -472,7 +533,7 @@ ScrollTrigger for the two pinned scrubs.
 - **Composite utilities**: `u-micro` (every eyebrow and metadata line),
   `u-num`, `u-shell` (the content rail — it also reserves the 56px cure gutter
   at ≥1024px), `u-prose` (68ch), `u-lede` (52ch), `section-major|standard|
-  compact`, `rule`/`rule-dk`.
+compact`, `rule`/`rule-dk`.
 - **Surfaces**: 1px hairlines and a mineral → sand shift, never boxes. No drop
   shadows on the storefront — two exceptions, the mobile bottom bar and the
   Studio's bulk-action bar. Blur in exactly one place: the sticky header.
@@ -481,6 +542,7 @@ ScrollTrigger for the two pinned scrubs.
   masks rather than clips — a clipped element never loads its image.
 
 ## Current repo reality (adapt to it — never break it)
+
 - Code lives under `src/`: storefront routes in `src/app/[locale]/(v2)`
   (next-intl, 9 locales incl. RTL — do NOT restructure); staff panel in
   `src/app/studio`; route guard at `src/proxy.ts` (Next 16.3 renamed
@@ -535,6 +597,7 @@ ScrollTrigger for the two pinned scrubs.
   `scripts/e2e-smoke.mjs`. There is no component-test runner.
 
 ## Conventions
+
 - TypeScript strict; no `any`; named exports; server components by default,
   `"use client"` only for interactivity/motion.
 - **Never call setState synchronously in an effect body** — the repo lints for
@@ -599,6 +662,7 @@ attempt has already failed and been recorded.
   sets it.
 
 ## Definition of done (every task)
+
 typecheck ✓ lint ✓ build ✓ · works at 360px and 1280px · keyboard reachable ·
 reduced-motion checked · screenshots verified · HARD RULES respected ·
 `scripts/redesign-audit.mjs` and `scripts/a11y-audit.mjs` gate every PR over the

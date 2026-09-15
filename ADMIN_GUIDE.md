@@ -17,7 +17,7 @@ Go to `/studio`, enter your admin email and password, and you land on the Dashbo
 
 ## 2. The Dashboard
 
-Your at-a-glance view: counts of products, this week's inquiries and blog posts, the six most recent WhatsApp orders with their status, and quick links to common jobs. The sidebar groups everything: **Catalog** (Products, Categories, Media Library), **Orders & Content** (WhatsApp Orders, Subscribers, Blog, Portfolio, Testimonials, FAQs, Pages), **Growth** (Sheet Import, Bulk Import, Product Scraper, SEO — SEO is admins-only), and **System** (Site Settings, Users, Activity).
+Your at-a-glance view: counts of products, this week's inquiries and blog posts, the six most recent WhatsApp orders with their status, and quick links to common jobs. The sidebar groups everything: **Catalog** (Products, Categories, Media Library), **Orders & Content** (WhatsApp Orders, Subscribers, Blog, Portfolio, Testimonials, FAQs, Pages), **Growth** (Catalog fill, Bulk Import, Product Scraper, SEO — SEO is admins-only), and **System** (Site Settings, Users, Activity).
 
 ## 3. Adding a product (step by step)
 
@@ -65,7 +65,7 @@ Show off finished commissions. Each portfolio item has a story, an optional **Be
 
 ## 9. Testimonials
 
-Each testimonial is its own page now (Quote · Attribution · Links · Media · Review). Beyond the name, quote, city and rating you can record the customer's designation, the piece or the project it belongs to (the product page then shows it), a photograph of the piece in their home, a short film with its poster, the date and the language it was given in, private notes, and — the part that matters — **permission**. A testimonial cannot be **Published** until Permission is **Granted** on the Review tab; the studio refuses the save and says so. Statuses run Draft → Pending review → Verified → Published, plus Archived; **Featured** picks the ones the big quote band shows. The list can be searched, sorted and filtered by status, and rows imported from a sheet arrive as Draft.
+Each testimonial is its own page now (Quote · Attribution · Links · Media · Review). Beyond the name, quote, city and rating you can record the customer's designation, the piece or the project it belongs to (the product page then shows it), a photograph of the piece in their home, a short film with its poster, the date and the language it was given in, private notes, and — the part that matters — **permission**. A testimonial cannot be **Published** until Permission is **Granted** on the Review tab; the studio refuses the save and says so. Statuses run Draft → Pending review → Verified → Published, plus Archived; **Featured** picks the ones the big quote band shows. The list can be searched, sorted and filtered by status, and rows imported from a file arrive as Draft.
 
 Demo testimonials (from the Content Lab, see §21) are always marked "demo" on the site and never count as real reviews in Google's data.
 
@@ -87,7 +87,6 @@ The one form that controls site-wide details:
 - **WhatsApp number** — this becomes the `wa.me` link behind every order button. It must be **digits only, with the country code, no + or spaces** (e.g. `917096036250`) — the form shows a live preview of the resulting link and won't let you save an invalid one.
 - **Socials** — put your real Instagram handle here before launch (the footer icon uses it).
 - **Default SEO** and **default care notes** — the fallbacks used when a product or page has none of its own.
-- **Sheets** — the id of your master spreadsheet and its five tab ids, so the scraper, the tier fill and the pushes all write to the sheet you name here (the deploy settings are the fallback).
 - **Demo content** — the switch that lets the Content Lab's demo pieces show on the live site, marked "DEMO CONTENT" (see §21). Off by default; leave it off unless you are showing the site to someone.
 
 ## 13. SEO defaults
@@ -115,7 +114,7 @@ For adding lots of content at once — products, categories, blog posts, FAQs, t
 3. **Feed it in**, either way:
    - **Google Sheet link** — the sheet must be shared as **"Anyone with the link can view"** (or published to the web), or the import will tell you it can't read it.
    - **Upload a .csv or .xlsx file** directly.
-4. **Review the preview.** Every row is checked *before anything is written*: rows are marked **Create** (new), **Update** (a row with the same slug already exists — importing updates it), or **Error** with a plain-English reason (unknown category, bad price, duplicate slug in the file, etc.). Error rows are simply skipped; they never block the good rows. For products the preview also counts the rows you have **edited in the studio** since they were last imported: those are left alone (only their stock status refreshes) unless you tick **Overwrite owner-edited products** — the same rule the scraper and the sheet fill follow, so an import can never silently undo your hand edits.
+4. **Review the preview.** Every row is checked _before anything is written_: rows are marked **Create** (new), **Update** (a row with the same slug already exists — importing updates it), or **Error** with a plain-English reason (unknown category, bad price, duplicate slug in the file, etc.). Error rows are simply skipped; they never block the good rows. For products the preview also counts the rows you have **edited in the studio** since they were last imported: those are left alone (only their stock status refreshes) unless you tick **Overwrite owner-edited products** — the same rule the scraper and the catalog fill follow, so an import can never silently undo your hand edits.
 5. **Run the import** and read the report: created / updated / skipped counts and any per-row errors.
 
 Good to know: up to **500 rows** per file; image columns take public URLs which are downloaded and re-uploaded into your own media storage; blog/page content columns are written in Markdown and converted to the rich editor format automatically.
@@ -129,6 +128,7 @@ The scraper collects competitor products **for research and cataloging speed** �
 **Sources** — a registry of scrape-ready sites in four tiers: Tier 1 (Owner-priority sites), Tier 2 (Resin goods stores), Tier 3 (Supplies), Tier 4 (3D printing). Around 120 curated sources come pre-loaded (the registry is reconciled on every deploy, preserving your verify results and enable/disable choices). Each row shows the detected platform and has a **Verify** button that re-checks the site live. You can add a new source by URL — the Studio fingerprints it automatically; marketplaces (Amazon, Etsy, Flipkart, Meesho, IndiaMART…) are blocked by design, and sites the scraper can't read are saved as disabled with a note.
 
 **Scrape** (the main Scraper page) — two ways to run:
+
 - **Scrape a website:** paste a store URL, pick its tier, go.
 - **Tier runs:** queue every enabled source in a tier (or "Scrape ALL" in tier order). Jobs run one at a time in small chunks, show live progress, and are **resumable** — if one stops, press Resume. Each finished job has its own **Export CSV** button.
 
@@ -136,28 +136,27 @@ The scraper collects competitor products **for research and cataloging speed** �
 
 > ⚠️ **The rewrite rule (copyright — not optional).** Approved items are imported as **Drafts** flagged **"needs rewrite"**. Scraped titles, text and photos are the competitor's copyrighted material — reference only. Before publishing you must **rewrite every description in your own words and replace all images with real Rivya Living Art photos**, then tick the confirm-rewrite box on the product form. Until then, publishing is blocked — even bulk publish skips flagged products and tells you how many it skipped.
 
-**Exports & the Google Sheet** — any set of scraped rows can be exported as a **ScrapeDeck CSV** (26 fixed columns — see CONTENT_GUIDE.md). If the Google keys are configured, a **Sync to Sheet** button pushes rows into your designated Google Sheet, one tab per tier (Tier1_Owner, Tier2_ResinGoods, Tier3_Supplies, Tier4_3DPrint), updating changed rows and appending new ones. And remember: those CSVs are for the review workflow only — Bulk Import will reject them.
+**Exports** — any set of scraped rows can be exported as a **ScrapeDeck CSV** (26 fixed columns — see CONTENT_GUIDE.md), and the confirmed list exports as CSV or XLSX from **Exports**. Until 2026-09-15 a **Sync to Sheet** button also pushed rows into a Google Sheet; that integration was removed, and you take a file when you want one instead. And remember: those scraper CSVs are for the review workflow only — Bulk Import will reject them.
 
 ## 19. Subscribers
 
 **Subscribers** collects the email addresses people leave in the newsletter signup forms on the website (footer and content pages). The list page shows every subscriber with their signup date, and an **Export CSV** button downloads the whole list so you can use it in any mailing tool. No emails are ever sent automatically — the site only collects; sending is up to you.
 
-## 20. Sheet Import (your four-tier catalog sheet)
+## 20. Catalog fill (your four-tier catalog import)
 
-**Sheet Import** is the status page for the catalog that loads automatically from your master Google Sheet's four tier tabs — **Tier1_Owner** (all rows), **Tier2_ResinGoods** (top 1,000), **Tier3_Supplies** (top 2,500), **Tier4_3DPrint** (top 500). The import runs on every deploy; this page shows per-tier counts, the last run's created/updated/failed numbers, and how many imported product images still point at external sites. Imported images are copied ("mirrored") into your own storage in batches — a nightly job works through the backlog, and a button on this page runs the next batch on demand.
+**Catalog fill** is the status page for the catalog that loads automatically from four tier CSVs committed to the repository — **Tier1_Owner** (all rows), **Tier2_ResinGoods** (top 1,000), **Tier3_Supplies** (top 2,500), **Tier4_3DPrint** (top 500). The import runs on every deploy; this page shows per-tier counts, the last run's created/updated/failed numbers, and how many imported product images still point at external sites. Imported images are copied ("mirrored") into your own storage in batches — a nightly job works through the backlog, and a button on this page runs the next batch on demand.
 
 Three things were added here:
 
 - **Preview** runs the whole four-tier fill as a dry run — nothing is written — and shows exactly what a real run would create, update and skip, with the reason for every dropped row. **Run now** does the real thing without waiting for a deploy (it honours the master switch in Settings).
-- **Conflicts** — when the sheet and a studio edit changed the same field of the same product between fills, the fill no longer picks a side quietly. Each conflict is listed by field with both values, and you choose **Keep mine**, **Take sheet** or **Skip**.
-- **Push history** — every write TO the sheet (a scrape job, a tier, the confirmed list, the website tab) leaves a row here with its outcome.
+- **Conflicts** — when the tier CSV and a studio edit changed the same field of the same product between fills, the fill no longer picks a side quietly. Each conflict is listed by field with both values, and you choose **Keep mine**, **Take imported** or **Skip**.
 
 ## 21. Content Lab (demo content)
 
-**Content Lab** loads a full set of *demo* content — a hundred concept pieces, thirty journal posts, twelve case studies, forty testimonials, FAQs, landing pages, media, enquiries and research notes — so you can see every screen of the studio and the site full, edit real rows, and rehearse the flows without inventing anything by hand. Every demo row is marked as such everywhere it appears (a small "DEMO CONTENT" mark on the site, a **demo** badge in the studio, a **Demo only** filter on every list).
+**Content Lab** loads a full set of _demo_ content — a hundred concept pieces, thirty journal posts, twelve case studies, forty testimonials, FAQs, landing pages, media, enquiries and research notes — so you can see every screen of the studio and the site full, edit real rows, and rehearse the flows without inventing anything by hand. Every demo row is marked as such everywhere it appears (a small "DEMO CONTENT" mark on the site, a **demo** badge in the studio, a **Demo only** filter on every list).
 
 - **Seed** loads the set; **Remove** deletes every demo row (it asks you to type a confirmation). Neither touches a real product, post or enquiry.
-- **Show demo content on the live site** is a switch in Content Lab and in Settings. Off, the demo pieces exist only inside the studio. On, they render on the site marked "DEMO CONTENT" — but they are never in the sitemap, never in Google's structured data, never pushed to your sheet and never mirrored, whatever the switch says. A demo order still opens WhatsApp, with the message prefixed **[DEMO]**, and is saved as a demo enquiry.
+- **Show demo content on the live site** is a switch in Content Lab and in Settings. Off, the demo pieces exist only inside the studio. On, they render on the site marked "DEMO CONTENT" — but they are never in the sitemap, never in Google's structured data, never exported and never mirrored, whatever the switch says. A demo order still opens WhatsApp, with the message prefixed **[DEMO]**, and is saved as a demo enquiry.
 - The loader refuses to write into a production database unless it is told to twice, so the demo set cannot land on the live site by accident.
 
 ## 22. Process steps, materials and sections that ship off
@@ -166,4 +165,4 @@ Three things were added here:
 
 ---
 
-*Companion guides: CONTENT_GUIDE.md (image standards + every import template), WHATSAPP_ORDER_GUIDE.md (how ordering works under the hood), SEO_GUIDE.md, BACKUP_GUIDE.md.*
+_Companion guides: CONTENT_GUIDE.md (image standards + every import template), WHATSAPP_ORDER_GUIDE.md (how ordering works under the hood), SEO_GUIDE.md, BACKUP_GUIDE.md._

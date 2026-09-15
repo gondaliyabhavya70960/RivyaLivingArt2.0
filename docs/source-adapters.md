@@ -17,7 +17,7 @@ WooCommerce automatically, and JSON-LD covers a surprising number of the rest.
 Most new sources need no code at all — add them to the registry and the
 existing adapters handle them.
 
-Write a new adapter only when fingerprinting returns `UNKNOWN` *and* the site
+Write a new adapter only when fingerprinting returns `UNKNOWN` _and_ the site
 has no usable JSON-LD.
 
 ## The contract
@@ -27,7 +27,7 @@ type AdapterContext = {
   baseUrl: string;
   sourceKey: string;
   vertical: string;
-  page: number;   // 1-based
+  page: number; // 1-based
 };
 
 type Adapter = (ctx: AdapterContext) => Promise<AdapterPage>;
@@ -47,7 +47,7 @@ guard is what stops a scraped URL pointing at internal infrastructure.
 
 **Never throw for a missing optional field.** Return what you found. A product
 missing a price is a product with a validation failure, not a dead job. Only
-throw when the *page* could not be read.
+throw when the _page_ could not be read.
 
 **Give every product a stable `externalId`.** It is half the dedupe key. If the
 site has no id, derive one deterministically from something that does not
@@ -60,7 +60,7 @@ selector matched the wrong thing.
 
 Fixture-based, never hitting the network. No adapter test exists yet (checked
 2026-09-03); the pure-module suites beside the adapters — `validation.test.ts`,
-`breaker.test.ts`, `sheet-delete-plan.test.ts` — are the pattern to follow when
+`breaker.test.ts`, `merge-policy.test.ts` — are the pattern to follow when
 one is written. A test that makes a real request fails in CI and re-fails
 whenever the competitor redesigns.
 

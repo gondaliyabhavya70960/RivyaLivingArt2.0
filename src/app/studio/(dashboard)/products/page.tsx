@@ -4,7 +4,6 @@ import { Plus } from "lucide-react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
-import { WebsiteSheetButton } from "@/components/studio/products/website-sheet-button";
 import {
   ProductList,
   type ProductRow,
@@ -158,7 +157,6 @@ export default async function ProductsPage({
         description="Everything in the catalog — drafts stay invisible on the public site until published."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <WebsiteSheetButton />
             <Button asChild>
               <Link href="/studio/products/new">
                 <Plus /> Add product

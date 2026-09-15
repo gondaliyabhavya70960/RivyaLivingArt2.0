@@ -79,7 +79,10 @@ function AddToCatalogBody({
   const [fallbackId, setFallbackId] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const unmatched = useMemo(() => items.filter((it) => !it.categoryId), [items]);
+  const unmatched = useMemo(
+    () => items.filter((it) => !it.categoryId),
+    [items],
+  );
   // Every item resolves once a fallback covers the unmatched ones.
   const ready = unmatched.length === 0 || Boolean(fallbackId);
   const eligible = fallbackId ? items.length : items.length - unmatched.length;
@@ -102,15 +105,14 @@ function AddToCatalogBody({
     const report = res.data;
     if (report) {
       for (const err of report.errors) {
-        console.warn(`Add-to-catalog failed for "${err.title}": ${err.message}`);
+        console.warn(
+          `Add-to-catalog failed for "${err.title}": ${err.message}`,
+        );
       }
       const parts = [
         `${report.imported} added as draft${report.imported === 1 ? "" : "s"}`,
       ];
       if (report.updated > 0) parts.push(`${report.updated} updated`);
-      if (typeof report.synced === "number") {
-        parts.push(`${report.synced} linked to Sheet1`);
-      }
       if (report.skipped > 0) parts.push(`${report.skipped} skipped`);
       // Reported separately from "skipped": leaving the owner's work alone is
       // the feature doing its job, and worth saying out loud.
@@ -119,7 +121,8 @@ function AddToCatalogBody({
           `${report.protected} left as you edited ${report.protected === 1 ? "it" : "them"}`,
         );
       }
-      if (report.errors.length > 0) parts.push(`${report.errors.length} failed`);
+      if (report.errors.length > 0)
+        parts.push(`${report.errors.length} failed`);
       const message = `${parts.join(" · ")}.`;
       if (report.errors.length > 0) toast.warning(message);
       else toast.success(message);

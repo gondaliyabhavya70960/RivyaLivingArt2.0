@@ -30,9 +30,9 @@ decided it. An agent that "helpfully" adds one of these has damaged the product.
 
 1. **NO payment gateway, online checkout, or cart payment.** No Stripe, Razorpay, PayPal
    or equivalent. Not behind a feature flag. Not "for later".
-2. **NO customer login, membership, or accounts.** The *only* login is the staff studio
+2. **NO customer login, membership, or accounts.** The _only_ login is the staff studio
    (admin/editor roles) at `/studio`.
-3. **NO AI-invented products. Ever.** The catalogue is filled *only* by the owner, via
+3. **NO AI-invented products. Ever.** The catalogue is filled _only_ by the owner, via
    scraper review + approval, Bulk Import (Google Sheets/CSV), or manual adds in
    `/studio`. Never write a product, a price, a review, a testimonial or a portfolio item
    that the owner did not supply. If a page needs content that does not exist, render
@@ -43,7 +43,7 @@ decided it. An agent that "helpfully" adds one of these has damaged the product.
    anything near it, run that.
 5. **The redesign changes the VISUAL layer only.** Product data, filtering, search,
    customization fields, uploads, Server Actions, auth, Studio/CMS behaviour, URLs and
-   routes are off-limits to design work (REDESIGN.md §1.1). Fixing a *bug* in those areas
+   routes are off-limits to design work (REDESIGN.md §1.1). Fixing a _bug_ in those areas
    is fine and often necessary — but it is its own change, with its own justification, not
    something folded into a visual pass.
 
@@ -55,21 +55,21 @@ verified. This project has been damaged before by a confident false "done".
 
 ## Read these, in this order
 
-| File | Lines | Why |
-|---|---|---|
-| `AGENTS.md` (this) | ~200 | The rules and the shape of the place |
-| `PROJECT_STATE.md` | ~600 | **Start every session here.** The SESSION CHECKPOINT block at the top is the resume point; below it: current phase, what is done, what is open, and the decisions that are settled |
-| `CLAUDE.md` | ~370 | The operating manual: subsystem-by-subsystem rules that are expensive to rediscover |
-| `docs/redesign-contract.md` | ~200 | The short form of the design system: tokens, review rules, hard constraints |
-| `REDESIGN.md` | ~1,400 | The full design spec. Read the relevant Part before building any UI — do not read it end to end |
-| `CHANGELOG.md` | — | What changed and why, newest first |
+| File                        | Lines  | Why                                                                                                                                                                                |
+| --------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AGENTS.md` (this)          | ~200   | The rules and the shape of the place                                                                                                                                               |
+| `PROJECT_STATE.md`          | ~600   | **Start every session here.** The SESSION CHECKPOINT block at the top is the resume point; below it: current phase, what is done, what is open, and the decisions that are settled |
+| `CLAUDE.md`                 | ~370   | The operating manual: subsystem-by-subsystem rules that are expensive to rediscover                                                                                                |
+| `docs/redesign-contract.md` | ~200   | The short form of the design system: tokens, review rules, hard constraints                                                                                                        |
+| `REDESIGN.md`               | ~1,400 | The full design spec. Read the relevant Part before building any UI — do not read it end to end                                                                                    |
+| `CHANGELOG.md`              | —      | What changed and why, newest first                                                                                                                                                 |
 
 **Superseded — do NOT act on these.** They are kept for history and they contradict the
 current design:
 
 - `DESIGN.md` (v2.0 "Midnight Gild") and `CONTEXT.md`
 - `docs/design-v7-sapphire-atelier.md`
-- **`RIVYA LIVING ART_2.0_UI_MASTER_PLAN.md`** — explicitly *not a plan for this repo*. It
+- **`RIVYA LIVING ART_2.0_UI_MASTER_PLAN.md`** — explicitly _not a plan for this repo_. It
   was written against an older tree, assumes a dependency that is not installed, and most
   of it is already built, factually wrong here, or forbidden by the rules above.
   `docs/ui-master-plan-reconciliation.md` checks all 213 of its entries against HEAD.
@@ -92,7 +92,7 @@ Adding a surface means following this, not inventing a ninth shape. Four rules h
 all of them:
 
 - **A save is a DRAFT.** Copy and images stage in `draftValue`/`draft`, preview behind the
-  staff cookie, and publish per *surface*.
+  staff cookie, and publish per _surface_.
 - **Guardrails refuse, they do not warn** — CI does not run when an owner presses Publish.
 - **Landing pages are the one place content lives in the row.**
 - **Every new table that stores a media URL goes into `src/lib/media-usages.ts` in the same
@@ -167,7 +167,7 @@ reproducing the failure first, then showing it gone.
   `filters.type`, so code asking "did the visitor filter?" sees a filter nobody applied.
   This has caused three separate bugs.
 - **`scripts/i18n-missing.mjs` does not catch a changed English value with stale
-  translations.** It reports keys that are *missing* or *identical to English*. Editing an
+  translations.** It reports keys that are _missing_ or _identical to English_. Editing an
   English string and leaving the other eight is invisible to every gate in the repo — so a
   copy change is a nine-file edit, always.
 - **`messages/en.json` and `src/lib/site-copy.generated.ts` must be regenerated together**
@@ -186,12 +186,15 @@ reproducing the failure first, then showing it gone.
 - **`public/` is load-bearing and was once missing entirely** — 242 files, 62 image slots.
   Three guards now fail loudly if it goes away: `site-images.test.ts`,
   `bundled-media.test.ts`, and a broken-image rule in `redesign-audit.mjs`.
-- **Owner edits outrank every writer.** The sheet importer and the scraper refresh
+- **Owner edits outrank every writer.** The CSV importer and the scraper refresh
   availability only when `ownerTouched` — never content, never images. The rule lives once,
-  in `src/lib/scraper/merge-policy.ts`, and it is checked *before* `needsRewrite`.
-- **Sheet row deletion is not upsert-in-reverse.** It needs the tab's numeric id and rows
-  must be removed in *descending* index order; an ascending pass deletes the wrong rows and
-  succeeds while doing it.
+  in `src/lib/scraper/merge-policy.ts`, and it is checked _before_ `needsRewrite`.
+- **Google Sheets is gone** (2026-09-15). The push engine, the per-source sync policy
+  and the service-account client were deleted; the confirmed list exports from
+  `/studio/exports` as CSV or XLSX instead. The rule that used to sit here — sheet row
+  deletion needs the tab's numeric id and a _descending_ index order, because an
+  ascending pass deletes the wrong rows and succeeds while doing it — has no code left
+  to govern. It is kept in `docs/archive/google-sheets.md` for whoever rebuilds this.
 - **CI runs now, and it reaches almost everything.** Until 2026-08-31 GitHub Actions was blocked
   by an account-level billing condition (jobs failed in ~2s with `runner_id: 0`) and every gate
   that passed was run locally. On 2026-09-02 run #71 executed both `ci.yml` jobs on PR #29 on a

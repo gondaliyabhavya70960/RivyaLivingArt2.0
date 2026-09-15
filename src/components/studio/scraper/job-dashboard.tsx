@@ -37,7 +37,6 @@ import {
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SheetSyncButton } from "@/components/studio/scraper/sheet-sync-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -535,13 +534,6 @@ export function JobDashboard({
                             <Download /> CSV
                           </a>
                         </Button>
-                        {/* Remounted by the S-10 cleanup: the per-job Sheet
-                            sync (optional, env-gated) was orphaned in the
-                            Phase 4 studio rebuild. */}
-                        <SheetSyncButton
-                          jobId={job.id}
-                          synced={job.sheetSynced}
-                        />
                       </div>
                     </td>
                   </StudioRow>

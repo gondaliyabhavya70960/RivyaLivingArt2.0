@@ -6,14 +6,7 @@ import { z } from "zod";
 import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
-import {
-  enrichScrapedFields,
-  scrapedRowToProductSheetRow,
-} from "@/lib/scraper/product-sheet";
-import {
-  isSheetSyncConfigured,
-  syncProductsToSheet1,
-} from "@/lib/scraper/sheets";
+import { enrichScrapedFields } from "@/lib/scraper/product-enrich";
 import { decideMerge } from "@/lib/scraper/merge-policy";
 import { SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
@@ -192,8 +185,6 @@ export type ImportScrapedReport = {
    * somebody about.
    */
   protected: number;
-  /** Rows also linked into the Google Sheet (Sheet1). Undefined = sync off. */
-  synced?: number;
   errors: { title: string; message: string }[];
 };
 
@@ -566,9 +557,6 @@ export async function addScrapedToCatalog(
     let updated = 0;
     let protectedCount = 0;
     const errors: ImportScrapedReport["errors"] = [];
-    // Bulk-upload rows for the products that actually import, mirrored into
-    // Sheet1 so the selection is linked in the sheet automatically.
-    const sheetRows: string[][] = [];
 
     for (const row of rows) {
       const categoryId = catByRow.get(row.id);
@@ -587,9 +575,6 @@ export async function addScrapedToCatalog(
         else if (outcome === "updated") updated += 1;
         else if (outcome === "protected") protectedCount += 1;
         else skipped += 1;
-        if (outcome !== "skipped") {
-          sheetRows.push(scrapedRowToProductSheetRow(row, categorySlug));
-        }
       } catch (error) {
         console.error(`Add-to-catalog failed for "${row.title}":`, error);
         errors.push({
@@ -602,97 +587,16 @@ export async function addScrapedToCatalog(
       }
     }
 
-    // Best-effort, env-gated: link the imported products into Sheet1. Never
-    // fails the import — a sheet error is logged and the products stay in-app.
-    let synced: number | undefined;
-    if (sheetRows.length > 0 && isSheetSyncConfigured()) {
-      try {
-        const res = await syncProductsToSheet1(sheetRows);
-        synced = res.updated + res.appended;
-      } catch (error) {
-        console.error("Sheet1 sync failed after add-to-catalog:", error);
-      }
-    }
-
     await logActivity({
       userId: session.user.id,
       action: "scraper-add-catalog",
       entity: "Product",
       entityId: null,
-      meta: { imported, updated, skipped, synced: synced ?? null },
+      meta: { imported, updated, skipped },
     });
     revalidatePath(REVIEW_PATH);
     revalidatePath(PRODUCTS_PATH);
 
-    return {
-      imported,
-      updated,
-      skipped,
-      protected: protectedCount,
-      synced,
-      errors,
-    };
-  });
-}
-
-// ————————————————————— Send to Sheet1 (no DB import) —————————————————————
-
-export type SendToSheetReport = {
-  /** False when the Google Sheet sync env isn't configured (no-op). */
-  configured: boolean;
-  /** Rows written to Sheet1 (created + updated). */
-  synced: number;
-  /** Selected rows without a resolvable category — not written. */
-  skipped: number;
-};
-
-/**
- * Link a selection of staged products into the designated Google Sheet's
- * Sheet1 tab in bulk-upload column format — WITHOUT importing them into the
- * catalog. Each row is serialized with its per-product category (auto-mapped
- * or operator-picked), merged by slug so re-sending updates in place.
- */
-export async function sendScrapedToSheet1(
-  input: AddScrapedToCatalogInput,
-): Promise<ActionResult<SendToSheetReport>> {
-  return runAction<SendToSheetReport>(async () => {
-    await requireStaff();
-    const parsed = addToCatalogSchema.parse(input);
-
-    if (!isSheetSyncConfigured()) {
-      return { configured: false, synced: 0, skipped: parsed.items.length };
-    }
-
-    const wantIds = [...new Set(parsed.items.map((i) => i.categoryId))];
-    const validCats = await db.category.findMany({
-      where: { id: { in: wantIds } },
-      select: { id: true, slug: true },
-    });
-    const slugByCat = new Map(validCats.map((c) => [c.id, c.slug]));
-    const catByRow = new Map(parsed.items.map((i) => [i.id, i.categoryId]));
-    const ids = parsed.items.map((i) => i.id);
-
-    const rows = await db.scrapedProduct.findMany({
-      where: { id: { in: ids } },
-    });
-
-    let skipped = new Set(ids).size - rows.length;
-    const sheetRows: string[][] = [];
-    for (const row of rows) {
-      const categoryId = catByRow.get(row.id);
-      const categorySlug = categoryId ? slugByCat.get(categoryId) : undefined;
-      if (!categorySlug) {
-        skipped += 1;
-        continue;
-      }
-      sheetRows.push(scrapedRowToProductSheetRow(row, categorySlug));
-    }
-
-    let synced = 0;
-    if (sheetRows.length > 0) {
-      const res = await syncProductsToSheet1(sheetRows);
-      synced = res.updated + res.appended;
-    }
-    return { configured: true, synced, skipped };
+    return { imported, updated, skipped, protected: protectedCount, errors };
   });
 }

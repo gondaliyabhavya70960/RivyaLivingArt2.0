@@ -8,16 +8,16 @@ Rivya Living Art is a production-ready, luxury e-commerce **showcase** platform 
 
 ## Business Information
 
-| | |
-|---|---|
-| Brand | **Rivya Living Art** |
-| Website | https://www.rivyalivingart.com |
-| Admin Panel | https://www.rivyalivingart.com/studio |
-| Phone | +91 7096036250 |
-| WhatsApp | +91 7096036250 (`wa.me/917096036250`) |
-| Email | gondaliyabhavya70960@gmail.com |
-| Location | https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6 |
-| Repository | https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git |
+|             |                                                               |
+| ----------- | ------------------------------------------------------------- |
+| Brand       | **Rivya Living Art**                                          |
+| Website     | https://www.rivyalivingart.com                                |
+| Admin Panel | https://www.rivyalivingart.com/studio                         |
+| Phone       | +91 7096036250                                                |
+| WhatsApp    | +91 7096036250 (`wa.me/917096036250`)                         |
+| Email       | gondaliyabhavya70960@gmail.com                                |
+| Location    | https://maps.app.goo.gl/L2NHDt9Akgqs2ZoT6                     |
+| Repository  | https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git |
 
 ## Business Model — Hard Rules (never violate)
 
@@ -37,20 +37,20 @@ Rivya Living Art is a production-ready, luxury e-commerce **showcase** platform 
 
 ## Tech Stack (Vercel-native)
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router, TypeScript; middleware is `src/proxy.ts`) |
-| Styling | Tailwind v4 (CSS-first, no config file) + shadcn/ui — "Liquid Luxury" v3 design system |
-| Motion | GSAP (ScrollTrigger + SplitText), Lenis smooth scroll, next-view-transitions (shop-card → PDP morph) |
-| 3D | `@google/model-viewer` (GLB/USDZ product 3D viewer) |
-| Forms | React Hook Form + Zod (server-side validation always) |
-| Database | **Neon Postgres** via Vercel Marketplace (native integration) + Prisma ORM |
-| Media | **Vercel Blob** (images, videos, 3D files, customer reference uploads) |
-| Auth | Auth.js v5 (Credentials) — admin/editor only, protects `/studio/*`; self-service password reset + first-run admin setup |
-| Rich text | Tiptap (blog, pages, admin) |
-| Email | Resend via Vercel Marketplace (optional — WhatsApp is the primary channel) |
-| Analytics | Vercel Web Analytics + Speed Insights |
-| Hosting | Vercel (one dashboard, one bill; Hobby → Pro upgrade path, zero re-architecture) |
+| Layer     | Technology                                                                                                              |
+| --------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Framework | Next.js 16 (App Router, TypeScript; middleware is `src/proxy.ts`)                                                       |
+| Styling   | Tailwind v4 (CSS-first, no config file) + shadcn/ui — "Liquid Luxury" v3 design system                                  |
+| Motion    | GSAP (ScrollTrigger + SplitText), Lenis smooth scroll, next-view-transitions (shop-card → PDP morph)                    |
+| 3D        | `@google/model-viewer` (GLB/USDZ product 3D viewer)                                                                     |
+| Forms     | React Hook Form + Zod (server-side validation always)                                                                   |
+| Database  | **Neon Postgres** via Vercel Marketplace (native integration) + Prisma ORM                                              |
+| Media     | **Vercel Blob** (images, videos, 3D files, customer reference uploads)                                                  |
+| Auth      | Auth.js v5 (Credentials) — admin/editor only, protects `/studio/*`; self-service password reset + first-run admin setup |
+| Rich text | Tiptap (blog, pages, admin)                                                                                             |
+| Email     | Resend via Vercel Marketplace (optional — WhatsApp is the primary channel)                                              |
+| Analytics | Vercel Web Analytics + Speed Insights                                                                                   |
+| Hosting   | Vercel (one dashboard, one bill; Hobby → Pro upgrade path, zero re-architecture)                                        |
 
 ## Design System — Liquid Luxury (v3)
 
@@ -73,24 +73,24 @@ Award-level presentation layer: settings-driven hero video (with poster fallback
 
 The storefront is localized: a 9-locale next-intl tree (English, Hindi, Gujarati, … including RTL Arabic) served under `/[locale]` with an as-needed locale prefix, routed by `src/proxy.ts`.
 
-**Admin (`/studio`):** Dashboard (KPIs/charts) · Products (with per-product Custom Form Builder) · Categories · Portfolio · Blog · Media Library (Vercel Blob) · Inquiries / WhatsApp Orders · Testimonials · FAQs · Subscribers · SEO · Site Settings · Pages · **Bulk Import (Google Sheets/CSV)** · **Sheet Import** (four-tier owner-sheet catalog import) · **Product Scraper** (tiered source registry → scrape → review → approve → draft import with rewrite guard) · User Roles · Activity Logs
+**Admin (`/studio`):** Dashboard (KPIs/charts) · Products (with per-product Custom Form Builder) · Categories · Portfolio · Blog · Media Library (Vercel Blob) · Inquiries / WhatsApp Orders · Testimonials · FAQs · Subscribers · SEO · Site Settings · Pages · **Bulk Import (Google Sheets/CSV)** · **Catalog fill** (four-tier CSV catalog import) · **Product Scraper** (tiered source registry → scrape → review → approve → draft import with rewrite guard) · User Roles · Activity Logs
 
 ## Documentation
 
-| File | Purpose |
-|---|---|
-| [CLAUDE.md](./CLAUDE.md) | **Project instructions** — current repo reality, hard rules, conventions. Read this first in every session. |
-| [REDESIGN.md](./REDESIGN.md) | **Master design spec** (v3 Liquid Luxury) — tokens, motion, sections, studio |
-| [DESIGN.md](./DESIGN.md) | Superseded v2.0 Midnight Gild spec — history only |
-| [CONTEXT.md](./CONTEXT.md) | Historical v1 build memory (phase log) — superseded by CLAUDE.md + REDESIGN.md |
-| [INSTALL.md](./INSTALL.md) | Local development setup |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | Vercel deployment, Neon + Blob integration, custom domain |
-| [ADMIN_GUIDE.md](./ADMIN_GUIDE.md) | Plain-language guide for the owner: studio, products, imports, scraper |
-| [CONTENT_GUIDE.md](./CONTENT_GUIDE.md) | Content standards + every Google Sheet / CSV import template |
-| [SEO_GUIDE.md](./SEO_GUIDE.md) | SEO system, schema markup, per-page metadata |
-| [BACKUP_GUIDE.md](./BACKUP_GUIDE.md) | Neon point-in-time recovery, Blob inventory, git |
-| [WHATSAPP_ORDER_GUIDE.md](./WHATSAPP_ORDER_GUIDE.md) | WhatsApp ordering system: message format, wa.me rules, testing |
-| [COMPETITOR.md](./COMPETITOR.md) | Top-20 competitor research (populated in Phase 11) |
+| File                                                 | Purpose                                                                                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [CLAUDE.md](./CLAUDE.md)                             | **Project instructions** — current repo reality, hard rules, conventions. Read this first in every session. |
+| [REDESIGN.md](./REDESIGN.md)                         | **Master design spec** (v3 Liquid Luxury) — tokens, motion, sections, studio                                |
+| [DESIGN.md](./DESIGN.md)                             | Superseded v2.0 Midnight Gild spec — history only                                                           |
+| [CONTEXT.md](./CONTEXT.md)                           | Historical v1 build memory (phase log) — superseded by CLAUDE.md + REDESIGN.md                              |
+| [INSTALL.md](./INSTALL.md)                           | Local development setup                                                                                     |
+| [DEPLOYMENT.md](./DEPLOYMENT.md)                     | Vercel deployment, Neon + Blob integration, custom domain                                                   |
+| [ADMIN_GUIDE.md](./ADMIN_GUIDE.md)                   | Plain-language guide for the owner: studio, products, imports, scraper                                      |
+| [CONTENT_GUIDE.md](./CONTENT_GUIDE.md)               | Content standards + every Google Sheet / CSV import template                                                |
+| [SEO_GUIDE.md](./SEO_GUIDE.md)                       | SEO system, schema markup, per-page metadata                                                                |
+| [BACKUP_GUIDE.md](./BACKUP_GUIDE.md)                 | Neon point-in-time recovery, Blob inventory, git                                                            |
+| [WHATSAPP_ORDER_GUIDE.md](./WHATSAPP_ORDER_GUIDE.md) | WhatsApp ordering system: message format, wa.me rules, testing                                              |
+| [COMPETITOR.md](./COMPETITOR.md)                     | Top-20 competitor research (populated in Phase 11)                                                          |
 
 ## Build Phases
 
@@ -108,7 +108,7 @@ One phase per session; each phase ends by updating CONTEXT.md and **stopping** f
 - [x] **Phase 3** — Database + Auth (Prisma 7 full schema + migrations, seed: admin/16 categories/FAQs/settings/legal stubs, Auth.js v5 staff login, edge-safe middleware — 6/6 auth flow checks)
 - [x] **Phase 4** — Admin Core (studio shell, dashboard, Products CRUD + Custom Form Builder + needsRewrite publish guard, Categories, Media Library on a Blob/local storage abstraction, bulk actions with type-DELETE confirm — 11/11 browser checks)
 - [x] **Phase 5** — Admin Rest (Blog with Tiptap, Portfolio, WhatsApp Orders workflow, Testimonials, FAQs, Pages, SEO, Site Settings, Users, Activity Log, Bulk Import with Google Sheets/CSV + scraper-export guard — 13/13 browser checks)
-- [x] **Phase 5B** — Product Scraper Module (34-source tiered registry, Shopify/Woo/JSON-LD adapters with fingerprint + marketplace blocklist, chunked resumable jobs, ScrapeDeck v4 CSV + optional Sheets sync, review→approve→DRAFT import with publish-blocking rewrite guard — full pipeline verified end-to-end)
+- [x] **Phase 5B** — Product Scraper Module (34-source tiered registry, Shopify/Woo/JSON-LD adapters with fingerprint + marketplace blocklist, chunked resumable jobs, ScrapeDeck v4 CSV export, review→approve→DRAFT import with publish-blocking rewrite guard — full pipeline verified end-to-end)
 - [x] **Phase 6** — Public Core Pages (12-section Home, About, Process, FAQ, Contact with spam-protected inquiry form + optional Resend, Workshops, full India-appropriate Privacy/Terms from the Page model, luxury 404/error/loading — 16/16 browser checks incl. header theming)
 - [x] **Phase 7** — Shop + Order Flow (filters incl. occasion + price band, infinite scroll, quick view, product detail with gallery/3D/dynamic customization form, reference uploads, live message preview, save-Inquiry-then-WhatsApp redirect, custom order, fallback page, analytics events — 17/17 E2E checks)
 - [x] **Phase 8** — Portfolio + Blog + Search (case studies with draggable before/after slider + lightbox + ADM-style meta, blog with Tiptap rendering, read-time, filters, related posts, share — 7/7 checks; search shipped in Phase 7)
@@ -116,7 +116,7 @@ One phase per session; each phase ends by updating CONTEXT.md and **stopping** f
 - [x] **Phase 10** — SEO + Deploy (Metadata API + canonicals everywhere, JSON-LD Organization/LocalBusiness/Product/Article/Breadcrumb/FAQPage, dynamic sitemap + robots + manifest, next/og branded OG images, favicon set, DEMO-product cleanup — deploy is owner-run via Vercel dashboard, see DEPLOYMENT.md)
 - [x] **Phase 11** — Competitor Research + Blog Seeding + Catalog Channels (COMPETITOR.md: 17 entries + 39 source candidates; 55 original blog posts seeded across 6 categories; per-category customization-field templates in the product form — catalog remains 100% owner-fed, zero auto-generated products)
 
-**All 12 build phases complete.** The catalog is auto-populated at deploy from the owner's four-tier product sheet (`data/tiers/*.csv.gz` via `prisma/import-tiers.ts`, run by the build's bootstrap step); the owner's intake paths (Product Scraper, Bulk Import, manual studio adds) remain the only other doors. Production deployment is **done** — the site is live at www.rivyalivingart.com on Vercel with Neon and Blob (this sentence claimed it was still the owner's remaining step until 2026-09-03); see [DEPLOYMENT.md](./DEPLOYMENT.md).
+**All 12 build phases complete.** The catalog is auto-populated at deploy from the four committed tier CSVs (`data/tiers/*.csv.gz` via `prisma/import-tiers.ts`, run by the build's bootstrap step); the owner's intake paths (Product Scraper, Bulk Import, manual studio adds) remain the only other doors. Production deployment is **done** — the site is live at www.rivyalivingart.com on Vercel with Neon and Blob (this sentence claimed it was still the owner's remaining step until 2026-09-03); see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 **Studio auth pages** — the `/studio` sign-in is a blue-led luxury card (void background + gradient mesh, show/hide password) with three companion flows, all staff-only and consistent with the no-customer-accounts rule:
 
@@ -137,9 +137,9 @@ See [.env.example](./.env.example). `DATABASE_URL` and `BLOB_READ_WRITE_TOKEN` a
 - The hero is a settings-driven video (≤6MB) with a poster image; reduced-motion users get the static poster automatically (the fallback is built in, not optional).
 - The Product Scraper natively supports Shopify + WooCommerce JSON APIs, plus a generic JSON-LD Product-schema fallback for other sites (slower — one page per product, capped and resumable). Sites exposing none of these need a custom adapter. Marketplaces (Amazon/Etsy/Flipkart/IndiaMART…) are blocked by design — use their official APIs. Poonam Shah Art has no scrapeable catalog (enquiry-only) and is covered by the Phase 11 original category seed instead.
 - Scraped text and images are competitor copyright — the scraper imports DRAFTS ONLY with a publish-blocking `needsRewrite` flag; rewrite descriptions and replace images with real Rivya Living Art photos before publishing.
-- Direct Google Sheet sync is optional and needs a free Google service account (`GOOGLE_SERVICE_ACCOUNT_JSON` + `SCRAPE_SHEET_ID`); without it, staging + Sheet-ready CSV export covers the full workflow with zero Google keys.
+- No Google account or credentials are needed. The confirmed product list exports from `/studio/exports` as CSV or XLSX; bulk import reads CSV/XLSX. (Direct Google Sheet sync existed until 2026-09-15 and was removed — see `docs/archive/google-sheets.md`.)
 - Long scrapes run as chunked, resumable jobs to respect Vercel serverless time limits.
-- ~100 sources × hundreds of products = tens of thousands of staging/Sheet rows — per-run caps, per-tier Sheet tabs, and change-hash upserts keep it manageable; scrape tiers in batches, not all in one day.
+- ~100 sources × hundreds of products = tens of thousands of staging rows — per-run caps and change-hash upserts keep it manageable; scrape tiers in batches, not all in one day.
 - "Top 50/20/20" scraper tier quotas are filled by the Phase 11 discovery task with MANDATORY fingerprint verification before a source is enabled — unverified or unsupported sites are stored disabled, never guessed at.
 
 ---
