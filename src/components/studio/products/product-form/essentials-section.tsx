@@ -12,10 +12,14 @@ import {
 } from "@/components/ui/select";
 import { describedBy, FieldHint } from "@/components/studio/field-hint";
 import { PRODUCT_LIMITS } from "@/lib/studio-limits";
+import {
+  SIZE_TIER_EXAMPLES,
+  SIZE_TIER_OPTIONS,
+} from "@/lib/product-size-tier";
 import { FormSection, FieldError } from "./form-section";
 import type { FormValues } from "./schema";
 
-/** Title, tagline, description, category, status, featured. */
+/** Title, tagline, description, category, status, product tier, featured. */
 export function EssentialsSection({
   categories,
 }: {
@@ -141,6 +145,49 @@ export function EssentialsSection({
             )}
           />
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Product tier</Label>
+        <Controller
+          control={control}
+          name="sizeTier"
+          render={({ field }) => (
+            <>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger
+                  ref={field.ref}
+                  className="w-full"
+                  aria-label="Product tier"
+                  aria-invalid={!!errors.sizeTier}
+                  aria-describedby={describedBy(
+                    "product-size-tier-hint",
+                    errors.sizeTier && "product-size-tier-error",
+                  )}
+                >
+                  <SelectValue placeholder="Pick a product tier" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SIZE_TIER_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldError id="product-size-tier-error">
+                {errors.sizeTier?.message}
+              </FieldError>
+              <FieldHint id="product-size-tier-hint">
+                {field.value !== "none" && field.value in SIZE_TIER_EXAMPLES
+                  ? SIZE_TIER_EXAMPLES[
+                      field.value as keyof typeof SIZE_TIER_EXAMPLES
+                    ]
+                  : "Which of the three worlds this piece belongs to — it decides how the piece is presented, what is asked for on its page and where it is found. Required before publishing."}
+              </FieldHint>
+            </>
+          )}
+        />
       </div>
 
       <Controller

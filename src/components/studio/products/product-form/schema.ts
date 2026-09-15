@@ -3,6 +3,7 @@ import type {
   ContentStatus,
   FieldType,
   ProductImageRole,
+  ProductSizeTier,
 } from "@/generated/prisma/enums";
 import type { UpsertProductInput } from "@/actions/products";
 import {
@@ -12,6 +13,11 @@ import {
 import { toTranslationsRecord } from "@/lib/translations-form";
 import { CONTENT_STATUSES } from "@/lib/content-status";
 import { PRODUCT_LIMITS, tooLong } from "@/lib/studio-limits";
+import {
+  SIZE_TIER_FORM_VALUES,
+  sizeTierFromFormValue,
+  sizeTierToFormValue,
+} from "@/lib/product-size-tier";
 
 // ————————————————————— Initial (server) shape —————————————————————
 
@@ -46,6 +52,8 @@ export type ProductFormInitial = {
   needsRewrite: boolean;
   /** Owner-sheet tier (1–4); null for products created in the studio. */
   tier: number | null;
+  /** The owner's three-tier product architecture. Provenance's `tier` is not this. */
+  sizeTier: ProductSizeTier | null;
   inStock: boolean;
   /** Import provenance — read-only in the form, shown in the Provenance panel. */
   importSource: string | null;
@@ -161,6 +169,10 @@ export const formSchema = z
     showPrice: z.boolean(),
     inStock: z.boolean(),
     tier: z.enum(["none", "1", "2", "3", "4"]),
+    // Derived from the one tuple, never re-typed — the scrape-tier list was
+    // hand-copied into five places and the fifth is why new tiers never
+    // reached the studio's filter row.
+    sizeTier: z.enum(SIZE_TIER_FORM_VALUES),
     timeline: capped(PRODUCT_LIMITS.timeline, "the timeline"),
     materials: capped(PRODUCT_LIMITS.materials, "materials"),
     dimensions: capped(PRODUCT_LIMITS.dimensions, "dimensions"),
@@ -268,6 +280,7 @@ export function buildDefaultValues(product?: ProductFormInitial): FormValues {
       product?.tier != null && product.tier >= 1 && product.tier <= 4
         ? (String(product.tier) as FormValues["tier"])
         : "none",
+    sizeTier: sizeTierToFormValue(product?.sizeTier),
     timeline: product?.timeline ?? "",
     materials: product?.materials ?? "",
     dimensions: product?.dimensions ?? "",
@@ -315,6 +328,7 @@ export function buildUpsertPayload(
     showPrice: values.showPrice,
     inStock: values.inStock,
     tier: values.tier === "none" ? null : Number(values.tier),
+    sizeTier: sizeTierFromFormValue(values.sizeTier),
     timeline: values.timeline || undefined,
     materials: values.materials || undefined,
     dimensions: values.dimensions || undefined,

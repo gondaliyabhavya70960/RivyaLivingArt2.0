@@ -28,6 +28,7 @@ function values(rows: { label: string; value: string }[]) {
     showPrice: false,
     inStock: true,
     tier: "none" as const,
+    sizeTier: "none" as const,
     timeline: "",
     materials: "",
     dimensions: "",

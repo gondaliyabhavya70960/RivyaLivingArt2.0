@@ -58,6 +58,44 @@ touching product cards, the PDP, navigation or the scraper's classification.
 flow says "Add to Cart / Checkout", and this project has no cart, no checkout
 and no customer accounts. Tier 03 is fast ORDERING through WhatsApp, not fast
 checkout; the conflict is recorded in the doc rather than quietly resolved.
+Ten more conflicts with §1.1 (T2–T11 in that document — the header's four nav
+items, seven proposed product fields, Tier 02's upload flow, a homepage band
+that would breach §3.1's dark-band rhythm, a CTA `Inquiry` cannot record) are
+tabled there as open questions, not built around.
+
+**THREE COLUMNS ARE CALLED "tier" AND THEY MEAN DIFFERENT THINGS.** This is the
+expensive trap in that workstream:
+
+- `Product.tier` — `Int?`, the OWNER-SHEET IMPORT tier (1 owner · 2 resin goods ·
+  3 supplies · 4 3D-print), written by `tier-fill.ts` from `data/tiers/*.csv.gz`.
+  It is indexed and it is read by `shop.ts`'s DEFAULT SORT, `search-query.ts`'s
+  group ranking, `groupForTier`, the import validator, the confirmed export and
+  the demo fixtures' zod shape. **Where a product CAME FROM.**
+- `Product.sizeTier` — the size taxonomy, a nullable `ProductSizeTier` enum,
+  shipped 2026-09-15. **What a piece IS.** Nullable because three writers create
+  products without passing the product form (the scraper's promote, Bulk Import,
+  and `tier-fill.ts` on every deploy) and a `NOT NULL DEFAULT` would break
+  backward compatibility and invent data at once. The vocabulary lives once, in
+  `src/lib/product-size-tier.ts`, and a test pins that tuple against the
+  generated Prisma enum — the scrape-tier list reached FIVE hand-written copies
+  before anyone noticed, and the fifth is why three new tiers once shipped
+  invisible.
+  **The publish refusal is scoped to the TRANSITION, not the state.**
+  `describeSizeTierPublishProblem` allows a save of an already-PUBLISHED row and
+  refuses only a move INTO published. That is deliberate and load-bearing: the
+  column is new, so all ~4,385 catalogue rows are untiered, and refusing every
+  save would have stopped the owner editing any of them before a bulk tool
+  existed — a guardrail that turns into a lockout. Both `upsertProduct` and
+  `setProductsStatus` apply it; the bulk toast names the reason rather than
+  reporting a bare "skipped 12".
+- `ScrapeSource.tier` — `ScrapeTier`, which supplier list we went looking in.
+  Its three SIZE values map to NULL in `TIER_NUMBER` precisely because the four
+  old values map onto `Product.tier`'s integers, and numbering a size tier would
+  make a purge delete CSV-imported products.
+
+Taking `Product.tier` over for the size taxonomy is a retype of an indexed
+column that live queries sort on — unsafe by the rule above, and it would reach
+production on push.
 
 On 2026-09-15 the owner delegated decisions D25–D29 ("decide by yourself and go
 to the next step") rather than answering them individually, so the plan's own

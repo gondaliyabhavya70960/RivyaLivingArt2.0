@@ -5,6 +5,157 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E step 2 — `Product.sizeTier`, and the studio control that writes it (2026-09-15)
+
+The owner's three-tier product architecture gets its column. Additive migration, a
+control in the product form's Essentials, a publish refusal on both write paths, and
+nothing on the storefront yet — a tier that renders before the catalogue can be tiered
+renders an empty world.
+
+### A new column, because `Product.tier` is taken
+
+`schema.prisma` already declares `tier Int?` — the owner-sheet import tier — indexed and
+read by `shop.ts`'s default sort and nine other places. Retyping it would be a rename of
+an indexed column live queries sort on, and it would reach production **on push**. So:
+
+    ProductSizeTier { LARGE_FORMAT · MEDIUM_FORMAT · SMALL_FORMAT }
+    Product.sizeTier  ProductSizeTier?   @@index([sizeTier, status])
+
+Three columns now carry the word "tier" and `CLAUDE.md` names all three: `Product.tier` is
+where a row CAME FROM, `Product.sizeTier` is what a piece IS, `ScrapeSource.tier` is which
+supplier list we went looking in.
+
+**The migration is hand-written and carries no backfill.** Not one `UPDATE`. There is no
+rule that could assign a tier without inventing it, and this file runs against production
+before any screen exists to check what it did. `prisma migrate diff` was not used to
+generate it and must not be — it re-proposes dropping `Product_{title,shortTagline,
+description}_trgm_idx`, which `schema.prisma` does not model.
+
+### The refusal is scoped to the transition, and that is the whole design
+
+"Every product carries a mandatory tier" cannot be a `NOT NULL DEFAULT`: three writers
+create products without passing the studio form — the scraper's promote, Bulk Import, and
+`tier-fill.ts` on **every deploy** over thousands of rows — so the constraint would break
+backward compatibility and invent the answer in the same statement.
+
+So the column is nullable and `describeSizeTierPublishProblem` refuses a move **into**
+PUBLISHED. It deliberately ALLOWS saving a row that is already published:
+
+> The column is new, so all ~4,385 rows in the catalogue are untiered. Refusing every save
+> of an already-published product would have stopped the owner editing any of them until
+> all of them were tiered — with no bulk tool built yet to do it. A guardrail that turns
+> into a lockout is a bug. Nothing NEW goes live untiered; what is already live keeps
+> saving, and step 3 is the filter and the bulk action that clear the backlog.
+
+Both write paths apply it: `upsertProduct`, and `setProductsStatus`, where the bulk skip
+is filtered as `sizeTier: null AND status != PUBLISHED` for the same reason. The toast now
+names **both** skip reasons — "Skipped 3 that still need a rewrite of scraped content, and
+9 with no product tier set". "Skipped 12" with no reason is the message that sends an
+owner looking for a bug that is a guardrail.
+
+### One tuple, and a test that fails when someone forgets it
+
+`src/lib/product-size-tier.ts` is the only place the list lives; the zod enums, the select
+options, the labels and the form mappers all derive from it. `product-size-tier.test.ts`
+pins the tuple against the generated Prisma enum — **verified by mutation**: dropping
+`SMALL_FORMAT` from the tuple fails two tests and the typecheck. That guard exists because
+the scrape-tier list reached five hand-written copies, and the fifth (a `TIER_ORDER` array)
+is why three new tiers shipped invisible last week.
+
+### Also: "Tier" is now "Import tier"
+
+With a **Product tier** select in Essentials, leaving the provenance select in Pricing &
+specs labelled "Tier" put two questions with the same name on one page. It is relabelled
+in the form and in the product list's column menu and filter. **Keys are untouched** — the
+column key stays `tier` because saved views persist it.
+
+### Verified
+
+typecheck · lint · 849 unit tests (14 new, one existing fixture updated) · 51 db tests ·
+a real `npm run build` against local Postgres · `studio-audit.mjs` clean at 1440 **and**
+390 across 39 routes · `npm run test:e2e` **36/36**, product create → edit → delete
+included. Then driven by hand in a real browser against the built server: the select
+renders all four options with the right labels, the hint changes with the choice, and
+saving a PUBLISHED product with no tier returns exactly the refusal — screenshotted, not
+assumed.
+
+Applied to a local database and checked in `psql`: the type has its three labels, the
+column and `Product_sizeTier_status_idx` exist, and `migrate diff` against the datasource
+reports no `sizeTier` drift — only the three known unmodelled trgm indexes.
+
+---
+
+## Workstream E step 0 — the three-tier product architecture, made findable (2026-09-15)
+
+The owner's product architecture — **Collectible Furniture & Spatial Art** · **Memory &
+Celebration Art** · **Personal Art & Gifting**, three customer intents rather than three
+filters — was written to `docs/plan/07-three-tier-architecture.md` and referenced from
+`CLAUDE.md`, and from nowhere else. This entry is the docs half of the owner's
+instruction to put it "in md and all also and in all main and primary place".
+
+### It was unreachable from every entry point but one
+
+Measured, not assumed. `docs/plan/README.md` — the index of the workstreams — contained
+zero occurrences of `07` or `three-tier`. `AGENTS.md`, `README.md` and `PROJECT_STATE.md`
+contained zero occurrences of `docs/plan` at all. An agent or a person following the
+repo's own "read these, in this order" table would never arrive at the document that
+governs what a product card is.
+
+So the architecture now appears in four places that a session actually opens:
+
+- **`docs/plan/README.md`** — workstream **E**, with the "not three filters" warning in
+  the index itself, and phase 9 in the sequence table.
+- **`AGENTS.md`** — a section immediately under the HARD RULES, with the tier table, the
+  three-columns-named-tier trap and the eleven recorded conflicts; plus two new rows in
+  the reading table.
+- **`README.md`** — the documentation table, and the "Website Structure" section, which
+  described the site's shape without it.
+- **`PROJECT_STATE.md`** — a current SESSION CHECKPOINT. The one that was there said
+  **"Next Exact Task: none from the plan"** and was dated 2026-09-04. It is kept, marked
+  superseded, and not rewritten: a dated record that gets edited stops being evidence
+  (D24).
+
+### The correction that made this step necessary
+
+An earlier draft of 07's own sequence said step 2 was *"`Product.tier` as the three-value
+taxonomy"*. **That column is taken and it means something else**: `schema.prisma:113`
+declares `tier Int?` — the owner-sheet import tier (1 owner · 2 resin goods · 3 supplies ·
+4 3D-print) — indexed as `@@index([tier, status])`, written by `tier-fill.ts` from
+`data/tiers/*.csv.gz`, and read by `shop.ts:189`'s DEFAULT SORT, `search-query.ts`'s group
+ranking, `groupForTier`, the Bulk Import validator, the confirmed-products export and the
+demo fixtures' zod shape.
+
+Retyping it is a rename of an indexed integer column that live queries sort on — which
+`CLAUDE.md` classes as unsafe, and which would reach production **on push**, not on merge.
+The size taxonomy therefore lands on a new nullable enum column, **`Product.sizeTier`**.
+`tier` is where a product came from; `sizeTier` is what it is; `ScrapeSource.tier` is which
+supplier list we went looking in. All three are now named and distinguished in `CLAUDE.md`,
+because three columns called "tier" is the trap that costs the next reader a day.
+
+### Eleven conflicts recorded rather than resolved quietly
+
+T1 — Tier 03's "Add to Cart / Checkout" — is **resolved**: Part 0 wins, and Tier 03 is
+fast WhatsApp ordering, not fast checkout. T2–T11 are open questions in 07's own table:
+the header nav's four items (REDESIGN.md §5.2 names them and the e2e smoke asserts them by
+label), seven proposed new product fields (§1.1 lists product data first under
+do-not-change), Tier 02's upload flow, a "made-to-order" field that `inStock` already
+means, "price on request" against the PDP's `AggregateOffer` and a hardcoded English
+`"Enquire"` outside next-intl, per-tier photography the asset queue cannot supply, a
+homepage band that would breach §3.1's dark-band rhythm, a "Consultation" CTA the `Inquiry`
+schema cannot record, and a `/collectible-design` route that `/large-resin-art` already is.
+
+Each stops at a question. None is built around.
+
+### Also corrected
+
+`AGENTS.md` said the database was **Neon**. It is Prisma Postgres at `db.prisma.io` — the
+build's own `db-preflight` prints the host on every deploy, and `CLAUDE.md` has said so
+since the migration hazard was written up.
+
+Docs only: no code, no schema, no migration.
+
+---
+
 ## Fix — the site URL an operator pastes is repaired, not refused (2026-09-07)
 
 Production failed on `NEXT_PUBLIC_SITE_URL: Invalid URL`, thrown from `src/lib/env.ts:87` during

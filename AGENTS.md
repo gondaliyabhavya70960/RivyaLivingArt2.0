@@ -18,7 +18,7 @@ real orders through it. There is no staging safety net for the catalogue: the pr
 the categories and the inquiries are the business.
 
 Next.js 16.3 (App Router) · React 19 · TypeScript strict · Tailwind v4 (CSS-first, **no
-`tailwind.config`**) · Prisma 7 + Postgres (Neon) · next-intl with **9 locales** ·
+`tailwind.config`**) · Prisma 7 + Postgres (**Prisma Postgres at `db.prisma.io`** — not Neon, whatever older docs say) · next-intl with **9 locales** ·
 Auth.js (staff only) · Vercel + Vercel Blob.
 
 ---
@@ -53,6 +53,40 @@ verified. This project has been damaged before by a confident false "done".
 
 ---
 
+## The catalogue has THREE TIERS, and they are not three filters
+
+The owner's product architecture, supplied 2026-09-15 and **in force**. Full document:
+**`docs/plan/07-three-tier-architecture.md`**.
+
+| Internal | Customer-facing | The work | The journey |
+| --- | --- | --- | --- |
+| `LARGE_FORMAT` | Collectible Furniture & Spatial Art | Dining/coffee/side tables, seating, benches, large panels, sculptures, installations | Explore → View Project → Customize → Consultation |
+| `MEDIUM_FORMAT` | Memory & Celebration Art | Varmala & bouquet preservation, wall clocks, engagement trays, wedding frames, keepsakes | Choose Style → Size → Upload Memory → Customize → Order |
+| `SMALL_FORMAT` | Personal Art & Gifting | Rakhi, jewellery, keychains, bookmarks, coasters, magnets, festive and corporate gifting | Browse → Personalize → Order |
+
+Three customer intents with different price ladders, customization depth and interface
+density, sharing **one** brand language. Not three websites, and not a facet on the shop
+page. "Tier 1/2/3" is internal vocabulary for the database and the Studio; customers see
+column two.
+
+Four things about it that are expensive to get wrong:
+
+- **`Product.tier` is NOT this.** That column is the owner-sheet import tier
+  (1 owner · 2 resin goods · 3 supplies · 4 3D-print), an indexed `Int?` that the shop's
+  default sort and nine other readers depend on. The size taxonomy is a separate nullable
+  enum column, **`Product.sizeTier`**. `tier` is where a product came from; `sizeTier` is
+  what it is.
+- **`ScrapeSource.tier` is a third thing** — which supplier list we went looking in. It
+  carries the same three names, which is exactly why they get confused.
+- **Tier 03's "Add to Cart / Checkout" does not exist here.** HARD RULE 1 wins: it is fast
+  WhatsApp ORDERING, not fast checkout. The conflict is recorded, not quietly resolved.
+- **Ten further conflicts with REDESIGN.md §1.1 and Part 0 are open** (T2–T11 in that
+  document): the header nav's four items, seven proposed product fields, Tier 02's upload
+  flow, a homepage band that would breach the dark-band rhythm, a CTA the `Inquiry` schema
+  cannot record. Each stops at a question rather than being built around.
+
+---
+
 ## Read these, in this order
 
 | File                        | Lines  | Why                                                                                                                                                                                |
@@ -63,6 +97,8 @@ verified. This project has been damaged before by a confident false "done".
 | `docs/redesign-contract.md` | ~200   | The short form of the design system: tokens, review rules, hard constraints                                                                                                        |
 | `REDESIGN.md`               | ~1,400 | The full design spec. Read the relevant Part before building any UI — do not read it end to end                                                                                    |
 | `CHANGELOG.md`              | —      | What changed and why, newest first                                                                                                                                                 |
+| `docs/plan/README.md`       | ~200   | The index of the five workstreams currently in force (redesign · scraper rebuild · Sheets removal · asset pipeline · **the three-tier product architecture**)                     |
+| `docs/plan/07-three-tier-architecture.md` | ~230 | **The product architecture. Read it before touching product cards, the PDP, navigation, the shop facets or the scraper's classification** — the summary is in "The catalogue has THREE TIERS" above |
 
 **Superseded — do NOT act on these.** They are kept for history and they contradict the
 current design:

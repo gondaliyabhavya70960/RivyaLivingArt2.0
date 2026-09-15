@@ -71,6 +71,16 @@ Award-level presentation layer: settings-driven hero video (with poster fallback
 
 **Public:** Home · About · Shop · Category pages · Product detail · Custom Order · Workshops · Portfolio · Process · Blog · FAQ · Contact · Privacy · Terms · Search · WhatsApp Order fallback · luxury 404/error/loading states
 
+**The catalogue is organised in three tiers** (`docs/plan/07-three-tier-architecture.md`,
+in force from 2026-09-15) — **Collectible Furniture & Spatial Art** (tables, seating,
+panels, sculpture, installations) · **Memory & Celebration Art** (varmala and bouquet
+preservation, wall clocks, engagement trays, wedding frames, keepsakes) · **Personal Art
+& Gifting** (rakhi, jewellery, keychains, coasters, desk pieces, festive and corporate
+gifting). They are three customer intents with different price ladders, customization
+depth and interface density — not three filters on one grid — and they share one brand
+language. Internally they are `Product.sizeTier`; customers see the names above. Tier 3
+stays a **WhatsApp order**, not a checkout: hard rule 1 is not negotiable by a tier.
+
 The storefront is localized: a 9-locale next-intl tree (English, Hindi, Gujarati, … including RTL Arabic) served under `/[locale]` with an as-needed locale prefix, routed by `src/proxy.ts`.
 
 **Admin (`/studio`):** Dashboard (KPIs/charts) · Products (with per-product Custom Form Builder) · Categories · Portfolio · Blog · Media Library (Vercel Blob) · Inquiries / WhatsApp Orders · Testimonials · FAQs · Subscribers · SEO · Site Settings · Pages · **Bulk Import (Google Sheets/CSV)** · **Catalog fill** (four-tier CSV catalog import) · **Product Scraper** (tiered source registry → scrape → review → approve → draft import with rewrite guard) · User Roles · Activity Logs
@@ -91,6 +101,8 @@ The storefront is localized: a 9-locale next-intl tree (English, Hindi, Gujarati
 | [BACKUP_GUIDE.md](./BACKUP_GUIDE.md)                 | Neon point-in-time recovery, Blob inventory, git                                                            |
 | [WHATSAPP_ORDER_GUIDE.md](./WHATSAPP_ORDER_GUIDE.md) | WhatsApp ordering system: message format, wa.me rules, testing                                              |
 | [COMPETITOR.md](./COMPETITOR.md)                     | Top-20 competitor research (populated in Phase 11)                                                          |
+| [docs/plan/README.md](./docs/plan/README.md)         | The five workstreams currently in force: storefront/Studio redesign · scraper rebuild · Sheets removal · Drive asset pipeline · the three-tier product architecture |
+| [docs/plan/07-three-tier-architecture.md](./docs/plan/07-three-tier-architecture.md) | **The product architecture** — Large (collectible furniture & spatial art) · Medium (memory & celebration art) · Small (personal art & gifting). Read before touching cards, the PDP, navigation, facets or scraper classification |
 
 ## Build Phases
 

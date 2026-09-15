@@ -77,6 +77,7 @@ const TABS = [
       "showPrice",
       "inStock",
       "tier",
+      "sizeTier",
       "timeline",
       "materials",
       "dimensions",

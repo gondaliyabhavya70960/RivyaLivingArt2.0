@@ -2,7 +2,8 @@
 
 **Date:** 2026-09-14 · **Base:** `main` @ `b593f72` · **Branch:** `claude/peaceful-cannon-7dck80`
 
-Four workstreams, one sequence:
+Five workstreams, one sequence — **E was added on 2026-09-15 and is the one in
+flight**:
 
 | #   | Workstream                        | Doc                                                                |
 | --- | --------------------------------- | ------------------------------------------------------------------ |
@@ -12,6 +13,17 @@ Four workstreams, one sequence:
 | D   | Drive asset pipeline              | [`04-drive-asset-pipeline.md`](04-drive-asset-pipeline.md)         |
 | —   | The UI build prompt (deliverable) | [`05-ui-generation-prompt.md`](05-ui-generation-prompt.md)         |
 | —   | Source-document reconciliation    | [`06-source-documents.md`](06-source-documents.md)                 |
+| **E** | **Three-tier product architecture** | [**`07-three-tier-architecture.md`**](07-three-tier-architecture.md) |
+
+> **`07` is the newest document here and it is IN FORCE.** The owner supplied it
+> on 2026-09-15, after the four workstreams above were planned, and it reorganizes
+> the product catalogue around three customer intents — Large (collectible
+> furniture and spatial art) · Medium (memory and celebration art) · Small
+> (personal art and gifting) — with different journeys, customization depth and
+> interface density per tier. **It is not three category filters.** Read it before
+> touching product cards, the PDP, navigation, the shop facets or the scraper's
+> classification. One part of it conflicts with Part 0 and Part 0 wins; ten more
+> conflicts are recorded in its own table rather than resolved quietly.
 
 ---
 
@@ -123,6 +135,12 @@ Workstreams are ordered by what unblocks what, not by appetite.
 | **6** | **B** — scraper: schema + snapshots + normalization                   | D26, phase 4                  | `test:db`, fixture adapter tests                                        |
 | **7** | **A** — Studio redesign, including the new scraper workspaces         | Phases 3, 6                   | Studio audit at both widths                                             |
 | **8** | **B** — analytics, opportunity scoring, similarity                    | Phase 6                       | Coverage labels on every payload                                        |
+| **9** | **E** — the three-tier architecture, steps 0-8 of [`07`](07-three-tier-architecture.md) | Phase 6 (the scraper's tiers) | full CI; `redesign-audit` for every new surface |
+
+**Phase 9 is running now**, out of order and deliberately: the owner supplied it
+after the rest of this plan was written, and its first two steps (the source
+tiers, the docs) depend on nothing. Its step 2 — `Product.sizeTier` — is the
+gate for everything else in it.
 
 Phases 1–2 are independent of the D25 debate and can start immediately once D27 and the slot list
 are settled. Phase 1 is the highest value-per-hour work in the plan.

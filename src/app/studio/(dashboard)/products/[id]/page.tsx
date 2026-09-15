@@ -81,6 +81,7 @@ export default async function EditProductPage({
     translations: product.translations,
     needsRewrite: product.needsRewrite,
     tier: product.tier,
+    sizeTier: product.sizeTier,
     inStock: product.inStock,
     importSource: product.importSource,
     importRef: product.importRef,

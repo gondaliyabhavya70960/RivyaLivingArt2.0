@@ -20,6 +20,28 @@ inventing a third answer.
   the visual layer only.** If a redesign appears to need a data change, stop
   and report it instead.
 
+### 1a. The catalogue has three tiers, and a card is not one shape
+
+`docs/plan/07-three-tier-architecture.md` (owner-supplied, in force from
+2026-09-15) organises the catalogue into three customer intents with different
+price ladders, customization depth and interface density:
+
+| `Product.sizeTier` | Customer-facing | Density |
+| --- | --- | --- |
+| `LARGE_FORMAT` | Collectible Furniture & Spatial Art | Editorial. Few per screen, full-bleed and macro, dimensions · materials · edition · lead time, craft story. A bespoke piece is never forced into an add-to-cart shape. |
+| `MEDIUM_FORMAT` | Memory & Celebration Art | Guided. The customization IS the product: occasion, names, date, uploads, and a visible path from choosing a piece to confirming the order. |
+| `SMALL_FORMAT` | Personal Art & Gifting | Efficient. Grid, quick personalization, variants, price visible, festival collections. |
+
+**One foundation, three variants** — `<ProductGallery variant="collectible" |
+"memory" | "gift" />` — not three templates and not one template pretending three
+products are alike. The branch lives in a pure module (`src/lib/card-meta.ts`),
+never in JSX: there is no component-test runner here, so a branch inside a
+component is permanently untestable.
+
+This does not relax rule 1. **Tier 03 is fast WhatsApp ORDERING, not checkout**,
+and the eleven places where the brief asks for something §1.1 protects are tabled
+as T1–T11 in that document — open questions, not licence.
+
 ## 2. Colour — `src/styles/tokens.css`
 
 | Utility                      | Role                                                                                                                                                               |
