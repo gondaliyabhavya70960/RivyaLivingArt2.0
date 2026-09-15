@@ -593,16 +593,16 @@ model SiteSettings {
      never opens this screen keeps self-populating exactly as it did. */
 
   /// Master switch. False stops the fill entirely, deploy included.
-  catalogFillEnabled     Boolean   @default(true)
+  catalogFillEnabled     Boolean   @default(true) @map("sheetFillEnabled")
   /// Whether a deploy triggers a fill. True keeps a fresh environment
   /// self-populating from the sheet on first boot, which is the point of
   /// having it in bootstrap at all.
-  catalogFillOnDeploy    Boolean   @default(true)
+  catalogFillOnDeploy    Boolean   @default(true) @map("sheetFillOnDeploy")
   /// Abort the whole run if it would CREATE more than this many products.
   /// Null means no cap — today's behaviour. Creates are the dangerous
   /// direction: a mis-sorted or re-keyed sheet inserts thousands, while
   /// updates are already held back by `ownerTouched`.
-  catalogFillMaxCreates  Int?
+  catalogFillMaxCreates  Int? @map("sheetFillMaxCreates")
   /// Owner switch: render demo rows on the public site (always marked, never in the sitemap).
   demoContentPublic Boolean @default(false)
   /// The owner's spreadsheet and its tab ids; null falls back to the environment.
@@ -1155,13 +1155,17 @@ model ImportConflict {
   importRunId  String?
   importRun    ImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
   field        String
-  importedValue String?
+  /// @map, not a column rename: preview deploys migrate the PRODUCTION
+  /// database, so for the window between a push and its merge, production runs
+  /// old code against the new schema. A rename breaks it; a map does not.
+  importedValue String?   @map("sheetValue")
   dbValue      String?
   status       String     @default("OPEN")
   createdAt    DateTime   @default(now())
   resolvedAt   DateTime?
   resolvedById String?
 
+  @@map("SheetConflict")
   @@index([status, createdAt])
   @@index([productId])
 }
