@@ -56,6 +56,21 @@ is the single largest risk in workstream A.
 
 ## 3. Storefront — what to actually change
 
+> **Verified against the live site and the code, 2026-09-15.** Every subsection below was checked
+> before being acted on, and **four of the six turned out to describe a storefront this repo does
+> not have.** The claims were written from an impression of the rendered page rather than from it;
+> each is corrected in place, with what was measured.
+>
+> The pattern is worth stating once, because it cost four surveys to learn: **this section's
+> "currently reads as…" judgements are the unreliable part, and its "not to touch" list is the
+> reliable part.** Before building anything from §3, load the route in a browser and measure it.
+> `scripts/preview-proxy.mjs` makes that a two-line job against any PR's own preview.
+>
+> One trap, which caught me: `MeniscusImage` opens its mask on an IntersectionObserver, so a
+> stitched full-page screenshot photographs everything below the fold **mid-reveal**, as a pale
+> wash that reads exactly like a broken image. `scripts/shots.mjs` already walks the page to avoid
+> this. Use it rather than writing your own capture.
+
 The live site's structure is sound. The work is craft, not composition. Ranked by visible return:
 
 ### 3.1 Typography and rhythm (highest return, lowest risk)
@@ -65,25 +80,54 @@ _contrast_ in the scale, not from more of it. Targets: the hero statement, secti
 manifesto band, pull-quotes. Keep `font-display`/`font-body`/`font-mono` roles exactly as the
 contract assigns them — every price, dimension and eyebrow stays mono and tabular.
 
-### 3.2 The collections band and the featured grid
+### 3.2 The collections band and the featured grid ~~— uplift~~ · CORRECTED
 
-Six category doorways and the featured grid are the commercial core. They currently read as a grid
-of tiles. Uplift: asymmetric editorial composition, real crops from the new masters (workstream D),
-`MeniscusImage` on each, and mono metadata that says something (timeline, scale class) rather than
-repeating the title.
+> ~~"They currently read as a grid of tiles. Uplift: asymmetric editorial composition, real crops
+> from the new masters, `MeniscusImage` on each, and mono metadata that says something rather than
+> repeating the title."~~
+>
+> **Every one of those was already true.** The band is a bento — the lead tile spans 8 of 12
+> columns and two rows at 4:5, the other five take 4 columns at 3:4. Every tile renders through
+> `MeniscusImage`. The mono eyebrow (`PRESERVE`) and the display promise ("Keep the day forever")
+> are different strings, not a repeat, and `CollectionCard` already carries an optional mono
+> footnote whose docstring explains why a count is NOT put there: §7.3, "a '139 pieces' label on a
+> candle-holder category reads as dropship, not atelier". The featured grid is one hero at
+> `col-span-7` beside three supporting at `col-span-5`, not the dense card grid described.
+>
+> **What was actually wrong, and this section never mentioned:** two of the six doorways —
+> Gift and Print, measured in Chromium against the live site — rendered as a two-letter monogram
+> on a flat block, because `CANONICAL_CATEGORIES[].image` was declared for all eight categories
+> and written by no code path. Fixed in #64. A composition uplift would have restyled a band whose
+> real problem was that a third of it had no picture.
 
-### 3.3 Large-format work
+### 3.3 Large-format work ~~— the homepage carousel~~ · CORRECTED
 
-`REDESIGN.md` Part 6 and the dedicated `/large-resin-art` route treat this as the brand's apex, and
-the homepage carousel under-sells it. This is the surface where Batch D's bench concepts,
-large-format art and concept-room renders were generated to land.
+> ~~"the homepage carousel under-sells it."~~
+>
+> **There is no carousel.** The homepage large-format band is a 4-up scope grid at `aspect-[4/5]`
+> with `MeniscusImage`, an intro and a CTA to `/large-resin-art`, reusing that page's own tiles and
+> alt text rather than a second set. Whether it under-sells the apex is a judgement worth having —
+> but it needs to be made about the grid that exists.
 
-### 3.4 Product detail page (Part 9)
+### 3.4 Product detail page (Part 9) — unverified as an uplift, verified as sound
 
 The commerce split (gallery 60 / information 40), the spec sheet, the customization fields and the
-WhatsApp order path all work. Uplift the **gallery** and the **spec sheet** — the two places a
-buyer decides. Do not touch the order logic; `e2e-smoke` asserts the wa.me round trip and the
-`[DEMO] ` prefix.
+WhatsApp order path all work. Do not touch the order logic; `e2e-smoke` asserts the wa.me round
+trip and the `[DEMO] ` prefix.
+
+> **Checked on a live PDP, 2026-09-15** (`/product/round-resin-mantra-frame-with-pink-texture`):
+> breadcrumb, six-thumbnail rail, 60/40 split, mono category eyebrow, display `h1`, mono price,
+> a MADE TO ORDER badge, the Customize and Ask-on-WhatsApp pair, and a three-line mono trust rail.
+> That is Part 9. **No defect found to justify an "uplift" from the code**, so none was made — a
+> visual change here needs the owner's eye on the rendered page, not an agent's on the markup.
+>
+> One factual observation, not a defect: every gallery image on that PDP is served from
+> `cdn.shopify.com` at 1000×1000 into a 617px box, unoptimised. That is the DOCUMENTED fallback
+> working as designed — `mirrorProductImage` keeps the original URL when the C3 mirror has not
+> covered a row, and `isOptimizableImageSrc` degrades it to a raw `<img>` rather than crashing,
+> because ~10k mirrored images through `next/image` would burn the very quota the mirror exists to
+> save. What it indicates is **mirror coverage**, an operational question for the owner, not a code
+> change.
 
 ### 3.5 Empty, loading and error states
 
