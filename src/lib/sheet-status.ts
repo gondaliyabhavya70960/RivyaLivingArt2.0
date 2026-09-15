@@ -10,12 +10,12 @@ import { z } from "zod";
  * prevent.
  */
 export const SHEET_CONFLICT_STATUSES = ["OPEN", "RESOLVED"] as const;
-export type SheetConflictStatus = (typeof SHEET_CONFLICT_STATUSES)[number];
-export const sheetConflictStatusSchema = z.enum(SHEET_CONFLICT_STATUSES);
+export type ImportConflictStatus = (typeof SHEET_CONFLICT_STATUSES)[number];
+export const importConflictStatusSchema = z.enum(SHEET_CONFLICT_STATUSES);
 export const SHEET_CONFLICT_STATUS = {
   OPEN: "OPEN",
   RESOLVED: "RESOLVED",
-} as const satisfies Record<SheetConflictStatus, SheetConflictStatus>;
+} as const satisfies Record<ImportConflictStatus, ImportConflictStatus>;
 
 export const SHEET_SYNC_DIRECTIONS = ["PUSH"] as const;
 export type SheetSyncDirection = (typeof SHEET_SYNC_DIRECTIONS)[number];

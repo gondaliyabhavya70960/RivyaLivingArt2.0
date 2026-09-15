@@ -8,7 +8,7 @@ const EMPTY: StudioInboxRows = {
     products: 0,
     blogPosts: 0,
     portfolios: 0,
-    sheetConflicts: 0,
+    importConflicts: 0,
   },
   scrapeJobs: [],
   importRuns: [],
@@ -38,7 +38,7 @@ describe("shapeInbox", () => {
   it("pending queues lead, then everything else sorts newest first", () => {
     const items = shapeInbox({
       ...EMPTY,
-      pending: { ...EMPTY.pending, sheetConflicts: 2 },
+      pending: { ...EMPTY.pending, importConflicts: 2 },
       scrapeJobs: [
         {
           id: "job-old",
@@ -75,7 +75,7 @@ describe("shapeInbox", () => {
     });
 
     expect(items.map((item) => item.id)).toEqual([
-      "pending:sheetConflicts",
+      "pending:importConflicts",
       "import-run:run-new",
       "activity:act-mid",
       "scrape-job:job-old",

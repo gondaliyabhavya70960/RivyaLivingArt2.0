@@ -37,16 +37,16 @@ async function main() {
     const settings = await db.siteSettings.findUnique({
       where: { id: "main" },
       select: {
-        sheetFillEnabled: true,
-        sheetFillOnDeploy: true,
-        sheetFillMaxCreates: true,
+        catalogFillEnabled: true,
+        catalogFillOnDeploy: true,
+        catalogFillMaxCreates: true,
       },
     });
     const policy: FillPolicy = settings
       ? {
-          enabled: settings.sheetFillEnabled,
-          onDeploy: settings.sheetFillOnDeploy,
-          maxCreates: settings.sheetFillMaxCreates,
+          enabled: settings.catalogFillEnabled,
+          onDeploy: settings.catalogFillOnDeploy,
+          maxCreates: settings.catalogFillMaxCreates,
         }
       : DEFAULT_FILL_POLICY;
 

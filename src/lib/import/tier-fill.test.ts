@@ -199,17 +199,17 @@ describe("diffConflictFields", () => {
     const byField = Object.fromEntries(diffs.map((d) => [d.field, d]));
     expect(byField.priceMax).toEqual({
       field: "priceMax",
-      sheetValue: "200",
+      importedValue: "200",
       dbValue: null,
     });
     expect(byField.materials).toEqual({
       field: "materials",
-      sheetValue: "Wood",
+      importedValue: "Wood",
       dbValue: null,
     });
     expect(byField.inStock).toEqual({
       field: "inStock",
-      sheetValue: "false",
+      importedValue: "false",
       dbValue: "true",
     });
   });

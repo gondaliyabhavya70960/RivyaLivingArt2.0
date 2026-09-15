@@ -249,14 +249,14 @@ export async function setSheetFillPolicy(
       where: { id: "main" },
       create: {
         id: "main",
-        sheetFillEnabled: parsed.enabled,
-        sheetFillOnDeploy: parsed.onDeploy,
-        sheetFillMaxCreates: parsed.maxCreates,
+        catalogFillEnabled: parsed.enabled,
+        catalogFillOnDeploy: parsed.onDeploy,
+        catalogFillMaxCreates: parsed.maxCreates,
       },
       update: {
-        sheetFillEnabled: parsed.enabled,
-        sheetFillOnDeploy: parsed.onDeploy,
-        sheetFillMaxCreates: parsed.maxCreates,
+        catalogFillEnabled: parsed.enabled,
+        catalogFillOnDeploy: parsed.onDeploy,
+        catalogFillMaxCreates: parsed.maxCreates,
       },
     });
 
