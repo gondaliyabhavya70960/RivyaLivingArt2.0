@@ -453,6 +453,22 @@ below are the ones that are expensive to rediscover.
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are
   deliberately not checked.
+- **`ScrapedProduct` holds the LATEST state; `ProductSnapshot` holds the
+  history** (B2, 2026-09-15). The staged row is upserted on
+  `(sourceKey, externalId)`, so a re-scrape overwrites its title, price and
+  description. `ResearchProduct` is the identity that outlives that, and
+  snapshots hang off it — written on first sighting and thereafter **only when
+  `contentHash` moves**, the same rule as price history and for the reason its
+  comment already gives. `lastSeen` is touched on every sighting, so a gap
+  between snapshots means the source said the same thing throughout it. The
+  dual write sits in `upsertPage`; the promote path is untouched.
+- **Check a generated migration against the statements you meant.** `prisma
+migrate diff` proposed dropping `Product_{title,shortTagline,description}_trgm_idx`
+  alongside B2's two new tables: those indexes are created as raw SQL by
+  `20260814050000_search_trgm` and `20260820120000_search_trgm_description`,
+  which `schema.prisma` does not model, so `diff` reads them as drift.
+  Shipping it would have deleted the storefront's search indexes in
+  production. B2's migration is hand-written for exactly that reason.
 - **Price history is append-only**, written on first sighting and thereafter
   only when the price moves. A gap between points means the price held.
 
