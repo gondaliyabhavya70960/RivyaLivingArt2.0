@@ -22,14 +22,18 @@ hand, but nothing reads that spreadsheet at build or request time:
   export returned 401. Superseded by the full files above, which take
   precedence; kept because they are what the pipeline was first proven against.
 
-**Refreshing them** is a manual run of the `Fetch product tier sheets` Actions
-workflow, which curls the spreadsheet's public CSV export. It is **not on a
-schedule** — it used to be, and every run rewrote 15 MB of gzip with a new
-timestamp header, so it committed and redeployed every two hours with a zero-line
-diff. It also needs the spreadsheet to still be shared as "Anyone with the link →
-Viewer"; once the owner un-shares it (Sheets removal, step 6) the workflow stops
-working and these committed files are all there is. That is fine — they are the
-source of truth, not a cache.
+**These files are now the ONLY copy.** The owner un-shared the spreadsheet and
+revoked the service account on 2026-09-15 (Sheets removal, step 6), so the
+`Fetch product tier sheets` workflow that used to refresh them has no source to
+read and was deleted with it — `git log --diff-filter=D` has it if a future
+spreadsheet is ever shared again.
+
+That was always the plan and is not a loss: these committed files are the
+source of truth, not a cache, and `prisma/import-tiers.ts` reads them off disk
+at deploy time. **Refreshing them now means replacing the `.csv.gz` files in a
+commit** — from a fresh export of whatever the owner's current source is, via
+Bulk Import's own CSV/XLSX path, or by re-sharing a sheet and restoring the
+deleted workflow.
 
 ## Scraper row schema (Tier tabs)
 
