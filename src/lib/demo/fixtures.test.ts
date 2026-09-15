@@ -3,6 +3,8 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
+
 import {
   loadDemoFixtures,
   referencedImagePaths,
@@ -158,6 +160,60 @@ describe("Content Lab fixtures", () => {
     expect(statuses).toEqual(
       new Set(["DRAFT", "REVIEW", "PUBLISHED", "ARCHIVED"]),
     );
+  });
+
+  it("every product tier appears, on a PUBLISHED row CI can actually see", () => {
+    // The gate for the tier variants that steps 6-8 will build. A card or PDP
+    // that branches on sizeTier is only ever exercised if a PUBLISHED demo
+    // product carries that tier — CI sweeps the demo routes, and an unseen
+    // branch is an untested one.
+    const published = fixtures.products.filter(
+      (p) => p.status === "PUBLISHED" && p.sizeTier !== null,
+    );
+    expect(new Set(published.map((p) => p.sizeTier))).toEqual(
+      new Set(PRODUCT_SIZE_TIERS),
+    );
+  });
+
+  it("the three audited demo PDPs are one of each tier, and all three render", () => {
+    // ci.yml sweeps these three slugs. They are the only product detail pages
+    // any audit ever loads, so between them they must cover all three tiers
+    // or two thirds of the PDP variants ship unaudited.
+    //
+    // STATUS AND IMAGES ARE ASSERTED TOO, and that is not belt and braces:
+    // the first pair picked for this list were demo-product-085 (status
+    // REVIEW, so its PDP 404s for a visitor) and demo-product-078 (zero
+    // images). Adding either to AUDIT_ROUTES would have turned CI red — or
+    // worse, audited the monogram fallback and called it a tier variant.
+    const AUDITED = {
+      "demo-product-001": "LARGE_FORMAT",
+      "demo-product-086": "MEDIUM_FORMAT",
+      "demo-product-062": "SMALL_FORMAT",
+    } as const;
+    const imageCount = new Map<string, number>();
+    for (const img of fixtures.productImages) {
+      imageCount.set(img.productId, (imageCount.get(img.productId) ?? 0) + 1);
+    }
+    for (const [slug, tier] of Object.entries(AUDITED)) {
+      const product = fixtures.products.find((p) => p.slug === slug);
+      expect(product, `${slug} must exist`).toBeDefined();
+      expect(product?.sizeTier, `${slug} tier`).toBe(tier);
+      expect(product?.status, `${slug} must render publicly`).toBe("PUBLISHED");
+      expect(imageCount.get(product!.id) ?? 0, `${slug} images`).toBeGreaterThan(
+        0,
+      );
+    }
+  });
+
+  it("the two workshops carry NO tier, and they are the only ones that do not", () => {
+    // A workshop is a booking, not a piece; the owner's taxonomy has no tier
+    // for it and inventing one would be a fabrication. They are also the only
+    // demo rows that exercise the "No tier yet" path in the studio.
+    const untiered = fixtures.products.filter((p) => p.sizeTier === null);
+    expect(untiered.map((p) => p.categorySlug)).toEqual([
+      "workshops",
+      "workshops",
+    ]);
   });
 
   it("every TestimonialStatus and a PUBLISHED+GRANTED row both appear", () => {

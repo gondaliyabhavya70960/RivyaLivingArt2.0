@@ -15,6 +15,8 @@
  */
 import { z } from "zod";
 
+import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
+
 import productsJson from "../../../prisma/fixtures/demo/products.json";
 import productImagesJson from "../../../prisma/fixtures/demo/product-images.json";
 import productFieldsJson from "../../../prisma/fixtures/demo/product-fields.json";
@@ -97,6 +99,13 @@ export const productSchema = z.object({
   importSource: z.literal("demo"),
   importRef: z.string(),
   tier: z.number().int().min(1).max(4).nullable(),
+  /**
+   * The owner's product tier. Nullable, and two of the hundred fixtures ARE
+   * null on purpose: a workshop is a booking, not a piece, and the taxonomy
+   * has no tier for it. Inventing one would be a fabrication, and the nulls
+   * are also the only demo rows that exercise the "No tier yet" path.
+   */
+  sizeTier: z.enum(PRODUCT_SIZE_TIERS).nullable(),
   inStock: z.boolean(),
   sourceHash: z.string().nullable(),
   ownerTouched: z.boolean(),

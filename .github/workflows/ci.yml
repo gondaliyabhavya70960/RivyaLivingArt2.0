@@ -11,8 +11,9 @@
 # After the build the job seeds the Content Lab demo set into the throwaway
 # database (the guarded `scripts/seed-demo.ts` — localhost is an allowed
 # host), so the audits sweep the detail routes on deterministic slugs
-# (/product/demo-product-001, /blog/demo-post-001, /portfolio/demo-case-001,
-# /p/demo-lander, /shop/gift-collections) and `scripts/e2e-smoke.mjs` runs
+# (/product/demo-product-{001,086,062} — one per product tier — plus
+# /blog/demo-post-001, /portfolio/demo-case-001, /p/demo-lander and
+# /shop/gift-collections) and `scripts/e2e-smoke.mjs` runs
 # against the started server with the Studio credentials the Studio audit
 # uses. The demo rows never reach production: the loader refuses non-local
 # hosts and the sitemap, JSON-LD, Sheet and mirror exclude them by clause.
@@ -119,7 +120,15 @@ jobs:
       # database is a throwaway container and /portfolio below is only worth
       # auditing with cases in it. Production leaves this unset.
       PORTFOLIO_SEED: "1"
-      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander"
+      # Three demo PDPs, not one, and the slugs are chosen rather than picked:
+      # 001 is LARGE, 086 is MEDIUM, 062 is SMALL (the owner's three-tier
+      # product architecture, docs/plan/07). The PDP and card variants those
+      # tiers get in later steps branch on `sizeTier`, and a branch no audited
+      # route ever renders is a branch no gate protects. All three are
+      # PUBLISHED with a gallery — `fixtures.test.ts` asserts exactly that,
+      # because the first pair chosen for this list were a REVIEW-status row
+      # (its PDP 404s) and one with no images.
+      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/product/demo-product-086,/product/demo-product-062,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander"
       # Arabic is a shipped locale and nothing in CI ever loaded one. The repo
       # carries 29 `rtl:` variants across 19 files and four JS direction
       # inversions (lightbox, gallery, cure line) that no gate protected: a

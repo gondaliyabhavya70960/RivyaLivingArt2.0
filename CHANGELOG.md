@@ -5,6 +5,66 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E step 4 — the demo fixtures get tiers, and CI gets two more PDPs (2026-09-15)
+
+A tier variant is only ever exercised if an audited route renders that tier. There was
+exactly **one** audited product detail page, so two thirds of the PDP variants steps 7–8
+will build would have shipped unseen by every gate. This closes that before any component
+exists to need it.
+
+### 51 LARGE · 16 MEDIUM · 31 SMALL · 2 null
+
+`sizeTier` across `prisma/fixtures/demo/products.json`, the zod shape in
+`src/lib/demo/fixtures.ts` and the write in `src/lib/demo/apply.ts`.
+
+Classified **title-first, category as a fallback** — the rule the step-6 classifier will
+use, and the right one here: these fixtures shuffle titles across categories, so
+`resin-wall-clocks` holds a "Diwali Diya Set" and `resin-furniture-surfaces` holds a "Ring
+Set". Classifying on the category would have filed both wrong.
+
+### The two nulls are the workshops, and that is a finding
+
+A workshop is a **booking, not a piece**. The owner's three-tier taxonomy describes
+collectible furniture, memory art and personal gifting; it has no tier for a Saturday
+session, and inventing one would be the fabrication this repo forbids. So
+`demo-product-023` and `-024` carry `sizeTier: null` — and they are also the only demo rows
+that exercise the "No tier yet" path shipped in step 3.
+
+**`/workshops` is a shipped route with its own products**, so this is a real gap to put to
+the owner rather than paper over: either a workshop legitimately has no product tier, or
+the taxonomy needs a fourth thing. It is recorded in `PROJECT_STATE.md` as an open
+question, not decided here.
+
+### CI now sweeps three demo PDPs, one per tier
+
+`demo-product-001` (LARGE) · `demo-product-086` (MEDIUM) · `demo-product-062` (SMALL).
+
+**The first two slugs picked for that list were wrong, and checking caught it.**
+`demo-product-085` is status `REVIEW` — its PDP 404s for a visitor, so adding it to
+`AUDIT_ROUTES` would have turned CI red. `demo-product-078` has zero images — it would have
+loaded, and audited the monogram fallback while reporting a tier variant as covered.
+
+`fixtures.test.ts` now asserts **PUBLISHED with a non-empty gallery** for all three slugs,
+not just their tier, so that cannot recur. **Verified by mutation**: pointing the map back
+at the two bad slugs fails with `demo-product-085 must render publicly: expected 'REVIEW'
+to be 'PUBLISHED'`.
+
+Both new routes were audited **before** they were added to CI — `redesign-audit.mjs` clean
+at 1440 · 1280 · 390 · 360 and `a11y-audit.mjs` clean, run against a real build with the
+demo set seeded.
+
+### Verified
+
+typecheck · lint · **867 unit tests** (3 new) · 51 db tests · copy:check · a real build ·
+design and a11y audits on the two new routes at all four CI widths · `test:e2e` **36/36**.
+
+The smoke first reported **28/35**, which was the documented `test:db` trap — that suite
+seeds *and removes* a demo set of its own, and it had run immediately before. Re-seeded
+and re-ran: 36/36. Recorded rather than quietly re-run, because a green number after an
+unexplained red one is worth nothing.
+
+---
+
 ## Workstream E step 3 — the untiered backlog, made visible and fixable (2026-09-15)
 
 `Product.sizeTier` shipped nullable against a catalogue of ~4,485 rows, so on the day it

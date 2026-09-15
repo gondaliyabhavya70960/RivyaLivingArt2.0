@@ -27,15 +27,23 @@ Done in workstream E:     step 0 (docs — this block, docs/plan/README.md, AGEN
                           #77).
                           Step 3 too: the "No tier yet" filter, the bulk Set product tier, the
                           content-gaps card, the Product tier column, and the product_tier
-                          columns on Bulk Import and the confirmed export.
-Next Exact Task:          step 4 — demo fixtures. sizeTier across all 100 rows of
-                          prisma/fixtures/demo/products.json and the zod shape in
-                          src/lib/demo/fixtures.ts, spread so at least a LARGE and a SMALL land
-                          on the audited demo detail routes. BEFORE any component: the five demo
-                          detail routes are what CI sweeps, so a tier variant with no demo row
-                          carrying that tier ships unseen by every gate. Then step 5 (copy, nine
-                          locales, one nested block, before any component for the same reason
-                          i18n-missing --stale exists).
+                          columns on Bulk Import and the confirmed export. Step 4: sizeTier
+                          across the 100 demo fixtures (51 LARGE / 16 MEDIUM / 31 SMALL / 2
+                          null — the workshops, which the taxonomy has no tier for), and CI
+                          now sweeps THREE demo PDPs, one per tier.
+Next Exact Task:          step 5 — copy, nine locales, ONE nested block. scripts/i18n-merge.mjs
+                          with no --partial, then npm run copy:registry. Before any component,
+                          because i18n-missing --stale makes every later rewording a nine-file
+                          edit. Then step 6 (the scraper's tier classifier: pure, fixture-tested,
+                          read at request time in the shape of category-map.ts, no column of its
+                          own yet) and step 7 (the first card variant, on /large-resin-art,
+                          branching in src/lib/card-meta.ts — there is no component-test runner,
+                          so a branch living in JSX is permanently untestable).
+Open question for owner:  WORKSHOPS HAVE NO TIER. /workshops is a shipped route with its own
+                          products, and the three-tier taxonomy describes pieces, not bookings.
+                          The two demo workshops carry sizeTier null; the real ones would too.
+                          Either that is correct (a workshop is not a product tier) or the
+                          taxonomy needs a fourth thing. Not invented either way.
 Open owner actions:       (1) /studio/scraper/sources — the three "Remove all resin goods /
                           supplies / 3d print" buttons; 107 de-seeded sources are still live DB
                           rows, because applySeedSources only upserts and a deploy that silently

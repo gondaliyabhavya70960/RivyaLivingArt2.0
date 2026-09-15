@@ -203,6 +203,7 @@ export async function seedDemo(
       importSource: p.importSource,
       importRef: p.importRef,
       tier: p.tier,
+      sizeTier: p.sizeTier,
       inStock: p.inStock,
       sourceHash: p.sourceHash,
       ownerTouched: p.ownerTouched,

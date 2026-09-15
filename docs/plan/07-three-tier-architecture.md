@@ -242,10 +242,28 @@ without the thing that writes it.
    `/studio/products` to 1450px in a 1440px viewport and the studio audit
    failed the route. Eight pixels off each tier column's trailing padding is
    the whole margin; a thirteenth column needs a real answer, not more shaving.
-4. **Demo fixtures.** `sizeTier` across all 100 rows of
-   `prisma/fixtures/demo/products.json` and the zod shape in `demo/fixtures.ts`,
-   spread so at least a LARGE and a SMALL land on audited demo detail routes.
-   **Before step 6**, or every tier variant ships unseen by every CI gate.
+4. **Demo fixtures** — done, 2026-09-15. `sizeTier` across
+   `prisma/fixtures/demo/products.json`, the zod shape in `demo/fixtures.ts`
+   and the write in `demo/apply.ts`: **51 LARGE · 16 MEDIUM · 31 SMALL · 2
+   null**. Classified title-first with the category as a fallback, which is the
+   rule the step-6 classifier will use and the right one here — these fixtures
+   shuffle titles across categories, so `resin-wall-clocks` holds a "Diwali
+   Diya Set" and classifying on category would file it wrong.
+
+   **The two nulls are the workshops, and they are honest.** A workshop is a
+   booking, not a piece; the owner's taxonomy has no tier for it and inventing
+   one would be a fabrication. They are also the only demo rows that exercise
+   the "No tier yet" path. **This is a real gap in the taxonomy worth putting
+   to the owner** — `/workshops` is a shipped route with its own products.
+
+   **CI now sweeps THREE demo PDPs, one per tier** (`demo-product-001` LARGE ·
+   `086` MEDIUM · `062` SMALL). A variant that branches on `sizeTier` is only
+   ever exercised if an audited route renders that tier, and there was exactly
+   one audited PDP. The first two slugs picked for that list were a
+   REVIEW-status row (its PDP 404s) and one with no images; `fixtures.test.ts`
+   now asserts PUBLISHED-with-a-gallery for all three so that cannot recur.
+   Both new routes verified clean at 1440 · 1280 · 390 · 360 and on a11y before
+   they were added.
 5. **Copy, nine locales, one nested block.** `scripts/i18n-merge.mjs` with no
    `--partial`, then `npm run copy:registry`. Before any component, because
    `i18n-missing.mjs --stale` turns every later rewording into a nine-file edit.
