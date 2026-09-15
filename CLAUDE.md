@@ -109,7 +109,7 @@ kept current — the plan records what was true when it was written.
 
 ### A MIGRATION HERE IS A PRODUCTION MIGRATION, ON PUSH
 
-`npm run build` is `prisma migrate deploy && tsx prisma/bootstrap.ts &&
+`npm run build` is `scripts/migrate-deploy.mjs && tsx prisma/bootstrap.ts &&
 next build`, and **Vercel runs it for PREVIEW deployments against the
 production database** (`db.prisma.io` — the build's own `db-preflight` prints
 the host every time; it is NOT Neon, whatever older comments say). So pushing a
@@ -133,10 +133,28 @@ settings form and dashboard inbox for four minutes, until a revert migration
 landed. The storefront was unaffected — it queries none of those tables.
 
 Worth fixing properly rather than tiptoeing forever: give previews their own
-database, or gate `migrate deploy` on `VERCEL_ENV=production`. Neither is done.
+database, or gate `migrate deploy` on `VERCEL_ENV=production`. **Neither is
+done, and the retry below does not do it** — it removes one symptom of pushing
+often, not the hazard.
+
+**The SYMPTOM that is handled: a build no longer dies because the database was
+merely busy.** `scripts/migrate-deploy.mjs` wraps `prisma migrate deploy` and
+runs it again (5s · 20s · 45s) when the failure is a connection problem —
+`too many connections for role "prisma_migration"`, P1001/P1002/P1017, a
+dropped socket, or the advisory lock another build is holding. Two builds per
+push against one database is the normal state here, and Prisma Postgres caps
+that role low: three migrations inside twenty minutes on 2026-09-15 failed a
+build on cadence alone.
+**It deliberately does NOT retry a migration that ran and failed** (P3009, "a
+migration failed to apply"), nor any error it does not recognise. Prisma
+records such a failure and refuses every later deploy until someone runs
+`migrate resolve`, so looping would only bury the message that person has to
+read. `scripts/lib/migrate-retry.mjs` holds that judgement alone and
+`migrate-retry.test.mjs` pins both directions, including the mixed case where
+a failed migration also mentions a lost connection — there, "it failed" wins.
 
 - lint: `npm run lint -- --fix`
-- build: `npm run build` (runs prisma migrate deploy + bootstrap first — needs DATABASE_URL)
+- build: `npm run build` (runs migrate deploy + bootstrap first — needs DATABASE_URL)
 
 ### Part 15 imagery (`docs/media-v3-manifest.json`)
 
@@ -460,9 +478,26 @@ below are the ones that are expensive to rediscover.
   scraper rebuild's "add two new adapters" step does NOT mean picking new
   companies to crawl: it means covering the platforms behind those 36. At least
   one of them carries the note **"NO scrapeable catalog (verified:
-  enquiry-only). Do NOT scrape"**, which is why plan §5's `collectionMode` /
-  `policyReviewStatus` gate has to land BEFORE any new adapter — a registered
-  source is not an authorised one.
+  enquiry-only). Do NOT scrape"** — which was prose nothing enforced until the
+  gate below.
+- **A REGISTERED SOURCE IS NOT AN AUTHORISED ONE** (plan §5, 2026-09-15).
+  `enabled` says whether the operator WANTS a source; `collectionMode` and
+  `policyReviewStatus` say whether we are allowed to collect it, which nothing
+  asked before. `policy.ts` holds the decision — `describeUnauthorizedRun`
+  mirrors `breaker.ts`'s "may I run right now", and the two are deliberately
+  separate: a breaker pause is about the SITE being down and clears by waiting;
+  a policy block is about US and does not.
+  **It fails closed.** `PENDING` is the default every migrated row got and it
+  REFUSES — a gate whose unreviewed state is "go ahead" only ever says yes.
+  Checked at all three points a job can move: `createScrapeJob`,
+  `createTierJobs` (as a `where` clause — `AUTOMATABLE_SOURCE_WHERE` — because
+  the fan-out is where a forgotten check queues a hundred jobs), and
+  `advanceScrapeJob`, which re-checks on EVERY advance: a job can sit QUEUED
+  while the owner blocks its source, and the cron drain would otherwise pick it
+  up ten minutes later with nobody watching. `MANUAL_RESEARCH` outranks an
+  approval — a source with no automated path does not become crawlable by being
+  allowed. The owner clears it per source on `/studio/scraper/sources/<key>` or
+  in bulk from the registry's selection bar; the record stamps who and when.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are

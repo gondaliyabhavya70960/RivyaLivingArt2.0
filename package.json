@@ -9,7 +9,7 @@
   "homepage": "https://www.rivyalivingart.com",
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/db-preflight.mjs; prisma migrate deploy && tsx prisma/bootstrap.ts && next build",
+    "build": "node scripts/db-preflight.mjs; node scripts/migrate-deploy.mjs && tsx prisma/bootstrap.ts && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

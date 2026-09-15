@@ -44,6 +44,10 @@ const DEFAULT_ROUTES = [
   "/studio/pages",
   "/studio/scraper",
   "/studio/scraper/sources",
+  // A source DETAIL page, for the governance card that only exists here. The
+  // key is from the curated registry, which prisma/bootstrap.ts seeds on every
+  // deploy — so it is present in any database this audit can reach.
+  "/studio/scraper/sources/poonam-shah-art",
   "/studio/scraper/review",
   "/studio/scraper/quality",
   "/studio/scraper/mapping",

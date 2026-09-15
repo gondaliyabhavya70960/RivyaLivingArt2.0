@@ -36,6 +36,7 @@ import {
   nextFailureCount,
   shouldTrip,
 } from "@/lib/scraper/breaker";
+import { describeUnauthorizedRun } from "@/lib/scraper/policy";
 import { priceMoved } from "@/lib/scraper/price-history";
 import {
   describeFieldFailures,
@@ -606,7 +607,18 @@ export async function advanceScrapeJob(
     include: {
       // `tier` used to be selected here for the legacy push's tier tab; D23
       // removed the only reader, so the job no longer loads it.
-      source: { select: { baseUrl: true, requestDelayMs: true } },
+      source: {
+        select: {
+          baseUrl: true,
+          requestDelayMs: true,
+          // The governance gate is re-checked on every advance, not just at
+          // enqueue — see below.
+          name: true,
+          collectionMode: true,
+          policyReviewStatus: true,
+          policyReviewNote: true,
+        },
+      },
     },
   });
   if (!job) throw new Error("Scrape job not found");
@@ -625,6 +637,27 @@ export async function advanceScrapeJob(
       },
     });
     return toSnapshot(failed);
+  }
+
+  // THE GOVERNANCE GATE, re-checked here rather than trusted from enqueue.
+  // A job can sit QUEUED for a long time and is advanced by the cron drain as
+  // well as by an operator's tab, so "it was allowed when it was created" is
+  // not the same statement as "it is allowed now". An owner who blocks a
+  // source, or switches it to manual research, expects the crawl to stop —
+  // including the one already in flight.
+  //
+  // A missing source row (sourceId is SetNull, so a source can be deleted out
+  // from under its jobs) refuses too: an unregistered source cannot have been
+  // reviewed.
+  const policyError = job.source
+    ? describeUnauthorizedRun(job.source.name, job.source)
+    : `${job.sourceName} is no longer in the source registry, so there is no policy review to run under.`;
+  if (policyError) {
+    const stopped = await db.scrapeJob.update({
+      where: { id: job.id },
+      data: { status: "FAILED", error: policyError, finishedAt: new Date() },
+    });
+    return toSnapshot(stopped);
   }
 
   if (job.status === "QUEUED") {
