@@ -74,7 +74,10 @@ describe("the canonical category seed", () => {
     const home = readFileSync("src/app/[locale]/(v2)/page.tsx", "utf8");
     expect(home).toMatch(/CANONICAL_CATEGORIES/);
     expect(home).toMatch(
-      /row\.image \?\? canonicalTileImage\.get\(row\.slug\)/,
+      // `||` rather than `??`: an empty string from the importer or the
+      // Cloudinary reconcile would pass `??` and land back on the monogram,
+      // which is the same bug one writer later.
+      /row\.image \|\| canonicalTileImage\.get\(row\.slug\)/,
     );
   });
 

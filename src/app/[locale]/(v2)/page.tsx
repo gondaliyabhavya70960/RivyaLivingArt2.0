@@ -286,7 +286,12 @@ export default async function Home({
   const tileImages = new Map(
     tileCategories.map((row) => [
       row.slug,
-      row.image ?? canonicalTileImage.get(row.slug) ?? null,
+      /* `||`, not `??`: the category editor normalises an emptied field to
+         null (`image: parsed.image || null`), but the importer and the
+         Cloudinary reconcile both write this column too, and an empty string
+         reaching here would pass `??` and render the monogram again — the
+         exact bug, one writer later. No image URL is legitimately falsy. */
+      row.image || canonicalTileImage.get(row.slug) || null,
     ]),
   );
 
