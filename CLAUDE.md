@@ -475,21 +475,30 @@ below are the ones that are expensive to rediscover.
   catalogue re-created 4,000 DIFFERENT products. So a `--confirm` run also
   switches `catalogFill*` off, and `tier-fill.test.ts` pins both halves.
   Inquiries and testimonials are `SetNull` and survive every purge.
-- **The source registry is the owner's, curated, and now 66 strong — narrowed
-  to the primary business on 2026-09-15.** It was 115. The 20 SUPPLIES and 29
-  PRINT3D entries were removed on the owner's instruction: the business is
-  LARGE-FORMAT RESIN ART, and by the registry's own tiering neither raw
-  materials nor 3D printing is resin art. What remains is 8 OWNER + 58
-  RESIN_GOODS (`src/lib/scraper/seed-data.ts`, seeded by
-  `prisma/bootstrap.ts`). The `SUPPLIES`/`PRINT3D` enum values STAY — existing
-  database rows still carry them, and the sources screen's "Remove all
-  supplies" / "Remove all 3d print" buttons are how those rows go.
-  A third of the registry still fingerprints as **UNKNOWN** and fails with
-  `CUSTOM_ADAPTER_MESSAGE` when a site has no JSON-LD product markup, so the
-  rebuild's "add two new adapters" step does NOT mean picking new companies to
-  crawl: it means covering the markup shapes behind them. At least one source
-  carries the note **"NO scrapeable catalog (verified: enquiry-only). Do NOT
-  scrape"** — which was prose nothing enforced until the gate below.
+- **The registry was emptied back to the owner's own 8 on 2026-09-15.** It was
+  115. All three non-owner tiers went, on the owner's instruction, because the
+  business is LARGE-FORMAT RESIN ART: 20 SUPPLIES and 29 PRINT3D first (by the
+  registry's own tiering, neither raw materials nor 3D printing is resin art),
+  then all 58 RESIN_GOODS — a list of mostly small-item resin sellers, which is
+  a different market from large pieces. What remains is TIER 1 ONLY
+  (`src/lib/scraper/seed-data.ts`, seeded by `prisma/bootstrap.ts`): 3
+  WooCommerce, 5 UNKNOWN, including WoodenSure and Saashi, both of which do
+  sell large-format work.
+  **The tier enum values all STAY.** `ScrapeTier` keeps RESIN_GOODS, SUPPLIES
+  and PRINT3D: existing database rows still carry them, operators can still
+  file a new source under any of them, and removing an enum value is a
+  destructive migration for no gain. `applySeedSources` only ever upserts, so
+  the rows it stopped listing SURVIVE in the database — the sources screen's
+  "Remove all …" buttons are how those go, which keeps the deletion an
+  operator's decision rather than a deploy's side effect.
+  **Rebuilding the list means verifying each site, not generating one.** A
+  supplier name that was never checked is a fabricated crawl target; one
+  candidate found by search on the day (`iqracreationonline.co.in`) did not
+  resolve at all. Everything added lands `policyReviewStatus: PENDING`, so the
+  gate below blocks collection until a human records a review anyway.
+  A source still carries the note **"NO scrapeable catalog (verified:
+  enquiry-only). Do NOT scrape"** — which was prose nothing enforced until
+  that gate.
 - **A REGISTERED SOURCE IS NOT AN AUTHORISED ONE** (plan §5, 2026-09-15).
   `enabled` says whether the operator WANTS a source; `collectionMode` and
   `policyReviewStatus` say whether we are allowed to collect it, which nothing
