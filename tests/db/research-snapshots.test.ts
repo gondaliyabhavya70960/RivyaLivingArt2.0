@@ -117,6 +117,37 @@ describe.skipIf(!db)("research identity + snapshots", () => {
     expect(new Set(rows.map((r) => r.contentHash)).size).toBe(rows.length);
   });
 
+  it("stores the RAW payload, not the normalized row", async () => {
+    // B2 shipped this storing the normalized product and claiming otherwise.
+    // The snapshot is meant to be what the SOURCE said — and B4's whole
+    // premise (fix a mapping without re-scraping) needs the raw value kept.
+    // `normalizeStagedProduct` rewrites `url`, `materials` and `dimensions`,
+    // so a value only it would change is the probe.
+    const { upsertPageForTest } = await import("@/lib/scraper/job-runner");
+    await upsertPageForTest(jobId, SOURCE, [
+      product({
+        externalId: "raw-1",
+        // A tracking query `canonicalizeUrl` strips, and a unit string
+        // `normalizeUnit` rewrites.
+        url: "https://example.test/p/raw-1?utm_source=newsletter",
+        materials: "epoxy resin, sheesham wood",
+        dimensions: "24 inches x 12 inches",
+      }),
+    ]);
+    const identity = await db!.researchProduct.findUniqueOrThrow({
+      where: { sourceKey_externalId: { sourceKey: SOURCE, externalId: "raw-1" } },
+      select: { id: true },
+    });
+    const snap = await db!.productSnapshot.findFirstOrThrow({
+      where: { researchProductId: identity.id },
+      select: { rawPayload: true },
+    });
+    const payload = snap.rawPayload as unknown as RichProduct;
+    expect(payload.url).toBe("https://example.test/p/raw-1?utm_source=newsletter");
+    expect(payload.dimensions).toBe("24 inches x 12 inches");
+    expect(payload.materials).toBe("epoxy resin, sheesham wood");
+  });
+
   it("a re-slug updates canonicalUrl without creating a second identity", async () => {
     const { upsertPageForTest } = await import("@/lib/scraper/job-runner");
     await upsertPageForTest(jobId, SOURCE, [
@@ -126,7 +157,12 @@ describe.skipIf(!db)("research identity + snapshots", () => {
         url: "https://example.test/p/1-indigo",
       }),
     ]);
-    const all = await db!.researchProduct.findMany({ where: { sourceKey: SOURCE } });
+    // Scoped to this externalId, not the whole source: sibling tests add
+    // their own fixtures here, and the claim is about identity NOT forking
+    // when a URL changes — not about how many products the source has.
+    const all = await db!.researchProduct.findMany({
+      where: { sourceKey: SOURCE, externalId: "ext-1" },
+    });
     expect(all).toHaveLength(1);
     expect(all[0].canonicalUrl).toBe("https://example.test/p/1-indigo");
   });

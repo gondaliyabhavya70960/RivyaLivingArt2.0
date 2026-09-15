@@ -328,6 +328,8 @@ async function recordResearchSnapshots(
     createdExternalIds: Set<string>;
     changedExternalIds: Set<string>;
     hashByExternalId: Map<string, string>;
+    /** Pre-normalization, straight off the adapter. What a snapshot stores. */
+    rawByExternalId: Map<string, RichProduct>;
     seenAt: Date;
   },
 ): Promise<void> {
@@ -385,9 +387,16 @@ async function recordResearchSnapshots(
             jobId,
             capturedAt: ctx.seenAt,
             contentHash: hash,
-            // What the adapter read, before normalization — the claim the
-            // source made, not our interpretation of it.
-            rawPayload: product as unknown as Prisma.InputJsonValue,
+            /* The PRE-normalization product, straight off the adapter.
+               B2 shipped this taking the normalized row by mistake, which
+               quietly defeated the point: a snapshot is meant to be what the
+               SOURCE said, and compute-time normalization (B4) can only
+               re-apply a corrected mapping if the raw value survived. Falls
+               back to the normalized row only if the raw one is somehow
+               missing, which cannot happen on this path but beats writing
+               nothing. */
+            rawPayload: (ctx.rawByExternalId.get(product.externalId) ??
+              product) as unknown as Prisma.InputJsonValue,
             variants: { create: variantRowsFor(product) },
           },
           select: { id: true },
@@ -451,6 +460,10 @@ async function upsertPage(
     if (!byExternalId.has(p.externalId)) byExternalId.set(p.externalId, p);
   }
   // Normalized BEFORE contentHash is computed from these rows below.
+  // Kept side by side on purpose. `unique` is what the staged row and the
+  // content hash are built from; `rawByExternalId` is what the SOURCE actually
+  // said, which is what a snapshot has to store — see recordResearchSnapshots.
+  const rawByExternalId = new Map(byExternalId);
   const unique = [...byExternalId.values()].map(normalizeStagedProduct);
 
   const existing = await db.scrapedProduct.findMany({
@@ -532,6 +545,7 @@ async function upsertPage(
     hashByExternalId: new Map(
       unique.map((p) => [p.externalId, contentHash(p)]),
     ),
+    rawByExternalId,
     seenAt: now,
   });
 
