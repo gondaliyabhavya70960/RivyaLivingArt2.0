@@ -889,6 +889,11 @@ model ResearchProduct {
 /// Not the HTTP body: storing ~35k product pages of HTML per scrape is a
 /// different feature with a different budget.
 ///
+/// B2 shipped this storing the NORMALIZED row by mistake and claiming
+/// otherwise here. Corrected in B4, which is also what depends on it: a
+/// compute-time mapping fix can only be re-applied to history if the raw
+/// value was the thing kept.
+///
 /// `jobId` is a plain id rather than a relation, exactly like
 /// `PriceHistory.scrapedProductId`: a job can be deleted to tidy the queue,
 /// and losing the history of what it captured with it would be a poor trade.
@@ -954,6 +959,46 @@ model ProductVariant {
 
   @@index([snapshotId])
   @@index([priceBasis])
+}
+
+/// What kind of value an alias maps. One table, one vocabulary per kind.
+enum AliasKind {
+  UNIT
+  MATERIAL
+  RESIN_STYLE
+  COLOUR
+  PRODUCT_TYPE
+  AVAILABILITY
+}
+
+/// An owner-editable mapping from what a source SAID to what we call it
+/// (workstream B, phase 6c).
+///
+/// The point is stated in the plan as "a mapping fix needs no re-scrape", and
+/// it only holds because `ProductSnapshot.rawPayload` keeps the source's own
+/// words. Normalization is applied when a snapshot is READ, against whatever
+/// this table says at that moment — so correcting "sheesham" → "Sheesham Wood"
+/// re-labels four years of history the next time anyone looks, instead of
+/// requiring 35,000 pages to be fetched again.
+///
+/// `src/lib/scraper/normalize.ts` stays as the built-in fallback: a kind with
+/// no row here behaves exactly as it did before this table existed, so an
+/// empty table is not a regression. A row here WINS over the built-in map,
+/// because it is the owner overruling the code — the same
+/// registry-then-override shape the Studio CMS uses everywhere else.
+model NormalizationAlias {
+  id             String    @id @default(cuid())
+  kind           AliasKind
+  /// Matched case-insensitively and trimmed; stored lowercased so the unique
+  /// constraint does the de-duplication rather than the application.
+  rawValue       String
+  canonicalValue String
+  /// Staff user id, or null when the row was seeded from the built-in maps.
+  createdBy      String?
+  createdAt      DateTime  @default(now())
+
+  @@unique([kind, rawValue])
+  @@index([kind])
 }
 
 /// A field that could not be extracted, recorded rather than silently nulled.

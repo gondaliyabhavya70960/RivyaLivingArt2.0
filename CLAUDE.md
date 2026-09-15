@@ -453,6 +453,19 @@ below are the ones that are expensive to rediscover.
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are
   deliberately not checked.
+- **A mapping fix needs no re-scrape** (B4, 2026-09-15). `NormalizationAlias`
+  (kind → rawValue → canonicalValue, owner-editable) is resolved at READ time
+  by `alias-resolver.ts`, in the Studio CMS's own shape: built-in maps in
+  `normalize.ts` → overrides in the table → a TOTAL resolver that returns the
+  value unchanged when nobody has an opinion. An empty table behaves exactly
+  as the code did before it existed; a row WINS over the built-in map. Correct
+  an alias and every snapshot ever captured re-labels on the next read — which
+  works ONLY because `rawPayload` keeps the source's own words.
+- **B2 shipped `rawPayload` storing the NORMALIZED row, not the raw one**, and
+  said the opposite in three places. Fixed in B4 and pinned by a db test,
+  because it quietly defeated the point of both phases: a snapshot is meant to
+  be what the SOURCE said, and compute-time normalization can only re-apply a
+  corrected mapping if the raw value survived.
 - **`ScrapedProduct` holds the LATEST state; `ProductSnapshot` holds the
   history** (B2, 2026-09-15). The staged row is upserted on
   `(sourceKey, externalId)`, so a re-scrape overwrites its title, price and
