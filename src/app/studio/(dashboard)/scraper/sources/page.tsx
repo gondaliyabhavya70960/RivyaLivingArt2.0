@@ -12,6 +12,10 @@ import { ScrapeTier } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 import { deriveHealth } from "@/lib/scraper/health";
 import { applySeedSources } from "@/lib/scraper/seed-sources";
+import {
+  describePolicyBadge,
+  describeUnauthorizedRun,
+} from "@/lib/scraper/policy";
 
 export const metadata: Metadata = { title: "Scrape sources" };
 
@@ -118,6 +122,10 @@ export default async function ScrapeSourcesPage({
       lastError: lastJob?.error ?? null,
       lastRunAt: lastRunDate ? dateTimeFormatter.format(lastRunDate) : null,
       lastRunAtTs: lastRunDate ? lastRunDate.getTime() : null,
+      // The gate's verdict, computed here with the same function the Scrape
+      // button uses rather than re-derived from the two enums in the client.
+      policyBlocked: describeUnauthorizedRun(source.name, source),
+      policyBadge: describePolicyBadge(source),
     };
   });
 

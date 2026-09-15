@@ -11,6 +11,11 @@ import {
   type JobHistoryRow,
   type SourceInfo,
 } from "@/components/studio/scraper/source-detail";
+import {
+  SourcePolicy,
+  type SourcePolicyInfo,
+} from "@/components/studio/scraper/source-policy";
+import { describeUnauthorizedRun } from "@/lib/scraper/policy";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { matchCategoryId } from "@/lib/scraper/category-map";
@@ -103,6 +108,22 @@ export default async function SourceDetailPage({
       : null,
     pausedReason: source.pausedReason,
     consecutiveFailures: source.consecutiveFailures,
+    policyBlocked: describeUnauthorizedRun(source.name, source),
+  };
+
+  // The governance gate's own state, rendered above everything else on the
+  // page: whether this source may be collected at all is the question that
+  // decides whether the rest of the screen can do anything.
+  const policy: SourcePolicyInfo = {
+    id: source.id,
+    name: source.name,
+    collectionMode: source.collectionMode,
+    policyReviewStatus: source.policyReviewStatus,
+    policyReviewedAt: source.policyReviewedAt
+      ? dateFormatter.format(source.policyReviewedAt)
+      : null,
+    policyReviewedBy: source.policyReviewedBy,
+    policyReviewNote: source.policyReviewNote,
   };
 
   const jobRows: JobHistoryRow[] = jobs.map((job) => ({
@@ -183,6 +204,7 @@ export default async function SourceDetailPage({
           </div>
         }
       />
+      <SourcePolicy source={policy} />
       <SourceDetail
         source={info}
         jobs={jobRows}

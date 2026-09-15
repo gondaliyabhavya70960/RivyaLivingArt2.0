@@ -478,9 +478,26 @@ below are the ones that are expensive to rediscover.
   scraper rebuild's "add two new adapters" step does NOT mean picking new
   companies to crawl: it means covering the platforms behind those 36. At least
   one of them carries the note **"NO scrapeable catalog (verified:
-  enquiry-only). Do NOT scrape"**, which is why plan §5's `collectionMode` /
-  `policyReviewStatus` gate has to land BEFORE any new adapter — a registered
-  source is not an authorised one.
+  enquiry-only). Do NOT scrape"** — which was prose nothing enforced until the
+  gate below.
+- **A REGISTERED SOURCE IS NOT AN AUTHORISED ONE** (plan §5, 2026-09-15).
+  `enabled` says whether the operator WANTS a source; `collectionMode` and
+  `policyReviewStatus` say whether we are allowed to collect it, which nothing
+  asked before. `policy.ts` holds the decision — `describeUnauthorizedRun`
+  mirrors `breaker.ts`'s "may I run right now", and the two are deliberately
+  separate: a breaker pause is about the SITE being down and clears by waiting;
+  a policy block is about US and does not.
+  **It fails closed.** `PENDING` is the default every migrated row got and it
+  REFUSES — a gate whose unreviewed state is "go ahead" only ever says yes.
+  Checked at all three points a job can move: `createScrapeJob`,
+  `createTierJobs` (as a `where` clause — `AUTOMATABLE_SOURCE_WHERE` — because
+  the fan-out is where a forgotten check queues a hundred jobs), and
+  `advanceScrapeJob`, which re-checks on EVERY advance: a job can sit QUEUED
+  while the owner blocks its source, and the cron drain would otherwise pick it
+  up ten minutes later with nobody watching. `MANUAL_RESEARCH` outranks an
+  approval — a source with no automated path does not become crawlable by being
+  allowed. The owner clears it per source on `/studio/scraper/sources/<key>` or
+  in bulk from the registry's selection bar; the record stamps who and when.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are

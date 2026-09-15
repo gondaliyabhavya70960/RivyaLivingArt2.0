@@ -1,4 +1,8 @@
-import type { ScrapePlatform, ScrapeTier } from "@/generated/prisma/enums";
+import type {
+  CollectionMode,
+  ScrapePlatform,
+  ScrapeTier,
+} from "@/generated/prisma/enums";
 
 /**
  * Curated scrape-source registry (Phase 11 research spec). Seeded on first
@@ -17,6 +21,13 @@ export type SeedSource = {
   supply: boolean;
   enabled: boolean;
   notes?: string;
+  /**
+   * Governance, for the rows where the registry itself already records a
+   * decision. Applied on CREATE only — like `enabled`, an operator's later
+   * choice in the Studio outranks the seed and must survive a re-seed.
+   * Omitted means HTTP, the schema default.
+   */
+  collectionMode?: CollectionMode;
 };
 
 const FINGERPRINT_FALLBACK_NOTE =
@@ -117,6 +128,7 @@ export const SEED_SOURCES: SeedSource[] = [
     platform: "UNKNOWN",
     supply: false,
     enabled: false,
+    collectionMode: "MANUAL_RESEARCH",
     notes:
       "NO scrapeable catalog (verified: enquiry-only). Do NOT scrape; her category lines are covered by the Phase 11 category structure.",
   },

@@ -42,6 +42,12 @@ export async function applySeedSources(): Promise<number> {
           supply: seed.supply,
           enabled: seed.enabled,
           notes: seed.notes ?? null,
+          // CREATE only. A seed that carries a collection mode is recording a
+          // decision the registry already made (see poonam-shah-art); one that
+          // does not takes the schema default. Either way the update branch
+          // leaves it alone, because re-seeding must not undo an operator's
+          // own governance choice — the same rule `enabled` has always had.
+          ...(seed.collectionMode ? { collectionMode: seed.collectionMode } : {}),
         },
         update: {
           name: seed.name,

@@ -64,6 +64,12 @@ export type SourceInfo = {
   /** Circuit breaker: set when repeated failures paused this source. */
   pausedReason: string | null;
   consecutiveFailures: number;
+  /**
+   * Why the governance gate would refuse a run, or null when it would not.
+   * Computed on the server by the same function the action calls — offering a
+   * Scrape button that is certain to be refused is worse than not offering it.
+   */
+  policyBlocked: string | null;
 };
 
 export type JobHistoryRow = {
@@ -478,7 +484,8 @@ export function SourceDetail({
             <Button
               size="sm"
               onClick={handleRun}
-              disabled={running || starting}
+              disabled={running || starting || source.policyBlocked !== null}
+              title={source.policyBlocked ?? undefined}
             >
               {running || starting ? (
                 <>
@@ -494,6 +501,14 @@ export function SourceDetail({
                 </>
               )}
             </Button>
+            {source.policyBlocked && (
+              // A disabled button explains nothing on its own, and a `title`
+              // is not reachable by keyboard. The full reason is on the policy
+              // card directly above; this says which control it belongs to.
+              <p className="text-xs text-muted-foreground">
+                Blocked by the collection policy above.
+              </p>
+            )}
             <Button
               variant="outline"
               size="sm"

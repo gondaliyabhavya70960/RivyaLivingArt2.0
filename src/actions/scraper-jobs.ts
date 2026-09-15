@@ -6,6 +6,8 @@ import { z } from "zod";
 import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
 import {
   Role,
+  type CollectionMode,
+  type PolicyReviewStatus,
   type ScrapePlatform,
   type ScrapeTier,
 } from "@/generated/prisma/enums";
@@ -23,6 +25,10 @@ import {
   partitionByInFlight,
 } from "@/lib/scraper/run-scope";
 import { describeBlockedRun } from "@/lib/scraper/breaker";
+import {
+  AUTOMATABLE_SOURCE_WHERE,
+  describeUnauthorizedRun,
+} from "@/lib/scraper/policy";
 import {
   fingerprint,
   isBlockedMarketplace,
@@ -102,6 +108,11 @@ export async function createScrapeJob(
       // full ScrapeSource, so reading it here costs nothing extra.
       pausedAt: Date | null;
       pausedReason: string | null;
+      // Governance state travels the same way, and is checked below before a
+      // single request is sent.
+      collectionMode: CollectionMode;
+      policyReviewStatus: PolicyReviewStatus;
+      policyReviewNote: string | null;
     };
     let platform: ScrapePlatform;
 
@@ -215,6 +226,24 @@ export async function createScrapeJob(
       return { jobId: inFlight.id, alreadyRunning: true };
     }
 
+    // The governance gate, checked BEFORE the breaker because it answers the
+    // more fundamental question. A breaker pause is about the site (it is
+    // down; resume when it is fixed); this is about us (nobody has established
+    // that we may crawl it at all), and no amount of waiting clears it.
+    //
+    // A source reached by pasting a URL was created moments ago by the branch
+    // above, so it arrives here PENDING by default and is refused — which is
+    // the intended shape: pasting a URL is a decision to crawl a site, and the
+    // gate exists so that decision is recorded rather than implied.
+    const unauthorized = describeUnauthorizedRun(source.name, source);
+    if (unauthorized) {
+      return {
+        userError: parsed.sourceId
+          ? unauthorized
+          : `${unauthorized} ${source.name} has been added to the registry, so the review is waiting for you there.`,
+      };
+    }
+
     // The circuit breaker. A source paused after repeated failures does not
     // get new jobs until an operator has looked at it — continuing to send
     // requests to a site that is down or blocking us is useless and is how a
@@ -310,6 +339,11 @@ export async function createTierJobs(
       where: {
         enabled: true,
         platform: { not: "UNKNOWN" },
+        // The same gate as the single-source path, enforced in the QUERY.
+        // The fan-out is exactly where a forgotten check would queue a
+        // hundred jobs at once, so the rule is a clause rather than a filter
+        // anyone can leave out.
+        ...AUTOMATABLE_SOURCE_WHERE,
         ...(parsed === "ALL" ? {} : { tier: parsed }),
       },
       orderBy: { name: "asc" },

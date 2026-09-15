@@ -36,22 +36,22 @@ model User {
 // ————————————————————— Catalog —————————————————————
 
 model Category {
-  id           String      @id @default(cuid())
-  name         String
-  slug         String      @unique
-  image        String?
-  description  String?
-  order        Int         @default(0)
+  id             String      @id @default(cuid())
+  name           String
+  slug           String      @unique
+  image          String?
+  description    String?
+  order          Int         @default(0)
   /// Per-locale { name, description } overrides; base is English (I3).
-  translations Json?
+  translations   Json?
   /// Owner SEO overrides; null falls back to the name-derived metadata.
   seoTitle       String?
   seoDescription String?
   /// false takes the shelf off every public surface without deleting it.
   visible        Boolean     @default(true)
-  products     Product[]
-  portfolios   Portfolio[]
-  posts BlogPost[] @relation("BlogPostCollection")
+  products       Product[]
+  portfolios     Portfolio[]
+  posts          BlogPost[]  @relation("BlogPostCollection")
 }
 
 enum ContentStatus {
@@ -64,82 +64,82 @@ enum ContentStatus {
 }
 
 model Product {
-  id             String               @id @default(cuid())
-  title          String
+  id              String               @id @default(cuid())
+  title           String
   /// Short editorial name for cards and the PDP hero. Null → storefront
   /// derives one from `title` (cut at the first qualifier separator). The
   /// full `title` stays canonical for SEO metadata, JSON-LD and WhatsApp.
-  displayName    String?
-  slug           String               @unique
-  shortTagline   String?
-  description    String               @default("")
-  priceMin       Int?
-  priceMax       Int?
-  showPrice      Boolean              @default(true)
-  timeline       String?
-  materials      String?
-  dimensions     String?
-  occasions      Json                 @default("[]") // string array
+  displayName     String?
+  slug            String               @unique
+  shortTagline    String?
+  description     String               @default("")
+  priceMin        Int?
+  priceMax        Int?
+  showPrice       Boolean              @default(true)
+  timeline        String?
+  materials       String?
+  dimensions      String?
+  occasions       Json                 @default("[]") // string array
   /// Aesop-style lexical rows (benchmark gap 4): [{ label, value }] shown in
   /// the PDP spec sheet — labels the owner's own ("Suited to", "Pour story").
-  lexical        Json                 @default("[]")
+  lexical         Json                 @default("[]")
   /// Cross-tier provenance (benchmark gap 3): the actual supplies/print
   /// products this piece is made with; the reverse side surfaces "What this
   /// creates" on the supply's PDP. Owner-linked in the studio, never guessed.
-  madeWith       Product[]            @relation("ProductProvenance")
-  usedIn         Product[]            @relation("ProductProvenance")
-  careNotes      String?              @db.Text
-  status         ContentStatus        @default(DRAFT)
-  featured       Boolean              @default(false)
-  videoUrl       String?
-  model3dUrl     String?
-  categoryId     String
-  category       Category             @relation(fields: [categoryId], references: [id])
-  seoTitle       String?
-  seoDescription String?
-  ogImage        String?
+  madeWith        Product[]            @relation("ProductProvenance")
+  usedIn          Product[]            @relation("ProductProvenance")
+  careNotes       String?              @db.Text
+  status          ContentStatus        @default(DRAFT)
+  featured        Boolean              @default(false)
+  videoUrl        String?
+  model3dUrl      String?
+  categoryId      String
+  category        Category             @relation(fields: [categoryId], references: [id])
+  seoTitle        String?
+  seoDescription  String?
+  ogImage         String?
   /// Per-locale field overrides, shape { [locale]: { field: value } }. The base
   /// row is English (default locale); missing locales/fields fall back to it (I3).
-  translations   Json?
+  translations    Json?
   /// Set by the Product Scraper — publish is BLOCKED while true.
-  needsRewrite   Boolean              @default(false)
+  needsRewrite    Boolean              @default(false)
   /// Scraper dedupe keys: importSource = source registry key, importRef =
   /// the competitor's external product id. Re-importing the same pair UPDATES
   /// this product instead of creating a duplicate.
-  importSource   String?
-  importRef      String?
+  importSource    String?
+  importRef       String?
   /// Owner-sheet tier (1 owner · 2 resin goods · 3 supplies · 4 3D-print).
   /// Null for products created in the studio by hand.
-  tier           Int?
+  tier            Int?
   /// Sheet `status` mapped: active → true, out_of_stock → false.
-  inStock        Boolean              @default(true)
+  inStock         Boolean              @default(true)
   /// contentHash of the imported sheet row — lets re-imports skip unchanged
   /// rows so a 4,000-product deploy pass stays fast.
-  sourceHash     String?
+  sourceHash      String?
   /// H5 merge-protection: set by every studio save. The sheet importer
   /// refreshes availability (inStock/sourceHash) on touched rows but never
   /// overwrites owner-edited content or images.
-  ownerTouched   Boolean              @default(false)
+  ownerTouched    Boolean              @default(false)
   /// When the studio last saved this row. `ownerTouched` says THAT a human
   /// edited it; this says WHEN, which is what conflict detection needs to
   /// decide whether the sheet or the studio has the newer version.
-  studioEditedAt DateTime?
+  studioEditedAt  DateTime?
   /// The final-list blessing. CONFIRMED_PRODUCTS is exactly the set of rows
   /// where this is non-null — never "everything scraped", never "everything
   /// in the studio". Only an explicit operator action sets it.
-  confirmedAt    DateTime?
+  confirmedAt     DateTime?
   /// Who blessed it, for the audit trail. Kept as an id rather than a
   /// relation: a confirmation outlives the staff account that made it, and
   /// deleting a user must not erase the record that someone approved this.
-  confirmedById  String?
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  images         ProductImage[]
-  customFields   CustomizationField[]
-  inquiries      Inquiry[]
-  testimonials   Testimonial[]
+  confirmedById   String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  images          ProductImage[]
+  customFields    CustomizationField[]
+  inquiries       Inquiry[]
+  testimonials    Testimonial[]
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo          Boolean              @default(false)
   importConflicts ImportConflict[]
 
   @@unique([importSource, importRef])
@@ -161,14 +161,14 @@ enum ProductImageRole {
 }
 
 model ProductImage {
-  id        String  @id @default(cuid())
+  id        String            @id @default(cuid())
   url       String
-  alt       String  @default("")
-  order     Int     @default(0)
+  alt       String            @default("")
+  order     Int               @default(0)
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
   /// Null on every existing frame; the room-context band needs IN_ROOM.
-  role ProductImageRole?
+  role      ProductImageRole?
 
   @@index([productId])
 }
@@ -257,7 +257,7 @@ model Inquiry {
   status             InquiryStatus @default(NEW)
   createdAt          DateTime      @default(now())
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo             Boolean       @default(false)
 
   @@index([status, createdAt])
 }
@@ -297,23 +297,24 @@ model Portfolio {
   // equivalent indexes; Portfolio had none, forcing scan+sort (PERF audit).
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
+
   @@index([status, createdAt])
   @@index([categoryId, status])
 }
 
 model PortfolioImage {
-  id          String    @id @default(cuid())
-  url         String
-  alt         String    @default("")
+  id           String    @id @default(cuid())
+  url          String
+  alt          String    @default("")
   /// What this frame shows, in the owner's words — printed beside the plate
   /// number. Distinct from `alt`: alt describes the picture for someone who
   /// cannot see it, a caption tells everyone something the picture does not.
-  caption     String?
+  caption      String?
   /// Per-locale { caption } overrides; base is English (I3).
   translations Json?
-  order       Int       @default(0)
-  portfolioId String
-  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  order        Int       @default(0)
+  portfolioId  String
+  portfolio    Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
 
   @@index([portfolioId])
 }
@@ -329,7 +330,7 @@ model BlogCategory {
   translations Json?
   posts        BlogPost[]
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo       Boolean    @default(false)
 }
 
 model Tag {
@@ -363,12 +364,12 @@ model BlogPost {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo         Boolean       @default(false)
   /// Optional link to a shop collection, for the article's related-collections strip.
-  categoryId String?
-  category   Category? @relation("BlogPostCollection", fields: [categoryId], references: [id], onDelete: SetNull)
-  @@index([categoryId])
+  categoryId     String?
+  category       Category?     @relation("BlogPostCollection", fields: [categoryId], references: [id], onDelete: SetNull)
 
+  @@index([categoryId])
   @@index([status, publishedAt])
 }
 
@@ -455,16 +456,16 @@ model Testimonial {
 }
 
 model Faq {
-  id           String @id @default(cuid())
+  id           String        @id @default(cuid())
   question     String
-  answer       String @db.Text
-  order        Int    @default(0)
+  answer       String        @db.Text
+  order        Int           @default(0)
   /// Public readers select PUBLISHED; existing rows were back-filled to it.
   status       ContentStatus @default(PUBLISHED)
   /// Per-locale { question, answer } overrides; base is English (I3).
   translations Json?
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo       Boolean       @default(false)
 }
 
 /// Where an asset came from. Recorded at the two places a Media row is
@@ -488,13 +489,13 @@ enum MediaType {
 }
 
 model Media {
-  id           String    @id @default(cuid())
+  id           String      @id @default(cuid())
   url          String
   /// Vercel Blob pathname — used for delete/list.
-  pathname     String    @unique
-  type         MediaType @default(IMAGE)
-  folder       String    @default("")
-  bytes        Int       @default(0)
+  pathname     String      @unique
+  type         MediaType   @default(IMAGE)
+  folder       String      @default("")
+  bytes        Int         @default(0)
   width        Int?
   height       Int?
   /// The name the file arrived with, kept only so search can find it. The
@@ -506,23 +507,23 @@ model Media {
   alt          String?
   /// sha256 of the bytes. Unique, so re-uploading the same varmala shot
   /// returns the row that already exists instead of a fourth copy.
-  checksum     String?   @unique
+  checksum     String?     @unique
   /// 20px LQIP data URI, the same treatment the v3 masters get.
-  blurDataUrl  String?   @db.Text
+  blurDataUrl  String?     @db.Text
   /// Average colour as #rrggbb — the ground under a picture before it loads.
   dominantHex  String?
   /// How this asset came to be here. Null on rows that predate the column —
   /// unknown, which renders as no claim rather than a wrong one.
   provenance   Provenance?
-  createdAt    DateTime  @default(now())
+  createdAt    DateTime    @default(now())
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo       Boolean     @default(false)
   /// Library metadata (B0 · media). `posterUrl` is a URL and is registered in media-usages.ts.
-  tags      String[] @default([])
-  caption   String?
-  favourite Boolean  @default(false)
-  duration  Int?
-  posterUrl String?
+  tags         String[]    @default([])
+  caption      String?
+  favourite    Boolean     @default(false)
+  duration     Int?
+  posterUrl    String?
 
   @@index([folder])
   // Indexed so the delete guard can look up references by URL (ENG-806).
@@ -587,50 +588,52 @@ model SiteSettings {
   announcementEndsAt   DateTime?
   announcementHref     String?
 
-  /* ——— Sheet → catalog auto-fill (Phase 7) ———
-     The importer already ran on every deploy; these put the owner in charge
-     of it. All three default to today's behaviour, so an environment that
-     never opens this screen keeps self-populating exactly as it did. */
+  /**
+   * ——— Sheet → catalog auto-fill (Phase 7) ———
+   * The importer already ran on every deploy; these put the owner in charge
+   * of it. All three default to today's behaviour, so an environment that
+   * never opens this screen keeps self-populating exactly as it did.
+   */
 
   /// Master switch. False stops the fill entirely, deploy included.
-  catalogFillEnabled     Boolean   @default(true) @map("sheetFillEnabled")
+  catalogFillEnabled    Boolean @default(true) @map("sheetFillEnabled")
   /// Whether a deploy triggers a fill. True keeps a fresh environment
   /// self-populating from the sheet on first boot, which is the point of
   /// having it in bootstrap at all.
-  catalogFillOnDeploy    Boolean   @default(true) @map("sheetFillOnDeploy")
+  catalogFillOnDeploy   Boolean @default(true) @map("sheetFillOnDeploy")
   /// Abort the whole run if it would CREATE more than this many products.
   /// Null means no cap — today's behaviour. Creates are the dangerous
   /// direction: a mis-sorted or re-keyed sheet inserts thousands, while
   /// updates are already held back by `ownerTouched`.
-  catalogFillMaxCreates  Int? @map("sheetFillMaxCreates")
+  catalogFillMaxCreates Int?    @map("sheetFillMaxCreates")
   /// Owner switch: render demo rows on the public site (always marked, never in the sitemap).
-  demoContentPublic Boolean @default(false)
+  demoContentPublic     Boolean @default(false)
   /// The owner's spreadsheet and its tab ids; null falls back to the environment.
-  sheetId     String?
-  sheetTabIds Json    @default("{}")
+  sheetId               String?
+  sheetTabIds           Json    @default("{}")
 }
 
 /// One run of the sheet → catalog fill: what it read, what it changed, and
 /// why it stopped if it did. Without this the only record of what a deploy
 /// did to the catalog is a build log nobody keeps.
 model ImportRun {
-  id            String   @id @default(cuid())
+  id            String           @id @default(cuid())
   /// DEPLOY (bootstrap) · MANUAL (studio button) · PREVIEW (dry run)
   trigger       String
-  dryRun        Boolean  @default(false)
-  rowsRead      Int      @default(0)
-  created       Int      @default(0)
-  updated       Int      @default(0)
-  unchanged     Int      @default(0)
-  failed        Int      @default(0)
+  dryRun        Boolean          @default(false)
+  rowsRead      Int              @default(0)
+  created       Int              @default(0)
+  updated       Int              @default(0)
+  unchanged     Int              @default(0)
+  failed        Int              @default(0)
   /// Set when the run refused to write — the cap, or the master switch.
   abortedReason String?
-  detail        Json     @default("{}")
-  startedAt     DateTime @default(now())
+  detail        Json             @default("{}")
+  startedAt     DateTime         @default(now())
   finishedAt    DateTime?
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
-  conflicts ImportConflict[]
+  isDemo        Boolean          @default(false)
+  conflicts     ImportConflict[]
 
   @@index([startedAt])
 }
@@ -667,6 +670,39 @@ enum ScrapeTier {
   RESIN_GOODS
   SUPPLIES
   PRINT3D
+}
+
+/// HOW a source may be collected — the gate in front of the fetcher.
+///
+/// Only the values with a real fetcher behind them exist. The plan
+/// (docs/plan/02-scraper-rebuild.md §5) also names `browser`, `api` and
+/// `feed`; this repo has none of those, and an option an operator can pick
+/// that silently does nothing is worse than one that is not offered yet.
+/// Adding an enum value later is a safe migration.
+enum CollectionMode {
+  /// The existing fetcher: robots-gated HTTP against the source's own site.
+  HTTP
+  /// NO automated path at all. The operator records findings by hand. This is
+  /// where a source lands when its terms, its robots rules or its own words
+  /// say we may look but not crawl.
+  MANUAL_RESEARCH
+}
+
+/// Whether anyone has actually checked that we may crawl this source.
+///
+/// A REGISTERED SOURCE IS NOT AN AUTHORISED ONE. The registry is a list of
+/// places the owner is interested in; this column is the separate question of
+/// whether its robots rules and terms were read. PENDING is not a soft
+/// warning — automated collection refuses on it, because the alternative is a
+/// gate that only ever says yes.
+enum PolicyReviewStatus {
+  /// Nobody has recorded a review. The default, and it blocks.
+  PENDING
+  /// Someone read the robots rules and the terms and recorded that we may.
+  APPROVED
+  /// Someone read them and recorded that we may NOT. Blocks permanently,
+  /// unlike a circuit-breaker pause, which is about the site being down.
+  BLOCKED
 }
 
 /// When a completed scrape pushes its rows to the Google Sheet.
@@ -716,38 +752,52 @@ enum ReviewStatus {
 }
 
 model ScrapeSource {
-  id         String         @id @default(cuid())
-  key        String         @unique
-  name       String
-  baseUrl    String
-  tier       ScrapeTier
-  vertical   String         @default("resin")
-  country    String         @default("IN")
-  platform   ScrapePlatform @default(UNKNOWN)
+  id                  String             @id @default(cuid())
+  key                 String             @unique
+  name                String
+  baseUrl             String
+  tier                ScrapeTier
+  vertical            String             @default("resin")
+  country             String             @default("IN")
+  platform            ScrapePlatform     @default(UNKNOWN)
   /// Supplies catalogs (moulds, pigments…) — huge, capped runs.
-  supply     Boolean        @default(false)
-  enabled    Boolean        @default(true)
-  verifiedAt DateTime?
-  notes      String?
+  supply              Boolean            @default(false)
+  enabled             Boolean            @default(true)
+  verifiedAt          DateTime?
+  notes               String?
   /// Politeness. Null uses the shared default; a site that rate-limits us can
   /// be slowed without a deploy.
-  requestDelayMs     Int?
+  requestDelayMs      Int?
   /// Circuit breaker. Counts consecutive FAILED jobs and resets on the first
   /// success — a source that fails, succeeds, then fails is having a bad day,
   /// not blocking us.
-  consecutiveFailures Int      @default(0)
+  consecutiveFailures Int                @default(0)
   /// Set when the breaker trips. A paused source refuses new jobs until an
   /// operator resumes it, so we stop hammering a site that is down or
   /// blocking us.
-  pausedAt           DateTime?
-  pausedReason       String?
+  pausedAt            DateTime?
+  pausedReason        String?
+  /// The governance gate (plan §5). `enabled` says whether the operator wants
+  /// this source; these two say whether we are ALLOWED to collect it
+  /// automatically, which is a different question and was never asked before.
+  /// Both are checked at every point a job can start or advance.
+  collectionMode      CollectionMode     @default(HTTP)
+  policyReviewStatus  PolicyReviewStatus @default(PENDING)
+  /// Who recorded the review and when, so the decision has an author. Null
+  /// while the status is PENDING — a review nobody has done has no date.
+  policyReviewedAt    DateTime?
+  policyReviewedBy    String?
+  /// The reviewer's own words: what robots.txt said, what the terms said, why
+  /// this is manual-research rather than HTTP. Shown in the refusal message,
+  /// which is the only place anyone will read it.
+  policyReviewNote    String?
   /// When this source's completed scrapes reach the sheet. See SheetSyncPolicy.
-  sheetSyncPolicy    SheetSyncPolicy @default(MANUAL)
+  sheetSyncPolicy     SheetSyncPolicy    @default(MANUAL)
   /// Last successful push, and the last failure — kept separately so a source
   /// that synced yesterday and failed today still shows both facts.
-  lastSheetSyncAt    DateTime?
-  lastSheetSyncError String?
-  jobs       ScrapeJob[]
+  lastSheetSyncAt     DateTime?
+  lastSheetSyncError  String?
+  jobs                ScrapeJob[]
 
   @@index([tier, enabled])
 }
@@ -779,29 +829,29 @@ model ScrapeJob {
   finishedAt   DateTime?
   products     ScrapedProduct[]
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo       Boolean          @default(false)
   /// What the job was asked to cover: the whole source, one listing, or one page.
-  scope     ScrapeScope @default(SOURCE)
+  scope        ScrapeScope      @default(SOURCE)
   /// Heartbeat: touched on every page advance so a dead RUNNING job can be reclaimed.
-  updatedAt DateTime    @default(now()) @updatedAt
+  updatedAt    DateTime         @default(now()) @updatedAt
 
   @@index([status, createdAt])
 }
 
 model ScrapedProduct {
-  id                String       @id @default(cuid())
+  id                String          @id @default(cuid())
   jobId             String
-  job               ScrapeJob    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  job               ScrapeJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
   sourceKey         String
   externalId        String
   url               String
-  vertical          String       @default("resin")
-  currency          String       @default("INR")
+  vertical          String          @default("resin")
+  currency          String          @default("INR")
   title             String
   slug              String
   category          String?
   shortTagline      String?
-  description       String?      @db.Text
+  description       String?         @db.Text
   priceMin          Int?
   priceMax          Int?
   showPrice         Boolean?
@@ -810,15 +860,15 @@ model ScrapedProduct {
   dimensions        String?
   status            String?
   featured          Boolean?
-  images            Json         @default("[]")
-  imageAlts         Json         @default("[]")
-  fields            Json         @default("{}")
+  images            Json            @default("[]")
+  imageAlts         Json            @default("[]")
+  fields            Json            @default("{}")
   seoTitle          String?
   seoDescription    String?
   contentHash       String
-  firstSeen         DateTime     @default(now())
-  lastSeen          DateTime     @default(now())
-  reviewStatus      ReviewStatus @default(PENDING)
+  firstSeen         DateTime        @default(now())
+  lastSeen          DateTime        @default(now())
+  reviewStatus      ReviewStatus    @default(PENDING)
   /// Per-row sheet state. Job-level `ScrapeJob.sheetSynced` says a push ran;
   /// this says whether THIS row made it, which is what a retry needs to know.
   sheetSyncStatus   SheetSyncStatus @default(NOT_SYNCED)
@@ -826,7 +876,7 @@ model ScrapedProduct {
   sheetSyncError    String?
   importedProductId String?
   /// The one mutable field on an otherwise immutable staged row: the reviewer's notes.
-  notes String? @db.Text
+  notes             String?         @db.Text
 
   @@unique([sourceKey, externalId])
   @@index([reviewStatus])
@@ -898,12 +948,12 @@ model ResearchProduct {
 /// `PriceHistory.scrapedProductId`: a job can be deleted to tidy the queue,
 /// and losing the history of what it captured with it would be a poor trade.
 model ProductSnapshot {
-  id                String          @id @default(cuid())
+  id                String           @id @default(cuid())
   researchProductId String
-  researchProduct   ResearchProduct @relation(fields: [researchProductId], references: [id], onDelete: Cascade)
+  researchProduct   ResearchProduct  @relation(fields: [researchProductId], references: [id], onDelete: Cascade)
   /// The job that captured it, when it came from one.
   jobId             String?
-  capturedAt        DateTime        @default(now())
+  capturedAt        DateTime         @default(now())
   contentHash       String
   rawPayload        Json
   variants          ProductVariant[]
@@ -937,25 +987,25 @@ enum PriceBasis {
 /// said at a moment. Snapshots are written only when content changes, so
 /// variants follow the same rhythm.
 model ProductVariant {
-  id                String          @id @default(cuid())
-  snapshotId        String
-  snapshot          ProductSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  id              String          @id @default(cuid())
+  snapshotId      String
+  snapshot        ProductSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
   /// The option as the source labels it ("Small / Indigo"), or null when the
   /// product has exactly one implicit variant.
-  label             String?
+  label           String?
   /// The option axes the source published, e.g. {"Size":"Small"}.
-  optionsJson       Json            @default("{}")
+  optionsJson     Json            @default("{}")
   /// MINOR units (paise), so no float ever reaches the database. NULL for
   /// QUOTE_ONLY — that is the rule this table exists to hold.
-  priceMinor        Int?
-  currency          String          @default("INR")
-  priceBasis        PriceBasis      @default(PER_PIECE)
-  available         Boolean?
+  priceMinor      Int?
+  currency        String          @default("INR")
+  priceBasis      PriceBasis      @default(PER_PIECE)
+  available       Boolean?
   /// A reference row is one kept for CONTEXT rather than comparison — a
   /// marketplace listing, a B2B MOQ price. `referenceReason` says which, and
   /// analytics leave these out of benchmarks (B6).
-  isReference       Boolean         @default(false)
-  referenceReason   String?
+  isReference     Boolean         @default(false)
+  referenceReason String?
 
   @@index([snapshotId])
   @@index([priceBasis])
@@ -1282,7 +1332,7 @@ model CustomPage {
   updatedAt      DateTime      @updatedAt
   updatedById    String?
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
-  isDemo Boolean @default(false)
+  isDemo         Boolean       @default(false)
 
   @@index([status, publishAt])
 }
@@ -1314,25 +1364,25 @@ model CustomBlock {
 /// mistake that would break catalog ingestion is deleting this with the rest
 /// of the "sheet" surface.
 model ImportConflict {
-  id           String     @id @default(cuid())
-  productId    String
-  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  importRunId  String?
-  importRun    ImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
-  field        String
+  id            String     @id @default(cuid())
+  productId     String
+  product       Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  importRunId   String?
+  importRun     ImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
+  field         String
   /// @map, not a column rename: preview deploys migrate the PRODUCTION
   /// database, so for the window between a push and its merge, production runs
   /// old code against the new schema. A rename breaks it; a map does not.
-  importedValue String?   @map("sheetValue")
-  dbValue      String?
-  status       String     @default("OPEN")
-  createdAt    DateTime   @default(now())
-  resolvedAt   DateTime?
-  resolvedById String?
+  importedValue String?    @map("sheetValue")
+  dbValue       String?
+  status        String     @default("OPEN")
+  createdAt     DateTime   @default(now())
+  resolvedAt    DateTime?
+  resolvedById  String?
 
-  @@map("SheetConflict")
   @@index([status, createdAt])
   @@index([productId])
+  @@map("SheetConflict")
 }
 
 /// One push of rows to the owner's sheet (B0 · sheets): the history the

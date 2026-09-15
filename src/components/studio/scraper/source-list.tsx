@@ -12,6 +12,7 @@ import {
   addScrapeSources,
   deleteScrapeSources,
   seedScrapeSources,
+  setSourcePolicyReview,
   toggleScrapeSources,
   verifyScrapeSource,
   type BulkAddReport,
@@ -84,6 +85,14 @@ export type SourceRow = {
   /** Pre-formatted last-run time; raw ts for sorting. */
   lastRunAt: string | null;
   lastRunAtTs: number | null;
+  /**
+   * Why the governance gate would refuse this source, or null when it would
+   * not. Computed on the SERVER by the same function the Scrape button calls,
+   * so the badge here and the refusal there can never drift apart.
+   */
+  policyBlocked: string | null;
+  /** Two or three words naming WHICH refusal it is, for the badge. */
+  policyBadge: string | null;
 };
 
 const TIER_SHORT: Record<ScrapeTier, string> = {
@@ -616,6 +625,30 @@ export function SourceList({
     }
   }
 
+  /**
+   * Record one policy review across every selected source.
+   *
+   * The bulk shape is what makes the gate usable rather than something to work
+   * around: every row starts PENDING, and 115 single reviews would have made
+   * "turn the gate off" the reasonable response. The record is still real —
+   * the action stamps who and when on each row.
+   */
+  async function handleBulkReview() {
+    const count = selection.count;
+    setBusy(true);
+    const res = await setSourcePolicyReview(selection.ids, "APPROVED");
+    setBusy(false);
+    if (res.ok) {
+      toast.success(
+        `Recorded a policy review for ${count} source${count === 1 ? "" : "s"}.`,
+      );
+      selection.clear();
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
+  }
+
   async function handleBulkToggle(enabled: boolean) {
     const count = selection.count;
     setBusy(true);
@@ -793,6 +826,18 @@ export function SourceList({
                     >
                       {source.name}
                     </Link>
+                    {source.policyBlocked && (
+                      // A source can look perfectly healthy and still never
+                      // run, so the reason belongs beside the name rather than
+                      // only on the detail page.
+                      <Badge
+                        variant="outline"
+                        className="ms-2 align-middle"
+                        title={source.policyBlocked}
+                      >
+                        {source.policyBadge}
+                      </Badge>
+                    )}
                     <a
                       href={source.baseUrl}
                       target="_blank"
@@ -893,6 +938,14 @@ export function SourceList({
       />
 
       <BulkBar count={selection.count} onClear={selection.clear}>
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={busy}
+          onClick={handleBulkReview}
+        >
+          Mark reviewed
+        </Button>
         <Button
           size="sm"
           variant="secondary"

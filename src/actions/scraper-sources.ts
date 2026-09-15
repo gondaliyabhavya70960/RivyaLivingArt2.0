@@ -346,6 +346,99 @@ export async function resumeScrapeSource(
   });
 }
 
+const reviewSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1).max(500),
+  status: z.enum(["PENDING", "APPROVED", "BLOCKED"]),
+  note: z.string().trim().max(2000).optional(),
+});
+
+/**
+ * Record a policy review against one or more sources.
+ *
+ * THIS IS THE ONLY WAY PAST THE GATE, which is why it takes a list: every row
+ * in the registry starts PENDING and refuses to be collected, and asking an
+ * owner to clear 115 of them one at a time would make the gate something to
+ * work around rather than something to use. The record is real either way —
+ * who, when, and their own words — so a bulk approval is still an approval
+ * somebody signed.
+ *
+ * Setting PENDING again is deliberately allowed: a review can be withdrawn
+ * when a site's terms change, and that must not require inventing a BLOCKED
+ * decision nobody made. Withdrawing clears the author and the date with it —
+ * a review that no longer holds has no reviewer.
+ */
+export async function setSourcePolicyReview(
+  ids: string[],
+  status: "PENDING" | "APPROVED" | "BLOCKED",
+  note?: string,
+): Promise<ActionResult<{ updated: number }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = reviewSchema.parse({ ids, status, note });
+    const withdrawn = parsed.status === "PENDING";
+
+    const res = await db.scrapeSource.updateMany({
+      where: { id: { in: parsed.ids } },
+      data: {
+        policyReviewStatus: parsed.status,
+        policyReviewedAt: withdrawn ? null : now(),
+        policyReviewedBy: withdrawn
+          ? null
+          : (session.user.email ?? session.user.id),
+        policyReviewNote: parsed.note?.length ? parsed.note : null,
+      },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "policy-review",
+      entity: "ScrapeSource",
+      meta: { count: res.count, ids: parsed.ids, status: parsed.status },
+    });
+    revalidatePath(STUDIO_PATH);
+    return { updated: res.count };
+  });
+}
+
+const collectionModeSchema = z.object({
+  id: z.string().min(1),
+  mode: z.enum(["HTTP", "MANUAL_RESEARCH"]),
+});
+
+/**
+ * How a source may be collected: over HTTP, or not automatically at all.
+ *
+ * MANUAL_RESEARCH is the stronger of the two statements the gate understands —
+ * it outranks an approval, because a source with no automated path does not
+ * become crawlable by being allowed. Per-source rather than bulk on purpose:
+ * this one is a judgement about a specific site.
+ */
+export async function setSourceCollectionMode(
+  id: string,
+  mode: "HTTP" | "MANUAL_RESEARCH",
+): Promise<ActionResult<{ mode: string }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = collectionModeSchema.parse({ id, mode });
+
+    const row = await db.scrapeSource.update({
+      where: { id: parsed.id },
+      data: { collectionMode: parsed.mode },
+      select: { key: true },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "collection-mode",
+      entity: "ScrapeSource",
+      entityId: parsed.id,
+      meta: { sourceKey: row.key, mode: parsed.mode },
+    });
+    revalidatePath(STUDIO_PATH);
+    return { mode: parsed.mode };
+  });
+}
+
 const policySchema = z.object({
   id: z.string().min(1),
   policy: z.enum(["MANUAL", "ON_COMPLETE", "OFF"]),
