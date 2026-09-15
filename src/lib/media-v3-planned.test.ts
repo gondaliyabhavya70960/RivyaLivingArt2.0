@@ -221,40 +221,61 @@ describe("the promoted partition the fetch scripts read", () => {
 describe("the 55 entries in docs/media-v3-manifest.json", () => {
   const entries = plannedEntries(manifest);
 
-  it("split cleanly into batch D (generated) and batch E (awaiting a run), none promoted", () => {
-    // This assertion used to read `.planned === entries.length`, under a
-    // comment saying a failure would be good news. It failed on 2026-09-04 for
-    // exactly that reason: all 28 were generated in-session through the
-    // Higgsfield MCP (56 renders, two variants each) and their URLs recorded.
-    // They stay `status: "planned"` deliberately — promoting a row makes
-    // bundled-media.test.ts demand its master ON DISK, and the master cannot be
-    // built where the CDN answers 403. So the queue's honest state is
-    // "generated, awaiting a promote on a machine that can download".
-    // Batch E (2026-09-05) then added 29 more entries that have NOT been
-    // rendered, so the queue is deliberately mixed from here on: `generated`
-    // rows carry candidate URLs and want a promote, `planned` rows still want
-    // a generation run. Asserting the split rather than a single total is what
-    // keeps `--planned`'s two instructions honest — telling an owner to
-    // generate something already rendered is the one wrong instruction here
-    // that costs money.
+  it("record the queue as it now stands: 40 built, 3 loops queued, 12 ungenerated", () => {
+    // This assertion is a DATED RECORD of the queue, and it has now been
+    // rewritten twice for the same good reason: the state legitimately moved.
+    //
+    // It first read `.planned === entries.length`, under a comment saying a
+    // failure would be good news, and failed on 2026-09-04 when all 28 were
+    // generated. It was rewritten to assert the generated/planned SPLIT and
+    // `incomplete + unculled + ready === 0` — "none promoted" — because a
+    // promote makes bundled-media.test.ts demand a master ON DISK, and the
+    // master could not be built where the CDN answered 403.
+    //
+    // On 2026-09-15 that stopped being true. The CDN answers 200 again, the 40
+    // generated stills were culled to one keeper each, promoted, and their
+    // masters built and committed. So the honest state is no longer a split
+    // between "generated" and "planned" — it is three groups, and the point of
+    // asserting all three is that `--planned`'s instructions stay right:
+    //
+    //   ready      40  built, on disk, wired or wireable
+    //   generated   3  SET F loops — candidates recorded, awaiting a promote
+    //                  through media-v3-video-fetch.mjs, NOT this pipeline
+    //   planned    12  never rendered; the Higgsfield workspace ran out of
+    //                  credits, so these still want a generation run
+    //
+    // Telling an owner to generate something already rendered is still the one
+    // wrong instruction here that costs money, which is why the 3 and the 12
+    // are counted apart rather than summed.
     const tally = tallyPlanned(entries);
-    expect(tally.generated + tally.planned).toBe(entries.length);
-    expect(tally.generated).toBeGreaterThan(0);
-    // "None promoted" has to be asserted through the states a promoted row
-    // WOULD land in — `tallyPlanned` has no `promoted` bucket, because a row
-    // that has left "planned" is described by how far along the build it is
-    // (incomplete · unculled · ready), never by the flag alone.
-    expect(tally.incomplete + tally.unculled + tally.ready).toBe(0);
+    expect(entries.length).toBe(55);
+    expect(tally.ready).toBe(40);
+    expect(tally.generated).toBe(3);
+    expect(tally.planned).toBe(12);
+    expect(tally.ready + tally.generated + tally.planned).toBe(entries.length);
+    // Nothing may sit half-promoted: a row that left "planned" has a keeper and
+    // a master path, or the build is broken in a way `--planned` would hide.
+    expect(tally.incomplete + tally.unculled).toBe(0);
+
     for (const entry of entries) {
-      expect(entry.keeper, entry.id).toBeNull();
-      expect(entry.status, entry.id).toBe("planned");
-      // A `generated` row must carry candidates; a `planned` row must not
-      // pretend to.
       const cands = (entry.candidates ?? []).length;
-      if (tallyPlanned([entry]).generated === 1) {
-        expect(cands, entry.id).toBeGreaterThan(0);
+      if (entry.status === "planned") {
+        // Still queued: no keeper yet. The 3 loops carry candidates; the 12
+        // ungenerated rows must not pretend to.
+        expect(entry.keeper, entry.id).toBeNull();
+        expect(
+          tallyPlanned([entry]).generated === 1 ? cands > 0 : cands === 0,
+          entry.id,
+        ).toBe(true);
       } else {
-        expect(cands, entry.id).toBe(0);
+        // Promoted: a keeper naming a variant that actually exists, so the
+        // master on disk is traceable to the frame somebody chose.
+        expect(entry.keeper, entry.id).not.toBeNull();
+        expect(cands, entry.id).toBeGreaterThan(0);
+        expect(
+          (entry.candidates ?? []).map((c) => c.variant),
+          entry.id,
+        ).toContain(entry.keeper);
       }
     }
   });
