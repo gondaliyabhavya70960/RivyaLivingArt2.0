@@ -13,8 +13,18 @@
  * 1.04 where the role says 1.02 is either a considered exception or a slip and
  * only a designer can say which (workstream A2).
  *
- * This file is what stops the pile growing back while that decision is
- * pending. The count is a ratchet; the value guard is the sharper half.
+ * The A2 pass then resolved all but one of them: 31 headings converged on
+ * their role's value, a seventh role was named (`leading-statement`, for
+ * display-scale type set as a paragraph to READ — five call sites, every one a
+ * <p> or a <blockquote>, not one a heading), and three components that pinned a
+ * single leading across two or three sizes now pair each size with its own.
+ *
+ * The survivor is `studio/page-header.tsx`, and it is an exception with a
+ * reason rather than a leftover: Part 12 asks the Studio for "a functional
+ * counterpoint", and a Studio leading scale is A7's to define.
+ *
+ * This file is what stops the pile growing back. The count is a ratchet; the
+ * value guard is the sharper half.
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -32,14 +42,16 @@ const SCALE = {
   "leading-h3": "1.15",
   "leading-body": "1.65",
   "leading-longform": "1.8",
+  "leading-statement": "1.35",
 } as const;
 
 /**
  * The number of raw `leading-[…]` literals left in src/. A RATCHET: it may
- * fall as A2 resolves each outlier into a token or a documented exception, and
- * it may never rise. Lower it in the commit that removes one.
+ * never rise. It went 79 → 35 (naming the scale) → 1 (the A2 pass), and the
+ * one that remains is `studio/page-header.tsx`, held back on purpose until A7
+ * gives the Studio a scale of its own. Lower it to 0 in that commit.
  */
-const RAW_LEADING_BUDGET = 35;
+const RAW_LEADING_BUDGET = 1;
 
 function tsxFiles(dir: string): string[] {
   const out: string[] = [];
@@ -109,6 +121,16 @@ describe("v4 leading scale", () => {
       raw.length,
       `${raw.length} raw leading literals (budget ${RAW_LEADING_BUDGET}):\n${raw.join("\n")}`,
     ).toBeLessThanOrEqual(RAW_LEADING_BUDGET);
+  });
+
+  it("spends the one remaining literal where it is documented to be", () => {
+    // A budget of 1 is otherwise spendable anywhere: delete the Studio's
+    // literal, add one to a storefront hero, and the count still passes while
+    // the exception has silently moved to a surface the scale does cover.
+    const holders = sources
+      .filter(({ text }) => /leading-\[[0-9.]+\]/.test(text))
+      .map(({ file }) => file.replace(/\\/g, "/"));
+    expect(holders).toEqual(["src/components/studio/page-header.tsx"]);
   });
 
   it("keeps the body default a token rather than a base-rule literal", () => {

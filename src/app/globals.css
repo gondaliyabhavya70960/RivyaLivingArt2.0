@@ -123,6 +123,7 @@
   --leading-h3: var(--leading-h3);
   --leading-body: var(--leading-body);
   --leading-longform: var(--leading-longform);
+  --leading-statement: var(--leading-statement);
 
   /* Font stacks. `--font-script` is defined per non-Latin locale by the
      [locale] layout (Noto Sans Devanagari/Gujarati/Arabic/JP/SC via

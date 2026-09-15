@@ -175,7 +175,7 @@ export function Footer({
               <span aria-hidden className="block h-px w-6 bg-champagne" />
               {ctaEyebrow}
             </p>
-            <p className="max-w-[16ch] font-display text-h2 leading-[1.05] text-mineral">
+            <p className="max-w-[16ch] font-display text-h2 leading-h2 text-mineral">
               {ctaHeadline}
             </p>
           </div>

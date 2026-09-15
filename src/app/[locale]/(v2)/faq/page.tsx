@@ -203,7 +203,7 @@ export default async function FaqPage({
         <div className="u-shell flex flex-col gap-8">
           <h2
             id="faq-close-heading"
-            className="max-w-[14ch] font-display text-h2 leading-[1.04] tracking-display"
+            className="max-w-[14ch] font-display text-h2 leading-h2 tracking-display"
           >
             {t("closingHeading")}
           </h2>

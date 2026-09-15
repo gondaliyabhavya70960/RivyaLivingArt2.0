@@ -301,7 +301,7 @@ export default async function ProcessPage({
                 className="flex flex-col gap-4 border-t border-hairline pt-8"
               >
                 <p className="u-micro">{t(`timelines.${band.key}Title`)}</p>
-                <p className="font-display text-h2 leading-[1.05] tracking-display text-ink">
+                <p className="font-display text-h2 leading-h2 tracking-display text-ink">
                   <span className="u-num">{band.value}</span>
                 </p>
                 <p className="u-prose font-body text-body leading-relaxed text-graphite">

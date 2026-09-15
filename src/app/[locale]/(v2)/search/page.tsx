@@ -248,7 +248,7 @@ export default async function SearchPage({
 
         <header className="mt-8 max-w-2xl">
           <Eyebrow>{t("heroEyebrow")}</Eyebrow>
-          <h1 className="mt-4 font-display text-h1 leading-[1.05] tracking-display text-ink">
+          <h1 className="mt-4 font-display text-h1 leading-h1 tracking-display text-ink">
             {t("heroHeadline")}
           </h1>
 

@@ -69,7 +69,7 @@ export async function FeaturedTestimonial({
           </div>
         ) : null}
         <RatingStars rating={testimonial.rating} />
-        <blockquote className="mt-6 font-display text-h2 leading-[1.1] tracking-display text-ink">
+        <blockquote className="mt-6 font-display text-h2 leading-h2 tracking-display text-ink">
           “{testimonial.quote}”
         </blockquote>
         <figcaption className="u-micro mt-6">

@@ -84,8 +84,16 @@ export function SectionHeading({
   className?: string;
   id?: string;
 }) {
+  // Size AND its leading, as one choice. They were separate: `size` picked
+  // the scale here and the class list below pinned h2's 1.08 onto all three,
+  // so an h1-scale section title read as loosely as an h3 and an h3 as
+  // tightly as an h1 — the flat rhythm the v4 leading scale exists to fix.
   const sizeClass =
-    size === "h1" ? "text-h1" : size === "h3" ? "text-h3" : "text-h2";
+    size === "h1"
+      ? "text-h1 leading-h1"
+      : size === "h3"
+        ? "text-h3 leading-h3"
+        : "text-h2 leading-h2";
 
   return (
     <div
@@ -104,14 +112,7 @@ export function SectionHeading({
         <Tag
           id={id}
           className={cn(
-            // One leading for three sizes: `size` picks text-h1, text-h2 or
-            // text-h3 on the line below, and all three get h2's 1.08. That is
-            // the "applied evenly" problem the v4 leading scale exists to
-            // name — converting the literal to the token did not fix it, and
-            // was not meant to. Whether an h1-scale section title should drop
-            // to `leading-h1` here is a design call, not a rename: workstream
-            // A2, the typography contrast pass.
-            "font-display leading-h2 text-balance",
+            "font-display text-balance",
             sizeClass,
             centred && "text-center",
           )}

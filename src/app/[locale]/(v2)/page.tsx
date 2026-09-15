@@ -431,7 +431,7 @@ export default async function Home({
               continues past it. */}
           <h2
             id="manifesto-heading"
-            className="sf-manifesto-brighten max-w-[18ch] font-display text-h1 leading-[1.05] tracking-display text-balance"
+            className="sf-manifesto-brighten max-w-[18ch] font-display text-h1 leading-h1 tracking-display text-balance"
           >
             {t("manifesto.line1")}
             <br />
@@ -939,7 +939,7 @@ export default async function Home({
           >
             {t("custom.heading")}
           </h2>
-          <p className="font-display text-h3 leading-[1.3] text-mineral/90">
+          <p className="font-display text-h3 leading-statement text-mineral/90">
             {t("custom.lineFlowers")}
             <br />
             {t("custom.lineNames")}

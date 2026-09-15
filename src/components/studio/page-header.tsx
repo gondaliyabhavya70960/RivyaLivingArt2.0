@@ -21,6 +21,12 @@ export function PageHeader({
     <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-b border-border pb-6">
       <div className="min-w-0 flex-1 basis-64">
         {eyebrow && <p className="u-micro mb-2">{eyebrow}</p>}
+        {/* The one raw leading left in src/, and deliberately so: the
+            storefront's `leading-h3` (1.15) is an editorial value, and Part 12
+            asks the Studio for "a functional counterpoint" — every panel screen
+            opens with this line above a dense table, where 1.15 costs a row.
+            A Studio leading scale is workstream A7's to define, not this
+            pass's to guess. */}
         <h1 className="font-display text-h3 leading-[1.05] tracking-display text-foreground">
           {title}
         </h1>

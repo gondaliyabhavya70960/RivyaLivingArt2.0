@@ -673,7 +673,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             {briefParagraphs.map((paragraph, i) => (
               <p
                 key={i}
-                className="u-prose font-display text-h3 leading-[1.35] whitespace-pre-line text-ink"
+                className="u-prose font-display text-h3 leading-statement whitespace-pre-line text-ink"
               >
                 {paragraph}
               </p>
@@ -783,7 +783,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 <figcaption className="u-micro">
                   {t("caseStudy.clientHeading")}
                 </figcaption>
-                <blockquote className="u-prose font-display text-h3 leading-[1.35] whitespace-pre-line text-ink">
+                <blockquote className="u-prose font-display text-h3 leading-statement whitespace-pre-line text-ink">
                   {clientNote}
                 </blockquote>
               </figure>

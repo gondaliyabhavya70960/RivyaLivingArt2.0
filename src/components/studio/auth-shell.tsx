@@ -124,7 +124,7 @@ export async function AuthShell({
 
           {/* Zone 2 — the ask. */}
           <div className="mt-7 border-t border-border pt-7">
-            <h1 className="font-display text-h3 leading-[1.1] tracking-display text-ink">
+            <h1 className="font-display text-h3 leading-h3 tracking-display text-ink">
               {title}
             </h1>
             {subtitle && (

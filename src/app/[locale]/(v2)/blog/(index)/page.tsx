@@ -254,7 +254,7 @@ function JournalCard({
           {post.isDemo ? <DemoMark label={labels.demoMark} /> : null}
         </p>
         {featured ? (
-          <h2 className="font-display text-h2 leading-[1.06] tracking-display text-ink">
+          <h2 className="font-display text-h2 leading-h2 tracking-display text-ink">
             <Link
               href={`/blog/${post.slug}`}
               className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
@@ -263,7 +263,7 @@ function JournalCard({
             </Link>
           </h2>
         ) : (
-          <h3 className="font-display text-h3 leading-[1.14] tracking-display text-ink">
+          <h3 className="font-display text-h3 leading-h3 tracking-display text-ink">
             <Link
               href={`/blog/${post.slug}`}
               className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"

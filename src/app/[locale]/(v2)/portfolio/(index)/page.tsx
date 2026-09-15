@@ -241,7 +241,10 @@ function CaseTile({
         >
           <p className="u-micro text-mineral/85">{tile.number}</p>
           <h3
-            className={cn("font-display leading-[1.12] text-mineral", display)}
+            // `display` is text-h3 or text-20 — adjacent steps, so one
+            // leading genuinely serves both, unlike the three-size spreads
+            // fixed elsewhere in this pass.
+            className={cn("font-display leading-h3 text-mineral", display)}
           >
             <Link
               href={`/portfolio/${tile.slug}`}

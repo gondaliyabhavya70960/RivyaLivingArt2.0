@@ -162,6 +162,19 @@
   --leading-body: 1.65;
   --leading-longform: 1.8;
 
+  /* The seventh role, and the one the first survey missed by keying on size
+     instead of on what the element IS. Five call sites set display-scale type
+     at 1.30–1.35, and not one of them is a heading: a journal excerpt, a case
+     study's statement, its pull-quote, a category lede, the homepage's
+     bespoke statement, and the journal body's `<blockquote>` — every one a
+     `<p>` or a `<blockquote>`, nearly all of them `u-prose`.
+
+     Display type set as a PARAGRAPH TO READ is its own job. `leading-h3`
+     (1.15) is a heading's leading and reads as a cramped wall at four lines;
+     `leading-longform` (1.8) is a body measure and falls apart at 36px. 1.35
+     is the value four of the five already chose. */
+  --leading-statement: 1.35;
+
   /* ————— Part 3.3 · Grid ————————————————————————————————————————— */
   --shell-max: 1440px;
   --shell-pad: clamp(

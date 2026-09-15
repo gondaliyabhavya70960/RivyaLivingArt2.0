@@ -80,22 +80,35 @@ Sentence case for headings and buttons. UPPERCASE only for `u-micro`.
 
 ### Leading — the v4 scale
 
-| Utility            | Value | Role                                                                    |
-| ------------------ | ----- | ----------------------------------------------------------------------- |
-| `leading-hero`     | 0.95  | `text-hero`                                                             |
-| `leading-h1`       | 1.02  | `text-h1`                                                               |
-| `leading-h2`       | 1.08  | `text-h2`                                                               |
-| `leading-h3`       | 1.15  | `text-h3`                                                               |
-| `leading-body`     | 1.65  | the `body` default — inherit it, don't restate it                       |
-| `leading-longform` | 1.8   | a full page of prose: terms, privacy, a journal post, a rich-text block |
+| Utility             | Value | Role                                                                                                   |
+| ------------------- | ----- | ------------------------------------------------------------------------------------------------------ |
+| `leading-hero`      | 0.95  | `text-hero`                                                                                            |
+| `leading-h1`        | 1.02  | `text-h1`                                                                                              |
+| `leading-h2`        | 1.08  | `text-h2`                                                                                              |
+| `leading-h3`        | 1.15  | `text-h3`                                                                                              |
+| `leading-body`      | 1.65  | the `body` default — inherit it, don't restate it                                                      |
+| `leading-longform`  | 1.8   | a full page of prose: terms, privacy, a journal post, a rich-text block                                |
+| `leading-statement` | 1.35  | display-scale type set as a paragraph to **read** — an excerpt, a lede, a pull-quote. Never a heading. |
 
-**Never write `leading-[…]` for one of those six values.** They render
+**Never write `leading-[…]` for one of those seven values.** They render
 identically, so no gate but `type-scale.test.ts` would ever notice, and the
 literal is what the next heading copies.
 
-A heading that genuinely wants a different leading is still allowed a literal —
-35 of them survive today, each an A2 judgement call — but the raw count is
-ratcheted and may only fall.
+**Leading follows the size it is applied to.** Three components pinned one value
+across two or three sizes (`SectionHeading`, the PDP's `h1` that steps down a
+scale on a long imported title, the portfolio tile) — a flat rhythm dressed as a
+system. Where a component picks its size at runtime, it picks the leading in the
+same expression.
+
+Exactly **one** raw literal survives in `src/`, and it is an exception with a
+reason rather than a leftover: `studio/page-header.tsx`. The storefront's 1.15
+is an editorial value, and Part 12 asks the Studio for a _functional
+counterpoint_ — every panel screen opens with that line directly above a dense
+table, where 1.15 costs a row. (The Studio's login card has no table under it
+and takes `leading-h3` like any other heading; density is the distinction, not
+the route tree.) A Studio leading scale is **A7**'s to define.
+`type-scale.test.ts` asserts the survivor is that file, so the budget cannot
+quietly move to a storefront hero.
 
 Tailwind's own `leading-relaxed`/`snug`/`tight`/`none` are untouched and stay
 available; the Studio is built on them.

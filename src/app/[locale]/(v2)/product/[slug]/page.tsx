@@ -752,8 +752,10 @@ export default async function ProductPage({ params }: PageProps) {
                 <h1
                   /* Plain concatenation, not cn(): the shared twMerge config
                      reads the numeric type-scale utilities as colors. */
-                  className={`mt-4 font-display leading-[1.06] tracking-display text-ink ${
-                    heroName.length > 60 ? "text-h3" : "text-h2"
+                  className={`mt-4 font-display tracking-display text-ink ${
+                    heroName.length > 60
+                      ? "text-h3 leading-h3"
+                      : "text-h2 leading-h2"
                   }`}
                 >
                   {heroName}
