@@ -6,8 +6,8 @@ Everything runs Vercel-native: hosting, Neon Postgres (Marketplace), Blob storag
 
 1. Go to https://vercel.com/new (signed in as the project owner, gondaliyabhavya70960@gmail.com).
 2. Import the GitHub repo **`gondaliyabhavya70960/RivyaLivingArt2.0`**.
-3. Framework preset: **Next.js**. Keep the default build settings (the repo's `npm run build` runs `prisma migrate deploy && tsx prisma/bootstrap.ts && next build` — migrations and catalog bootstrap happen inside the build). No overrides are required.
-4. **Connect storage and set env vars BEFORE the first deploy** — the build requires `DATABASE_URL` and fails at `prisma migrate deploy` without it.
+3. Framework preset: **Next.js**. Keep the default build settings (the repo's `npm run build` runs `scripts/migrate-deploy.mjs && tsx prisma/bootstrap.ts && next build` — migrations and catalog bootstrap happen inside the build). No overrides are required.
+4. **Connect storage and set env vars BEFORE the first deploy** — the build requires `DATABASE_URL` and fails at `migrate deploy` without it.
 
 ## 2. Storage — Neon Postgres (native integration)
 
@@ -46,7 +46,7 @@ Project → **Settings → Environment Variables** (all environments unless note
 
 ## 5. First deploy
 
-Trigger a deploy (push to the default branch, or the **Deploy** button). The build runs `prisma migrate deploy && tsx prisma/bootstrap.ts && next build` with the injected env — it should complete green, and by then the database is already migrated and bootstrapped (four-tier catalog import, portfolio cases, 55 blog posts on an empty DB). Step 6 covers the remaining one-time seed details.
+Trigger a deploy (push to the default branch, or the **Deploy** button). The build runs `scripts/migrate-deploy.mjs && tsx prisma/bootstrap.ts && next build` with the injected env — it should complete green, and by then the database is already migrated and bootstrapped (four-tier catalog import, portfolio cases, 55 blog posts on an empty DB). Step 6 covers the remaining one-time seed details.
 
 ## 6. Run migrations + seed against Neon (once)
 

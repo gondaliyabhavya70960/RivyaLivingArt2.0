@@ -140,7 +140,7 @@ node scripts/a11y-audit.mjs   "/,/shop" [--w 390]
 node scripts/shots.mjs /tmp/out "/,/shop" --full
 ```
 
-`npm run build` runs `prisma migrate deploy` and `prisma/bootstrap.ts` before
+`npm run build` runs `prisma migrate deploy` (through `scripts/migrate-deploy.mjs`, which retries a database that is merely unreachable) and `prisma/bootstrap.ts` before
 `next build`, so it fails without a reachable `DATABASE_URL`. That is deliberate.
 
 ---

@@ -75,7 +75,7 @@ npm run dev
 | Command                           | Purpose                                                                                                                                                       |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `npm run dev`                     | Dev server (Turbopack)                                                                                                                                        |
-| `npm run build` / `npm run start` | Production build / serve. **Note:** `npm run build` is `prisma migrate deploy && tsx prisma/bootstrap.ts && next build` — it needs a reachable `DATABASE_URL` |
+| `npm run build` / `npm run start` | Production build / serve. **Note:** `npm run build` is `scripts/migrate-deploy.mjs && tsx prisma/bootstrap.ts && next build` (the wrapper is `prisma migrate deploy`, retried when the database is merely unreachable) — it needs a reachable `DATABASE_URL` |
 | `npm run lint`                    | ESLint 9                                                                                                                                                      |
 | `npm run typecheck`               | Typecheck (`tsc --noEmit`, strict)                                                                                                                            |
 | `npm run db:seed`                 | (Re-)seed structure content (`tsx prisma/seed.ts`)                                                                                                            |

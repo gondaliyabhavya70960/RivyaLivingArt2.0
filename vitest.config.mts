@@ -11,7 +11,9 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
   test: {
-    include: ["src/**/*.test.ts"],
+    // scripts/ is in scope for the build tooling that has its own judgement to
+    // pin — `migrate-retry` decides whether a failed deploy is worth rerunning.
+    include: ["src/**/*.test.ts", "scripts/**/*.test.mjs"],
     environment: "node",
     env: {
       DATABASE_URL: "postgresql://test@127.0.0.1:5433/test",
