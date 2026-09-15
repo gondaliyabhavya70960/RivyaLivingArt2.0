@@ -408,7 +408,6 @@ export const scrapeJobSchema = z.object({
   totalScraped: z.number().int(),
   newCount: z.number().int(),
   updatedCount: z.number().int(),
-  sheetSynced: z.boolean(),
   error: z.string().nullable(),
   createdAt: z.string(),
   finishedAt: z.string().nullable(),
@@ -419,13 +418,6 @@ export const scrapeJobSchema = z.object({
 export type DemoScrapeJob = z.infer<typeof scrapeJobSchema>;
 
 const reviewStatus = z.enum(["PENDING", "APPROVED", "REJECTED", "IMPORTED"]);
-const sheetSyncStatus = z.enum([
-  "NOT_SYNCED",
-  "SYNC_PENDING",
-  "SYNCED",
-  "SYNC_FAILED",
-]);
-
 export const scrapedProductSchema = z.object({
   id: z.string(),
   jobId: z.string(),
@@ -456,9 +448,6 @@ export const scrapedProductSchema = z.object({
   firstSeen: z.string(),
   lastSeen: z.string(),
   reviewStatus,
-  sheetSyncStatus,
-  sheetSyncedAt: z.string().nullable(),
-  sheetSyncError: z.string().nullable(),
   importedProductId: z.string().nullable(),
   notes: z.string().nullable(),
 });

@@ -151,7 +151,6 @@ export default async function ScraperPage() {
     createdAt: dateFormatter.format(job.createdAt),
     createdAtTs: job.createdAt.getTime(),
     finishedAt: job.finishedAt ? dateFormatter.format(job.finishedAt) : null,
-    sheetSynced: job.sheetSynced,
   }));
 
   return (
