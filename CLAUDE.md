@@ -55,16 +55,17 @@ D's asset pipeline end to end (Phase 1); workstream C's Sheets REPLACEMENT (the
 confirmed-products export and `/studio/exports`) and then its REMOVAL — the
 push engine, the sync policy and the service-account client are deleted;
 workstream A's design-system layer (the v4 leading scale, one disabled state,
-the Studio's nav groups) and the homepage collections fix. **Not yet done:** the
-schema DROP that finishes the Sheets removal (its own PR, for the reason in the
-migration warning above — step 4a, which stops REFERENCING the columns, is
-done), the scraper rebuild (B), and the Studio redesign (A8).
+the Studio's nav groups) and the homepage collections fix. **Workstream C is COMPLETE**: step 4b dropped the schema — the two enums, the
+`SheetSyncRun` table and all six columns are gone, and so are the export script
+and its workflow. **Not yet done:** the scraper rebuild (B) and the Studio
+redesign (A8).
 
-**The export has RUN** (2026-09-15, `docs/archive/sheets-2026-09-15/`). It
-holds one row: a single `PUSH` that never executed because credentials were
-never configured (`status: UNCONFIGURED`), plus zero import conflicts. That is
-the entire push history this project ever had, and it is now in the repo rather
-than only in a table about to be dropped.
+**The export RAN and the table is now DROPPED**
+(`docs/archive/sheets-2026-09-15/`, 2026-09-15). The archive holds one row: a
+single `PUSH` that never executed because credentials were never configured
+(`status: UNCONFIGURED`), plus zero import conflicts. That is the entire push
+history this project ever had, and the CSV is now the only copy — the script
+and the workflow that produced it were deleted with the table they read.
 
 Where this file and the plan disagree on a fact, this file is the one being
 kept current — the plan records what was true when it was written.
@@ -509,12 +510,14 @@ below are the ones that are expensive to rediscover.
   being asked for. So: PR one removes the fields and the code that reads them
   and ships NO migration (the database keeps the columns, filled by their own
   defaults — verified by seeding against exactly that state); PR two drops them,
-  once the first is live. Phase 4 step 4a did the first for `sheetSyncPolicy`,
-  `lastSheetSync*`, `ScrapeJob.sheetSynced` and `ScrapedProduct.sheetSync*`.
-  `SheetSyncRun` is the exception and stays in the schema until the drop: no
-  other model references it and nothing on a request path reads it, so it is
-  only reachable by the one-off export script — which must keep working while
-  its table is still the only copy of the data.
+  once the first is live. Phase 4 did exactly this: step 4a
+  (PR #74) removed the fields and shipped no migration, and step 4b dropped
+  them only once 4a's production DEPLOYMENT was live — **merged is not
+  deployed**, and the window between them is precisely when the old client is
+  still asking for the columns. `SheetSyncRun` was the one exception, kept
+  through 4a because nothing on a request path read it and the one-off export
+  script had to keep working while its table was still the only copy of the
+  data; it went with the drop.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are
