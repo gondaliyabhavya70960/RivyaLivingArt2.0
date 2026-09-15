@@ -214,3 +214,55 @@ describe("diffConflictFields", () => {
     });
   });
 });
+
+/**
+ * Why `scripts/purge-products.ts` switches the automatic fill OFF rather than
+ * trusting tombstones alone.
+ *
+ * The cap is applied AFTER the tombstone filter, so on a capped tier deleting
+ * the current selection does not empty the tier — it promotes the rows that
+ * were sitting just below the cap. That is the right behaviour for "I deleted
+ * these items, show me the next ones", and it is precisely wrong for "remove
+ * all products": measured on the real data, a purge + redeploy re-created
+ * 4,000 different products, because Tiers 2-4 hold 35,128 / 21,508 / 7,685
+ * rows against caps of 1,000 / 2,500 / 500.
+ *
+ * Tier 1 is the opposite case and is asserted here too: no cap, so tombstoning
+ * its rows really does empty it. If either of these ever flips, the purge
+ * script's default is wrong and this test is how you find out.
+ */
+describe("tombstones against a tier cap", () => {
+  const four = [
+    row({ externalid: "ext-1" }),
+    row({ externalid: "ext-2" }),
+    row({ externalid: "ext-3" }),
+    row({ externalid: "ext-4" }),
+  ];
+
+  it("promotes the rows below the cap when the selection is tombstoned", () => {
+    const first = planTierRows(TIER2_CAPPED, four, new Set());
+    expect(first.rows.map((r) => r.externalId)).toEqual(["ext-1", "ext-2"]);
+
+    // Delete what the first run imported — one tombstone per selected row.
+    const tombstones = new Set(
+      first.rows.map((r) => `sheet:${r.sourceKey}|${r.externalId}`),
+    );
+
+    const second = planTierRows(TIER2_CAPPED, four, tombstones);
+    expect(second.rows).toHaveLength(2);
+    expect(second.rows.map((r) => r.externalId)).toEqual(["ext-3", "ext-4"]);
+  });
+
+  it("empties an UNCAPPED tier, which is why Tier 1 needs no switch", () => {
+    const first = planTierRows(TIER1, four, new Set());
+    expect(first.rows).toHaveLength(4);
+
+    const tombstones = new Set(
+      first.rows.map((r) => `sheet:${r.sourceKey}|${r.externalId}`),
+    );
+    const second = planTierRows(TIER1, four, tombstones);
+    expect(second.rows).toEqual([]);
+    expect(second.dropped).toHaveLength(4);
+    expect(second.dropped[0].reason).toContain("deleted by the owner");
+  });
+});

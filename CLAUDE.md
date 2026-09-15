@@ -428,6 +428,16 @@ below are the ones that are expensive to rediscover.
   what a supplier's site said; a deletion here does not un-happen the scrape.
   The `DeletedImport` tombstone written by the delete is what stops the next
   CSV import resurrecting it.
+- **Emptying the catalogue takes TWO things, and tombstones are only one.**
+  `npm run products:purge` (dry run by default; `--confirm` to write) deletes
+  products and writes a `DeletedImport` per row, which stops those exact rows
+  returning. That empties Tier 1 — 372 rows, no cap — and does NOT empty Tiers
+  2-4, because `planTierRows` applies the cap AFTER the tombstone filter and
+  the pools dwarf the caps (35,128 / 21,508 / 7,685 rows against 1,000 / 2,500
+  / 500). Measured, not assumed: a purge plus redeploy on a real 4,385-product
+  catalogue re-created 4,000 DIFFERENT products. So a `--confirm` run also
+  switches `catalogFill*` off, and `tier-fill.test.ts` pins both halves.
+  Inquiries and testimonials are `SetNull` and survive every purge.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are

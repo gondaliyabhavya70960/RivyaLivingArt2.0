@@ -151,6 +151,40 @@ Three things were added here:
 - **Preview** runs the whole four-tier fill as a dry run — nothing is written — and shows exactly what a real run would create, update and skip, with the reason for every dropped row. **Run now** does the real thing without waiting for a deploy (it honours the master switch in Settings).
 - **Conflicts** — when the tier CSV and a studio edit changed the same field of the same product between fills, the fill no longer picks a side quietly. Each conflict is listed by field with both values, and you choose **Keep mine**, **Take imported** or **Skip**.
 
+## 20b. Emptying the catalogue
+
+Deleting products from the Products screen is not enough on its own, and this
+is worth understanding before you try it: the catalog fill runs on **every
+deploy**, so the catalogue refills unless the fill itself is switched off.
+
+There is a script for it. Someone with the production `DATABASE_URL` runs:
+
+```
+npm run products:purge                      # shows the blast radius, writes nothing
+npm run products:purge -- --confirm         # does it
+```
+
+The dry run comes first and always. It prints how many products go, how many
+images and customization fields go with them (cascade), and — the part worth
+reading — what is **kept**: every WhatsApp order and every testimonial
+survives, simply unlinked from the product it pointed at. A customer's order
+history and a customer's own words are never deleted by this.
+
+A `--confirm` run also switches the automatic fill **off**, and that is
+deliberate. Deletions are remembered permanently (a "tombstone" per row), but
+Tiers 2–4 hold far more rows than their caps — 35,128 rows against a cap of
+1,000, for instance — so deleting the current 1,000 just promotes the next
+1,000 on the following deploy. Only switching the fill off actually empties the
+catalogue. Turn it back on from **Catalog fill** whenever you want one again.
+
+Flags: `--imported-only` spares products you made by hand, `--keep-demo` spares
+the Content Lab set, `--keep-fill-on` leaves the fill running (the catalogue
+will not stay empty).
+
+Images already copied into Blob storage are **not** deleted — a mass delete of
+shared files is how a blog post loses its picture. The script reports how many
+there are; clear them from the Media Library if you want the space back.
+
 ## 21. Content Lab (demo content)
 
 **Content Lab** loads a full set of _demo_ content — a hundred concept pieces, thirty journal posts, twelve case studies, forty testimonials, FAQs, landing pages, media, enquiries and research notes — so you can see every screen of the studio and the site full, edit real rows, and rehearse the flows without inventing anything by hand. Every demo row is marked as such everywhere it appears (a small "DEMO CONTENT" mark on the site, a **demo** badge in the studio, a **Demo only** filter on every list).
