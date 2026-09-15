@@ -1,16 +1,22 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { SEED_SOURCES } from "../src/lib/scraper/seed-data";
+import {
+  SEED_SOURCES,
+  seedSourceUpsertData,
+} from "../src/lib/scraper/seed-data";
 
 /**
  * Deploy-time reconcile of the curated scrape-source registry. Runs on EVERY
  * build (from bootstrap.ts, after `prisma migrate deploy`), unlike the base
- * seed which only runs on an empty DB. Mirrors applySeedSources exactly:
- * idempotent upsert by `key`, a live-verified platform is never downgraded,
- * and the owner's enable/disable choices survive (the update never touches
- * `enabled`). This is what makes the full curated list show up automatically
- * after every deploy without anyone pasting URLs.
+ * seed which only runs on an empty DB. This is what makes the full curated
+ * list show up automatically after every deploy without anyone pasting URLs.
+ *
+ * The payload comes from `seedSourceUpsertData`, shared with
+ * `applySeedSources` — this file used to carry its own hand-copy under a
+ * comment promising it "mirrors applySeedSources exactly", and that stopped
+ * being true the moment a column was added to one of them. The rule now lives
+ * in one place, in a db-free module both callers can reach.
  */
 async function main() {
   if (!process.env.DATABASE_URL) {
@@ -31,36 +37,9 @@ async function main() {
 
     let upserted = 0;
     for (const seed of SEED_SOURCES) {
-      const current = byKey.get(seed.key);
-      const keepVerifiedPlatform =
-        current !== undefined &&
-        current.verifiedAt !== null &&
-        current.platform !== "UNKNOWN";
-
       await db.scrapeSource.upsert({
         where: { key: seed.key },
-        create: {
-          key: seed.key,
-          name: seed.name,
-          baseUrl: seed.baseUrl,
-          tier: seed.tier,
-          vertical: seed.vertical,
-          country: seed.country,
-          platform: seed.platform,
-          supply: seed.supply,
-          enabled: seed.enabled,
-          notes: seed.notes ?? null,
-        },
-        update: {
-          name: seed.name,
-          baseUrl: seed.baseUrl,
-          tier: seed.tier,
-          vertical: seed.vertical,
-          country: seed.country,
-          supply: seed.supply,
-          ...(seed.notes !== undefined ? { notes: seed.notes } : {}),
-          ...(keepVerifiedPlatform ? {} : { platform: seed.platform }),
-        },
+        ...seedSourceUpsertData(seed, byKey.get(seed.key)),
       });
       upserted += 1;
     }

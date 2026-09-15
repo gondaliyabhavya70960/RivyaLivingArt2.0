@@ -1,3 +1,4 @@
+import type { Prisma } from "@/generated/prisma/client";
 import type {
   CollectionMode,
   ScrapePlatform,
@@ -29,6 +30,73 @@ export type SeedSource = {
    */
   collectionMode?: CollectionMode;
 };
+
+/** The row as it exists today, or undefined when this seed is new. */
+export type SeedSourceCurrent =
+  | { platform: ScrapePlatform; verifiedAt: Date | null }
+  | undefined;
+
+/**
+ * The upsert payload for one seed — the ONE definition of what re-seeding
+ * writes.
+ *
+ * It lives in this db-free module because TWO callers reconcile the registry
+ * and they must not drift: `applySeedSources` (the Studio's "Re-seed registry"
+ * button) and `prisma/seed-sources.ts` (the deploy-time script bootstrap runs
+ * on every build, which cannot import the Studio one because that pulls in
+ * `@/lib/db`). The second used to be a hand-copy of the first under a comment
+ * promising it "mirrors applySeedSources exactly". It stopped being true the
+ * moment `collectionMode` was added to one of them: a fresh deploy seeded the
+ * enquiry-only source as automatable, and only CI's clean database caught it —
+ * a developer database already had the row, so the migration's backfill hid
+ * the bug locally.
+ *
+ * WHAT THE UPDATE BRANCH DELIBERATELY OMITS is the whole rule: `enabled`,
+ * `collectionMode` and every policy-review column. Those are the operator's
+ * decisions, and a deploy that runs on every build must never overwrite one.
+ * A seed's `collectionMode` therefore applies on CREATE only — it records what
+ * the registry already knew about a brand-new row, not an opinion to re-impose
+ * on an existing one.
+ */
+export function seedSourceUpsertData(
+  seed: SeedSource,
+  current: SeedSourceCurrent,
+): {
+  create: Prisma.ScrapeSourceCreateInput;
+  update: Prisma.ScrapeSourceUpdateInput;
+} {
+  // A platform confirmed against the live site outranks the seed's guess.
+  const keepVerifiedPlatform =
+    current !== undefined &&
+    current.verifiedAt !== null &&
+    current.platform !== "UNKNOWN";
+
+  return {
+    create: {
+      key: seed.key,
+      name: seed.name,
+      baseUrl: seed.baseUrl,
+      tier: seed.tier,
+      vertical: seed.vertical,
+      country: seed.country,
+      platform: seed.platform,
+      supply: seed.supply,
+      enabled: seed.enabled,
+      notes: seed.notes ?? null,
+      ...(seed.collectionMode ? { collectionMode: seed.collectionMode } : {}),
+    },
+    update: {
+      name: seed.name,
+      baseUrl: seed.baseUrl,
+      tier: seed.tier,
+      vertical: seed.vertical,
+      country: seed.country,
+      supply: seed.supply,
+      ...(seed.notes !== undefined ? { notes: seed.notes } : {}),
+      ...(keepVerifiedPlatform ? {} : { platform: seed.platform }),
+    },
+  };
+}
 
 const FINGERPRINT_FALLBACK_NOTE =
   "fingerprint at runtime → JSON-LD fallback if not Shopify/Woo";

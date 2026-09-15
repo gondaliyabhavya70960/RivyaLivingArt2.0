@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { SEED_SOURCES, type SeedSource } from "./seed-data";
+import { SEED_SOURCES, seedSourceUpsertData, type SeedSource } from "./seed-data";
 
 // The registry data now lives in seed-data.ts — a db-free module so the
 // deploy-time prisma/seed-sources.ts script can import it under tsx without
@@ -22,45 +22,12 @@ export async function applySeedSources(): Promise<number> {
   const byKey = new Map(existing.map((s) => [s.key, s]));
 
   await db.$transaction(
-    SEED_SOURCES.map((seed) => {
-      const current = byKey.get(seed.key);
-      const keepVerifiedPlatform =
-        current !== undefined &&
-        current.verifiedAt !== null &&
-        current.platform !== "UNKNOWN";
-
-      return db.scrapeSource.upsert({
+    SEED_SOURCES.map((seed) =>
+      db.scrapeSource.upsert({
         where: { key: seed.key },
-        create: {
-          key: seed.key,
-          name: seed.name,
-          baseUrl: seed.baseUrl,
-          tier: seed.tier,
-          vertical: seed.vertical,
-          country: seed.country,
-          platform: seed.platform,
-          supply: seed.supply,
-          enabled: seed.enabled,
-          notes: seed.notes ?? null,
-          // CREATE only. A seed that carries a collection mode is recording a
-          // decision the registry already made (see poonam-shah-art); one that
-          // does not takes the schema default. Either way the update branch
-          // leaves it alone, because re-seeding must not undo an operator's
-          // own governance choice — the same rule `enabled` has always had.
-          ...(seed.collectionMode ? { collectionMode: seed.collectionMode } : {}),
-        },
-        update: {
-          name: seed.name,
-          baseUrl: seed.baseUrl,
-          tier: seed.tier,
-          vertical: seed.vertical,
-          country: seed.country,
-          supply: seed.supply,
-          ...(seed.notes !== undefined ? { notes: seed.notes } : {}),
-          ...(keepVerifiedPlatform ? {} : { platform: seed.platform }),
-        },
-      });
-    }),
+        ...seedSourceUpsertData(seed, byKey.get(seed.key)),
+      }),
+    ),
   );
 
   return SEED_SOURCES.length;
