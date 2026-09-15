@@ -41,9 +41,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -89,9 +86,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -137,9 +131,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -185,9 +176,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -233,9 +221,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -281,9 +266,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -329,9 +311,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -377,9 +356,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -425,9 +401,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": "Demo fixture — reviewer note on a staged row."
   },
@@ -473,9 +446,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -521,9 +491,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -569,9 +536,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -617,9 +581,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -665,9 +626,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -713,9 +671,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -761,9 +716,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -809,9 +761,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -857,9 +806,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": "Demo fixture — reviewer note on a staged row."
   },
@@ -905,9 +851,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -953,9 +896,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1001,9 +941,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1049,9 +986,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1097,9 +1031,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1145,9 +1076,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1193,9 +1121,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1241,9 +1166,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1289,9 +1211,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": "Demo fixture — reviewer note on a staged row."
   },
@@ -1337,9 +1256,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1385,9 +1301,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1433,9 +1346,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1481,9 +1391,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1529,9 +1436,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1577,9 +1481,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1625,9 +1526,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1673,9 +1571,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1721,9 +1616,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": "Demo fixture — reviewer note on a staged row."
   },
@@ -1769,9 +1661,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "APPROVED",
-    "sheetSyncStatus": "SYNC_PENDING",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1817,9 +1706,6 @@
     "firstSeen": "2026-09-01T16:58:04.750Z",
     "lastSeen": "2026-09-01T17:00:04.750Z",
     "reviewStatus": "REJECTED",
-    "sheetSyncStatus": "SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1865,9 +1751,6 @@
     "firstSeen": "2026-09-03T16:13:04.750Z",
     "lastSeen": "2026-09-03T16:13:04.750Z",
     "reviewStatus": "IMPORTED",
-    "sheetSyncStatus": "SYNC_FAILED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   },
@@ -1913,9 +1796,6 @@
     "firstSeen": "2026-08-31T16:58:04.750Z",
     "lastSeen": "2026-08-31T17:03:04.750Z",
     "reviewStatus": "PENDING",
-    "sheetSyncStatus": "NOT_SYNCED",
-    "sheetSyncedAt": null,
-    "sheetSyncError": null,
     "importedProductId": null,
     "notes": null
   }

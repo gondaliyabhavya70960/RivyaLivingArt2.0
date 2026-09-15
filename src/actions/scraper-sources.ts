@@ -439,44 +439,6 @@ export async function setSourceCollectionMode(
   });
 }
 
-const policySchema = z.object({
-  id: z.string().min(1),
-  policy: z.enum(["MANUAL", "ON_COMPLETE", "OFF"]),
-});
-
-/**
- * Set when this source's completed scrapes reach the Google Sheet.
- *
- * This is the whole of the owner's "push automatically, but when I say so":
- * the push engine does not change, only the trigger. MANUAL stages and waits;
- * ON_COMPLETE fires at the end of every job; OFF opts the source out.
- */
-export async function setSheetSyncPolicy(
-  id: string,
-  policy: "MANUAL" | "ON_COMPLETE" | "OFF",
-): Promise<ActionResult<{ policy: string }>> {
-  return runAction(async () => {
-    const session = await requireStaff();
-    const parsed = policySchema.parse({ id, policy });
-
-    const row = await db.scrapeSource.update({
-      where: { id: parsed.id },
-      data: { sheetSyncPolicy: parsed.policy },
-      select: { key: true, name: true },
-    });
-
-    await logActivity({
-      userId: session.user.id,
-      action: "sheet-policy",
-      entity: "ScrapeSource",
-      entityId: parsed.id,
-      meta: { sourceKey: row.key, policy: parsed.policy },
-    });
-    revalidatePath(STUDIO_PATH);
-    return { policy: parsed.policy };
-  });
-}
-
 /**
  * Re-fingerprint a source live. A recognised platform stamps verifiedAt;
  * an UNKNOWN result also disables the source and explains why in notes.

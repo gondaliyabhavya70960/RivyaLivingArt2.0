@@ -66,7 +66,6 @@ export type JobRow = {
   createdAt: string;
   createdAtTs: number;
   finishedAt: string | null;
-  sheetSynced: boolean;
 };
 
 export type TierCounts = Record<ScrapeTier, number>;

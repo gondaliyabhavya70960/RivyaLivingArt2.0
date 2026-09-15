@@ -56,12 +56,15 @@ confirmed-products export and `/studio/exports`) and then its REMOVAL — the
 push engine, the sync policy and the service-account client are deleted;
 workstream A's design-system layer (the v4 leading scale, one disabled state,
 the Studio's nav groups) and the homepage collections fix. **Not yet done:** the
-schema DROPS that finish the Sheets removal (their own PR, for the reason in the
-migration warning above), the scraper rebuild (B), and the Studio redesign (A8).
+schema DROP that finishes the Sheets removal (its own PR, for the reason in the
+migration warning above — step 4a, which stops REFERENCING the columns, is
+done), the scraper rebuild (B), and the Studio redesign (A8).
 
-**Before the drops can land the owner must run `npm run export:sheets-history`
-once** — `SheetSyncRun` is the only copy of the push history and the drop
-migration destroys it.
+**The export has RUN** (2026-09-15, `docs/archive/sheets-2026-09-15/`). It
+holds one row: a single `PUSH` that never executed because credentials were
+never configured (`status: UNCONFIGURED`), plus zero import conflicts. That is
+the entire push history this project ever had, and it is now in the repo rather
+than only in a table about to be dropped.
 
 Where this file and the plan disagree on a fact, this file is the one being
 kept current — the plan records what was true when it was written.
@@ -498,6 +501,20 @@ below are the ones that are expensive to rediscover.
   approval — a source with no automated path does not become crawlable by being
   allowed. The owner clears it per source on `/studio/scraper/sources/<key>` or
   in bulk from the registry's selection bar; the record stamps who and when.
+- **DROPPING A COLUMN TAKES TWO PRs HERE, and the reason is the generated
+  client.** `db.scrapeSource.findMany()` with no `select` makes Prisma emit an
+  explicit column list, so the moment a column disappears from the database the
+  CURRENTLY DEPLOYED client asks for a column that is not there and every query
+  on that table fails. Removing the field from `schema.prisma` is what stops it
+  being asked for. So: PR one removes the fields and the code that reads them
+  and ships NO migration (the database keeps the columns, filled by their own
+  defaults — verified by seeding against exactly that state); PR two drops them,
+  once the first is live. Phase 4 step 4a did the first for `sheetSyncPolicy`,
+  `lastSheetSync*`, `ScrapeJob.sheetSynced` and `ScrapedProduct.sheetSync*`.
+  `SheetSyncRun` is the exception and stays in the schema until the drop: no
+  other model references it and nothing on a request path reads it, so it is
+  only reachable by the one-off export script — which must keep working while
+  its table is still the only copy of the data.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are

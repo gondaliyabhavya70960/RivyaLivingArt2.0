@@ -702,31 +702,6 @@ enum PolicyReviewStatus {
   BLOCKED
 }
 
-/// When a completed scrape pushes its rows to the Google Sheet.
-///
-/// One sync ENGINE, one policy deciding when it fires — not two write paths.
-/// MANUAL is the default because it is what the owner asked for and because
-/// the safe default for writing into a shared document somebody else works in
-/// is "don't".
-enum SheetSyncPolicy {
-  /// Staged only. Rows go to the sheet when the operator says so.
-  MANUAL
-  /// Fires automatically when a job reaches DONE.
-  ON_COMPLETE
-  /// Never. This source's flow does not involve the sheet.
-  OFF
-}
-
-/// Where one staged product stands with the sheet. A row nobody has pushed
-/// must look different from one whose push FAILED — that distinction is the
-/// entire value of showing this.
-enum SheetSyncStatus {
-  NOT_SYNCED
-  SYNC_PENDING
-  SYNCED
-  SYNC_FAILED
-}
-
 enum ScrapePlatform {
   SHOPIFY
   WOOCOMMERCE
@@ -788,12 +763,6 @@ model ScrapeSource {
   /// this is manual-research rather than HTTP. Shown in the refusal message,
   /// which is the only place anyone will read it.
   policyReviewNote    String?
-  /// When this source's completed scrapes reach the sheet. See SheetSyncPolicy.
-  sheetSyncPolicy    SheetSyncPolicy @default(MANUAL)
-  /// Last successful push, and the last failure — kept separately so a source
-  /// that synced yesterday and failed today still shows both facts.
-  lastSheetSyncAt    DateTime?
-  lastSheetSyncError String?
   jobs       ScrapeJob[]
 
   @@index([tier, enabled])
@@ -820,7 +789,6 @@ model ScrapeJob {
   totalScraped Int              @default(0)
   newCount     Int              @default(0)
   updatedCount Int              @default(0)
-  sheetSynced  Boolean          @default(false)
   error        String?
   createdAt    DateTime         @default(now())
   finishedAt   DateTime?
@@ -866,11 +834,6 @@ model ScrapedProduct {
   firstSeen         DateTime     @default(now())
   lastSeen          DateTime     @default(now())
   reviewStatus      ReviewStatus @default(PENDING)
-  /// Per-row sheet state. Job-level `ScrapeJob.sheetSynced` says a push ran;
-  /// this says whether THIS row made it, which is what a retry needs to know.
-  sheetSyncStatus   SheetSyncStatus @default(NOT_SYNCED)
-  sheetSyncedAt     DateTime?
-  sheetSyncError    String?
   importedProductId String?
   /// The one mutable field on an otherwise immutable staged row: the reviewer's notes.
   notes String? @db.Text
@@ -878,9 +841,27 @@ model ScrapedProduct {
   @@unique([sourceKey, externalId])
   @@index([reviewStatus])
   @@index([jobId])
-  // The retry drain asks "what is still pending?" — without this it is a
-  // sequential scan of every staged row, and there are tens of thousands.
-  @@index([sheetSyncStatus])
+}
+
+/// One push of rows to the owner's sheet (B0 · sheets): the history the
+/// sheet-import screen shows. No URL columns.
+///
+/// KEPT DELIBERATELY until the drop migration. Google Sheets is gone and this
+/// table has no writer and no reader on any request path — only the one-off
+/// `scripts/export-sheets-history.ts`. Removing it from the schema now would
+/// break that script while its data is still the only copy in production, so
+/// it leaves in the same PR that drops the table.
+model SheetSyncRun {
+  id         String    @id @default(cuid())
+  direction  String
+  tab        String
+  rows       Int       @default(0)
+  status     String
+  error      String?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  @@index([startedAt])
 }
 
 /// Stable identity for one product across every scrape that ever saw it
@@ -1380,21 +1361,6 @@ model ImportConflict {
   @@map("SheetConflict")
   @@index([status, createdAt])
   @@index([productId])
-}
-
-/// One push of rows to the owner's sheet (B0 · sheets): the history the
-/// sheet-import screen shows. No URL columns.
-model SheetSyncRun {
-  id         String    @id @default(cuid())
-  direction  String
-  tab        String
-  rows       Int       @default(0)
-  status     String
-  error      String?
-  startedAt  DateTime  @default(now())
-  finishedAt DateTime?
-
-  @@index([startedAt])
 }
 
 /// A hand-kept research note from a relevant website (B0 · research
