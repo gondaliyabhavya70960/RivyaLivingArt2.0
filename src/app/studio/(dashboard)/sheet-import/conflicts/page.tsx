@@ -24,8 +24,8 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
  * detection). Each row is one field, one product — resolved independently,
  * because "take sheet" on the price says nothing about the description.
  */
-export default async function SheetConflictsPage() {
-  const conflicts = await db.sheetConflict.findMany({
+export default async function ImportConflictsPage() {
+  const conflicts = await db.importConflict.findMany({
     where: { status: "OPEN" },
     orderBy: { createdAt: "desc" },
     take: 500,
@@ -44,7 +44,7 @@ export default async function SheetConflictsPage() {
       productTitle: c.product!.title,
       productSlug: c.product!.slug,
       field: c.field,
-      sheetValue: c.sheetValue,
+      importedValue: c.importedValue,
       dbValue: c.dbValue,
       createdAt: dateFormatter.format(c.createdAt),
     }));

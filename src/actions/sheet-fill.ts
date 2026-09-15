@@ -32,16 +32,16 @@ async function loadPolicy(): Promise<FillPolicy> {
   const settings = await db.siteSettings.findUnique({
     where: { id: "main" },
     select: {
-      sheetFillEnabled: true,
-      sheetFillOnDeploy: true,
-      sheetFillMaxCreates: true,
+      catalogFillEnabled: true,
+      catalogFillOnDeploy: true,
+      catalogFillMaxCreates: true,
     },
   });
   return settings
     ? {
-        enabled: settings.sheetFillEnabled,
-        onDeploy: settings.sheetFillOnDeploy,
-        maxCreates: settings.sheetFillMaxCreates,
+        enabled: settings.catalogFillEnabled,
+        onDeploy: settings.catalogFillOnDeploy,
+        maxCreates: settings.catalogFillMaxCreates,
       }
     : DEFAULT_FILL_POLICY;
 }
@@ -64,7 +64,7 @@ export async function previewSheetFill(): Promise<
 
 /**
  * Run the fill now, from the studio, rather than waiting for the next
- * deploy. Blocked only by the master switch (`sheetFillEnabled`) — MANUAL
+ * deploy. Blocked only by the master switch (`catalogFillEnabled`) — MANUAL
  * bypasses "fill on deploy" the same way pressing this button implies: the
  * operator is asking for it right now, not waiting on the next release.
  */
@@ -105,7 +105,7 @@ const resolveSchema = z.object({
   choice: z.enum(CONFLICT_CHOICES),
 });
 
-/** Coerce a SheetConflict's serialized `sheetValue` back to the Product
+/** Coerce a ImportConflict's serialized `importedValue` back to the Product
  *  column's real type — the run that wrote it stored every field as a
  *  string (a conflict row has no per-field schema of its own). */
 function coerceConflictValue(field: string, raw: string | null): unknown {
@@ -133,7 +133,7 @@ function coerceConflictValue(field: string, raw: string | null): unknown {
  * and only an OPEN conflict may be resolved — the row is the record of a
  * decision, not a button that can be pressed twice.
  */
-export async function resolveSheetConflict(
+export async function resolveImportConflict(
   id: string,
   choice: ConflictChoice,
 ): Promise<ActionResult<void>> {
@@ -141,7 +141,7 @@ export async function resolveSheetConflict(
     const session = await requireStaff();
     const parsed = resolveSchema.parse({ id, choice });
 
-    const conflict = await db.sheetConflict.findUnique({
+    const conflict = await db.importConflict.findUnique({
       where: { id: parsed.id },
     });
     if (!conflict) throw new Error("That conflict no longer exists.");
@@ -158,7 +158,7 @@ export async function resolveSheetConflict(
     const before = snapshotBefore(product, [field]);
 
     if (parsed.choice === "take-sheet") {
-      const value = coerceConflictValue(conflict.field, conflict.sheetValue);
+      const value = coerceConflictValue(conflict.field, conflict.importedValue);
       await db.product.update({
         where: { id: conflict.productId },
         data: { [conflict.field]: value, studioEditedAt: new Date() },
@@ -173,7 +173,7 @@ export async function resolveSheetConflict(
       meta: { field: conflict.field, before },
     });
 
-    await db.sheetConflict.update({
+    await db.importConflict.update({
       where: { id: parsed.id },
       data: {
         status: SHEET_CONFLICT_STATUS.RESOLVED,
@@ -199,7 +199,7 @@ const bulkResolveSchema = z.object({
  * carries none of "take sheet"'s per-row risk. "Take sheet" stays a
  * one-at-a-time decision, made with the field's two values in view.
  */
-export async function bulkResolveSheetConflicts(
+export async function bulkResolveImportConflicts(
   ids: string[],
   choice: "keep-mine" | "skip",
 ): Promise<ActionResult<{ resolved: number }>> {
@@ -207,7 +207,7 @@ export async function bulkResolveSheetConflicts(
     const session = await requireStaff();
     const parsed = bulkResolveSchema.parse({ ids, choice });
 
-    const res = await db.sheetConflict.updateMany({
+    const res = await db.importConflict.updateMany({
       where: { id: { in: parsed.ids }, status: SHEET_CONFLICT_STATUS.OPEN },
       data: {
         status: SHEET_CONFLICT_STATUS.RESOLVED,

@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
-  bulkResolveSheetConflicts,
-  resolveSheetConflict,
+  bulkResolveImportConflicts,
+  resolveImportConflict,
 } from "@/actions/sheet-fill";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
@@ -24,7 +24,7 @@ export type ConflictRow = {
   productTitle: string;
   productSlug: string;
   field: string;
-  sheetValue: string | null;
+  importedValue: string | null;
   dbValue: string | null;
   createdAt: string;
 };
@@ -57,7 +57,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
     choice: "keep-mine" | "take-sheet" | "skip",
   ) {
     setBusyId(id);
-    const res = await resolveSheetConflict(id, choice);
+    const res = await resolveImportConflict(id, choice);
     setBusyId(null);
     if (!res.ok) {
       toast.error(res.error);
@@ -75,7 +75,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
 
   async function handleBulk(choice: "keep-mine" | "skip") {
     setBulkBusy(true);
-    const res = await bulkResolveSheetConflicts(selection.ids, choice);
+    const res = await bulkResolveImportConflicts(selection.ids, choice);
     setBulkBusy(false);
     if (!res.ok) {
       toast.error(res.error);
@@ -162,9 +162,9 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
                 </td>
                 <td
                   className="max-w-[20ch] px-4 py-3 text-graphite"
-                  title={row.sheetValue ?? undefined}
+                  title={row.importedValue ?? undefined}
                 >
-                  {displayValue(row.sheetValue)}
+                  {displayValue(row.importedValue)}
                 </td>
                 <td
                   className="max-w-[20ch] px-4 py-3 text-graphite"

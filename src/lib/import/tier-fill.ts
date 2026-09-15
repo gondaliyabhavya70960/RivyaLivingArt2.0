@@ -41,7 +41,7 @@ import { decideFillWrite, type FillPolicy } from "@/lib/import/fill-policy";
  *
  * `dryRun` runs every read and every decision exactly as a real run would,
  * and skips every WRITE (category creation, the care-notes cleanup pass,
- * per-row create/update, the demote reconciliation, SheetConflict rows, and
+ * per-row create/update, the demote reconciliation, ImportConflict rows, and
  * the ImportRun/ActivityLog record) — so `previewSheetFill()` can show
  * accurate creates/updates/drops without touching the catalog.
  */
@@ -129,7 +129,7 @@ const FOREIGN_CURRENCY_SOURCES = new Set([
 /** Store artifacts that are not products of THIS store. */
 const EXCLUDED_TITLE = /gift\s*card/i;
 
-/** Fields SheetConflict tracks — see the module note on conflict detection. */
+/** Fields ImportConflict tracks — see the module note on conflict detection. */
 const CONFLICT_FIELDS = [
   "title",
   "priceMin",
@@ -432,7 +432,7 @@ export type TierFillResult = {
    *  can show what WOULD be flagged); zero on the very first run ever, since
    *  there is nothing to compare against yet. */
   conflictsDetected: number;
-  /** Of `conflictsDetected`, how many were actually written as SheetConflict
+  /** Of `conflictsDetected`, how many were actually written as ImportConflict
    *  rows — always 0 in dryRun, since a preview writes nothing. */
   conflictsWritten: number;
   /** OwnerImportReady batch totals, when that tab was present. */
@@ -580,14 +580,14 @@ export function planTierRows(
 /** One field of a sheet/studio conflict — see `runTierFill`'s conflict note. */
 export type ConflictFieldDiff = {
   field: (typeof CONFLICT_FIELDS)[number];
-  sheetValue: string | null;
+  importedValue: string | null;
   dbValue: string | null;
 };
 
 /**
  * Pure: which of `CONFLICT_FIELDS` differ between what the sheet would
  * write and what the database currently holds, serialized the same way
- * `SheetConflict.sheetValue`/`dbValue` are stored (String(...), null stays
+ * `ImportConflict.importedValue`/`dbValue` are stored (String(...), null stays
  * null). Extracted so the field-diff logic is unit-tested directly.
  */
 export function diffConflictFields(
@@ -599,7 +599,7 @@ export function diffConflictFields(
     if (dbSide[field] === sheetSide[field]) continue;
     diffs.push({
       field,
-      sheetValue:
+      importedValue:
         sheetSide[field] === null || sheetSide[field] === undefined
           ? null
           : String(sheetSide[field]),
@@ -625,7 +625,7 @@ export async function runTierFill(
   const conflictRows: {
     productId: string;
     field: string;
-    sheetValue: string | null;
+    importedValue: string | null;
     dbValue: string | null;
   }[] = [];
 
@@ -1319,12 +1319,12 @@ export async function runTierFill(
       });
       importRunId = run.id;
       if (conflictRows.length > 0) {
-        await db.sheetConflict.createMany({
+        await db.importConflict.createMany({
           data: conflictRows.map((c) => ({
             productId: c.productId,
             importRunId: run.id,
             field: c.field,
-            sheetValue: c.sheetValue,
+            importedValue: c.importedValue,
             dbValue: c.dbValue,
           })),
         });

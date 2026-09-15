@@ -64,9 +64,9 @@ export default async function SheetImportPage() {
     db.siteSettings.findUnique({
       where: { id: "main" },
       select: {
-        sheetFillEnabled: true,
-        sheetFillOnDeploy: true,
-        sheetFillMaxCreates: true,
+        catalogFillEnabled: true,
+        catalogFillOnDeploy: true,
+        catalogFillMaxCreates: true,
       },
     }),
     db.importRun.findMany({
@@ -77,7 +77,7 @@ export default async function SheetImportPage() {
 
   const [syncRuns, openConflicts] = await Promise.all([
     db.sheetSyncRun.findMany({ orderBy: { startedAt: "desc" }, take: 20 }),
-    db.sheetConflict.count({ where: { status: "OPEN" } }),
+    db.importConflict.count({ where: { status: "OPEN" } }),
   ]);
 
   const [
@@ -226,9 +226,9 @@ export default async function SheetImportPage() {
 
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <SheetFillPolicy
-          enabled={settings?.sheetFillEnabled ?? true}
-          onDeploy={settings?.sheetFillOnDeploy ?? true}
-          maxCreates={settings?.sheetFillMaxCreates ?? null}
+          enabled={settings?.catalogFillEnabled ?? true}
+          onDeploy={settings?.catalogFillOnDeploy ?? true}
+          maxCreates={settings?.catalogFillMaxCreates ?? null}
         />
 
         {/* What the fills actually did. Before this the only record was a

@@ -140,7 +140,7 @@ model Product {
   testimonials   Testimonial[]
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
-  sheetConflicts SheetConflict[]
+  importConflicts ImportConflict[]
 
   @@unique([importSource, importRef])
   @@index([categoryId, status])
@@ -593,16 +593,16 @@ model SiteSettings {
      never opens this screen keeps self-populating exactly as it did. */
 
   /// Master switch. False stops the fill entirely, deploy included.
-  sheetFillEnabled     Boolean   @default(true)
+  catalogFillEnabled     Boolean   @default(true)
   /// Whether a deploy triggers a fill. True keeps a fresh environment
   /// self-populating from the sheet on first boot, which is the point of
   /// having it in bootstrap at all.
-  sheetFillOnDeploy    Boolean   @default(true)
+  catalogFillOnDeploy    Boolean   @default(true)
   /// Abort the whole run if it would CREATE more than this many products.
   /// Null means no cap — today's behaviour. Creates are the dangerous
   /// direction: a mis-sorted or re-keyed sheet inserts thousands, while
   /// updates are already held back by `ownerTouched`.
-  sheetFillMaxCreates  Int?
+  catalogFillMaxCreates  Int?
   /// Owner switch: render demo rows on the public site (always marked, never in the sitemap).
   demoContentPublic Boolean @default(false)
   /// The owner's spreadsheet and its tab ids; null falls back to the environment.
@@ -630,7 +630,7 @@ model ImportRun {
   finishedAt    DateTime?
   /// Synthetic Content Lab row. Public readers add `isDemo: false` unless the owner shows demo content.
   isDemo Boolean @default(false)
-  conflicts SheetConflict[]
+  conflicts ImportConflict[]
 
   @@index([startedAt])
 }
@@ -1138,17 +1138,24 @@ model CustomBlock {
   @@index([pageId, order])
 }
 
-/// One field on one product where the sheet and the Studio disagree after an
-/// owner edit (B0 · sheets). Status is a String with a code-side enum, the
+/// One field on one product where the IMPORTED CSV and the Studio disagree
+/// after an owner edit. Status is a String with a code-side enum, the
 /// ImportRun.trigger precedent, so a new state never needs an enum migration.
-model SheetConflict {
+///
+/// Named `SheetConflict` until the Google Sheets removal (plan C, phase 4).
+/// That name was always a misnomer: this row is written by `tier-fill.ts`,
+/// which reads `data/tiers/*.csv.gz` off disk and has never called the Sheets
+/// API. Renaming it is what makes the Sheets deletion safe to read — the one
+/// mistake that would break catalog ingestion is deleting this with the rest
+/// of the "sheet" surface.
+model ImportConflict {
   id           String     @id @default(cuid())
   productId    String
   product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   importRunId  String?
   importRun    ImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
   field        String
-  sheetValue   String?
+  importedValue String?
   dbValue      String?
   status       String     @default("OPEN")
   createdAt    DateTime   @default(now())

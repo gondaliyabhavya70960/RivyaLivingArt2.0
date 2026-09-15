@@ -30,7 +30,7 @@ export type StudioInboxRows = {
     products: number;
     blogPosts: number;
     portfolios: number;
-    sheetConflicts: number;
+    importConflicts: number;
   };
   scrapeJobs: {
     id: string;
@@ -68,7 +68,7 @@ const PENDING_HREF = {
   products: "/studio/products?status=REVIEW",
   blogPosts: "/studio/blog?status=REVIEW",
   portfolios: "/studio/portfolio?status=REVIEW",
-  sheetConflicts: "/studio/sheet-import/conflicts",
+  importConflicts: "/studio/sheet-import/conflicts",
 } as const;
 
 const PENDING_LABEL: Record<keyof StudioInboxRows["pending"], string> = {
@@ -77,7 +77,7 @@ const PENDING_LABEL: Record<keyof StudioInboxRows["pending"], string> = {
   products: "product",
   blogPosts: "journal post",
   portfolios: "portfolio piece",
-  sheetConflicts: "sheet conflict",
+  importConflicts: "sheet conflict",
 };
 
 const PENDING_VERB: Record<keyof StudioInboxRows["pending"], string> = {
@@ -86,7 +86,7 @@ const PENDING_VERB: Record<keyof StudioInboxRows["pending"], string> = {
   products: "awaiting review",
   blogPosts: "awaiting review",
   portfolios: "awaiting review",
-  sheetConflicts: "to resolve",
+  importConflicts: "to resolve",
 };
 
 function plural(n: number, noun: string): string {
@@ -173,7 +173,7 @@ export async function getStudioInbox(): Promise<InboxItem[]> {
     products,
     blogPosts,
     portfolios,
-    sheetConflicts,
+    importConflicts,
     scrapeJobs,
     importRuns,
     activity,
@@ -183,7 +183,7 @@ export async function getStudioInbox(): Promise<InboxItem[]> {
     db.product.count({ where: { status: "REVIEW" } }),
     db.blogPost.count({ where: { status: "REVIEW" } }),
     db.portfolio.count({ where: { status: "REVIEW" } }),
-    db.sheetConflict.count({ where: { status: SHEET_CONFLICT_STATUS.OPEN } }),
+    db.importConflict.count({ where: { status: SHEET_CONFLICT_STATUS.OPEN } }),
     db.scrapeJob.findMany({
       where: { status: { in: ["DONE", "FAILED"] } },
       orderBy: { finishedAt: "desc" },
@@ -234,7 +234,7 @@ export async function getStudioInbox(): Promise<InboxItem[]> {
       products,
       blogPosts,
       portfolios,
-      sheetConflicts,
+      importConflicts,
     },
     scrapeJobs: scrapeJobs.map((job) => ({
       id: job.id,
