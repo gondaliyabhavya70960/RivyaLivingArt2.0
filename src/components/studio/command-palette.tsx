@@ -116,13 +116,48 @@ export function CommandPalette({ role }: { role: Role }) {
     keywords: string;
     icon: typeof Plus;
   }[] = [
-    { label: "Create a product", href: "/studio/products/new", keywords: "add new create product item", icon: Plus },
-    { label: "Write a journal post", href: "/studio/blog/new", keywords: "add new write blog journal post article", icon: FileText },
-    { label: "Add a portfolio piece", href: "/studio/portfolio/new", keywords: "add new portfolio case study piece", icon: ImageIcon },
-    { label: "Run the scraper", href: "/studio/scraper/sources", keywords: "run scrape scraper sources fetch", icon: Radar },
-    { label: "Import from the sheet", href: "/studio/sheet-import", keywords: "import sheet google tiers sync", icon: Table },
-    { label: "Bulk import products", href: "/studio/import", keywords: "import bulk csv upload", icon: Import },
-    { label: "Upload media", href: "/studio/media", keywords: "upload media image file library", icon: ImageIcon },
+    {
+      label: "Create a product",
+      href: "/studio/products/new",
+      keywords: "add new create product item",
+      icon: Plus,
+    },
+    {
+      label: "Write a journal post",
+      href: "/studio/blog/new",
+      keywords: "add new write blog journal post article",
+      icon: FileText,
+    },
+    {
+      label: "Add a portfolio piece",
+      href: "/studio/portfolio/new",
+      keywords: "add new portfolio case study piece",
+      icon: ImageIcon,
+    },
+    {
+      label: "Run the scraper",
+      href: "/studio/scraper/sources",
+      keywords: "run scrape scraper sources fetch",
+      icon: Radar,
+    },
+    {
+      label: "Catalog fill",
+      href: "/studio/catalog-fill",
+      keywords: "import csv tiers fill catalog sheet",
+      icon: Table,
+    },
+    {
+      label: "Bulk import products",
+      href: "/studio/import",
+      keywords: "import bulk csv upload",
+      icon: Import,
+    },
+    {
+      label: "Upload media",
+      href: "/studio/media",
+      keywords: "upload media image file library",
+      icon: ImageIcon,
+    },
   ];
 
   const navItems = SECTIONS.flatMap((section) =>

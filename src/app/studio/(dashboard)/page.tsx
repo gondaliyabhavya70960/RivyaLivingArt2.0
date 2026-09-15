@@ -476,7 +476,7 @@ export default async function DashboardPage() {
       <p className="mb-4 max-w-[68ch] text-small leading-relaxed text-graphite">
         The catalogue is fed by the{" "}
         <Link
-          href="/studio/sheet-import"
+          href="/studio/catalog-fill"
           className="rounded-input font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
         >
           Sheet Import

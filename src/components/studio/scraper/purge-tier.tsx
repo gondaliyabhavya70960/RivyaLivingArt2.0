@@ -90,8 +90,10 @@ export function PurgeTierButton({ tier }: { tier: ScrapeTier }) {
     const d = res.data;
     toast.success(
       `Removed ${d?.sources ?? 0} ${label.toLowerCase()} source(s), ${(d?.stagedProducts ?? 0).toLocaleString("en-IN")} staged products` +
-        (d?.catalogProducts ? `, ${d.catalogProducts.toLocaleString("en-IN")} catalog products` : "") +
-        `, and ${(d?.sheetRows ?? 0).toLocaleString("en-IN")} sheet rows.`,
+        (d?.catalogProducts
+          ? `, ${d.catalogProducts.toLocaleString("en-IN")} catalog products`
+          : "") +
+        ".",
     );
     router.refresh();
   }
@@ -115,7 +117,9 @@ export function PurgeTierButton({ tier }: { tier: ScrapeTier }) {
       <Dialog open={open} onOpenChange={(o) => !o && setOpen(false)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Remove every {label.toLowerCase()} source?</DialogTitle>
+            <DialogTitle>
+              Remove every {label.toLowerCase()} source?
+            </DialogTitle>
             <DialogDescription>
               {preview
                 ? describePurgePlan(label.toLowerCase(), preview, {
@@ -148,10 +152,18 @@ export function PurgeTierButton({ tier }: { tier: ScrapeTier }) {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>
+            <Button
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={busy}
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={() => void confirm()} disabled={busy}>
+            <Button
+              variant="destructive"
+              onClick={() => void confirm()}
+              disabled={busy}
+            >
               {busy ? <Loader2 aria-hidden className="animate-spin" /> : null}
               Remove {preview?.sources ?? 0} source
               {preview?.sources === 1 ? "" : "s"}

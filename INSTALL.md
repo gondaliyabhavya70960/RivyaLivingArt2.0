@@ -29,22 +29,21 @@ cp .env.example .env
 
 > **Why `.env` and not `.env.local`?** Prisma 7 does not read env files by itself — `prisma.config.ts` loads them via `dotenv`, which only reads `.env`. Next.js reads `.env` too, so keeping everything in `.env` makes both the app and the Prisma CLI (`migrate`, `db seed`, `studio`) see the same values.
 
-| Variable | How to set it |
-|---|---|
-| `DATABASE_URL` | **Option A — local Postgres:** create a database and use e.g. `postgresql://rivya:rivya_dev@localhost:5432/rivya`. **Option B — Neon via Vercel:** `vercel link`, then `vercel env pull .env` (auto-injected by the Neon native integration). |
-| `AUTH_SECRET` | Generate with `npx auth secret` (it appends the value to `.env.local` — move it into `.env`). |
-| `AUTH_URL` | Leave unset (or `http://localhost:3000`) for local dev; Auth.js detects localhost. Production uses `https://www.rivyalivingart.com` — **include the scheme**: Auth.js calls `new URL()` on this value inside the middleware, and a bare host once 500'd every `/studio` route in production. |
-| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Your studio login. **Used only by the seed script** to create the admin user. |
-| `BLOB_READ_WRITE_TOKEN` | Leave empty locally — uploads fall back to local disk automatically (see §7). |
-| `RESEND_API_KEY` | Optional — email via Resend: contact-form + order notifications and password-reset delivery. Skipping it is fine; forms still save inquiries and reset links are logged to the server console. |
-| `RESEND_EMAIL_DOMAIN` / `RESEND_FROM` / `EMAIL_FROM` | Optional — sender address for Resend emails. |
-| `NEXT_PUBLIC_META_PIXEL_ID` / `NEXT_PUBLIC_GA_ID` | Optional — Meta Pixel / GA4 ids; both tags stay off unless set. |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` (or `GOOGLE_SERVICE_ACCOUNT_KEY_B64`) / `SCRAPE_SHEET_ID` (or `SHEET_ID`) | Optional — direct Google Sheet sync from the Product Scraper. Without them, the scraper's CSV export covers the same workflow. |
-| `SCRAPER_USER_AGENT` | Optional — custom User-Agent for scraper requests. |
-| `CRON_SECRET` | Optional locally — Bearer token for the `/api/cron/mirror-images` route (required in production). |
-| `AUTH_TRUST_HOST` | Not needed locally or on Vercel; set `true` for any other production host (boot fails without it). |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | `917096036250` |
-| `NEXT_PUBLIC_SITE_URL` | `https://www.rivyalivingart.com` (or `http://localhost:3000` if you want local wa.me messages to say so) |
+| Variable                                             | How to set it                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                       | **Option A — local Postgres:** create a database and use e.g. `postgresql://rivya:rivya_dev@localhost:5432/rivya`. **Option B — Neon via Vercel:** `vercel link`, then `vercel env pull .env` (auto-injected by the Neon native integration).                                                |
+| `AUTH_SECRET`                                        | Generate with `npx auth secret` (it appends the value to `.env.local` — move it into `.env`).                                                                                                                                                                                                |
+| `AUTH_URL`                                           | Leave unset (or `http://localhost:3000`) for local dev; Auth.js detects localhost. Production uses `https://www.rivyalivingart.com` — **include the scheme**: Auth.js calls `new URL()` on this value inside the middleware, and a bare host once 500'd every `/studio` route in production. |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD`                     | Your studio login. **Used only by the seed script** to create the admin user.                                                                                                                                                                                                                |
+| `BLOB_READ_WRITE_TOKEN`                              | Leave empty locally — uploads fall back to local disk automatically (see §7).                                                                                                                                                                                                                |
+| `RESEND_API_KEY`                                     | Optional — email via Resend: contact-form + order notifications and password-reset delivery. Skipping it is fine; forms still save inquiries and reset links are logged to the server console.                                                                                               |
+| `RESEND_EMAIL_DOMAIN` / `RESEND_FROM` / `EMAIL_FROM` | Optional — sender address for Resend emails.                                                                                                                                                                                                                                                 |
+| `NEXT_PUBLIC_META_PIXEL_ID` / `NEXT_PUBLIC_GA_ID`    | Optional — Meta Pixel / GA4 ids; both tags stay off unless set.                                                                                                                                                                                                                              |
+| `SCRAPER_USER_AGENT`                                 | Optional — custom User-Agent for scraper requests.                                                                                                                                                                                                                                           |
+| `CRON_SECRET`                                        | Optional locally — Bearer token for the `/api/cron/mirror-images` route (required in production).                                                                                                                                                                                            |
+| `AUTH_TRUST_HOST`                                    | Not needed locally or on Vercel; set `true` for any other production host (boot fails without it).                                                                                                                                                                                           |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER`                        | `917096036250`                                                                                                                                                                                                                                                                               |
+| `NEXT_PUBLIC_SITE_URL`                               | `https://www.rivyalivingart.com` (or `http://localhost:3000` if you want local wa.me messages to say so)                                                                                                                                                                                     |
 
 ## 4. Database setup
 
@@ -73,18 +72,18 @@ npm run dev
 
 ## 6. Useful scripts
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Dev server (Turbopack) |
+| Command                           | Purpose                                                                                                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                     | Dev server (Turbopack)                                                                                                                                        |
 | `npm run build` / `npm run start` | Production build / serve. **Note:** `npm run build` is `prisma migrate deploy && tsx prisma/bootstrap.ts && next build` — it needs a reachable `DATABASE_URL` |
-| `npm run lint` | ESLint 9 |
-| `npm run typecheck` | Typecheck (`tsc --noEmit`, strict) |
-| `npm run db:seed` | (Re-)seed structure content (`tsx prisma/seed.ts`) |
-| `npm run db:seed:blogs` | Seed the 55 blog posts |
-| `npm run db:bootstrap` | Run the deploy-time bootstrap (tier catalog import + reconciliation) on demand |
-| `npx prisma studio` | Browse the database |
-| `npx prisma migrate dev` | Create/apply migrations after schema changes |
-| `npx prisma db seed` | Same as `npm run db:seed` |
+| `npm run lint`                    | ESLint 9                                                                                                                                                      |
+| `npm run typecheck`               | Typecheck (`tsc --noEmit`, strict)                                                                                                                            |
+| `npm run db:seed`                 | (Re-)seed structure content (`tsx prisma/seed.ts`)                                                                                                            |
+| `npm run db:seed:blogs`           | Seed the 55 blog posts                                                                                                                                        |
+| `npm run db:bootstrap`            | Run the deploy-time bootstrap (tier catalog import + reconciliation) on demand                                                                                |
+| `npx prisma studio`               | Browse the database                                                                                                                                           |
+| `npx prisma migrate dev`          | Create/apply migrations after schema changes                                                                                                                  |
+| `npx prisma db seed`              | Same as `npm run db:seed`                                                                                                                                     |
 
 ## 7. File uploads without Vercel Blob (local storage driver)
 

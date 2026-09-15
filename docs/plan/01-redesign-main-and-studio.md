@@ -182,19 +182,65 @@ The original proposal, kept because it is what the grouping was measured against
 | **Research**  | Scraper · Sources · Review · Quality · Mapping · Research · Content gaps                                                                      |
 | **Settings**  | Settings · SEO · Users · Subscribers · Content Lab                                                                                            |
 
-### 4.2 The draft/publish model deserves to be visible
+### 4.2 The draft/publish model ~~deserves to be visible~~ · CORRECTED — it already is
 
-Every copy and image save stages in `draftValue`/`draft` and publishes per surface. That is a
-genuinely good model and the UI barely shows it. A persistent "N unpublished changes on this
-surface" affordance, with a preview link and a publish action, converts a hidden safety feature
-into a visible one.
+**The original text below was wrong, and it was checked by staging a real draft rather than by
+reading the source.** Recipe in `CLAUDE.md` ("Running the Studio locally"): a throwaway Postgres,
+`npm run build`, a staff row, then one `SiteCopy.draftValue` and one `SiteImage.draft` staged on
+the same surface (Homepage).
 
-### 4.3 Data tables
+What the two screens then showed:
 
-The Studio's tables carry column visibility, bulk actions and a floating bulk-action bar (one of
-the two sanctioned shadows). They are the most-used surface in the app and the least designed one.
-Density, alignment (numbers mono and right-aligned), sticky headers, and a consistent empty state
-across all of them is a single focused PR with outsized effect.
+| Screen                | What it rendered                                                                                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/studio/site-copy`   | a sticky `PublishBar`: **"2 changes on Homepage are not published yet"** — it counts the copy AND the image — plus a `/api/draft` Preview link and a **Publish Homepage** button |
+| `/studio/site-images` | a **"Not published"** badge on exactly the staged slot, a per-group **Publish** button carrying the group's pending count, and Revision history                                  |
+
+So the affordance the paragraph asks for — a persistent "N unpublished changes on this surface",
+a preview link, a publish action — is built, on both screens, with the count scoped to the surface.
+
+The two screens deliberately do it DIFFERENTLY, and `site-image-board.tsx` says why in a comment:
+Site Images lists every group at once, so a second sticky bar would compete with the composer's,
+and a per-group button is the honest shape for a screen with no single surface. A reviewer
+measuring for site-copy's sticky bar specifically will conclude Site Images is missing the feature.
+It is not — that was my own first reading, and it was wrong.
+
+> **Original text, superseded:** "Every copy and image save stages in `draftValue`/`draft` and
+> publishes per surface. That is a genuinely good model and the UI barely shows it. A persistent
+> 'N unpublished changes on this surface' affordance, with a preview link and a publish action,
+> converts a hidden safety feature into a visible one."
+
+### 4.3 Data tables ~~— a single focused PR with outsized effect~~ · CORRECTED
+
+**Every item this paragraph lists is already built.** Measured against a running Studio with a real
+login and seeded content, not read off the markup:
+
+| §4.3 / Part 12.5 asks for                                        | Found                                                                                                                    |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Sticky header                                                    | `position: sticky; top: 64px; z-index: 20` — and it sticks: the `thead` top went 351 → 64 after a 600px scroll           |
+| Sortable columns                                                 | `sort-header.tsx`, on every list                                                                                         |
+| Saved views as chips                                             | `saved-views.tsx`                                                                                                        |
+| Checkbox selection + floating bulk-action bar                    | `bulk-bar.tsx` — the sanctioned `shadow-e3`, with `Esc` returning focus to the checkbox that raised it                   |
+| Server-side pagination                                           | `pagination.tsx`; `products/page.tsx` does count → clamp → skip/take                                                     |
+| Column visibility                                                | `columns-menu.tsx`                                                                                                       |
+| Consistent empty state                                           | one `EmptyState`, used by 21 components                                                                                  |
+| Typed confirmation for bulk destructive                          | `confirm-delete-dialog.tsx`, 20 call sites, arming on `count > 1`                                                        |
+| Part 12.6 "tables become cards" on mobile                        | at 390px the `<table>` is `display:none` and card groups render — verified on products, inquiries, blog and testimonials |
+| Part 12.3 KPI "large mono numerals, one hairline sparkline each" | four 44px **JetBrains Mono** numerals, four sparkline SVGs                                                               |
+
+`studio-audit.mjs` also ran clean over **38 routes at both 1440px and 390px**.
+
+So there is no "single focused PR with outsized effect" here; the effect has been had. Two things
+are worth knowing rather than doing:
+
+- **"numbers mono and right-aligned" is not a Studio rule.** Part 3.2 governs the storefront; the
+  Studio has its own Part 12, which asks for mono numerals in the §12.3 KPI cards specifically —
+  and those are mono. Applying Part 3.2 across the Studio would be over-reading the spec.
+- **There is a real spelling inconsistency, and it is cosmetic.** Of the Studio's numeric
+  treatments, 9 files use the `u-num` utility, 10 hand-write `tabular-nums` (mostly without
+  `font-mono`, so they are tabular Inter, not mono), and 4 use neither. `u-num` is exactly
+  `font-mono` + `tabular-nums` + `tnum`. Converging them is tidying, not a defect fix, and touching
+  44 call sites for it is churn unless something else is already in those files.
 
 ### 4.4 The scraper workspaces
 

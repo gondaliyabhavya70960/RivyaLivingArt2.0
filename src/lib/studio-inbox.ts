@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 
-import { SHEET_CONFLICT_STATUS } from "@/lib/sheet-status";
+import { IMPORT_CONFLICT_STATUS } from "@/lib/import-status";
 /**
  * The studio topbar's notification list (§12.2's bell, previously a bare
  * link + a two-number count). `getStudioInbox()` gathers everything in the
@@ -68,7 +68,7 @@ const PENDING_HREF = {
   products: "/studio/products?status=REVIEW",
   blogPosts: "/studio/blog?status=REVIEW",
   portfolios: "/studio/portfolio?status=REVIEW",
-  importConflicts: "/studio/sheet-import/conflicts",
+  importConflicts: "/studio/catalog-fill/conflicts",
 } as const;
 
 const PENDING_LABEL: Record<keyof StudioInboxRows["pending"], string> = {
@@ -183,7 +183,7 @@ export async function getStudioInbox(): Promise<InboxItem[]> {
     db.product.count({ where: { status: "REVIEW" } }),
     db.blogPost.count({ where: { status: "REVIEW" } }),
     db.portfolio.count({ where: { status: "REVIEW" } }),
-    db.importConflict.count({ where: { status: SHEET_CONFLICT_STATUS.OPEN } }),
+    db.importConflict.count({ where: { status: IMPORT_CONFLICT_STATUS.OPEN } }),
     db.scrapeJob.findMany({
       where: { status: { in: ["DONE", "FAILED"] } },
       orderBy: { finishedAt: "desc" },

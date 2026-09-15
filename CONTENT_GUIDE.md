@@ -53,8 +53,8 @@ Every word, title, and image published on the site must be **100% original Rivya
 
 ### Products
 
-| Required | Optional |
-|---|---|
+| Required                         | Optional                                                                                                                                                                                                                                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `title`, `slug`, `category_slug` | `short_tagline`, `description`, `price_min`, `price_max`, `show_price`, `timeline`, `materials`, `dimensions`, `occasions`, `care_notes`, `status`, `tier`, `in_stock`, `featured`, `video_url`, `model3d_url`, `seo_title`, `seo_description`, `images`, `image_alts`, plus the customization columns below |
 
 - `category_slug` must match an existing category (import Categories first).
@@ -66,57 +66,57 @@ Every word, title, and image published on the site must be **100% original Rivya
 
 ### Categories
 
-| Required | Optional |
-|---|---|
+| Required       | Optional                        |
+| -------------- | ------------------------------- |
 | `name`, `slug` | `description`, `image`, `order` |
 
 Import categories **before** products so `category_slug` values resolve. Rows without an `order` are appended after existing categories.
 
 ### Blog posts
 
-| Required | Optional |
-|---|---|
+| Required        | Optional                                                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `title`, `slug` | `excerpt`, `content`, `cover_image`, `author_name`, `category`, `tags`, `status`, `published_at`, `seo_title`, `seo_description` |
 
 `content` is **Markdown**. `category` and `tags` are created automatically if they don't exist yet. `published_at` is an ISO date (e.g. `2026-01-15` or `2026-01-15T10:00:00Z`).
 
 ### FAQs
 
-| Required | Optional |
-|---|---|
-| `question`, `answer` | `order` |
+| Required             | Optional |
+| -------------------- | -------- |
+| `question`, `answer` | `order`  |
 
 Questions match case-insensitively — re-importing an existing question updates its answer instead of duplicating it.
 
 ### Testimonials
 
-| Required | Optional |
-|---|---|
+| Required        | Optional                                    |
+| --------------- | ------------------------------------------- |
 | `name`, `quote` | `location`, `rating`, `avatar_url`, `order` |
 
 `rating` is 1–5 (defaults to 5). A row matching an existing name + quote updates that testimonial.
 
 ### Portfolio
 
-| Required | Optional |
-|---|---|
+| Required        | Optional                                                                                                                                                                   |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `title`, `slug` | `story`, `category_slug`, `before_image_url`, `after_image_url`, `video_url`, `meta_type`, `meta_material`, `meta_size`, `meta_timeline`, `status`, `images`, `image_alts` |
 
 `category_slug` is optional but must match an existing category when set. The `meta_*` columns fill the case-study result details (Type / Material / Size / Timeline).
 
 ### Pages
 
-| Required | Optional |
-|---|---|
+| Required        | Optional                                  |
+| --------------- | ----------------------------------------- |
 | `slug`, `title` | `content`, `seo_title`, `seo_description` |
 
 `content` is **Markdown**. Re-importing an existing slug updates that page.
 
 ---
 
-## Scraper Sheet Layout — ScrapeDeck v4 (26 columns, exact order)
+## Scraper Export Layout — ScrapeDeck v4 (26 columns, exact order)
 
-Emitted identically by the CSV export (`/api/scraper/export`) and the optional Google Sheet sync:
+Emitted by the CSV export (`/api/scraper/export`). Until 2026-09-15 the Google Sheet sync emitted the same columns; that integration was removed.
 
 ```
 sourceKey, vertical, externalId, title, slug, category, shortTagline,
@@ -125,6 +125,6 @@ dimensions, status, featured, images, imageAlts, fields, seoTitle,
 seoDescription, url, firstSeen, lastSeen, contentHash
 ```
 
-Serialization rules: arrays joined with `" | "` · `fields` JSON-stringified · booleans `TRUE`/`FALSE` · dates ISO 8601 · empty for null · RFC 4180 quoting, CRLF line endings. Merge key: `sourceKey|externalId`. Sheet sync writes one tab per tier: **Tier1_Owner, Tier2_ResinGoods, Tier3_Supplies, Tier4_3DPrint** (updates changed rows, appends new ones).
+Serialization rules: arrays joined with `" | "` · `fields` JSON-stringified · booleans `TRUE`/`FALSE` · dates ISO 8601 · empty for null · RFC 4180 quoting, CRLF line endings. Merge key: `sourceKey|externalId`.
 
-> ⚠️ **Scraper CSVs are for the Sheet/review workflow ONLY — never feed them through the generic Bulk Import.** Scraped competitor content may enter the catalog only via the scraper's Approve flow, which imports as DRAFT with the publish-blocking `needsRewrite` flag. Bulk Import enforces this: any file containing scraper-schema columns (`sourceKey`/`source_key`, `externalId`/`external_id`, `contentHash`/`content_hash`) is **rejected whole-file** with a pointer to the scraper review flow.
+> ⚠️ **Scraper CSVs are for the review workflow ONLY — never feed them through the generic Bulk Import.** Scraped competitor content may enter the catalog only via the scraper's Approve flow, which imports as DRAFT with the publish-blocking `needsRewrite` flag. Bulk Import enforces this: any file containing scraper-schema columns (`sourceKey`/`source_key`, `externalId`/`external_id`, `contentHash`/`content_hash`) is **rejected whole-file** with a pointer to the scraper review flow.

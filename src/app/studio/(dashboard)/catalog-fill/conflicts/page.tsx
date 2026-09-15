@@ -6,11 +6,11 @@ import { PageHeader } from "@/components/studio/page-header";
 import {
   ConflictList,
   type ConflictRow,
-} from "@/components/studio/sheet-import/conflict-list";
+} from "@/components/studio/catalog-fill/conflict-list";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 
-export const metadata: Metadata = { title: "Sheet conflicts" };
+export const metadata: Metadata = { title: "Import conflicts" };
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium",
@@ -20,9 +20,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
 /**
  * Field-level conflicts a fill flagged instead of silently dropping: an
  * owner-edited product whose studio edit landed AFTER the last fill, on a
- * field the sheet has ALSO since changed (`tier-fill.ts`'s conflict
+ * field the CSV has ALSO since changed (`tier-fill.ts`'s conflict
  * detection). Each row is one field, one product — resolved independently,
- * because "take sheet" on the price says nothing about the description.
+ * because "take imported" on the price says nothing about the description.
  */
 export default async function ImportConflictsPage() {
   const conflicts = await db.importConflict.findMany({
@@ -52,12 +52,12 @@ export default async function ImportConflictsPage() {
   return (
     <>
       <PageHeader
-        title="Sheet conflicts"
-        description="Fields where the sheet and a studio edit both changed the same product since the last fill. Nothing is overwritten until you say so, per field."
+        title="Import conflicts"
+        description="Fields where the tier CSV and a studio edit both changed the same product since the last fill. Nothing is overwritten until you say so, per field."
         actions={
           <Button asChild variant="ghost" size="sm">
-            <Link href="/studio/sheet-import">
-              <ArrowLeft /> Sheet Import
+            <Link href="/studio/catalog-fill">
+              <ArrowLeft /> Catalog fill
             </Link>
           </Button>
         }

@@ -28,7 +28,7 @@ CONFIRMED_PRODUCTS  ≡  { p : p.confirmedAt IS NOT NULL }
 ```
 
 Not everything scraped. Not everything in the studio. Not everything sitting in
-the sheet. Only rows somebody blessed.
+the tier CSVs. Only rows somebody blessed.
 
 Nothing in the codebase sets `confirmedAt` except the Confirm action. The
 mandatory test — 500 scraped, 7 confirmed → 7 — exists because that number
@@ -38,20 +38,20 @@ going wrong is the whole feature going wrong.
 
 ## Who owns a field
 
-Two writers can land on the same catalog row: the deploy-time sheet importer
+Two writers can land on the same catalog row: the deploy-time CSV importer
 and the scraper's promote path. Both may legitimately update a product.
 **Neither may quietly undo your work.**
 
-| Condition | What a writer may do |
-| --- | --- |
-| No catalog row | create it |
+| Condition                               | What a writer may do                    |
+| --------------------------------------- | --------------------------------------- |
+| No catalog row                          | create it                               |
 | **You have edited it** (`ownerTouched`) | **refresh availability. nothing else.** |
-| Already rewritten | leave it alone |
-| Untouched scraped row | refresh in full |
+| Already rewritten                       | leave it alone                          |
+| Untouched scraped row                   | refresh in full                         |
 
 Owner edits are checked **first**, ahead of every other condition.
 
-> **This was a real bug, fixed in Phase 9.** The sheet importer had always
+> **This was a real bug, fixed in Phase 9.** The CSV importer had always
 > followed this rule. The scraper's promote path guarded on `needsRewrite`
 > instead — a different question. A studio save sets `ownerTouched` but only
 > clears `needsRewrite` when you tick "confirm rewrite", and most edits are not
@@ -71,10 +71,10 @@ only one is worth telling somebody about.
 
 ### The two flags
 
-| Field | Says |
-| --- | --- |
-| `ownerTouched` | *that* a human edited this row |
-| `studioEditedAt` | *when* — which is what conflict detection needs to decide whether the sheet or the studio is newer |
+| Field            | Says                                                                                                |
+| ---------------- | --------------------------------------------------------------------------------------------------- |
+| `ownerTouched`   | _that_ a human edited this row                                                                      |
+| `studioEditedAt` | _when_ — which is what conflict detection needs to decide whether the import or the studio is newer |
 
 ---
 
@@ -111,7 +111,7 @@ correction, not an erasure.
 
 ## Deletion
 
-Deleting writes a `DeletedImport` tombstone, so the next sheet import does not
+Deleting writes a `DeletedImport` tombstone, so the next CSV import does not
 resurrect what you removed. It also clears the row from the website mirror and
 the confirmed tab — but not from the tier tabs, which record what the source
 said rather than what you stock.

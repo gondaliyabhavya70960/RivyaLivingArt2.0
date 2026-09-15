@@ -23,7 +23,8 @@
     "test:e2e": "node scripts/e2e-smoke.mjs",
     "copy:registry": "node scripts/site-copy-registry.mjs",
     "copy:check": "node scripts/site-copy-registry.mjs --check",
-    "export:sheets-history": "tsx scripts/export-sheets-history.ts"
+    "export:sheets-history": "tsx scripts/export-sheets-history.ts",
+    "products:purge": "tsx scripts/purge-products.ts"
   },
   "dependencies": {
     "@google/model-viewer": "^4.3.1",

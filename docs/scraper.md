@@ -2,7 +2,7 @@
 
 How a competitor's storefront becomes a row you can review.
 
-> Companion docs: [`google-sheets.md`](./google-sheets.md) ·
+> Companion docs:
 > [`product-lifecycle.md`](./product-lifecycle.md) ·
 > [`source-adapters.md`](./source-adapters.md) ·
 > [`troubleshooting.md`](./troubleshooting.md)
@@ -25,7 +25,7 @@ handle, so progress survives a redeploy and a crashed worker resumes at
 `cursorPage` rather than starting over.
 
 **Staged rows are immutable source data.** `ScrapedProduct` is what the site
-said. Promotion writes a *separate* catalog `Product`. Corrections never edit
+said. Promotion writes a _separate_ catalog `Product`. Corrections never edit
 the staged row, so changing a normalisation rule does not need a re-scrape.
 
 **Identity is deterministic.** `@@unique([sourceKey, externalId])` on the
@@ -50,7 +50,7 @@ not yet fingerprinted to a platform) → **scraping** (jobs queued or running
 right now) → **staged** (rows landed in `ScrapedProduct`) → **quality** (open
 extraction failures) → **review** (awaiting a decision) → **approved** →
 **imported** (promoted to a draft `Product`) → **confirmed** (blessed for the
-sheet). Every cell links to the screen its count describes.
+CSV). Every cell links to the screen its count describes.
 
 `src/lib/scraper/stages.ts` (the definitions + the pure shaping function,
 tested without a database) / `stages-server.ts` (the nine counting queries,
@@ -123,7 +123,7 @@ get there — the loop used to die with whichever component started it. A
 ### The circuit breaker
 
 Five consecutive failed jobs pauses a source. A paused source refuses new jobs
-**with the reason**, and `Resume` clears the pause *and* the counter — resuming
+**with the reason**, and `Resume` clears the pause _and_ the counter — resuming
 without the reset would leave it one failure from tripping again, which is not
 what "resume" means to the person pressing it.
 
@@ -168,7 +168,7 @@ Null is a real value. A product that stopped advertising a price has changed in
 a way worth recording, and so has one that started.
 
 Append-only. Nothing updates or deletes a point, because the value of the
-series is that it says what the price *was*.
+series is that it says what the price _was_.
 
 `src/lib/scraper/price-history.ts` · surfaced inline on the source detail page.
 
@@ -220,28 +220,29 @@ never on the path from scrape to catalogue. `src/actions/research.ts`,
 
 ## Where things live
 
-| Concern | File |
-| --- | --- |
-| Stage rail | `src/lib/scraper/stages.ts` / `stages-server.ts` |
-| Run / resume / fan out | `src/actions/scraper-jobs.ts` |
-| The runner (survives navigation) | `src/hooks/use-scrape-runner.ts` |
-| One-run-per-source + stale reclaim | `src/lib/scraper/run-scope.ts` |
-| Circuit breaker + delay | `src/lib/scraper/breaker.ts` |
-| Adapters (scope-aware) | `src/lib/scraper/adapters/` |
-| Safety | `src/lib/scraper/robots.ts`, `ssrf.ts` |
-| Dedupe / change detection | `src/lib/scraper/hash.ts`, `fingerprint.ts` |
-| Normalization | `src/lib/scraper/normalize.ts` |
-| Price history | `src/lib/scraper/price-history.ts` |
-| Validation | `src/lib/scraper/validation.ts` |
-| Category mapping | `src/lib/scraper/category-map.ts` (+ `.test.ts` against the real catalog) |
-| Review + promote + notes | `src/actions/scraper-review.ts` |
-| Research library | `src/actions/research.ts` |
-| Merge protection | `src/lib/scraper/merge-policy.ts` (also honoured by Bulk Import's products template, `src/actions/import.ts`) |
+| Concern                            | File                                                                                                          |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Stage rail                         | `src/lib/scraper/stages.ts` / `stages-server.ts`                                                              |
+| Run / resume / fan out             | `src/actions/scraper-jobs.ts`                                                                                 |
+| The runner (survives navigation)   | `src/hooks/use-scrape-runner.ts`                                                                              |
+| One-run-per-source + stale reclaim | `src/lib/scraper/run-scope.ts`                                                                                |
+| Circuit breaker + delay            | `src/lib/scraper/breaker.ts`                                                                                  |
+| Adapters (scope-aware)             | `src/lib/scraper/adapters/`                                                                                   |
+| Safety                             | `src/lib/scraper/robots.ts`, `ssrf.ts`                                                                        |
+| Dedupe / change detection          | `src/lib/scraper/hash.ts`, `fingerprint.ts`                                                                   |
+| Normalization                      | `src/lib/scraper/normalize.ts`                                                                                |
+| Price history                      | `src/lib/scraper/price-history.ts`                                                                            |
+| Validation                         | `src/lib/scraper/validation.ts`                                                                               |
+| Category mapping                   | `src/lib/scraper/category-map.ts` (+ `.test.ts` against the real catalog)                                     |
+| Review + promote + notes           | `src/actions/scraper-review.ts`                                                                               |
+| Research library                   | `src/actions/research.ts`                                                                                     |
+| Merge protection                   | `src/lib/scraper/merge-policy.ts` (also honoured by Bulk Import's products template, `src/actions/import.ts`) |
 
 ## Environment
 
-| Variable | Purpose |
-| --- | --- |
+| Variable             | Purpose                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SCRAPER_USER_AGENT` | Overrides the fetch identity. Defaults to a mainstream desktop string, because many storefronts 403 an identifying bot UA. robots.txt is honoured either way. |
 
-Sheet credentials are covered in [`google-sheets.md`](./google-sheets.md).
+Google Sheets is removed (2026-09-15); no credentials are needed. The confirmed
+list exports from `/studio/exports`. History: `docs/archive/google-sheets.md`.

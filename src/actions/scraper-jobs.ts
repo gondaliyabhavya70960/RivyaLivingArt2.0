@@ -30,9 +30,6 @@ import {
   describeFieldFailures,
   resolvedFields,
 } from "@/lib/scraper/validation";
-import { shouldPushOnComplete } from "@/lib/scraper/sheet-policy";
-import { readSheetSettings } from "@/lib/scraper/sheet-settings";
-import { pushJobToSheet } from "@/lib/scraper/sheet-push";
 import { getAdapter } from "@/lib/scraper/adapters";
 import { jsonldAdapter } from "@/lib/scraper/adapters/jsonld";
 import {
@@ -811,14 +808,6 @@ export async function continueScrapeJob(
       },
     });
 
-    // The whole of "automatic push to the sheet": one policy check at the one
-    // point a job finishes. A source set to ON_COMPLETE syncs itself; MANUAL
-    // (the default) stages and waits for the operator to say add; OFF never
-    // touches the sheet. Same engine either way — see `pushJobToSheet`.
-    //
-    // Deliberately not awaited into the job's own success: `pushJobToSheet`
-    // swallows its failures and marks the rows SYNC_PENDING, because a scrape
-    // that worked must not be reported as failed by a third party's outage.
     if (finished) {
       // Looked up by sourceKey, not job.sourceId: the FK is nullable
       // (onDelete: SetNull) and goes null the moment a source row is
@@ -827,12 +816,7 @@ export async function continueScrapeJob(
       // instead of restarting silently disconnected from it (breaker.ts).
       const source = await db.scrapeSource.findUnique({
         where: { key: job.sourceKey },
-        select: {
-          id: true,
-          sheetSyncPolicy: true,
-          name: true,
-          consecutiveFailures: true,
-        },
+        select: { id: true, name: true, consecutiveFailures: true },
       });
 
       // Breaker bookkeeping: count consecutive failures, reset on success,
@@ -863,22 +847,10 @@ export async function continueScrapeJob(
       } else {
         console.warn(describeBreakerSkip(job.sourceKey));
       }
-      // THE ONLY SHEET WRITE IN THIS FILE. A second, un-gated push used to
-      // run below on every finished job that staged anything — including a
-      // FAILED one — which made the MANUAL default, "a FAILED job never
-      // auto-pushes" and the one-writer invariant in sheet-push.ts all false
-      // in code (D23). It is gone; `sheet-policy.test.ts` asserts both the
-      // policy truth table and that this file keeps exactly one writer.
-      if (shouldPushOnComplete(status, source?.sheetSyncPolicy)) {
-        const outcome = await pushJobToSheet(job.id, await readSheetSettings());
-        await logActivity({
-          userId: session.user.id,
-          action: "sheet-sync-auto",
-          entity: "ScrapeJob",
-          entityId: job.id,
-          meta: { sourceKey: job.sourceKey, outcome: outcome.status },
-        });
-      }
+      // A finished job used to push itself to the owner's Google Sheet here,
+      // gated by the source's ON_COMPLETE/MANUAL/OFF policy. Google Sheets is
+      // removed (plan C); the confirmed list is exported from /studio/exports
+      // as CSV or XLSX instead, on demand rather than on every scrape.
     }
 
     if (finished) {

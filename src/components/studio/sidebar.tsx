@@ -79,7 +79,7 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       { label: "Categories", href: "/studio/categories", icon: FolderTree },
       { label: "Media Library", href: "/studio/media", icon: ImageIcon },
       { label: "Bulk Import", href: "/studio/import", icon: Import },
-      { label: "Sheet Import", href: "/studio/sheet-import", icon: Import },
+      { label: "Catalog fill", href: "/studio/catalog-fill", icon: Import },
       { label: "Exports", href: "/studio/exports", icon: Download },
     ],
   },

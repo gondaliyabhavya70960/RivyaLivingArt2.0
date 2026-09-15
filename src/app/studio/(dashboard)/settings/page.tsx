@@ -23,11 +23,7 @@ export default async function SettingsPage() {
         title="Site Settings"
         description="Brand, contact and storefront-wide details — every public page reads from here."
       />
-      <SettingsForm
-        settings={toSiteSettingsValues(settings)}
-        sheetId={settings?.sheetId ?? null}
-        sheetTabIds={settings?.sheetTabIds ?? {}}
-      />
+      <SettingsForm settings={toSiteSettingsValues(settings)} />
     </div>
   );
 }

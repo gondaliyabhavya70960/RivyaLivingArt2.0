@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import {
   bulkResolveImportConflicts,
   resolveImportConflict,
-} from "@/actions/sheet-fill";
+} from "@/actions/catalog-fill";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -54,7 +54,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
 
   async function handleResolve(
     id: string,
-    choice: "keep-mine" | "take-sheet" | "skip",
+    choice: "keep-mine" | "take-import" | "skip",
   ) {
     setBusyId(id);
     const res = await resolveImportConflict(id, choice);
@@ -64,8 +64,8 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
       return;
     }
     toast.success(
-      choice === "take-sheet"
-        ? "Took the sheet's value."
+      choice === "take-import"
+        ? "Took the imported value."
         : choice === "keep-mine"
           ? "Kept the studio's value."
           : "Skipped.",
@@ -93,7 +93,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
     return (
       <EmptyState
         title="No open conflicts"
-        description="A conflict appears when the sheet and a studio edit change the same field of the same product after the last fill. Nothing needs a decision right now."
+        description="A conflict appears when the tier CSV and a studio edit change the same field of the same product after the last fill. Nothing needs a decision right now."
       />
     );
   }
@@ -103,7 +103,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
       <div
         tabIndex={0}
         role="region"
-        aria-label="Sheet conflicts"
+        aria-label="Import conflicts"
         className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
       >
         <table className="w-full text-sm">
@@ -123,7 +123,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
                 Field
               </th>
               <th scope="col" className="px-4 py-3 font-medium">
-                Sheet says
+                Import says
               </th>
               <th scope="col" className="px-4 py-3 font-medium">
                 Studio has
@@ -191,9 +191,9 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
                       variant="secondary"
                       className="h-8 px-2"
                       disabled={busyId === row.id}
-                      onClick={() => handleResolve(row.id, "take-sheet")}
+                      onClick={() => handleResolve(row.id, "take-import")}
                     >
-                      Take sheet
+                      Take imported
                     </Button>
                     <Button
                       size="sm"

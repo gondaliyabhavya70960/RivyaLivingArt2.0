@@ -47,7 +47,7 @@ const DEFAULT_ROUTES = [
   "/studio/scraper/review",
   "/studio/scraper/quality",
   "/studio/scraper/mapping",
-  "/studio/sheet-import",
+  "/studio/catalog-fill",
   "/studio/import",
   "/studio/analytics",
   "/studio/subscribers",
@@ -58,7 +58,7 @@ const DEFAULT_ROUTES = [
   "/studio/testimonials/new",
   "/studio/content-lab",
   "/studio/research",
-  "/studio/sheet-import/conflicts",
+  "/studio/catalog-fill/conflicts",
   "/studio/process",
   "/studio/materials",
 ];
@@ -166,7 +166,11 @@ for (const route of routes) {
       const r = el.getBoundingClientRect();
       if (r.width > 4 || r.height > 4) return false;
       const cs = getComputedStyle(el);
-      return cs.position === "absolute" || cs.clip !== "auto" || cs.clipPath !== "none";
+      return (
+        cs.position === "absolute" ||
+        cs.clip !== "auto" ||
+        cs.clipPath !== "none"
+      );
     };
 
     const h1s = [...document.querySelectorAll("h1")].filter(visible).map(text);
@@ -215,7 +219,11 @@ for (const route of routes) {
       return text(el);
     };
 
-    const nameless = [...document.querySelectorAll("button, a[href], [role=checkbox], [role=switch]")]
+    const nameless = [
+      ...document.querySelectorAll(
+        "button, a[href], [role=checkbox], [role=switch]",
+      ),
+    ]
       .filter(visible)
       .filter((el) => !screenReaderOnly(el))
       .filter((el) => accessibleName(el).length === 0)
@@ -229,7 +237,9 @@ for (const route of routes) {
     // WCAG 2.2 §2.5.8 target size (minimum) is 24×24, and exempts a control
     // that is inline in a sentence. The Studio gets used on a phone in a
     // workshop, so this is a real check — but only over standalone controls.
-    const small = [...document.querySelectorAll("button, a[href], [role=button]")]
+    const small = [
+      ...document.querySelectorAll("button, a[href], [role=button]"),
+    ]
       .filter(visible)
       .filter((el) => !screenReaderOnly(el))
       .filter((el) => {

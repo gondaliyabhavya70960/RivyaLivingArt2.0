@@ -1,3 +1,24 @@
+> **ARCHIVED 2026-09-15 — Google Sheets is removed from this project.**
+>
+> Everything below describes a subsystem that no longer exists: the
+> service-account client, the push engine, the per-source
+> `MANUAL`/`ON_COMPLETE`/`OFF` policy, the Sheet1 linking and the four
+> `GOOGLE_*` / `*SHEET_ID` environment variables were all deleted under
+> plan C (`docs/plan/03-sheets-removal.md`).
+>
+> **What replaced it:** the owner exports the confirmed list from
+> `/studio/exports` as CSV or XLSX, on demand.
+>
+> **What was never Google Sheets** and still works exactly as before:
+> `/studio/sheet-import` and `src/lib/import/tier-fill.ts`, which read committed
+> CSVs from `data/tiers/*.csv.gz`. The conflict queue that fill writes is now
+> `ImportConflict`; it was called `SheetConflict`, which is the naming trap this
+> archive exists to stop anyone falling into.
+>
+> Kept unedited below as a record of what the integration did.
+
+---
+
 # The Google Sheet
 
 The owner's spreadsheet is a working surface, not an export target. People sort
@@ -9,12 +30,12 @@ it, filter it and type in it. Everything here follows from that.
 
 ## Tabs
 
-| Tab | Holds | Merge key | Written by |
-| --- | --- | --- | --- |
+| Tab                             | Holds                        | Merge key               | Written by                       |
+| ------------------------------- | ---------------------------- | ----------------------- | -------------------------------- |
 | `Tier1_Owner` … `Tier4_3DPrint` | Raw scrape decks, 26 columns | `sourceKey\|externalId` | `syncJobToSheet`, `Add to Sheet` |
-| `Sheet1` | Bulk-upload format | `slug` | `sendScrapedToSheet1` |
-| `Added product in website` | Every product on the site | `Product ID` | `syncWebsiteProductsToSheet` |
-| `CONFIRMED_PRODUCTS` | **The final list** | `Product ID` | the Confirm action only |
+| `Sheet1`                        | Bulk-upload format           | `slug`                  | `sendScrapedToSheet1`            |
+| `Added product in website`      | Every product on the site    | `Product ID`            | `syncWebsiteProductsToSheet`     |
+| `CONFIRMED_PRODUCTS`            | **The final list**           | `Product ID`            | the Confirm action only          |
 
 The tier tabs are large — Tier 2 alone runs to ~35,000 rows, and the four
 together to roughly 64,700. Anything that reads or diffs a whole tab must be
@@ -59,7 +80,7 @@ key, so re-pushing updates what already landed instead of duplicating it. The
 retry is free and cannot double-write.
 
 Per-row `sheetSyncStatus` exists because the job-level flag can only say a push
-*ran*, not which rows made it — which is exactly what a retry needs to know. It
+_ran_, not which rows made it — which is exactly what a retry needs to know. It
 also makes "nobody pushed this yet" look different from "this failed", and only
 one of those needs anyone to do something.
 
@@ -80,11 +101,11 @@ toast happened to be on screen when it finished.
 not build auto-fill; it put the owner in charge of one that was already
 running.
 
-| Setting | Default | Meaning |
-| --- | --- | --- |
-| `sheetFillEnabled` | `true` | Master switch |
-| `sheetFillOnDeploy` | `true` | A deploy triggers a fill — this is what lets a **fresh environment self-populate on first boot** |
-| `sheetFillMaxCreates` | `null` | Abort the run if it would create more than this many products |
+| Setting               | Default | Meaning                                                                                          |
+| --------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `sheetFillEnabled`    | `true`  | Master switch                                                                                    |
+| `sheetFillOnDeploy`   | `true`  | A deploy triggers a fill — this is what lets a **fresh environment self-populate on first boot** |
+| `sheetFillMaxCreates` | `null`  | Abort the run if it would create more than this many products                                    |
 
 Every default reproduces the old behaviour, so an environment that never opens
 the settings screen behaves exactly as it did.
@@ -96,7 +117,7 @@ restructuring the importer that runs on every production deploy, which is not a
 trade worth making for a guard that would mostly duplicate `ownerTouched`.
 
 A **preview is always allowed**, even with the switch off. It writes nothing,
-and refusing to show what *would* happen is how a switch becomes something
+and refusing to show what _would_ happen is how a switch becomes something
 nobody dares touch.
 
 Every run — deploy, manual or preview — records an `ImportRun`. Before this,
@@ -139,14 +160,14 @@ website`** and **`CONFIRMED_PRODUCTS`** — a product that no longer exists
 cannot be on the confirmed list.
 
 **The tier tabs are deliberately untouched.** Those are the raw scrape decks: a
-record of what a supplier's site said. Deleting a product from *this* website
+record of what a supplier's site said. Deleting a product from _this_ website
 does not un-happen the scrape, and erasing it there would break the
 immutable-raw rule the pipeline rests on. The `DeletedImport` tombstone written
 on delete is what stops the next import resurrecting the product.
 
 ### Removing a whole source is the exception
 
-Purging a source — `/studio/scraper/sources` → *Remove all ‹tier›* — **does**
+Purging a source — `/studio/scraper/sources` → _Remove all ‹tier›_ — **does**
 clear its rows from the tier tab, which is the deliberate opposite of the rule
 above. There, one product left your catalogue and the scrape still happened.
 Here the supplier itself is going, and its deck should go with it.
@@ -155,7 +176,7 @@ A purge takes the source, its jobs, its staged products, its price history and
 its validation failures. **Live catalog products are kept** unless the dialog's
 opt-in is ticked: "stop scraping this supplier" and "take these products off my
 website" are different requests, and only one of them is what pressing that
-button usually means. When they *are* deleted, a `DeletedImport` tombstone goes
+button usually means. When they _are_ deleted, a `DeletedImport` tombstone goes
 with each so the next deploy-time import does not resurrect them.
 
 The confirmation names every number, because "this will remove 38 sources"
@@ -182,11 +203,11 @@ that deletes nothing.
 
 Server-side only. Never in the client, never committed.
 
-| Variable | Purpose |
-| --- | --- |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | Service-account key, raw JSON |
+| Variable                         | Purpose                                               |
+| -------------------------------- | ----------------------------------------------------- |
+| `GOOGLE_SERVICE_ACCOUNT_JSON`    | Service-account key, raw JSON                         |
 | `GOOGLE_SERVICE_ACCOUNT_KEY_B64` | The same, base64 — for platforms that mangle newlines |
-| `SCRAPE_SHEET_ID` / `SHEET_ID` | The spreadsheet id — fallback only, see below |
+| `SCRAPE_SHEET_ID` / `SHEET_ID`   | The spreadsheet id — fallback only, see below         |
 
 **`SiteSettings.sheetId`** (Settings → Sheets) takes priority over both
 environment variables when set — `readSheetId(settings)` checks it first, so
@@ -212,15 +233,15 @@ regardless.
 
 ## Files
 
-| Concern | File |
-| --- | --- |
-| Sheets client (auth, upsert, delete) | `src/lib/scraper/sheets.ts` |
-| The one push writer | `src/lib/scraper/sheet-push.ts` |
-| Push policy decision | `src/lib/scraper/sheet-policy.ts` |
-| Website mirror + delete | `src/lib/scraper/product-sheet-sync.ts`, `website-sheet.ts` |
-| Confirmed tab | `src/lib/scraper/confirm.ts` |
-| Fill policy | `src/lib/import/fill-policy.ts` |
-| The fill itself (preview + real, one implementation) | `src/lib/import/tier-fill.ts` |
-| Studio Preview / Run now / conflict resolution | `src/actions/sheet-fill.ts` |
-| Actions | `src/actions/scraper-sheets.ts` |
-| Owner sheet id + tab ids | Settings → Sheets (`src/actions/settings.ts`'s `setSheetIds`) |
+| Concern                                              | File                                                          |
+| ---------------------------------------------------- | ------------------------------------------------------------- |
+| Sheets client (auth, upsert, delete)                 | `src/lib/scraper/sheets.ts`                                   |
+| The one push writer                                  | `src/lib/scraper/sheet-push.ts`                               |
+| Push policy decision                                 | `src/lib/scraper/sheet-policy.ts`                             |
+| Website mirror + delete                              | `src/lib/scraper/product-sheet-sync.ts`, `website-sheet.ts`   |
+| Confirmed tab                                        | `src/lib/scraper/confirm.ts`                                  |
+| Fill policy                                          | `src/lib/import/fill-policy.ts`                               |
+| The fill itself (preview + real, one implementation) | `src/lib/import/tier-fill.ts`                                 |
+| Studio Preview / Run now / conflict resolution       | `src/actions/sheet-fill.ts`                                   |
+| Actions                                              | `src/actions/scraper-sheets.ts`                               |
+| Owner sheet id + tab ids                             | Settings → Sheets (`src/actions/settings.ts`'s `setSheetIds`) |

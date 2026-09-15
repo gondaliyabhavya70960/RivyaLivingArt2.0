@@ -4,21 +4,12 @@ import { useCallback, useMemo, useState } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
 import { useRouter } from "next/navigation";
-import {
-  Download,
-  ExternalLink,
-  Loader2,
-  Play,
-  RefreshCw,
-  Sheet,
-} from "lucide-react";
+import { Download, ExternalLink, Loader2, Play, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import { createScrapeJob } from "@/actions/scraper-jobs";
-import { sendScrapedToSheet1 } from "@/actions/scraper-review";
 import {
   resumeScrapeSource,
-  setSheetSyncPolicy,
   verifyScrapeSource,
 } from "@/actions/scraper-sources";
 import { BulkBar } from "@/components/studio/bulk-bar";
@@ -50,12 +41,10 @@ import type {
   ScrapePlatform,
   ScrapeScope,
   ScrapeTier,
-  SheetSyncPolicy,
 } from "@/generated/prisma/enums";
 import { useSelection } from "@/hooks/use-selection";
 import { useScrapeRunner } from "@/hooks/use-scrape-runner";
 import { HEALTH_META, type SourceHealth } from "@/lib/scraper/health";
-import { SHEET_POLICY_LABEL } from "@/lib/scraper/sheet-policy";
 import { cn } from "@/lib/utils";
 
 export type SourceInfo = {
@@ -72,13 +61,9 @@ export type SourceInfo = {
   health: SourceHealth;
   notes: string | null;
   verifiedAt: string | null;
-  /** When completed scrapes of this source reach the Google Sheet. */
-  sheetSyncPolicy: SheetSyncPolicy;
   /** Circuit breaker: set when repeated failures paused this source. */
   pausedReason: string | null;
   consecutiveFailures: number;
-  lastSheetSyncAt: string | null;
-  lastSheetSyncError: string | null;
 };
 
 export type JobHistoryRow = {
@@ -194,7 +179,6 @@ export function SourceDetail({
   const [verifying, setVerifying] = useState(false);
   const [starting, setStarting] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
-  const [sendingSheet, setSendingSheet] = useState(false);
   // Per-row catalog category overrides (row id → category id). Defaults fall
   // back to each row's auto-mapped category until the operator changes it.
   const [catOverrides, setCatOverrides] = useState<Record<string, string>>({});
@@ -218,9 +202,6 @@ export function SourceDetail({
     progress?.status !== "DONE" &&
     progress?.status !== "FAILED";
 
-  const [policy, setPolicy] = useState<SheetSyncPolicy>(source.sheetSyncPolicy);
-  const [policyBusy, setPolicyBusy] = useState(false);
-
   const [resuming, setResuming] = useState(false);
 
   async function handleResume() {
@@ -233,26 +214,6 @@ export function SourceDetail({
     }
     toast.success(`${source.name} resumed.`);
     router.refresh();
-  }
-
-  async function handlePolicy(next: SheetSyncPolicy) {
-    const previous = policy;
-    setPolicy(next); // optimistic — a select that lags feels broken
-    setPolicyBusy(true);
-    const res = await setSheetSyncPolicy(source.id, next);
-    setPolicyBusy(false);
-    if (!res.ok) {
-      setPolicy(previous);
-      toast.error(res.error);
-      return;
-    }
-    toast.success(
-      next === "ON_COMPLETE"
-        ? `${source.name} will push to the sheet when a scrape finishes.`
-        : next === "MANUAL"
-          ? `${source.name} will stage rows and wait for you to add them.`
-          : `${source.name} will not touch the sheet.`,
-    );
   }
 
   async function handleRun() {
@@ -377,36 +338,6 @@ export function SourceDetail({
       };
     });
   }, [selection.ids, products, categoryFor]);
-
-  // Link the selected products into the Google Sheet's Sheet1 tab (bulk-upload
-  // format) without importing them into the catalog. Env-gated on the server.
-  async function handleSendToSheet() {
-    const items = selectedItems
-      .filter((it) => it.categoryId)
-      .map((it) => ({ id: it.id, categoryId: it.categoryId as string }));
-    if (items.length === 0) {
-      toast.error("Give the selected products a catalog category first.");
-      return;
-    }
-    setSendingSheet(true);
-    const res = await sendScrapedToSheet1({ items, mirrorImages: false });
-    setSendingSheet(false);
-    if (!res.ok) {
-      toast.error(res.error);
-      return;
-    }
-    const report = res.data;
-    if (!report) return;
-    if (!report.configured) {
-      toast.info(
-        "Google Sheet sync isn't configured — set the service account + sheet id in the deployment env to enable Sheet1 linking.",
-      );
-      return;
-    }
-    const parts = [`${report.synced} linked to Sheet1`];
-    if (report.skipped > 0) parts.push(`${report.skipped} skipped`);
-    toast.success(`${parts.join(" · ")}.`);
-  }
 
   // ————— Jobs table: sort —————
   const getJobValue = useCallback((row: JobHistoryRow, key: string) => {
@@ -563,34 +494,6 @@ export function SourceDetail({
                 </>
               )}
             </Button>
-            {/* The owner's "push automatically, but when I say so", as a
-                setting rather than a second button: one engine, three
-                triggers. MANUAL is the default and is what the code did
-                before this existed. */}
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Sheet</span>
-              <Select
-                value={policy}
-                disabled={policyBusy}
-                onValueChange={(v) => void handlePolicy(v as SheetSyncPolicy)}
-              >
-                <SelectTrigger
-                  className="h-9 w-[190px]"
-                  aria-label={`When to push ${source.name} to the Google Sheet`}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(SHEET_POLICY_LABEL) as SheetSyncPolicy[]).map(
-                    (value) => (
-                      <SelectItem key={value} value={value}>
-                        {SHEET_POLICY_LABEL[value]}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
             <Button
               variant="outline"
               size="sm"
@@ -927,22 +830,6 @@ export function SourceDetail({
       </section>
 
       <BulkBar count={selection.count} onClear={selection.clear}>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={handleSendToSheet}
-          disabled={sendingSheet}
-        >
-          {sendingSheet ? (
-            <>
-              <Loader2 className="animate-spin" aria-hidden /> Sending…
-            </>
-          ) : (
-            <>
-              <Sheet aria-hidden /> Send to Sheet1
-            </>
-          )}
-        </Button>
         <Button size="sm" onClick={() => setImportOpen(true)}>
           Add to catalog
         </Button>

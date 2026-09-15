@@ -70,7 +70,7 @@ async function main() {
     }
     if (result.conflictsWritten > 0) {
       console.log(
-        `import-tiers: ${result.conflictsWritten} sheet/studio conflict(s) recorded — review at /studio/sheet-import/conflicts.`,
+        `import-tiers: ${result.conflictsWritten} sheet/studio conflict(s) recorded — review at /studio/catalog-fill/conflicts.`,
       );
     }
   } finally {

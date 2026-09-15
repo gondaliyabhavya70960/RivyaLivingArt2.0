@@ -181,7 +181,7 @@ export default async function ScraperPage() {
           <p>
             The live catalog is fed by the{" "}
             <Link
-              href="/studio/sheet-import"
+              href="/studio/catalog-fill"
               className="font-medium text-sapphire-ink hover:underline"
             >
               Sheet Import

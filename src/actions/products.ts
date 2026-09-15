@@ -24,7 +24,6 @@ import {
   describeConfirmBlockers,
   describeConfirmRefusal,
 } from "@/lib/scraper/confirm";
-import { removeProductsFromSheet } from "@/lib/scraper/product-sheet-sync";
 import {
   buildProductWhere,
   productListFilterSchema,
@@ -616,29 +615,11 @@ export async function deleteProducts(
       imagesCleaned = orphaned.length;
     }
 
-    // Remove the deleted rows from the sheet's product tabs. The ids are
-    // passed in because the products are already gone and cannot be read back.
-    //
-    // The tier tabs are deliberately NOT touched: those are the raw scrape
-    // decks, a record of what a supplier's site said. Deleting a product from
-    // this website does not un-happen the scrape, and erasing it there would
-    // break the immutable-raw rule the pipeline rests on. The DeletedImport
-    // tombstone written above already stops the next import resurrecting it.
-    const sheetRemoval = await removeProductsFromSheet(targetIds);
-
     await logActivity({
       userId: session.user.id,
       action: "bulk-delete",
       entity: "Product",
-      meta: {
-        count: deleted,
-        imagesCleaned,
-        ...(sheetRemoval
-          ? {
-              sheetRowsRemoved: sheetRemoval.website + sheetRemoval.confirmed,
-            }
-          : {}),
-      },
+      meta: { count: deleted, imagesCleaned },
     });
 
     revalidatePath("/studio/products");

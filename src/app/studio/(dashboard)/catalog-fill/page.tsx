@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   CircleAlert,
   CircleCheck,
-  ExternalLink,
   Globe,
   ImageOff,
   Layers,
@@ -19,15 +18,11 @@ import { mirrorNextCatalogBatch } from "@/actions/catalog-mirror";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
-import { FillPreview } from "@/components/studio/sheet-import/fill-preview";
-import { SheetFillPolicy } from "@/components/studio/sheet-fill-policy";
+import { FillPreview } from "@/components/studio/catalog-fill/fill-preview";
+import { CatalogFillPolicy } from "@/components/studio/catalog-fill-policy";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 
-export const metadata: Metadata = { title: "Sheet Import" };
-
-/** The owner's source spreadsheet (four tier tabs, fetched by Actions). */
-const SHEET_URL =
-  "https://docs.google.com/spreadsheets/d/1f4_cl3-8JrYIFTPNhSsuMEl8GAET1n61L9ZZKL8npa8/edit";
+export const metadata: Metadata = { title: "Catalog fill" };
 
 const TIER_META: Record<
   number,
@@ -59,7 +54,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   timeStyle: "short",
 });
 
-export default async function SheetImportPage() {
+export default async function CatalogFillPage() {
   const [settings, importRuns] = await Promise.all([
     db.siteSettings.findUnique({
       where: { id: "main" },
@@ -75,10 +70,9 @@ export default async function SheetImportPage() {
     }),
   ]);
 
-  const [syncRuns, openConflicts] = await Promise.all([
-    db.sheetSyncRun.findMany({ orderBy: { startedAt: "desc" }, take: 20 }),
-    db.importConflict.count({ where: { status: "OPEN" } }),
-  ]);
+  const openConflicts = await db.importConflict.count({
+    where: { status: "OPEN" },
+  });
 
   const [
     byTierStatus,
@@ -184,7 +178,11 @@ export default async function SheetImportPage() {
   );
 
   const kpis = [
-    { label: "Published from sheet", value: totalPublished, icon: CircleCheck },
+    {
+      label: "Published from import",
+      value: totalPublished,
+      icon: CircleCheck,
+    },
     { label: "Held as drafts", value: totalDrafts, icon: Layers },
     {
       label: "Published without images",
@@ -197,12 +195,12 @@ export default async function SheetImportPage() {
   return (
     <div>
       <PageHeader
-        title="Sheet Import"
-        description="The four-tier product import from the owner spreadsheet — live catalog state, the last run, and how the pipeline moves data."
+        title="Catalog fill"
+        description="The four-tier product import from the committed tier CSVs — live catalog state, the last run, and how the pipeline moves data."
         actions={
           <>
             <Button asChild variant="outline">
-              <Link href="/studio/sheet-import/conflicts">
+              <Link href="/studio/catalog-fill/conflicts">
                 Conflicts
                 {openConflicts > 0 && (
                   <Badge variant="warning" className="ms-1.5">
@@ -210,11 +208,6 @@ export default async function SheetImportPage() {
                   </Badge>
                 )}
               </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <a href={SHEET_URL} target="_blank" rel="noopener noreferrer">
-                Open source sheet <ExternalLink />
-              </a>
             </Button>
           </>
         }
@@ -225,7 +218,7 @@ export default async function SheetImportPage() {
       </div>
 
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
-        <SheetFillPolicy
+        <CatalogFillPolicy
           enabled={settings?.catalogFillEnabled ?? true}
           onDeploy={settings?.catalogFillOnDeploy ?? true}
           maxCreates={settings?.catalogFillMaxCreates ?? null}
@@ -270,74 +263,6 @@ export default async function SheetImportPage() {
         </section>
       </div>
 
-      {/* Push history — every write TO the sheet (job/tier/confirmed/website
-          tabs), as opposed to "Recent fills" above, which is the catalog
-          reading FROM it. B0's SheetSyncRun; last 20. */}
-      <section className="mb-6 rounded-card border border-border bg-card p-5 shadow-e1">
-        <h2 className="font-medium text-foreground">Sheet push history</h2>
-        {syncRuns.length === 0 ? (
-          <p className="mt-1 text-sm text-muted-foreground">
-            No push has been recorded yet — syncing a job, a tier or the
-            confirmed list to the sheet will add one.
-          </p>
-        ) : (
-          <div
-            tabIndex={0}
-            role="region"
-            aria-label="Sheet push history"
-            className="mt-3 overflow-x-auto [contain:paint]"
-          >
-            <table className="w-full text-sm">
-              <thead>
-                <StudioTableHead>
-                  <th className="py-2 pe-4 font-medium">When</th>
-                  <th className="py-2 pe-4 font-medium">Tab</th>
-                  <th className="py-2 pe-4 text-right font-medium">Rows</th>
-                  <th className="py-2 pe-4 font-medium">Status</th>
-                  <th className="py-2 font-medium">Error</th>
-                </StudioTableHead>
-              </thead>
-              <tbody>
-                {syncRuns.map((run) => (
-                  <tr
-                    key={run.id}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="py-2 pe-4 whitespace-nowrap text-muted-foreground">
-                      {dateFormatter.format(run.startedAt)}
-                    </td>
-                    <td className="py-2 pe-4 font-mono text-xs">{run.tab}</td>
-                    <td className="py-2 pe-4 text-right tabular-nums">
-                      {run.rows}
-                    </td>
-                    <td className="py-2 pe-4">
-                      <Badge
-                        variant={
-                          run.status === "SYNCED" ? "success" : "outline"
-                        }
-                        className={
-                          run.status === "FAILED"
-                            ? "border-destructive/40 text-destructive"
-                            : undefined
-                        }
-                      >
-                        {run.status.toLowerCase()}
-                      </Badge>
-                    </td>
-                    <td
-                      className="py-2 max-w-[24ch] truncate text-xs text-muted-foreground"
-                      title={run.error ?? undefined}
-                    >
-                      {run.error ?? "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ label, value, icon: Icon }) => (
           <div
@@ -364,7 +289,7 @@ export default async function SheetImportPage() {
       <div
         tabIndex={0}
         role="region"
-        aria-label="Sheet rows"
+        aria-label="Imported rows"
         className="mt-6 overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
       >
         <table className="w-full text-sm">
@@ -477,20 +402,24 @@ export default async function SheetImportPage() {
           </div>
           <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>
-              A GitHub Actions workflow re-fetches the four tier tabs from the
-              source sheet every two hours and commits them when anything
-              changed.
+              The four tier CSVs are committed to the repository at{" "}
+              <code className="font-mono text-xs">data/tiers/</code>. Refreshing
+              them is a manual run of the{" "}
+              <code className="font-mono text-xs">
+                Fetch product tier sheets
+              </code>{" "}
+              workflow — it is not on a schedule.
             </li>
             <li>
-              The next deploy imports the tabs: Tier 1 in full, Tiers 2–4 as the
-              sheet-ordered top 1,000 / 2,500 / 500. Unchanged rows are skipped;
+              The next deploy imports them: Tier 1 in full, Tiers 2–4 as the
+              file-ordered top 1,000 / 2,500 / 500. Unchanged rows are skipped;
               rows that fall out of the selection move to draft — nothing is
               deleted.
             </li>
             <li>
               Imported fields (title, description, prices, images, category,
-              availability) refresh from the sheet whenever a row changes; edit
-              the sheet, not the product, for those fields.
+              availability) refresh from the CSV whenever a row changes; change
+              the CSV, not the product, for those fields.
             </li>
           </ol>
         </div>

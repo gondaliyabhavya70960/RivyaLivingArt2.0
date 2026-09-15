@@ -54,10 +54,6 @@ const schema = z.object({
   RESEND_EMAIL_DOMAIN: z.string().optional(),
   RESEND_FROM: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
-  GOOGLE_SERVICE_ACCOUNT_JSON: z.string().optional(),
-  GOOGLE_SERVICE_ACCOUNT_KEY_B64: z.string().optional(),
-  SCRAPE_SHEET_ID: z.string().optional(),
-  SHEET_ID: z.string().optional(),
   SCRAPER_USER_AGENT: z.string().optional(),
 });
 

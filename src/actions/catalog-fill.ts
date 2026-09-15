@@ -9,7 +9,7 @@ import {
   runAction,
   type ActionResult,
 } from "@/actions/helpers";
-import { SHEET_CONFLICT_STATUS } from "@/lib/sheet-status";
+import { IMPORT_CONFLICT_STATUS } from "@/lib/import-status";
 import { logActivity, snapshotBefore } from "@/lib/activity";
 import { db } from "@/lib/db";
 import {
@@ -19,8 +19,8 @@ import {
 } from "@/lib/import/fill-policy";
 import { runTierFill, type TierFillResult } from "@/lib/import/tier-fill";
 
-const SHEET_IMPORT_PATH = "/studio/sheet-import";
-const CONFLICTS_PATH = "/studio/sheet-import/conflicts";
+const CATALOG_FILL_PATH = "/studio/catalog-fill";
+const CONFLICTS_PATH = "/studio/catalog-fill/conflicts";
 
 /**
  * The owner's current fill policy — the same settings row
@@ -52,7 +52,7 @@ async function loadPolicy(): Promise<FillPolicy> {
  * to even show what a fill WOULD do is how a switch becomes a thing nobody
  * dares touch (`decideFillRun`'s own contract for the PREVIEW trigger).
  */
-export async function previewSheetFill(): Promise<
+export async function previewCatalogFill(): Promise<
   ActionResult<TierFillResult>
 > {
   return runAction(async () => {
@@ -68,7 +68,9 @@ export async function previewSheetFill(): Promise<
  * bypasses "fill on deploy" the same way pressing this button implies: the
  * operator is asking for it right now, not waiting on the next release.
  */
-export async function runSheetFillNow(): Promise<ActionResult<TierFillResult>> {
+export async function runCatalogFillNow(): Promise<
+  ActionResult<TierFillResult>
+> {
   return runAction(async () => {
     const session = await requireStaff();
     const policy = await loadPolicy();
@@ -80,7 +82,7 @@ export async function runSheetFillNow(): Promise<ActionResult<TierFillResult>> {
 
     await logActivity({
       userId: session.user.id,
-      action: "sheet-fill-manual",
+      action: "catalog-fill-manual",
       entity: "Product",
       meta: {
         totals: result.totals,
@@ -88,7 +90,7 @@ export async function runSheetFillNow(): Promise<ActionResult<TierFillResult>> {
         dropped: result.dropped.length,
       },
     });
-    revalidatePath(SHEET_IMPORT_PATH);
+    revalidatePath(CATALOG_FILL_PATH);
     revalidatePath("/studio/products");
     revalidatePublic("product");
     return result;
@@ -97,7 +99,7 @@ export async function runSheetFillNow(): Promise<ActionResult<TierFillResult>> {
 
 // ————————————————————— Conflicts —————————————————————
 
-const CONFLICT_CHOICES = ["keep-mine", "take-sheet", "skip"] as const;
+const CONFLICT_CHOICES = ["keep-mine", "take-import", "skip"] as const;
 type ConflictChoice = (typeof CONFLICT_CHOICES)[number];
 
 const resolveSchema = z.object({
@@ -119,15 +121,15 @@ function coerceConflictValue(field: string, raw: string | null): unknown {
 }
 
 /**
- * Resolve one field-level sheet/studio conflict.
+ * Resolve one field-level import/studio conflict.
  *
- *   keep mine   — the database keeps what it has; nothing is written.
- *   take sheet  — the sheet's value overwrites that ONE field, and
- *                 studioEditedAt is bumped so the next fill sees this as a
- *                 fresh studio decision, not a stale one it already knows.
- *   skip        — same as keep mine (nothing written), recorded separately
- *                 so the activity log shows a deliberate "not now" rather
- *                 than an explicit "keep my version".
+ *   keep mine    — the database keeps what it has; nothing is written.
+ *   take import  — the tier CSV's value overwrites that ONE field, and
+ *                  studioEditedAt is bumped so the next fill sees this as a
+ *                  fresh studio decision, not a stale one it already knows.
+ *   skip         — same as keep mine (nothing written), recorded separately
+ *                  so the activity log shows a deliberate "not now" rather
+ *                  than an explicit "keep my version".
  *
  * Every choice logs activity with a before-snapshot of the touched field,
  * and only an OPEN conflict may be resolved — the row is the record of a
@@ -145,7 +147,7 @@ export async function resolveImportConflict(
       where: { id: parsed.id },
     });
     if (!conflict) throw new Error("That conflict no longer exists.");
-    if (conflict.status !== SHEET_CONFLICT_STATUS.OPEN) {
+    if (conflict.status !== IMPORT_CONFLICT_STATUS.OPEN) {
       throw new Error("This conflict was already resolved.");
     }
 
@@ -157,7 +159,7 @@ export async function resolveImportConflict(
     const field = conflict.field as keyof typeof product;
     const before = snapshotBefore(product, [field]);
 
-    if (parsed.choice === "take-sheet") {
+    if (parsed.choice === "take-import") {
       const value = coerceConflictValue(conflict.field, conflict.importedValue);
       await db.product.update({
         where: { id: conflict.productId },
@@ -167,7 +169,12 @@ export async function resolveImportConflict(
 
     await logActivity({
       userId: session.user.id,
-      action: `sheet-conflict-${parsed.choice}`,
+      /* Rows written before 2026-09-15 read `sheet-conflict-take-sheet`
+         and the like. Nothing QUERIES this action, so it moved with the
+         rename; `"sheet-import"` in tier-fill.ts is read back by the
+         catalog-fill screen and is frozen for that reason. Either way the old
+         spellings are in the log — expect both when reading history. */
+      action: `import-conflict-${parsed.choice}`,
       entity: "Product",
       entityId: conflict.productId,
       meta: { field: conflict.field, before },
@@ -176,14 +183,14 @@ export async function resolveImportConflict(
     await db.importConflict.update({
       where: { id: parsed.id },
       data: {
-        status: SHEET_CONFLICT_STATUS.RESOLVED,
+        status: IMPORT_CONFLICT_STATUS.RESOLVED,
         resolvedAt: new Date(),
         resolvedById: session.user.id,
       },
     });
 
     revalidatePath(CONFLICTS_PATH);
-    if (parsed.choice === "take-sheet") revalidatePublic("product");
+    if (parsed.choice === "take-import") revalidatePublic("product");
     return undefined;
   });
 }
@@ -196,7 +203,7 @@ const bulkResolveSchema = z.object({
 /**
  * Bulk-resolve OPEN conflicts as "keep mine" or "skip" — the two choices
  * that write nothing to the product, so applying them to many rows at once
- * carries none of "take sheet"'s per-row risk. "Take sheet" stays a
+ * carries none of "take import"'s per-row risk. "Take import" stays a
  * one-at-a-time decision, made with the field's two values in view.
  */
 export async function bulkResolveImportConflicts(
@@ -208,9 +215,9 @@ export async function bulkResolveImportConflicts(
     const parsed = bulkResolveSchema.parse({ ids, choice });
 
     const res = await db.importConflict.updateMany({
-      where: { id: { in: parsed.ids }, status: SHEET_CONFLICT_STATUS.OPEN },
+      where: { id: { in: parsed.ids }, status: IMPORT_CONFLICT_STATUS.OPEN },
       data: {
-        status: SHEET_CONFLICT_STATUS.RESOLVED,
+        status: IMPORT_CONFLICT_STATUS.RESOLVED,
         resolvedAt: new Date(),
         resolvedById: session.user.id,
       },
@@ -218,7 +225,12 @@ export async function bulkResolveImportConflicts(
 
     await logActivity({
       userId: session.user.id,
-      action: `sheet-conflict-${parsed.choice}`,
+      /* Rows written before 2026-09-15 read `sheet-conflict-take-sheet`
+         and the like. Nothing QUERIES this action, so it moved with the
+         rename; `"sheet-import"` in tier-fill.ts is read back by the
+         catalog-fill screen and is frozen for that reason. Either way the old
+         spellings are in the log — expect both when reading history. */
+      action: `import-conflict-${parsed.choice}`,
       entity: "Product",
       meta: { count: res.count, bulk: true },
     });

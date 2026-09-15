@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * Rows a fill (preview or real) did not import, grouped by why. A tab-level
  * reason (missing fields on N rows) has no per-row identity — the count is
  * the whole story. A row-level reason (gift card, tombstoned, duplicate,
- * over cap) names the row, so the operator can look it up in the sheet.
+ * over cap) names the row, so the operator can look it up in the CSV.
  */
 export function DroppedRows({ dropped }: { dropped: TierFillDroppedRow[] }) {
   const [open, setOpen] = useState(false);

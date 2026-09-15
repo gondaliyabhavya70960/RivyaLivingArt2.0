@@ -34,12 +34,12 @@ studio down.
 
 ## "Sheet sync not configured"
 
-**Cause.** No `GOOGLE_SERVICE_ACCOUNT_JSON` (or `_KEY_B64`) and
-`SCRAPE_SHEET_ID` in this environment.
+**Gone.** Google Sheets was removed on 2026-09-15 (plan C). There is no sync to
+configure and no Google credential to set. If you still see this string, you are
+looking at a deployment built before that date.
 
-**Do.** Set them, server-side. Nothing else is broken: sync is optional by
-design, scraping and the studio work without it, and the CSV export covers the
-workflow.
+**Do.** Export the confirmed list from `/studio/exports` as CSV or XLSX. The
+history of the old integration is in `docs/archive/google-sheets.md`.
 
 ---
 
@@ -92,11 +92,11 @@ worth reporting with the product id.
 
 ## A deleted product is back
 
-**Cause.** Almost always a re-import of a sheet row.
+**Cause.** Almost always a re-import of a tier CSV row.
 
 **Do.** Check `DeletedImport` for the `(importSource, importRef)` pair. The
-tombstone should stop it. If the row returned under a *different* key — a
-re-keyed sheet, a changed external id — the tombstone cannot match it, and the
+tombstone should stop it. If the row returned under a _different_ key — a
+re-keyed CSV, a changed external id — the tombstone cannot match it, and the
 duplicate is a new product as far as the system can tell.
 
 ---
@@ -104,33 +104,35 @@ duplicate is a new product as far as the system can tell.
 ## The auto-fill refused to run
 
 **"Would create N products, over the limit of M."** The blast-radius cap fired
-and **nothing was written**. Usually a sheet that was sorted, re-keyed, or had
-its id column changed — the importer sees the rows as new.
+and **nothing was written**. Usually a tier CSV that was sorted, re-keyed, or
+had its id column changed — the importer sees the rows as new.
 
-**Do.** Check the sheet before raising the cap. Raising it is right when the
-run genuinely is that large; it is wrong when the sheet has shifted under you.
+**Do.** Check the CSV before raising the cap. Raising it is right when the run
+genuinely is that large; it is wrong when the file has shifted under you.
 
 ---
 
-## A scrape "succeeded" but the sheet has nothing
+## A scrape "succeeded" but nothing left the studio
 
-**Cause.** The source's sync policy is `MANUAL` (the default) — rows are staged
-and waiting for you to press **Sync to Sheet** on the job.
+**There is nowhere for it to go, and that is the design.** A scrape stages rows
+in `ScrapedProduct`; they reach the catalogue only when you promote them, and
+they reach a file only when you export. Google Sheets used to be a third
+destination and was removed on 2026-09-15 (plan C) — nothing pushes anywhere on
+its own any more.
 
-Or: the push failed and the rows are `SYNC_PENDING`. Those look different in
-the studio on purpose. Use **Retry sync**, which re-pushes whole jobs and
-cannot double-write.
+**Do.** Review the job in `/studio/scraper`, promote what you want, and export
+the confirmed list from `/studio/exports`.
 
 ---
 
 ## A fresh environment came up with an empty catalogue
 
-**Cause.** `sheetFillEnabled` or `sheetFillOnDeploy` is off, or
+**Cause.** `catalogFillEnabled` or `catalogFillOnDeploy` is off, or
 `data/tiers/*.csv.gz` are missing so the importer had nothing to read.
 
 **Do.** Both settings default to **on** precisely so a new environment
 self-populates. If they were turned off deliberately, the fill can be run from
-`/studio/sheet-import`.
+`/studio/catalog-fill`.
 
 ---
 

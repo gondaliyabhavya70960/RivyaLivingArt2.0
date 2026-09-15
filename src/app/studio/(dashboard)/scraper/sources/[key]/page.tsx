@@ -101,11 +101,6 @@ export default async function SourceDetailPage({
     verifiedAt: source.verifiedAt
       ? dateFormatter.format(source.verifiedAt)
       : null,
-    sheetSyncPolicy: source.sheetSyncPolicy,
-    lastSheetSyncAt: source.lastSheetSyncAt
-      ? dateFormatter.format(source.lastSheetSyncAt)
-      : null,
-    lastSheetSyncError: source.lastSheetSyncError,
     pausedReason: source.pausedReason,
     consecutiveFailures: source.consecutiveFailures,
   };
@@ -121,7 +116,9 @@ export default async function SourceDetailPage({
     error: job.error,
     createdAt: dateTimeFormatter.format(job.createdAt),
     createdAtTs: job.createdAt.getTime(),
-    finishedAt: job.finishedAt ? dateTimeFormatter.format(job.finishedAt) : null,
+    finishedAt: job.finishedAt
+      ? dateTimeFormatter.format(job.finishedAt)
+      : null,
   }));
 
   // Latest two price points per staged row — enough to say what moved, in one
