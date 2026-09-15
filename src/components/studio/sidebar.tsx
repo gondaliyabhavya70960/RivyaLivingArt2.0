@@ -58,28 +58,52 @@ type NavItem = {
  */
 export const SECTIONS: { heading: string; items: NavItem[] }[] = [
   {
-    heading: "overview",
+    // What you open the Studio to look at. Analytics sits here rather than
+    // under research for the same reason Overview does: it answers "how is the
+    // business doing", not "what should we source next".
+    heading: "today",
     items: [
       { label: "Overview", href: "/studio", icon: LayoutDashboard },
-      {
-        label: "Content Gaps",
-        href: "/studio/content-gaps",
-        icon: ListChecks,
-      },
+      { label: "Commissions", href: "/studio/inquiries", icon: Inbox },
+      { label: "Analytics", href: "/studio/analytics", icon: BarChart3 },
+      { label: "Activity", href: "/studio/activity", icon: Activity },
     ],
   },
   {
-    heading: "catalog",
+    // Products and the three ways they get here. Import lives WITH the
+    // catalogue because importing is how the catalogue is filled — it was
+    // filed under "growth", which is a strategy word for a data-entry job.
+    heading: "catalogue",
     items: [
       { label: "Products", href: "/studio/products", icon: Package },
       { label: "Categories", href: "/studio/categories", icon: FolderTree },
       { label: "Media Library", href: "/studio/media", icon: ImageIcon },
-      { label: "Site Images", href: "/studio/site-images", icon: Images },
+      { label: "Bulk Import", href: "/studio/import", icon: Import },
+      { label: "Sheet Import", href: "/studio/sheet-import", icon: Import },
+      { label: "Exports", href: "/studio/exports", icon: Download },
+    ],
+  },
+  {
+    // The site's own words, pictures and arrangement — every surface in the
+    // "registry → overrides → total resolver" family. Process Steps and
+    // Materials are Page Sections pre-filtered (`SUBLIST_PAGES`), so they
+    // belong beside it rather than in a group of their own.
+    heading: "site content",
+    items: [
       { label: "Site Copy", href: "/studio/site-copy", icon: Type },
+      { label: "Site Images", href: "/studio/site-images", icon: Images },
       {
         label: "Page Sections",
         href: "/studio/sections",
         icon: LayoutTemplate,
+      },
+      { label: "Process Steps", href: "/studio/process", icon: Hammer },
+      { label: "Materials", href: "/studio/materials", icon: Palette },
+      {
+        label: "Navigation",
+        href: "/studio/navigation",
+        icon: Menu,
+        adminOnly: true,
       },
       {
         label: "Commission Form",
@@ -87,20 +111,13 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
         icon: SlidersHorizontal,
         adminOnly: true,
       },
-      {
-        label: "Navigation",
-        href: "/studio/navigation",
-        icon: Menu,
-        adminOnly: true,
-      },
     ],
   },
   {
-    heading: "commissions & content",
+    // Things the owner WRITES, as opposed to the chrome above that they
+    // adjust. Each is a body of published work with its own editor.
+    heading: "editorial",
     items: [
-      { label: "Commissions", href: "/studio/inquiries", icon: Inbox },
-      { label: "Analytics", href: "/studio/analytics", icon: BarChart3 },
-      { label: "Subscribers", href: "/studio/subscribers", icon: Mail },
       { label: "Journal", href: "/studio/blog", icon: FileText },
       { label: "Portfolio", href: "/studio/portfolio", icon: ImageIcon },
       {
@@ -118,20 +135,22 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
     ],
   },
   {
-    heading: "growth",
+    // Looking outward at what other makers sell. Content Gaps was filed under
+    // "overview", which put an analysis screen next to the dashboard and left
+    // the scraper's own analysis surfaces two groups away.
+    heading: "research",
     items: [
-      { label: "Sheet Import", href: "/studio/sheet-import", icon: Import },
-      { label: "Bulk Import", href: "/studio/import", icon: Import },
-      { label: "Exports", href: "/studio/exports", icon: Download },
       { label: "Product Scraper", href: "/studio/scraper", icon: Radar },
-      // SEO edits SiteSettings (site-wide fallback metadata) — a settings
-      // surface, so it follows the settings rule: admins only.
-      { label: "SEO", href: "/studio/seo", icon: Search, adminOnly: true },
       { label: "Research", href: "/studio/research", icon: FlaskConical },
+      {
+        label: "Content Gaps",
+        href: "/studio/content-gaps",
+        icon: ListChecks,
+      },
     ],
   },
   {
-    heading: "system",
+    heading: "settings",
     items: [
       {
         label: "Site Settings",
@@ -139,8 +158,12 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
         icon: Settings,
         adminOnly: true,
       },
+      // SEO edits SiteSettings (site-wide fallback metadata) — a settings
+      // surface, so it follows the settings rule: admins only. It was under
+      // "growth" with its own comment saying it was a settings surface.
+      { label: "SEO", href: "/studio/seo", icon: Search, adminOnly: true },
       { label: "Users", href: "/studio/users", icon: Users, adminOnly: true },
-      { label: "Activity", href: "/studio/activity", icon: Activity },
+      { label: "Subscribers", href: "/studio/subscribers", icon: Mail },
       {
         label: "Content Lab",
         href: "/studio/content-lab",
@@ -149,18 +172,7 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       },
     ],
   },
-  // Appended, not inserted into "catalog" above — two more Page Sections
-  // screens, pre-filtered to the ten process steps and the four materials
-  // (`src/lib/page-sections.ts` `SUBLIST_PAGES`), each its own route.
-  {
-    heading: "content arrangement",
-    items: [
-      { label: "Process Steps", href: "/studio/process", icon: Hammer },
-      { label: "Materials", href: "/studio/materials", icon: Palette },
-    ],
-  },
 ];
-
 /**
  * Studio nav — §12.2. Lives on the obsidian chrome, which carries
  * `data-theme="navy"`, so inks resolve mineral/mist and focus rings resolve
