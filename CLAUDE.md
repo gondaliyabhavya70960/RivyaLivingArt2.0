@@ -1,5 +1,31 @@
 # Rivya Living Art 2.0
 
+## The canonical repository
+
+**`https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0`** — this one, the
+`origin` remote, default branch `main`. It is the only repository this project
+ships from: the Vercel project deploys from it, `package.json` records it, and
+`git remote -v` is the ground truth if this file is ever wrong.
+
+**A 404 on it means a permissions problem, never a missing repository.**
+GitHub answers 404 rather than 403 to a caller who cannot see a repo, so while
+this one was private an unauthenticated request could not tell "hidden from
+you" from "does not exist". Two separate reviews took that 404 at face value,
+concluded this repo did not exist, and wrote entire implementation plans
+against the older `RivyaLivingArt` tree instead.
+Every path they produced (`lib/sheets/`, `app/(studio)/`, `supabase/migrations/`)
+is absent here. Check `git remote -v` before concluding anything about repo
+identity; `docs/plan/06-source-documents.md` has the full account.
+
+**Older documents name `ResinRiva2.0`.** That was this repository before the
+rename (`docs/RENAME-MIGRATION.md`), not a different project. Those references
+survive in dated records — CHANGELOG entries, PROJECT_STATE history, prior
+audits, the archived `DESIGN.md` and `CONTEXT.md` — and are deliberately **not**
+rewritten, per owner decision D24: editing what a dated document said at the
+time would falsify it. Read them as history; read this line as current.
+
+---
+
 Premium resin-art brand site. **The design spec is REDESIGN.md** (Master UI/UX
 Redesign Specification v1.0) — read the relevant Part BEFORE building any UI,
 motion or studio feature. `docs/redesign-contract.md` is the short version: the

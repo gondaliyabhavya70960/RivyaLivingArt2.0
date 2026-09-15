@@ -1,5 +1,16 @@
 # Source documents — what each one is, and which repository it describes
 
+> **The canonical repository is
+> `https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0`** — the `origin`
+> remote of this tree, default branch `main`, the source the Vercel project
+> deploys from, and since 2026-09-15 the `repository` field in `package.json`.
+> `CLAUDE.md` states it first, so no future session has to infer it.
+>
+> Nothing in the working tree points anywhere else. Every `github.com/…` URL in
+> the docs already names this repo; the older name `ResinRiva2.0` appears only
+> in dated records and is this same repository before the rename
+> (`docs/RENAME-MIGRATION.md`), left unrewritten under owner decision D24.
+
 Five briefs were supplied on 2026-09-15. They do not agree, and **two of them
 describe a different codebase**. This file records which is which, so a future
 session does not spend a day looking for `lib/sheets/` in a repo that has never

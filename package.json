@@ -2,6 +2,11 @@
   "name": "rivya-living-art",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gondaliyabhavya70960/RivyaLivingArt2.0.git"
+  },
+  "homepage": "https://www.rivyalivingart.com",
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/db-preflight.mjs; prisma migrate deploy && tsx prisma/bootstrap.ts && next build",
