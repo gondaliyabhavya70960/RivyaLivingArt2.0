@@ -316,7 +316,7 @@ model Portfolio {
   afterImageUrl  String?
   videoUrl       String?
   resultsMeta    Json             @default("{}") // ADM-style: type, material, size, timeline
-  /// Per-locale { title, story } overrides; base is English (I3).
+  /// Per-locale { title, story } overrides; base row is English (I3).
   translations   Json?
   categoryId     String?
   category       Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -1426,7 +1426,7 @@ model CustomPage {
   seoTitle       String?
   seoDescription String?
   ogImage        String?
-  /// Per-locale { title, seoDescription } overrides; base is English.
+  /// Per-locale { title, seoTitle, seoDescription } overrides; base is English.
   translations   Json?
   blocks         CustomBlock[]
   createdAt      DateTime      @default(now())
