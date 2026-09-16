@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTestDb } from "./helpers";
 import type { RichProduct } from "@/lib/scraper/types";
@@ -56,6 +56,17 @@ describe.skipIf(!db)("research identity + snapshots", () => {
       select: { id: true },
     });
     jobId = job.id;
+  });
+
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.researchProduct.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapeJob.deleteMany({ where: { sourceKey: SOURCE } });
   });
 
   async function counts() {
@@ -195,6 +206,17 @@ describe.skipIf(!db)("variants and price basis", () => {
       select: { id: true },
     });
     jobId = job.id;
+  });
+
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.researchProduct.deleteMany({ where: { sourceKey: QUOTE_SOURCE } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: QUOTE_SOURCE } });
+    await db.scrapeJob.deleteMany({ where: { sourceKey: QUOTE_SOURCE } });
   });
 
   async function variantsFor(externalId: string) {

@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTestDb } from "./helpers";
 import { AUTOMATABLE_SOURCE_WHERE } from "@/lib/scraper/policy";
@@ -40,6 +40,17 @@ describe.skipIf(!db)("the governance gate stops a job at the runner", () => {
       select: { id: true },
     });
     sourceId = source.id;
+  });
+
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.scrapeJob.deleteMany({ where: { sourceKey: SOURCE_KEY } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: SOURCE_KEY } });
+    await db.scrapeSource.deleteMany({ where: { key: SOURCE_KEY } });
   });
 
   const queueJob = async () => {

@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTestDb } from "./helpers";
 
@@ -55,6 +55,16 @@ describe.skipIf(!db)("workflow run retry/cancel", () => {
     });
   });
 
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.scrapeJob.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapeSource.deleteMany({ where: { key: SOURCE } });
+  });
+
   it("retrying a FAILED run queues a FRESH job for the same target and leaves the failed row untouched", async () => {
     const failedId = await makeJob("FAILED");
     const { retryRun } = await import("@/lib/scraper/run-control");
@@ -81,14 +91,18 @@ describe.skipIf(!db)("workflow run retry/cancel", () => {
 
   it("retrying a DONE run is refused with the reason, and no job is created", async () => {
     const doneId = await makeJob("DONE");
+    // The previous test's successful retry left a QUEUED job for this
+    // source, deliberately (it IS the fresh job). "No job is created" is
+    // therefore a before/after count, not an absolute zero.
+    const before = await db!.scrapeJob.count({ where: { sourceKey: SOURCE } });
     const { retryRun } = await import("@/lib/scraper/run-control");
     const outcome = await retryRun(doneId);
 
     expect(outcome.jobId).toBeUndefined();
     expect(outcome.userError).toContain("Only a failed run");
-    expect(
-      await db!.scrapeJob.count({ where: { sourceKey: SOURCE, status: "QUEUED" } }),
-    ).toBe(0);
+    expect(await db!.scrapeJob.count({ where: { sourceKey: SOURCE } })).toBe(
+      before,
+    );
   });
 
   it("retry is refused while the source has a run in flight — the one-run-per-source rule holds", async () => {

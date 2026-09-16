@@ -6,11 +6,22 @@
  * page renders.
  *
  * The league guard is the QUERY's job, exactly as B6 drew the line: rows
- * are fetched through `variantWhereForLeague`, so a MATERIALS_DIY pigment
- * price or a B2B MOQ starting point physically cannot reach a FINISHED_ART
- * benchmark — no UI filter is involved. Non-benchmark leagues still get
- * their OWN benchmark rows (the owner wants to know what pigment costs);
- * what they never do is leak into another league's.
+ * are fetched by the league's CURRENT source keys (`sourceKeysForLeague`),
+ * so a MATERIALS_DIY pigment price or a B2B MOQ starting point physically
+ * cannot reach a FINISHED_ART benchmark — no UI filter is involved.
+ * Non-benchmark leagues still get their OWN benchmark rows (the owner wants
+ * to know what pigment costs); what they never do is leak into another
+ * league's.
+ *
+ * Within a league the fetch is `variantWhereForLeagueContext`, NOT
+ * `variantWhereForLeague`: the reference rows must be read so that
+ * `computedFrom` can count them as `considered` and name them under
+ * `exclusions.reference`. `scopeRows` (via `isComparable`) is what keeps
+ * them out of every pick, so no statistic ever averages one — the guard
+ * moved from the WHERE to the accounting, where the payload can show it.
+ * Fetching through the benchmark fragment here (B8 as first shipped) made
+ * `exclusions.reference` a bucket that could never be non-zero and gave the
+ * supplies league's own benchmark "considered 0" for a source it had read.
  *
  * Recompute is explicit (a Studio action, not a cron): it replaces every
  * AnalyticsSnapshot row and every OpportunityScore row with the fresh set in
@@ -37,7 +48,10 @@ import {
   scopeRows,
   type ScopedVariantRow,
 } from "@/lib/scraper/comparison-scopes";
-import { BENCHMARK_LEAGUE, variantWhereForLeague } from "@/lib/scraper/leagues";
+import {
+  BENCHMARK_LEAGUE,
+  variantWhereForLeagueContext,
+} from "@/lib/scraper/leagues";
 import { sourceKeysForLeague } from "@/lib/scraper/league-query";
 import { SCRAPER_NORMALIZER_VERSION } from "@/lib/scraper/normalize";
 import {
@@ -62,7 +76,7 @@ async function leagueRows(league: AnalyticsLeague): Promise<LeagueRow[]> {
   const sourceKeys = await sourceKeysForLeague(league);
   if (sourceKeys.length === 0) return [];
   const variants = await db.productVariant.findMany({
-    where: variantWhereForLeague(sourceKeys),
+    where: variantWhereForLeagueContext(sourceKeys),
     select: {
       snapshotId: true,
       label: true,
