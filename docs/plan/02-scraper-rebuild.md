@@ -252,6 +252,24 @@ answered. Embeddings are a demo until those exist.
 > The owner re-leagues a source from its Studio page, beside the collection
 > mode and policy review it already carried.
 
+> **B7 shipped 2026-09-16** as `ShortlistEntry` — one row per researched
+> product holding the current funnel state, who moved it, when and why —
+> with the seven-state machine in `scraper/shortlist.ts` (CONFIRMED reachable
+> only from SHORTLISTED; CONFIRMED leaves only back to SHORTLISTED; no
+> automatic transitions anywhere). The review inbox is rebuilt on entries
+> (`shortlist-query.ts` + `shortlist-inbox.tsx`): NEW folds in the entry-less
+> products, bulk moves report "moved / already / refused" instead of failing
+> a mixed selection, and notes/tags live on the entry. The legacy
+> `reviewStatus` stays as the promote path's input, mirrored both ways
+> (SHORTLISTED→APPROVED down; APPROVED→SHORTLISTED up, never un-confirming),
+> and the import path's IMPORTED now confirms the entry — the backfill's
+> mapping applied going forward. The new `/studio/scraper/confirmed` page is
+> the gated final list, with CSV/XLSX export at
+> `/api/scraper/export-confirmed` carrying the B6 reference-variant pick and
+> its rationale on every row. The plan sketch's `linkedOpportunityId` is
+> deferred to B8 — a column with no writer is the defect ResearchProduct's
+> comment already cites.
+
 Every adapter ships against the **Adapter Acceptance Checklist** as fixture tests that
 make no network calls. The source brief's own checklist was never committed to this repo;
 `docs/adapter-acceptance-checklist.md` is this repo's replacement for it, written at B5
