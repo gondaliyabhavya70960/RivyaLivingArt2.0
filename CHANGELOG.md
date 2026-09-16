@@ -5,6 +5,70 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E step 3, worked — the live catalogue tiered by rule (2026-09-16)
+
+Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #91. The owner's word:
+"tier the live catalogue from /studio/products". Step 3 had built the tools for a person —
+the "No tier yet" filter, bulk **Set product tier**, the content-gaps card — and left every
+one of the ~4,385 rows untiered. A row at a time is not a plan for a catalogue that size,
+and the CSV fill creates PUBLISHED rows on every deploy that the publish refusal never sees.
+
+- **The rule** — `src/lib/catalog-size-tier.ts`, pure, 12 unit tests on the catalogue's own
+  titles. The owner's category is the default (`CATEGORY_SIZE_TIER`, the brief's "typical
+  work" column slug by slug; Resin Home Decor, Resin Vases and Kids Room Decor deliberately
+  have none). Step 6's vocabulary over the title, description and dimensions outranks it
+  only when decisive (6: a form-factor word in the title, or a ≥ 60 cm side) AND ahead of
+  the category's own tier by that margin — "Handmade Floral Candle Bouquet" under candle
+  holders carries a Memory word and a Personal word and the filing settles it; "Engagement
+  Ring Tray" under keychains carries nothing for Personal and moves. Supplies never: six
+  category slugs and a title list (molds, cavities, pigments, hardeners, clock hands, bezels,
+  beads, pollens, "chain for", "40gms", "1.5 Kg", "100 Pcs", silicone, tuition) — ~3,500 of
+  the rows are not pieces, and there is no fourth tier for "not a piece" (a T-question, not
+  this rule's). The category NAME is never scored; Collectible is never decided on a weak
+  word; a tie or a silent title stays for a person.
+- **The write side** — `catalog-size-tier-backfill.ts`, 3 db tests: plan (pages of 1,000
+  by id cursor, counts and six sample titles per tier, what is skipped and why) → apply
+  (chunks of 500, each re-checking `sizeTier IS NULL` so a tier the owner set in between
+  wins), only rows that are not `ownerTouched` and not demo, one `ActivityLog` row
+  (`size-tier-suggest`) per run that wrote anything.
+- **Two callers.** `prisma/suggest-size-tiers.ts`, run by `bootstrap.ts` right after the
+  CSV fill, on production and local builds — and **skipped on preview builds**: a preview
+  runs against production, and a classification a person may want to see first lands with
+  the merge, not the push. And the Studio's **Suggest tiers** button on `/studio/products`:
+  a dialog with the plan (per-tier counts and sample titles, how many stay untiered as
+  supplies or unsure) and a **File N products** button that writes exactly it, then
+  invalidates the PDP, `/large-resin-art`, the shop's first page and the Studio lists.
+  `setProductsSizeTier` now invalidates the same readers — its comment had said "once
+  readers exist", and steps 7–8 built them.
+- **What the dry runs over the local mirror corrected before the rule was final.** Material
+  words that name a technique ("epoxy resin", "alcohol ink", "glitter") left the supply
+  guard — they nulled finished clocks; the category name stopped being scored — "Festive
+  & Pooja" was filing its own rows Memory through "pooja"; trays follow step 6's
+  vocabulary (Memory) rather than a category default that fought it; "puja" joined "pooja";
+  weak words need title strength (4) and never decide Collectible — "Round placemats" had
+  gone LARGE on "table" in its prose; and the decisive margin above, which turned a
+  36-inch mantra frame back into a frame.
+- **Measured**: 4,385 untiered → 567 filed (13 Collectible · 125 Memory · 429 Personal);
+  3,484 supplies untiered on purpose (2,996 by category, 488 by title); 334 for a person.
+  Production's numbers will differ slightly and are read off the production build log
+  after the merge.
+- **The push that carries this ALSO switches the deploy-time CSV fill OFF**
+  (`20260917130000_catalog_fill_off_after_purge`: `SiteSettings.sheetFillOnDeploy = false`).
+  At 16:57 UTC the owner emptied the catalogue from the Studio (bulk-delete of 4,012 rows,
+  each tombstoned in `DeletedImport`) and asked for it to be rebuilt from the reference
+  sites through the scraper's review queue. The CSV fill would have re-created ~4,000
+  DIFFERENT supplier rows on this very push — the tier caps apply after the tombstone
+  filter and the pools dwarf them (CLAUDE.md, "Emptying the catalogue takes TWO things").
+  The master switch and the manual run on `/studio/catalog-fill` are untouched.
+- **Main's unit job was red**: `migrate-resolve-failed.test.mjs` counted the repo's
+  migrations and #90's drop migration had moved the count. The expectation now names all
+  five renames-and-drops.
+- `large-format.ts` re-exports `LARGE_FORMAT_CATEGORY_SLUGS` from the rule module — one
+  set, two readers, pinned by a test. The shop drawer's Scale section stays last and
+  closed; promoting it is the owner's call once the "No tier yet" list is worked.
+
+---
+
 ## C-tail — the last two Sheets columns dropped (2026-09-16)
 
 Branch `c-tail-drop-sheets-columns` (the owner's, commit `a14dddc`), main merged in and pushed

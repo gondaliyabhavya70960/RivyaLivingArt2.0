@@ -87,7 +87,19 @@ expensive trap in that workstream:
   save would have stopped the owner editing any of them before a bulk tool
   existed — a guardrail that turns into a lockout. Both `upsertProduct` and
   `setProductsStatus` apply it; the bulk toast names the reason rather than
-  reporting a bare "skipped 12".
+  reporting a bare "skipped 12". **The backlog is filed by RULE, not by hand** (2026-09-16):
+  `src/lib/catalog-size-tier.ts` decides a row from its category (the brief's
+  own column, slug by slug) and its own words (step 6's vocabulary, which
+  outranks the category only by a decisive margin), never from a category
+  NAME, never Collectible on a weak word, and never for a supply — ~3,500 of
+  the rows are molds, pigments, filaments and clock hands, and there is no
+  fourth tier for "not a piece". `prisma/suggest-size-tiers.ts` runs it from
+  `bootstrap.ts` after the CSV fill on production and local builds and
+  **SKIPS PREVIEW builds** (a preview runs against production; the
+  classification lands with the merge, not the push); the Studio's **Suggest
+  tiers** button on `/studio/products` shows the plan first. Both write only
+  `sizeTier IS NULL` rows nobody has edited, and one `ActivityLog` row
+  (`size-tier-suggest`) records each run.
 - `ScrapeSource.tier` — `ScrapeTier`, which supplier list we went looking in.
   Its three SIZE values map to NULL in `TIER_NUMBER` precisely because the four
   old values map onto `Product.tier`'s integers, and numbering a size tier would
@@ -116,9 +128,10 @@ followed to the letter. Nothing Sheets-shaped remains in the schema. **Workstrea
 (B1–B9: PRs #68–#71, #73, #81–#85, 2026-09-15/16), and workstream A's table is closed — A9's
 scraper workspaces (PR #86) were the last row; A2/A4/A5/A6/A8 were measured
 against the running site and found already built or corrected in
-`docs/plan/01-redesign-main-and-studio.md`. **Not yet done:** workstream E's
-steps 4–8 (`docs/plan/07-three-tier-architecture.md`), and the T2–T11 owner
-questions it tables.
+`docs/plan/01-redesign-main-and-studio.md`. **Workstream E** has shipped steps 0–8 (2026-09-15/16) and the untiered
+backlog is filed by rule (below); what remains stops at an owner question —
+the navigation (T2), the homepage band (T8), Tier 02's guided path (T4) and
+the T2–T11 questions `docs/plan/07-three-tier-architecture.md` tables.
 
 **The export RAN and the table is now DROPPED**
 (`docs/archive/sheets-2026-09-15/`, 2026-09-15). The archive holds one row: a
@@ -584,6 +597,13 @@ below are the ones that are expensive to rediscover.
   catalogue re-created 4,000 DIFFERENT products. So a `--confirm` run also
   switches `catalogFill*` off, and `tier-fill.test.ts` pins both halves.
   Inquiries and testimonials are `SetNull` and survive every purge.
+  **The Studio's bulk delete writes the tombstones but does NOT switch the
+  fill off.** On 2026-09-16 the owner emptied the catalogue that way (4,012
+  rows, 16:57 UTC); `20260917130000_catalog_fill_off_after_purge` set
+  `sheetFillOnDeploy = false` in the same push that would otherwise have
+  refilled it with ~4,000 different supplier rows. The deploy-time fill is
+  now OFF in production; `/studio/catalog-fill` can still run it by hand or
+  turn it back on.
 - **`ScrapeTier` now carries the owner's SIZE taxonomy** (2026-09-15):
   `LARGE_FORMAT` · `MEDIUM_FORMAT` · `SMALL_FORMAT`, ahead of the four retired
   provenance values. **`TIER_NUMBER` maps the size tiers to `null` and that is
@@ -653,7 +673,12 @@ below are the ones that are expensive to rediscover.
   still asking for the columns. `SheetSyncRun` was the one exception, kept
   through 4a because nothing on a request path read it and the one-off export
   script had to keep working while its table was still the only copy of the
-  data; it went with the drop.
+  data; it went with the drop. **And a failed build is not a safety mechanism.** The C-tail drop
+  (`20260917110000_drop_sheets_settings_columns`) was pushed once at 13:35 UTC
+  on 2026-09-16 with #83's client still deployed and selecting both columns;
+  the P3009 that was failing every build that day is the only reason it did
+  not run. Read the production deployment's commit before pushing a drop,
+  every time — the 16:48 push waited for exactly that.
 - **Extraction failures are recorded, not nulled.** The checked fields are the
   same ones that block confirmation, so clearing `/studio/scraper/quality` is
   what unblocks the final list. Fields most storefronts never publish are

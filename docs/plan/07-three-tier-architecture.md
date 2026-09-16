@@ -242,6 +242,44 @@ without the thing that writes it.
    `/studio/products` to 1450px in a 1440px viewport and the studio audit
    failed the route. Eight pixels off each tier column's trailing padding is
    the whole margin; a thirteenth column needs a real answer, not more shaving.
+   **The backlog itself — worked by rule, 2026-09-16.** A row at a time was
+   never a plan for ~4,385 rows, and the CSV fill creates PUBLISHED rows on
+   every deploy that the publish refusal cannot reach. `src/lib/catalog-size-tier.ts`
+   (pure) decides a row from two things and refuses on a third: the owner's
+   own category (the brief's "typical work" column, slug by slug, in
+   `CATEGORY_SIZE_TIER` — Resin Home Decor, Resin Vases and Kids Room Decor
+   deliberately have no default); step 6's vocabulary over the title,
+   description and dimensions, which outranks the category only when it is
+   decisive (6: a form-factor word in the title, or a ≥ 60 cm side) AND beats
+   the category's own tier by that margin ("Candle Bouquet" under candle
+   holders carries a word for each side, and the owner's filing settles it;
+   "Engagement Ring Tray" under keychains carries none for Personal, and
+   moves); and a supply guard — `SUPPLY_CATEGORY_SLUGS` plus a title list of
+   molds, pigments, hardeners, clock hands, bezels, beads, "40gms", "100 Pcs"
+   — because ~3,500 of the rows are not pieces at all and there is no fourth
+   tier for "not a piece" (that is a T-question). The category NAME is never
+   scored (it double-counted the filing), Collectible is never decided on a
+   weak word (the collectible card is the costliest wrong render), and a tie
+   or a title that says nothing about form stays for a person.
+
+   The write side (`catalog-size-tier-backfill.ts`) touches only `sizeTier IS
+   NULL` rows that are not `ownerTouched` and not demo, re-checks null per row
+   on apply, and records one `ActivityLog` row (`size-tier-suggest`). Two
+   callers: `prisma/suggest-size-tiers.ts`, run by `bootstrap.ts` right after
+   the CSV fill on production and local builds and **skipped on preview
+   builds** — a preview runs against production, and a classification a
+   person may want to see first lands with the merge, not the push; and the
+   Studio's **Suggest tiers** button on `/studio/products`, which shows the
+   plan (counts and sample titles per tier, what stays untiered and why)
+   before **File** writes it.
+
+   Measured on the local mirror: 4,385 untiered → 567 filed (13 Collectible ·
+   125 Memory · 429 Personal), 3,484 supplies left untiered on purpose (2,996
+   by category, 488 by title), 334 for a person through "No tier yet" —
+   nearly all Resin Home Decor rows whose titles say nothing ("Get Well
+   Soon!", "Round placemats"). The shop drawer's Scale section stays where
+   step 8 left it, last and closed; promoting it is the owner's call once
+   that list is worked.
 4. **Demo fixtures** — done, 2026-09-16. `sizeTier` on the zod shape (from
    `PRODUCT_SIZE_TIERS`, so a fourth enum value fails the vocabulary test
    before any fixture changes), on the loader, and on all 100 rows: 52 LARGE ·
