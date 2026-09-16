@@ -208,13 +208,46 @@ dropped socket, or the advisory lock another build is holding. Two builds per
 push against one database is the normal state here, and Prisma Postgres caps
 that role low: three migrations inside twenty minutes on 2026-09-15 failed a
 build on cadence alone.
-**It deliberately does NOT retry a migration that ran and failed** (P3009, "a
+**It deliberately does NOT retry a migration that ran and failed** (P3018, "a
 migration failed to apply"), nor any error it does not recognise. Prisma
 records such a failure and refuses every later deploy until someone runs
 `migrate resolve`, so looping would only bury the message that person has to
 read. `scripts/lib/migrate-retry.mjs` holds that judgement alone and
 `migrate-retry.test.mjs` pins both directions, including the mixed case where
 a failed migration also mentions a lost connection — there, "it failed" wins.
+
+**A RECORDED failure (P3009, "migrate found failed migrations") gets one
+guarded self-heal per build, and the guard is a fact check, not a judgement.**
+`scripts/lib/migrate-resolve-failed.mjs` parses the failed migration's own SQL
+into the footprint it declares (tables with their columns and types, indexes,
+constraints, enum types and values, extensions) and reads the catalog for
+every item. It resolves the record only when one of three facts holds:
+nothing of it exists (`--rolled-back`, the deploy re-applies it); all of it
+exists in the declared shape and it carries no data statement
+(`--applied`); or some of it exists in another shape and everything that
+would have to go holds no data — an index, a constraint, an enum type, an
+empty table, or a table the module declares a DERIVATION (`DERIVED_TABLES`:
+B8's two, whose writer replaces the whole set on every recompute) — in which
+case the stray objects are dropped in one transaction, foreign keys onto them
+first, and the deploy re-applies the migration from scratch. Anything else
+(rows it cannot vouch for, a column half-added to a live table, a DROP or a
+RENAME in the migration, a type it cannot check) stops the build with the
+facts it found and the manual commands. **Prisma does NOT run a migration
+script atomically** — probed 2026-09-16: the first CREATE TABLE survives the
+second's failure — so a partial footprint is a real state, not a theory.
+
+What the guard actually answered, on 2026-09-16: not a cancelled build (the
+first account, written from the P3009 line alone) but an ABANDONED BRANCH. A
+preview of `feat/b8-analytics-opportunity-score` applied its own
+`20260916210000_analytics_opportunity` to production at 08:16 UTC; the B8 that
+merged carried a rewritten migration under a new name, and at 09:47 UTC that
+one failed on `relation "AnalyticsSnapshot" already exists`. Production sat on
+#83 for the rest of the day while B9, A9, #87 and #88 merged. The lesson that
+outlives the fix: **a migration pushed on ANY branch is applied to production
+under THAT name; renaming or rewriting it afterwards leaves the first one
+applied and the second one colliding with it.** A migration's name and body
+are final the moment its branch is pushed. `20260917120000_shortlist_stray_link_column`
+removes the column that preview left on `ShortlistEntry`.
 
 - lint: `npm run lint -- --fix`
 - build: `npm run build` (runs migrate deploy + bootstrap first — needs DATABASE_URL)

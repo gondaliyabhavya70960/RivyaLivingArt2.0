@@ -8,6 +8,41 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-16 (later the same day — production deploy blocker)
+What this session found:  EVERY production deploy since 09:47 UTC failed with P3009 on
+                          20260917090000_analytics_opportunity, and production sat on #83
+                          (B7) while B9, A9, #87 and #88 merged. Not a cancelled build: the
+                          abandoned branch feat/b8-analytics-opportunity-score had applied
+                          ITS migration (20260916210000_analytics_opportunity, another shape,
+                          plus ShortlistEntry.linkedOpportunityId) to production from a
+                          preview build at 08:16 UTC; the merged B8's rewritten migration then
+                          collided with it — 42P07 "relation already exists".
+What shipped:             scripts/lib/migrate-resolve-failed.mjs now parses the failed
+                          migration's WHOLE footprint and reads the catalog for it: nothing
+                          exists → --rolled-back; all of it exists as declared → --applied;
+                          a stray, data-free partial (or a declared derivation) → dropped in
+                          one transaction, then --rolled-back and re-applied; anything else
+                          → the facts and the manual commands, build fails. Pinned by 47
+                          tests and by a local replay of the exact production state. Plus
+                          20260917120000_shortlist_stray_link_column (IF EXISTS drops of the
+                          stray column). CLAUDE.md carries the true story and the rule: a
+                          migration pushed on ANY branch is applied to production under that
+                          name; never rename or rewrite it afterwards.
+How production heals:     pushing this branch runs the guard against production from the
+                          preview build (that is what preview builds do here). Then merge —
+                          or Redeploy main — and the site is on #88.
+Next Exact Task:          confirm the preview build log shows the three-statement drop and
+                          "All migrations have been successfully applied"; merge; watch the
+                          production deployment go READY. ONLY THEN may the owner's branch
+                          c-tail-drop-sheets-columns be pushed again: its migration drops
+                          SiteSettings.sheetId/sheetTabIds, which #83's deployed client still
+                          selects — pushing it before main is live repeats the 2026-09-15
+                          rename incident. The workstream E items below are unchanged.
+```
+
+## SESSION CHECKPOINT — 2026-09-16, PR #88 (superseded by the block above, kept as history)
+
+```text
 Date:                     2026-09-16
 Current Phase:            docs/plan workstream E — THE THREE-TIER PRODUCT ARCHITECTURE
                           (docs/plan/07-three-tier-architecture.md, IN FORCE). Branch

@@ -5,6 +5,81 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Fix — production deploys unblocked: the P3009 guard reads the whole footprint (2026-09-16)
+
+Branch `claude/inspiring-cerf-2ymgwf`, second PR. Every production deploy since 09:47 UTC —
+#84's merge, then B9, A9, #87 and #88 — failed with P3009 on `20260917090000_analytics_opportunity`,
+and the guard #87 added refused to act because the two tables it creates already existed.
+Production stayed on #83 (B7) all day.
+
+### What actually happened — not what the #87 entry says
+
+The entry below this one records "a superseded preview build was cancelled mid-migration". It
+was read off the P3009 line; the Vercel build logs say otherwise, and the entry is kept as
+written (D24) with the correction here. At **08:16 UTC** a preview build of the abandoned branch
+`feat/b8-analytics-opportunity-score` (commit `556168f`) applied ITS migration,
+`20260916210000_analytics_opportunity`, to production: `AnalyticsSnapshot` and `OpportunityScore`
+in that branch's shape (`league` typed by the enum, `analyticsVersion` TEXT, `computedCount` /
+`totalCount`, `score` / `evidence`), plus a `ShortlistEntry.linkedOpportunityId` column with an
+index and a foreign key onto `OpportunityScore`. The B8 that merged (#84, branch
+`b8-analytics-opportunity`) carried a rewritten migration under a NEW name, and at **09:47 UTC**
+its preview build ran that one: `42P07 relation "AnalyticsSnapshot" already exists`. Prisma
+recorded it as failed, and P3009 followed on every deploy after.
+
+The lesson that outlives the fix, now in CLAUDE.md: **a migration pushed on any branch is
+applied to production under that name. Renaming or rewriting it afterwards leaves the first
+applied and the second colliding with it.**
+
+### The guard now proves one of three facts, or stops
+
+`scripts/lib/migrate-resolve-failed.mjs` parses the failed migration's SQL into the footprint it
+declares — tables with columns, types and nullability; indexes with uniqueness and columns;
+constraints; enum types and values; extensions; data statements; and everything else as
+`unknown` — and reads the Postgres catalog for each item. `decideResolution` is pure and is
+pinned by 47 tests, including the 2026-09-16 case replayed from the two real migrations:
+
+- **Nothing of it exists** → `migrate resolve --rolled-back`, the deploy re-applies it (#87's
+  rule, now over enums and columns too — see the probe below).
+- **All of it exists in the declared shape**, and it carries no data statement → `--applied`.
+  #87 said "never `--applied`, that is a human's call"; a footprint verified item by item is not
+  a call, it is a check, and the refusal now sits on what cannot be checked (a data statement,
+  an unreadable statement, a type outside the known spellings).
+- **Some of it exists in another shape**, and everything that would go holds no data — an
+  index, a constraint, an enum type, an empty table, or a table `DERIVED_TABLES` declares a
+  derivation (B8's two: `analytics-query.ts` runs `deleteMany({})` + `createMany` on every
+  recompute) — and nothing it would add to a pre-existing table is already there → the stray
+  objects are dropped in one transaction, foreign keys onto them first, then `--rolled-back`
+  and the re-apply. That is the production case: the plan is exactly
+  `ALTER TABLE "ShortlistEntry" DROP CONSTRAINT "ShortlistEntry_linkedOpportunityId_fkey"`,
+  `DROP TABLE "OpportunityScore"`, `DROP TABLE "AnalyticsSnapshot"`.
+- Anything else prints the differences it found, why the drop was refused, and the manual
+  commands, and fails the build as before.
+
+**Prisma does not apply a migration script atomically.** Probed here: a two-statement migration
+whose second statement fails leaves the first's table behind. A partial footprint is a real
+state, which is why the "nothing exists" test now covers every declared object and why the
+drop path exists at all.
+
+### The stray column
+
+`20260917120000_shortlist_stray_link_column` drops the `linkedOpportunityId` constraint, index and
+column from `ShortlistEntry` with `IF EXISTS` — a no-op everywhere but production. The two-PR
+drop rule does not apply: no client ever deployed to production knew the column (it existed only
+in that abandoned branch's preview builds, never in `schema.prisma` on main).
+
+### Verified
+
+The production state was reproduced on the local Postgres 16 from the two real migrations —
+the abandoned branch's applied first, then #84's failing with the same 42P07 — and
+`node scripts/migrate-deploy.mjs` healed it: ten differences listed, the three-statement drop,
+`--rolled-back`, then B8, B9 and the tidy-up applied, final shapes byte-equal to the schema, zero
+stray leftovers. The other three outcomes were exercised on the same database against B9:
+rows in a non-derived table with a missing FK → refused, exit 1; complete → `--applied`;
+table gone → `--rolled-back` and re-applied. Pushing this branch runs the same guard against
+production from the preview build, which is how the record is healed in practice.
+
+---
+
 ## Workstream E steps 4–8, CI green again, and the owed entries (2026-09-16)
 
 Draft PR #88, branch `claude/inspiring-cerf-2ymgwf`. The session was commissioned from a
