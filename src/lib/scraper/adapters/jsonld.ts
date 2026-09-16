@@ -266,13 +266,17 @@ export const jsonldAdapter: Adapter = async (ctx) => {
     return { products: product ? [product] : [], hasMore: false };
   }
 
+  // The politeness default, unless the source carries its own ceiling — a
+  // sized source (the reference rollout's 500) may discover up to it, and
+  // the runner's 40-page cap bounds the job either way.
+  const discoveryCap = Math.max(
+    MAX_JSONLD_PRODUCTS_PER_RUN,
+    ctx.maxProducts ?? 0,
+  );
   const collected =
     ctx.scope === "CATEGORY"
-      ? await discoverProductUrlsFromListing(
-          ctx.baseUrl,
-          MAX_JSONLD_PRODUCTS_PER_RUN,
-        )
-      : await discoverProductUrls(ctx.baseUrl, MAX_JSONLD_PRODUCTS_PER_RUN);
+      ? await discoverProductUrlsFromListing(ctx.baseUrl, discoveryCap)
+      : await discoverProductUrls(ctx.baseUrl, discoveryCap);
   const slice = collected.slice(
     (ctx.page - 1) * PAGE_SIZE,
     ctx.page * PAGE_SIZE,

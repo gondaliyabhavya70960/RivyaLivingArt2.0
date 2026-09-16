@@ -53,6 +53,19 @@ async function main() {
     );
   }
 
+  // The reference-site rollout (the owner's 2026-09-16 instruction): record
+  // the policy review, enable, cap and queue the first job for each
+  // automatable reference source — once, never on preview builds, never over
+  // a person's own decision. src/lib/scraper/backlog-rollout.ts has the rules.
+  try {
+    execSync("tsx prisma/seed-scrape-backlog.ts", { stdio: "inherit" });
+  } catch (error) {
+    console.error(
+      "bootstrap: reference rollout failed (continuing):",
+      error instanceof Error ? error.message : error,
+    );
+  }
+
   // Reconcile branded category cover images too (every deploy, non-destructive
   // — only fills categories that still have no image).
   try {

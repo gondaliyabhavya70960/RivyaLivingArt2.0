@@ -70,11 +70,20 @@ export type JobRow = {
 
 export type TierCounts = Record<ScrapeTier, number>;
 
+/**
+ * The owner's size tiers first — the batch buttons used to list only the four
+ * retired provenance tiers, so the reference sites filed under the size
+ * tiers on 2026-09-15 could not be queued from here at all. Labels follow the
+ * source registry's (`source-list.tsx`).
+ */
 const TIERS: { value: ScrapeTier; label: string }[] = [
-  { value: "OWNER", label: "Tier 1 — Owner" },
-  { value: "RESIN_GOODS", label: "Tier 2 — Resin goods" },
-  { value: "SUPPLIES", label: "Tier 3 — Supplies" },
-  { value: "PRINT3D", label: "Tier 4 — 3D print" },
+  { value: "LARGE_FORMAT", label: "Tier 1 — Large" },
+  { value: "MEDIUM_FORMAT", label: "Tier 2 — Medium" },
+  { value: "SMALL_FORMAT", label: "Tier 3 — Small" },
+  { value: "OWNER", label: "Owner's list (retired)" },
+  { value: "RESIN_GOODS", label: "Resin goods (retired)" },
+  { value: "SUPPLIES", label: "Supplies (retired)" },
+  { value: "PRINT3D", label: "3D print (retired)" },
 ];
 
 function hostLabel(input: string): string {
