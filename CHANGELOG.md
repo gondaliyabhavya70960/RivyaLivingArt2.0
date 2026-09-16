@@ -5,6 +5,100 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Workstream E steps 4–8, CI green again, and the owed entries (2026-09-16)
+
+Draft PR #88, branch `claude/inspiring-cerf-2ymgwf`. The session was commissioned from a
+summary that named workstream C as next; C was already merged, and what the tree needed was
+this.
+
+### CI's build job had been red since B6, and nobody could see why
+
+Not since pgvector — since #82. The db suites B6, B8 and A9 added were each described as
+"skip gracefully without DATABASE_URL and bite in CI", and in CI they bit: five failures,
+unread because the job was already red. `.github/workflows/ci.yml` now runs
+`pgvector/pgvector:pg16` (the one-line edit #85, #86 and #87 could not push), and the five
+were root-caused rather than skipped:
+
+- **One code defect.** `analytics-query.ts` fetched a league's rows through
+  `variantWhereForLeague`, whose `isReference: false` clause is the benchmark shape — so
+  the rows B8's accounting exists to NAME as excluded were never handed to it.
+  `exclusions.reference` could not be non-zero, and the supplies league's own benchmark
+  read "considered 0" for a source it had read. The fetch now goes through a new
+  `variantWhereForLeagueContext`; `scopeRows`/`isComparable` keep reference rows out of
+  every pick, so nothing averages one — the guard moved from the WHERE to the accounting.
+- **Four test defects.** A league-guard expectation contradicted a row the same suite had
+  written two tests earlier (the proof is now the average equalling that row EXACTLY); an
+  illegal `REJECTED → SHORTLISTED` move that the machine refused, then an assertion on a
+  product that was never re-scored; two global counts that only held on a fresh database;
+  an absolute count right after the test that legitimately queues a job.
+- **The shared database.** The older suites leave it as they found it in an `afterAll`;
+  the scraper suites only cleaned BEFORE, and every run left priced FINISHED_ART rows under
+  nine test sources that moved the analytics suite's league-wide median on the next run.
+  `test:db` now passes 87/87 twice in a row and leaves no test rows.
+
+The six CHANGELOG entries #81–#86 merged without (the API channel could not write this
+file) are landed verbatim below, and #87 gets the entry it never wrote.
+
+### Workstream C's last two columns
+
+`SiteSettings.sheetId` and `sheetTabIds` were in plan C's drop list, read by nothing since
+#67, and missed by the drop. Un-modelled from `schema.prisma` with NO migration — step 4a
+again — and verified in the state that creates: a build against a database that still
+carries both, bootstrap's settings upsert, 87 db tests. The `DROP COLUMN` ships in its own
+PR once this client is DEPLOYED (`docs/plan/03` §4).
+
+### Workstream E, steps 4–8 (`docs/plan/07`)
+
+- **Step 4 — demo fixtures.** `sizeTier` on the zod shape (from `PRODUCT_SIZE_TIERS`), the
+  loader and all 100 rows: 52 LARGE · 12 MEDIUM · 34 SMALL, filed by what the piece IS off
+  its editorial name — the generator paired names and categories loosely. The two workshop
+  sessions are null on purpose. Every tier lands on a PUBLISHED row, the E2E PDP is LARGE,
+  and `/p/demo-lander`'s grid carries one PUBLISHED piece of each (001 · 006 · 086 · 078),
+  because `/shop/gift-collections` cannot carry a demo row. `fixtures.test.ts` pins it.
+- **Step 5 — copy.** `ProductTier.<enum>.{name, shortName, promise, primaryCta,
+  secondaryCta}` in nine locales, keyed by the enum value so a consumer writes
+  t(`${tier}.primaryCta`) with no mapping table. `product-size-tier.test.ts` reads
+  `en.json` and fails if `name`/`shortName` drift from the studio's labels, and refuses
+  cart/checkout wording in any tier (T1). Registry 1320 → 1329 by the end.
+- **Step 6 — the scraper suggests a tier.** `size-tier-suggest.ts`: one home per keyword
+  (the test refuses a keyword in two tiers), longest phrase first and consumed on match,
+  curated fields double, prose once, one dimension heuristic (≥ 60 cm LARGE, ≤ 10 cm SMALL,
+  the band between leans MEDIUM under a decisive word; the description is never parsed).
+  Nothing scoring → null; a tie → null, the operator decides. The source's tier is not an
+  input. Computed per row on the source page beside the category auto-map, a "Product
+  tier" select with a "suggested" hint, carried by the dialog, written on create. Never
+  stored on the staged row. 38 tests, the brief's sixteen examples among them.
+- **Step 7 — the collectible card.** `cardVariantFor` / `collectibleCardMeta` in
+  `card-meta.ts` (tested: a figure, a band, or price on request; "starting from" is not
+  derived — T3; `formatPriceBand`'s "Enquire" can never reach a card — T6), a
+  `collectible` variant on `CatalogProductCard`, and `large-format.ts` a `CARD_SELECT`
+  consumer with a byte-identical where. The hand-rolled tile is gone; the variant is
+  passed by CONTEXT on the tier-homogeneous page.
+- **Step 8a — PDP presets.** `tier-order-copy.ts`: the three fields off
+  `ProductTier.<tier>` (the CTA is the tier's `primaryCta`), `selectOrderCopy` the one
+  precedence rule the panel and the Server Action share (out of stock wins), Tier 03's
+  intro byte-equal to the default order intro, the byte-identical payload a `toBe` on the
+  built message. The smoke clicks the form's submit control (the label now reads
+  "Commission a piece" on the LARGE demo PDP); the persisted `Inquiry` mirrors the wa.me
+  message. T6's leak closed at the hero and the summary.
+- **Step 8b — the facet.** `?sizeTier=large|medium|small`, slugs derived from the enum,
+  registered in all five places (filters type · where clause with a test that no clause
+  touches `tier` · both pages' parsing, hrefs, `hasFilters` and the collection page's
+  hand-listed object · the explorer's apply, Load more payload and deps, chip and drawer
+  rows · the load-more zod schema). The drawer section sits last and closed until the
+  catalogue is tiered. `search-query.ts`'s tier-sort comment now says which tier it is.
+- **Still at a question:** navigation (T2), the homepage band (T8), Tier 02's guided path
+  (T4). Not built around.
+
+### Verified
+
+typecheck · lint · **1,056 unit tests** (98 files) · **test:db 87/87, twice** · copy:check ·
+i18n-missing 0 missing and `--stale` clean · a real build against Postgres 16 + pgvector
+0.6.0 · motion-budget 48.4 KB (unchanged, under the 49 KB ceiling) · **e2e smoke 36/36** ·
+the redesign, a11y, keyboard and Studio audits — see the PR body.
+
+---
+
 ## Fix — a failed-migration record heals itself when it provably left nothing behind (2026-09-16)
 
 PR #87. Production deploy `573f43b` failed with **P3009**: `20260917090000_analytics_opportunity`
