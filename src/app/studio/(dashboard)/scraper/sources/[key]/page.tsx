@@ -118,6 +118,7 @@ export default async function SourceDetailPage({
     id: source.id,
     name: source.name,
     collectionMode: source.collectionMode,
+    analyticsLeague: source.analyticsLeague,
     policyReviewStatus: source.policyReviewStatus,
     policyReviewedAt: source.policyReviewedAt
       ? dateFormatter.format(source.policyReviewedAt)

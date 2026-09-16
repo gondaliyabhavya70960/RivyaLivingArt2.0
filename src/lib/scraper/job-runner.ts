@@ -27,9 +27,14 @@
 import { revalidatePath } from "next/cache";
 
 import type { Prisma } from "@/generated/prisma/client";
-import type { ScrapeJobStatus } from "@/generated/prisma/enums";
+import type { AnalyticsLeague, ScrapeJobStatus } from "@/generated/prisma/enums";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
+import {
+  BENCHMARK_LEAGUE,
+  isBenchmarkLeague,
+  referenceReasonForLeague,
+} from "@/lib/scraper/leagues";
 import {
   describeBreakerSkip,
   describeTrip,
@@ -333,6 +338,7 @@ async function recordResearchSnapshots(
     rawByExternalId: Map<string, RichProduct>;
     seenAt: Date;
   },
+  league: AnalyticsLeague = BENCHMARK_LEAGUE,
 ): Promise<void> {
   if (products.length === 0) return;
 
@@ -398,7 +404,7 @@ async function recordResearchSnapshots(
                nothing. */
             rawPayload: (ctx.rawByExternalId.get(product.externalId) ??
               product) as unknown as Prisma.InputJsonValue,
-            variants: { create: variantRowsFor(product) },
+            variants: { create: variantRowsFor(product, league) },
           },
           select: { id: true },
         }),
@@ -419,13 +425,26 @@ async function recordResearchSnapshots(
  * "price on request" beside a placeholder number is honoured. Every row runs
  * through `priceForBasis`, which is what guarantees a QUOTE_ONLY row carries
  * NULL and never 0.
+ *
+ * Every row is also stamped with the source's LEAGUE standing (B6): variants
+ * from a MATERIALS_DIY or MARKETPLACE_B2B source are `isReference` with a
+ * `referenceReason` of `league:<LEAGUE>`, so a per-kilo pigment price or an
+ * MOQ starting point is kept as context but can never enter a finished-art
+ * benchmark. The stamp is write-time provenance; the current classification
+ * is enforced again at query time (`variantWhereForLeague`), because an
+ * owner re-leaguing a source expects the change to bite immediately and
+ * dated snapshots are not rewritten (D24).
  */
 function variantRowsFor(
   product: RichProduct,
+  league: AnalyticsLeague = BENCHMARK_LEAGUE,
 ): Prisma.ProductVariantCreateWithoutSnapshotInput[] {
   const text = [product.title, product.shortTagline, product.description]
     .filter(Boolean)
     .join(" \n ");
+
+  const reference = !isBenchmarkLeague(league);
+  const referenceReason = referenceReasonForLeague(league);
 
   const source =
     product.variants && product.variants.length > 0
@@ -444,6 +463,8 @@ function variantRowsFor(
       available:
         variant.available ??
         (product.status ? product.status === "active" : null),
+      isReference: reference,
+      referenceReason,
     };
   });
 }
@@ -452,6 +473,7 @@ async function upsertPage(
   jobId: string,
   sourceKey: string,
   products: RichProduct[],
+  league: AnalyticsLeague = BENCHMARK_LEAGUE,
 ): Promise<{ created: number; updated: number }> {
   if (products.length === 0) return { created: 0, updated: 0 };
 
@@ -548,7 +570,7 @@ async function upsertPage(
     ),
     rawByExternalId,
     seenAt: now,
-  });
+  }, league);
 
   // Price history. A point is written on first sighting, to anchor the series,
   // and thereafter only when the price actually MOVES.
@@ -617,6 +639,9 @@ export async function advanceScrapeJob(
           collectionMode: true,
           policyReviewStatus: true,
           policyReviewNote: true,
+          // The source's league is threaded to the write path, which stamps
+          // non-benchmark leagues' variants isReference — see variantRowsFor.
+          analyticsLeague: true,
         },
       },
     },
@@ -727,7 +752,15 @@ export async function advanceScrapeJob(
         scope: job.scope,
       });
 
-      const counts = await upsertPage(job.id, job.sourceKey, products);
+      const counts = await upsertPage(
+        job.id,
+        job.sourceKey,
+        products,
+        // Null only when the source row was deleted mid-flight, which the
+        // governance gate above already refused on — the default never
+        // actually fires on this path.
+        job.source?.analyticsLeague ?? BENCHMARK_LEAGUE,
+      );
 
       // Optimistic per-page advance: the `where` only matches while
       // cursorPage is still what THIS invocation last saw. Two workers

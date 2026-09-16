@@ -239,6 +239,19 @@ answered. Embeddings are a demo until those exist.
 > was never committed with the source brief, so the repo now carries its own:
 > `docs/adapter-acceptance-checklist.md`, labelled as agent-written.
 
+> **B6 shipped 2026-09-16** as `AnalyticsLeague` on `ScrapeSource`
+> (FINISHED_ART · MATERIALS_DIY · MARKETPLACE_B2B; backfilled from the
+> owner-set `supply` flag, which was already this decision in another
+> column), the pure vocabulary and query guards in `scraper/leagues.ts` +
+> `scraper/league-query.ts`, and the four comparison scopes in
+> `scraper/comparison-scopes.ts` (all-variants · base-product ·
+> unique-design · quote-only-separate, with the reference-variant pick's
+> rationale recorded on every row). The write path stamps non-benchmark
+> leagues' variants `isReference` with a `league:<LEAGUE>` reason; the guard
+> is enforced in the query (`variantWhereForLeague`), not in a UI filter.
+> The owner re-leagues a source from its Studio page, beside the collection
+> mode and policy review it already carried.
+
 Every adapter ships against the **Adapter Acceptance Checklist** as fixture tests that
 make no network calls. The source brief's own checklist was never committed to this repo;
 `docs/adapter-acceptance-checklist.md` is this repo's replacement for it, written at B5

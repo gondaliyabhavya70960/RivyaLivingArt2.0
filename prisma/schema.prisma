@@ -754,6 +754,25 @@ enum PolicyReviewStatus {
   BLOCKED
 }
 
+/// WHICH MARKET a source sells into — the unit of fair comparison (B6).
+///
+/// Leagues are the rule that keeps benchmarks honest (plan
+/// docs/plan/02-scraper-rebuild.md §6): a benchmark computed across leagues
+/// compares a coaster to a dining table and means nothing. The guard lives in
+/// the query (`src/lib/scraper/leagues.ts`), not in a UI filter a user can
+/// clear. Adding an enum value later is a safe migration.
+enum AnalyticsLeague {
+  /// Finished resin art sold to end customers — Rivya's actual competitors.
+  /// The benchmark league: comparisons default to it.
+  FINISHED_ART
+  /// Moulds, pigments, kits — supplies for MAKING resin art, not the art
+  /// itself. A per-kilo pigment price is context, never a comparator.
+  MATERIALS_DIY
+  /// Wholesale / MOQ marketplaces. Prices are negotiated bulk starting
+  /// points, not retail prices, and treat them that way.
+  MARKETPLACE_B2B
+}
+
 enum ScrapePlatform {
   SHOPIFY
   WOOCOMMERCE
@@ -815,6 +834,12 @@ model ScrapeSource {
   /// this is manual-research rather than HTTP. Shown in the refusal message,
   /// which is the only place anyone will read it.
   policyReviewNote    String?
+  /// The league this source competes in (B6). Variants from non-FINISHED_ART
+  /// sources are stamped `isReference` at write time and excluded from
+  /// benchmarks server-side, so a per-kilo pigment price can never drag down
+  /// the average price of a console table. Backfilled from the owner-set
+  /// `supply` flag, which was already this decision in another column.
+  analyticsLeague     AnalyticsLeague    @default(FINISHED_ART)
   jobs       ScrapeJob[]
 
   @@index([tier, enabled])
