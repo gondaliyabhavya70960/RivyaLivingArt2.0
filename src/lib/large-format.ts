@@ -24,14 +24,13 @@ import { demoWhere } from "@/lib/demo-content";
  *
  * These are owner-seeded rows (`prisma/seed.ts`), not `CANONICAL_CATEGORIES`
  * — that array is only the importer's fallback shelves. Category slugs are a
- * plain unique String, not a closed union, so this tuple is declared locally
- * and the query survives a category the owner has renamed or removed.
+ * plain unique String, not a closed union, so this tuple is declared as a
+ * plain list and the query survives a category the owner has renamed or
+ * removed. The list itself lives in the pure `catalog-size-tier.ts`, which
+ * files the backlog by the same three slugs — one set, two readers.
  */
-export const LARGE_FORMAT_CATEGORY_SLUGS = [
-  "resin-furniture-surfaces",
-  "sculptures-objets",
-  "art-craft-pieces",
-] as const;
+export { LARGE_FORMAT_CATEGORY_SLUGS } from "@/lib/catalog-size-tier";
+import { LARGE_FORMAT_CATEGORY_SLUGS } from "@/lib/catalog-size-tier";
 
 /**
  * Published pieces in the large-format categories, best-first, as card rows.

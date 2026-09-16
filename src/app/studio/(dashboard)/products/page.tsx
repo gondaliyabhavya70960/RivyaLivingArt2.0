@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
+import { SuggestSizeTiersButton } from "@/components/studio/products/suggest-size-tiers-button";
 import {
   ProductList,
   type ProductRow,
@@ -162,6 +163,7 @@ export default async function ProductsPage({
         description="Everything in the catalog — drafts stay invisible on the public site until published."
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <SuggestSizeTiersButton />
             <Button asChild>
               <Link href="/studio/products/new">
                 <Plus /> Add product

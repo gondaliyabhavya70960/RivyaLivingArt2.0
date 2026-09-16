@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
 import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 import {
+  type ProductSizeTier,
   describeSizeTierPublishProblem,
   PRODUCT_SIZE_TIERS,
   SIZE_TIER_NAME,
@@ -21,6 +22,11 @@ import {
   type ActionResult,
 } from "@/actions/helpers";
 import { logActivity, snapshotBefore } from "@/lib/activity";
+import {
+  applySizeTierBackfill,
+  planSizeTierBackfill,
+  summarizeSizeTierPlan,
+} from "@/lib/catalog-size-tier-backfill";
 import { deleteFile } from "@/lib/storage";
 import { findMediaUsages } from "@/lib/media-usages";
 import { createWithUniqueSlug, uniqueSlug } from "@/lib/slug";
@@ -784,11 +790,65 @@ export async function setProductsSizeTier(
       },
     });
 
-    revalidatePath("/studio/products");
-    // No public reader branches on `sizeTier` yet — the storefront variants are
-    // later steps of docs/plan/07. When the first one ships, the PDP and shop
-    // invalidations that `setProductsCategory` performs belong here too.
+    revalidateSizeTierReaders();
     return { updated };
+  });
+}
+
+/**
+ * Everything on the public site that branches on `sizeTier` since docs/plan/07
+ * steps 7–8: the PDP's per-tier order presets, the shop's ?sizeTier= facet
+ * and its cached first page, and the large-format band's collectible cards.
+ * The Studio list and the content-gaps backlog card read it too.
+ */
+function revalidateSizeTierReaders() {
+  revalidatePath("/studio/products");
+  revalidatePath("/studio/content-gaps");
+  revalidatePath("/[locale]/product/[slug]", "page");
+  revalidatePath("/[locale]/large-resin-art", "page");
+  revalidateTag(SHOP_FIRST_PAGE_TAG, "max");
+}
+
+export type SizeTierSuggestionReport = {
+  scanned: number;
+  total: number;
+  byTier: Record<ProductSizeTier, number>;
+  skipped: { supplies: number; unsure: number };
+  samples: Record<ProductSizeTier, string[]>;
+};
+
+/**
+ * The untiered backlog, filed by rule — docs/plan/07 step 3 for a catalogue
+ * of ~4,400. `preview` reads and decides without writing, so the Studio can
+ * show the counts and sample titles first; `apply` writes exactly that plan
+ * (re-checking `sizeTier IS NULL` per row) and records one ActivityLog row.
+ * The rule — supplies and workshops never, a person's edited rows never, the
+ * category's own tier, a decisive word in the row outranking it — lives in
+ * `src/lib/catalog-size-tier.ts`; the same plan runs on every production
+ * deploy from `prisma/suggest-size-tiers.ts`.
+ */
+export async function suggestSizeTiersForBacklog(
+  mode: "preview" | "apply",
+): Promise<ActionResult<SizeTierSuggestionReport>> {
+  const session = await requireStaff();
+  return runAction(async () => {
+    const plan = await planSizeTierBackfill(db);
+    const summary = summarizeSizeTierPlan(plan);
+    const report: SizeTierSuggestionReport = {
+      scanned: plan.scanned,
+      total: summary.total,
+      byTier: summary.byTier,
+      skipped: plan.skipped,
+      samples: plan.samples,
+    };
+    if (mode === "preview") return report;
+
+    const result = await applySizeTierBackfill(db, plan, {
+      actorId: session.user.id,
+      source: "studio",
+    });
+    revalidateSizeTierReaders();
+    return { ...report, total: result.total, byTier: result.updated };
   });
 }
 
