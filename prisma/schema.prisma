@@ -953,6 +953,10 @@ model ResearchProduct {
   /// Where this product stands in the shortlist funnel (B7). Absent means
   /// NEW — an entry exists only once a human has touched the product.
   shortlistEntry ShortlistEntry?
+  /// The inspectable components of its opportunity score (B8) — one row per
+  /// formula component, rewritten as a set on every recompute. Absent means
+  /// never scored; only products a human shortlisted or confirmed are scored.
+  opportunityScores OpportunityScore[]
 
   @@unique([sourceKey, externalId])
   @@index([lastSeen])
@@ -1128,9 +1132,11 @@ enum ShortlistState {
 /// This is the CURRENT state, not a history — `changedBy`/`changedAt` record
 /// the last decision and every transition writes an ActivityLog row, which is
 /// where the audit trail lives. The plan sketch's `linkedOpportunityId` is
-/// deliberately absent: nothing writes it until B8, and a column declared
-/// with no writer is the exact defect ResearchProduct's comment already cites
-/// as the expensive lesson. Adding it later is the safe class of migration.
+/// deliberately absent, and B8 kept it absent: the link from an entry to a
+/// product's opportunity score IS `OpportunityScore.researchProductId`, so a
+/// second pointer column here would need a writer keeping two facts in sync —
+/// the exact column-with-no-writer defect its B7 deferral cited as the
+/// expensive lesson.
 model ShortlistEntry {
   id                String          @id @default(cuid())
   researchProductId String          @unique
@@ -1181,6 +1187,105 @@ model ValidationFailure {
   @@unique([scrapedProductId, field])
   @@index([status, field])
   @@index([sourceKey, status])
+}
+
+/// A computed analytics payload, stored so the Studio reads one row instead
+/// of re-deriving a benchmark on every page load (B8, plan §4 phase 8).
+///
+/// Keyed by (view, league, scope, sourceKey): WHAT was computed, in B6's
+/// fair-comparison vocabulary, narrowed to one source when asked. The last
+/// three key parts are plain strings with "" meaning "not applicable to this
+/// view" — never "all": a benchmark row whose league part meant "every
+/// league at once" would be the coaster-versus-dining-table comparison B6
+/// exists to prevent. League-wide rows carry the league with "" source;
+/// per-source rows carry league AND source. The columns are strings rather
+/// than enums so the comparison-scope vocabulary stays a pure-module concern
+/// (comparison-scopes.ts) instead of being frozen in SQL.
+///
+/// `payload` ALWAYS carries `computedFrom: { included, considered,
+/// exclusions }` — B8's proof that every number shows how many rows it
+/// stands on and what was excluded and why. `includedCount`/`consideredCount`
+/// duplicate the headline pair as columns so the table itself stays auditable
+/// without unpacking JSON.
+///
+/// A recompute REPLACES the row for its key. These are derivations, not
+/// dated records — D24 protects what a source said, not what we computed
+/// from it — and `computedAt` plus the version stamps say exactly how stale
+/// a row is.
+model AnalyticsSnapshot {
+  id      String @id @default(cuid())
+  /// What was computed — the ANALYTICS_VIEWS vocabulary in analytics.ts.
+  view    String
+  /// The league the computation ran inside, or "" when the view is not
+  /// league-scoped. Never an aggregate across leagues.
+  league  String @default("")
+  /// The comparison scope (comparison-scopes.ts), or "" when not applicable.
+  scope   String @default("")
+  /// Narrows the computation to one source; "" = the league as a whole.
+  sourceKey String @default("")
+  payload   Json
+  /// Rows the number stands on / rows the computation looked at — the B8
+  /// proof, duplicated out of the payload so the table is auditable as SQL.
+  includedCount   Int
+  consideredCount Int
+  computedAt      DateTime @default(now())
+  /// The newest scrape job at compute time — provenance, not a relation:
+  /// jobs are deletable to tidy the queue, and a snapshot must survive that.
+  scrapeRunId String?
+  /// The staging normalizer's version (normalize.ts's
+  /// SCRAPER_NORMALIZER_VERSION) the read went through.
+  normalizerVersion String
+  /// analytics.ts's ANALYTICS_VERSION when this row was computed — bump the
+  /// constant when a formula changes and stale rows become recognizable
+  /// instead of silently wrong.
+  analyticsVersion  Int
+
+  @@unique([view, league, scope, sourceKey])
+  @@index([computedAt])
+}
+
+/// One COMPONENT of one product's opportunity score (B8, plan §4 phase 8 +
+/// rule 7: show the components, not a score).
+///
+/// There is deliberately no "total" row or column anywhere: what a
+/// merchandiser should act on is the set of components — market depth, price
+/// fit, freshness, option richness — each carrying its measured value, the
+/// named weight it carried, its contribution, and a human-readable `detail`
+/// that shows the working ("₹84,500 vs benchmark median ₹1,20,000 across 37
+/// designs"). A lone score with no components is exactly what rule 7 forbids
+/// shipping.
+///
+/// One row per (researchProduct, component): a recompute rewrites the set
+/// for the scored products and deletes rows of products no longer scored.
+/// Only SHORTLISTED and CONFIRMED products are scored — the states a human
+/// marked "worth benchmarking against" — so a score's existence is itself a
+/// human-gated fact (rule 8), and no scrape or cron ever creates one.
+model OpportunityScore {
+  id                String          @id @default(cuid())
+  researchProductId String
+  researchProduct   ResearchProduct @relation(fields: [researchProductId], references: [id], onDelete: Cascade)
+  /// Which component — the OPPORTUNITY_COMPONENTS vocabulary in
+  /// opportunity.ts. A string, not an enum, so rebalancing the formula is a
+  /// code change, not a migration.
+  component         String
+  /// The measured value in [0,1], or null when the component could not be
+  /// measured (a quote-only product has no price fit) — contribution is then
+  /// 0 and `detail` says why, instead of a guessed number.
+  value             Float?
+  /// The named weight this component carried (opportunity.ts's
+  /// OPPORTUNITY_WEIGHTS), recorded per row so a re-weight is visible in the
+  /// data rather than a silent formula change.
+  weight            Float
+  /// value × weight, or 0 when value is null.
+  contribution      Float
+  /// The working, in words: the inputs, the counts, and why.
+  detail            String
+  /// analytics.ts's ANALYTICS_VERSION when computed.
+  analyticsVersion  Int
+  computedAt        DateTime        @default(now())
+
+  @@unique([researchProductId, component])
+  @@index([computedAt])
 }
 
 /// A price as it stood at one moment, for one product, from one source.

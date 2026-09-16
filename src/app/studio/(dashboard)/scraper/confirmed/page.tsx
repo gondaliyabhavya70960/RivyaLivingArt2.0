@@ -46,6 +46,9 @@ export default async function ConfirmedProductsPage() {
               <Link href="/studio/scraper/review">Review inbox</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
+              <Link href="/studio/scraper/analytics">Analytics</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <a href="/api/scraper/export-confirmed?format=csv" download>
                 <Download /> CSV
               </a>
