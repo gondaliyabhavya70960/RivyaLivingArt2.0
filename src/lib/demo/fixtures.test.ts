@@ -8,6 +8,7 @@ import {
   referencedImagePaths,
   SEEDED_CATEGORY_SLUGS,
 } from "@/lib/demo/fixtures";
+import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
 
 /**
  * Decision 7 (Content Lab plan): demo fixture images reference only
@@ -145,6 +146,48 @@ describe("Content Lab fixtures", () => {
     expect(Math.min(...lengths)).toBeGreaterThanOrEqual(8);
     expect(Math.max(...lengths)).toBeGreaterThanOrEqual(200);
     expect(Math.max(...lengths)).toBeLessThanOrEqual(220);
+  });
+
+  /**
+   * Workstream E step 4. The tier column shipped nullable and the storefront
+   * is about to branch on it, and the five demo detail routes are what CI's
+   * audits sweep — so a tier with no PUBLISHED demo row behind it, or one
+   * that never reaches an audited route, ships every card variant unseen.
+   */
+  it("every product carries a sizeTier from the one vocabulary — except the two workshop sessions, which are untiered on purpose", () => {
+    const untiered = fixtures.products.filter((p) => p.sizeTier === null);
+    expect(untiered.map((p) => p.categorySlug)).toEqual([
+      "workshops",
+      "workshops",
+    ]);
+    for (const p of fixtures.products) {
+      if (p.sizeTier !== null) expect(PRODUCT_SIZE_TIERS).toContain(p.sizeTier);
+    }
+  });
+
+  it("every tier lands on a PUBLISHED demo row, and the E2E PDP is LARGE", () => {
+    const published = new Set(
+      fixtures.products
+        .filter((p) => p.status === "PUBLISHED")
+        .map((p) => p.sizeTier),
+    );
+    for (const tier of PRODUCT_SIZE_TIERS) expect(published).toContain(tier);
+    const pdp = fixtures.products.find((p) => p.id === "demo-product-001");
+    expect(pdp?.sizeTier).toBe("LARGE_FORMAT");
+  });
+
+  it("the demo lander's grid carries one PUBLISHED piece of each tier, so CI audits every card variant", () => {
+    const grid = fixtures.customBlocks.find(
+      (b) => b.id === "demo-block-lander-grid",
+    );
+    const slugs = (grid?.data as { slugs?: string[] } | undefined)?.slugs ?? [];
+    expect(slugs.length).toBeGreaterThanOrEqual(3);
+    const rows = slugs.map((slug) =>
+      fixtures.products.find((p) => p.slug === slug),
+    );
+    for (const row of rows) expect(row?.status).toBe("PUBLISHED");
+    const tiers = new Set(rows.map((r) => r?.sizeTier));
+    for (const tier of PRODUCT_SIZE_TIERS) expect(tiers).toContain(tier);
   });
 
   it("featured products stay at or under the 12-tile budget", () => {
