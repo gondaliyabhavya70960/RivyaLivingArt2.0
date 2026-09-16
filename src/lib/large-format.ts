@@ -1,17 +1,26 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { localize } from "@/lib/localize";
-import { buildProductWhere } from "@/lib/shop";
+import {
+  buildProductWhere,
+  CARD_SELECT,
+  toShopProductItem,
+  type ShopProductItem,
+} from "@/lib/shop";
 import { demoWhere } from "@/lib/demo-content";
 
 /**
  * The categories a piece has to sit in to count as large-format work.
  *
- * Classification is CATEGORY MEMBERSHIP and nothing else. `Product` has no
- * "statement piece" column and this page does not add one: the owner already
- * classifies by moving a product into a category, and a second, parallel flag
- * would be a second source of truth for the same fact.
+ * Classification is CATEGORY MEMBERSHIP and nothing else. `Product.sizeTier`
+ * now exists (docs/plan/07 step 2) and this where DELIBERATELY still
+ * classifies by category: the catalogue is untiered until step 3's backlog
+ * is worked, so a `sizeTier: LARGE_FORMAT` clause would empty this band into
+ * its invitation state on the live site. Widening it to
+ * `OR: [category, sizeTier]` is a query-semantics change that needs its own
+ * step; this one only changes what a piece RENDERS as (the collectible card,
+ * passed by context on the page because this grid is tier-homogeneous by
+ * construction).
  *
  * These are owner-seeded rows (`prisma/seed.ts`), not `CANONICAL_CATEGORIES`
  * — that array is only the importer's fallback shelves. Category slugs are a
@@ -24,34 +33,25 @@ export const LARGE_FORMAT_CATEGORY_SLUGS = [
   "art-craft-pieces",
 ] as const;
 
-export type LargeFormatPiece = {
-  id: string;
-  slug: string;
-  title: string;
-  categoryName: string;
-  image: { url: string; alt: string | null } | null;
-  /** Owner-typed free text. Rendered as written, never parsed. */
-  materials: string | null;
-  dimensions: string | null;
-};
-
 /**
- * Published pieces in the large-format categories, best-first.
+ * Published pieces in the large-format categories, best-first, as card rows.
  *
  * `featured` ORDERS, it never gates: it is a site-wide flag that also promotes
  * a row into the homepage's featured band and the default shop sort, so
  * treating it as "is a statement piece" would couple two unrelated decisions.
  *
- * `materials` and `dimensions` are deliberately NOT in
- * `TRANSLATABLE_FIELDS.product`, so they render as the owner typed them in all
- * nine locales. They are shown beside a translated label rather than inside a
- * translated sentence, and are never parsed, sorted or compared — this page
- * makes no claim about how large "large" is.
+ * The row is the shop's own `CARD_SELECT` + `toShopProductItem` (E step 7):
+ * the page used to hand-roll a tile over a select of its own, which was a
+ * second copy of the card-row shape. `materials` and `dimensions` are
+ * deliberately NOT in `TRANSLATABLE_FIELDS.product`, so they render as the
+ * owner typed them in all nine locales, beside a translated label rather
+ * than inside a translated sentence, and are never parsed, sorted or
+ * compared — this page makes no claim about how large "large" is.
  */
 export async function fetchLargeFormatPieces(
   locale: string,
   take = 6,
-): Promise<LargeFormatPiece[]> {
+): Promise<ShopProductItem[]> {
   const rows = await db.product.findMany({
     where: {
       // buildProductWhere({}) is exactly { status: PUBLISHED, demo gate } with
@@ -61,35 +61,8 @@ export async function fetchLargeFormatPieces(
     },
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }, { id: "desc" }],
     take,
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      materials: true,
-      dimensions: true,
-      translations: true,
-      category: { select: { name: true, translations: true } },
-      images: {
-        orderBy: { order: "asc" },
-        take: 1,
-        select: { url: true, alt: true },
-      },
-    },
+    select: CARD_SELECT,
   });
 
-  return rows.map((row) => {
-    const p = localize(row, locale, ["title"]);
-    // The literal ["name"], not TRANSLATABLE_FIELDS.category — that is
-    // ["name","description"] and the select above omits description.
-    const c = localize(row.category, locale, ["name"]);
-    return {
-      id: p.id,
-      slug: p.slug,
-      title: p.title,
-      categoryName: c.name,
-      image: row.images[0] ?? null,
-      materials: row.materials?.trim() || null,
-      dimensions: row.dimensions?.trim() || null,
-    };
-  });
+  return rows.map((row) => toShopProductItem(row, locale));
 }

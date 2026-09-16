@@ -979,7 +979,12 @@
       "viewPiece": "查看作品",
       "shipsIn": "7–10 天发货",
       "askOnWhatsApp": "通过 WhatsApp 咨询",
-      "materialsDimensions": "材质与尺寸"
+      "materialsDimensions": "材质与尺寸",
+      "collectible": {
+        "sizeLabel": "尺寸",
+        "materialsLabel": "材料",
+        "priceOnRequest": "价格面议"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {暂无作品} one {# 件作品} other {# 件作品}}",
@@ -1606,8 +1611,6 @@
       "eyebrow": "大件作品",
       "heading": "这个尺度的作品",
       "intro": "工作室归入大型的作品。若某件作品记录了尺寸或材料，会一并列出。",
-      "materialsLabel": "材料",
-      "sizeLabel": "尺寸",
       "catalogCta": "查看完整目录",
       "emptyHeading": "在离开工作室时记录",
       "emptyBody": "这个尺度目前还没有可浏览的作品。对话不必等待展厅——描述你想要的作品，我们会从空间出发为你设计。",

@@ -979,7 +979,12 @@
       "viewPiece": "Ver la pieza",
       "shipsIn": "Envío en 7–10 días",
       "askOnWhatsApp": "Pregunta por WhatsApp",
-      "materialsDimensions": "Materiales y dimensiones"
+      "materialsDimensions": "Materiales y dimensiones",
+      "collectible": {
+        "sizeLabel": "Tamaño",
+        "materialsLabel": "Materiales",
+        "priceOnRequest": "Precio a consultar"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {Aún sin piezas} one {# pieza} other {# piezas}}",
@@ -1606,8 +1611,6 @@
       "eyebrow": "piezas grandes",
       "heading": "Piezas a esta escala",
       "intro": "Obra que el taller ha agrupado como gran formato. Cuando de una pieza consta un tamaño o un material, se imprime con ella.",
-      "materialsLabel": "Materiales",
-      "sizeLabel": "Tamaño",
       "catalogCta": "Ver el catálogo completo",
       "emptyHeading": "Documentadas al salir del taller",
       "emptyBody": "Todavía no hay nada que explorar a esta escala. La conversación no espera a la galería — describe la pieza que quieres y la diseñaremos desde la sala hacia fuera.",

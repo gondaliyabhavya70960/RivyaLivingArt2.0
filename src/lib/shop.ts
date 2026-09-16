@@ -5,6 +5,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
+import type { ProductSizeTier } from "@/lib/product-size-tier";
 import { demoClause, NO_DEMO, type DemoClause } from "@/lib/demo-clause";
 import {
   CATALOG_GROUPS,
@@ -141,6 +142,13 @@ export type ShopProductItem = {
   variantChips: string[];
   /** Owner-sheet tier (1 = studio original). Null for hand-made studio rows. */
   tier: number | null;
+  /**
+   * The owner's three-tier architecture — what the piece IS
+   * (docs/plan/07); `tier` above is where it CAME FROM. Null for the
+   * untiered backlog. Read by `cardVariantFor` in card-meta.ts, never by
+   * a query here.
+   */
+  sizeTier: ProductSizeTier | null;
   inStock: boolean;
   featured: boolean;
   /**
@@ -252,8 +260,13 @@ function toImage(
     : null;
 }
 
-/** Row select shared by the paged fetch and the wishlist slug fetch. */
-const CARD_SELECT = {
+/**
+ * Row select shared by the paged fetch, the wishlist slug fetch and — since
+ * workstream E step 7 — `large-format.ts`. A consumer may bring its own
+ * where/orderBy/take; a select of its own is the duplicate this export
+ * removed.
+ */
+export const CARD_SELECT = {
   id: true,
   slug: true,
   title: true,
@@ -264,6 +277,7 @@ const CARD_SELECT = {
   priceMax: true,
   showPrice: true,
   tier: true,
+  sizeTier: true,
   inStock: true,
   featured: true,
   // D21: owner-typed free text for the mono card meta line, the card-hover
@@ -285,9 +299,9 @@ const CARD_SELECT = {
   },
 } satisfies Prisma.ProductSelect;
 
-type CardRow = Prisma.ProductGetPayload<{ select: typeof CARD_SELECT }>;
+export type CardRow = Prisma.ProductGetPayload<{ select: typeof CARD_SELECT }>;
 
-function toShopProductItem(
+export function toShopProductItem(
   row: CardRow,
   locale: string,
   duplicateCount?: number,
@@ -314,6 +328,7 @@ function toShopProductItem(
     hoverImage: toImage(row.images[1]),
     variantChips: buildVariantChips(row.customFields),
     tier: row.tier,
+    sizeTier: row.sizeTier,
     inStock: row.inStock,
     featured: row.featured,
     // Only carried when the title genuinely belongs to a duplicate group —

@@ -979,7 +979,12 @@
       "viewPiece": "Voir la pièce",
       "shipsIn": "Expédié sous 7–10 jours",
       "askOnWhatsApp": "Demander sur WhatsApp",
-      "materialsDimensions": "Matériaux et dimensions"
+      "materialsDimensions": "Matériaux et dimensions",
+      "collectible": {
+        "sizeLabel": "Taille",
+        "materialsLabel": "Matériaux",
+        "priceOnRequest": "Prix sur demande"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {Aucune pièce pour l'instant} one {# pièce} other {# pièces}}",
@@ -1606,8 +1611,6 @@
       "eyebrow": "grandes pièces",
       "heading": "Des pièces à cette échelle",
       "intro": "Des travaux que l'atelier a réunis sous le grand format. Lorsqu'une taille ou un matériau est consigné pour une pièce, il est indiqué avec elle.",
-      "materialsLabel": "Matériaux",
-      "sizeLabel": "Taille",
       "catalogCta": "Voir tout le catalogue",
       "emptyHeading": "Documentées à leur sortie de l'atelier",
       "emptyBody": "Il n'y a encore rien à parcourir à cette échelle. La conversation n'attend pas la galerie — décrivez la pièce que vous voulez et nous la dessinerons à partir du lieu.",

@@ -979,7 +979,12 @@
       "viewPiece": "Stück ansehen",
       "shipsIn": "Versand in 7–10 Tagen",
       "askOnWhatsApp": "Auf WhatsApp fragen",
-      "materialsDimensions": "Materialien und Maße"
+      "materialsDimensions": "Materialien und Maße",
+      "collectible": {
+        "sizeLabel": "Maß",
+        "materialsLabel": "Materialien",
+        "priceOnRequest": "Preis auf Anfrage"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {Noch keine Stücke} one {# Stück} other {# Stücke}}",
@@ -1606,8 +1611,6 @@
       "eyebrow": "große stücke",
       "heading": "Stücke in diesem Maßstab",
       "intro": "Arbeiten, die das Atelier als großformatig eingeordnet hat. Wo für ein Stück ein Maß oder ein Material erfasst ist, wird es mit ausgegeben.",
-      "materialsLabel": "Materialien",
-      "sizeLabel": "Maß",
       "catalogCta": "Den ganzen Katalog ansehen",
       "emptyHeading": "Dokumentiert, wenn sie das Atelier verlassen",
       "emptyBody": "In diesem Maßstab gibt es noch nichts zu durchstöbern. Das Gespräch wartet nicht auf die Galerie — beschreiben Sie das Stück, das Sie möchten, und wir entwerfen es vom Raum aus.",

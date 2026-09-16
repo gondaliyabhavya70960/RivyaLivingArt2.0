@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1320 slots · 0 flagged as unreachable from any component.
+ * 1321 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -776,6 +776,9 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.card.shipsIn","group":"Shop","section":"card","label":"Ships in","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.card.askOnWhatsApp","group":"Shop","section":"card","label":"Ask on whats app","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.card.materialsDimensions","group":"Shop","section":"card","label":"Materials dimensions","kind":"body","tier":"editorial","max":400},
+  {"key":"Shop.card.collectible.sizeLabel","group":"Shop","section":"card","label":"Size label","kind":"label","tier":"editorial","max":60},
+  {"key":"Shop.card.collectible.materialsLabel","group":"Shop","section":"card","label":"Materials label","kind":"label","tier":"editorial","max":60},
+  {"key":"Shop.card.collectible.priceOnRequest","group":"Shop","section":"card","label":"Price on request","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.collection.count","group":"Shop","section":"collection","label":"Count","kind":"body","tier":"editorial","max":400,"vars":["count"]},
   {"key":"Shop.collection.featuredHeading","group":"Shop","section":"collection","label":"Featured heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Shop.collection.relatedHeading","group":"Shop","section":"collection","label":"Related heading","kind":"heading","tier":"editorial","max":80},
@@ -1277,8 +1280,6 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"LargeFormat.gallery.eyebrow","group":"Large format","section":"gallery","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"LargeFormat.gallery.heading","group":"Large format","section":"gallery","label":"Heading","kind":"heading","tier":"editorial","max":80},
   {"key":"LargeFormat.gallery.intro","group":"Large format","section":"gallery","label":"Intro","kind":"body","tier":"editorial","max":400},
-  {"key":"LargeFormat.gallery.materialsLabel","group":"Large format","section":"gallery","label":"Materials label","kind":"label","tier":"editorial","max":60},
-  {"key":"LargeFormat.gallery.sizeLabel","group":"Large format","section":"gallery","label":"Size label","kind":"label","tier":"editorial","max":60},
   {"key":"LargeFormat.gallery.catalogCta","group":"Large format","section":"gallery","label":"Catalog cta","kind":"cta","tier":"editorial","max":60},
   {"key":"LargeFormat.gallery.emptyHeading","group":"Large format","section":"gallery","label":"Empty heading","kind":"heading","tier":"editorial","max":80},
   {"key":"LargeFormat.gallery.emptyBody","group":"Large format","section":"gallery","label":"Empty body","kind":"body","tier":"editorial","max":400},

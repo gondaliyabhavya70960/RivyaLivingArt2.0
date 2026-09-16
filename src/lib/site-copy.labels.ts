@@ -223,7 +223,7 @@ export const COPY_SLOT_OVERRIDES: Record<string, Partial<CopySlot>> = {
   },
   "ProductTier.LARGE_FORMAT.promise": {
     label: "Tier 1 · promise line",
-    where: "Collectible Furniture & Spatial Art — the mono eyebrow on its cards",
+    where: "Collectible Furniture & Spatial Art — the one-line promise on a band or collection header; a card's eyebrow is the piece's own category",
     max: 48,
   },
   "ProductTier.LARGE_FORMAT.primaryCta": {
@@ -247,7 +247,7 @@ export const COPY_SLOT_OVERRIDES: Record<string, Partial<CopySlot>> = {
   },
   "ProductTier.MEDIUM_FORMAT.promise": {
     label: "Tier 2 · promise line",
-    where: "Memory & Celebration Art — the mono eyebrow on its cards",
+    where: "Memory & Celebration Art — the one-line promise on a band or collection header; a card's eyebrow is the piece's own category",
     max: 48,
   },
   "ProductTier.MEDIUM_FORMAT.primaryCta": {
@@ -271,7 +271,7 @@ export const COPY_SLOT_OVERRIDES: Record<string, Partial<CopySlot>> = {
   },
   "ProductTier.SMALL_FORMAT.promise": {
     label: "Tier 3 · promise line",
-    where: "Personal Art & Gifting — the mono eyebrow on its cards",
+    where: "Personal Art & Gifting — the one-line promise on a band or collection header; a card's eyebrow is the piece's own category",
     max: 48,
   },
   "ProductTier.SMALL_FORMAT.primaryCta": {
