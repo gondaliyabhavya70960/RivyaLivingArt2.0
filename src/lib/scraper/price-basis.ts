@@ -31,6 +31,15 @@ export const PRICE_BASES = [
 ] as const;
 export type PriceBasis = (typeof PRICE_BASES)[number];
 
+/** Short display labels — the one canonical spelling, shared by the
+ *  confirmed list, the explorer, and any future surface. */
+export const PRICE_BASIS_LABELS: Record<PriceBasis, string> = {
+  PER_PIECE: "per piece",
+  PER_AREA: "per area",
+  STARTING_FROM: "starting from",
+  QUOTE_ONLY: "quote only",
+};
+
 /** "from ₹2,400", "starting at 2400", "price starts from" — a floor, not a price.
  * Exported so markup-shape detection (B5) shares one phrase vocabulary with
  * basis derivation — two lists that drift apart are a rule that lies. */

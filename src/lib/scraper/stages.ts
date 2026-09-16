@@ -51,7 +51,7 @@ export const SCRAPE_STAGES: readonly ScrapeStageDef[] = [
     key: "scraping",
     label: "Scraping",
     description: "Jobs queued or running right now.",
-    href: "/studio/scraper",
+    href: "/studio/scraper/runs",
   },
   {
     key: "staged",
