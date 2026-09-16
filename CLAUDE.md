@@ -106,12 +106,13 @@ push engine, the sync policy and the service-account client are deleted;
 workstream A's design-system layer (the v4 leading scale, one disabled state,
 the Studio's nav groups) and the homepage collections fix. **Workstream C is COMPLETE**: step 4b dropped the schema — the two enums, the
 `SheetSyncRun` table and the seven push-state columns are gone, and so are the export script
-and its workflow. **One drop is still owed**: `SiteSettings.sheetId` and
+and its workflow. **The last two columns are gone too**: `SiteSettings.sheetId` and
 `sheetTabIds` — the owner's spreadsheet and tab ids, in plan C §2.3's drop list —
-survived 4b unread. They were un-modelled from `schema.prisma` on 2026-09-16
-with NO migration (step 4a, again: the database keeps both, nullable and
-`DEFAULT '{}'`), and the `ALTER TABLE … DROP COLUMN` ships only once that
-client is DEPLOYED, by the two-PR rule below. **Workstream B is COMPLETE**
+survived 4b unread, were un-modelled from `schema.prisma` on 2026-09-16 with
+NO migration (step 4a, again), and were dropped by
+`20260917110000_drop_sheets_settings_columns` only after #88's client was
+DEPLOYED (the #89 production deployment, 16:36 UTC) — the two-PR rule below,
+followed to the letter. Nothing Sheets-shaped remains in the schema. **Workstream B is COMPLETE**
 (B1–B9: PRs #68–#71, #73, #81–#85, 2026-09-15/16), and workstream A's table is closed — A9's
 scraper workspaces (PR #86) were the last row; A2/A4/A5/A6/A8 were measured
 against the running site and found already built or corrected in

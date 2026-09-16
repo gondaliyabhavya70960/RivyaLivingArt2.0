@@ -31,13 +31,19 @@ What shipped:             scripts/lib/migrate-resolve-failed.mjs now parses the 
 How production heals:     pushing this branch runs the guard against production from the
                           preview build (that is what preview builds do here). Then merge —
                           or Redeploy main — and the site is on #88.
-Next Exact Task:          confirm the preview build log shows the three-statement drop and
-                          "All migrations have been successfully applied"; merge; watch the
-                          production deployment go READY. ONLY THEN may the owner's branch
-                          c-tail-drop-sheets-columns be pushed again: its migration drops
-                          SiteSettings.sheetId/sheetTabIds, which #83's deployed client still
-                          selects — pushing it before main is live repeats the 2026-09-15
-                          rename incident. The workstream E items below are unchanged.
+Done since:               #89 merged at 16:35 UTC and its production deployment went READY
+                          at 16:36 — the first since 09:47. Then, on the owner's word, the
+                          C-tail branch: main merged into it, the build run locally against
+                          a database that still had the two columns (the drop applied,
+                          bootstrap and next build green), and pushed — so
+                          20260917110000_drop_sheets_settings_columns dropped
+                          SiteSettings.sheetId/sheetTabIds in production from its preview
+                          build, with #88's client already live. Workstream C's last
+                          schema debt is paid.
+Next Exact Task:          the hardened guard (an eleven-agent review's seven findings,
+                          commits 6b866d7 and 7002547) reached the branch AFTER #89 was
+                          merged, so it is NOT on main — it ships as its own PR, restarted
+                          from main. Then the workstream E items below.
 ```
 
 ## SESSION CHECKPOINT — 2026-09-16, PR #88 (superseded by the block above, kept as history)

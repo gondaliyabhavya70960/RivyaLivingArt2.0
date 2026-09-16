@@ -144,10 +144,12 @@ Destructive. Sequence matters.
 > but were neither un-modelled nor dropped. They came out of `schema.prisma` on 2026-09-16
 > with **no migration** — the same step-4a shape the seven push-state columns went through,
 > because `findMany()` without a `select` names every column and a drop under the old client
-> fails every `SiteSettings` query. **Still owed, in its own PR after that client is
-> deployed:** `ALTER TABLE "SiteSettings" DROP COLUMN "sheetId", DROP COLUMN "sheetTabIds";`
-> — hand-written, like every migration here, because `prisma migrate diff` re-proposes
-> dropping the three trgm search indexes the schema does not model.
+> fails every `SiteSettings` query. **Paid (2026-09-16, later the same day):**
+> `20260917110000_drop_sheets_settings_columns` —
+> `ALTER TABLE "SiteSettings" DROP COLUMN "sheetId", DROP COLUMN "sheetTabIds";`, hand-written
+> like every migration here — shipped on the C-tail branch only after #88's client was
+> DEPLOYED (the #89 production deployment, 16:36 UTC), and applied to production from that
+> branch's preview build. Nothing in §2.3's drop list remains.
 
 Splitting rename-then-drop across two migrations means step 2 is reversible and step 4 runs against
 a tree already proven to work without the Sheets code paths.
