@@ -128,6 +128,7 @@ const KEYWORDS: Record<ProductSizeTier, readonly Weighted[]> = {
     ["footprint", 3],
     ["handprint", 3],
     ["pooja", 3],
+    ["puja", 3],
     ["frame", 2],
     ["tray", 2],
     ["platter", 2],
@@ -266,7 +267,9 @@ export function parseMaxDimensionCm(
     .replace(/\b(?:inch|inches|ins)\b/gi, "inchmark");
   const text = normalizeUnit(marked);
   if (!text) return null;
-  const unit = options.bareInches ? "cm|mm|ft|inchmark|in" : "cm|mm|ft|inchmark";
+  const unit = options.bareInches
+    ? "cm|mm|ft|inchmark|in"
+    : "cm|mm|ft|inchmark";
   const chain = new RegExp(
     `(\\d+(?:\\.\\d+)?(?:\\s*(?:x|×|\\*|by)\\s*\\d+(?:\\.\\d+)?)*)\\s*(${unit})\\b`,
     "gi",

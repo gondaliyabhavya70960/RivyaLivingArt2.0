@@ -8,6 +8,53 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-16 (evening — the live catalogue tiered by rule)
+Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main (a5438fe, after #91).
+What shipped:             docs/plan/07 step 3's BACKLOG, worked by rule instead of a row at a
+                          time. src/lib/catalog-size-tier.ts (pure): the owner's category is
+                          the default (the brief's own column, slug by slug); a decisive word
+                          in the row (step 6's vocabulary) outranks it only by a decisive
+                          margin over the category's own tier; supplies never (a category
+                          list plus a title list — molds, pigments, clock hands, bezels,
+                          beads, "40gms", "100 Pcs"); the category NAME is never scored;
+                          Collectible never on a weak word; a tie or a silent title stays
+                          for a person. catalog-size-tier-backfill.ts: plan → apply, only
+                          sizeTier IS NULL, never ownerTouched, never demo, one ActivityLog
+                          row ("size-tier-suggest"). prisma/suggest-size-tiers.ts runs from
+                          bootstrap after the CSV fill on production and local builds and is
+                          SKIPPED ON PREVIEW builds. The Studio's Suggest tiers button on
+                          /studio/products shows the plan (counts, sample titles, what stays
+                          untiered and why) before File. 12 unit tests, 3 db tests.
+Measured (local mirror):  4,385 untiered → 567 filed (13 Collectible · 125 Memory · 429
+                          Personal); 3,484 supplies untiered on purpose (2,996 by category,
+                          488 by title); 334 for a person through "No tier yet".
+Production:               #89 (the guard), #90 (the C-tail drop) and #91 (the hardened guard)
+                          merged and deployed (READY). Then, at 16:57 UTC, THE OWNER EMPTIED THE
+                          CATALOGUE from the Studio (bulk-delete 4,012, tombstoned) and purged the
+                          retired non-owner scrape sources: the catalogue is to be rebuilt from
+                          the reference sites (75–100 minimum, ~500 per tier) through the
+                          scraper's review queue. So this PR ALSO carries
+                          20260917130000_catalog_fill_off_after_purge (sheetFillOnDeploy=false):
+                          without it, this push's preview build would have re-created ~4,000
+                          supplier rows from the CSV pools. The deploy backfill therefore files
+                          nothing in production until products exist again.
+Next Exact Task:          the owner's 2026-09-16 evening brief, in order: (1) the catalogue
+                          rebuild — the reference sites and the owner's old store
+                          (store.bhavyagondaliya.co.in, answering 402) in the source registry
+                          with a recorded policy review, size-tier batch runs on the scraper
+                          hub, a per-source product cap (~500), a one-shot first job per source
+                          so the cron drain collects with nobody watching, and the review inbox
+                          as the only path into the catalogue (HARD RULE: no auto-publish);
+                          (2) primary business content on every Studio surface that is empty
+                          in production (audit first); (3) the five attached briefs checked
+                          against HEAD into docs/NEEDED-WORK.md and docs/COMPLETED-WORK.md, with
+                          the status marked in docs/plan/*. Then the step-8 owner questions
+                          (T2 navigation, T8 homepage band, T4 Tier 02's guided path).
+```
+
+## SESSION CHECKPOINT — 2026-09-16, the deploy blocker and the C-tail (superseded by the block above, kept as history)
+
+```text
 Date:                     2026-09-16 (later the same day — production deploy blocker)
 What this session found:  EVERY production deploy since 09:47 UTC failed with P3009 on
                           20260917090000_analytics_opportunity, and production sat on #83

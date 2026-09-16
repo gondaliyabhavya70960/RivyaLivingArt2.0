@@ -92,9 +92,8 @@ async function main() {
   //     resets. Once any slot has been set this never runs again; the studio
   //     button remains for re-importing by hand.
   try {
-    const { blobStorageConfigured, importBundledSiteImages } = await import(
-      "../src/lib/site-images-import"
-    );
+    const { blobStorageConfigured, importBundledSiteImages } =
+      await import("../src/lib/site-images-import");
     if (!blobStorageConfigured()) {
       // Name the environment: a Blob store can be linked but scoped to
       // Production only, in which case preview builds skip while production
@@ -148,6 +147,11 @@ async function main() {
   // Tier4 top 500 (2026-08-13).
   try {
     execSync("tsx prisma/import-tiers.ts", { stdio: "inherit" });
+    // Then file what the fill just created (and any other untiered row a
+    // person has not edited) under its size tier — docs/plan/07 step 3,
+    // by rule. Non-destructive, idempotent, skipped on preview builds; the
+    // rule and its reasons live in src/lib/catalog-size-tier.ts.
+    execSync("tsx prisma/suggest-size-tiers.ts", { stdio: "inherit" });
   } catch (error) {
     console.error(
       "bootstrap: tier import failed (continuing):",
@@ -172,9 +176,8 @@ async function main() {
           "bootstrap: commission form options already set — skipping seed.",
         );
       } else {
-        const { FORM_OPTION_DEFAULTS, FORM_OPTION_LISTS } = await import(
-          "../src/lib/form-options"
-        );
+        const { FORM_OPTION_DEFAULTS, FORM_OPTION_LISTS } =
+          await import("../src/lib/form-options");
         let seeded = 0;
         for (const list of FORM_OPTION_LISTS) {
           for (const [index, value] of FORM_OPTION_DEFAULTS[list].entries()) {
@@ -210,9 +213,8 @@ async function main() {
       if ((await ndb.navItem.count()) > 0) {
         console.log("bootstrap: navigation already set — skipping seed.");
       } else {
-        const { NAV_MENUS, NAV_MENU_DEFAULTS } = await import(
-          "../src/lib/nav-menus"
-        );
+        const { NAV_MENUS, NAV_MENU_DEFAULTS } =
+          await import("../src/lib/nav-menus");
         let seeded = 0;
         for (const menuKey of NAV_MENUS) {
           await ndb.navMenu.upsert({
@@ -263,7 +265,11 @@ async function main() {
     });
     try {
       const BACKFILL = [
-        { menuKey: "footer-explore", key: "largeFormat", href: "/large-resin-art" },
+        {
+          menuKey: "footer-explore",
+          key: "largeFormat",
+          href: "/large-resin-art",
+        },
       ] as const;
       let added = 0;
       for (const link of BACKFILL) {
@@ -271,7 +277,9 @@ async function main() {
           where: { menuKey_key: { menuKey: link.menuKey, key: link.key } },
         });
         if (existing) continue;
-        const menu = await ndb.navMenu.findUnique({ where: { key: link.menuKey } });
+        const menu = await ndb.navMenu.findUnique({
+          where: { key: link.menuKey },
+        });
         if (!menu) continue; // menu itself unseeded — the seed above owns that
         const last = await ndb.navItem.findFirst({
           where: { menuKey: link.menuKey },
@@ -288,7 +296,8 @@ async function main() {
         });
         added += 1;
       }
-      if (added > 0) console.log(`bootstrap: backfilled ${added} navigation link(s).`);
+      if (added > 0)
+        console.log(`bootstrap: backfilled ${added} navigation link(s).`);
     } finally {
       await ndb.$disconnect();
     }
