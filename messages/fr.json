@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "Développer",
     "collapse": "Réduire"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "Mobilier de collection & art spatial",
+      "shortName": "Collection",
+      "promise": "À l'échelle de la pièce qu'il habitera",
+      "primaryCta": "Commander une pièce",
+      "secondaryCta": "Demander une consultation"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "Art du souvenir & de la célébration",
+      "shortName": "Souvenir",
+      "promise": "Fleurs, prénoms et dates, fixés pour de bon",
+      "primaryCta": "Préserver votre souvenir",
+      "secondaryCta": "Commencer la personnalisation"
+    },
+    "SMALL_FORMAT": {
+      "name": "Art personnel & cadeaux",
+      "shortName": "Personnel",
+      "promise": "Vite personnalisé, prêt à offrir",
+      "primaryCta": "Commander sur WhatsApp",
+      "secondaryCta": "La personnaliser"
+    }
   }
 }

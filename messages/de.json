@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "Erweitern",
     "collapse": "Einklappen"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "Sammlermöbel & Raumkunst",
+      "shortName": "Sammlerstücke",
+      "promise": "Gefertigt im Maßstab des Raums",
+      "primaryCta": "Stück beauftragen",
+      "secondaryCta": "Beratung anfragen"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "Erinnerungs- & Festkunst",
+      "shortName": "Erinnerung",
+      "promise": "Blumen, Namen und Daten, für immer gefasst",
+      "primaryCta": "Erinnerung bewahren",
+      "secondaryCta": "Anpassung beginnen"
+    },
+    "SMALL_FORMAT": {
+      "name": "Persönliche Kunst & Geschenke",
+      "shortName": "Persönlich",
+      "promise": "Schnell personalisiert, bereit zum Verschenken",
+      "primaryCta": "Per WhatsApp bestellen",
+      "secondaryCta": "Dieses Stück personalisieren"
+    }
   }
 }

@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "विस्तार करें",
     "collapse": "समेटें"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "संग्रहणीय फ़र्नीचर और स्थानिक कला",
+      "shortName": "संग्रहणीय",
+      "promise": "कमरे के पैमाने पर बनी",
+      "primaryCta": "कृति कमीशन करें",
+      "secondaryCta": "परामर्श का अनुरोध करें"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "यादों और उत्सव की कला",
+      "shortName": "यादें",
+      "promise": "फूल, नाम और तारीख़ें, हमेशा के लिए थमे",
+      "primaryCta": "अपनी याद सहेजें",
+      "secondaryCta": "कस्टमाइज़ करना शुरू करें"
+    },
+    "SMALL_FORMAT": {
+      "name": "निजी कला और उपहार",
+      "shortName": "निजी",
+      "promise": "झटपट कस्टमाइज़, उपहार के लिए तैयार",
+      "primaryCta": "WhatsApp पर ऑर्डर करें",
+      "secondaryCta": "इस कृति को अपना बनाएँ"
+    }
   }
 }

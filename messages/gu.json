@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "વિસ્તૃત કરો",
     "collapse": "સંકોચો"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "સંગ્રહયોગ્ય ફર્નિચર અને ઓરડાની કલા",
+      "shortName": "સંગ્રહયોગ્ય",
+      "promise": "ઓરડાના માપે બનેલી",
+      "primaryCta": "કૃતિ કમિશન કરો",
+      "secondaryCta": "પરામર્શની વિનંતી કરો"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "યાદો અને ઉજવણીની કલા",
+      "shortName": "યાદ",
+      "promise": "ફૂલો, નામ અને તારીખો, કાયમ માટે સાચવેલાં",
+      "primaryCta": "તમારી યાદ સાચવો",
+      "secondaryCta": "કસ્ટમાઇઝ કરવાનું શરૂ કરો"
+    },
+    "SMALL_FORMAT": {
+      "name": "અંગત કલા અને ભેટ",
+      "shortName": "અંગત",
+      "promise": "ઝડપથી કસ્ટમાઇઝ, ભેટ માટે તૈયાર",
+      "primaryCta": "WhatsApp પર ઓર્ડર આપો",
+      "secondaryCta": "આ કૃતિને અંગત બનાવો"
+    }
   }
 }

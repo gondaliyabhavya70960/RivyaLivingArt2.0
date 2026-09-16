@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "Expand",
     "collapse": "Collapse"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "Collectible Furniture & Spatial Art",
+      "shortName": "Collectible",
+      "promise": "Made to the scale of a room",
+      "primaryCta": "Commission a piece",
+      "secondaryCta": "Request a consultation"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "Memory & Celebration Art",
+      "shortName": "Memory",
+      "promise": "Flowers, names and dates, set to keep",
+      "primaryCta": "Preserve your memory",
+      "secondaryCta": "Start customization"
+    },
+    "SMALL_FORMAT": {
+      "name": "Personal Art & Gifting",
+      "shortName": "Personal",
+      "promise": "Quick to personalize, ready to gift",
+      "primaryCta": "Order on WhatsApp",
+      "secondaryCta": "Personalize this piece"
+    }
   }
 }

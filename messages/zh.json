@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "展开",
     "collapse": "收起"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "收藏级家具与空间艺术",
+      "shortName": "收藏级",
+      "promise": "以房间的尺度而作",
+      "primaryCta": "定制一件作品",
+      "secondaryCta": "申请咨询"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "记忆与庆典艺术",
+      "shortName": "记忆",
+      "promise": "花、名字与日期，永久封存",
+      "primaryCta": "留住你的记忆",
+      "secondaryCta": "开始个性化定制"
+    },
+    "SMALL_FORMAT": {
+      "name": "个人艺术与礼品",
+      "shortName": "个人",
+      "promise": "快速个性化，即刻可赠",
+      "primaryCta": "通过 WhatsApp 下单",
+      "secondaryCta": "个性化这件作品"
+    }
   }
 }

@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "توسيع",
     "collapse": "طيّ"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "أثاث للاقتناء وفن للمساحات",
+      "shortName": "مقتنيات",
+      "promise": "مصنوع بمقياس الغرفة",
+      "primaryCta": "اطلب قطعة بتكليف",
+      "secondaryCta": "اطلب استشارة"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "فن الذكريات والاحتفالات",
+      "shortName": "ذكريات",
+      "promise": "زهور وأسماء وتواريخ، تُحفظ للأبد",
+      "primaryCta": "احفظ ذكراك",
+      "secondaryCta": "ابدأ التخصيص"
+    },
+    "SMALL_FORMAT": {
+      "name": "فن شخصي وهدايا",
+      "shortName": "شخصي",
+      "promise": "سريعة التخصيص، جاهزة للإهداء",
+      "primaryCta": "اطلب عبر WhatsApp",
+      "secondaryCta": "أضف لمستك الشخصية"
+    }
   }
 }

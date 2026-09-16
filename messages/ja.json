@@ -1665,5 +1665,28 @@
   "AccordionGallery": {
     "expand": "展開",
     "collapse": "折りたたむ"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "コレクタブル家具と空間アート",
+      "shortName": "コレクタブル",
+      "promise": "部屋のスケールでつくる",
+      "primaryCta": "作品を依頼する",
+      "secondaryCta": "ご相談を申し込む"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "記憶と祝祭のアート",
+      "shortName": "記憶",
+      "promise": "花、名前、日付を、永遠に",
+      "primaryCta": "記憶を残す",
+      "secondaryCta": "カスタマイズを始める"
+    },
+    "SMALL_FORMAT": {
+      "name": "パーソナルアートとギフト",
+      "shortName": "パーソナル",
+      "promise": "すぐにパーソナライズ、そのまま贈れる",
+      "primaryCta": "WhatsApp で注文する",
+      "secondaryCta": "この作品をパーソナライズ"
+    }
   }
 }
