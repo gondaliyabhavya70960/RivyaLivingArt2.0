@@ -957,6 +957,10 @@ model ResearchProduct {
   /// formula component, rewritten as a set on every recompute. Absent means
   /// never scored; only products a human shortlisted or confirmed are scored.
   opportunityScores OpportunityScore[]
+  /// The derived vectors behind similarity (B9) — one row per product per
+  /// embedder model, rewritten when the product's identity text changes.
+  /// Absent means never embedded (or embedded by a pruned model generation).
+  embeddings       ProductEmbedding[]
 
   @@unique([sourceKey, externalId])
   @@index([lastSeen])
@@ -1285,6 +1289,47 @@ model OpportunityScore {
   computedAt        DateTime        @default(now())
 
   @@unique([researchProductId, component])
+  @@index([computedAt])
+}
+
+/// A derived vector for one researched product (B9, plan §4 phase 8:
+/// `hash · model · version · vector`) — the substrate for "pieces like this
+/// one" and cross-source duplicate candidates.
+///
+/// Three rules keep this honest:
+///   1. The vector is COMPUTED FROM LISTED FEATURES (`features` JSON), never
+///      from a hidden model call — rule 7 applies to embeddings too: the
+///      working is on the row. `hash` is the sha1 of that feature list, so a
+///      recompute rewrites only products whose identity text actually moved.
+///   2. `model` + `version` name the embedder. The v1 embedder is a
+///      deterministic feature hash over normalized attributes (no network,
+///      no AI key); a semantic model later is a new `model` value, not a
+///      silent change to what a vector means. Recompute prunes other
+///      generations wholesale — embeddings are derivations, not records.
+///   3. `vector` is a pgvector column the Prisma client cannot model; it is
+///      written and read through raw SQL in embedding-query.ts, and the
+///      similarity operator is pgvector's own — the plan's "no hand-rolled
+///      index" rule.
+model ProductEmbedding {
+  id                String          @id @default(cuid())
+  researchProductId String
+  researchProduct   ResearchProduct @relation(fields: [researchProductId], references: [id], onDelete: Cascade)
+  /// The embedder name — embedding.ts's EMBEDDING_MODEL.
+  model             String
+  /// The embedder's recipe version — embedding.ts's EMBEDDING_VERSION.
+  version           Int
+  /// sha1 (16 hex chars) of the canonical feature JSON — the change key.
+  hash              String
+  /// Vector length — embedding.ts's EMBEDDING_DIMENSIONS.
+  dimensions        Int
+  /// The weighted features the vector was built from, so the embedding is
+  /// inspectable: [{feature, weight}].
+  features          Json
+  /// pgvector storage. Written/read via $executeRaw/$queryRaw only.
+  vector            Unsupported("vector(512)")
+  computedAt        DateTime        @default(now())
+
+  @@unique([researchProductId, model])
   @@index([computedAt])
 }
 
