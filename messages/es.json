@@ -1041,7 +1041,8 @@
       "anyAvailability": "Cualquier disponibilidad",
       "clearAll": "Borrar todo",
       "apply": "Aplicar ({count, plural, one {# pieza} other {# piezas}})",
-      "unavailable": "Ninguna pieza en esta vista"
+      "unavailable": "Ninguna pieza en esta vista",
+      "sectionSizeTier": "Escala"
     },
     "activeFilters": {
       "remove": "Quitar {filter}"
@@ -1054,7 +1055,8 @@
       "imageAlt": "Un bloque de resina en capas que se lee como profundidad marina, con bandas claras entre el azul"
     },
     "sortName": "Nombre",
-    "quickViewLabel": "Vista rápida"
+    "quickViewLabel": "Vista rápida",
+    "allSizeTiers": "Todas las escalas"
   },
   "Search": {
     "meta": {

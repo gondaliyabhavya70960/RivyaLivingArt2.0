@@ -9,6 +9,12 @@ import { CATALOG_GROUPS, type CatalogGroup } from "@/lib/catalog-taxonomy";
 
 export { OCCASIONS };
 export { CATALOG_GROUPS, type CatalogGroup };
+export {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_SLUG,
+  sizeTierFromSlug,
+  type SizeTierSlug,
+} from "@/lib/product-size-tier";
 
 /** Ecosystem tab order for the shop's browse tabs (v6 catalog groups). */
 export const ECOSYSTEMS = [
@@ -111,4 +117,10 @@ export type ShopFilters = {
   type?: string;
   /** Availability (?stock=in) → inStock only. */
   stock?: string;
+  /**
+   * The owner's product tier (?sizeTier=large|medium|small) →
+   * `Product.sizeTier` (docs/plan/07 step 8). NOT `Product.tier`, the
+   * import ladder. An unknown value adds no clause.
+   */
+  sizeTier?: string;
 };

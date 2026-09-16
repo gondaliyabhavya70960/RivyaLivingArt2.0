@@ -1041,7 +1041,8 @@
       "anyAvailability": "أي حالة توفر",
       "clearAll": "مسح الكل",
       "apply": "اعرض ({count, plural, zero {لا قطع} one {قطعة واحدة} two {قطعتان} few {# قطع} many {# قطعة} other {# قطعة}})",
-      "unavailable": "لا قطع في هذا العرض"
+      "unavailable": "لا قطع في هذا العرض",
+      "sectionSizeTier": "المقياس"
     },
     "activeFilters": {
       "remove": "أزل {filter}"
@@ -1054,7 +1055,8 @@
       "imageAlt": "كتلة ريزن متعددة الطبقات تُقرأ كأعماق بحر، بأشرطة فاتحة تخترق الأزرق"
     },
     "sortName": "الاسم",
-    "quickViewLabel": "عرض سريع"
+    "quickViewLabel": "عرض سريع",
+    "allSizeTiers": "كل المقاييس"
   },
   "Search": {
     "meta": {

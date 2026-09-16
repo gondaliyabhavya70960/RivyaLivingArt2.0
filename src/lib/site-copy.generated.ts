@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1327 slots · 0 flagged as unreachable from any component.
+ * 1329 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -826,6 +826,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.drawer.clearAll","group":"Shop","section":"drawer","label":"Clear all","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.drawer.apply","group":"Shop","section":"drawer","label":"Apply","kind":"body","tier":"editorial","max":400,"vars":["count"]},
   {"key":"Shop.drawer.unavailable","group":"Shop","section":"drawer","label":"Unavailable","kind":"body","tier":"editorial","max":400},
+  {"key":"Shop.drawer.sectionSizeTier","group":"Shop","section":"drawer","label":"Section size tier","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.activeFilters.remove","group":"Shop","section":"activeFilters","label":"Remove","kind":"body","tier":"editorial","max":400,"vars":["filter"]},
   {"key":"Shop.editorialBreak.eyebrow","group":"Shop","section":"editorialBreak","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Shop.editorialBreak.heading","group":"Shop","section":"editorialBreak","label":"Heading","kind":"heading","tier":"editorial","max":80},
@@ -833,6 +834,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.editorialBreak.cta","group":"Shop","section":"editorialBreak","label":"Cta","kind":"cta","tier":"editorial","max":60},
   {"key":"Shop.editorialBreak.imageAlt","group":"Shop","section":"editorialBreak","label":"Image alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Shop.quickViewLabel","group":"Shop","section":"general","label":"Quick view label","kind":"label","tier":"editorial","max":60},
+  {"key":"Shop.allSizeTiers","group":"Shop","section":"general","label":"All size tiers","kind":"body","tier":"editorial","max":400},
   {"key":"Search.meta.title","group":"Shop","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Search.meta.description","group":"Shop","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Search.heroEyebrow","group":"Shop","section":"general","label":"Hero eyebrow","kind":"eyebrow","tier":"editorial","max":48},

@@ -1041,7 +1041,8 @@
       "anyAvailability": "Beliebige Verfügbarkeit",
       "clearAll": "Alles zurücksetzen",
       "apply": "Anwenden ({count, plural, one {# Stück} other {# Stücke}})",
-      "unavailable": "Keine Stücke in dieser Ansicht"
+      "unavailable": "Keine Stücke in dieser Ansicht",
+      "sectionSizeTier": "Maßstab"
     },
     "activeFilters": {
       "remove": "{filter} entfernen"
@@ -1054,7 +1055,8 @@
       "imageAlt": "Ein geschichteter Harzblock, der wie Meerestiefe wirkt, mit hellen Bändern im Blau"
     },
     "sortName": "Name",
-    "quickViewLabel": "Schnellansicht"
+    "quickViewLabel": "Schnellansicht",
+    "allSizeTiers": "Alle Maßstäbe"
   },
   "Search": {
     "meta": {

@@ -1041,7 +1041,8 @@
       "anyAvailability": "Toute disponibilité",
       "clearAll": "Tout effacer",
       "apply": "Appliquer ({count, plural, one {# pièce} other {# pièces}})",
-      "unavailable": "Aucune pièce dans cette vue"
+      "unavailable": "Aucune pièce dans cette vue",
+      "sectionSizeTier": "Échelle"
     },
     "activeFilters": {
       "remove": "Retirer {filter}"
@@ -1054,7 +1055,8 @@
       "imageAlt": "Un bloc de résine stratifié qui évoque la profondeur marine, des bandes claires traversant le bleu"
     },
     "sortName": "Nom",
-    "quickViewLabel": "Aperçu rapide"
+    "quickViewLabel": "Aperçu rapide",
+    "allSizeTiers": "Toutes les échelles"
   },
   "Search": {
     "meta": {

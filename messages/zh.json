@@ -1041,7 +1041,8 @@
       "anyAvailability": "不限库存状态",
       "clearAll": "全部清除",
       "apply": "应用（{count, plural, other {# 件作品}}）",
-      "unavailable": "此视图下暂无作品"
+      "unavailable": "此视图下暂无作品",
+      "sectionSizeTier": "尺度"
     },
     "activeFilters": {
       "remove": "移除 {filter}"
@@ -1054,7 +1055,8 @@
       "imageAlt": "层叠的树脂块宛如海洋深处，浅色条带穿过蓝色"
     },
     "sortName": "名称",
-    "quickViewLabel": "快速查看"
+    "quickViewLabel": "快速查看",
+    "allSizeTiers": "所有尺度"
   },
   "Search": {
     "meta": {

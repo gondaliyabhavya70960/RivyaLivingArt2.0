@@ -15,7 +15,9 @@ import {
   SIZE_TIER_NAME,
   SIZE_TIER_NUMBER,
   SIZE_TIER_OPTIONS,
+  SIZE_TIER_SLUG,
   sizeTierFromFormValue,
+  sizeTierFromSlug,
   sizeTierStudioLabel,
   sizeTierToFormValue,
 } from "@/lib/product-size-tier";
@@ -94,6 +96,24 @@ describe("the tier list is not a hand-written copy", () => {
     const every = Object.values(en.ProductTier).flatMap((t) => Object.values(t));
     for (const value of every) {
       expect(value).not.toMatch(/\b(cart|checkout|basket|bag|buy now|pay)\b/i);
+    }
+  });
+
+  it("gives every tier one lowercase URL slug, and reads only that spelling back", () => {
+    // The shop facet's `?sizeTier=` value (docs/plan/07 step 8). Customer
+    // words, derived from the enum so the list still lives once.
+    expect(PRODUCT_SIZE_TIERS.map((t) => SIZE_TIER_SLUG[t])).toEqual([
+      "large",
+      "medium",
+      "small",
+    ]);
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(sizeTierFromSlug(SIZE_TIER_SLUG[tier])).toBe(tier);
+    }
+    // An unknown value is ignored, not errored, and the enum spelling is
+    // deliberately NOT a second public one.
+    for (const value of ["", undefined, null, "LARGE_FORMAT", "Large", "NONE", "__proto__"]) {
+      expect(sizeTierFromSlug(value)).toBeUndefined();
     }
   });
 

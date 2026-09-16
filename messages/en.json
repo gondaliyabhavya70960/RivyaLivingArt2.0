@@ -1042,7 +1042,8 @@
       "anyAvailability": "Any availability",
       "clearAll": "Clear all",
       "apply": "Apply ({count, plural, one {# piece} other {# pieces}})",
-      "unavailable": "No pieces in this view"
+      "unavailable": "No pieces in this view",
+      "sectionSizeTier": "Scale"
     },
     "activeFilters": {
       "remove": "Remove {filter}"
@@ -1054,7 +1055,8 @@
       "cta": "See how it is made",
       "imageAlt": "A layered resin block read as ocean depth, pale bands running through blue"
     },
-    "quickViewLabel": "Quick view"
+    "quickViewLabel": "Quick view",
+    "allSizeTiers": "All scales"
   },
   "Search": {
     "meta": {

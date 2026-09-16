@@ -1041,7 +1041,8 @@
       "anyAvailability": "कोई भी उपलब्धता",
       "clearAll": "सब हटाएँ",
       "apply": "लागू करें ({count, plural, one {# कृति} other {# कृतियाँ}})",
-      "unavailable": "इस दृश्य में कोई कृति नहीं"
+      "unavailable": "इस दृश्य में कोई कृति नहीं",
+      "sectionSizeTier": "पैमाना"
     },
     "activeFilters": {
       "remove": "{filter} हटाएँ"
@@ -1054,7 +1055,8 @@
       "imageAlt": "समुद्र की गहराई जैसा परतदार रेज़िन ब्लॉक, नीले में हल्की धारियाँ"
     },
     "sortName": "नाम से",
-    "quickViewLabel": "त्वरित झलक"
+    "quickViewLabel": "त्वरित झलक",
+    "allSizeTiers": "सभी पैमाने"
   },
   "Search": {
     "meta": {

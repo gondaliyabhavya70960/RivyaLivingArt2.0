@@ -66,6 +66,7 @@ type CategorySearchParams = {
   occasion?: string | string[];
   band?: string | string[];
   stock?: string | string[];
+  sizeTier?: string | string[];
   sort?: string | string[];
   /** §7.7's numbered pager — 1-based. Absent and `1` are the same page. */
   page?: string | string[];
@@ -98,6 +99,7 @@ function categoryHref(
   if (filters.occasion) params.set("occasion", filters.occasion);
   if (filters.band) params.set("band", filters.band);
   if (filters.stock) params.set("stock", filters.stock);
+  if (filters.sizeTier) params.set("sizeTier", filters.sizeTier);
   if (sort !== DEFAULT_SORT) params.set("sort", sort);
   if (page > 1) params.set("page", String(page));
   const qs = params.toString();
@@ -133,7 +135,7 @@ export async function generateMetadata({
       t("categoryMetaDescription", { category: category.name }),
     // A hidden shelf reachable via preview must never be indexed.
     ...(row.visible ? {} : { robots: { index: false, follow: false } }),
-    // Collapse ?occasion/?band/?stock/?sort/?q filter permutations onto the
+    // Collapse ?occasion/?band/?stock/?sizeTier/?sort/?q filter permutations onto the
     // clean category URL so ranking signals don't split.
     alternates: localeAlternates(`/shop/${slug}`, locale),
   };
@@ -188,6 +190,7 @@ export default async function ShopCategoryPage({
     occasion: first(sp.occasion),
     band: first(sp.band),
     stock: first(sp.stock),
+    sizeTier: first(sp.sizeTier),
   };
   const requestedPage = parseShopPage(first(sp.page));
   const after = requestedPage > 1 ? undefined : first(sp.after);
@@ -469,6 +472,7 @@ export default async function ShopCategoryPage({
             occasion: filters.occasion,
             band: filters.band,
             stock: filters.stock,
+            sizeTier: filters.sizeTier,
           }}
           sort={sort}
           lockedCategory={slug}

@@ -1041,7 +1041,8 @@
       "anyAvailability": "કોઈ પણ ઉપલબ્ધતા",
       "clearAll": "બધું હટાવો",
       "apply": "લાગુ કરો ({count, plural, one {# કૃતિ} other {# કૃતિઓ}})",
-      "unavailable": "આ દૃશ્યમાં કોઈ કૃતિ નથી"
+      "unavailable": "આ દૃશ્યમાં કોઈ કૃતિ નથી",
+      "sectionSizeTier": "કદ"
     },
     "activeFilters": {
       "remove": "{filter} હટાવો"
@@ -1054,7 +1055,8 @@
       "imageAlt": "દરિયાની ઊંડાઈ જેવો સ્તરવાળો રેઝિન બ્લોક, વાદળીમાં આછી પટ્ટીઓ"
     },
     "sortName": "નામ પ્રમાણે",
-    "quickViewLabel": "ઝડપી ઝલક"
+    "quickViewLabel": "ઝડપી ઝલક",
+    "allSizeTiers": "બધાં કદ"
   },
   "Search": {
     "meta": {

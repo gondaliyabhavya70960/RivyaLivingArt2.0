@@ -1041,7 +1041,8 @@
       "anyAvailability": "在庫状況を問わない",
       "clearAll": "すべて解除",
       "apply": "表示する（{count, plural, other {# 点}}）",
-      "unavailable": "この条件に作品はありません"
+      "unavailable": "この条件に作品はありません",
+      "sectionSizeTier": "スケール"
     },
     "activeFilters": {
       "remove": "{filter} を外す"
@@ -1054,7 +1055,8 @@
       "imageAlt": "海の深さのように見える層状のレジンブロック。青のあいだに淡い帯が走る"
     },
     "sortName": "名前順",
-    "quickViewLabel": "クイックビュー"
+    "quickViewLabel": "クイックビュー",
+    "allSizeTiers": "すべてのスケール"
   },
   "Search": {
     "meta": {
