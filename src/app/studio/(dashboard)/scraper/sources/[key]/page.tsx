@@ -19,6 +19,7 @@ import { describeUnauthorizedRun } from "@/lib/scraper/policy";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { matchCategoryId } from "@/lib/scraper/category-map";
+import { suggestSizeTier } from "@/lib/scraper/size-tier-suggest";
 import { describePriceMove } from "@/lib/scraper/price-history";
 import { deriveHealth } from "@/lib/scraper/health";
 
@@ -41,6 +42,15 @@ const getSource = cache((key: string) =>
 const firstString = (value: unknown): string | null =>
   Array.isArray(value)
     ? (value.find((v): v is string => typeof v === "string") ?? null)
+    : null;
+
+/** `fields.productType`, when the adapter recorded one (Shopify does). */
+const productTypeOf = (fields: unknown): string | null =>
+  fields &&
+  typeof fields === "object" &&
+  "productType" in fields &&
+  typeof (fields as { productType: unknown }).productType === "string"
+    ? (fields as { productType: string }).productType
     : null;
 
 function priceLabel(min: number | null, max: number | null): string {
@@ -172,6 +182,17 @@ export default async function SourceDetailPage({
     // Auto-map the free-text source category to the nearest catalog category;
     // the operator can override it per-row in the list before importing.
     mappedCategoryId: matchCategoryId(p.category, p.title, categories),
+    // Same idea for the size taxonomy (docs/plan/07 step 6): a suggestion
+    // computed at read time, never stored on the staged row, editable in
+    // the list before importing. The SOURCE's tier is deliberately not an
+    // input — a large-format studio sells coasters too.
+    suggestedSizeTier: suggestSizeTier({
+      title: p.title,
+      category: p.category,
+      productType: productTypeOf(p.fields),
+      description: p.description,
+      dimensions: p.dimensions,
+    }),
     priceLabel: priceLabel(p.priceMin, p.priceMax),
     priceSort: p.priceMin ?? p.priceMax ?? null,
     priceMove: (() => {
