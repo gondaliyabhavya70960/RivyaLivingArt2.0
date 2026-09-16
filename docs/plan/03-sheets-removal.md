@@ -138,6 +138,17 @@ Destructive. Sequence matters.
 6. Revoke the service account. Un-share the spreadsheet.
 ```
 
+> **Status (2026-09-16).** Steps 1–6 ran on 2026-09-15 (`docs/archive/sheets-2026-09-15/`,
+> migration `20260915150000_drop_sheets_schema`, PRs #73–#75). One item in §2.3's drop list
+> was missed by step 4: **`SiteSettings.{sheetId, sheetTabIds}`** were never read after step 3
+> but were neither un-modelled nor dropped. They came out of `schema.prisma` on 2026-09-16
+> with **no migration** — the same step-4a shape the seven push-state columns went through,
+> because `findMany()` without a `select` names every column and a drop under the old client
+> fails every `SiteSettings` query. **Still owed, in its own PR after that client is
+> deployed:** `ALTER TABLE "SiteSettings" DROP COLUMN "sheetId", DROP COLUMN "sheetTabIds";`
+> — hand-written, like every migration here, because `prisma migrate diff` re-proposes
+> dropping the three trgm search indexes the schema does not model.
+
 Splitting rename-then-drop across two migrations means step 2 is reversible and step 4 runs against
 a tree already proven to work without the Sheets code paths.
 
