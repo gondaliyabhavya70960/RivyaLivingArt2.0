@@ -5,6 +5,27 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## C-tail — the last two Sheets columns dropped (2026-09-16)
+
+Branch `c-tail-drop-sheets-columns` (the owner's, commit `a14dddc`), main merged in and pushed
+on the owner's word once #89's production deployment was READY. Plan C step 4b's last item:
+`20260917110000_drop_sheets_settings_columns` drops `SiteSettings.sheetId` and
+`sheetTabIds`, the owner's spreadsheet and tab ids that survived the 2026-09-15 drop unread.
+The two-PR rule, to the letter: #88 un-modelled them with no migration (step 4a), #89's
+deployment put that client live at 16:36 UTC, and only then did this migration run — from
+the preview build, as every migration here does. The branch sat unpushed for three hours
+for exactly that reason: its first push at 13:35 UTC had failed on the P3009 that blocked
+everything, and pushing it again before #88 was live would have dropped columns the
+deployed #83 client still selected — the 2026-09-15 rename incident again.
+
+Verified before the push: main merged cleanly (the branch adds one file); the schema no
+longer models the fields; typecheck; a real `npm run build` against a local database that
+still had both columns — the migration applied, bootstrap ran, `next build` completed,
+zero Sheets columns left. `docs/plan/03-sheets-removal.md` §4 and CLAUDE.md record the
+debt as paid. Nothing Sheets-shaped remains in the schema.
+
+---
+
 ## Fix — production deploys unblocked: the P3009 guard reads the whole footprint (2026-09-16)
 
 Branch `claude/inspiring-cerf-2ymgwf`, second PR. Every production deploy since 09:47 UTC —
