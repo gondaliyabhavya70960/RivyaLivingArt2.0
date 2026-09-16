@@ -21,6 +21,20 @@
  * directly.
  */
 
+/**
+ * The scraper pipeline's own normalizer version (B8), stamped on every
+ * `AnalyticsSnapshot` as `normalizerVersion`. Deliberately NOT
+ * import-tiers.ts's `NORMALIZER_VERSION` — that constant versions the sheet
+ * pipeline's tier inference, a different pipeline reading different fields.
+ *
+ * Bump when any function in this file changes what it outputs: analytics
+ * read staged rows and snapshot variants through these mappings, so a
+ * mapping change without a bump would leave old snapshots claiming the new
+ * reading. A bump requires no re-scrape — compute-time normalization (B4)
+ * re-reads `rawPayload` — but it does require a recompute.
+ */
+export const SCRAPER_NORMALIZER_VERSION = "n1";
+
 /** Split a delimited phrase into trimmed, non-empty tokens. `/` and `&` are
  *  treated as separators alongside the obvious comma — "wood/resin" and
  *  "gold & silver" are two items, not one. */
