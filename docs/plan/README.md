@@ -142,6 +142,14 @@ after the rest of this plan was written, and its first two steps (the source
 tiers, the docs) depend on nothing. Its step 2 — `Product.sizeTier` — is the
 gate for everything else in it.
 
+> **Where the sequence stands (2026-09-16).** Phases 1–8 are shipped: D (#61, #62),
+> C's replacement (#59) and removal (#66, #67, #74, #75 — one owed drop recorded in
+> [`03`](03-sheets-removal.md) §4), A's design-system layer and the corrected §3/§4 items
+> (#63–#65, #67), B1–B9 (#68–#71, #73, #81–#85) and A9's scraper workspaces (#86). Phase 9
+> has steps 0–3 shipped (#78–#80, after the registry narrowing in #76–#77) and
+> continues from step 4; the ten owner questions T2–T11 in [`07`](07-three-tier-architecture.md)
+> stay open and are not built around.
+
 Phases 1–2 are independent of the D25 debate and can start immediately once D27 and the slot list
 are settled. Phase 1 is the highest value-per-hour work in the plan.
 

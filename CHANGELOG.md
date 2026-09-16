@@ -5,6 +5,244 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## Fix — a failed-migration record heals itself when it provably left nothing behind (2026-09-16)
+
+PR #87. Production deploy `573f43b` failed with **P3009**: `20260917090000_analytics_opportunity`
+(the B8 migration) was recorded in `_prisma_migrations` as *failed*, so Prisma refused to apply
+anything newer. The migration itself was fine — pure additive `CREATE TABLE`s, byte-verified. The
+record was the problem: Vercel runs `migrate deploy` for **preview** deployments against the
+production database too, and a superseded preview build was cancelled mid-migration.
+
+- `scripts/migrate-deploy.mjs` now gives P3009 **one guarded chance to heal itself per build**:
+  parse the failed migration name(s), read each one's own `migration.sql` from the repo and
+  extract the tables it creates, query the database (the same unpooled URL chain
+  `prisma.config.ts` uses), and — **only when NONE of those tables exist**, which for this
+  repo's additive-only migrations proves the migration left nothing behind — run
+  `prisma migrate resolve --rolled-back <name>` and let the deploy re-apply from scratch.
+- Everything else stops the build exactly as before, with the exact manual commands printed:
+  a table it would create already exists (partial application — a human decides between
+  drop-and-rolled-back and `--applied`), the migration is ALTER-only (a half-applied column
+  cannot be ruled out this way), or the footprint cannot be checked at all. **It never runs
+  `--applied`.** That is a human's call, every time.
+- New module `scripts/lib/migrate-resolve-failed.mjs` holds the parsers and the guard's
+  reasoning; 10 new unit tests run them against the real production P3009 output.
+
+> The six entries below — **B5 (PR #81) · B6 (#82) · B7 (#83) · B8 (#84) · B9 (#85) · A9 (#86)** —
+> were merged on 2026-09-16 without being pasted: the API channel those sessions pushed through
+> could not write a 242 KB file, so each PR body carried its entry and asked for it to be landed
+> on merge. They are landed here verbatim, newest first. Three carry the 2026-09-17 date their
+> authors wrote (the migration directories are dated the same way); the merges happened on
+> 2026-09-16 UTC.
+
+## A9 — Studio scraper workspaces (2026-09-17)
+
+- **Workflow runs** (`/studio/scraper/runs`, plan §6): every scrape job as a
+  filterable feed — status chips with true per-status counts, source filter,
+  pagination, demo rows excluded by clause. Retry queues a FRESH job for the
+  failed run's exact target (the failed row is a dated record, never
+  reopened — D24) under the one-run-per-source guard; cancel terminal-writes
+  an in-flight job as FAILED with the operator's name on the error line so a
+  hand stop never reads as a source fault. Semantics live in
+  `run-control.ts`, db-tested without an auth session.
+- **Product explorer** (`/studio/scraper/explorer`): the researched corpus
+  as one table with raw and normalized values SIDE BY SIDE — the staged
+  row's own fields next to B6's reference-variant pick and B4's
+  alias-resolved materials, computed at read time so a mapping fix relabels
+  history without a re-scrape. League/source/state filter in the query;
+  basis/title filter the shaped rows; "showing X of N" on every read. A
+  quote-only listing shows quote only, never a zero.
+- **Large-format workspace** (`/studio/scraper/large-format`): image-first
+  cards for shortlisted/confirmed pieces from LARGE_FORMAT-tier sources —
+  dimensions, material stack, reference price, top-3 B9 neighbours via
+  pgvector — plus the INSPIRATION_ONLY reference board as the image wall it
+  exists to be. Human-gated (rule 8): nothing arrives here on its own.
+- **Tidyings**: `PRICE_BASIS_LABELS` is canonical in `price-basis.ts` (was a
+  page-local const); the B9 embedder and the explorer share
+  `splitMaterialList`; the stage rail's Scraping cell lands on the runs
+  feed; the hub links all three screens.
+
+## B9 — Embeddings + similarity (2026-09-17)
+
+- **ProductEmbedding** (new table, plan §4 phase 8's `hash · model · version
+  · vector`): one derived vector per researched product per embedder model.
+  `features` JSON stores the weighted feature list the vector was built from
+  — rule 7 applies to embeddings: the working is on the row. `hash` (sha1 of
+  the canonical feature list) is the change key; `model` + `version` name
+  the generation so a future semantic or vision model is a new value, never
+  a silent change to what a vector means. `vector` is a pgvector
+  `vector(512)` column Prisma never models — written and read through raw
+  SQL, with pgvector's own `<=>` cosine operator (the plan's "no hand-rolled
+  index" rule; migration starts with `CREATE EXTENSION IF NOT EXISTS
+  vector`).
+- **The `attr-hash` v1 embedder** (pure module): namespaced weighted
+  features — title tokens ×1, alias-resolved materials ×2.5, category ×2,
+  league ×1.5, coarse INR price band ×1, option-label tokens ×0.75 —
+  feature-hashed into 512 signed dimensions, L2-normalized. Deterministic
+  and offline: no AI key exists in this deployment, and an unauditable
+  external similarity number fails rule 7. Quote-only pieces contribute NO
+  price band; products with no usable identity text get NO embedding.
+  Scope stated in the module header: identity text, not images — visual
+  similarity is a new `model` generation on the same table.
+- **Recompute is explicit and incremental**: a Studio action behind
+  `requireStaff` (no scrape, no cron) rewrites only rows whose feature hash
+  moved, keeps the rest with their original `computedAt`, and prunes other
+  model generations wholesale — embeddings are derivations, not dated
+  records (D24). Materials resolve through the owner's NormalizationAlias
+  rows read fresh, so a mapping fix moves embeddings without a re-scrape
+  (B4's rule, extended).
+- **Similarity reads**: cross-source duplicate candidates at ≥ 85% cosine
+  (the signal the DUPLICATE shortlist state exists for) and top-5 nearest
+  neighbours for every shortlisted/confirmed product — the whole corpus is
+  indexed, but which pieces the owner compares is a human-gated list
+  (rule 8). Price bands come from B6's reference-variant pick, so "similar"
+  and "comparable" never drift apart.
+- **Surface**: `/studio/scraper/analytics` gains a Similarity section —
+  "embedded X of N researched products" stamps with the no-signal exclusion
+  named, the duplicate-candidate pairs table, and neighbour cards, behind
+  its own Recompute embeddings button and empty state.
+- **Infra**: CI's throwaway Postgres moves to `pgvector/pgvector:pg16`
+  (drop-in `postgres:16` with the extension). Production must be
+  pgvector-capable; if it cannot be, the plan's honest fallback is a managed
+  vector service.
+
+## B8 — Analytics + opportunity score (2026-09-17)
+
+- **AnalyticsSnapshot** (new table): precomputed analytics payloads keyed
+  `(view, league, scope, sourceKey)` with `""` as the not-applicable sentinel
+  — never NULL (the compound unique stays upsertable) and never meaning "all"
+  (the key vocabulary has no spelling for "every league", so a league-wide
+  number cannot silently become an all-leagues one). Every payload carries
+  `computedFrom { included, considered, exclusions }` with the invariant
+  *included + Σ exclusions = considered*; `includedCount`/`consideredCount`
+  are duplicated as columns so the table is auditable as SQL. Stamped
+  `computedAt` · `scrapeRunId` · `normalizerVersion` · `analyticsVersion`
+  (n1 / v1) so a formula change makes stale rows recognizable.
+- **Views**: `league-price-benchmark` (every league × every comparison scope,
+  league-wide and per-source; type-7 min/p25/median/p75/max/mean over the
+  scope's picks; the QUOTE_ONLY_SEPARATE arena is a COUNT, never a price —
+  quote-only rows carry NULL prices by design) and `funnel-overview` (the
+  corpus counted through the shortlist states, entry-less products folded
+  into NEW). Benchmark rows are fetched through B6's `variantWhereForLeague`
+  guard — a materials price cannot reach a finished-art median BY CLAUSE.
+- **OpportunityScore** (new table): one row per **component** per product —
+  market-depth 0.35, price-fit 0.35, freshness 0.2, option-richness 0.1 —
+  each with `value` (nullable: null means unmeasurable, contribution 0, and
+  the `detail` says why — never guessed), `weight`, `contribution`, and
+  `detail` showing the working in words. No total is stored: Σ contribution
+  is computable from the rows, and a stored total would be a score with the
+  working thrown away (rule 7). Scores exist only for products a human
+  shortlisted or confirmed — derived data is human-gated too (rule 8).
+- **Recompute is explicit**: a Studio action behind `requireStaff`, never a
+  cron and never a scrape. It replaces both tables wholesale in one
+  transaction each — derivations, not dated records (D24 protects what a
+  source said, not what we computed from it) — which is also what keeps a
+  re-leagued source from leaving a stale per-source row behind.
+- **Surface**: `/studio/scraper/analytics` — benchmark tables with a
+  "computed from X of N rows — excluded: …" line under every number, funnel
+  chips, and opportunity cards with per-component bars, value × weight, and
+  the detail string, ranked by Σ contribution. Linked from the scraper hub
+  and the confirmed page.
+- **Decision**: `ShortlistEntry.linkedOpportunityId` (plan sketch) is
+  deliberately not added — `OpportunityScore.researchProductId` IS the link;
+  a second pointer would be two spellings of one fact. `ProductEmbedding`
+  remains B9.
+
+## B7 — Shortlist → confirmed → export (2026-09-16)
+
+- Added `ShortlistState` (NEW · REVIEW · SHORTLISTED · REJECTED · CONFIRMED ·
+  INSPIRATION_ONLY · DUPLICATE) and `ShortlistEntry`, keyed one-per-
+  ResearchProduct (hand-written additive migration
+  20260916190000_shortlist_entries). An entry records a decision — state, who,
+  when, why, note, tags; a product with no entry is implicitly NEW.
+- Backfill maps the legacy review queue forward (APPROVED→SHORTLISTED,
+  REJECTED→REJECTED, IMPORTED→CONFIRMED, plus PENDING rows carrying notes)
+  with changedBy NULL — no invented authors; the reason records the
+  provenance.
+- New `src/lib/scraper/shortlist.ts`: the seven-state transition machine.
+  CONFIRMED is reachable only from SHORTLISTED and leaves only back to
+  SHORTLISTED; no automatic transitions anywhere (rule 8).
+- Review inbox rebuilt on entries (`shortlist-query.ts` + `shortlist-inbox.tsx`,
+  replacing review-grid.tsx): seven clickable state filters, bulk moves that
+  report moved / already / refused instead of failing a mixed selection, notes
+  and tags on the entry, import dialog wired to the shortlisted selection.
+- Legacy coexistence: `reviewStatus` stays the promote path's input, mirrored
+  both ways (SHORTLISTED→APPROVED down; APPROVED→SHORTLISTED up, never
+  un-confirming a CONFIRMED entry); importing now confirms the entry — the
+  backfill's mapping applied going forward.
+- New `/studio/scraper/confirmed` page — the gated final list — with CSV/XLSX
+  export at `/api/scraper/export-confirmed` (ADMIN-only; formula-injection-safe
+  CSV via the shared writer, XLSX via exceljs). Every row carries the B6
+  reference-variant pick and its rationale; quote-only exports an empty price,
+  never zero (rule 3).
+- Tests: 17 new unit tests (transitions, legacy mapping both ways, export
+  serializer) + tests/db/shortlist-write.test.ts (9 db tests: the gate rules,
+  both mirrors, the import-confirm door, first-move provenance).
+
+## B6 — Fair comparison scopes + leagues (2026-09-16)
+
+- Added `AnalyticsLeague` (FINISHED_ART · MATERIALS_DIY · MARKETPLACE_B2B) and
+  `ScrapeSource.analyticsLeague`, backfilled from the owner-set `supply` flag
+  (hand-written additive migration 20260916120000_analytics_league).
+- New `src/lib/scraper/leagues.ts` + `league-query.ts`: league vocabulary and
+  the server-side query guards (`snapshotWhereForLeague`,
+  `variantWhereForLeague`) — enforced in the query, not a UI filter.
+- New `src/lib/scraper/comparison-scopes.ts`: the four comparison scopes
+  (all-variants · base-product · unique-design · quote-only-separate) with a
+  deterministic reference-variant pick whose rationale is recorded per row.
+- Write path stamps non-benchmark leagues' variants `isReference` with a
+  `league:<LEAGUE>` reason; re-leaguing a source bites at query time without
+  rewriting dated snapshots (D24).
+- Studio: "Which market it sells into" select on the source page, with the
+  league's own description; `setSourceAnalyticsLeague` server action.
+- Tests: 17 new pure tests + tests/db/league-guard.test.ts (test:db) proving
+  the stamp and the guard meet — a league's average excludes reference rows
+  BY CLAUSE.
+
+## Workstream B step 5 — two adapters keyed on markup shape (2026-09-16)
+
+B5 of `docs/plan/02-scraper-rebuild.md`: prove the phase-6b schema survives both catalog
+styles — a priced/variant store and a bespoke/quote studio — before it hardens.
+
+### What shipped
+
+- **`adapters/markup-shape.ts`** — `detectMarkupShape()` keys a page on what its markup
+  looks like: commerce markup with a declared price → PRICED_STORE; no price + a
+  quote/enquiry CTA + piece-page structure → QUOTE_STUDIO; anything else → NONE.
+  Strictness is the design: price text alone never promotes a page (a category grid is
+  full of it), and a page carrying several product identities is a listing, whatever its
+  cards claim.
+- **`adapters/priced-store.ts`** — single product pages with commerce markup but no
+  usable JSON-LD Product node (microdata, OG product tags, `data-product_variants`
+  blobs). One variant row per published option; a bare range becomes floor+ceiling rows,
+  never an invented midpoint; the price block's own words ("per sq ft", "Price on
+  request") travel in `shortTagline` so basis derivation sees them at persistence.
+- **`adapters/quote-studio.ts`** — bespoke atelier piece pages: no price, a quote CTA,
+  spec lists. Emits exactly one variant with `priceMajor: null` → QUOTE_ONLY → NULL
+  stored, never zero. `showPrice: false`, because there is no price to show.
+- **Wiring:** the JSON-LD adapter's fetch path now falls back to `mapPageByShape()` when
+  a page has no schema.org Product node — sitemap-discovered pages without JSON-LD
+  extract instead of silently skipping. Pages with Product nodes are untouched;
+  non-product pages still yield nothing.
+- **`docs/adapter-acceptance-checklist.md`** — the plan names an Adapter Acceptance
+  Checklist as B5's definition of done, but the source brief's checklist was never
+  committed (verified by repo-wide grep). This repo now carries its own, labelled as
+  agent-written; reconcile with the original if it is ever supplied.
+- **One shared vocabulary:** `price-basis.ts`'s phrase patterns are now exported, so
+  shape detection and basis derivation can never drift apart.
+
+### Verified
+
+- 30 new fixture tests (zero network calls) covering the checklist gates: identity,
+  quote-only integrity end to end through `derivePriceBasis`/`priceForBasis`, range →
+  floor/ceiling, spec extraction, and the negative gates (blog post, listing page,
+  malformed HTML all yield null without throwing).
+- Full unit suite **891 passed** (87 files), typecheck clean, lint clean on the changed
+  area.
+- Not run locally: `test:db` (needs Postgres), the build, `studio-audit` and e2e — CI
+  covers them on the PR.
+
+---
+
 ## Workstream E step 3 — the untiered backlog, made visible and fixable (2026-09-15)
 
 `Product.sizeTier` shipped nullable against a catalogue of ~4,485 rows, so on the day it
