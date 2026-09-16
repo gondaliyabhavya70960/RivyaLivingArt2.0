@@ -231,9 +231,18 @@ answered. Embeddings are a demo until those exist.
 | B8 | Analytics + opportunity score | Every payload carries `computed from X of N` |
 | B9 | Embeddings + similarity | Only after B8 |
 
-Every adapter ships against the document's **Adapter Acceptance Checklist** as fixture tests that
-make no network calls. That checklist is good and should be copied into the repo verbatim as the
-definition of done for `sources/<host>/`.
+> **B5 shipped 2026-09-16** as the markup-shape extractors
+> (`adapters/priced-store.ts`, `adapters/quote-studio.ts`,
+> `adapters/markup-shape.ts`), wired as the fallback inside the JSON-LD fetch
+> path — a page with no schema.org Product node is now routed by its markup
+> shape instead of being skipped. The Adapter Acceptance Checklist named below
+> was never committed with the source brief, so the repo now carries its own:
+> `docs/adapter-acceptance-checklist.md`, labelled as agent-written.
+
+Every adapter ships against the **Adapter Acceptance Checklist** as fixture tests that
+make no network calls. The source brief's own checklist was never committed to this repo;
+`docs/adapter-acceptance-checklist.md` is this repo's replacement for it, written at B5
+and labelled as such — reconcile with the original if the owner ever supplies it.
 
 ---
 
