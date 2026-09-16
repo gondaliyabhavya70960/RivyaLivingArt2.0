@@ -106,6 +106,7 @@ Four things about it that are expensive to get wrong:
 | `CHANGELOG.md`              | —      | What changed and why, newest first                                                                                                                                                 |
 | `docs/plan/README.md`       | ~200   | The index of the five workstreams currently in force (redesign · scraper rebuild · Sheets removal · asset pipeline · **the three-tier product architecture**)                     |
 | `docs/plan/07-three-tier-architecture.md` | ~230 | **The product architecture. Read it before touching product cards, the PDP, navigation, the shop facets or the scraper's classification** — the summary is in "The catalogue has THREE TIERS" above |
+| `docs/COMPLETED-WORK.md` · `docs/NEEDED-WORK.md` | ~150 each | **What the owner's five briefs asked for, and what is done or still owed — tier by tier.** The 617 audited rows behind them are in `docs/audits/2026-09-16/`. Update them when a brief item ships or a decision lands |
 
 **Superseded — do NOT act on these.** They are kept for history and they contradict the
 current design:

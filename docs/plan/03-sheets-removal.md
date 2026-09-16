@@ -1,5 +1,7 @@
 # C — Complete removal of Google Sheets
 
+> **Status, 2026-09-16:** complete, to the provider level. The residuals the audits found (a dead constant, two unmarked historical docs, no CI grep) are in `docs/NEEDED-WORK.md` §3 Hygiene.
+
 > **Blocked on D27.** The attached rebuild document makes Google Sheets first-class (Prompt 29, the
 > canonical column list, Definition-of-Done item 13). The user's instruction removes it. The
 > instruction wins; DoD item 13 is restated as *"export the confirmed list as CSV/XLSX."*
