@@ -5,6 +5,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
+import type { ProductSizeTier } from "@/lib/product-size-tier";
 import { demoClause, NO_DEMO, type DemoClause } from "@/lib/demo-clause";
 import {
   CATALOG_GROUPS,
@@ -13,6 +14,7 @@ import {
   PRICE_BANDS,
   type ShopFilters,
   type SortKey,
+  sizeTierFromSlug,
 } from "@/lib/shop-filters";
 
 // Server-side shop catalog lib (imports db — server code only). Client
@@ -29,9 +31,13 @@ export {
   normalizeEcosystemParam,
   OCCASIONS,
   PRICE_BANDS,
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_SLUG,
+  sizeTierFromSlug,
   SORTS,
   type PriceBand,
   type ShopFilters,
+  type SizeTierSlug,
   type SortKey,
 } from "@/lib/shop-filters";
 
@@ -40,7 +46,7 @@ export {
 /**
  * Public catalog where-clause: always PUBLISHED and never DEMO seeds, plus
  * the optional search / ecosystem / category / occasion / price-band /
- * availability filters.
+ * availability / product-tier filters.
  */
 export function buildProductWhere(
   filters: ShopFilters,
@@ -84,6 +90,14 @@ export function buildProductWhere(
   // is simply the unfiltered view.
   if (filters.stock === "in") {
     and.push({ inStock: true });
+  }
+
+  // The three-tier architecture (docs/plan/07 step 8). `Product.sizeTier`,
+  // NOT `Product.tier` — that one is the import ladder ORDER_BY sorts on.
+  // An unknown slug adds no clause, the same rule `band` follows below.
+  const sizeTier = sizeTierFromSlug(filters.sizeTier);
+  if (sizeTier) {
+    and.push({ sizeTier });
   }
 
   const band = filters.band
@@ -141,6 +155,13 @@ export type ShopProductItem = {
   variantChips: string[];
   /** Owner-sheet tier (1 = studio original). Null for hand-made studio rows. */
   tier: number | null;
+  /**
+   * The owner's three-tier architecture — what the piece IS
+   * (docs/plan/07); `tier` above is where it CAME FROM. Null for the
+   * untiered backlog. Read by `cardVariantFor` in card-meta.ts, never by
+   * a query here.
+   */
+  sizeTier: ProductSizeTier | null;
   inStock: boolean;
   featured: boolean;
   /**
@@ -252,8 +273,13 @@ function toImage(
     : null;
 }
 
-/** Row select shared by the paged fetch and the wishlist slug fetch. */
-const CARD_SELECT = {
+/**
+ * Row select shared by the paged fetch, the wishlist slug fetch and — since
+ * workstream E step 7 — `large-format.ts`. A consumer may bring its own
+ * where/orderBy/take; a select of its own is the duplicate this export
+ * removed.
+ */
+export const CARD_SELECT = {
   id: true,
   slug: true,
   title: true,
@@ -263,7 +289,10 @@ const CARD_SELECT = {
   priceMin: true,
   priceMax: true,
   showPrice: true,
+  // `tier` is the owner-sheet IMPORT tier (where a row came from);
+  // `sizeTier` is the three-tier architecture (what the piece is).
   tier: true,
+  sizeTier: true,
   inStock: true,
   featured: true,
   // D21: owner-typed free text for the mono card meta line, the card-hover
@@ -285,9 +314,9 @@ const CARD_SELECT = {
   },
 } satisfies Prisma.ProductSelect;
 
-type CardRow = Prisma.ProductGetPayload<{ select: typeof CARD_SELECT }>;
+export type CardRow = Prisma.ProductGetPayload<{ select: typeof CARD_SELECT }>;
 
-function toShopProductItem(
+export function toShopProductItem(
   row: CardRow,
   locale: string,
   duplicateCount?: number,
@@ -314,6 +343,7 @@ function toShopProductItem(
     hoverImage: toImage(row.images[1]),
     variantChips: buildVariantChips(row.customFields),
     tier: row.tier,
+    sizeTier: row.sizeTier,
     inStock: row.inStock,
     featured: row.featured,
     // Only carried when the title genuinely belongs to a duplicate group —
@@ -630,7 +660,7 @@ export type DefaultShopFirstPage = {
  * The per-visitor-identical /shop entry bundle — unfiltered first page
  * (cards + total) plus the collection chip index — cached for 300s per
  * (locale, sort) and tag-invalidated on category/product mutations (M-P5).
- * Only the DEFAULT entry (no q/type/category/occasion/band/stock/after) may
+ * Only the DEFAULT entry (no q/type/category/occasion/band/stock/sizeTier/after) may
  * read this; any filtered, searched, or cursor-resumed request keeps hitting
  * the DB directly. Pure DB reads only — nothing here may touch per-request
  * APIs (cookies/headers), which `unstable_cache` cannot close over.

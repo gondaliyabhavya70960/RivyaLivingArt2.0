@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { ProductSizeTier } from "@/generated/prisma/enums";
@@ -12,7 +15,9 @@ import {
   SIZE_TIER_NAME,
   SIZE_TIER_NUMBER,
   SIZE_TIER_OPTIONS,
+  SIZE_TIER_SLUG,
   sizeTierFromFormValue,
+  sizeTierFromSlug,
   sizeTierStudioLabel,
   sizeTierToFormValue,
 } from "@/lib/product-size-tier";
@@ -62,6 +67,54 @@ describe("the tier list is not a hand-written copy", () => {
     ]);
     const labels = SIZE_TIER_OPTIONS.map((o) => o.label);
     expect(new Set(labels).size).toBe(labels.length);
+  });
+
+  it("ships the customer names to the storefront under ProductTier.<tier>, byte for byte", () => {
+    // The sixth-copy guard this file's header asks for. SIZE_TIER_NAME is
+    // the studio's copy and the canonical English; the storefront reads the
+    // same words through next-intl from messages/en.json (workstream E step
+    // 5, one nested block keyed by the enum value so a consumer can write
+    // t(`${tier}.name`) with no mapping table). The two are typed by hand
+    // in two files, and this is what stops them drifting apart silently.
+    const en = JSON.parse(
+      readFileSync(join(process.cwd(), "messages/en.json"), "utf8"),
+    ) as {
+      ProductTier: Record<
+        string,
+        { name: string; shortName: string; promise: string; primaryCta: string; secondaryCta: string }
+      >;
+    };
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(en.ProductTier[tier]?.name).toBe(SIZE_TIER_NAME[tier]);
+      expect(en.ProductTier[tier]?.shortName).toBe(SIZE_TIER_SHORT[tier]);
+      expect(en.ProductTier[tier]?.promise).toBeTruthy();
+      expect(en.ProductTier[tier]?.primaryCta).toBeTruthy();
+      expect(en.ProductTier[tier]?.secondaryCta).toBeTruthy();
+    }
+    // Part 0 / T1: Tier 03 is fast ORDERING through WhatsApp. No cart, no
+    // checkout, no basket — in any tier's copy.
+    const every = Object.values(en.ProductTier).flatMap((t) => Object.values(t));
+    for (const value of every) {
+      expect(value).not.toMatch(/\b(cart|checkout|basket|bag|buy now|pay)\b/i);
+    }
+  });
+
+  it("gives every tier one lowercase URL slug, and reads only that spelling back", () => {
+    // The shop facet's `?sizeTier=` value (docs/plan/07 step 8). Customer
+    // words, derived from the enum so the list still lives once.
+    expect(PRODUCT_SIZE_TIERS.map((t) => SIZE_TIER_SLUG[t])).toEqual([
+      "large",
+      "medium",
+      "small",
+    ]);
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(sizeTierFromSlug(SIZE_TIER_SLUG[tier])).toBe(tier);
+    }
+    // An unknown value is ignored, not errored, and the enum spelling is
+    // deliberately NOT a second public one.
+    for (const value of ["", undefined, null, "LARGE_FORMAT", "Large", "NONE", "__proto__"]) {
+      expect(sizeTierFromSlug(value)).toBeUndefined();
+    }
   });
 
   it("labels a tier with both vocabularies at once", () => {

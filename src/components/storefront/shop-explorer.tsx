@@ -36,6 +36,8 @@ import {
   isEcosystem,
   OCCASIONS,
   PRICE_BANDS,
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_SLUG,
   SORTS,
   type ShopFilters,
   type SortKey,
@@ -149,6 +151,9 @@ export function ShopExplorer({
   const locale = useLocale();
   const t = useTranslations("Shop");
   const tCommon = useTranslations("Common");
+  // The three tiers' customer names (docs/plan/07): this drawer is where
+  // that block first reaches the storefront.
+  const tTier = useTranslations("ProductTier");
   const [isPending, startTransition] = useTransition();
 
   const [items, setItems] = useState(initialItems);
@@ -182,6 +187,7 @@ export function ShopExplorer({
       occasion: activeFilters.occasion,
       band: activeFilters.band,
       stock: activeFilters.stock,
+      sizeTier: activeFilters.sizeTier,
       sort,
       ...next,
     };
@@ -204,6 +210,7 @@ export function ShopExplorer({
     if (merged.occasion) params.set("occasion", merged.occasion);
     if (merged.band) params.set("band", merged.band);
     if (merged.stock) params.set("stock", merged.stock);
+    if (merged.sizeTier) params.set("sizeTier", merged.sizeTier);
     if (merged.sort !== DEFAULT_SORT) params.set("sort", merged.sort);
     const qs = params.toString();
     startTransition(() => {
@@ -221,7 +228,7 @@ export function ShopExplorer({
   /* ————————— paging (§7.7: never infinite scroll) ————————— */
 
   const fetchingRef = useRef(false);
-  const { q, category, occasion, band, type, stock } = activeFilters;
+  const { q, category, occasion, band, type, stock, sizeTier } = activeFilters;
 
   const loadMore = useCallback(async () => {
     if (!cursor || fetchingRef.current) return;
@@ -237,6 +244,7 @@ export function ShopExplorer({
           band,
           type,
           stock,
+          sizeTier,
         },
         sort,
         cursor,
@@ -282,6 +290,7 @@ export function ShopExplorer({
     band,
     type,
     stock,
+    sizeTier,
     lockedCategory,
     sort,
     locale,
@@ -292,6 +301,10 @@ export function ShopExplorer({
 
   const activeType = isEcosystem(type) ? type : undefined;
   const stockIn = stock === "in";
+  // An unknown URL value shows no chip and no selected row, as `band` does.
+  const activeSizeTier = PRODUCT_SIZE_TIERS.find(
+    (tier) => SIZE_TIER_SLUG[tier] === sizeTier,
+  );
 
   /* An ecosystem equal to the DEFAULT is not something the visitor applied.
      The server resolves `?type=` through `normalizeEcosystemParam` before it
@@ -304,6 +317,7 @@ export function ShopExplorer({
     occasion ||
     band ||
     stock ||
+    sizeTier ||
     (!lockedCategory && (category || (type && type !== DEFAULT_ECOSYSTEM))),
   );
 
@@ -363,6 +377,13 @@ export function ShopExplorer({
       id: "stock",
       label: t("inStockOnly"),
       onRemove: () => apply({ stock: undefined }),
+    });
+  if (activeSizeTier)
+    chips.push({
+      id: "sizeTier",
+      // The one-word name: chips are dense. The drawer rows carry the full one.
+      label: tTier(`${activeSizeTier}.shortName`),
+      onRemove: () => apply({ sizeTier: undefined }),
     });
 
   /* One ratio per grid (§4.6). The shelf decides once — a supplies view of
@@ -698,6 +719,43 @@ export function ShopExplorer({
                               apply({ stock: stockIn ? undefined : "in" })
                             }
                           />
+                        </FilterRows>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* The three-tier architecture (docs/plan/07 step 8) —
+                        the customer's intent axis, not a sub-filter, and it
+                        will lead this drawer once the catalogue is tiered.
+                        Until step 3's backlog is worked it sits last and
+                        closed: a facet that empties the shelf for almost
+                        every visitor is not a headline. Rows mirror
+                        occasion/availability — no counts, no disabled rows. */}
+                    <AccordionItem value="sizeTier">
+                      <AccordionTrigger>
+                        {t("drawer.sectionSizeTier")}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <FilterRows>
+                          <FilterRow
+                            label={t("allSizeTiers")}
+                            selected={!activeSizeTier}
+                            onSelect={() => apply({ sizeTier: undefined })}
+                          />
+                          {PRODUCT_SIZE_TIERS.map((tier) => (
+                            <FilterRow
+                              key={tier}
+                              label={tTier(`${tier}.name`)}
+                              selected={activeSizeTier === tier}
+                              onSelect={() =>
+                                apply({
+                                  sizeTier:
+                                    activeSizeTier === tier
+                                      ? undefined
+                                      : SIZE_TIER_SLUG[tier],
+                                })
+                              }
+                            />
+                          ))}
                         </FilterRows>
                       </AccordionContent>
                     </AccordionItem>

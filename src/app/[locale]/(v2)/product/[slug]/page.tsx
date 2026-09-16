@@ -55,6 +55,7 @@ import { reviewJsonld } from "@/lib/review-jsonld";
 import { fetchDuplicateTitleCounts, type ShopProductItem } from "@/lib/shop";
 import { getSiteSettings } from "@/lib/site-settings";
 import { getTestimonials } from "@/lib/testimonials";
+import { tierOrderCopy } from "@/lib/tier-order-copy";
 import { formatPriceBand } from "@/lib/utils";
 import { buildWaLink } from "@/lib/whatsapp";
 import { localeAlternates } from "@/i18n/seo";
@@ -125,6 +126,7 @@ const RAIL_SELECT = {
   showPrice: true,
   featured: true,
   tier: true,
+  sizeTier: true,
   inStock: true,
   description: true,
   careNotes: true,
@@ -314,6 +316,20 @@ export default async function ProductPage({ params }: PageProps) {
     key: string,
     values?: Record<string, string | number | Date>,
   ): string => (t.has(key) ? t(key, values) : tEn(key, values));
+  // The tier presets (docs/plan/07 step 8) read `ProductTier.<tier>` with
+  // the same English-first shape, so a catalog that has not synced a key
+  // renders the English words rather than a raw path.
+  const tTier =
+    "ProductTier" in messages
+      ? await getTranslations("ProductTier")
+      : await getTranslations({ locale: "en", namespace: "ProductTier" });
+  const tTierEn =
+    locale === "en"
+      ? tTier
+      : await getTranslations({ locale: "en", namespace: "ProductTier" });
+  const tierCopy = tierOrderCopy(product.sizeTier, (key) =>
+    tTier.has(key) ? tTier(key) : tTierEn(key),
+  );
 
   // Ecosystem group feeds the honest "Collection" spec row (audit H1 —
   // supplies and 3D print present as their own ecosystems).
@@ -455,6 +471,7 @@ export default async function ProductPage({ params }: PageProps) {
         : null,
       variantChips: [],
       tier: row.tier,
+      sizeTier: row.sizeTier,
       inStock: row.inStock,
       featured: row.featured,
       materials: row.materials?.trim() || null,
@@ -596,9 +613,14 @@ export default async function ProductPage({ params }: PageProps) {
     { label: p.title },
   ];
 
-  const priceLabel = product.showPrice
-    ? formatPriceBand(product.priceMin, product.priceMax)
-    : tCommon("enquire");
+  // `showPrice` alone is not enough: with both prices null, formatPriceBand
+  // paints its hardcoded English "Enquire" in all nine locales (T6), and
+  // demo-product-001 — the PDP CI audits — is exactly that row.
+  const priceLabel =
+    product.showPrice &&
+    (product.priceMin != null || product.priceMax != null)
+      ? formatPriceBand(product.priceMin, product.priceMax)
+      : tCommon("enquire");
 
   /* §9.2's secondary action. A pre-sale enquiry link — it never touches
      `buildOrderMessage`, which stays the sole author of the order message
@@ -918,6 +940,7 @@ export default async function ProductPage({ params }: PageProps) {
                       waIntro: tp("oosWaIntro"),
                     }
               }
+              tierCopy={tierCopy}
             />
           </div>
         </section>

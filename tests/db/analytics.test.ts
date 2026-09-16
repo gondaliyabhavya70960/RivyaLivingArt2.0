@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTestDb } from "./helpers";
 import { ANALYTICS_VERSION } from "@/lib/scraper/analytics";
@@ -193,6 +193,18 @@ describe.skipIf(!db)("analytics + opportunity score", () => {
     latestJobId = diyJob.id;
   });
 
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.researchProduct.deleteMany({ where: { sourceKey: { in: [ART, DIY] } } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: { in: [ART, DIY] } } });
+    await db.scrapeJob.deleteMany({ where: { sourceKey: { in: [ART, DIY] } } });
+    await db.scrapeSource.deleteMany({ where: { key: { in: [ART, DIY] } } });
+  });
+
   it("recompute writes every league × scope league-wide, the funnel, and per-source rows — all stamped", async () => {
     const { recomputeAnalytics } = await import(
       "@/lib/scraper/analytics-query"
@@ -335,7 +347,11 @@ describe.skipIf(!db)("analytics + opportunity score", () => {
       "@/lib/scraper/analytics-query"
     );
     const report = await recomputeAnalytics();
-    expect(report.productsScored).toBe(1);
+    // At least ours. Other suites (shortlist-write, embeddings) leave their
+    // own shortlisted rows behind on a shared database, so an exact 1 only
+    // held on a fresh CI database — the human gate itself is proven by the
+    // next test, on this source's un-shortlisted siblings.
+    expect(report.productsScored).toBeGreaterThanOrEqual(1);
 
     const rows = await db!.opportunityScore.findMany({
       where: { researchProductId: id },
@@ -397,10 +413,22 @@ describe.skipIf(!db)("analytics + opportunity score", () => {
 
   it("the page read assembles stamps, benchmarks, funnel, and ranked opportunities", async () => {
     // Score one product again so the page has an opportunity row to rank.
+    // The previous test left it REJECTED, and REJECTED's only exits are
+    // NEW and REVIEW (SHORTLIST_TRANSITIONS) — a direct move to SHORTLISTED
+    // is refused as a no-op, which is exactly what the machine is for. Two
+    // legal moves, then. (The first version of this test made the single
+    // illegal move and asserted on a product that was never re-scored.)
     const id = await researchProductId(ART, "ext-2");
-    await transitionEntries([id], ShortlistState.SHORTLISTED, {
+    const toReview = await transitionEntries([id], ShortlistState.REVIEW, {
       changedBy: "user-1",
     });
+    expect(toReview.moved).toBe(1);
+    const toShortlist = await transitionEntries(
+      [id],
+      ShortlistState.SHORTLISTED,
+      { changedBy: "user-1" },
+    );
+    expect(toShortlist.moved).toBe(1);
     const { recomputeAnalytics, analyticsPageData } = await import(
       "@/lib/scraper/analytics-query"
     );
@@ -422,16 +450,17 @@ describe.skipIf(!db)("analytics + opportunity score", () => {
       data.funnel!.computedFrom.considered,
     );
 
-    expect(data.opportunities).toHaveLength(1);
-    expect(data.opportunities[0].researchProductId).toBe(id);
-    expect(data.opportunities[0].components).toHaveLength(
+    // Ours is on the ranked list; other suites' shortlisted rows may be too.
+    const ours = data.opportunities.find((o) => o.researchProductId === id);
+    expect(ours).toBeDefined();
+    expect(ours!.components).toHaveLength(
       OPPORTUNITY_COMPONENTS.length,
     );
-    const expectedTotal = data.opportunities[0].components.reduce(
+    const expectedTotal = ours!.components.reduce(
       (a, c) => a + c.contribution,
       0,
     );
-    expect(data.opportunities[0].total).toBeCloseTo(expectedTotal, 10);
+    expect(ours!.total).toBeCloseTo(expectedTotal, 10);
     expect(data.staleScoresPrunedOnNextRun).toBe(0);
   });
 });

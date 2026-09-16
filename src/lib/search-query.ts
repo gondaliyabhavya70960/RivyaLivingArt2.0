@@ -58,6 +58,7 @@ const PRODUCT_CARD_SELECT = {
   priceMin: true,
   priceMax: true,
   showPrice: true,
+  // The import tier, for the group ranking below — not the size taxonomy.
   tier: true,
   inStock: true,
   featured: true,
@@ -126,7 +127,12 @@ export async function searchProducts(
   });
   // Gap 7: ecosystem grouping — pieces before pigments before prints ("blue"
   // returns art before supplies). Stable sort keeps the title-first ranking
-  // inside each group; tier↔group is 1:1 on the live catalog.
+  // inside each group; tier↔group is 1:1 on the live catalog. `a.tier` is
+  // `Product.tier`, the owner-sheet IMPORT tier (1 owner · 2 resin goods ·
+  // 3 supplies · 4 3D-print) that `groupForTier` maps to a catalogue group.
+  // It is NOT `Product.sizeTier`, the three-tier product architecture, which
+  // search does not rank on; faceted search is `/shop?q=`, through
+  // `buildProductWhere`, where `?sizeTier=` applies.
   const GROUP_RANK = { art: 0, supplies: 1, print: 2 } as const;
   merged.sort(
     (a, b) =>

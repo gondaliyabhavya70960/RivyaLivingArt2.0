@@ -979,7 +979,12 @@
       "viewPiece": "કૃતિ જુઓ",
       "shipsIn": "7–10 દિવસમાં રવાના",
       "askOnWhatsApp": "WhatsApp પર પૂછો",
-      "materialsDimensions": "સામગ્રી અને માપ"
+      "materialsDimensions": "સામગ્રી અને માપ",
+      "collectible": {
+        "sizeLabel": "માપ",
+        "materialsLabel": "સામગ્રી",
+        "priceOnRequest": "કિંમત વિનંતી પર"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {હજી કોઈ કૃતિ નહીં} one {# કૃતિ} other {# કૃતિઓ}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "કોઈ પણ ઉપલબ્ધતા",
       "clearAll": "બધું હટાવો",
       "apply": "લાગુ કરો ({count, plural, one {# કૃતિ} other {# કૃતિઓ}})",
-      "unavailable": "આ દૃશ્યમાં કોઈ કૃતિ નથી"
+      "unavailable": "આ દૃશ્યમાં કોઈ કૃતિ નથી",
+      "sectionSizeTier": "કદ"
     },
     "activeFilters": {
       "remove": "{filter} હટાવો"
@@ -1049,7 +1055,8 @@
       "imageAlt": "દરિયાની ઊંડાઈ જેવો સ્તરવાળો રેઝિન બ્લોક, વાદળીમાં આછી પટ્ટીઓ"
     },
     "sortName": "નામ પ્રમાણે",
-    "quickViewLabel": "ઝડપી ઝલક"
+    "quickViewLabel": "ઝડપી ઝલક",
+    "allSizeTiers": "બધાં કદ"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "મોટી કૃતિઓ",
       "heading": "આ કદની કૃતિઓ",
       "intro": "સ્ટુડિયોએ મોટા કદમાં મૂકેલું કામ. જ્યાં કૃતિનું માપ કે સામગ્રી નોંધાયેલી હોય, ત્યાં તે સાથે છપાય છે.",
-      "materialsLabel": "સામગ્રી",
-      "sizeLabel": "માપ",
       "catalogCta": "આખું કૅટલૉગ જુઓ",
       "emptyHeading": "સ્ટુડિયો છોડે ત્યારે નોંધાય છે",
       "emptyBody": "આ કદે હજી જોવા જેવું કશું નથી. વાતચીત ગૅલેરીની રાહ જોતી નથી — તમને જોઈતી કૃતિ વર્ણવો, અમે ઓરડાથી શરૂ કરીને તેને ડિઝાઇન કરીશું.",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "વિસ્તૃત કરો",
     "collapse": "સંકોચો"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "સંગ્રહયોગ્ય ફર્નિચર અને ઓરડાની કલા",
+      "shortName": "સંગ્રહયોગ્ય",
+      "promise": "ઓરડાના માપે બનેલી",
+      "primaryCta": "કૃતિ કમિશન કરો",
+      "secondaryCta": "પરામર્શની વિનંતી કરો",
+      "orderSummaryNote": "કમિશન પૂછપરછ — કિંમત અને સમય WhatsApp પર નક્કી થાય છે.",
+      "orderWaIntro": "નમસ્તે Rivya Living Art,\nહું આ કૃતિ કમિશન કરવા માંગું છું:"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "યાદો અને ઉજવણીની કલા",
+      "shortName": "યાદ",
+      "promise": "ફૂલો, નામ અને તારીખો, કાયમ માટે સાચવેલાં",
+      "primaryCta": "તમારી યાદ સાચવો",
+      "secondaryCta": "કસ્ટમાઇઝ કરવાનું શરૂ કરો",
+      "orderSummaryNote": "યાદગીરીની કૃતિ — વિગતો અને સમય WhatsApp પર નક્કી થાય છે.",
+      "orderWaIntro": "નમસ્તે Rivya Living Art,\nહું આ સાથે યાદ સાચવવા માંગું છું:"
+    },
+    "SMALL_FORMAT": {
+      "name": "અંગત કલા અને ભેટ",
+      "shortName": "અંગત",
+      "promise": "ઝડપથી કસ્ટમાઇઝ, ભેટ માટે તૈયાર",
+      "primaryCta": "WhatsApp પર ઓર્ડર આપો",
+      "secondaryCta": "આ કૃતિને અંગત બનાવો",
+      "orderSummaryNote": "ઝડપી ઓર્ડર — કિંમત અને મોકલવાનું WhatsApp પર નક્કી થાય છે.",
+      "orderWaIntro": "નમસ્તે Rivya Living Art,\nહું આ ઓર્ડર કરવા માંગું છું:"
+    }
   }
 }

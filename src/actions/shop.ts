@@ -26,6 +26,9 @@ const loadMoreSchema = z.object({
     band: z.string().trim().max(30).optional(),
     type: z.string().trim().max(20).optional(),
     stock: z.string().trim().max(10).optional(),
+    // zod strips undeclared keys — an unlisted facet vanishes on every
+    // Load more batch (docs/plan/07 step 8: "or it drops on page 2").
+    sizeTier: z.string().trim().max(10).optional(),
   }),
   sort: z.enum(SORTS),
   cursor: z.string().min(1).max(64).optional(),

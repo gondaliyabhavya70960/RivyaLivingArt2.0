@@ -8,6 +8,90 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-16 (later the same day — production deploy blocker)
+What this session found:  EVERY production deploy since 09:47 UTC failed with P3009 on
+                          20260917090000_analytics_opportunity, and production sat on #83
+                          (B7) while B9, A9, #87 and #88 merged. Not a cancelled build: the
+                          abandoned branch feat/b8-analytics-opportunity-score had applied
+                          ITS migration (20260916210000_analytics_opportunity, another shape,
+                          plus ShortlistEntry.linkedOpportunityId) to production from a
+                          preview build at 08:16 UTC; the merged B8's rewritten migration then
+                          collided with it — 42P07 "relation already exists".
+What shipped:             scripts/lib/migrate-resolve-failed.mjs now parses the failed
+                          migration's WHOLE footprint and reads the catalog for it: nothing
+                          exists → --rolled-back; all of it exists as declared → --applied;
+                          a stray, data-free partial (or a declared derivation) → dropped in
+                          one transaction, then --rolled-back and re-applied; anything else
+                          → the facts and the manual commands, build fails. Pinned by 47
+                          tests and by a local replay of the exact production state. Plus
+                          20260917120000_shortlist_stray_link_column (IF EXISTS drops of the
+                          stray column). CLAUDE.md carries the true story and the rule: a
+                          migration pushed on ANY branch is applied to production under that
+                          name; never rename or rewrite it afterwards.
+How production heals:     pushing this branch runs the guard against production from the
+                          preview build (that is what preview builds do here). Then merge —
+                          or Redeploy main — and the site is on #88.
+Next Exact Task:          confirm the preview build log shows the three-statement drop and
+                          "All migrations have been successfully applied"; merge; watch the
+                          production deployment go READY. ONLY THEN may the owner's branch
+                          c-tail-drop-sheets-columns be pushed again: its migration drops
+                          SiteSettings.sheetId/sheetTabIds, which #83's deployed client still
+                          selects — pushing it before main is live repeats the 2026-09-15
+                          rename incident. The workstream E items below are unchanged.
+```
+
+## SESSION CHECKPOINT — 2026-09-16, PR #88 (superseded by the block above, kept as history)
+
+```text
+Date:                     2026-09-16
+Current Phase:            docs/plan workstream E — THE THREE-TIER PRODUCT ARCHITECTURE
+                          (docs/plan/07-three-tier-architecture.md, IN FORCE). Branch
+                          claude/inspiring-cerf-2ymgwf, draft PR #88; main = a7de607.
+What this session found:  CI's build job had been RED since B6 (#82), not since pgvector:
+                          the db suites B6/B8/A9 added were described as "bite in CI" and
+                          in CI they bit — five failures nobody read, because the job was
+                          already red. Fixed at the root (one B8 code defect: the analytics
+                          fetch went through the benchmark WHERE, so reference rows could
+                          never be counted as "considered"; four test defects), the scraper
+                          suites gained the afterAll cleanup the older suites already had,
+                          ci.yml runs pgvector/pgvector:pg16, and the six CHANGELOG entries
+                          #81–#86 owed since their merges are landed verbatim.
+Done in workstream E:     steps 0–3 (2026-09-15, see below) and, this session, steps 4–8:
+                          demo fixtures tiered (52 · 12 · 34 · 2 workshop sessions null; one
+                          PUBLISHED piece of each tier on /p/demo-lander), the ProductTier
+                          copy block in nine locales, the scraper's read-time tier
+                          suggestion (never stored; a tie returns null), the collectible
+                          card variant replacing /large-resin-art's hand-rolled tile, the
+                          PDP's per-tier order presets (out of stock wins; T6's "Enquire"
+                          leak closed), and the ?sizeTier= shop facet in all five places
+                          (drawer section last and closed until the catalogue is tiered).
+Also this session:        workstream C's last two columns (SiteSettings.sheetId /
+                          sheetTabIds) un-modelled with NO migration — step 4a again; the
+                          drop (4b) ships in its own PR only after this client is DEPLOYED.
+Next Exact Task:          the three items of step 8 that STOP AT A QUESTION — navigation
+                          (T2), the homepage band (T8), Tier 02's guided path (T4) — need
+                          the owner's answer before any code. Independently: tier the live
+                          catalogue from /studio/products (the "No tier yet" filter + bulk
+                          Set product tier), because every storefront tier surface renders
+                          from that column and the backlog is the whole catalogue; then
+                          promote the drawer's Scale section to first-and-open.
+Open owner actions:       the three from 2026-09-15 below, plus: (4) merge #88 and, once
+                          its production deployment is live, commission the 4b drop.
+Verified this session:    typecheck · lint · 1056 unit tests (98 files) · test:db 87/87
+                          twice on one database · copy:check · i18n-missing 0 missing,
+                          --stale clean · a real build against Postgres 16 + pgvector ·
+                          motion-budget 48.4 KB (under the 49 KB ceiling, unchanged) ·
+                          e2e smoke 36/36 with the LARGE preset on the demo PDP and the
+                          persisted Inquiry mirroring the wa.me message · redesign, a11y,
+                          keyboard and Studio audits (see the PR body for widths and routes).
+```
+
+## SESSION CHECKPOINT — 2026-09-15 (superseded, kept as history)
+
+**Superseded by the block above** — workstream B closed (B5–B9, PRs #81–#85) and A9 (#86)
+shipped after it was written, and E moved from step 4 to step 8. Not rewritten (D24).
+
+```text
 Date:                     2026-09-15
 Current Phase:            docs/plan workstream E — THE THREE-TIER PRODUCT ARCHITECTURE
                           (docs/plan/07-three-tier-architecture.md, supplied by the owner today

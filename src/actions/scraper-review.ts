@@ -9,6 +9,10 @@ import { db } from "@/lib/db";
 import { enrichScrapedFields } from "@/lib/scraper/product-enrich";
 import { decideMerge } from "@/lib/scraper/merge-policy";
 import {
+  PRODUCT_SIZE_TIERS,
+  type ProductSizeTier,
+} from "@/lib/product-size-tier";
+import {
   markImportedConfirmed,
   mirrorLegacyReviewStatus,
 } from "@/lib/scraper/shortlist-write";
@@ -258,6 +262,10 @@ async function importOneScrapedRow(
   categoryId: string,
   mirrorImages: boolean,
   changedBy: string | null,
+  /** The operator's product tier for the draft (docs/plan/07 step 6). A
+   *  null never writes: empty means "no opinion", the rule Bulk Import
+   *  already follows, so a re-import can never un-tier a product. */
+  sizeTier: ProductSizeTier | null = null,
 ): Promise<"created" | "updated" | "skipped" | "protected"> {
   // Every path below that marks the twin IMPORTED also confirms its
   // shortlist entry (B7): IMPORTED→CONFIRMED is the backfill's mapping,
@@ -275,7 +283,12 @@ async function importOneScrapedRow(
     importSource && importRef
       ? await db.product.findUnique({
           where: { importSource_importRef: { importSource, importRef } },
-          select: { id: true, needsRewrite: true, ownerTouched: true },
+          select: {
+            id: true,
+            needsRewrite: true,
+            ownerTouched: true,
+            sizeTier: true,
+          },
         })
       : null;
 
@@ -370,6 +383,12 @@ async function importOneScrapedRow(
         ...productData,
         needsRewrite: true,
         categoryId,
+        // Fill only: an uncurated draft that somehow carries a tier (a Bulk
+        // Import column, an earlier import) keeps it. This branch overwrites
+        // copy and images because decideMerge said nobody edited them; a
+        // tier is a filing decision and a non-null one is never revisited
+        // by a re-scrape.
+        ...(sizeTier && !existing.sizeTier ? { sizeTier } : {}),
         images: { create: imageCreate },
       },
       select: { id: true },
@@ -403,6 +422,7 @@ async function importOneScrapedRow(
         importSource,
         importRef,
         categoryId,
+        ...(sizeTier ? { sizeTier } : {}),
         images: { create: imageCreate },
       },
       select: { id: true },
@@ -508,7 +528,15 @@ export async function importApprovedScraped({
 
 const addToCatalogSchema = z.object({
   items: z
-    .array(z.object({ id: z.string().min(1), categoryId: z.string().min(1) }))
+    .array(
+      z.object({
+        id: z.string().min(1),
+        categoryId: z.string().min(1),
+        // The list's suggestion or the operator's pick; omitted or null
+        // leaves the draft untiered for the publish guard to ask about.
+        sizeTier: z.enum(PRODUCT_SIZE_TIERS).nullable().default(null),
+      }),
+    )
     .min(1, "Select at least one product."),
   mirrorImages: z.boolean(),
 });
@@ -534,6 +562,7 @@ export async function addScrapedToCatalog(
     });
     const slugByCat = new Map(validCats.map((c) => [c.id, c.slug]));
     const catByRow = new Map(parsed.items.map((i) => [i.id, i.categoryId]));
+    const tierByRow = new Map(parsed.items.map((i) => [i.id, i.sizeTier]));
     const ids = parsed.items.map((i) => i.id);
 
     // Approve everything selected (unless already imported) so it all imports.
@@ -565,6 +594,7 @@ export async function addScrapedToCatalog(
           categoryId,
           parsed.mirrorImages,
           session.user.id,
+          tierByRow.get(row.id) ?? null,
         );
         if (outcome === "created") imported += 1;
         else if (outcome === "updated") updated += 1;

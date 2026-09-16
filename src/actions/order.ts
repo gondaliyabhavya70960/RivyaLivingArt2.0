@@ -11,7 +11,9 @@ import { sendOrderNotification } from "@/lib/email";
 import { canOrderProduct } from "@/lib/order-visibility";
 import { clientIp, passesSpamChecks, rateLimit } from "@/lib/rate-limit";
 import { getSiteSettings } from "@/lib/site-settings";
+import { tierOrderCopyKey } from "@/lib/tier-order-copy";
 import { generateOpaqueToken } from "@/lib/tokens";
+import type { ProductSizeTier } from "@/lib/product-size-tier";
 import {
   bilingualLabel,
   buildOrderMessage,
@@ -171,6 +173,30 @@ async function oosIntroFor(
   return t("oosWaIntro");
 }
 
+/**
+ * The tier preset's intro (docs/plan/07 step 8) — the same mirror as
+ * `oosIntroFor`, reading `ProductTier.<tier>.orderWaIntro`, so what the
+ * panel previewed is what the row persists and WhatsApp receives. Null for
+ * the untiered backlog, which keeps the default labels object untouched.
+ */
+async function tierIntroFor(
+  locale: (typeof locales)[number] | undefined,
+  tier: ProductSizeTier | null,
+): Promise<string | null> {
+  if (!tier) return null;
+  const key = tierOrderCopyKey(tier, "waIntro");
+  if (locale && locale !== "en") {
+    try {
+      const t = await getTranslations({ locale, namespace: "ProductTier" });
+      if (t.has(key)) return t(key);
+    } catch {
+      // fall through to the English catalog
+    }
+  }
+  const t = await getTranslations({ locale: "en", namespace: "ProductTier" });
+  return t(key);
+}
+
 /* ————————————————— product orders ————————————————— */
 
 const productOrderSchema = z.object({
@@ -233,6 +259,7 @@ export async function submitProductOrder(
         status: true,
         inStock: true,
         isDemo: true,
+        sizeTier: true,
         customFields: {
           where: { required: true },
           select: { label: true },
@@ -279,10 +306,19 @@ export async function submitProductOrder(
     // message opens with the availability-enquiry framing (mirroring the
     // panel's live preview) so neither the customer nor the operator can
     // mistake it for a shippable order.
+    // The tier preset reframes the intro for an in-stock piece; out of
+    // stock wins, exactly as `selectOrderCopy` decides for the panel — a
+    // fact outranks a framing. An untiered, in-stock piece keeps the very
+    // same `labels` object as before.
     const labels = await orderLabelsFor(parsed.data.locale);
-    const messageLabels = product.inStock
-      ? labels
-      : { ...labels, intro: await oosIntroFor(parsed.data.locale) };
+    const tierIntro = product.inStock
+      ? await tierIntroFor(parsed.data.locale, product.sizeTier)
+      : null;
+    const messageLabels = !product.inStock
+      ? { ...labels, intro: await oosIntroFor(parsed.data.locale) }
+      : tierIntro === null
+        ? labels
+        : { ...labels, intro: tierIntro };
     const messageInput = {
       productTitle: product.title,
       selections,

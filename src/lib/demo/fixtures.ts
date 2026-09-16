@@ -15,6 +15,8 @@
  */
 import { z } from "zod";
 
+import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
+
 import productsJson from "../../../prisma/fixtures/demo/products.json";
 import productImagesJson from "../../../prisma/fixtures/demo/product-images.json";
 import productFieldsJson from "../../../prisma/fixtures/demo/product-fields.json";
@@ -97,6 +99,27 @@ export const productSchema = z.object({
   importSource: z.literal("demo"),
   importRef: z.string(),
   tier: z.number().int().min(1).max(4).nullable(),
+  /**
+   * The owner's three-tier product architecture (workstream E step 4). One
+   * of `PRODUCT_SIZE_TIERS` — the single vocabulary, so a fourth value added
+   * to the schema fails `product-size-tier.test.ts` before any fixture row
+   * needs to change — or null for the two workshop sessions: a session is
+   * not a piece, and the step-6 classifier returns null for one too.
+   *
+   * Filed by what the piece IS, read off its editorial name, not off its
+   * fixture category: batch G's generator paired the two loosely (a
+   * "Diwali Diya Set" sits under resin-wall-clocks, a "Wall Art Panel" under
+   * resin-vases). `demo-product-002` is LARGE although its catalogue `title`
+   * reads "Ring Set" — that eight-character title is what
+   * `fixtures.test.ts`'s length span needs, and its `displayName`, category
+   * and dimensions all say bench. The spread is deliberate: every tier lands
+   * on a PUBLISHED row, the E2E PDP (demo-product-001) is LARGE, and the
+   * demo lander's grid carries one of each so CI's audits sweep all three
+   * card variants (the gift-collections route cannot carry a demo row —
+   * no seeded category maps to it — so the lander is where SMALL and
+   * MEDIUM are audited).
+   */
+  sizeTier: z.enum(PRODUCT_SIZE_TIERS).nullable(),
   inStock: z.boolean(),
   sourceHash: z.string().nullable(),
   ownerTouched: z.boolean(),

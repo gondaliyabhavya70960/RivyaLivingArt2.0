@@ -270,6 +270,39 @@ answered. Embeddings are a demo until those exist.
 > deferred to B8 — a column with no writer is the defect ResearchProduct's
 > comment already cites.
 
+> **B8 shipped 2026-09-16** (PR #84) as `AnalyticsSnapshot` — one row per
+> computed view keyed `(view, league, scope, sourceKey)` with `""` as the
+> not-applicable sentinel, every payload carrying `computedFrom { included,
+> considered, exclusions }` under the invariant *included + Σ exclusions =
+> considered* — and `OpportunityScore`, one row per COMPONENT per product
+> (market-depth 0.35 · price-fit 0.35 · freshness 0.2 · option-richness 0.1)
+> with `value`, `weight`, `contribution` and the `detail` in words, and no
+> stored total: Σ contribution is computable from the rows, and storing it
+> would be rule 7's failure. Recompute is an explicit Studio action behind
+> `requireStaff`, never a cron; it replaces both tables wholesale (derivations,
+> not dated records). Scores exist only for SHORTLISTED/CONFIRMED products.
+> `/studio/scraper/analytics` shows every number over its own "computed from
+> X of N rows — excluded: …" line. `linkedOpportunityId` was NOT added:
+> `OpportunityScore.researchProductId` is the link.
+
+> **B9 shipped 2026-09-16** (PR #85) as `ProductEmbedding` (`hash · model ·
+> version · features · vector(512)`, a pgvector column Prisma never models —
+> the migration opens with `CREATE EXTENSION IF NOT EXISTS vector`, so CI's
+> throwaway Postgres runs `pgvector/pgvector:pg16`) and the deterministic
+> offline `attr-hash` v1 embedder: weighted identity-text features hashed
+> into 512 signed dimensions, L2-normalized. Materials resolve through the
+> owner's alias rows read fresh, so a mapping fix moves embeddings without a
+> re-scrape. Quote-only pieces contribute no price band; products with no
+> identity text get no embedding. Similarity reads are pgvector's own `<=>`:
+> cross-source duplicate candidates at ≥ 85% cosine, top-5 neighbours for
+> shortlisted/confirmed pieces. Visual similarity is a new `model` generation
+> on the same table, deliberately not v1.
+>
+> **That closes the table.** B1–B9 are shipped (PRs #68–#71, #73, #81–#85).
+> The Studio surfaces §6 asked for landed as A9 (PR #86, 2026-09-16): the
+> workflow-runs feed with retry/cancel, the raw-beside-normalized product
+> explorer, and the large-format workspace with its reference board.
+
 Every adapter ships against the **Adapter Acceptance Checklist** as fixture tests that
 make no network calls. The source brief's own checklist was never committed to this repo;
 `docs/adapter-acceptance-checklist.md` is this repo's replacement for it, written at B5

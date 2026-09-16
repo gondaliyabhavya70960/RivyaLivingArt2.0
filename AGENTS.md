@@ -84,6 +84,13 @@ Four things about it that are expensive to get wrong:
   document): the header nav's four items, seven proposed product fields, Tier 02's upload
   flow, a homepage band that would breach the dark-band rhythm, a CTA the `Inquiry` schema
   cannot record. Each stops at a question rather than being built around.
+- **The storefront reads `sizeTier` in exactly three places** (steps 7–8, 2026-09-16): the
+  collectible card variant (`card-meta.ts` decides, `/large-resin-art` passes it by
+  context), the PDP's order presets (`tier-order-copy.ts`; out of stock wins), and the
+  shop's `?sizeTier=large|medium|small` facet. Every customer-facing word comes from the
+  `ProductTier.<enum>` block in `messages/*.json`, whose `name`/`shortName` a test pins to
+  the studio's labels. The scraper only SUGGESTS a tier (`size-tier-suggest.ts`), never
+  stores one.
 
 ---
 
@@ -176,7 +183,7 @@ node scripts/a11y-audit.mjs   "/,/shop" [--w 390]
 node scripts/shots.mjs /tmp/out "/,/shop" --full
 ```
 
-`npm run build` runs `prisma migrate deploy` (through `scripts/migrate-deploy.mjs`, which retries a database that is merely unreachable) and `prisma/bootstrap.ts` before
+`npm run build` runs `prisma migrate deploy` (through `scripts/migrate-deploy.mjs`, which retries a database that is merely unreachable, and gives a migration Prisma has RECORDED as failed one guarded self-heal per build — `scripts/lib/migrate-resolve-failed.mjs` states the three facts it will act on and refuses everything else) and `prisma/bootstrap.ts` before
 `next build`, so it fails without a reachable `DATABASE_URL`. That is deliberate.
 
 ---

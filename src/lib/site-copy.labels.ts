@@ -204,4 +204,82 @@ export const COPY_SLOT_OVERRIDES: Record<string, Partial<CopySlot>> = {
     label: "Footer contact heading",
     where: "Rendered in uppercase whatever you type",
   },
+
+  /* ————————— The three product tiers (docs/plan/07) ————————— */
+  // Keyed by the enum value, so a section on the board reads "LARGE_FORMAT"
+  // — these entries are what make the rows legible. `name` and `shortName`
+  // must stay equal to the studio's own labels (product-size-tier.ts);
+  // product-size-tier.test.ts fails the build if they drift.
+  "ProductTier.LARGE_FORMAT.name": {
+    label: "Tier 1 · customer name",
+    where: "Collectible Furniture & Spatial Art — the tier's name wherever the storefront says it",
+    note: "Must match the studio's label in product-size-tier.ts; a test pins the two.",
+    max: 48,
+  },
+  "ProductTier.LARGE_FORMAT.shortName": {
+    label: "Tier 1 · one-word name",
+    where: "Collectible — dense cells and chips",
+    max: 16,
+  },
+  "ProductTier.LARGE_FORMAT.promise": {
+    label: "Tier 1 · promise line",
+    where: "Collectible Furniture & Spatial Art — the one-line promise on a band or collection header; a card's eyebrow is the piece's own category",
+    max: 48,
+  },
+  "ProductTier.LARGE_FORMAT.primaryCta": {
+    label: "Tier 1 · primary button",
+    where: "Collectible pieces — the order panel's main action",
+  },
+  "ProductTier.LARGE_FORMAT.secondaryCta": {
+    label: "Tier 1 · secondary button",
+    where: "Collectible pieces — opens the WhatsApp thread; nothing is booked",
+  },
+  "ProductTier.MEDIUM_FORMAT.name": {
+    label: "Tier 2 · customer name",
+    where: "Memory & Celebration Art — the tier's name wherever the storefront says it",
+    note: "Must match the studio's label in product-size-tier.ts; a test pins the two.",
+    max: 48,
+  },
+  "ProductTier.MEDIUM_FORMAT.shortName": {
+    label: "Tier 2 · one-word name",
+    where: "Memory — dense cells and chips",
+    max: 16,
+  },
+  "ProductTier.MEDIUM_FORMAT.promise": {
+    label: "Tier 2 · promise line",
+    where: "Memory & Celebration Art — the one-line promise on a band or collection header; a card's eyebrow is the piece's own category",
+    max: 48,
+  },
+  "ProductTier.MEDIUM_FORMAT.primaryCta": {
+    label: "Tier 2 · primary button",
+    where: "Memory pieces — the order panel's main action",
+  },
+  "ProductTier.MEDIUM_FORMAT.secondaryCta": {
+    label: "Tier 2 · secondary button",
+    where: "Memory pieces — jumps to the customization fields",
+  },
+  "ProductTier.SMALL_FORMAT.name": {
+    label: "Tier 3 · customer name",
+    where: "Personal Art & Gifting — the tier's name wherever the storefront says it",
+    note: "Must match the studio's label in product-size-tier.ts; a test pins the two.",
+    max: 48,
+  },
+  "ProductTier.SMALL_FORMAT.shortName": {
+    label: "Tier 3 · one-word name",
+    where: "Personal — dense cells and chips",
+    max: 16,
+  },
+  "ProductTier.SMALL_FORMAT.promise": {
+    label: "Tier 3 · promise line",
+    where: "Personal Art & Gifting — the one-line promise on a band or collection header; a card's eyebrow is the piece's own category",
+    max: 48,
+  },
+  "ProductTier.SMALL_FORMAT.primaryCta": {
+    label: "Tier 3 · primary button",
+    where: "Personal pieces — the order panel's main action. WhatsApp ordering; there is no cart",
+  },
+  "ProductTier.SMALL_FORMAT.secondaryCta": {
+    label: "Tier 3 · secondary button",
+    where: "Personal pieces — jumps to the personalization fields",
+  },
 };

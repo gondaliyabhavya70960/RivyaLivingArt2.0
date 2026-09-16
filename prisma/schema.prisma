@@ -638,9 +638,15 @@ model SiteSettings {
   catalogFillMaxCreates  Int? @map("sheetFillMaxCreates")
   /// Owner switch: render demo rows on the public site (always marked, never in the sitemap).
   demoContentPublic Boolean @default(false)
-  /// The owner's spreadsheet and its tab ids; null falls back to the environment.
-  sheetId     String?
-  sheetTabIds Json    @default("{}")
+
+  /* `sheetId` and `sheetTabIds` — the owner's spreadsheet and its tab ids —
+     were the last two Google Sheets columns (plan C §2.3). They are no longer
+     modelled here, and that is step 4a of the two-PR drop: the database still
+     carries both (nullable · DEFAULT '{}'), nothing reads them, and the
+     client that stops asking for them has to be DEPLOYED before the drop
+     migration (step 4b) can run — `findMany()` without a `select` names every
+     column, so dropping first would fail every SiteSettings query under the
+     old client. */
 }
 
 /// One run of the sheet → catalog fill: what it read, what it changed, and

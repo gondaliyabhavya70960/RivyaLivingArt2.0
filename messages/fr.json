@@ -979,7 +979,12 @@
       "viewPiece": "Voir la pièce",
       "shipsIn": "Expédié sous 7–10 jours",
       "askOnWhatsApp": "Demander sur WhatsApp",
-      "materialsDimensions": "Matériaux et dimensions"
+      "materialsDimensions": "Matériaux et dimensions",
+      "collectible": {
+        "sizeLabel": "Taille",
+        "materialsLabel": "Matériaux",
+        "priceOnRequest": "Prix sur demande"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {Aucune pièce pour l'instant} one {# pièce} other {# pièces}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "Toute disponibilité",
       "clearAll": "Tout effacer",
       "apply": "Appliquer ({count, plural, one {# pièce} other {# pièces}})",
-      "unavailable": "Aucune pièce dans cette vue"
+      "unavailable": "Aucune pièce dans cette vue",
+      "sectionSizeTier": "Échelle"
     },
     "activeFilters": {
       "remove": "Retirer {filter}"
@@ -1049,7 +1055,8 @@
       "imageAlt": "Un bloc de résine stratifié qui évoque la profondeur marine, des bandes claires traversant le bleu"
     },
     "sortName": "Nom",
-    "quickViewLabel": "Aperçu rapide"
+    "quickViewLabel": "Aperçu rapide",
+    "allSizeTiers": "Toutes les échelles"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "grandes pièces",
       "heading": "Des pièces à cette échelle",
       "intro": "Des travaux que l'atelier a réunis sous le grand format. Lorsqu'une taille ou un matériau est consigné pour une pièce, il est indiqué avec elle.",
-      "materialsLabel": "Matériaux",
-      "sizeLabel": "Taille",
       "catalogCta": "Voir tout le catalogue",
       "emptyHeading": "Documentées à leur sortie de l'atelier",
       "emptyBody": "Il n'y a encore rien à parcourir à cette échelle. La conversation n'attend pas la galerie — décrivez la pièce que vous voulez et nous la dessinerons à partir du lieu.",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "Développer",
     "collapse": "Réduire"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "Mobilier de collection & art spatial",
+      "shortName": "Collection",
+      "promise": "À l'échelle de la pièce qu'il habitera",
+      "primaryCta": "Commander une pièce",
+      "secondaryCta": "Demander une consultation",
+      "orderSummaryNote": "Demande de commande sur mesure — le prix et le délai sont confirmés sur WhatsApp.",
+      "orderWaIntro": "Bonjour Rivya Living Art,\nJe souhaite commander sur mesure :"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "Art du souvenir & de la célébration",
+      "shortName": "Souvenir",
+      "promise": "Fleurs, prénoms et dates, fixés pour de bon",
+      "primaryCta": "Préserver votre souvenir",
+      "secondaryCta": "Commencer la personnalisation",
+      "orderSummaryNote": "Pièce souvenir — les détails et le délai sont confirmés sur WhatsApp.",
+      "orderWaIntro": "Bonjour Rivya Living Art,\nJe souhaite préserver un souvenir avec :"
+    },
+    "SMALL_FORMAT": {
+      "name": "Art personnel & cadeaux",
+      "shortName": "Personnel",
+      "promise": "Vite personnalisé, prêt à offrir",
+      "primaryCta": "Commander sur WhatsApp",
+      "secondaryCta": "La personnaliser",
+      "orderSummaryNote": "Commande rapide — le prix et l'expédition sont confirmés sur WhatsApp.",
+      "orderWaIntro": "Bonjour Rivya Living Art,\nJe souhaite commander :"
+    }
   }
 }
