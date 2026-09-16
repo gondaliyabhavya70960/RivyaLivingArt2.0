@@ -22,6 +22,7 @@ import { discoverProductUrls } from "@/lib/scraper/sitemaps";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { slugify } from "@/lib/slug";
 import { stripHtml } from "@/lib/scraper/adapters/strip-html";
+import { mapPageByShape } from "@/lib/scraper/adapters/markup-shape";
 
 const PAGE_SIZE = 8;
 
@@ -240,9 +241,16 @@ async function fetchProductAt(
       signal: AbortSignal.timeout(15_000),
     });
     if (!res.ok) return null; // one dead product page must not fail the run
-    const node = findProductNode(await res.text());
-    if (!node) return null; // page without a Product node — skip, do not fail
-    return mapProduct(node, pageUrl, ctx);
+    const html = await res.text();
+    const node = findProductNode(html);
+    if (node) return mapProduct(node, pageUrl, ctx);
+    // No schema.org Product node. Before this, the page was silently skipped;
+    // now its MARKUP SHAPE decides (B5): commerce markup without schema →
+    // priced-store extraction, a bespoke piece page with a quote CTA →
+    // quote-studio, anything else → null exactly as before. Detection is
+    // deliberately strict (docs/adapter-acceptance-checklist.md §D) — a blog
+    // post or listing page still yields nothing.
+    return mapPageByShape(html, pageUrl, ctx);
   } catch {
     return null; // timeout / parse issue on a single page — skip and continue
   }

@@ -31,8 +31,10 @@ export const PRICE_BASES = [
 ] as const;
 export type PriceBasis = (typeof PRICE_BASES)[number];
 
-/** "from ₹2,400", "starting at 2400", "price starts from" — a floor, not a price. */
-const STARTING_FROM = [
+/** "from ₹2,400", "starting at 2400", "price starts from" — a floor, not a price.
+ * Exported so markup-shape detection (B5) shares one phrase vocabulary with
+ * basis derivation — two lists that drift apart are a rule that lies. */
+export const STARTING_FROM_PHRASES = [
   /\bstarting\s+(?:from|at)\b/i,
   /\bstarts?\s+(?:from|at)\s*(?:₹|rs\.?|inr)?\s*\d/i,
   /\bprice\s+(?:starts|starting)\b/i,
@@ -41,14 +43,14 @@ const STARTING_FROM = [
 ];
 
 /** "per sq ft", "per square foot", "/sqft" — an area rate, not a piece price. */
-const PER_AREA = [
+export const PER_AREA_PHRASES = [
   /\bper\s+(?:sq\.?\s*(?:ft|feet|foot|m|metre|meter)|square\s+(?:foot|feet|metre|meter))\b/i,
   /\/\s*sq\.?\s*(?:ft|m)\b/i,
   /\bper\s+square\b/i,
 ];
 
 /** "price on request", "call for price", "request a quote", "enquire". */
-const QUOTE_ONLY = [
+export const QUOTE_ONLY_PHRASES = [
   /\bprice\s+on\s+(?:request|enquiry|inquiry)\b/i,
   /\b(?:call|contact|ask)\s+(?:us\s+)?for\s+(?:a\s+)?(?:price|quote|pricing)\b/i,
   /\brequest\s+a?\s*quote\b/i,
@@ -57,7 +59,7 @@ const QUOTE_ONLY = [
   /\bmade\s+to\s+order\s*[-—:]\s*quote\b/i,
 ];
 
-function matchesAny(patterns: RegExp[], haystack: string): boolean {
+export function matchesAnyPhrase(patterns: RegExp[], haystack: string): boolean {
   return patterns.some((re) => re.test(haystack));
 }
 
@@ -82,10 +84,10 @@ export function derivePriceBasis(input: {
 }): PriceBasis {
   const text = (input.text ?? "").slice(0, 4000);
 
-  if (text && matchesAny(QUOTE_ONLY, text)) return "QUOTE_ONLY";
+  if (text && matchesAnyPhrase(QUOTE_ONLY_PHRASES, text)) return "QUOTE_ONLY";
   if (input.priceMinor === null) return "QUOTE_ONLY";
-  if (text && matchesAny(PER_AREA, text)) return "PER_AREA";
-  if (text && matchesAny(STARTING_FROM, text)) return "STARTING_FROM";
+  if (text && matchesAnyPhrase(PER_AREA_PHRASES, text)) return "PER_AREA";
+  if (text && matchesAnyPhrase(STARTING_FROM_PHRASES, text)) return "STARTING_FROM";
   return "PER_PIECE";
 }
 
