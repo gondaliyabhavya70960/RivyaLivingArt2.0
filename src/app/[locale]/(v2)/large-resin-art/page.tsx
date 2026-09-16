@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/storefront/accordion";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
+import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { Button } from "@/components/storefront/button";
 import { CureLine, type CureMark } from "@/components/storefront/cure-line";
 import { DemoMark } from "@/components/storefront/demo-mark";
@@ -681,62 +682,16 @@ export default async function LargeResinArtPage({
                 intro={t("gallery.intro")}
               />
               <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {/* The collectible card, passed by CONTEXT rather than read
+                    off `piece.sizeTier`: this band is tier-homogeneous by
+                    its where-clause (large-format.ts), and keying off the
+                    column would render the full card for the untiered
+                    backlog. A mixed grid (the shop) is where
+                    `cardVariantFor` decides. The hand-rolled tile that used
+                    to live here was a second copy of the card. */}
                 {pieces.map((piece) => (
-                  <li key={piece.id} className="flex flex-col gap-4">
-                    <Link
-                      href={`/product/${piece.slug}`}
-                      className="group flex flex-col gap-4"
-                    >
-                      <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-mineral">
-                        {isRenderableSrc(piece.image?.url) && piece.image ? (
-                          <MeniscusImage
-                            src={piece.image.url}
-                            alt={piece.image.alt || piece.title}
-                            fill
-                            sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 90vw"
-                            unoptimized={
-                              !isOptimizableImageSrc(piece.image.url)
-                            }
-                            className="absolute inset-0"
-                            imageClassName="object-cover"
-                          />
-                        ) : null}
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="u-micro text-graphite">
-                          {piece.categoryName}
-                        </span>
-                        <h3 className="font-display text-h3 text-ink">
-                          {piece.title}
-                        </h3>
-                      </div>
-                    </Link>
-                    {/* Printed only where the owner recorded it. Free text,
-                        rendered as typed and never parsed. */}
-                    {piece.dimensions || piece.materials ? (
-                      <dl className="flex flex-col gap-1 border-t border-hairline pt-3">
-                        {piece.dimensions ? (
-                          <div className="flex gap-2">
-                            <dt className="u-micro text-graphite">
-                              {t("gallery.sizeLabel")}
-                            </dt>
-                            <dd className="u-num text-small text-ink">
-                              {piece.dimensions}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {piece.materials ? (
-                          <div className="flex gap-2">
-                            <dt className="u-micro text-graphite">
-                              {t("gallery.materialsLabel")}
-                            </dt>
-                            <dd className="font-body text-small text-ink">
-                              {piece.materials}
-                            </dd>
-                          </div>
-                        ) : null}
-                      </dl>
-                    ) : null}
+                  <li key={piece.id}>
+                    <CatalogProductCard item={piece} variant="collectible" />
                   </li>
                 ))}
               </ul>

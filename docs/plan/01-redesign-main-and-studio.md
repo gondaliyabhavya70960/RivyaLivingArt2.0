@@ -290,5 +290,18 @@ Each row is one reviewable PR that leaves the tree green.
 | A8  | Studio data tables + draft/publish visibility                               |                                                                        |
 | A9  | Studio scraper workspaces                                                   | **After** workstream B phase 6.                                        |
 
+> **Where the table stands (2026-09-16).** A1–A3 shipped in #63 (the v4 leading scale, the
+> typography pass, one disabled state); A5's real defect shipped in #64 (two blank doorways);
+> A7 shipped as the six job-named nav groups (§4.1). A2, A4, A6 and A8 were measured against
+> the running site rather than built: §3.2, §3.3, §4.2 and §4.3 record what was found already
+> in place, and §3.4 found no PDP defect to justify an uplift without the owner's eye. **A9
+> shipped 2026-09-16 (PR #86)**, after B1–B9 closed: `/studio/scraper/runs` (the feed, with
+> retry queuing a fresh job and cancel writing an operator-named terminal row),
+> `/studio/scraper/explorer` (raw beside normalized, "showing X of N") and
+> `/studio/scraper/large-format` (image-first cards, B9 neighbours, the INSPIRATION_ONLY
+> reference board). **The table is closed.** What remains for the storefront is workstream E's
+> tier-specific card, PDP and shop work in [`07`](07-three-tier-architecture.md), which reads
+> this document's §3.6 and REDESIGN.md §1.1 before every step.
+
 Per `CLAUDE.md`: every PR is `feat|fix|chore|refactor(scope): message`, small and verified —
 typecheck, lint, build, 360px and 1280px, keyboard, reduced-motion, screenshots.

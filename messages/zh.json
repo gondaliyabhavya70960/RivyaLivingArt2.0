@@ -979,7 +979,12 @@
       "viewPiece": "查看作品",
       "shipsIn": "7–10 天发货",
       "askOnWhatsApp": "通过 WhatsApp 咨询",
-      "materialsDimensions": "材质与尺寸"
+      "materialsDimensions": "材质与尺寸",
+      "collectible": {
+        "sizeLabel": "尺寸",
+        "materialsLabel": "材料",
+        "priceOnRequest": "价格面议"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {暂无作品} one {# 件作品} other {# 件作品}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "不限库存状态",
       "clearAll": "全部清除",
       "apply": "应用（{count, plural, other {# 件作品}}）",
-      "unavailable": "此视图下暂无作品"
+      "unavailable": "此视图下暂无作品",
+      "sectionSizeTier": "尺度"
     },
     "activeFilters": {
       "remove": "移除 {filter}"
@@ -1049,7 +1055,8 @@
       "imageAlt": "层叠的树脂块宛如海洋深处，浅色条带穿过蓝色"
     },
     "sortName": "名称",
-    "quickViewLabel": "快速查看"
+    "quickViewLabel": "快速查看",
+    "allSizeTiers": "所有尺度"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "大件作品",
       "heading": "这个尺度的作品",
       "intro": "工作室归入大型的作品。若某件作品记录了尺寸或材料，会一并列出。",
-      "materialsLabel": "材料",
-      "sizeLabel": "尺寸",
       "catalogCta": "查看完整目录",
       "emptyHeading": "在离开工作室时记录",
       "emptyBody": "这个尺度目前还没有可浏览的作品。对话不必等待展厅——描述你想要的作品，我们会从空间出发为你设计。",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "展开",
     "collapse": "收起"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "收藏级家具与空间艺术",
+      "shortName": "收藏级",
+      "promise": "以房间的尺度而作",
+      "primaryCta": "定制一件作品",
+      "secondaryCta": "申请咨询",
+      "orderSummaryNote": "定制咨询——价格与交期将通过 WhatsApp 确认。",
+      "orderWaIntro": "您好 Rivya Living Art，\n我想定制："
+    },
+    "MEDIUM_FORMAT": {
+      "name": "记忆与庆典艺术",
+      "shortName": "记忆",
+      "promise": "花、名字与日期，永久封存",
+      "primaryCta": "留住你的记忆",
+      "secondaryCta": "开始个性化定制",
+      "orderSummaryNote": "记忆作品——细节与时间将通过 WhatsApp 确认。",
+      "orderWaIntro": "您好 Rivya Living Art，\n我想用以下物件留住一段记忆："
+    },
+    "SMALL_FORMAT": {
+      "name": "个人艺术与礼品",
+      "shortName": "个人",
+      "promise": "快速个性化，即刻可赠",
+      "primaryCta": "通过 WhatsApp 下单",
+      "secondaryCta": "个性化这件作品",
+      "orderSummaryNote": "快速下单——价格与发货将通过 WhatsApp 确认。",
+      "orderWaIntro": "您好 Rivya Living Art，\n我想订购："
+    }
   }
 }

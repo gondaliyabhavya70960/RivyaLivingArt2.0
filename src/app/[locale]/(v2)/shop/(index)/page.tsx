@@ -84,6 +84,7 @@ type ShopSearchParams = {
   occasion?: string | string[];
   band?: string | string[];
   stock?: string | string[];
+  sizeTier?: string | string[];
   sort?: string | string[];
   /** §7.7's numbered pager — 1-based. Absent and `1` are the same page. */
   page?: string | string[];
@@ -134,6 +135,7 @@ function shopHref(filters: ShopFilters, sort: SortKey, page: number): string {
   if (filters.occasion) params.set("occasion", filters.occasion);
   if (filters.band) params.set("band", filters.band);
   if (filters.stock) params.set("stock", filters.stock);
+  if (filters.sizeTier) params.set("sizeTier", filters.sizeTier);
   if (sort !== DEFAULT_SORT) params.set("sort", sort);
   if (page > 1) params.set("page", String(page));
   const qs = params.toString();
@@ -177,7 +179,8 @@ const CATEGORY_TABS = [
  * arrived from `/search` with a term could not narrow to RESIN ART without
  * retyping it, and one browsing supplies could not widen without losing it.
  *
- * `q` and `sort` travel; `category`, `occasion`, `band` and `stock` do NOT.
+ * `q` and `sort` travel; `category`, `occasion`, `band`, `stock` and
+ * `sizeTier` do NOT.
  * Those are ecosystem-bound, and carrying one across would compose an
  * unsatisfiable AND — `?type=supplies&category=gift-collections` is a shelf
  * that cannot contain anything, which reads to the visitor as a broken tab
@@ -251,6 +254,7 @@ export default async function ShopPage({
     occasion: first(params.occasion),
     band: first(params.band),
     stock: first(params.stock),
+    sizeTier: first(params.sizeTier),
   };
 
   const requestedPage = parseShopPage(first(params.page));
@@ -265,7 +269,8 @@ export default async function ShopPage({
     filters.category ||
     filters.occasion ||
     filters.band ||
-    filters.stock,
+    filters.stock ||
+    filters.sizeTier,
   );
 
   let page: ShopPage;

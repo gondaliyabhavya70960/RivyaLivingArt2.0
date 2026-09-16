@@ -210,10 +210,13 @@ export default async function SearchPage({
       // line, hover video and demo mark. `search-query.ts`'s own select is
       // B0-owned and unchanged by this batch, so the search results simply
       // carry the same "nothing to show" defaults they always rendered —
-      // no card here loses anything it had before this type grew.
+      // no card here loses anything it had before this type grew. The same
+      // goes for `sizeTier` (E step 7): search renders the full card until
+      // step 8's facet gives the search select a reason to fetch it.
       materials: null,
       dimensions: null,
       videoUrl: null,
+      sizeTier: null,
       isDemo: p.isDemo,
     };
   });

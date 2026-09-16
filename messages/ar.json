@@ -979,7 +979,12 @@
       "viewPiece": "عرض القطعة",
       "shipsIn": "الشحن خلال 7–10 أيام",
       "askOnWhatsApp": "اسأل عبر WhatsApp",
-      "materialsDimensions": "الخامات والأبعاد"
+      "materialsDimensions": "الخامات والأبعاد",
+      "collectible": {
+        "sizeLabel": "المقاس",
+        "materialsLabel": "الخامات",
+        "priceOnRequest": "السعر عند الطلب"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {لا قطع بعد} one {# قطعة} two {قطعتان} few {# قطع} many {# قطعة} other {# قطعة}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "أي حالة توفر",
       "clearAll": "مسح الكل",
       "apply": "اعرض ({count, plural, zero {لا قطع} one {قطعة واحدة} two {قطعتان} few {# قطع} many {# قطعة} other {# قطعة}})",
-      "unavailable": "لا قطع في هذا العرض"
+      "unavailable": "لا قطع في هذا العرض",
+      "sectionSizeTier": "المقياس"
     },
     "activeFilters": {
       "remove": "أزل {filter}"
@@ -1049,7 +1055,8 @@
       "imageAlt": "كتلة ريزن متعددة الطبقات تُقرأ كأعماق بحر، بأشرطة فاتحة تخترق الأزرق"
     },
     "sortName": "الاسم",
-    "quickViewLabel": "عرض سريع"
+    "quickViewLabel": "عرض سريع",
+    "allSizeTiers": "كل المقاييس"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "القطع الكبيرة",
       "heading": "قطع بهذا المقياس",
       "intro": "أعمال صنّفها المشغل ضمن الحجم الكبير. وحين يكون المقاس أو الخامة مسجّلًا لقطعة، يُطبع معها.",
-      "materialsLabel": "الخامات",
-      "sizeLabel": "المقاس",
       "catalogCta": "تصفّح الكتالوج كاملًا",
       "emptyHeading": "تُوثَّق عند مغادرتها المشغل",
       "emptyBody": "لا يوجد ما يُتصفَّح بهذا المقياس بعد. والحوار لا ينتظر المعرض — صِف القطعة التي تريدها وسنصممها انطلاقًا من الغرفة.",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "توسيع",
     "collapse": "طيّ"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "أثاث للاقتناء وفن للمساحات",
+      "shortName": "مقتنيات",
+      "promise": "مصنوع بمقياس الغرفة",
+      "primaryCta": "اطلب قطعة بتكليف",
+      "secondaryCta": "اطلب استشارة",
+      "orderSummaryNote": "طلب تكليف — يُؤكَّد السعر ومدة التنفيذ عبر WhatsApp.",
+      "orderWaIntro": "مرحبًا Rivya Living Art،\nأودّ أن أكلّفكم بصنع:"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "فن الذكريات والاحتفالات",
+      "shortName": "ذكريات",
+      "promise": "زهور وأسماء وتواريخ، تُحفظ للأبد",
+      "primaryCta": "احفظ ذكراك",
+      "secondaryCta": "ابدأ التخصيص",
+      "orderSummaryNote": "قطعة ذكرى — تُؤكَّد التفاصيل والمدة عبر WhatsApp.",
+      "orderWaIntro": "مرحبًا Rivya Living Art،\nأودّ أن أحفظ ذكرى في:"
+    },
+    "SMALL_FORMAT": {
+      "name": "فن شخصي وهدايا",
+      "shortName": "شخصي",
+      "promise": "سريعة التخصيص، جاهزة للإهداء",
+      "primaryCta": "اطلب عبر WhatsApp",
+      "secondaryCta": "أضف لمستك الشخصية",
+      "orderSummaryNote": "طلب سريع — يُؤكَّد السعر والشحن عبر WhatsApp.",
+      "orderWaIntro": "مرحبًا Rivya Living Art،\nأودّ أن أطلب:"
+    }
   }
 }

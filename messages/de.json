@@ -979,7 +979,12 @@
       "viewPiece": "Stück ansehen",
       "shipsIn": "Versand in 7–10 Tagen",
       "askOnWhatsApp": "Auf WhatsApp fragen",
-      "materialsDimensions": "Materialien und Maße"
+      "materialsDimensions": "Materialien und Maße",
+      "collectible": {
+        "sizeLabel": "Maß",
+        "materialsLabel": "Materialien",
+        "priceOnRequest": "Preis auf Anfrage"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {Noch keine Stücke} one {# Stück} other {# Stücke}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "Beliebige Verfügbarkeit",
       "clearAll": "Alles zurücksetzen",
       "apply": "Anwenden ({count, plural, one {# Stück} other {# Stücke}})",
-      "unavailable": "Keine Stücke in dieser Ansicht"
+      "unavailable": "Keine Stücke in dieser Ansicht",
+      "sectionSizeTier": "Maßstab"
     },
     "activeFilters": {
       "remove": "{filter} entfernen"
@@ -1049,7 +1055,8 @@
       "imageAlt": "Ein geschichteter Harzblock, der wie Meerestiefe wirkt, mit hellen Bändern im Blau"
     },
     "sortName": "Name",
-    "quickViewLabel": "Schnellansicht"
+    "quickViewLabel": "Schnellansicht",
+    "allSizeTiers": "Alle Maßstäbe"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "große stücke",
       "heading": "Stücke in diesem Maßstab",
       "intro": "Arbeiten, die das Atelier als großformatig eingeordnet hat. Wo für ein Stück ein Maß oder ein Material erfasst ist, wird es mit ausgegeben.",
-      "materialsLabel": "Materialien",
-      "sizeLabel": "Maß",
       "catalogCta": "Den ganzen Katalog ansehen",
       "emptyHeading": "Dokumentiert, wenn sie das Atelier verlassen",
       "emptyBody": "In diesem Maßstab gibt es noch nichts zu durchstöbern. Das Gespräch wartet nicht auf die Galerie — beschreiben Sie das Stück, das Sie möchten, und wir entwerfen es vom Raum aus.",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "Erweitern",
     "collapse": "Einklappen"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "Sammlermöbel & Raumkunst",
+      "shortName": "Sammlerstücke",
+      "promise": "Gefertigt im Maßstab des Raums",
+      "primaryCta": "Stück beauftragen",
+      "secondaryCta": "Beratung anfragen",
+      "orderSummaryNote": "Auftragsanfrage – Preis und Fertigungszeit werden auf WhatsApp bestätigt.",
+      "orderWaIntro": "Hallo Rivya Living Art,\nich möchte folgendes Stück beauftragen:"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "Erinnerungs- & Festkunst",
+      "shortName": "Erinnerung",
+      "promise": "Blumen, Namen und Daten, für immer gefasst",
+      "primaryCta": "Erinnerung bewahren",
+      "secondaryCta": "Anpassung beginnen",
+      "orderSummaryNote": "Erinnerungsstück – Details und Zeitplan werden auf WhatsApp bestätigt.",
+      "orderWaIntro": "Hallo Rivya Living Art,\nich möchte eine Erinnerung bewahren mit:"
+    },
+    "SMALL_FORMAT": {
+      "name": "Persönliche Kunst & Geschenke",
+      "shortName": "Persönlich",
+      "promise": "Schnell personalisiert, bereit zum Verschenken",
+      "primaryCta": "Per WhatsApp bestellen",
+      "secondaryCta": "Dieses Stück personalisieren",
+      "orderSummaryNote": "Schnellbestellung – Preis und Versand werden auf WhatsApp bestätigt.",
+      "orderWaIntro": "Hallo Rivya Living Art,\nich möchte Folgendes bestellen:"
+    }
   }
 }

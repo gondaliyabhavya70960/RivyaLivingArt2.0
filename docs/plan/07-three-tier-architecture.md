@@ -178,7 +178,7 @@ Work below them proceeds; these are the parts that stop at a question.
 | **T3** | Seven new structured product fields (finish, price type, fulfilment, personalization type, commission flag, preservation flag, edition) | REDESIGN.md §1.1 lists "product data" first under do-not-change | Open. `sizeTier` alone is justified by this document; seven more fields is a separate authorization. |
 | **T4** | Tier 02's "Upload Memory" and its 7-step guided path | §1.1 names "customization logic" and "image upload" under do-not-change; the e2e smoke asserts the current PDP → `wa.me` round trip | Open, and the largest piece of work in the brief. |
 | **T5** | "Made-to-order vs ready-to-ship" as a new field | `Product.inStock` ALREADY means made-to-order on the card (`card.madeToOrder` renders when `inStock` is true) | Two columns for one fact. Use the existing one. |
-| **T6** | "Price on request" as a price type | The PDP emits `AggregateOffer` JSON-LD for every non-demo row, and `formatPriceBand` returns a hardcoded English `"Enquire"` outside next-intl | Open. Both are real defects to fix before a tier can select this. |
+| **T6** | "Price on request" as a price type | The PDP emits `AggregateOffer` JSON-LD for every non-demo row, and `formatPriceBand` returns a hardcoded English `"Enquire"` outside next-intl | **Half closed (2026-09-16).** The `"Enquire"` leak is fixed at every storefront site (hero, summary, card); `showPrice: false` already yields the localized "price on request" and suppresses the JSON-LD offer. A price TYPE field stays T3. |
 | **T7** | Deliberately different photography per tier | 78 image slots share 25 files today; the tier sets are ungenerated and the Higgsfield workspace is out of credits | Blocked on assets, not on code. |
 | **T8** | A homepage "three worlds" band | §3.1 (max three dark bands, never adjacent — the homepage already declares exactly three) and the §6 record that a "three studios" block was DELETED for competing with the collections band | Open. The band has to REPLACE something, not be added. |
 | **T9** | LARGE's "Consultation / Request Quote" | `InquirySource` is exactly `PRODUCT \| CUSTOM_ORDER \| CONTACT`; `Inquiry` has no scheduling and no priority column | Open. The CTA promises a record the schema cannot hold. |
@@ -242,29 +242,60 @@ without the thing that writes it.
    `/studio/products` to 1450px in a 1440px viewport and the studio audit
    failed the route. Eight pixels off each tier column's trailing padding is
    the whole margin; a thirteenth column needs a real answer, not more shaving.
-4. **Demo fixtures.** `sizeTier` across all 100 rows of
-   `prisma/fixtures/demo/products.json` and the zod shape in `demo/fixtures.ts`,
-   spread so at least a LARGE and a SMALL land on audited demo detail routes.
-   **Before step 6**, or every tier variant ships unseen by every CI gate.
-5. **Copy, nine locales, one nested block.** `scripts/i18n-merge.mjs` with no
-   `--partial`, then `npm run copy:registry`. Before any component, because
-   `i18n-missing.mjs --stale` turns every later rewording into a nine-file edit.
-6. **Scraper classification, pure and read-only.** Suggest a tier from title,
-   description, type, dimensions and category — dining table → LARGE, varmala
-   preservation → MEDIUM, rakhi → SMALL — in the shape of `category-map.ts`
-   (weighted scoring, `null` when nothing scores), read at request time beside
-   the existing `matchCategoryId` call. No column of its own until it earns one.
-   An administrator always overrides; nothing publishes without the existing
-   review/approval workflow.
-7. **The first card variant, on `/large-resin-art`** — already tier-homogeneous
-   and hand-rolling its own tile, so the variant DELETES a duplicate. Branch in a
-   pure module (`card-meta.ts`): there is no component-test runner here, so a
-   branch living in JSX is permanently untestable.
-8. **PDP copy presets** through the existing `oosCopy` mechanism, which already
-   proves server-resolved copy can reframe the CTA, the summary and the WhatsApp
-   intro with a byte-identical payload → **shop facet** (all five places it must
-   be registered, or it drops on page 2) → **navigation** (T2) → **homepage band**
-   (T8) → **Tier 02's guided path** (T4), the largest single piece.
+4. **Demo fixtures** — done, 2026-09-16. `sizeTier` on the zod shape (from
+   `PRODUCT_SIZE_TIERS`, so a fourth enum value fails the vocabulary test
+   before any fixture changes), on the loader, and on all 100 rows: 52 LARGE ·
+   12 MEDIUM · 34 SMALL, filed by what the piece IS off its editorial name
+   rather than its fixture category (batch G's generator paired them
+   loosely). The two workshop sessions are null on purpose — a session is not
+   a piece, and step 6's classifier returns null for one too. Every tier lands
+   on a PUBLISHED row, the E2E PDP is LARGE, and the demo lander's grid
+   carries one PUBLISHED piece of each (001 · 006 · 086 · 078) — because
+   `/shop/gift-collections` cannot carry a demo row (no seeded category maps
+   to it), the lander is where MEDIUM and SMALL are audited.
+5. **Copy, nine locales, one nested block** — done, 2026-09-16.
+   `ProductTier.<LARGE_FORMAT|MEDIUM_FORMAT|SMALL_FORMAT>` keyed by the enum
+   value, so a consumer writes t(`${tier}.primaryCta`) with no mapping table:
+   `name` and `shortName` (pinned byte-for-byte to the studio's own labels by
+   `product-size-tier.test.ts`), `promise`, `primaryCta`, `secondaryCta`, and
+   from step 8 `orderSummaryNote` and `orderWaIntro`. The same test refuses
+   cart/checkout wording in any tier (T1).
+6. **Scraper classification, pure and read-only** — done, 2026-09-16.
+   `size-tier-suggest.ts`: one home per keyword (a keyword in two tiers is a
+   tie by construction and the test refuses it), longest phrase first and
+   consumed on match, curated fields double, prose once, one dimension
+   heuristic (≥ 60 cm pushes LARGE, ≤ 10 cm pushes SMALL, the band between
+   leans MEDIUM under a decisive word; the description is never parsed for a
+   size). Nothing scoring → null; a tie → null, the one departure from
+   `matchCategoryId`'s first-wins — the operator decides. The source's own
+   tier is not an input, and the test fails if `ScrapeTier` enters the code.
+   Wired the way the category auto-map is: computed per row on the source
+   page, a "Product tier" select defaulting to it with a "suggested" hint,
+   carried by the Add-to-catalog dialog, written on create (and on the
+   uncurated re-import branch only where the draft has none). Nothing is
+   stored on the staged row.
+7. **The first card variant, on `/large-resin-art`** — done, 2026-09-16.
+   `cardVariantFor` / `collectibleCardMeta` in `card-meta.ts` (tested), a
+   `collectible` variant on `CatalogProductCard`, and `large-format.ts` now a
+   `CARD_SELECT` consumer with a byte-identical where — the hand-rolled tile is
+   gone. The variant is passed by CONTEXT on that page, not read off
+   `piece.sizeTier`: the band is tier-homogeneous by its where-clause, and the
+   where still classifies by category on purpose (a `sizeTier` clause would
+   empty the band until the backlog is worked).
+8. **PDP copy presets** — done, 2026-09-16: `tier-order-copy.ts` resolves the
+   three fields off `ProductTier.<tier>` (the CTA is the tier's own
+   `primaryCta`), `selectOrderCopy` is the one precedence rule the panel and
+   the Server Action share (out of stock wins — a fact outranks a framing),
+   Tier 03's intro is byte-equal to the default order intro in every locale,
+   and the byte-identical payload is a `toBe` on the built message. T6's leak
+   (`formatPriceBand`'s English "Enquire" on the hero and the summary when both
+   prices are null) is closed at both sites; "price on request" as a tier
+   behaviour needs no price type — `showPrice: false` already yields it.
+   → **shop facet** — done, 2026-09-16: `?sizeTier=large|medium|small`, derived
+   slugs, all five places, the drawer section deliberately last and closed
+   until the catalogue is tiered, and the search comment corrected.
+   → **navigation** (T2) → **homepage band** (T8) → **Tier 02's guided path**
+   (T4), the largest single piece — **all three still stop at their question.**
 
 Two corrections to the brief's own ordering, both from the survey: **search must
 be handled at step 2, not never** — `search-query.ts:129-133` already sorts on

@@ -348,7 +348,10 @@ try {
         .context()
         .waitForEvent("page", { timeout: 20000 })
         .catch(() => null);
-      await p.getByRole("button", { name: /place order/i }).click();
+      // The label is a tier preset now (docs/plan/07 step 8): demo-product-001
+      // is LARGE, so the button reads "Commission a piece" rather than
+      // "Place order". The form's one submit control is the stable handle.
+      await panel.locator('button[type="submit"]').click();
       const newPage = await newPagePromise;
       let waUrl = "";
       if (newPage) {

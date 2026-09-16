@@ -979,7 +979,12 @@
       "viewPiece": "作品を見る",
       "shipsIn": "7〜10日で発送",
       "askOnWhatsApp": "WhatsApp で相談する",
-      "materialsDimensions": "素材とサイズ"
+      "materialsDimensions": "素材とサイズ",
+      "collectible": {
+        "sizeLabel": "寸法",
+        "materialsLabel": "素材",
+        "priceOnRequest": "価格はお問い合わせください"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {作品はまだありません} one {# 点} other {# 点}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "在庫状況を問わない",
       "clearAll": "すべて解除",
       "apply": "表示する（{count, plural, other {# 点}}）",
-      "unavailable": "この条件に作品はありません"
+      "unavailable": "この条件に作品はありません",
+      "sectionSizeTier": "スケール"
     },
     "activeFilters": {
       "remove": "{filter} を外す"
@@ -1049,7 +1055,8 @@
       "imageAlt": "海の深さのように見える層状のレジンブロック。青のあいだに淡い帯が走る"
     },
     "sortName": "名前順",
-    "quickViewLabel": "クイックビュー"
+    "quickViewLabel": "クイックビュー",
+    "allSizeTiers": "すべてのスケール"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "大きな作品",
       "heading": "このスケールの作品",
       "intro": "工房が大型としてまとめた仕事です。寸法や素材が記録されている作品には、それも一緒に表示します。",
-      "materialsLabel": "素材",
-      "sizeLabel": "寸法",
       "catalogCta": "カタログをすべて見る",
       "emptyHeading": "工房を出るときに記録します",
       "emptyBody": "このスケールで見ていただけるものはまだありません。会話はギャラリーを待ちません。ご希望の作品をお聞かせいただければ、部屋のほうから設計します。",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "展開",
     "collapse": "折りたたむ"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "コレクタブル家具と空間アート",
+      "shortName": "コレクタブル",
+      "promise": "部屋のスケールでつくる",
+      "primaryCta": "作品を依頼する",
+      "secondaryCta": "ご相談を申し込む",
+      "orderSummaryNote": "制作依頼のお問い合わせ——価格と納期は WhatsApp で確認します。",
+      "orderWaIntro": "Rivya Living Art様、\n以下の作品の制作を依頼したいです："
+    },
+    "MEDIUM_FORMAT": {
+      "name": "記憶と祝祭のアート",
+      "shortName": "記憶",
+      "promise": "花、名前、日付を、永遠に",
+      "primaryCta": "記憶を残す",
+      "secondaryCta": "カスタマイズを始める",
+      "orderSummaryNote": "記憶の作品——詳細と納期は WhatsApp で確認します。",
+      "orderWaIntro": "Rivya Living Art様、\n以下で記憶を残したいです："
+    },
+    "SMALL_FORMAT": {
+      "name": "パーソナルアートとギフト",
+      "shortName": "パーソナル",
+      "promise": "すぐにパーソナライズ、そのまま贈れる",
+      "primaryCta": "WhatsApp で注文する",
+      "secondaryCta": "この作品をパーソナライズ",
+      "orderSummaryNote": "クイック注文——価格と発送は WhatsApp で確認します。",
+      "orderWaIntro": "Rivya Living Art様、\n以下を注文したいです："
+    }
   }
 }

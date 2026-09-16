@@ -38,6 +38,7 @@ const GROUP_BY_NAMESPACE = {
   Faq: "FAQ",
   Shop: "Shop",
   Product: "Shop",
+  ProductTier: "Shop",
   Search: "Shop",
   Wishlist: "Shop",
   WhatsAppOrder: "Shop",

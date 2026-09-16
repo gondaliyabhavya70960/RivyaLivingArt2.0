@@ -9,7 +9,12 @@ import { WishlistButton } from "@/components/shop/wishlist-button";
 import { DemoMark } from "@/components/storefront/demo-mark";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import { MorphLink } from "@/components/storefront/morph-link";
-import { accessibleCardName, cardMetaLine } from "@/lib/card-meta";
+import {
+  accessibleCardName,
+  cardMetaLine,
+  collectibleCardMeta,
+  type CardVariant,
+} from "@/lib/card-meta";
 import {
   isOptimizableImageSrc,
   isRenderableSrc,
@@ -96,9 +101,12 @@ export function CatalogProductCard({
    *  view-transition-name. Enable ONLY where a product renders at most once
    *  per page — duplicate names make the browser skip the whole transition. */
   morph?: boolean;
-  /** Decided per GRID, not per card — see `shelfVariant`. Defaults to `full`
-   *  so a card dropped anywhere without thought is the editorial one. */
-  variant?: "full" | "compact";
+  /** `full` and `compact` are decided per GRID, not per card — see
+   *  `shelfVariant`. `collectible` is the LARGE_FORMAT tier's variant
+   *  (docs/plan/07 step 7): a tier-homogeneous grid passes it by context, a
+   *  mixed grid asks `cardVariantFor`. Defaults to `full` so a card dropped
+   *  anywhere without thought is the editorial one. */
+  variant?: CardVariant;
   /** The first row of the first grid carries the LCP — those images load
    *  eagerly and are never revealed. */
   priority?: boolean;
@@ -116,6 +124,7 @@ export function CatalogProductCard({
   const metaLine = cardMetaLine(item);
 
   const compact = variant === "compact";
+  const collectible = variant === "collectible";
 
   const stage = (
     <div
@@ -230,6 +239,103 @@ export function CatalogProductCard({
           <p className="u-num mt-1 text-14 text-graphite">
             {priceLabel ?? t("card.viewDetails")}
           </p>
+        </div>
+      </article>
+    );
+  }
+
+  /* ————— Collectible: the LARGE_FORMAT tier (docs/plan/07). The brief's
+     card — hero image, name, object type, material, the bespoke indicator,
+     a figure / a band / price on request, "View piece" — and nothing more:
+     "do not overload the card". The name takes the display face, the
+     dimensions and materials sit labelled on a hairline (furniture is read
+     at room scale, so the size is not a footnote here), and there is no
+     quick view: Tier 01's journey is Explore → View → Consultation, and the
+     consultation is the WhatsApp thread (T9 — nothing else can be
+     recorded). The branch itself lives in card-meta.ts, where it is
+     tested. ————— */
+  if (collectible) {
+    const meta = collectibleCardMeta(item);
+    return (
+      <article
+        data-slot="sf-catalog-card"
+        data-variant="collectible"
+        className={cn("group relative", className)}
+      >
+        {stage}
+        <div className="mt-4 flex flex-col gap-2">
+          {meta.objectType || item.isDemo ? (
+            <div className="flex items-center gap-2">
+              {meta.objectType ? (
+                <p className="u-micro">{meta.objectType}</p>
+              ) : null}
+              {item.isDemo ? <DemoMark label={tCommon("demoMark")} /> : null}
+            </div>
+          ) : null}
+          <h3 className="font-display text-h3 leading-h3 text-ink in-data-[theme=navy]:text-mineral">
+            <MorphLink
+              href={`/product/${item.slug}`}
+              className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
+            >
+              <TitleText
+                full={accessibleCardName(item)}
+                visible={item.displayTitle}
+                clamp={2}
+              />
+            </MorphLink>
+          </h3>
+          {meta.dimensions || meta.materials ? (
+            <dl className="flex flex-col gap-1 border-t border-hairline pt-3">
+              {meta.dimensions ? (
+                <div className="flex gap-2">
+                  <dt className="u-micro">{t("card.collectible.sizeLabel")}</dt>
+                  <dd className="u-num text-small text-ink in-data-[theme=navy]:text-mineral">
+                    {meta.dimensions}
+                  </dd>
+                </div>
+              ) : null}
+              {meta.materials ? (
+                <div className="flex gap-2">
+                  <dt className="u-micro">
+                    {t("card.collectible.materialsLabel")}
+                  </dt>
+                  <dd className="font-body text-small text-ink in-data-[theme=navy]:text-mineral">
+                    {meta.materials}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          ) : null}
+          <p className="u-num text-16 text-ink in-data-[theme=navy]:text-mineral">
+            {meta.price.kind === "onRequest"
+              ? t("card.collectible.priceOnRequest")
+              : meta.price.label}
+          </p>
+          <p className="u-micro">
+            {meta.availability === "madeToOrder"
+              ? t("card.madeToOrder")
+              : t("card.badgeOutOfStock")}
+          </p>
+          <p
+            aria-hidden
+            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+          >
+            <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
+              {t("card.viewPiece")}
+            </span>
+            <ArrowRight
+              aria-hidden
+              strokeWidth={1.5}
+              className="size-4 rtl:-scale-x-100"
+            />
+          </p>
+        </div>
+
+        {/* One real control beside the stretched card link, above it in the
+            stacking order (see the full variant): the WhatsApp thread is the
+            consultation. */}
+        <div className="relative z-10 mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <CardAskWhatsApp title={item.title} slug={item.slug} />
         </div>
       </article>
     );

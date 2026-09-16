@@ -979,7 +979,12 @@
       "viewPiece": "कृति देखें",
       "shipsIn": "7–10 दिनों में रवाना",
       "askOnWhatsApp": "WhatsApp पर पूछें",
-      "materialsDimensions": "सामग्री और आयाम"
+      "materialsDimensions": "सामग्री और आयाम",
+      "collectible": {
+        "sizeLabel": "माप",
+        "materialsLabel": "सामग्री",
+        "priceOnRequest": "मूल्य अनुरोध पर"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {अभी कोई कृति नहीं} one {# कृति} other {# कृतियाँ}}",
@@ -1036,7 +1041,8 @@
       "anyAvailability": "कोई भी उपलब्धता",
       "clearAll": "सब हटाएँ",
       "apply": "लागू करें ({count, plural, one {# कृति} other {# कृतियाँ}})",
-      "unavailable": "इस दृश्य में कोई कृति नहीं"
+      "unavailable": "इस दृश्य में कोई कृति नहीं",
+      "sectionSizeTier": "पैमाना"
     },
     "activeFilters": {
       "remove": "{filter} हटाएँ"
@@ -1049,7 +1055,8 @@
       "imageAlt": "समुद्र की गहराई जैसा परतदार रेज़िन ब्लॉक, नीले में हल्की धारियाँ"
     },
     "sortName": "नाम से",
-    "quickViewLabel": "त्वरित झलक"
+    "quickViewLabel": "त्वरित झलक",
+    "allSizeTiers": "सभी पैमाने"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "बड़ी कृतियाँ",
       "heading": "इस पैमाने की कृतियाँ",
       "intro": "वह काम जिसे स्टूडियो ने बड़े आकार में रखा है। जहाँ किसी कृति का माप या सामग्री दर्ज है, वहाँ वह साथ छपती है।",
-      "materialsLabel": "सामग्री",
-      "sizeLabel": "माप",
       "catalogCta": "पूरा कैटलॉग देखें",
       "emptyHeading": "स्टूडियो छोड़ते समय दर्ज की जाती हैं",
       "emptyBody": "इस पैमाने पर अभी देखने को कुछ नहीं है। बातचीत गैलरी का इंतज़ार नहीं करती — जो कृति आप चाहते हैं उसे बताइए, हम कमरे से शुरू कर के उसे डिज़ाइन करेंगे।",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "विस्तार करें",
     "collapse": "समेटें"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "संग्रहणीय फ़र्नीचर और स्थानिक कला",
+      "shortName": "संग्रहणीय",
+      "promise": "कमरे के पैमाने पर बनी",
+      "primaryCta": "कृति कमीशन करें",
+      "secondaryCta": "परामर्श का अनुरोध करें",
+      "orderSummaryNote": "कमीशन पूछताछ — मूल्य और समय WhatsApp पर तय होंगे।",
+      "orderWaIntro": "नमस्ते Rivya Living Art,\nमैं यह कृति कमीशन करना चाहता/चाहती हूँ:"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "यादों और उत्सव की कला",
+      "shortName": "यादें",
+      "promise": "फूल, नाम और तारीख़ें, हमेशा के लिए थमे",
+      "primaryCta": "अपनी याद सहेजें",
+      "secondaryCta": "कस्टमाइज़ करना शुरू करें",
+      "orderSummaryNote": "यादगार कृति — विवरण और समय WhatsApp पर तय होंगे।",
+      "orderWaIntro": "नमस्ते Rivya Living Art,\nमैं इसके साथ एक याद सहेजना चाहता/चाहती हूँ:"
+    },
+    "SMALL_FORMAT": {
+      "name": "निजी कला और उपहार",
+      "shortName": "निजी",
+      "promise": "झटपट कस्टमाइज़, उपहार के लिए तैयार",
+      "primaryCta": "WhatsApp पर ऑर्डर करें",
+      "secondaryCta": "इस कृति को अपना बनाएँ",
+      "orderSummaryNote": "त्वरित ऑर्डर — मूल्य और डिस्पैच WhatsApp पर तय होंगे।",
+      "orderWaIntro": "नमस्ते Rivya Living Art,\nमैं यह ऑर्डर करना चाहता/चाहती हूँ:"
+    }
   }
 }

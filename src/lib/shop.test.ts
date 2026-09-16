@@ -66,6 +66,21 @@ describe("buildProductWhere (Prompt 07)", () => {
     expect(and).toContainEqual({ inStock: true });
   });
 
+  it("adds a sizeTier equality clause for a known slug — Product.sizeTier, not Product.tier", () => {
+    const where = buildProductWhere({ sizeTier: "large" });
+    const and = where.AND as Array<Record<string, unknown>>;
+    expect(and).toContainEqual({ sizeTier: "LARGE_FORMAT" });
+    for (const clause of and) expect(clause).not.toHaveProperty("tier");
+  });
+
+  it("ignores an unknown sizeTier value rather than matching nothing", () => {
+    // The enum spelling is deliberately not a second public one, and the
+    // untiered backlog is a Studio concern, not a storefront facet.
+    for (const value of ["LARGE_FORMAT", "none", "huge"]) {
+      expect(buildProductWhere({ sizeTier: value }).AND).toBeUndefined();
+    }
+  });
+
   it("filters price band with min and max bounds correctly", () => {
     // 1k-5k: min 1000, max 5000
     const where = buildProductWhere({ band: "1k-5k" });

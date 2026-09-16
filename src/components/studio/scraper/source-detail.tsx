@@ -44,6 +44,15 @@ import type {
 } from "@/generated/prisma/enums";
 import { useSelection } from "@/hooks/use-selection";
 import { useScrapeRunner } from "@/hooks/use-scrape-runner";
+import {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_FORM_VALUES,
+  SIZE_TIER_NUMBER,
+  SIZE_TIER_SHORT,
+  sizeTierFromFormValue,
+  sizeTierToFormValue,
+  type ProductSizeTier,
+} from "@/lib/product-size-tier";
 import { HEALTH_META, type SourceHealth } from "@/lib/scraper/health";
 import { cn } from "@/lib/utils";
 
@@ -95,6 +104,9 @@ export type DetailProductRow = {
   category: string | null;
   /** Auto-mapped catalog category id (null when nothing matched). */
   mappedCategoryId: string | null;
+  /** Read-time size-tier suggestion (null when nothing scored or two tiers
+   *  tied). Never stored; the operator's pick travels with the import. */
+  suggestedSizeTier: ProductSizeTier | null;
   priceLabel: string;
   priceSort: number | null;
   /** Most recent recorded price move, e.g. "₹799 → ₹849". Null = never moved. */
@@ -113,6 +125,23 @@ const PLATFORM_BADGE: Record<
   JSONLD: "secondary",
   UNKNOWN: "outline",
 };
+
+/**
+ * The size-tier cell's options — derived from the one vocabulary, one word
+ * per tier, because the four-word names failed the studio audit's width
+ * once (product-size-tier.ts). "none" persists as SQL NULL, the same
+ * convention the product form's select already uses.
+ */
+type SizeTierFormValue = (typeof SIZE_TIER_FORM_VALUES)[number];
+const SIZE_TIER_CELL_OPTIONS: readonly { value: SizeTierFormValue; label: string }[] = [
+  { value: "none", label: "— not set" },
+  ...PRODUCT_SIZE_TIERS.map((tier) => ({
+    value: tier,
+    label: `Tier ${SIZE_TIER_NUMBER[tier]} · ${SIZE_TIER_SHORT[tier]}`,
+  })),
+];
+const isSizeTierFormValue = (value: string): value is SizeTierFormValue =>
+  (SIZE_TIER_FORM_VALUES as readonly string[]).includes(value);
 
 const TIER_LABELS: Record<ScrapeTier, string> = {
   LARGE_FORMAT: "Tier 1 — Large",
@@ -191,6 +220,11 @@ export function SourceDetail({
   // Per-row catalog category overrides (row id → category id). Defaults fall
   // back to each row's auto-mapped category until the operator changes it.
   const [catOverrides, setCatOverrides] = useState<Record<string, string>>({});
+  // Per-row product-tier overrides (row id → form value). Defaults fall back
+  // to each row's read-time suggestion until the operator changes it.
+  const [tierOverrides, setTierOverrides] = useState<
+    Record<string, SizeTierFormValue>
+  >({});
 
   // Run scope: the whole source (its registry baseUrl), one listing/category
   // page (paginated), or one product page (a single JSON-LD fetch). CATEGORY
@@ -335,7 +369,15 @@ export function SourceDetail({
     [catOverrides],
   );
 
-  // Selected rows paired with their resolved category, for the confirm dialog.
+  // The product tier shown for a row: operator override → suggestion → none.
+  const sizeTierFor = useCallback(
+    (row: DetailProductRow): SizeTierFormValue =>
+      tierOverrides[row.id] ?? sizeTierToFormValue(row.suggestedSizeTier),
+    [tierOverrides],
+  );
+
+  // Selected rows paired with their resolved category and tier, for the
+  // confirm dialog.
   const selectedItems = useMemo<AddToCatalogItem[]>(() => {
     const byId = new Map(products.map((p) => [p.id, p]));
     return selection.ids.map((id) => {
@@ -344,9 +386,10 @@ export function SourceDetail({
         id,
         title: row?.title ?? id,
         categoryId: row ? categoryFor(row) || null : null,
+        sizeTier: row ? sizeTierFromFormValue(sizeTierFor(row)) : null,
       };
     });
-  }, [selection.ids, products, categoryFor]);
+  }, [selection.ids, products, categoryFor, sizeTierFor]);
 
   // ————— Jobs table: sort —————
   const getJobValue = useCallback((row: JobHistoryRow, key: string) => {
@@ -629,6 +672,9 @@ export function SourceDetail({
                   <th scope="col" className="px-4 py-3 font-medium">
                     Catalog category
                   </th>
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Product tier
+                  </th>
                   <SortHead
                     label="Price"
                     sortKey="price"
@@ -715,6 +761,40 @@ export function SourceDetail({
                             ))}
                           </SelectContent>
                         </Select>
+                      </td>
+                      <td className="px-4 py-2">
+                        <Select
+                          value={sizeTierFor(p)}
+                          onValueChange={(v) => {
+                            if (!isSizeTierFormValue(v)) return;
+                            setTierOverrides((prev) => ({ ...prev, [p.id]: v }));
+                          }}
+                          disabled={p.reviewStatus === "IMPORTED"}
+                        >
+                          <SelectTrigger
+                            size="sm"
+                            aria-label={`Product tier for ${p.title}`}
+                            className="w-40"
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SIZE_TIER_CELL_OPTIONS.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {/* Provenance, shown only while the value is the
+                            untouched suggestion. Nothing scored → "— not set"
+                            and no hint: nothing is invented. */}
+                        {tierOverrides[p.id] === undefined &&
+                          p.suggestedSizeTier && (
+                            <span className="block text-12 text-muted-foreground">
+                              suggested
+                            </span>
+                          )}
                       </td>
                       <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">
                         {p.priceLabel}
@@ -861,6 +941,7 @@ export function SourceDetail({
         onDone={() => {
           selection.clear();
           setCatOverrides({});
+          setTierOverrides({});
           router.refresh();
         }}
       />

@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTestDb } from "./helpers";
 import type { RichProduct } from "@/lib/scraper/types";
@@ -75,6 +75,18 @@ describe.skipIf(!db)("analytics league guard", () => {
     jobId = job.id;
   });
 
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.researchProduct.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapeJob.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapeSource.deleteMany({ where: { key: SOURCE } });
+  });
+
   it("a MATERIALS_DIY scrape stamps every variant isReference with its league reason", async () => {
     const { upsertPageForTest } = await import("@/lib/scraper/job-runner");
     await upsertPageForTest(jobId, SOURCE, [product()], "MATERIALS_DIY");
@@ -140,10 +152,19 @@ describe.skipIf(!db)("analytics league guard", () => {
     expect(artAvg._avg.priceMinor).toBeNull();
 
     // And inside its own league, the reference stamp still excludes it.
+    // The source holds two snapshots by now: the ₹499 row written under
+    // MATERIALS_DIY (stamped reference) and the ₹549 row the previous test
+    // wrote under FINISHED_ART (comparable). An average that equals the
+    // comparable row's price EXACTLY is the proof: the ₹499 reference row
+    // was kept out by the clause, not averaged in and filtered after. (The
+    // first version of this test expected null, which would only be true
+    // if the comparable row did not exist — it does, two tests up.)
     const diyAvg = await db!.productVariant.aggregate({
       where: variantWhereForLeague(diyKeys.filter((k) => k === SOURCE)),
       _avg: { priceMinor: true },
+      _count: { priceMinor: true },
     });
-    expect(diyAvg._avg.priceMinor).toBeNull();
+    expect(diyAvg._count.priceMinor).toBe(1);
+    expect(diyAvg._avg.priceMinor).toBe(54900);
   });
 });

@@ -84,6 +84,13 @@ Four things about it that are expensive to get wrong:
   document): the header nav's four items, seven proposed product fields, Tier 02's upload
   flow, a homepage band that would breach the dark-band rhythm, a CTA the `Inquiry` schema
   cannot record. Each stops at a question rather than being built around.
+- **The storefront reads `sizeTier` in exactly three places** (steps 7–8, 2026-09-16): the
+  collectible card variant (`card-meta.ts` decides, `/large-resin-art` passes it by
+  context), the PDP's order presets (`tier-order-copy.ts`; out of stock wins), and the
+  shop's `?sizeTier=large|medium|small` facet. Every customer-facing word comes from the
+  `ProductTier.<enum>` block in `messages/*.json`, whose `name`/`shortName` a test pins to
+  the studio's labels. The scraper only SUGGESTS a tier (`size-tier-suggest.ts`), never
+  stores one.
 
 ---
 

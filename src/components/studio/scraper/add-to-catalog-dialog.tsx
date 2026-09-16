@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { addScrapedToCatalog } from "@/actions/scraper-review";
+import type { ProductSizeTier } from "@/lib/product-size-tier";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -28,6 +29,9 @@ export type AddToCatalogItem = {
   title: string;
   /** Auto-mapped or operator-picked catalog category; null when unresolved. */
   categoryId: string | null;
+  /** Suggested or operator-picked product tier; null leaves the draft
+   *  untiered (the publish guard will ask for one later). */
+  sizeTier: ProductSizeTier | null;
 };
 
 /**
@@ -89,7 +93,11 @@ function AddToCatalogBody({
 
   async function handleAdd() {
     const resolved = items
-      .map((it) => ({ id: it.id, categoryId: it.categoryId ?? fallbackId }))
+      .map((it) => ({
+        id: it.id,
+        categoryId: it.categoryId ?? fallbackId,
+        sizeTier: it.sizeTier,
+      }))
       .filter((it) => it.categoryId);
     if (resolved.length === 0) {
       toast.error("Pick a category for the unmatched products first.");
@@ -142,7 +150,7 @@ function AddToCatalogBody({
         <DialogDescription>
           {items.length} selected product{items.length === 1 ? "" : "s"} will be
           added as draft{items.length === 1 ? "" : "s"}, each routed to its own
-          catalog category.
+          catalog category and filed under the product tier shown in the list.
         </DialogDescription>
       </DialogHeader>
 

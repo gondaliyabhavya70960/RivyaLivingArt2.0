@@ -980,7 +980,12 @@
       "viewPiece": "View piece",
       "shipsIn": "Ships in 7–10 days",
       "askOnWhatsApp": "Ask on WhatsApp",
-      "materialsDimensions": "Materials and dimensions"
+      "materialsDimensions": "Materials and dimensions",
+      "collectible": {
+        "sizeLabel": "Size",
+        "materialsLabel": "Materials",
+        "priceOnRequest": "Price on request"
+      }
     },
     "collection": {
       "count": "{count, plural, =0 {No pieces yet} one {# piece} other {# pieces}}",
@@ -1037,7 +1042,8 @@
       "anyAvailability": "Any availability",
       "clearAll": "Clear all",
       "apply": "Apply ({count, plural, one {# piece} other {# pieces}})",
-      "unavailable": "No pieces in this view"
+      "unavailable": "No pieces in this view",
+      "sectionSizeTier": "Scale"
     },
     "activeFilters": {
       "remove": "Remove {filter}"
@@ -1049,7 +1055,8 @@
       "cta": "See how it is made",
       "imageAlt": "A layered resin block read as ocean depth, pale bands running through blue"
     },
-    "quickViewLabel": "Quick view"
+    "quickViewLabel": "Quick view",
+    "allSizeTiers": "All scales"
   },
   "Search": {
     "meta": {
@@ -1606,8 +1613,6 @@
       "eyebrow": "large pieces",
       "heading": "Pieces at this scale",
       "intro": "Work the studio has grouped as large-format. Where a size or a material is recorded for a piece, it is printed with it.",
-      "materialsLabel": "Materials",
-      "sizeLabel": "Size",
       "catalogCta": "See the full catalogue",
       "emptyHeading": "Documented as they leave the studio",
       "emptyBody": "There is nothing to browse at this scale yet. The conversation does not wait for the gallery — describe the piece you want and we will design it from the room outwards.",
@@ -1665,5 +1670,34 @@
   "AccordionGallery": {
     "expand": "Expand",
     "collapse": "Collapse"
+  },
+  "ProductTier": {
+    "LARGE_FORMAT": {
+      "name": "Collectible Furniture & Spatial Art",
+      "shortName": "Collectible",
+      "promise": "Made to the scale of a room",
+      "primaryCta": "Commission a piece",
+      "secondaryCta": "Request a consultation",
+      "orderSummaryNote": "Commission enquiry — price and lead time are confirmed on WhatsApp.",
+      "orderWaIntro": "Hello Rivya Living Art,\nI would like to commission:"
+    },
+    "MEDIUM_FORMAT": {
+      "name": "Memory & Celebration Art",
+      "shortName": "Memory",
+      "promise": "Flowers, names and dates, set to keep",
+      "primaryCta": "Preserve your memory",
+      "secondaryCta": "Start customization",
+      "orderSummaryNote": "Memory piece — details and timeline are confirmed on WhatsApp.",
+      "orderWaIntro": "Hello Rivya Living Art,\nI would like to preserve a memory with:"
+    },
+    "SMALL_FORMAT": {
+      "name": "Personal Art & Gifting",
+      "shortName": "Personal",
+      "promise": "Quick to personalize, ready to gift",
+      "primaryCta": "Order on WhatsApp",
+      "secondaryCta": "Personalize this piece",
+      "orderSummaryNote": "Quick order — price and dispatch are confirmed on WhatsApp.",
+      "orderWaIntro": "Hello Rivya Living Art,\nI would like to order:"
+    }
   }
 }

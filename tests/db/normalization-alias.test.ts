@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTestDb } from "./helpers";
 import { AliasKind } from "@/generated/prisma/enums";
@@ -70,6 +70,20 @@ describe.skipIf(!db)("aliases re-label history without a re-scrape", () => {
       select: { id: true },
     });
     snapshotId = snap.id;
+  });
+
+  // Leave the shared database as this suite found it (the convention the
+  // older suites already follow): league-wide medians in analytics.test.ts
+  // read EVERY source, so a suite that leaves priced rows behind moves
+  // another suite's numbers on the next run.
+  afterAll(async () => {
+    if (!db) return;
+    await db.researchProduct.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapedProduct.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.scrapeJob.deleteMany({ where: { sourceKey: SOURCE } });
+    await db.normalizationAlias.deleteMany({
+      where: { rawValue: { in: [aliasKey("sheesham"), aliasKey("teakwood")] } },
+    });
   });
 
   /** Read the snapshot's raw material and normalize it against the table NOW. */

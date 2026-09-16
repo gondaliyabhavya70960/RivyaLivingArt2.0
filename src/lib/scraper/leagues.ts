@@ -84,3 +84,22 @@ export function variantWhereForLeague(
     snapshot: { researchProduct: { sourceKey: { in: sourceKeys } } },
   };
 }
+
+/**
+ * Where-fragment for EVERY variant a league's sources hold, reference rows
+ * included. This is NOT a benchmark shape — nothing should average through
+ * it. It exists for the one reader that has to SEE the reference rows in
+ * order to say it left them out: B8's `computedFrom` accounting, whose
+ * "computed from X of N — excluded: reference 1" line is only true if the
+ * fetch handed it N, not X. Fetching through `variantWhereForLeague` there
+ * made `exclusions.reference` a bucket that could never be non-zero, and the
+ * supplies league's own benchmark reported "considered 0" for a source it
+ * had actually read.
+ */
+export function variantWhereForLeagueContext(
+  sourceKeys: string[],
+): Prisma.ProductVariantWhereInput {
+  return {
+    snapshot: { researchProduct: { sourceKey: { in: sourceKeys } } },
+  };
+}

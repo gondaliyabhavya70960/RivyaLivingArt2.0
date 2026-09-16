@@ -34,6 +34,7 @@ import { CharCounter } from "@/components/ui/char-counter";
 import { swatchColor } from "@/lib/swatch-colors";
 import { uploadReferenceImages } from "@/lib/upload-client";
 import { cn, formatPriceBand } from "@/lib/utils";
+import { selectOrderCopy, type TierOrderCopy } from "@/lib/tier-order-copy";
 import { buildOrderMessage, localizedOrderLabels } from "@/lib/whatsapp";
 
 export type OrderPanelFieldType =
@@ -83,6 +84,13 @@ export type OrderPanelOosCopy = {
   /** Enquiry-framed intro for the WhatsApp message — Product.oosWaIntro. */
   waIntro: string;
 };
+
+/**
+ * The tier preset (docs/plan/07 step 8): the same three fields, resolved
+ * the same way on the server from `ProductTier.<tier>`, and LOWER
+ * precedence than `oosCopy` — see `selectOrderCopy`.
+ */
+export type OrderPanelTierCopy = TierOrderCopy;
 
 /* Swatch colour names → css moved to `src/lib/swatch-colors.ts` (A3): the
    table and `swatchColor()` are byte-identical, only the import site moved
@@ -136,16 +144,21 @@ type Phase = "idle" | "uploading" | "submitting";
 export function ProductOrderPanel({
   product,
   oosCopy = null,
+  tierCopy = null,
 }: {
   product: OrderPanelProduct;
   oosCopy?: OrderPanelOosCopy | null;
+  tierCopy?: OrderPanelTierCopy | null;
 }) {
   const router = useRouter();
 
   // Honest out-of-stock flow (audit H2): the form still submits — the studio
   // WANTS the restock conversation — but the CTA, summary and WhatsApp
-  // message all say what this really is: an availability enquiry.
-  const outOfStock = !product.inStock && oosCopy !== null;
+  // message all say what this really is: an availability enquiry. The tier
+  // preset reframes the same three surfaces for an in-stock piece; out of
+  // stock wins (a fact outranks a framing), and with neither set every site
+  // below evaluates to exactly what it did before presets existed.
+  const copy = selectOrderCopy({ inStock: product.inStock, oosCopy, tierCopy });
 
   // Fields render (and enter the summary) in studio-defined order.
   const fields = [...product.customFields].sort((a, b) => a.order - b.order);
@@ -242,9 +255,7 @@ export function ProductOrderPanel({
         email: email.trim() || undefined,
       },
     },
-    outOfStock && oosCopy
-      ? { ...orderLabels, intro: oosCopy.waIntro }
-      : orderLabels,
+    copy ? { ...orderLabels, intro: copy.waIntro } : orderLabels,
   );
 
   function validate(): boolean {
@@ -361,7 +372,12 @@ export function ProductOrderPanel({
     { label: t("summaryPiece"), value: product.title },
     {
       label: t("summaryPrice"),
-      value: product.showPrice
+      // `showPrice` alone is not enough: with both prices null,
+      // formatPriceBand paints its hardcoded English "Enquire" in all nine
+      // locales (T6). The same guard the catalog card uses.
+      value:
+        product.showPrice &&
+        (product.priceMin != null || product.priceMax != null)
         ? [
             formatPriceBand(product.priceMin, product.priceMax),
             product.timeline
@@ -638,8 +654,8 @@ export function ProductOrderPanel({
               ? progressText || t("uploading")
               : phase === "submitting"
                 ? t("preparing")
-                : outOfStock && oosCopy
-                  ? oosCopy.cta
+                : copy
+                  ? copy.cta
                   : t("placeOrder")}
           </Button>
           <p className="mt-4 font-body text-12 leading-relaxed text-graphite">
@@ -661,7 +677,7 @@ export function ProductOrderPanel({
           messageLabel={t("whatsappMessageLabel")}
           rows={summaryRows}
           message={previewMessage}
-          note={outOfStock && oosCopy ? oosCopy.summaryNote : undefined}
+          note={copy?.summaryNote}
         />
         <p className="mt-3 font-body text-12 leading-relaxed text-graphite">
           {t("updatesHint")}

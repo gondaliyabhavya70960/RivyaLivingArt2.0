@@ -172,3 +172,31 @@ export const SIZE_TIER_CELL_VALUES = PRODUCT_SIZE_TIERS.flatMap((tier) => [
   tier.replace("_FORMAT", ""),
   tier,
 ]).join(", ");
+
+/**
+ * The storefront's URL value for a tier — `?sizeTier=large` — the short
+ * word, lowercase, DERIVED so the list still lives once. Customer words in
+ * a shareable URL, not database identifiers: `?sizeTier=LARGE_FORMAT` is
+ * the same objection `parseSizeTierCell` records for a spreadsheet cell.
+ */
+export type SizeTierSlug = "large" | "medium" | "small";
+
+export const SIZE_TIER_SLUG = Object.fromEntries(
+  PRODUCT_SIZE_TIERS.map((tier) => [
+    tier,
+    tier.replace("_FORMAT", "").toLowerCase(),
+  ]),
+) as Record<ProductSizeTier, SizeTierSlug>;
+
+/**
+ * Slug → tier; anything else → undefined, so an unknown facet value adds
+ * no clause — the rule `band` already follows in `buildProductWhere`.
+ * Exact match only, no case folding: `?sizeTier=LARGE_FORMAT` must not
+ * become a second public spelling of the same URL.
+ */
+export function sizeTierFromSlug(
+  value: string | null | undefined,
+): ProductSizeTier | undefined {
+  if (!value) return undefined;
+  return PRODUCT_SIZE_TIERS.find((tier) => SIZE_TIER_SLUG[tier] === value);
+}
