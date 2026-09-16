@@ -8,6 +8,30 @@ ScraperManager → adapter registry → the site's adapter
 src/lib/scraper/adapters/{index,shopify,woocommerce,jsonld}.ts
 ```
 
+Every adapter ships against **`docs/adapter-acceptance-checklist.md`** as
+fixture tests that make no network call (fixtures live beside the adapters in
+`__fixtures__/`). That checklist was written for this repo — the original
+brief's checklist was never committed; the doc's own header records that.
+
+## The markup-shape extractors (B5, 2026-09-16)
+
+Two page mappers keyed on what a page's markup LOOKS like, not the platform:
+
+- **`priced-store.ts`** — a single product page with commerce markup but no
+  usable JSON-LD Product node (microdata, Open Graph product tags,
+  `data-product_variants` blobs). Per-variant rows when the page names them,
+  floor+ceiling rows for a bare range, never an invented midpoint.
+- **`quote-studio.ts`** — a bespoke atelier's piece page: no price at all, a
+  quote/enquiry CTA, spec lists. Emits one variant with `priceMajor: null`,
+  which persists as QUOTE_ONLY with a NULL price — never zero.
+
+`markup-shape.ts` decides which shape a page is, and the JSON-LD adapter's
+fetch path calls it when a page has no schema.org Product node — so a
+sitemap-discovered page without JSON-LD now extracts instead of skipping.
+Detection is deliberately strict (checklist §D): price text alone never
+promotes a page, a page with several product identities is a listing, and
+non-product pages yield nothing.
+
 ---
 
 ## Before writing one
@@ -58,10 +82,12 @@ selector matched the wrong thing.
 
 ## Testing
 
-Fixture-based, never hitting the network. No adapter test exists yet (checked
-2026-09-03); the pure-module suites beside the adapters — `validation.test.ts`,
-`breaker.test.ts`, `merge-policy.test.ts` — are the pattern to follow when
-one is written. A test that makes a real request fails in CI and re-fails
+Fixture-based, never hitting the network. The first adapter tests shipped
+with B5 (2026-09-16) — `markup-shape.test.ts`, `priced-store.test.ts`,
+`quote-studio.test.ts` — against checked-in HTML fixtures, per
+`docs/adapter-acceptance-checklist.md`. Earlier pure-module suites
+(`validation.test.ts`, `breaker.test.ts`, `merge-policy.test.ts`) remain the
+pattern. A test that makes a real request fails in CI and re-fails
 whenever the competitor redesigns.
 
 ## When a site changes shape
