@@ -164,6 +164,15 @@ export default async function ScraperPage() {
         actions={
           <>
             <Button asChild variant="outline" size="sm">
+              <Link href="/studio/scraper/runs">Workflow runs</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/studio/scraper/explorer">Product explorer</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/studio/scraper/large-format">Large-format</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/studio/scraper/sources">Source registry</Link>
             </Button>
             <Button asChild variant="outline" size="sm">

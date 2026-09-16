@@ -41,17 +41,8 @@ import {
   vectorToLiteral,
   type EmbeddingInput,
 } from "@/lib/scraper/embedding";
+import { splitMaterialList } from "@/lib/scraper/explorer";
 import { BENCHMARK_LEAGUE } from "@/lib/scraper/leagues";
-
-/** Split a free-text materials string ("epoxy resin, acacia wood") into
- *  raw material phrases for alias resolution. */
-function splitMaterials(raw: string | null): string[] {
-  if (!raw) return [];
-  return raw
-    .split(/[,;+/]|\band\b/i)
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
 
 export type EmbeddingRecomputeReport = {
   computedAt: Date;
@@ -162,7 +153,7 @@ export async function recomputeEmbeddings(): Promise<EmbeddingRecomputeReport> {
     const input: EmbeddingInput = {
       title: twin?.title ?? "",
       category: twin?.category ?? null,
-      materials: splitMaterials(twin?.materials ?? null).map((m) =>
+      materials: splitMaterialList(twin?.materials ?? null).map((m) =>
         resolveWithMap(materialMap, AliasKind.MATERIAL, m),
       ),
       league:
