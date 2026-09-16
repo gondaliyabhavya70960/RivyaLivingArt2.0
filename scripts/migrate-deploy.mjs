@@ -23,13 +23,17 @@
  * treated as real. Retry is for "the door was locked", never for "the room was
  * on fire".
  *
- * The one exception, added after the 2026-09-16 P3009 (a cancelled preview
- * build died inside `20260917090000_analytics_opportunity` and blocked every
- * later deploy): when the failed migration's own SQL creates tables and NONE
- * of them exist, the migration provably applied nothing, so this script marks
- * it rolled-back itself and runs the deploy again — once per build, never
- * `--applied`, never when a table it would create already exists. The guard
- * and its reasoning live in `scripts/lib/migrate-resolve-failed.mjs`.
+ * The one exception — P3009, a migration Prisma has RECORDED as failed —
+ * gets one guarded chance per build to heal itself, and the guard is a fact
+ * check, not a judgement: the failed migration's own SQL declares what it
+ * would leave behind, the catalog is read for every item, and the record is
+ * resolved only when NOTHING of it exists (→ `--rolled-back`), EVERYTHING of
+ * it exists in the declared shape (→ `--applied`), or a stray, data-free
+ * partial is dropped first (→ `--rolled-back`, then the deploy re-applies it
+ * from scratch). The 2026-09-16 block was the third case: an abandoned
+ * branch's preview had built the B8 tables under another migration name, in
+ * another shape. The rules, the incident and the refusals live in
+ * `scripts/lib/migrate-resolve-failed.mjs`.
  *
  * It is a drop-in for the command it wraps: same stdout, same stderr, and the
  * child's exit code is this script's exit code, so `&&` in the build still
@@ -41,10 +45,12 @@ import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { classifyMigrateFailure } from "./lib/migrate-retry.mjs";
 import {
+  decideResolution,
   failedMigrationNames,
+  inspectFootprint,
   manualResolveInstructions,
+  parseMigrationFootprint,
   readMigrationSql,
-  tablesCreatedBy,
 } from "./lib/migrate-resolve-failed.mjs";
 
 /**
@@ -72,10 +78,10 @@ const MIGRATION_URL =
   process.env.DATABASE_URL ??
   "";
 
-/** `prisma migrate resolve --rolled-back <name>`, output echoed live. */
-function runMigrateResolve(name) {
+/** `prisma migrate resolve --rolled-back|--applied <name>`, output echoed live. */
+function runMigrateResolve(flag, name) {
   return new Promise((resolve) => {
-    const child = spawn(PRISMA, ["migrate", "resolve", "--rolled-back", name], {
+    const child = spawn(PRISMA, ["migrate", "resolve", flag, name], {
       stdio: ["inherit", "pipe", "pipe"],
       env: process.env,
     });
@@ -96,11 +102,11 @@ function tee_child(child) {
 }
 
 /**
- * Which of these tables exist in the public schema. Connects exactly as
- * db-preflight does: the URL as written first, TLS fallback only when the
- * server demands it.
+ * One connection for the whole check-and-heal, opened exactly as db-preflight
+ * opens its own: the URL as written first, TLS fallback only when the server
+ * demands it.
  */
-async function existingTables(tableNames) {
+async function withDb(fn) {
   const attempt = async (ssl) => {
     const client = new pg.Client({
       connectionString: MIGRATION_URL,
@@ -109,14 +115,12 @@ async function existingTables(tableNames) {
     });
     try {
       await client.connect();
-      const res = await client.query(
-        `select table_name from information_schema.tables
-         where table_schema = 'public' and table_name = any($1)`,
-        [tableNames],
-      );
-      return { rows: res.rows.map((r) => r.table_name) };
     } catch (e) {
+      await client.end().catch(() => {});
       return { error: e };
+    }
+    try {
+      return { value: await fn(client) };
     } finally {
       await client.end().catch(() => {});
     }
@@ -127,17 +131,19 @@ async function existingTables(tableNames) {
     result = await attempt({ rejectUnauthorized: false });
   }
   if (result.error) throw result.error;
-  return result.rows;
+  return result.value;
 }
+
+const log = (line) => console.error(`migrate-deploy: ${line}`);
 
 /**
  * The one-shot P3009 self-heal, attempted at most once per build (the
  * `resolveAttempted` flag in the loop below is what makes "once" true). The
- * guard itself lives in migrate-resolve-failed.mjs, which states it.
+ * facts and the decision live in migrate-resolve-failed.mjs; this function
+ * only reads the catalog, acts on the decision, and says what it did.
  *
- * Returns true only when every failed migration was provably unapplied and
- * is now marked rolled-back — the caller then re-runs migrate deploy, which
- * applies them from scratch.
+ * Returns true only when every failed migration is now resolved — the caller
+ * then re-runs migrate deploy, which applies whatever is pending.
  */
 async function tryResolveFailedMigrations(output) {
   const names = failedMigrationNames(output);
@@ -145,30 +151,93 @@ async function tryResolveFailedMigrations(output) {
 
   for (const name of names) {
     const sql = readMigrationSql(name);
-    const created = sql === null ? [] : tablesCreatedBy(sql);
-    if (created.length === 0) {
-      console.error(manualResolveInstructions(name, []));
+    if (sql === null) {
+      log(`\`${name}\` is recorded as failed and is not a migration this checkout carries — resolve by hand.`);
+      console.error(manualResolveInstructions(name, null));
       return false;
     }
-    const present = await existingTables(created);
-    if (present.length > 0) {
-      console.error(manualResolveInstructions(name, present));
-      return false;
-    }
-    console.error(
-      `migrate-deploy: \`${name}\` is recorded as failed, and none of the tables it creates ` +
-        `(${created.join(", ")}) exist — it provably applied nothing. ` +
-        "Marking it rolled-back so this deploy can apply it cleanly.",
-    );
-    const code = await runMigrateResolve(name);
-    if (code !== 0) {
-      console.error(
-        `migrate-deploy: \`migrate resolve --rolled-back ${name}\` itself failed — resolve by hand.`,
+    const footprint = parseMigrationFootprint(sql);
+
+    const resolved = await withDb(async (client) => {
+      const query = async (text, params) => (await client.query(text, params)).rows;
+      const observed = await inspectFootprint(query, footprint);
+      const decision = decideResolution(footprint, observed);
+
+      if (decision.action === "manual") {
+        console.error(manualResolveInstructions(name, decision));
+        return false;
+      }
+
+      if (decision.action === "applied") {
+        log(
+          `\`${name}\` is recorded as failed, and every object its SQL declares exists in the ` +
+            `declared shape (${describeFootprint(footprint)}) — its work is all present. ` +
+            "Marking it applied.",
+        );
+        return (await runMigrateResolve("--applied", name)) === 0;
+      }
+
+      if (decision.action === "drop-and-rolled-back") {
+        log(
+          `\`${name}\` is recorded as failed and what exists does not match its SQL ` +
+            `(${decision.gaps.length} difference${decision.gaps.length === 1 ? "" : "s"}; first: ${decision.gaps[0]}). ` +
+            "Nothing that would go holds data a person entered:",
+        );
+        for (const d of decision.discarded) {
+          console.error(
+            `    - ${d.table}: ${d.hasRows ? "HAS rows" : "no rows"}` +
+              (d.derived ? ` — a declared derivation (${d.derived})` : ""),
+          );
+        }
+        log("Dropping the stray objects in one transaction:");
+        for (const statement of decision.plan) console.error(`    ${statement};`);
+        try {
+          await client.query("BEGIN");
+          for (const statement of decision.plan) await client.query(statement);
+          await client.query("COMMIT");
+        } catch (e) {
+          await client.query("ROLLBACK").catch(() => {});
+          log(`the drop failed and was rolled back (${e.message}) — resolve by hand.`);
+          console.error(manualResolveInstructions(name, decision));
+          return false;
+        }
+        log("Dropped. Marking the migration rolled-back so this deploy re-applies it from scratch.");
+        return (await runMigrateResolve("--rolled-back", name)) === 0;
+      }
+
+      // "rolled-back": nothing of it exists.
+      log(
+        `\`${name}\` is recorded as failed, and nothing its SQL declares exists ` +
+          `(${describeFootprint(footprint)}) — it provably applied nothing. ` +
+          "Marking it rolled-back so this deploy can apply it cleanly.",
       );
+      return (await runMigrateResolve("--rolled-back", name)) === 0;
+    });
+
+    if (!resolved) {
+      log(`\`${name}\` is still recorded as failed — resolve by hand.`);
       return false;
     }
   }
   return true;
+}
+
+/** "2 tables, 4 indexes, 1 constraint" — for the build log's one line. */
+function describeFootprint(footprint) {
+  const count = (n, one, many) => (n === 0 ? null : `${n} ${n === 1 ? one : many}`);
+  return (
+    [
+      count(footprint.tables.length, "table", "tables"),
+      count(footprint.columns.length, "added column", "added columns"),
+      count(footprint.indexes.length, "index", "indexes"),
+      count(footprint.constraints.length, "constraint", "constraints"),
+      count(footprint.enums.length, "enum type", "enum types"),
+      count(footprint.enumValues.length, "enum value", "enum values"),
+      count(footprint.extensions.length, "extension", "extensions"),
+    ]
+      .filter(Boolean)
+      .join(", ") || "nothing checkable"
+  );
 }
 
 let resolveAttempted = false;
@@ -214,10 +283,11 @@ for (let attempt = 0; ; attempt += 1) {
   const waitMs = BACKOFF_MS[attempt];
 
   if (!retry) {
-    // P3009 gets one guarded chance to heal itself: when the failed migration
-    // provably left nothing behind, mark it rolled-back and run the deploy
-    // again. Anything short of that proof falls through to the same stop as
-    // before, with the manual commands printed.
+    // P3009 gets one guarded chance to heal itself: when the failed
+    // migration's footprint is provably absent, provably complete, or a
+    // stray data-free partial, resolve it and run the deploy again. Anything
+    // short of that proof falls through to the same stop as before, with the
+    // facts and the manual commands printed.
     if (!resolveAttempted && /P3009/.test(output)) {
       resolveAttempted = true;
       try {

@@ -183,7 +183,7 @@ node scripts/a11y-audit.mjs   "/,/shop" [--w 390]
 node scripts/shots.mjs /tmp/out "/,/shop" --full
 ```
 
-`npm run build` runs `prisma migrate deploy` (through `scripts/migrate-deploy.mjs`, which retries a database that is merely unreachable) and `prisma/bootstrap.ts` before
+`npm run build` runs `prisma migrate deploy` (through `scripts/migrate-deploy.mjs`, which retries a database that is merely unreachable, and gives a migration Prisma has RECORDED as failed one guarded self-heal per build — `scripts/lib/migrate-resolve-failed.mjs` states the three facts it will act on and refuses everything else) and `prisma/bootstrap.ts` before
 `next build`, so it fails without a reachable `DATABASE_URL`. That is deliberate.
 
 ---
