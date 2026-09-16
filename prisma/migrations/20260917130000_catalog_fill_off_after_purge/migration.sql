@@ -1,0 +1,11 @@
+-- The owner emptied the catalogue from the Studio on 2026-09-16 (bulk-delete
+-- of 4,012 products, each tombstoned in DeletedImport) and asked for it to be
+-- rebuilt from the reference sites through the scraper's review queue. The
+-- CSV catalogue fill would re-create ~4,000 DIFFERENT supplier rows on the
+-- very next deploy — the tier caps are applied after the tombstone filter and
+-- the pools dwarf them (CLAUDE.md, "Emptying the catalogue takes TWO things").
+-- So the deploy-time run is switched off here, in the same push that would
+-- otherwise have refilled it. The master switch and the manual run on
+-- /studio/catalog-fill are untouched: the owner can still fill by hand, or
+-- turn the deploy run back on, from the Studio.
+UPDATE "SiteSettings" SET "sheetFillOnDeploy" = false;

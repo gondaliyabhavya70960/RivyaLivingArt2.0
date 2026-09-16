@@ -428,13 +428,14 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
     expect(tablesCreatedBy('-- CREATE TABLE "Ghost" ("id" TEXT);\nCREATE TABLE "Real" ("id" TEXT PRIMARY KEY);')).toEqual(["Real"]);
   });
 
-  it("recognises all 66 additive migrations in the repo without a gap, and only the three renames and drops as unknown", () => {
+  it("recognises all 65 additive migrations in the repo without a gap, and only the five renames and drops as unknown", () => {
     const dirs = readdirSync(new URL("../../prisma/migrations", import.meta.url)).filter((d) => !d.endsWith(".toml"));
     const withUnknown = dirs.filter((d) => fp(readMigrationSql(d)).unknown.length > 0);
     expect(withUnknown.sort()).toEqual([
       "20260915090000_import_conflict_rename",
       "20260915093000_import_conflict_map_not_rename",
       "20260915150000_drop_sheets_schema",
+      "20260917110000_drop_sheets_settings_columns",
       "20260917120000_shortlist_stray_link_column",
     ]);
     const untyped = dirs.flatMap((d) => {
