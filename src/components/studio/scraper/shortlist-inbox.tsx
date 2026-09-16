@@ -1,15 +1,25 @@
 "use client";
 
+/**
+ * The review inbox, rebuilt on ShortlistEntry (B7). Cards are researched
+ * products; the badge is where a human last left them in the funnel. Bulk
+ * moves ride the same state machine as the detail sheet — CONFIRMED only
+ * from SHORTLISTED, and the toast says exactly what moved and what was
+ * refused, so a mixed selection never silently half-applies.
+ */
+
 import { useMemo, useState, type FormEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check, ExternalLink, X } from "lucide-react";
+import { Check, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
+import { updateStagedProduct } from "@/actions/scraper-review";
 import {
-  setScrapedNotes,
-  setScrapedReviewStatus,
-  updateStagedProduct,
-} from "@/actions/scraper-review";
+  setShortlistNote,
+  setShortlistState,
+  setShortlistTags,
+} from "@/actions/scraper-shortlist";
+import type { TransitionReport } from "@/actions/scraper-shortlist";
 import { ApproveImportDialog } from "@/components/studio/scraper/approve-import-dialog";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
@@ -41,71 +51,35 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import type { ReviewStatus } from "@/generated/prisma/enums";
+import {
+  SHORTLIST_STATE_DESCRIPTIONS,
+  SHORTLIST_STATE_LABELS,
+  SHORTLIST_STATE_ORDER,
+  SHORTLIST_TRANSITIONS,
+  ShortlistState,
+} from "@/lib/scraper/shortlist";
+import type { InboxCounts, InboxRow } from "@/lib/scraper/shortlist-query";
 import { useSelection } from "@/hooks/use-selection";
 
-export type ScrapedRow = {
-  id: string;
-  title: string;
-  slug: string;
-  url: string;
-  sourceKey: string;
-  /** Human website name for the source (e.g. "sumaiyaresin.art"). */
-  sourceName: string;
-  vertical: string;
-  category: string | null;
-  shortTagline: string | null;
-  description: string | null;
-  priceMin: number | null;
-  priceMax: number | null;
-  timeline: string | null;
-  materials: string | null;
-  dimensions: string | null;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  images: string[];
-  imageAlts: string[];
-  /** The one field an otherwise-immutable staged row may change: a
-   *  reviewer's own comment on the listing, not the source's data. */
-  notes: string | null;
-  reviewStatus: ReviewStatus;
-  /** Precomputed on the server: lastSeen > firstSeen. */
-  updated: boolean;
-  /** Pre-formatted on the server (en-IN). */
-  firstSeen: string;
-  lastSeen: string;
-};
-
-export type ReviewCounts = Record<ReviewStatus, number>;
-
-const REVIEW_STATUS_ORDER: ReviewStatus[] = [
-  "PENDING",
-  "APPROVED",
-  "REJECTED",
-  "IMPORTED",
-];
-
-const STATUS_LABELS: Record<ReviewStatus, string> = {
-  PENDING: "Pending",
-  APPROVED: "Approved",
-  REJECTED: "Rejected",
-  IMPORTED: "Imported",
-};
-
-const STATUS_BADGE: Record<
-  ReviewStatus,
-  {
-    variant: "default" | "secondary" | "outline" | "success";
-    className?: string;
-  }
+const STATE_BADGE: Record<
+  ShortlistState,
+  { variant: "default" | "secondary" | "outline" | "success"; className?: string }
 > = {
-  PENDING: { variant: "outline" },
-  APPROVED: { variant: "success" },
+  NEW: { variant: "outline" },
+  REVIEW: { variant: "secondary" },
+  SHORTLISTED: { variant: "success" },
+  CONFIRMED: { variant: "default" },
   REJECTED: { variant: "secondary", className: "text-muted-foreground" },
-  IMPORTED: { variant: "default" },
+  INSPIRATION_ONLY: { variant: "outline" },
+  DUPLICATE: { variant: "secondary", className: "text-muted-foreground" },
 };
 
 const inr = new Intl.NumberFormat("en-IN");
+
+const dateFormatter = new Intl.DateTimeFormat("en-IN", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
 
 function formatPriceRange(min: number | null, max: number | null): string {
   if (min == null && max == null) return "—";
@@ -115,24 +89,37 @@ function formatPriceRange(min: number | null, max: number | null): string {
   return `₹${inr.format((min ?? max) as number)}`;
 }
 
-function StatusBadge({ status }: { status: ReviewStatus }) {
-  const config = STATUS_BADGE[status];
+function StateBadge({ state }: { state: ShortlistState }) {
+  const config = STATE_BADGE[state];
   return (
     <Badge variant={config.variant} className={config.className}>
-      {status.toLowerCase()}
+      {SHORTLIST_STATE_LABELS[state]}
     </Badge>
   );
 }
 
+function reportToast(action: string, report: TransitionReport, target: ShortlistState) {
+  const parts = [`${report.moved} ${action}`];
+  if (report.already > 0) parts.push(`${report.already} already there`);
+  if (report.blocked.length > 0) {
+    parts.push(
+      target === ShortlistState.CONFIRMED
+        ? `${report.blocked.length} skipped — only shortlisted items can be confirmed`
+        : `${report.blocked.length} skipped — that move is not allowed from their state`,
+    );
+  }
+  toast.success(parts.join(" · "));
+}
+
 // ————————————————————— Card —————————————————————
 
-function ReviewCard({
+function InboxCard({
   row,
   checked,
   onToggle,
   onOpen,
 }: {
-  row: ScrapedRow;
+  row: InboxRow;
   checked: boolean;
   onToggle: () => void;
   onOpen: () => void;
@@ -181,11 +168,15 @@ function ReviewCard({
               {row.sourceName}
             </Badge>
             {row.category && <Badge variant="secondary">{row.category}</Badge>}
-            <Badge variant="outline">{row.vertical}</Badge>
             <Badge variant={row.updated ? "outline" : "secondary"}>
               {row.updated ? "updated" : "new"}
             </Badge>
-            <StatusBadge status={row.reviewStatus} />
+            <StateBadge state={row.state} />
+            {row.tags.map((tag) => (
+              <Badge key={tag} variant="outline">
+                {tag}
+              </Badge>
+            ))}
           </div>
         </div>
       </button>
@@ -198,13 +189,14 @@ function ReviewCard({
 function DetailSheetBody({
   row,
   busy,
-  onReview,
+  onTransition,
   onSave,
-  onSaveNotes,
+  onSaveNote,
+  onSaveTags,
 }: {
-  row: ScrapedRow;
+  row: InboxRow;
   busy: boolean;
-  onReview: (status: "APPROVED" | "REJECTED") => void;
+  onTransition: (target: ShortlistState, reason: string) => Promise<void>;
   onSave: (patch: {
     id: string;
     title: string;
@@ -213,7 +205,8 @@ function DetailSheetBody({
     priceMin: number | null;
     priceMax: number | null;
   }) => Promise<void>;
-  onSaveNotes: (id: string, notes: string | null) => Promise<void>;
+  onSaveNote: (note: string | null) => Promise<void>;
+  onSaveTags: (tags: string[]) => Promise<void>;
 }) {
   const [title, setTitle] = useState(row.title);
   const [tagline, setTagline] = useState(row.shortTagline ?? "");
@@ -232,15 +225,24 @@ function DetailSheetBody({
     priceMin?: string;
     priceMax?: string;
   }>({});
-  const locked = row.reviewStatus === "IMPORTED";
+  const [note, setNote] = useState(row.note ?? "");
+  const [savingNote, setSavingNote] = useState(false);
+  const [tagsText, setTagsText] = useState(row.tags.join(", "));
+  const [savingTags, setSavingTags] = useState(false);
+  const [reason, setReason] = useState(row.reason ?? "");
+  // Edit-before-import locks once the twin is in the catalog — the same rule
+  // the old queue enforced on IMPORTED rows.
+  const locked = row.twinImported;
 
   const ids = {
-    title: `edit-title-${row.id}`,
-    tagline: `edit-tagline-${row.id}`,
-    category: `edit-category-${row.id}`,
-    priceMin: `edit-min-${row.id}`,
-    priceMax: `edit-max-${row.id}`,
-    notes: `edit-notes-${row.id}`,
+    title: `edit-title-${row.researchProductId}`,
+    tagline: `edit-tagline-${row.researchProductId}`,
+    category: `edit-category-${row.researchProductId}`,
+    priceMin: `edit-min-${row.researchProductId}`,
+    priceMax: `edit-max-${row.researchProductId}`,
+    note: `edit-note-${row.researchProductId}`,
+    tags: `edit-tags-${row.researchProductId}`,
+    reason: `move-reason-${row.researchProductId}`,
   } as const;
   type EditKey = keyof typeof errors;
 
@@ -253,18 +255,6 @@ function DetailSheetBody({
       "aria-invalid": errors[key] ? true : undefined,
       "aria-describedby": describedBy(errors[key] && `${ids[key]}-error`),
     };
-  }
-
-  // Notes are the one field this otherwise-immutable row may change, and
-  // they save independently of — and even once — the row is locked: a
-  // reviewer's comment on the listing is not the source's data.
-  const [notes, setNotes] = useState(row.notes ?? "");
-  const [savingNotes, setSavingNotes] = useState(false);
-
-  async function handleSaveNotes() {
-    setSavingNotes(true);
-    await onSaveNotes(row.id, notes.trim() || null);
-    setSavingNotes(false);
   }
 
   async function handleSave() {
@@ -303,11 +293,12 @@ function DetailSheetBody({
       document.getElementById(ids[first])?.focus();
       return;
     }
+    if (!row.twinId) return;
     const min = rawMin == null ? null : Math.round(rawMin);
     const max = rawMax == null ? null : Math.round(rawMax);
     setSaving(true);
     await onSave({
-      id: row.id,
+      id: row.twinId,
       title: title.trim(),
       shortTagline: tagline.trim() || null,
       category: category.trim() || null,
@@ -317,13 +308,32 @@ function DetailSheetBody({
     setSaving(false);
   }
 
+  async function handleSaveNote() {
+    setSavingNote(true);
+    await onSaveNote(note.trim() || null);
+    setSavingNote(false);
+  }
+
+  async function handleSaveTags() {
+    setSavingTags(true);
+    await onSaveTags(
+      tagsText
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+    );
+    setSavingTags(false);
+  }
+
+  const targets = SHORTLIST_TRANSITIONS[row.state];
+
   return (
     <SheetContent side="right" className="w-full gap-0 sm:max-w-lg">
       <SheetHeader className="pr-10">
         <SheetTitle className="text-lg leading-snug">{row.title}</SheetTitle>
         <SheetDescription>
           {row.sourceName} · {formatPriceRange(row.priceMin, row.priceMax)} ·
-          last seen {row.lastSeen}
+          last seen {dateFormatter.format(row.lastSeen)}
         </SheetDescription>
         <div className="flex flex-wrap gap-1.5 pt-1">
           <Badge variant="secondary" title="Source website">
@@ -331,157 +341,229 @@ function DetailSheetBody({
           </Badge>
           {row.category && <Badge variant="secondary">{row.category}</Badge>}
           <Badge variant="outline">{row.vertical}</Badge>
-          <Badge variant={row.updated ? "outline" : "secondary"}>
-            {row.updated ? "updated" : "new"}
-          </Badge>
-          <StatusBadge status={row.reviewStatus} />
+          <StateBadge state={row.state} />
         </div>
       </SheetHeader>
 
       <div className="flex-1 space-y-5 overflow-y-auto px-4 pb-4">
-        {/* Inline edit — curate the staged data before it imports as a draft. */}
+        {/* Funnel move — the state machine decides which buttons exist. */}
         <div className="space-y-3 rounded-card border border-border p-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
-              Edit before import
-            </h3>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleSave}
-              disabled={locked || saving || busy}
-            >
-              {saving ? "Saving…" : "Save"}
-            </Button>
-          </div>
+          <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
+            Move through the funnel
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            {SHORTLIST_STATE_DESCRIPTIONS[row.state]}
+          </p>
           <div className="space-y-1.5">
-            <Label htmlFor={`edit-title-${row.id}`} className="text-xs">
-              Title
+            <Label htmlFor={ids.reason} className="text-xs">
+              Reason (optional, recorded with the move)
             </Label>
             <Input
-              id={ids.title}
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                clear("title");
-              }}
-              disabled={locked}
-              {...a11y("title")}
+              id={ids.reason}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="e.g. duplicate of the Pepperfry listing"
+              maxLength={500}
             />
-            <FieldError id={`${ids.title}-error`}>{errors.title}</FieldError>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={`edit-tagline-${row.id}`} className="text-xs">
-              Tagline
-            </Label>
-            <Input
-              id={ids.tagline}
-              value={tagline}
-              onChange={(e) => {
-                setTagline(e.target.value);
-                clear("tagline");
-              }}
-              disabled={locked}
-              {...a11y("tagline")}
-            />
-            <FieldError id={`${ids.tagline}-error`}>{errors.tagline}</FieldError>
+          <div className="flex flex-wrap gap-2">
+            {targets.map((target) => (
+              <Button
+                key={target}
+                size="sm"
+                variant={
+                  target === ShortlistState.CONFIRMED ? "default" : "outline"
+                }
+                disabled={busy}
+                title={SHORTLIST_STATE_DESCRIPTIONS[target]}
+                onClick={() => onTransition(target, reason.trim())}
+              >
+                {target === ShortlistState.CONFIRMED && <Check />}
+                {SHORTLIST_STATE_LABELS[target]}
+              </Button>
+            ))}
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={`edit-category-${row.id}`} className="text-xs">
-              Category (source label)
-            </Label>
-            <Input
-              id={ids.category}
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                clear("category");
-              }}
-              disabled={locked}
-              {...a11y("category")}
-            />
-            <FieldError id={`${ids.category}-error`}>
-              {errors.category}
-            </FieldError>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1.5">
-              <Label htmlFor={`edit-min-${row.id}`} className="text-xs">
-                Price min (₹)
-              </Label>
-              <Input
-                id={ids.priceMin}
-                type="number"
-                inputMode="numeric"
-                min={0}
-                step={1}
-                value={priceMin}
-                onChange={(e) => {
-                  setPriceMin(e.target.value);
-                  clear("priceMin");
-                }}
-                disabled={locked}
-                {...a11y("priceMin")}
-              />
-              <FieldError id={`${ids.priceMin}-error`}>
-                {errors.priceMin}
-              </FieldError>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor={`edit-max-${row.id}`} className="text-xs">
-                Price max (₹)
-              </Label>
-              <Input
-                id={ids.priceMax}
-                type="number"
-                inputMode="numeric"
-                min={0}
-                step={1}
-                value={priceMax}
-                onChange={(e) => {
-                  setPriceMax(e.target.value);
-                  clear("priceMax");
-                }}
-                disabled={locked}
-                {...a11y("priceMax")}
-              />
-              <FieldError id={`${ids.priceMax}-error`}>
-                {errors.priceMax}
-              </FieldError>
-            </div>
-          </div>
+          {row.changedAt && (
+            <p className="text-xs text-muted-foreground">
+              Last moved {dateFormatter.format(row.changedAt)}
+              {row.reason ? ` — ${row.reason}` : ""}
+            </p>
+          )}
         </div>
 
-        {/* Reviewer notes — the one field that stays editable even once the
-            row is locked (IMPORTED): a comment on the listing, not the
-            source's data. */}
+        {/* Inline edit — curate the staged data before it imports as a draft. */}
+        {row.twinId && (
+          <div className="space-y-3 rounded-card border border-border p-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
+                Edit before import
+              </h3>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleSave}
+                disabled={locked || saving || busy}
+              >
+                {saving ? "Saving…" : "Save"}
+              </Button>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor={ids.title} className="text-xs">
+                Title
+              </Label>
+              <Input
+                id={ids.title}
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  clear("title");
+                }}
+                disabled={locked}
+                {...a11y("title")}
+              />
+              <FieldError id={`${ids.title}-error`}>{errors.title}</FieldError>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor={ids.tagline} className="text-xs">
+                Tagline
+              </Label>
+              <Input
+                id={ids.tagline}
+                value={tagline}
+                onChange={(e) => {
+                  setTagline(e.target.value);
+                  clear("tagline");
+                }}
+                disabled={locked}
+                {...a11y("tagline")}
+              />
+              <FieldError id={`${ids.tagline}-error`}>
+                {errors.tagline}
+              </FieldError>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor={ids.category} className="text-xs">
+                Category (source label)
+              </Label>
+              <Input
+                id={ids.category}
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  clear("category");
+                }}
+                disabled={locked}
+                {...a11y("category")}
+              />
+              <FieldError id={`${ids.category}-error`}>
+                {errors.category}
+              </FieldError>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1.5">
+                <Label htmlFor={ids.priceMin} className="text-xs">
+                  Price min (₹)
+                </Label>
+                <Input
+                  id={ids.priceMin}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  step={1}
+                  value={priceMin}
+                  onChange={(e) => {
+                    setPriceMin(e.target.value);
+                    clear("priceMin");
+                  }}
+                  disabled={locked}
+                  {...a11y("priceMin")}
+                />
+                <FieldError id={`${ids.priceMin}-error`}>
+                  {errors.priceMin}
+                </FieldError>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={ids.priceMax} className="text-xs">
+                  Price max (₹)
+                </Label>
+                <Input
+                  id={ids.priceMax}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  step={1}
+                  value={priceMax}
+                  onChange={(e) => {
+                    setPriceMax(e.target.value);
+                    clear("priceMax");
+                  }}
+                  disabled={locked}
+                  {...a11y("priceMax")}
+                />
+                <FieldError id={`${ids.priceMax}-error`}>
+                  {errors.priceMax}
+                </FieldError>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reviewer note — lives on the entry now, not the staged row. */}
         <div className="space-y-2 rounded-card border border-border p-3">
           <div className="flex items-center justify-between">
             <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
-              Reviewer notes
+              Reviewer note
             </h3>
             <Button
               size="sm"
               variant="outline"
-              onClick={handleSaveNotes}
-              disabled={savingNotes || busy}
+              onClick={handleSaveNote}
+              disabled={savingNote || busy}
             >
-              {savingNotes ? "Saving…" : "Save"}
+              {savingNote ? "Saving…" : "Save"}
             </Button>
           </div>
           <Textarea
-            id={ids.notes}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Anything worth flagging for the next reviewer…"
-            aria-label="Reviewer notes"
-            aria-describedby={`${ids.notes}-hint`}
+            id={ids.note}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Anything worth flagging for the next look…"
+            aria-label="Reviewer note"
+            aria-describedby={`${ids.note}-hint`}
             rows={3}
             maxLength={4000}
           />
-          <FieldHint id={`${ids.notes}-hint`}>
-            Up to 4,000 characters. Stays editable after import — a comment on
-            the listing, not the source&apos;s data.
+          <FieldHint id={`${ids.note}-hint`}>
+            Up to 4,000 characters. Your words about the listing — never the
+            source&apos;s data.
+          </FieldHint>
+        </div>
+
+        {/* Tags — the owner's own labels, exported with the confirmed list. */}
+        <div className="space-y-2 rounded-card border border-border p-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
+              Tags
+            </h3>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSaveTags}
+              disabled={savingTags || busy}
+            >
+              {savingTags ? "Saving…" : "Save"}
+            </Button>
+          </div>
+          <Input
+            id={ids.tags}
+            value={tagsText}
+            onChange={(e) => setTagsText(e.target.value)}
+            placeholder="large-format, diwali-benchmark"
+            aria-label="Tags"
+            aria-describedby={`${ids.tags}-hint`}
+          />
+          <FieldHint id={`${ids.tags}-hint`}>
+            Comma-separated, up to 20. Exported with the confirmed list.
           </FieldHint>
         </div>
 
@@ -541,20 +623,6 @@ function DetailSheetBody({
           </dl>
         )}
 
-        {(row.seoTitle || row.seoDescription) && (
-          <div className="space-y-1 rounded-card bg-muted/60 p-3 text-sm">
-            <h3 className="text-12 font-medium uppercase tracking-wider text-muted-foreground">
-              SEO
-            </h3>
-            {row.seoTitle && (
-              <p className="font-medium text-foreground">{row.seoTitle}</p>
-            )}
-            {row.seoDescription && (
-              <p className="text-muted-foreground">{row.seoDescription}</p>
-            )}
-          </div>
-        )}
-
         <a
           href={row.url}
           target="_blank"
@@ -567,49 +635,46 @@ function DetailSheetBody({
       </div>
 
       <SheetFooter className="flex-row justify-end gap-2 border-t border-border">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={busy || row.reviewStatus === "IMPORTED"}
-          onClick={() => onReview("REJECTED")}
-        >
-          <X /> Reject
-        </Button>
-        <Button
-          size="sm"
-          disabled={busy || row.reviewStatus === "IMPORTED"}
-          onClick={() => onReview("APPROVED")}
-        >
-          <Check /> Approve
-        </Button>
+        {targets.slice(0, 2).map((target) => (
+          <Button
+            key={target}
+            variant={target === ShortlistState.CONFIRMED ? "default" : "outline"}
+            size="sm"
+            disabled={busy}
+            onClick={() => onTransition(target, reason.trim())}
+          >
+            {SHORTLIST_STATE_LABELS[target]}
+          </Button>
+        ))}
       </SheetFooter>
     </SheetContent>
   );
 }
 
-// ————————————————————— Grid —————————————————————
+// ————————————————————— Inbox —————————————————————
 
-export function ReviewGrid({
+export function ShortlistInbox({
   rows,
   sources,
   categories,
   counts,
   activeSource,
-  activeStatus,
+  activeState,
   initialQuery,
   truncated,
+  totalMatching,
 }: {
-  rows: ScrapedRow[];
-  /** Distinct sources present in staging — key + human website name. */
+  rows: InboxRow[];
   sources: { key: string; name: string }[];
   categories: { id: string; name: string }[];
-  counts: ReviewCounts;
+  counts: InboxCounts;
   /** "ALL" or a sourceKey. */
   activeSource: string;
-  /** "ALL" or a ReviewStatus. */
-  activeStatus: string;
+  /** "ALL" or a ShortlistState. */
+  activeState: string;
   initialQuery: string;
   truncated: boolean;
+  totalMatching: number;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -618,30 +683,41 @@ export function ReviewGrid({
   const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
     rows,
     PAGE_SIZE,
-    `${activeSource}|${activeStatus}|${initialQuery}`,
+    `${activeSource}|${activeState}|${initialQuery}`,
   );
 
   // Selection is scoped to the visible page.
-  const rowIds = useMemo(() => pageRows.map((row) => row.id), [pageRows]);
+  const rowIds = useMemo(
+    () => pageRows.map((row) => row.researchProductId),
+    [pageRows],
+  );
   const selection = useSelection(rowIds);
   const rowById = useMemo(
-    () => new Map(rows.map((row) => [row.id, row])),
+    () => new Map(rows.map((row) => [row.researchProductId, row])),
     [rows],
   );
 
-  const [detail, setDetail] = useState<ScrapedRow | null>(null);
+  const [detail, setDetail] = useState<InboxRow | null>(null);
   const [busy, setBusy] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [bulkTarget, setBulkTarget] = useState<ShortlistState>(
+    ShortlistState.SHORTLISTED,
+  );
 
-  const approvedSelected = selection.ids.filter(
-    (id) => rowById.get(id)?.reviewStatus === "APPROVED",
+  // The import dialog still works on staged twins — the SHORTLISTED mirror
+  // keeps them APPROVED, which is what the promote path reads.
+  const selectedTwins = selection.ids
+    .map((id) => rowById.get(id))
+    .filter((row): row is InboxRow => Boolean(row?.twinId));
+  const shortlistedSelected = selectedTwins.filter(
+    (row) => row.state === ShortlistState.SHORTLISTED,
   ).length;
 
   function setParam(key: "source" | "status" | "q", value: string) {
     const params = new URLSearchParams(searchParams.toString());
     const isDefault =
       key === "status"
-        ? value === "PENDING"
+        ? value === ShortlistState.NEW
         : key === "source"
           ? value === "ALL"
           : value === "";
@@ -657,27 +733,33 @@ export function ReviewGrid({
     setParam("q", String(data.get("q") ?? "").trim());
   }
 
-  async function handleReview(ids: string[], status: "APPROVED" | "REJECTED") {
+  async function moveIds(
+    ids: string[],
+    target: ShortlistState,
+    reason?: string,
+  ): Promise<boolean> {
     setBusy(true);
-    const res = await setScrapedReviewStatus(ids, status);
+    const res = await setShortlistState(ids, target, reason);
     setBusy(false);
     if (!res.ok) {
       toast.error(res.error);
-      return;
+      return false;
     }
-    const updated = res.data?.updated ?? 0;
-    toast.success(
-      `${updated} item${updated === 1 ? "" : "s"} ${
-        status === "APPROVED" ? "approved" : "rejected"
-      }.`,
-    );
+    if (res.data) {
+      reportToast(
+        target === ShortlistState.CONFIRMED ? "confirmed" : "moved",
+        res.data,
+        target,
+      );
+    }
     router.refresh();
+    return true;
   }
 
-  async function handleDetailReview(status: "APPROVED" | "REJECTED") {
+  async function handleDetailTransition(target: ShortlistState, reason: string) {
     if (!detail) return;
-    await handleReview([detail.id], status);
-    setDetail(null);
+    const moved = await moveIds([detail.researchProductId], target, reason);
+    if (moved) setDetail(null);
   }
 
   async function handleSaveEdit(patch: {
@@ -694,9 +776,8 @@ export function ReviewGrid({
       return;
     }
     toast.success("Saved.");
-    // Reflect the edit in the open sheet immediately; server data refreshes too.
     setDetail((d) =>
-      d && d.id === patch.id
+      d && d.twinId === patch.id
         ? {
             ...d,
             title: patch.title,
@@ -710,14 +791,27 @@ export function ReviewGrid({
     router.refresh();
   }
 
-  async function handleSaveNotes(id: string, notes: string | null) {
-    const res = await setScrapedNotes(id, notes);
+  async function handleSaveNote(note: string | null) {
+    if (!detail) return;
+    const res = await setShortlistNote(detail.researchProductId, note);
     if (!res.ok) {
       toast.error(res.error);
       return;
     }
     toast.success("Note saved.");
-    setDetail((d) => (d && d.id === id ? { ...d, notes } : d));
+    setDetail((d) => (d ? { ...d, note } : d));
+    router.refresh();
+  }
+
+  async function handleSaveTags(tags: string[]) {
+    if (!detail) return;
+    const res = await setShortlistTags(detail.researchProductId, tags);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Tags saved.");
+    setDetail((d) => (d ? { ...d, tags } : d));
     router.refresh();
   }
 
@@ -743,19 +837,19 @@ export function ReviewGrid({
         </Select>
 
         <Select
-          value={activeStatus}
+          value={activeState}
           onValueChange={(value) => setParam("status", value)}
         >
-          <SelectTrigger size="sm" aria-label="Filter by review status">
-            <SelectValue placeholder="Status" />
+          <SelectTrigger size="sm" aria-label="Filter by funnel state">
+            <SelectValue placeholder="State" />
           </SelectTrigger>
           <SelectContent>
-            {REVIEW_STATUS_ORDER.map((status) => (
-              <SelectItem key={status} value={status}>
-                {STATUS_LABELS[status]}
+            {SHORTLIST_STATE_ORDER.map((state) => (
+              <SelectItem key={state} value={state}>
+                {SHORTLIST_STATE_LABELS[state]}
               </SelectItem>
             ))}
-            <SelectItem value="ALL">All statuses</SelectItem>
+            <SelectItem value="ALL">All states</SelectItem>
           </SelectContent>
         </Select>
 
@@ -764,8 +858,8 @@ export function ReviewGrid({
             key={initialQuery}
             name="q"
             defaultValue={initialQuery}
-            placeholder="Search title or slug…"
-            aria-label="Search staged products"
+            placeholder="Search title or URL…"
+            aria-label="Search researched products"
             className="h-9 w-56"
           />
           <Button type="submit" variant="outline" size="sm">
@@ -774,41 +868,47 @@ export function ReviewGrid({
         </form>
       </div>
 
-      {/* Count summary chips */}
+      {/* Count summary chips — clicking one filters to that state. */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        {REVIEW_STATUS_ORDER.map((status) => (
-          <span
-            key={status}
-            className="inline-flex items-center gap-1.5 rounded-full border border-foreground/15 bg-card/60 px-3 py-1.5 text-xs font-medium text-muted-foreground"
+        {SHORTLIST_STATE_ORDER.map((state) => (
+          <button
+            key={state}
+            type="button"
+            onClick={() => setParam("status", state)}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors motion-reduce:transition-none ${
+              activeState === state
+                ? "border-foreground/40 bg-muted text-foreground"
+                : "border-foreground/15 bg-card/60 text-muted-foreground hover:text-foreground"
+            }`}
           >
-            {STATUS_LABELS[status]}
+            {SHORTLIST_STATE_LABELS[state]}
             <span className="tabular-nums text-foreground">
-              {counts[status]}
+              {counts[state]}
             </span>
-          </span>
+          </button>
         ))}
       </div>
 
       {truncated && (
         <p className="mb-3 text-xs text-muted-foreground">
-          Showing the 200 most recently seen items — narrow the filters to see
-          the rest.
+          Showing the {pageRows.length} most recently seen of {totalMatching}{" "}
+          matching items — narrow the filters to see the rest.
         </p>
       )}
 
       {rows.length === 0 ? (
         <EmptyState
-          title="Nothing to review here"
-          description="Run a scrape job or loosen the filters — freshly scraped products land in this queue as pending."
+          title="Nothing here"
+          description="Run a scrape job or loosen the filters — freshly researched products land in this inbox as New."
         />
       ) : (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 2xl:grid-cols-4">
           {pageRows.map((row) => (
-            <ReviewCard
-              key={row.id}
+            <InboxCard
+              key={row.researchProductId}
               row={row}
-              checked={selection.selected.has(row.id)}
-              onToggle={() => selection.toggle(row.id)}
+              checked={selection.selected.has(row.researchProductId)}
+              onToggle={() => selection.toggle(row.researchProductId)}
               onOpen={() => setDetail(row)}
             />
           ))}
@@ -825,32 +925,43 @@ export function ReviewGrid({
       />
 
       <BulkBar count={selection.count} onClear={selection.clear}>
+        <Select
+          value={bulkTarget}
+          onValueChange={(value) => setBulkTarget(value as ShortlistState)}
+        >
+          <SelectTrigger size="sm" aria-label="Move selection to">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SHORTLIST_STATE_ORDER.map((state) => (
+              <SelectItem
+                key={state}
+                value={state}
+                title={SHORTLIST_STATE_DESCRIPTIONS[state]}
+              >
+                {SHORTLIST_STATE_LABELS[state]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button
           size="sm"
           variant="secondary"
           disabled={busy}
-          onClick={() => handleReview(selection.ids, "APPROVED")}
+          onClick={() => moveIds(selection.ids, bulkTarget)}
         >
-          Approve
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          disabled={busy}
-          onClick={() => handleReview(selection.ids, "REJECTED")}
-        >
-          Reject
+          Move {selection.count} to {SHORTLIST_STATE_LABELS[bulkTarget]}
         </Button>
         <Button size="sm" disabled={busy} onClick={() => setImportOpen(true)}>
-          Import approved…
+          Import shortlisted…
         </Button>
       </BulkBar>
 
       <ApproveImportDialog
         open={importOpen}
         onOpenChange={setImportOpen}
-        ids={selection.ids}
-        approvedCount={approvedSelected}
+        ids={selectedTwins.map((row) => row.twinId as string)}
+        approvedCount={shortlistedSelected}
         categories={categories}
         onDone={() => {
           selection.clear();
@@ -866,12 +977,13 @@ export function ReviewGrid({
       >
         {detail && (
           <DetailSheetBody
-            key={detail.id}
+            key={detail.researchProductId}
             row={detail}
             busy={busy}
-            onReview={handleDetailReview}
+            onTransition={handleDetailTransition}
             onSave={handleSaveEdit}
-            onSaveNotes={handleSaveNotes}
+            onSaveNote={handleSaveNote}
+            onSaveTags={handleSaveTags}
           />
         )}
       </Sheet>

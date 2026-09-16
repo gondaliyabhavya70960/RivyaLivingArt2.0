@@ -950,6 +950,9 @@ model ResearchProduct {
   /// written just to record that we looked.
   lastSeen     DateTime          @default(now())
   snapshots    ProductSnapshot[]
+  /// Where this product stands in the shortlist funnel (B7). Absent means
+  /// NEW — an entry exists only once a human has touched the product.
+  shortlistEntry ShortlistEntry?
 
   @@unique([sourceKey, externalId])
   @@index([lastSeen])
@@ -1083,6 +1086,70 @@ model NormalizationAlias {
 
   @@unique([kind, rawValue])
   @@index([kind])
+}
+
+/// The seven states of the shortlist funnel (B7, plan §4 phase 6c).
+///
+/// The funnel runs NEW → REVIEW → SHORTLISTED → CONFIRMED, with three side
+/// states (REJECTED, INSPIRATION_ONLY, DUPLICATE) that are parking lots, not
+/// dead ends — every state can be revisited by a human, and only a human
+/// ever moves an entry. Rule 8 of the rebuild: nothing auto-confirms, so
+/// CONFIRMED is reachable only from SHORTLISTED and only through an explicit
+/// Studio action; no code path sets it as a side effect of a scrape.
+///
+/// NEW is also the IMPLICIT state of a researched product with no entry row
+/// at all — an entry is created the first time a human touches the product,
+/// so this table records decisions, not arrivals.
+enum ShortlistState {
+  /// Seen, not yet triaged.
+  NEW
+  /// A human is actively looking at it.
+  REVIEW
+  /// Worth benchmarking against — feeds the comparison scopes.
+  SHORTLISTED
+  /// Considered and set aside.
+  REJECTED
+  /// The gated final list — the only state the export reads.
+  CONFIRMED
+  /// Kept as a reference board image, never a benchmark row.
+  INSPIRATION_ONLY
+  /// The same product seen twice across sources.
+  DUPLICATE
+}
+
+/// One row per researched product: where it stands in the shortlist funnel,
+/// who put it there, and why (B7).
+///
+/// Keyed on ResearchProduct, not ScrapedProduct: the staged row is the latest
+/// sighting and gets upserted away, while the identity is what a decision is
+/// actually ABOUT — "this dining table, whoever is selling it, however often
+/// it is re-scraped".
+///
+/// This is the CURRENT state, not a history — `changedBy`/`changedAt` record
+/// the last decision and every transition writes an ActivityLog row, which is
+/// where the audit trail lives. The plan sketch's `linkedOpportunityId` is
+/// deliberately absent: nothing writes it until B8, and a column declared
+/// with no writer is the exact defect ResearchProduct's comment already cites
+/// as the expensive lesson. Adding it later is the safe class of migration.
+model ShortlistEntry {
+  id                String          @id @default(cuid())
+  researchProductId String          @unique
+  researchProduct   ResearchProduct @relation(fields: [researchProductId], references: [id], onDelete: Cascade)
+  state             ShortlistState  @default(NEW)
+  /// Staff user id of the LAST decision. Null only on rows the B7 backfill
+  /// created from a legacy reviewStatus — a decision nobody recorded.
+  changedBy         String?
+  changedAt         DateTime        @default(now())
+  /// The reviewer's own words on the listing — carried forward from
+  /// ScrapedProduct.notes at backfill. Never the source's data.
+  note              String?         @db.Text
+  /// Why the state is what it is ("imported to catalog", "duplicate of
+  /// <url>"). Optional, but recorded verbatim when given.
+  reason            String?
+  /// Owner's own labels, e.g. ["large-format", "river-table"].
+  tags              String[]        @default([])
+
+  @@index([state, changedAt])
 }
 
 /// A field that could not be extracted, recorded rather than silently nulled.

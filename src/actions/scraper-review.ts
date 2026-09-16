@@ -8,6 +8,10 @@ import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { enrichScrapedFields } from "@/lib/scraper/product-enrich";
 import { decideMerge } from "@/lib/scraper/merge-policy";
+import {
+  markImportedConfirmed,
+  mirrorLegacyReviewStatus,
+} from "@/lib/scraper/shortlist-write";
 import { SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { createWithUniqueSlug, slugify, uniqueSlug } from "@/lib/slug";
@@ -40,6 +44,12 @@ const statusSchema = z.object({
  * Bulk approve/reject/reset staged products. IMPORTED is terminal and is
  * only ever set by importApprovedScraped — rows already imported are left
  * untouched here.
+ *
+ * Legacy surface (B7): the review inbox now lives on ShortlistEntry and this
+ * action's only remaining caller is the import dialog's approve-first step.
+ * The decision is mirrored UP to the entries (APPROVED→SHORTLISTED …) so the
+ * two representations cannot drift — with the hard rule that the mirror
+ * never moves an entry out of CONFIRMED (see shortlist-write.ts).
  */
 export async function setScrapedReviewStatus(
   ids: string[],
@@ -49,10 +59,17 @@ export async function setScrapedReviewStatus(
     const session = await requireStaff();
     const parsed = statusSchema.parse({ ids, status });
 
+    // Fetch the twins' identity refs BEFORE the update — updateMany returns
+    // a count, not rows.
+    const twins = await db.scrapedProduct.findMany({
+      where: { id: { in: parsed.ids }, reviewStatus: { not: "IMPORTED" } },
+      select: { sourceKey: true, externalId: true },
+    });
     const res = await db.scrapedProduct.updateMany({
       where: { id: { in: parsed.ids }, reviewStatus: { not: "IMPORTED" } },
       data: { reviewStatus: parsed.status },
     });
+    await mirrorLegacyReviewStatus(twins, parsed.status, session.user.id);
 
     await logActivity({
       userId: session.user.id,
@@ -119,51 +136,12 @@ export async function updateStagedProduct(
   });
 }
 
-// ————————————————————— Reviewer notes —————————————————————
-
-const notesSchema = z.object({
-  id: z.string().min(1),
-  notes: z.string().trim().max(4000).nullable(),
-});
-
-/**
- * Set a staged row's reviewer note. `ScrapedProduct.notes` is, by design,
- * the one field this immutable row may change after it lands: a scrape is
- * what the source site said, and every other field stays exactly that so a
- * normalization fix never needs a re-scrape — but a reviewer's own comment
- * ("check this dimension, looks like cm not mm") is not the source's data at
- * all, so protecting it from edits would protect nothing. Allowed even on an
- * IMPORTED row: the note is about the source listing, not the promotion.
- */
-export async function setScrapedNotes(
-  id: string,
-  notes: string | null,
-): Promise<ActionResult<void>> {
-  return runAction(async () => {
-    const session = await requireStaff();
-    const p = notesSchema.parse({ id, notes });
-
-    const row = await db.scrapedProduct.findUnique({
-      where: { id: p.id },
-      select: { id: true },
-    });
-    if (!row) throw new Error("That staged product no longer exists.");
-
-    await db.scrapedProduct.update({
-      where: { id: p.id },
-      data: { notes: p.notes || null },
-    });
-    await logActivity({
-      userId: session.user.id,
-      action: "note",
-      entity: "ScrapedProduct",
-      entityId: p.id,
-    });
-    revalidatePath(REVIEW_PATH);
-  });
-}
-
 // ————————————————————— Import approved → DRAFT products —————————————————————
+
+// Reviewer notes moved to ShortlistEntry with the B7 inbox rebuild — see
+// setShortlistNote in actions/scraper-shortlist.ts. ScrapedProduct.notes
+// stays in the schema (the backfill carried its contents forward); it is
+// simply no longer edited from the Studio.
 
 const importSchema = z.object({
   ids: z.array(z.string().min(1)).min(1, "Select at least one item."),
@@ -279,7 +257,17 @@ async function importOneScrapedRow(
   row: StagedRow,
   categoryId: string,
   mirrorImages: boolean,
+  changedBy: string | null,
 ): Promise<"created" | "updated" | "skipped" | "protected"> {
+  // Every path below that marks the twin IMPORTED also confirms its
+  // shortlist entry (B7): IMPORTED→CONFIRMED is the backfill's mapping,
+  // applied going forward. The import IS the human confirmation — the owner
+  // clicked it.
+  const confirmImported = () =>
+    markImportedConfirmed(
+      { sourceKey: row.sourceKey, externalId: row.externalId },
+      changedBy,
+    );
   const importSource = row.sourceKey;
   const importRef = row.externalId;
 
@@ -310,6 +298,7 @@ async function importOneScrapedRow(
         where: { id: row.id },
         data: { reviewStatus: "IMPORTED", importedProductId: sheetTwin.id },
       });
+      await confirmImported();
       return "skipped";
     }
   }
@@ -334,6 +323,7 @@ async function importOneScrapedRow(
       where: { id: row.id },
       data: { reviewStatus: "IMPORTED", importedProductId: existing.id },
     });
+    await confirmImported();
     return "protected";
   }
   if (existing && action === "skip") {
@@ -341,6 +331,7 @@ async function importOneScrapedRow(
       where: { id: row.id },
       data: { reviewStatus: "IMPORTED", importedProductId: existing.id },
     });
+    await confirmImported();
     return "skipped";
   }
 
@@ -387,6 +378,7 @@ async function importOneScrapedRow(
       where: { id: row.id },
       data: { reviewStatus: "IMPORTED", importedProductId: product.id },
     });
+    await confirmImported();
     return "updated";
   }
 
@@ -420,6 +412,7 @@ async function importOneScrapedRow(
     where: { id: row.id },
     data: { reviewStatus: "IMPORTED", importedProductId: product.id },
   });
+  await confirmImported();
   return "created";
 }
 
@@ -467,6 +460,7 @@ export async function importApprovedScraped({
           row,
           parsed.categoryId,
           parsed.mirrorImages,
+          session.user.id,
         );
         if (outcome === "created") imported += 1;
         else if (outcome === "updated") updated += 1;
@@ -570,6 +564,7 @@ export async function addScrapedToCatalog(
           row,
           categoryId,
           parsed.mirrorImages,
+          session.user.id,
         );
         if (outcome === "created") imported += 1;
         else if (outcome === "updated") updated += 1;

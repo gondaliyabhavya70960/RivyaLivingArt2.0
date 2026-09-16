@@ -170,7 +170,10 @@ export default async function ScraperPage() {
               <Link href="/studio/scraper/mapping">Category report</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link href="/studio/scraper/review">Review queue</Link>
+              <Link href="/studio/scraper/review">Review inbox</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/studio/scraper/confirmed">Confirmed products</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/studio/scraper/quality">Data quality</Link>
