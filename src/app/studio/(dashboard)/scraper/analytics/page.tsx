@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { EmptyState, PageHeader } from "@/components/studio/page-header";
 import { RecomputeAnalyticsButton } from "@/components/studio/scraper/recompute-analytics-button";
+import { RecomputeEmbeddingsButton } from "@/components/studio/scraper/recompute-embeddings-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,10 @@ import {
   COMPARISON_SCOPE_LABELS,
   type ComparisonScope,
 } from "@/lib/scraper/comparison-scopes";
+import {
+  similarityPageData,
+  type SimilarityPageData,
+} from "@/lib/scraper/embedding-query";
 import {
   ANALYTICS_LEAGUE_DESCRIPTIONS,
   ANALYTICS_LEAGUE_LABELS,
@@ -192,6 +197,181 @@ function FunnelSection({
   );
 }
 
+/** A similarity as a percentage with one decimal — 87.4%. */
+function formatSimilarity(similarity: number): string {
+  return `${(similarity * 100).toFixed(1)}%`;
+}
+
+/**
+ * The B9 surface: which pieces look alike, and WHY is inspectable — the
+ * stored `features` list on every embedding row is the working. Vectors only
+ * move on the explicit Recompute; similarity is read live from pgvector.
+ */
+function SimilaritySection({ data }: { data: SimilarityPageData }) {
+  return (
+    <section className="space-y-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-foreground">
+            Similarity (embeddings)
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Cross-source duplicate candidates, and the nearest neighbours of
+            every shortlisted or confirmed piece. The embedder is deterministic
+            — every vector is computed from a stored feature list, never from
+            a hidden model call.
+          </p>
+        </div>
+        <RecomputeEmbeddingsButton />
+      </div>
+
+      {!data.computedAt ? (
+        <EmptyState
+          title="Nothing embedded yet"
+          description="Run Recompute embeddings to vectorize the researched corpus. Nothing embeds on its own — similarity changes when you ask it to."
+        />
+      ) : (
+        <>
+          <p className="text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">
+              embedded {data.embeddedCount} of {data.productCount}
+            </span>{" "}
+            researched products
+            {data.productCount - data.embeddedCount > 0 && (
+              <>
+                {" — excluded: "}
+                {data.productCount - data.embeddedCount} with no usable
+                identity text
+              </>
+            )}
+            {` · model ${data.model} v${data.version} · ${data.dimensions} dims · computed ${dateFormatter.format(data.computedAt)}`}
+          </p>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-foreground">
+              Duplicate candidates
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              The same piece listed on two sources, at or above{" "}
+              {formatSimilarity(data.duplicateThreshold)} similar — mark them
+              Duplicate in the review inbox.
+            </p>
+            {data.duplicateCandidates.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                No cross-source pairs above the threshold.
+              </p>
+            ) : (
+              <div className="overflow-x-auto rounded-card border border-border bg-card">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                      <th className="px-3 py-2.5 font-medium">Piece</th>
+                      <th className="px-3 py-2.5 font-medium">
+                        Possible twin
+                      </th>
+                      <th className="px-3 py-2.5 font-medium">Similarity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.duplicateCandidates.map((pair) => (
+                      <tr
+                        key={`${pair.aId}|${pair.bId}`}
+                        className="border-b border-border/60 align-top last:border-0"
+                      >
+                        <td className="px-3 py-3">
+                          <p className="font-medium text-foreground">
+                            {pair.aTitle}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {pair.aSourceName} ·{" "}
+                            {SHORTLIST_STATE_LABELS[pair.aState]}
+                          </p>
+                        </td>
+                        <td className="px-3 py-3">
+                          <p className="font-medium text-foreground">
+                            {pair.bTitle}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {pair.bSourceName} ·{" "}
+                            {SHORTLIST_STATE_LABELS[pair.bState]}
+                          </p>
+                        </td>
+                        <td className="px-3 py-3 tabular-nums">
+                          {formatSimilarity(pair.similarity)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-foreground">
+              Pieces like the ones you picked
+            </h3>
+            {data.focus.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                Neighbours are listed for shortlisted and confirmed products —
+                shortlist products in the review inbox, then recompute
+                embeddings.
+              </p>
+            ) : (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {data.focus.map((focus) => (
+                  <div
+                    key={focus.researchProductId}
+                    className="rounded-card border border-border bg-card p-4"
+                  >
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-foreground">
+                          {focus.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {focus.sourceName}
+                        </p>
+                      </div>
+                      <Badge variant="secondary">
+                        {SHORTLIST_STATE_LABELS[focus.state]}
+                      </Badge>
+                    </div>
+                    <ul className="space-y-1.5">
+                      {focus.neighbours.map((n) => (
+                        <li
+                          key={n.researchProductId}
+                          className="flex items-baseline justify-between gap-3 text-xs"
+                        >
+                          <span className="min-w-0 truncate text-foreground">
+                            {n.title}
+                            <span className="text-muted-foreground">
+                              {" "}
+                              · {n.sourceName}
+                            </span>
+                          </span>
+                          <span className="shrink-0 tabular-nums text-muted-foreground">
+                            {formatSimilarity(n.similarity)}
+                          </span>
+                        </li>
+                      ))}
+                      {focus.neighbours.length === 0 && (
+                        <li className="text-xs text-muted-foreground">
+                          No other embedded products yet.
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
 /**
  * The B8 surface: every benchmark shows its working (`computed from X of N`
  * with named exclusions), and every opportunity is its four components —
@@ -199,7 +379,10 @@ function FunnelSection({
  * the explicit Recompute action; the stamps say exactly what was read.
  */
 export default async function ScraperAnalyticsPage() {
-  const data = await analyticsPageData();
+  const [data, similarity] = await Promise.all([
+    analyticsPageData(),
+    similarityPageData(),
+  ]);
 
   return (
     <>
@@ -342,6 +525,10 @@ export default async function ScraperAnalyticsPage() {
           </section>
         </div>
       )}
+
+      <div className="mt-10">
+        <SimilaritySection data={similarity} />
+      </div>
     </>
   );
 }
