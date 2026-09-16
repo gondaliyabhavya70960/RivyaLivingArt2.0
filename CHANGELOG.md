@@ -5,6 +5,86 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## The catalogue rebuild — every source verified, the automatable ones reviewed and queued; the five briefs audited (2026-09-16, evening)
+
+Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #92. The owner's brief, the
+evening the catalogue was emptied: rebuild it from the reference sites — "the top ~500
+products in every tier, 75–100 at least" — put the owner's previous website in the scraper
+and the reference list, put primary business content on every Studio surface, and check the
+five attached briefs against the tree into a needed-work file and a completed-work file.
+
+### Every source was tried with the repository's own scraper before anything was decided
+
+`fingerprint()` and then a full job per source, run locally through the same adapters
+production uses, against the ten reference sites and the seven automatable entries on the
+owner's own list. What each one actually yields, and the size tier step 6's classifier
+suggests for what it staged:
+
+| Source | Platform | Staged | Suggested tier mix (L · M · S · unsure) |
+| --- | --- | ---: | --- |
+| Saashi (owner's list) | WooCommerce | 338 | 20 · 219 · 96 · 3 |
+| Dinosaur Designs (reference, AU) | Shopify | 331 | 39 · 5 · 217 · 70 |
+| Leoberry Gifts (owner's list) | WooCommerce | 210 | 2 · 21 · 135 · 52 |
+| Kanha Kreation (owner's list) | WooCommerce | 151 | 1 · 51 · 93 · 6 |
+| Radhika Art (reference) | JSON-LD, capped at 150 | 148 | 0 · 118 · 21 · 9 |
+| WoodenSure (owner's list) | JSON-LD, capped at 150 | 146 | 103 · 12 · 8 · 23 |
+| Resin Art Store India (reference) | WooCommerce | 31 | 0 · 5 · 25 · 1 |
+| Resin Arts Jaipur (owner's list) | WooCommerce | 22 | 0 · 21 · 1 · 0 |
+| Korepox Arts (reference) | WooCommerce | 9 | 9 · 0 · 0 · 0 |
+| Sumaiya Resin (owner's list) | WooCommerce | 0 | the Store API answers but lists nothing |
+| Scarlet Splendour · Draga & Aurel · Materia Aurea · WITHIN · VEDUMI · The Art Galaxy · ResinArt.in | — | 0 | no automated path (Cloudflare challenge, no catalogue API, no product JSON-LD, no product sitemap) |
+
+**1,386 rows, 174 · 452 · 596 · 164 by suggestion** — every tier clears the 75–100 minimum
+before a person has looked, and LARGE gets there only through the owner's own list
+(WoodenSure and Saashi, which the registry note always said sell large-format work). The
+reference sites the brief calls design references (Draga & Aurel, Materia Aurea, Scarlet
+Splendour, WITHIN) are exactly the ones with nothing to collect; that is recorded on each.
+
+### What shipped
+
+- **`src/lib/scraper/backlog-rollout.ts`** — the owner's instruction carried into the
+  registry by a deploy, as a ONE-SHOT: `planReferenceRollout` reviews (APPROVED, reviewer
+  `owner-instruction:2026-09-16`, the authority and the evidence in the note), enables, caps
+  and queues the first job for each verified source; `planManualResearch` files the rest as
+  manual research with the reason. Three rules keep a deploy from re-deciding anything: a
+  source a person has ever reviewed is never touched, a source that has ever had a job is
+  never touched, and preview builds skip it. Pure decisions with 8 unit tests; the db test
+  runs the whole thing against probe sources, twice.
+- **`prisma/seed-scrape-backlog.ts`** from `bootstrap.ts` right after the registry
+  reconcile; the queued jobs are advanced by `/api/cron/scrape-drain` every ten minutes, so
+  the collection runs with the laptop closed and lands in `/studio/scraper/review`.
+- **`ScrapeSource.maxProducts`** (`20260917140000_scrape_source_max_products`, nullable): a
+  source's own ceiling per run — the rollout sets 500; the runner stops the job at it
+  ("product cap reached", DONE), and the JSON-LD adapter lets a sized source discover past
+  the 150 politeness default (the 40-page cap still bounds a job at 320).
+- **The size tiers on the scraper hub's batch runs.** The buttons listed only the four
+  retired provenance tiers, so the reference sites filed under LARGE/MEDIUM/SMALL could not
+  be queued from there at all; `createTierJobs` takes every `ScrapeTier` now.
+- **The owner's previous store** (`store.bhavyagondaliya.co.in`) registered under the
+  owner's list as manual research: it answered HTTP 402 — a frozen store — to every probe;
+  its catalogue survives as `data/tiers/Tier1_Owner.csv.gz`.
+- **Verified platforms and notes** on all nineteen registry rows, so the registry says what
+  each site is rather than `UNKNOWN`.
+- **The five briefs audited against HEAD** — `docs/audits/2026-09-16/` (five tables, 617
+  rows, every one citing a path or a heading), synthesised tier by tier into
+  `docs/COMPLETED-WORK.md` and `docs/NEEDED-WORK.md`; `docs/plan/*` and `AGENTS.md` point
+  at them. The live-site content audit is there too: what is empty in production and who
+  can fill it — nothing invented.
+
+### What is deliberately NOT here
+
+- **No product enters the catalogue from this PR.** HARD RULES: the catalogue is filled only
+  by the owner through review + approval. The rollout stages; the owner approves in
+  `/studio/scraper/review` and imports with the suggested tier.
+- **No content was invented.** Testimonials, the address and social links, real
+  photography, real commissions, FAQs about the owner's own shipping and pickup — every one
+  is listed in `docs/NEEDED-WORK.md` §1 with the Studio screen that takes it.
+- **The owner's own 373 previous-store rows stay tombstoned** by the owner's own delete;
+  bringing them back is a Studio button worth building (`NEEDED-WORK.md` §3), not a deploy's
+  decision.
+
+---
+
 ## Workstream E step 3, worked — the live catalogue tiered by rule (2026-09-16)
 
 Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #91. The owner's word:

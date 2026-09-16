@@ -8,6 +8,37 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-16 (late evening — the catalogue rebuild begins)
+Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main after #92 (91c93b5).
+What shipped:             The reference-site rollout on the owner's written instruction:
+                          every registry source verified with the repo's own scraper
+                          (fingerprint + a full job, locally): 1,386 rows staged from nine
+                          sources — 174 · 452 · 596 by suggested tier, 164 unsure — and
+                          seven sites with no automated path. src/lib/scraper/backlog-rollout.ts
+                          (one-shot: review with authority + evidence, enable, cap 500, first
+                          job; never over a person's review, never twice, never on preview),
+                          prisma/seed-scrape-backlog.ts from bootstrap, ScrapeSource.maxProducts
+                          (+ the runner's product cap and the JSON-LD discovery cap), the size
+                          tiers on the hub's batch runs, the owner's previous store registered
+                          (HTTP 402, manual research). The five briefs audited against HEAD:
+                          docs/audits/2026-09-16/ (617 rows) → docs/COMPLETED-WORK.md and
+                          docs/NEEDED-WORK.md, tier by tier; docs/plan/* and AGENTS.md point
+                          at them. Nothing invented, nothing imported.
+What happens on merge:    the production build records the reviews, enables the nine sources
+                          and queues their first jobs; the cron drain collects over the next
+                          hours; the review inbox fills. The preview build does none of it.
+Next Exact Task:          THE OWNER: approve and import from /studio/scraper/review (bulk,
+                          with the suggested tier); testimonials, address/socials/logo, a real
+                          maker portrait, FAQs, a LARGE portfolio case (NEEDED-WORK.md §1);
+                          decide T2/T3/T4/T5/T7/T8/T9 (§2). THE CODE: the buildable-now list
+                          in NEEDED-WORK.md §3 — first the collectible card in every grid,
+                          the memory and gift card variants, the Tier-1 restore button, the
+                          Studio control for maxProducts, then the export/alias/explorer items.
+```
+
+## SESSION CHECKPOINT — 2026-09-16 evening, the backlog filed by rule (superseded by the block above, kept as history)
+
+```text
 Date:                     2026-09-16 (evening — the live catalogue tiered by rule)
 Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main (a5438fe, after #91).
 What shipped:             docs/plan/07 step 3's BACKLOG, worked by rule instead of a row at a
