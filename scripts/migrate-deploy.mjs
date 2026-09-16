@@ -32,8 +32,10 @@
  * partial is dropped first (→ `--rolled-back`, then the deploy re-applies it
  * from scratch). The 2026-09-16 block was the third case: an abandoned
  * branch's preview had built the B8 tables under another migration name, in
- * another shape. The rules, the incident and the refusals live in
- * `scripts/lib/migrate-resolve-failed.mjs`.
+ * another shape. The whole heal runs in one transaction under Prisma's own
+ * migrate lock, with the failed record locked FOR UPDATE, because every push
+ * runs TWO builds against this database and both see the P3009. The rules,
+ * the incident and the refusals live in `scripts/lib/migrate-resolve-failed.mjs`.
  *
  * It is a drop-in for the command it wraps: same stdout, same stderr, and the
  * child's exit code is this script's exit code, so `&&` in the build still
@@ -45,9 +47,8 @@ import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { classifyMigrateFailure } from "./lib/migrate-retry.mjs";
 import {
-  decideResolution,
   failedMigrationNames,
-  inspectFootprint,
+  healFailedMigration,
   manualResolveInstructions,
   parseMigrationFootprint,
   readMigrationSql,
@@ -77,29 +78,6 @@ const MIGRATION_URL =
   process.env.POSTGRES_URL_NON_POOLING ??
   process.env.DATABASE_URL ??
   "";
-
-/** `prisma migrate resolve --rolled-back|--applied <name>`, output echoed live. */
-function runMigrateResolve(flag, name) {
-  return new Promise((resolve) => {
-    const child = spawn(PRISMA, ["migrate", "resolve", flag, name], {
-      stdio: ["inherit", "pipe", "pipe"],
-      env: process.env,
-    });
-    tee_child(child);
-    child.on("error", () => resolve(1));
-    child.on("close", (code) => resolve(code ?? 1));
-  });
-}
-
-function tee_child(child) {
-  for (const stream of [child.stdout, child.stderr]) {
-    stream.setEncoding("utf8");
-    stream.on("data", (chunk) => {
-      const sink = stream === child.stdout ? process.stdout : process.stderr;
-      sink.write(chunk);
-    });
-  }
-}
 
 /**
  * One connection for the whole check-and-heal, opened exactly as db-preflight
@@ -139,11 +117,13 @@ const log = (line) => console.error(`migrate-deploy: ${line}`);
 /**
  * The one-shot P3009 self-heal, attempted at most once per build (the
  * `resolveAttempted` flag in the loop below is what makes "once" true). The
- * facts and the decision live in migrate-resolve-failed.mjs; this function
- * only reads the catalog, acts on the decision, and says what it did.
+ * facts, the decision, the transaction and the record change live in
+ * migrate-resolve-failed.mjs; this function opens the connection and prints
+ * the manual instructions when the guard says no.
  *
- * Returns true only when every failed migration is now resolved — the caller
- * then re-runs migrate deploy, which applies whatever is pending.
+ * Returns true only when every failed migration is now resolved — by this
+ * build or by the other build of the same push — and the caller should run
+ * migrate deploy again.
  */
 async function tryResolveFailedMigrations(output) {
   const names = failedMigrationNames(output);
@@ -158,86 +138,15 @@ async function tryResolveFailedMigrations(output) {
     }
     const footprint = parseMigrationFootprint(sql);
 
-    const resolved = await withDb(async (client) => {
-      const query = async (text, params) => (await client.query(text, params)).rows;
-      const observed = await inspectFootprint(query, footprint);
-      const decision = decideResolution(footprint, observed);
-
-      if (decision.action === "manual") {
-        console.error(manualResolveInstructions(name, decision));
-        return false;
-      }
-
-      if (decision.action === "applied") {
-        log(
-          `\`${name}\` is recorded as failed, and every object its SQL declares exists in the ` +
-            `declared shape (${describeFootprint(footprint)}) — its work is all present. ` +
-            "Marking it applied.",
-        );
-        return (await runMigrateResolve("--applied", name)) === 0;
-      }
-
-      if (decision.action === "drop-and-rolled-back") {
-        log(
-          `\`${name}\` is recorded as failed and what exists does not match its SQL ` +
-            `(${decision.gaps.length} difference${decision.gaps.length === 1 ? "" : "s"}; first: ${decision.gaps[0]}). ` +
-            "Nothing that would go holds data a person entered:",
-        );
-        for (const d of decision.discarded) {
-          console.error(
-            `    - ${d.table}: ${d.hasRows ? "HAS rows" : "no rows"}` +
-              (d.derived ? ` — a declared derivation (${d.derived})` : ""),
-          );
-        }
-        log("Dropping the stray objects in one transaction:");
-        for (const statement of decision.plan) console.error(`    ${statement};`);
-        try {
-          await client.query("BEGIN");
-          for (const statement of decision.plan) await client.query(statement);
-          await client.query("COMMIT");
-        } catch (e) {
-          await client.query("ROLLBACK").catch(() => {});
-          log(`the drop failed and was rolled back (${e.message}) — resolve by hand.`);
-          console.error(manualResolveInstructions(name, decision));
-          return false;
-        }
-        log("Dropped. Marking the migration rolled-back so this deploy re-applies it from scratch.");
-        return (await runMigrateResolve("--rolled-back", name)) === 0;
-      }
-
-      // "rolled-back": nothing of it exists.
-      log(
-        `\`${name}\` is recorded as failed, and nothing its SQL declares exists ` +
-          `(${describeFootprint(footprint)}) — it provably applied nothing. ` +
-          "Marking it rolled-back so this deploy can apply it cleanly.",
-      );
-      return (await runMigrateResolve("--rolled-back", name)) === 0;
-    });
-
-    if (!resolved) {
-      log(`\`${name}\` is still recorded as failed — resolve by hand.`);
+    const { outcome, decision } = await withDb((client) =>
+      healFailedMigration({ client, name, footprint, sql, log }),
+    );
+    if (outcome === "manual") {
+      console.error(manualResolveInstructions(name, decision));
       return false;
     }
   }
   return true;
-}
-
-/** "2 tables, 4 indexes, 1 constraint" — for the build log's one line. */
-function describeFootprint(footprint) {
-  const count = (n, one, many) => (n === 0 ? null : `${n} ${n === 1 ? one : many}`);
-  return (
-    [
-      count(footprint.tables.length, "table", "tables"),
-      count(footprint.columns.length, "added column", "added columns"),
-      count(footprint.indexes.length, "index", "indexes"),
-      count(footprint.constraints.length, "constraint", "constraints"),
-      count(footprint.enums.length, "enum type", "enum types"),
-      count(footprint.enumValues.length, "enum value", "enum values"),
-      count(footprint.extensions.length, "extension", "extensions"),
-    ]
-      .filter(Boolean)
-      .join(", ") || "nothing checkable"
-  );
 }
 
 let resolveAttempted = false;

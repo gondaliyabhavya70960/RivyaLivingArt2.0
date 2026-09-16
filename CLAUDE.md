@@ -220,22 +220,38 @@ a failed migration also mentions a lost connection — there, "it failed" wins.
 **A RECORDED failure (P3009, "migrate found failed migrations") gets one
 guarded self-heal per build, and the guard is a fact check, not a judgement.**
 `scripts/lib/migrate-resolve-failed.mjs` parses the failed migration's own SQL
-into the footprint it declares (tables with their columns and types, indexes,
-constraints, enum types and values, extensions) and reads the catalog for
-every item. It resolves the record only when one of three facts holds:
-nothing of it exists (`--rolled-back`, the deploy re-applies it); all of it
-exists in the declared shape and it carries no data statement
-(`--applied`); or some of it exists in another shape and everything that
-would have to go holds no data — an index, a constraint, an enum type, an
-empty table, or a table the module declares a DERIVATION (`DERIVED_TABLES`:
-B8's two, whose writer replaces the whole set on every recompute) — in which
-case the stray objects are dropped in one transaction, foreign keys onto them
-first, and the deploy re-applies the migration from scratch. Anything else
-(rows it cannot vouch for, a column half-added to a live table, a DROP or a
-RENAME in the migration, a type it cannot check) stops the build with the
-facts it found and the manual commands. **Prisma does NOT run a migration
+into the footprint it declares (tables with their columns, types, nullability
+and defaults and their primary key; indexes with uniqueness, method and
+columns in order; constraints with their columns, referenced columns and
+actions; enum types and values; extensions) and reads the catalog for every
+item, comparing each one exactly. It resolves the record only when one of
+three facts holds: nothing of it exists and it carries no statement the
+parser cannot read (rolled back, the deploy re-applies it); all of it exists
+in the declared shape with NOTHING undeclared beside it on the tables it
+creates, and it carries no data statement (applied); or some of it exists
+in another shape and everything that would have to go holds no data — an
+index, a constraint, an enum type, an empty table, or a table the module
+declares a DERIVATION (`DERIVED_TABLES`: B8's two, whose writer replaces the
+whole set on every recompute) — and nothing that would go is owned by
+another migration in the repo (a table, column, index or enum some other
+migration declares is live schema, never a stray), in which case the stray
+objects are dropped, foreign keys onto them first, and the deploy re-applies
+the migration from scratch. Anything else (rows it cannot vouch for, a column
+half-added to a live table, a DROP or a RENAME in the migration, a name taken
+by an object on another table, a type or an expression it cannot compare)
+stops the build with the facts it found and the manual commands. **The whole
+heal — the catalog read, the decision, the drop and the record change — is
+ONE transaction under Prisma's own migrate lock (`pg_advisory_lock(72707369)`)
+with the failed record locked `FOR UPDATE`**, because every push runs two
+builds against this database and both see the P3009: the second finds no
+failed row and simply runs the deploy again. A migration the guard has
+already rolled back twice is refused — a re-apply that keeps failing needs
+its error read, not a fourth attempt. **Prisma does NOT run a migration
 script atomically** — probed 2026-09-16: the first CREATE TABLE survives the
 second's failure — so a partial footprint is a real state, not a theory.
+`tests/db/migrate-resolve-failed.test.ts` runs the reader, the transaction
+and two concurrent heals against a real Postgres, and reads every additive
+migration since the last rename back as exactly applied.
 
 What the guard actually answered, on 2026-09-16: not a cancelled build (the
 first account, written from the P3009 line alone) but an ABANDONED BRANCH. A
