@@ -1675,21 +1675,27 @@
       "shortName": "Colección",
       "promise": "Hecho a la escala de una sala",
       "primaryCta": "Encargar una pieza",
-      "secondaryCta": "Solicitar una consulta"
+      "secondaryCta": "Solicitar una consulta",
+      "orderSummaryNote": "Consulta de encargo: el precio y el plazo se confirman por WhatsApp.",
+      "orderWaIntro": "Hola Rivya Living Art,\nMe gustaría encargar:"
     },
     "MEDIUM_FORMAT": {
       "name": "Arte de recuerdos y celebraciones",
       "shortName": "Recuerdo",
       "promise": "Flores, nombres y fechas, fijados para siempre",
       "primaryCta": "Preserva tu recuerdo",
-      "secondaryCta": "Empieza a personalizar"
+      "secondaryCta": "Empieza a personalizar",
+      "orderSummaryNote": "Pieza de recuerdo: los detalles y el plazo se confirman por WhatsApp.",
+      "orderWaIntro": "Hola Rivya Living Art,\nMe gustaría preservar un recuerdo con:"
     },
     "SMALL_FORMAT": {
       "name": "Arte personal y regalos",
       "shortName": "Personal",
       "promise": "Rápido de personalizar, listo para regalar",
       "primaryCta": "Pide por WhatsApp",
-      "secondaryCta": "Personalízala"
+      "secondaryCta": "Personalízala",
+      "orderSummaryNote": "Pedido rápido: el precio y el envío se confirman por WhatsApp.",
+      "orderWaIntro": "Hola Rivya Living Art,\nMe gustaría hacer este pedido:"
     }
   }
 }

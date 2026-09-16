@@ -1675,21 +1675,27 @@
       "shortName": "مقتنيات",
       "promise": "مصنوع بمقياس الغرفة",
       "primaryCta": "اطلب قطعة بتكليف",
-      "secondaryCta": "اطلب استشارة"
+      "secondaryCta": "اطلب استشارة",
+      "orderSummaryNote": "طلب تكليف — يُؤكَّد السعر ومدة التنفيذ عبر WhatsApp.",
+      "orderWaIntro": "مرحبًا Rivya Living Art،\nأودّ أن أكلّفكم بصنع:"
     },
     "MEDIUM_FORMAT": {
       "name": "فن الذكريات والاحتفالات",
       "shortName": "ذكريات",
       "promise": "زهور وأسماء وتواريخ، تُحفظ للأبد",
       "primaryCta": "احفظ ذكراك",
-      "secondaryCta": "ابدأ التخصيص"
+      "secondaryCta": "ابدأ التخصيص",
+      "orderSummaryNote": "قطعة ذكرى — تُؤكَّد التفاصيل والمدة عبر WhatsApp.",
+      "orderWaIntro": "مرحبًا Rivya Living Art،\nأودّ أن أحفظ ذكرى في:"
     },
     "SMALL_FORMAT": {
       "name": "فن شخصي وهدايا",
       "shortName": "شخصي",
       "promise": "سريعة التخصيص، جاهزة للإهداء",
       "primaryCta": "اطلب عبر WhatsApp",
-      "secondaryCta": "أضف لمستك الشخصية"
+      "secondaryCta": "أضف لمستك الشخصية",
+      "orderSummaryNote": "طلب سريع — يُؤكَّد السعر والشحن عبر WhatsApp.",
+      "orderWaIntro": "مرحبًا Rivya Living Art،\nأودّ أن أطلب:"
     }
   }
 }

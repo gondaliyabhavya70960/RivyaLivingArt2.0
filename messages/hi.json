@@ -1675,21 +1675,27 @@
       "shortName": "संग्रहणीय",
       "promise": "कमरे के पैमाने पर बनी",
       "primaryCta": "कृति कमीशन करें",
-      "secondaryCta": "परामर्श का अनुरोध करें"
+      "secondaryCta": "परामर्श का अनुरोध करें",
+      "orderSummaryNote": "कमीशन पूछताछ — मूल्य और समय WhatsApp पर तय होंगे।",
+      "orderWaIntro": "नमस्ते Rivya Living Art,\nमैं यह कृति कमीशन करना चाहता/चाहती हूँ:"
     },
     "MEDIUM_FORMAT": {
       "name": "यादों और उत्सव की कला",
       "shortName": "यादें",
       "promise": "फूल, नाम और तारीख़ें, हमेशा के लिए थमे",
       "primaryCta": "अपनी याद सहेजें",
-      "secondaryCta": "कस्टमाइज़ करना शुरू करें"
+      "secondaryCta": "कस्टमाइज़ करना शुरू करें",
+      "orderSummaryNote": "यादगार कृति — विवरण और समय WhatsApp पर तय होंगे।",
+      "orderWaIntro": "नमस्ते Rivya Living Art,\nमैं इसके साथ एक याद सहेजना चाहता/चाहती हूँ:"
     },
     "SMALL_FORMAT": {
       "name": "निजी कला और उपहार",
       "shortName": "निजी",
       "promise": "झटपट कस्टमाइज़, उपहार के लिए तैयार",
       "primaryCta": "WhatsApp पर ऑर्डर करें",
-      "secondaryCta": "इस कृति को अपना बनाएँ"
+      "secondaryCta": "इस कृति को अपना बनाएँ",
+      "orderSummaryNote": "त्वरित ऑर्डर — मूल्य और डिस्पैच WhatsApp पर तय होंगे।",
+      "orderWaIntro": "नमस्ते Rivya Living Art,\nमैं यह ऑर्डर करना चाहता/चाहती हूँ:"
     }
   }
 }

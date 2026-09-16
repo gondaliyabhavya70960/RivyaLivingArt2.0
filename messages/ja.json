@@ -1675,21 +1675,27 @@
       "shortName": "コレクタブル",
       "promise": "部屋のスケールでつくる",
       "primaryCta": "作品を依頼する",
-      "secondaryCta": "ご相談を申し込む"
+      "secondaryCta": "ご相談を申し込む",
+      "orderSummaryNote": "制作依頼のお問い合わせ——価格と納期は WhatsApp で確認します。",
+      "orderWaIntro": "Rivya Living Art様、\n以下の作品の制作を依頼したいです："
     },
     "MEDIUM_FORMAT": {
       "name": "記憶と祝祭のアート",
       "shortName": "記憶",
       "promise": "花、名前、日付を、永遠に",
       "primaryCta": "記憶を残す",
-      "secondaryCta": "カスタマイズを始める"
+      "secondaryCta": "カスタマイズを始める",
+      "orderSummaryNote": "記憶の作品——詳細と納期は WhatsApp で確認します。",
+      "orderWaIntro": "Rivya Living Art様、\n以下で記憶を残したいです："
     },
     "SMALL_FORMAT": {
       "name": "パーソナルアートとギフト",
       "shortName": "パーソナル",
       "promise": "すぐにパーソナライズ、そのまま贈れる",
       "primaryCta": "WhatsApp で注文する",
-      "secondaryCta": "この作品をパーソナライズ"
+      "secondaryCta": "この作品をパーソナライズ",
+      "orderSummaryNote": "クイック注文——価格と発送は WhatsApp で確認します。",
+      "orderWaIntro": "Rivya Living Art様、\n以下を注文したいです："
     }
   }
 }

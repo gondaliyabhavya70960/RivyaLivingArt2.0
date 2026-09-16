@@ -1675,21 +1675,27 @@
       "shortName": "Collectible",
       "promise": "Made to the scale of a room",
       "primaryCta": "Commission a piece",
-      "secondaryCta": "Request a consultation"
+      "secondaryCta": "Request a consultation",
+      "orderSummaryNote": "Commission enquiry — price and lead time are confirmed on WhatsApp.",
+      "orderWaIntro": "Hello Rivya Living Art,\nI would like to commission:"
     },
     "MEDIUM_FORMAT": {
       "name": "Memory & Celebration Art",
       "shortName": "Memory",
       "promise": "Flowers, names and dates, set to keep",
       "primaryCta": "Preserve your memory",
-      "secondaryCta": "Start customization"
+      "secondaryCta": "Start customization",
+      "orderSummaryNote": "Memory piece — details and timeline are confirmed on WhatsApp.",
+      "orderWaIntro": "Hello Rivya Living Art,\nI would like to preserve a memory with:"
     },
     "SMALL_FORMAT": {
       "name": "Personal Art & Gifting",
       "shortName": "Personal",
       "promise": "Quick to personalize, ready to gift",
       "primaryCta": "Order on WhatsApp",
-      "secondaryCta": "Personalize this piece"
+      "secondaryCta": "Personalize this piece",
+      "orderSummaryNote": "Quick order — price and dispatch are confirmed on WhatsApp.",
+      "orderWaIntro": "Hello Rivya Living Art,\nI would like to order:"
     }
   }
 }

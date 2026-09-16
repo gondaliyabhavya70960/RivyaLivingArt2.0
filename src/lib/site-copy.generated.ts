@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1321 slots · 0 flagged as unreachable from any component.
+ * 1327 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -1321,14 +1321,20 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"ProductTier.LARGE_FORMAT.promise","group":"Shop","section":"LARGE_FORMAT","label":"Promise","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.LARGE_FORMAT.primaryCta","group":"Shop","section":"LARGE_FORMAT","label":"Primary cta","kind":"cta","tier":"editorial","max":60},
   {"key":"ProductTier.LARGE_FORMAT.secondaryCta","group":"Shop","section":"LARGE_FORMAT","label":"Secondary cta","kind":"cta","tier":"editorial","max":60},
+  {"key":"ProductTier.LARGE_FORMAT.orderSummaryNote","group":"Shop","section":"LARGE_FORMAT","label":"Order summary note","kind":"micro","tier":"interface","max":200},
+  {"key":"ProductTier.LARGE_FORMAT.orderWaIntro","group":"Shop","section":"LARGE_FORMAT","label":"Order wa intro","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.MEDIUM_FORMAT.name","group":"Shop","section":"MEDIUM_FORMAT","label":"Name","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.MEDIUM_FORMAT.shortName","group":"Shop","section":"MEDIUM_FORMAT","label":"Short name","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.MEDIUM_FORMAT.promise","group":"Shop","section":"MEDIUM_FORMAT","label":"Promise","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.MEDIUM_FORMAT.primaryCta","group":"Shop","section":"MEDIUM_FORMAT","label":"Primary cta","kind":"cta","tier":"editorial","max":60},
   {"key":"ProductTier.MEDIUM_FORMAT.secondaryCta","group":"Shop","section":"MEDIUM_FORMAT","label":"Secondary cta","kind":"cta","tier":"editorial","max":60},
+  {"key":"ProductTier.MEDIUM_FORMAT.orderSummaryNote","group":"Shop","section":"MEDIUM_FORMAT","label":"Order summary note","kind":"micro","tier":"interface","max":200},
+  {"key":"ProductTier.MEDIUM_FORMAT.orderWaIntro","group":"Shop","section":"MEDIUM_FORMAT","label":"Order wa intro","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.SMALL_FORMAT.name","group":"Shop","section":"SMALL_FORMAT","label":"Name","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.SMALL_FORMAT.shortName","group":"Shop","section":"SMALL_FORMAT","label":"Short name","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.SMALL_FORMAT.promise","group":"Shop","section":"SMALL_FORMAT","label":"Promise","kind":"body","tier":"editorial","max":400},
   {"key":"ProductTier.SMALL_FORMAT.primaryCta","group":"Shop","section":"SMALL_FORMAT","label":"Primary cta","kind":"cta","tier":"editorial","max":60},
   {"key":"ProductTier.SMALL_FORMAT.secondaryCta","group":"Shop","section":"SMALL_FORMAT","label":"Secondary cta","kind":"cta","tier":"editorial","max":60},
+  {"key":"ProductTier.SMALL_FORMAT.orderSummaryNote","group":"Shop","section":"SMALL_FORMAT","label":"Order summary note","kind":"micro","tier":"interface","max":200},
+  {"key":"ProductTier.SMALL_FORMAT.orderWaIntro","group":"Shop","section":"SMALL_FORMAT","label":"Order wa intro","kind":"body","tier":"editorial","max":400},
 ] as const;

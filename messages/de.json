@@ -1675,21 +1675,27 @@
       "shortName": "Sammlerstücke",
       "promise": "Gefertigt im Maßstab des Raums",
       "primaryCta": "Stück beauftragen",
-      "secondaryCta": "Beratung anfragen"
+      "secondaryCta": "Beratung anfragen",
+      "orderSummaryNote": "Auftragsanfrage – Preis und Fertigungszeit werden auf WhatsApp bestätigt.",
+      "orderWaIntro": "Hallo Rivya Living Art,\nich möchte folgendes Stück beauftragen:"
     },
     "MEDIUM_FORMAT": {
       "name": "Erinnerungs- & Festkunst",
       "shortName": "Erinnerung",
       "promise": "Blumen, Namen und Daten, für immer gefasst",
       "primaryCta": "Erinnerung bewahren",
-      "secondaryCta": "Anpassung beginnen"
+      "secondaryCta": "Anpassung beginnen",
+      "orderSummaryNote": "Erinnerungsstück – Details und Zeitplan werden auf WhatsApp bestätigt.",
+      "orderWaIntro": "Hallo Rivya Living Art,\nich möchte eine Erinnerung bewahren mit:"
     },
     "SMALL_FORMAT": {
       "name": "Persönliche Kunst & Geschenke",
       "shortName": "Persönlich",
       "promise": "Schnell personalisiert, bereit zum Verschenken",
       "primaryCta": "Per WhatsApp bestellen",
-      "secondaryCta": "Dieses Stück personalisieren"
+      "secondaryCta": "Dieses Stück personalisieren",
+      "orderSummaryNote": "Schnellbestellung – Preis und Versand werden auf WhatsApp bestätigt.",
+      "orderWaIntro": "Hallo Rivya Living Art,\nich möchte Folgendes bestellen:"
     }
   }
 }
