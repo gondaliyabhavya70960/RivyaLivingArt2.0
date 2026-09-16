@@ -439,6 +439,46 @@ export async function setSourceCollectionMode(
   });
 }
 
+const analyticsLeagueSchema = z.object({
+  id: z.string().min(1),
+  league: z.enum(["FINISHED_ART", "MATERIALS_DIY", "MARKETPLACE_B2B"]),
+});
+
+/**
+ * Which market a source sells into (B6). The league decides whether the
+ * source's prices may enter a benchmark: FINISHED_ART is the benchmark
+ * league; the other two are kept as context and their variants are stamped
+ * isReference from the NEXT scrape on. Existing snapshots are not rewritten
+ * (D24) — the query guard reads the CURRENT league, so a change bites
+ * immediately for analytics either way. Per-source rather than bulk for the
+ * same reason collection mode is: a judgement about a specific site.
+ */
+export async function setSourceAnalyticsLeague(
+  id: string,
+  league: "FINISHED_ART" | "MATERIALS_DIY" | "MARKETPLACE_B2B",
+): Promise<ActionResult<{ league: string }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = analyticsLeagueSchema.parse({ id, league });
+
+    const row = await db.scrapeSource.update({
+      where: { id: parsed.id },
+      data: { analyticsLeague: parsed.league },
+      select: { key: true },
+    });
+
+    await logActivity({
+      userId: session.user.id,
+      action: "analytics-league",
+      entity: "ScrapeSource",
+      entityId: parsed.id,
+      meta: { sourceKey: row.key, league: parsed.league },
+    });
+    revalidatePath(STUDIO_PATH);
+    return { league: parsed.league };
+  });
+}
+
 /**
  * Re-fingerprint a source live. A recognised platform stamps verifiedAt;
  * an UNKNOWN result also disables the source and explains why in notes.
