@@ -22,8 +22,16 @@ What shipped:             scripts/lib/migrate-resolve-failed.mjs now parses the 
                           exists → --rolled-back; all of it exists as declared → --applied;
                           a stray, data-free partial (or a declared derivation) → dropped in
                           one transaction, then --rolled-back and re-applied; anything else
-                          → the facts and the manual commands, build fails. Pinned by 47
-                          tests and by a local replay of the exact production state. Plus
+                          → the facts and the manual commands, build fails. Hardened after
+                          an eleven-agent adversarial review (CHANGELOG has the seven
+                          findings): the whole heal is one transaction under Prisma's own
+                          migrate lock with the record change inside it (two builds per
+                          push both see the P3009), every comparison is exact, a superset
+                          is not "complete", live schema another migration owns is never
+                          a stray, and a third heal of one migration is refused. Pinned by
+                          70 unit tests, 8 db tests against a real catalog (two concurrent
+                          heals included) and a local replay of the exact production
+                          state, twice concurrently. Plus
                           20260917120000_shortlist_stray_link_column (IF EXISTS drops of the
                           stray column). CLAUDE.md carries the true story and the rule: a
                           migration pushed on ANY branch is applied to production under that

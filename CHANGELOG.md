@@ -60,6 +60,52 @@ whose second statement fails leaves the first's table behind. A partial footprin
 state, which is why the "nothing exists" test now covers every declared object and why the
 drop path exists at all.
 
+### Reviewed adversarially before it merged, and hardened on what the review found
+
+An eleven-agent review pass over the diff (three lenses — parser, resolution safety, tests
+and conventions — each finding then handed to a skeptic told to refute it) confirmed seven
+findings; every one is fixed here and pinned by a test:
+
+- **Two builds at once.** Every push runs a preview and a production build against the one
+  database, and both see the P3009. A guard that read the catalog, then dropped, could drop
+  the tables the other build had just re-applied and leave the record saying "applied" over
+  an empty schema. The heal is now ONE transaction under Prisma's own migrate lock
+  (`pg_advisory_lock(72707369)`, from the schema engine's strings) with the failed record
+  locked `FOR UPDATE`, and the record change — the same writes `prisma migrate resolve`
+  makes, watched against the CLI — happens inside it, so a drop and its record commit
+  together or not at all. The second build finds no failed row and runs the deploy again.
+  Replayed with two wrappers started in the same second: one heals, Prisma's lock holds the
+  other's deploy until the drop has committed, both exit 0, the end state is exact.
+- **The "applied" proof was a name check.** Index columns were matched as a substring,
+  order-blind; foreign-key and primary-key columns, referential actions and column defaults
+  were never compared; an expression index passed on existence. A stray predecessor that
+  differed only in composition would have been marked applied for good. Every comparison is
+  now exact — `pg_get_constraintdef` and `pg_indexes.indexdef` are parsed by the same parser
+  as the migration's own statements — and an expression, a partial index or a CHECK is
+  "cannot compare", never "present".
+- **A superset passed as complete.** A created table carrying an undeclared NOT NULL column
+  or a stray unique index read as "all present"; the client would then have failed on every
+  insert, forever. Undeclared columns, indexes and constraints on a created table are gaps.
+- **Live schema could have been dropped.** A future migration that re-creates a table an
+  earlier applied migration owns, on a database where that table is empty, would have had
+  it dropped as a stray. The guard now indexes what every OTHER migration in the repo
+  declares; a table, column, index or enum some other migration owns is never a stray.
+- **A name taken by an object on another table was invisible**, so the guard would have
+  rolled back, re-applied into the same 42P07, and repeated that on every build with a log
+  line claiming proof. Declared names are now looked up schema-wide; a collision is a
+  blocker, and a migration the guard has already rolled back twice is refused with a pointer
+  to the previous build's error.
+- **"Nothing exists" ignored unreadable statements.** A DROP or an UPDATE on a live table
+  that ran before the first checkable object failed would have been "provably nothing" and
+  run again on the re-apply. That branch now refuses on any unreadable statement and on any
+  data statement against a table the migration does not create.
+- **No test touched a real catalog.** `tests/db/migrate-resolve-failed.test.ts` now runs the
+  reader against the migrated test database — every additive migration since the last
+  rename reads back as exactly applied, defaults and enum labels and foreign keys included
+  (which is how a `name[]` array the driver hands back as a string was caught) — and applies,
+  mutates, records as failed and heals a probe migration for real, with two clients healing
+  the same record at once.
+
 ### The stray column
 
 `20260917120000_shortlist_stray_link_column` drops the `linkedOpportunityId` constraint, index and
