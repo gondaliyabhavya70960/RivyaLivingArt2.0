@@ -13,6 +13,8 @@ import {
   confirmedProductsToRows,
   priceBasisOf,
 } from "@/lib/export/confirmed";
+import { importListOf } from "@/lib/import-list";
+import { parseSizeTierCell } from "@/lib/product-size-tier";
 
 const AT = new Date("2026-09-15T10:30:00.000Z");
 
@@ -143,6 +145,32 @@ describe("confirmedProductToRow", () => {
     }
   });
 
+  it("writes the product tier and the import list to their own columns", () => {
+    // Two columns called "tier", two different things. `product_tier` is
+    // WHAT the piece is (the three-tier architecture, the enum name as the
+    // cell); `tier` is WHERE the row came from (the import list, 1–4, as a
+    // digit). A reader that confuses them files a coaster as a collectible
+    // or an owner's-store row as "Tier 1".
+    const row = confirmedProductToRow(
+      product({ sizeTier: "LARGE_FORMAT", tier: 2 }),
+    );
+    expect(col(row, "product_tier")).toBe("LARGE_FORMAT");
+    expect(col(row, "tier")).toBe("2");
+    // And each cell reads back through ITS vocabulary — the contract that
+    // lets a spreadsheet edit re-import without losing either tier.
+    expect(parseSizeTierCell(col(row, "product_tier"))).toBe("LARGE_FORMAT");
+    expect(importListOf(Number(col(row, "tier")))).toBe(2);
+  });
+
+  it("leaves both tier cells blank when neither is set — never 0, never 'null'", () => {
+    // An unfiled product and a studio-made product: nothing to say in either
+    // column. Bulk Import reads a blank as "no opinion", so a re-import of
+    // this row cannot clear a tier the owner filed later.
+    const row = confirmedProductToRow(product({ sizeTier: null, tier: null }));
+    expect(col(row, "product_tier")).toBe("");
+    expect(col(row, "tier")).toBe("");
+  });
+
   it("reports availability and the rewrite flag as stable tokens", () => {
     expect(col(confirmedProductToRow(product()), "availability")).toBe(
       "in_stock",
@@ -172,10 +200,17 @@ describe("column vocabulary", () => {
     );
   });
 
-  it("pins the leading column order — append only, never reorder", () => {
-    // Someone's saved formula references a column by position. Reordering is
-    // a silent break: the file still opens, the numbers are just wrong.
-    expect(CONFIRMED_EXPORT_COLUMNS.slice(0, 8)).toEqual([
+  it("pins the whole column order — append only, never reorder, never rename", () => {
+    // The full 24, as a literal, because the header row IS the contract.
+    // Someone's saved formula references column H; reordering is a silent
+    // break — the file still opens, the numbers are just wrong. Renaming is
+    // the same break for the two columns Bulk Import reads back by header:
+    // `product_tier` (the product tier) and `tier` (the import list) are the
+    // names the products template carries, and they keep the old word
+    // "tier" for the list precisely because the name is stored data. A new
+    // column goes at the END of this list, and nowhere else. If this test
+    // fails, the fix is in the test only when a column was APPENDED.
+    expect([...CONFIRMED_EXPORT_COLUMNS]).toEqual([
       "internal_product_id",
       "slug",
       "title",
@@ -184,6 +219,22 @@ describe("column vocabulary", () => {
       "price_basis",
       "currency",
       "list_price",
+      "sale_price",
+      "availability",
+      "lead_time_text",
+      "materials_raw",
+      "dimensions_raw",
+      "source_name",
+      "source_product_id",
+      "product_tier",
+      "tier",
+      "needs_rewrite",
+      "hero_image_url",
+      "image_count",
+      "confirmed_at",
+      "confirmed_by",
+      "created_at",
+      "updated_at",
     ]);
   });
 });

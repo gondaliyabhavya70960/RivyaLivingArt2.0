@@ -3,14 +3,14 @@
 The path an operator actually walks, and what each screen is for.
 
 ```
-/studio/scraper                  run a scrape, watch it, fan out by tier
+/studio/scraper                  run a scrape, watch it, fan out by source tier
   └ /sources                     the registry
       └ /sources/‹key›           one source: policy, health, staged rows
   └ /review                      the staged queue — approve, reject, import
   └ /mapping                     source category → catalog category
   └ /quality                     what could not be extracted
 /studio/products                 the catalog — edit and confirm
-/studio/catalog-fill             fill the catalogue from the tier CSVs
+/studio/catalog-fill             fill the catalogue from the four import lists (committed CSVs)
 /studio/content-gaps             what is missing across the whole catalogue
 /studio/activity                 who did what
 ```
@@ -34,11 +34,24 @@ with a progress line — a run that stops resumes by pressing Add again.
 
 **3 · Import the approved rows.** They arrive as **DRAFT** with the rewrite
 guard set — scraped titles and photographs are somebody else's copyrighted
-material until rewritten.
+material until rewritten. The second door is `/studio/import`: a ScrapeDeck
+export (the CSV the scraper screens download) uploaded as **Products** lands
+the same way — drafts with the guard, one row per `(source, external id)`,
+categories matched and tiers suggested where the listing makes them clear,
+the staged twin marked imported — and the preview says exactly what it will
+do before you press Import. Any other content type refuses the file.
 
 **4 · Rewrite and edit.** `/studio/products`. Every save marks the row
 owner-touched, after which no scrape or CSV import will overwrite your
 content or your images.
+
+**4b · Approve.** Filter the Review tab, **Select all N matching**, press
+**Approve**: it clears the rewrite guard on the selection, marks the rows as
+your decision and publishes the ones that have a product tier — an untiered
+row keeps the approval and waits for **Set product tier…**, an archived row
+stays archived. It asks first, and says what it lifts: scraped listings carry
+another site's words until rewritten, so approve only what you have read.
+Publish on its own keeps refusing flagged rows; Approve is the explicit act.
 
 **5 · Confirm.** Select the products that belong on the final list and press
 Confirm. Only those reach `CONFIRMED_PRODUCTS`.
@@ -69,9 +82,9 @@ resolved automatically — that is a fact, not a judgement — but rows you
 
 ### `/studio/scraper/sources`
 
-Add a website, remove one, enable or disable it in bulk, and — per tier —
-**Remove all ‹tier›**, which takes the sources, their staged products, their
-jobs together. Live catalog products are kept unless you
+Add a website, remove one, enable or disable it in bulk, and — per source
+tier — **Remove all ‹tier› sources**, which takes the sources, their staged
+products, their jobs together. Live catalog products are kept unless you
 tick the opt-in. The confirmation names every number before you press it.
 
 ### `/studio/content-gaps`

@@ -5,10 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { ActivityFilters } from "@/components/studio/activity/activity-filter";
-import {
-  SYSTEM_ACTOR,
-  type ActivityActor,
-} from "@/lib/activity-filter";
+import { SYSTEM_ACTOR, type ActivityActor } from "@/lib/activity-filter";
 import { EmptyState, PageHeader } from "@/components/studio/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,10 +31,29 @@ type BadgeVariant = "default" | "secondary" | "outline";
 
 function actionVariant(action: string): BadgeVariant {
   if (action.includes("delete")) return "outline";
-  if (action === "create" || action === "publish") return "default";
+  if (action === "create" || action.includes("publish")) return "default";
   if (action === "reset-password" || action === "update-role") return "default";
   return "secondary";
 }
+
+/**
+ * Stored action strings → the words the Studio uses for them now. The RAW
+ * string is stored data and frozen — `"sheet-import"` is read back by the
+ * catalog-fill screen's "last run" and would orphan every existing row if
+ * it changed — so it stays on the row as a mono suffix and a title, and the
+ * trail is still searchable by the string the writer wrote. Anything not
+ * listed falls through to the raw string.
+ */
+const ACTION_LABEL: Record<string, string> = {
+  "sheet-import": "Catalog fill",
+  "bulk-import": "Bulk Import",
+  "size-tier-suggest": "Tier suggestions",
+  approve: "Approve",
+  // The string carries "publish" on purpose — the notifications bell builds
+  // its publish queue by matching that substring, and an Approve that put
+  // products on the shop belongs in it (`src/actions/products.ts`).
+  "approve-publish": "Approve · published",
+};
 
 function compactMeta(meta: unknown): string {
   const str = JSON.stringify(meta);
@@ -141,12 +157,10 @@ export default async function ActivityPage({
   // in the log — a staff member since deleted, a mistyped or stale bookmark —
   // resolves to "no filter" in the WHERE clause and in every affordance that
   // describes it, so the two can no longer disagree.
-  const actor = rawActor && actors.some((a) => a.id === rawActor)
-    ? rawActor
-    : undefined;
-  const entity = rawEntity && entities.includes(rawEntity)
-    ? rawEntity
-    : undefined;
+  const actor =
+    rawActor && actors.some((a) => a.id === rawActor) ? rawActor : undefined;
+  const entity =
+    rawEntity && entities.includes(rawEntity) ? rawEntity : undefined;
 
   const actorLabel = actor
     ? (actors.find((a) => a.id === actor)?.label ?? null)
@@ -305,10 +319,18 @@ export default async function ActivityPage({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={actionVariant(row.action)}>
-                        {row.action}
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <Badge
+                        variant={actionVariant(row.action)}
+                        title={row.action}
+                      >
+                        {ACTION_LABEL[row.action] ?? row.action}
                       </Badge>
+                      {row.action in ACTION_LABEL && (
+                        <code className="ms-2 font-mono text-xs text-muted-foreground">
+                          {row.action}
+                        </code>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-foreground">{row.entity}</td>
                     <td

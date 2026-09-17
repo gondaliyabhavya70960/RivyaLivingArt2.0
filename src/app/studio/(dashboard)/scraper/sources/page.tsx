@@ -139,16 +139,19 @@ export default async function ScrapeSourcesPage({
         description="The research registry — every site the scraper may visit, with its latest scrape status. Click a source to see everything scraped from it."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            {/* Bulk removal by tier — sources, their staged products, their
-                jobs, their rows in the sheet and, unless the dialog's opt-in
-                is unticked, the live catalog products of that tier.
+            {/* Bulk removal by source tier — sources, their staged products,
+                their jobs and, unless the dialog's
+                opt-in is unticked, the live catalog products imported from
+                that source tier.
 
-                All three are supplier research, not the shop: tier 2 is other
-                artists' resin goods, tier 3 is resin supplies, and tier 4 is
-                3D-printing hardware — filament, hot ends, printer parts and
-                tweezers, from jollifrogs/west3d/atomic-filament. None of it is
-                art. Tier 1 has no button: it is the owner's own catalogue,
-                and emptying that is not a bulk action. */}
+                All three are supplier research, not the shop: Resin goods is
+                other artists' resin goods, Supplies is resin supplies, and 3D
+                print is 3D-printing hardware — filament, hot ends, printer
+                parts and tweezers, from jollifrogs/west3d/atomic-filament.
+                None of it is art. Owner's store has no button: it is the
+                owner's own catalogue, and emptying that is not a bulk action.
+                (These are the retired provenance values of `ScrapeTier`; the
+                words come from `purge.ts`.) */}
             <PurgeTierButton tier="RESIN_GOODS" />
             <PurgeTierButton tier="SUPPLIES" />
             <PurgeTierButton tier="PRINT3D" />

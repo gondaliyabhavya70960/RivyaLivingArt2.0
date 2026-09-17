@@ -73,12 +73,15 @@ import {
   sizeTierStudioLabel,
 } from "@/lib/product-size-tier";
 import { MOVE_BATCH, chunk } from "@/lib/scraper/inbox-batch";
-import { SCRAPE_TIERS, TIER_LABEL } from "@/lib/scraper/purge";
+import { SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
 import { useSelection } from "@/hooks/use-selection";
 
 const STATE_BADGE: Record<
   ShortlistState,
-  { variant: "default" | "secondary" | "outline" | "success"; className?: string }
+  {
+    variant: "default" | "secondary" | "outline" | "success";
+    className?: string;
+  }
 > = {
   NEW: { variant: "outline" },
   REVIEW: { variant: "secondary" },
@@ -124,7 +127,11 @@ function totalsOf(report: TransitionReport): MoveTotals {
   };
 }
 
-function reportToast(action: string, report: MoveTotals, target: ShortlistState) {
+function reportToast(
+  action: string,
+  report: MoveTotals,
+  target: ShortlistState,
+) {
   const parts = [`${report.moved} ${action}`];
   if (report.already > 0) parts.push(`${report.already} already there`);
   if (report.blocked > 0) {
@@ -673,7 +680,9 @@ function DetailSheetBody({
         {targets.slice(0, 2).map((target) => (
           <Button
             key={target}
-            variant={target === ShortlistState.CONFIRMED ? "default" : "outline"}
+            variant={
+              target === ShortlistState.CONFIRMED ? "default" : "outline"
+            }
             size="sm"
             disabled={busy}
             onClick={() => onTransition(target, reason.trim())}
@@ -727,7 +736,9 @@ export function ShortlistInbox({
     () => ({
       sourceKey: activeSource !== "ALL" ? activeSource : undefined,
       sourceTier:
-        activeSourceTier !== "ALL" ? (activeSourceTier as ScrapeTier) : undefined,
+        activeSourceTier !== "ALL"
+          ? (activeSourceTier as ScrapeTier)
+          : undefined,
       sizeTier:
         activeSizeTier !== "ALL"
           ? (activeSizeTier as InboxSizeTierFilter)
@@ -872,7 +883,10 @@ export function ShortlistInbox({
     router.refresh();
   }
 
-  async function handleDetailTransition(target: ShortlistState, reason: string) {
+  async function handleDetailTransition(
+    target: ShortlistState,
+    reason: string,
+  ) {
     if (!detail) return;
     const moved = await moveIds([detail.researchProductId], target, reason);
     if (moved) setDetail(null);
@@ -978,9 +992,12 @@ export function ShortlistInbox({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">All source tiers</SelectItem>
+            {/* "Tier 1 sources — …": the qualifier is what tells this list
+                of options from the product-tier filter's, next to it, whose
+                options read "Tier 1 — …" for the same three names. */}
             {SCRAPE_TIERS.map((tier) => (
               <SelectItem key={tier} value={tier}>
-                {TIER_LABEL[tier]}
+                {scrapeTierStudioLabel(tier, "sources")}
               </SelectItem>
             ))}
           </SelectContent>
@@ -990,7 +1007,10 @@ export function ShortlistInbox({
           value={activeSizeTier}
           onValueChange={(value) => setParam("size", value)}
         >
-          <SelectTrigger size="sm" aria-label="Filter by suggested product tier">
+          <SelectTrigger
+            size="sm"
+            aria-label="Filter by suggested product tier"
+          >
             <SelectValue placeholder="Suggested tier" />
           </SelectTrigger>
           <SelectContent>
@@ -1043,9 +1063,9 @@ export function ShortlistInbox({
       {truncated && (
         <p className="mb-3 text-xs text-muted-foreground">
           Showing the {rows.length} most recently seen of {totalMatching}{" "}
-          matching items — narrow the filters to see the rest, or select all
-          on this page and then all {totalMatching} matching to act on every
-          one of them.
+          matching items — narrow the filters to see the rest, or select all on
+          this page and then all {totalMatching} matching to act on every one of
+          them.
         </p>
       )}
 

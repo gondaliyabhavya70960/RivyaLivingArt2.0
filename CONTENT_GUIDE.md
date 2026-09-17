@@ -55,10 +55,13 @@ Every word, title, and image published on the site must be **100% original Rivya
 
 | Required                         | Optional                                                                                                                                                                                                                                                                                                     |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `title`, `slug`, `category_slug` | `short_tagline`, `description`, `price_min`, `price_max`, `show_price`, `timeline`, `materials`, `dimensions`, `occasions`, `care_notes`, `status`, `tier`, `in_stock`, `featured`, `video_url`, `model3d_url`, `seo_title`, `seo_description`, `images`, `image_alts`, plus the customization columns below |
+| `title`, `slug`, `category_slug` | `short_tagline`, `description`, `price_min`, `price_max`, `show_price`, `timeline`, `materials`, `dimensions`, `occasions`, `care_notes`, `status`, `product_tier`, `tier`, `in_stock`, `featured`, `video_url`, `model3d_url`, `seo_title`, `seo_description`, `images`, `image_alts`, plus the customization columns below |
 
 - `category_slug` must match an existing category (import Categories first).
-- `tier` is the catalog tier 1–4 (1 owner · 2 resin goods · 3 supplies · 4 3D print) — products without a tier sort last on the shop; `in_stock` is TRUE/FALSE (defaults to in stock). Empty `tier`/`in_stock` cells leave existing values unchanged on update.
+- **Two columns are called "tier", and they are different things.**
+  - `product_tier` is the **product tier** — _what the piece is_, the three-tier architecture: `LARGE` (Tier 1 — Collectible Furniture & Spatial Art), `MEDIUM` (Tier 2 — Memory & Celebration Art) or `SMALL` (Tier 3 — Personal Art & Gifting). Case does not matter, and the full names `LARGE_FORMAT` / `MEDIUM_FORMAT` / `SMALL_FORMAT` also work — that is how the confirmed export writes the cell, so a downloaded file re-imports as it is. The product form, the bulk Publish action and — since 2026-09-17 — Bulk Import all refuse to publish a product without one: a row whose `status` is `PUBLISHED` with no `product_tier` in its cell and none already on the row comes back as an error in the preview. Leave `status` blank to bring the row in as a draft and file its tier in the Studio; a product that is already live stays live.
+  - `tier` is the **import list** — _where the row came from_, 1–4: 1 Owner's store · 2 Resin goods · 3 Supplies · 4 3D printing (the four committed CSVs the Catalog fill reads, see ADMIN_GUIDE.md §20). Leave it blank for a product you made yourself. It also sorts the shop, and products without one sort last.
+- `in_stock` is TRUE/FALSE (defaults to in stock). Empty `product_tier`/`tier`/`in_stock` cells leave existing values unchanged on update, so a re-import never clears a tier you set in the Studio.
 - `occasions` values must come from: **Wedding, Anniversary, Diwali, Birthday, Corporate, Housewarming, Baby** (case-insensitive; unknown values are flagged).
 - **Customization fields — repeating column groups `custom1_*` … `custom6_*`** (up to 6 per product):
   `customN_label`, `customN_type`, `customN_options`, `customN_required`.
@@ -114,9 +117,27 @@ Questions match case-insensitively — re-importing an existing question updates
 
 ---
 
+## Confirmed Products Export (24 columns, exact order)
+
+Downloaded from **Studio → Exports → Confirmed products** as CSV or Excel (`/api/studio/export/confirmed`, `?format=xlsx`). One row per product somebody explicitly confirmed — not everything scraped, not everything in the Studio.
+
+```
+internal_product_id, slug, title, canonical_product_type, status,
+price_basis, currency, list_price, sale_price, availability,
+lead_time_text, materials_raw, dimensions_raw, source_name,
+source_product_id, product_tier, tier, needs_rewrite, hero_image_url,
+image_count, confirmed_at, confirmed_by, created_at, updated_at
+```
+
+- The header order is **frozen — columns are only ever appended**, because a saved spreadsheet formula references a column by its letter.
+- **Two columns are called "tier", and they are different things** — the same two as the products template above. `product_tier` is the **product tier** (what the piece is), written as `LARGE_FORMAT`, `MEDIUM_FORMAT` or `SMALL_FORMAT` — Tier 1 Collectible · Tier 2 Memory · Tier 3 Personal — and blank until someone files it. `tier` is the **import list** (where the row came from), written as `1`–`4` — 1 Owner's store · 2 Resin goods · 3 Supplies · 4 3D printing — and blank for a product made in the Studio.
+- A quote-only piece exports an **empty** `list_price`/`sale_price` with `price_basis` = `QUOTE_ONLY` — never a `0`, because a zero gets averaged.
+- `canonical_product_type` is the category slug; dates are ISO 8601 UTC; `availability` is `in_stock`/`out_of_stock`.
+- **Feeding it back through Bulk Import**: the products template reads exactly five of these headers under the same names — `slug` (the row it updates), `title`, `status`, `product_tier` and `tier`. Rename `canonical_product_type` to `category_slug` (the importer requires it); every other column is ignored. Empty `product_tier`/`tier` cells leave the Studio's values alone.
+
 ## Scraper Export Layout — ScrapeDeck v4 (26 columns, exact order)
 
-Emitted by the CSV export (`/api/scraper/export`). Until 2026-09-15 the Google Sheet sync emitted the same columns; that integration was removed.
+Emitted by the ScrapeDeck CSV download (`/api/scraper/export`): the per-job and per-source **CSV** buttons in the Scraper, and the admin-only **Scraped products** row on **Studio → Exports**. Until 2026-09-15 the Google Sheet sync emitted the same columns; that integration was removed, and the file is the whole export.
 
 ```
 sourceKey, vertical, externalId, title, slug, category, shortTagline,
@@ -127,4 +148,4 @@ seoDescription, url, firstSeen, lastSeen, contentHash
 
 Serialization rules: arrays joined with `" | "` · `fields` JSON-stringified · booleans `TRUE`/`FALSE` · dates ISO 8601 · empty for null · RFC 4180 quoting, CRLF line endings. Merge key: `sourceKey|externalId`.
 
-> ⚠️ **Scraper CSVs are for the review workflow ONLY — never feed them through the generic Bulk Import.** Scraped competitor content may enter the catalog only via the scraper's Approve flow, which imports as DRAFT with the publish-blocking `needsRewrite` flag. Bulk Import enforces this: any file containing scraper-schema columns (`sourceKey`/`source_key`, `externalId`/`external_id`, `contentHash`/`content_hash`) is **rejected whole-file** with a pointer to the scraper review flow.
+> ⚠️ **A scraper CSV is competitor content, and it enters the catalog only as drafts behind the rewrite rule.** Bulk Import recognises the ScrapeDeck signature (`sourceKey`/`source_key` together with `externalId`/`external_id`) and accepts such a file as **Products only** — every row lands as a DRAFT with the publish-blocking `needsRewrite` flag, its category and its `product_tier` are filled in where the listing makes them clear (an explicit cell always wins), and the file's `status` and `tier` cells are ignored (a scraped row came from a supplier's site, not from an import list). Uploaded as any other content type, the file is **rejected whole-file** — a blog post or a testimonial has no rewrite guard to land behind.

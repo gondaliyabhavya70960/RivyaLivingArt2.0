@@ -54,6 +54,7 @@ import {
   type ProductSizeTier,
 } from "@/lib/product-size-tier";
 import { HEALTH_META, type SourceHealth } from "@/lib/scraper/health";
+import { scrapeTierStudioLabel } from "@/lib/scraper/purge";
 import { cn } from "@/lib/utils";
 
 export type SourceInfo = {
@@ -133,7 +134,10 @@ const PLATFORM_BADGE: Record<
  * convention the product form's select already uses.
  */
 type SizeTierFormValue = (typeof SIZE_TIER_FORM_VALUES)[number];
-const SIZE_TIER_CELL_OPTIONS: readonly { value: SizeTierFormValue; label: string }[] = [
+const SIZE_TIER_CELL_OPTIONS: readonly {
+  value: SizeTierFormValue;
+  label: string;
+}[] = [
   { value: "none", label: "— not set" },
   ...PRODUCT_SIZE_TIERS.map((tier) => ({
     value: tier,
@@ -142,16 +146,6 @@ const SIZE_TIER_CELL_OPTIONS: readonly { value: SizeTierFormValue; label: string
 ];
 const isSizeTierFormValue = (value: string): value is SizeTierFormValue =>
   (SIZE_TIER_FORM_VALUES as readonly string[]).includes(value);
-
-const TIER_LABELS: Record<ScrapeTier, string> = {
-  LARGE_FORMAT: "Tier 1 — Large",
-  MEDIUM_FORMAT: "Tier 2 — Medium",
-  SMALL_FORMAT: "Tier 3 — Small",
-  OWNER: "Owner's list (retired)",
-  RESIN_GOODS: "Resin goods (retired)",
-  SUPPLIES: "Supplies (retired)",
-  PRINT3D: "3D print (retired)",
-};
 
 function JobStatusBadge({ status }: { status: ScrapeJobStatus }) {
   switch (status) {
@@ -444,7 +438,13 @@ export function SourceDetail({
               <Badge variant={PLATFORM_BADGE[source.platform]}>
                 {source.platform}
               </Badge>
-              <Badge variant="outline">{TIER_LABELS[source.tier]}</Badge>
+              {/* The SOURCE's tier — which supplier list this site sits in.
+                  The product-tier cell further down is a different column and
+                  a different thing; the label here is the module's, so the two
+                  can never drift apart. */}
+              <Badge variant="outline">
+                {scrapeTierStudioLabel(source.tier, "sources")}
+              </Badge>
               {source.supply && <Badge variant="outline">Supply</Badge>}
               <span className="text-xs text-muted-foreground">
                 {source.country}
@@ -767,7 +767,10 @@ export function SourceDetail({
                           value={sizeTierFor(p)}
                           onValueChange={(v) => {
                             if (!isSizeTierFormValue(v)) return;
-                            setTierOverrides((prev) => ({ ...prev, [p.id]: v }));
+                            setTierOverrides((prev) => ({
+                              ...prev,
+                              [p.id]: v,
+                            }));
                           }}
                           disabled={p.reviewStatus === "IMPORTED"}
                         >

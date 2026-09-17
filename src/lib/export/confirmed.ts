@@ -95,8 +95,17 @@ export type ConfirmedExportProduct = {
   dimensions: string | null;
   importSource: string | null;
   importRef: string | null;
-  /** The owner's product tier. Empty for a row nobody has filed yet. */
+  /**
+   * The PRODUCT tier — what the piece is (`src/lib/product-size-tier.ts`,
+   * exported under `product_tier`). Null for a row nobody has filed yet.
+   */
   sizeTier: ProductSizeTier | null;
+  /**
+   * The IMPORT LIST the row came from — `Product.tier`, 1–4
+   * (`src/lib/import-list.ts`), exported under `tier`. Null for a product
+   * made in the studio. A different thing from `sizeTier` above, and the
+   * two share a word only because the column names are frozen.
+   */
   tier: number | null;
   needsRewrite: boolean;
   /** First gallery image by `order`, or null when the product has none. */
@@ -171,8 +180,16 @@ export function confirmedProductToRow(p: ConfirmedExportProduct): string[] {
     p.dimensions ?? "",
     p.importSource ?? "",
     p.importRef ?? "",
-    // The column Bulk Import reads back under the same name, so an export can
-    // be edited in a spreadsheet and re-imported without losing the tier.
+    // `product_tier`, the enum name (`LARGE_FORMAT`), and `tier`, the import
+    // list number. Bulk Import's products template reads back exactly five of
+    // this file's headers under the same names — `slug` (the identity it
+    // upserts on), `title`, `status`, `product_tier` and `tier` — so an
+    // export edited in a spreadsheet re-imports without losing either tier.
+    // It is not a whole-file round trip: the importer requires
+    // `category_slug`, which this file writes as `canonical_product_type`,
+    // and it ignores every other column here. Both header names are frozen
+    // — the template carries the same two, and `CONFIRMED_EXPORT_COLUMNS` is
+    // append-only — so neither side can rename what the other reads.
     p.sizeTier ?? "",
     num(p.tier),
     p.needsRewrite ? "true" : "false",

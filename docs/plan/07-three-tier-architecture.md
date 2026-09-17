@@ -246,7 +246,9 @@ without the thing that writes it.
    untiered; what is already live keeps saving. Both the product form and the
    bulk status action apply it, and the bulk toast names the reason.
 
-   Also here: the old `Product.tier` control is relabelled **"Import tier"**.
+   Also here: the old `Product.tier` control is relabelled **"Import tier"** —
+   and, since 2026-09-17, **"Import list"**: the word "tier" is the product
+   tier's alone now (`src/lib/import-list.ts`).
    Two selects on one page both called "Tier" is a question an owner should
    never have to answer twice.
 3. **Make the untiered backlog visible and bulk-fixable, before anything renders
@@ -259,7 +261,8 @@ without the thing that writes it.
    correction anyone asked for, and the product form clears the one row where
    it is); a `/studio/content-gaps` card counting the whole backlog, not just
    published rows, linking straight to `?sizeTier=NONE&status=ALL`; a
-   **Product tier** column beside the renamed **Import tier** one.
+   **Product tier** column beside the renamed **Import list** one (it read
+   "Import tier" for two days).
 
    And the two writers the Studio guard cannot reach, both: a `product_tier`
    Bulk Import column and the matching export column. `parseSizeTierCell` takes

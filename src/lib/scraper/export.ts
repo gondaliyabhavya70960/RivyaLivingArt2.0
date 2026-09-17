@@ -1,8 +1,13 @@
 /**
- * ScrapeDeck v4 serialization — the CSV export route and the Google Sheet
- * sync both emit rows in this exact column order. Column A is sourceKey and
- * column C is externalId; the sheet sync relies on that when it merges by
- * `${sourceKey}|${externalId}`.
+ * ScrapeDeck v4 serialization — the CSV the owner downloads from the Studio
+ * (`/api/scraper/export`: the per-job and per-source CSV buttons, and the
+ * admin-only "Scraped products" row on `/studio/exports`), in this exact
+ * column order. Column A is sourceKey and column C is externalId: that pair
+ * is the row's identity, and Bulk Import's scraper-export path
+ * (`src/lib/import/scrape-export.ts`) deduplicates on it when the owner
+ * feeds the file back in as Products. There is no other destination — the
+ * Google Sheet sync that used to emit these same columns was removed on
+ * 2026-09-15 (plan C), and the file is the whole export.
  */
 import { toCsvDocument } from "@/lib/export/csv";
 
@@ -114,19 +119,14 @@ export function rowToScrapeDeck(p: ScrapeDeckProduct): string[] {
 }
 
 /**
- * Serialize one cell for the downloaded CSV. First neutralise spreadsheet
- * formula injection (SEC-108): scraped third-party text (title, description…)
- * can start with =, +, -, @, tab or CR, which Excel/Sheets/LibreOffice would
- * evaluate on open — prefix a single quote so the cell stays literal text.
- * Then apply RFC-4180 quoting. Only the CSV download passes through here; the
- * Google Sheet sync uses valueInputOption RAW and is unaffected.
- */
-/**
  * Full CSV document: header row + data rows, CRLF line endings.
  *
- * The quoting and the formula-injection guard live in `@/lib/export/csv` so
- * that this download and the Studio exports cannot disagree about how a cell
- * containing a comma is written. Behaviour here is unchanged.
+ * The quoting and the formula-injection guard (SEC-108: scraped third-party
+ * text can start with =, +, -, @, tab or CR, which a spreadsheet would
+ * evaluate on open) live in `@/lib/export/csv`, so that this download and
+ * the Studio exports cannot disagree about how a cell containing a comma is
+ * written. Every row leaves through that guard — the file is the only
+ * destination now, so there is no raw-value path beside it.
  */
 export function toCsv(rows: string[][]): string {
   return toCsvDocument(SCRAPEDECK_COLUMNS, rows);

@@ -19,7 +19,7 @@ reviews or testimonials).
 | Surface | What is missing | Where to do it |
 | --- | --- | --- |
 | Products (all tiers) | The catalogue is empty since the 16:57 UTC purge. The reference rollout stages ~1,400 rows for review after the merge; **approving and importing them is the owner's act**, in `/studio/scraper/review` (bulk approve → Add to catalog, with the suggested tier). | `/studio/scraper/review` → `/studio/products` |
-| The owner's own previous pieces | The 373 rows of `data/tiers/Tier1_Owner.csv.gz` (the owner's previous store) are TOMBSTONED by the purge, so the fill will not bring them back; the previous store itself answers HTTP 402. If they are wanted: clear their tombstones (`DeletedImport` rows with `importSource = "sheet:…"` for Tier 1) and run the fill for Tier 1 from `/studio/catalog-fill` — a Studio button for exactly that is buildable (see §3). | `/studio/catalog-fill` |
+| The owner's own previous pieces | The 373 rows of `data/tiers/Tier1_Owner.csv.gz` (the owner's previous store) are TOMBSTONED by the purge, so the fill will not bring them back; the previous store itself answers HTTP 402. If they are wanted: clear their tombstones (`DeletedImport` rows with `importSource = "sheet:…"` for List 1) and run the fill for List 1 from `/studio/catalog-fill` — a Studio button for exactly that is buildable (see §3). | `/studio/catalog-fill` |
 | Testimonials (all tiers) | Zero rows; the wall returns null on home, custom-order, large-format and every PDP. Publishing needs `permissionStatus: GRANTED`. | `/studio/testimonials` |
 | Settings | `address` is empty, `socials` is `{}`, `logoUrl` / `faviconUrl` / `appIconUrl` are null; the footer and `/contact` show only the phone, the Gmail address and "10am–8pm IST". | `/studio/settings` |
 | Photography | `home.maker` and `about.maker` are AI generations the owner must replace with a real portrait (§15.2); no real bench, studio or product photography; portfolio images are hot-linked from a supplier host. | `/studio/site-images`, `/studio/media` |
@@ -97,8 +97,12 @@ rows named.
   (decorative motion) — not needed.
 
 ### Studio
-- **A Studio button to restore the owner's own Tier-1 rows**: clear their
-  tombstones and run the Tier-1 fill (see §1).
+- **A Studio button to restore the owner's own List 1 rows**: clear their
+  tombstones and run the List 1 fill (see §1).
+- **The catalog fill could file tiers at write time.** It writes `sizeTier`
+  NULL and the deploy-time pass files them afterwards; the screen now shows
+  the forecast ("Would file as", the same rule), so writing it in the fill
+  is one decision away, not a design.
 - **`maxProducts` has no Studio control** — the rollout sets it (500); the
   source detail page should show and edit it beside the politeness delay.
 - **`NormalizationAlias` has no writer** — the read-time resolver works, but

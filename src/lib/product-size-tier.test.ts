@@ -228,9 +228,12 @@ describe("parseSizeTierCell — the Bulk Import column", () => {
   });
 
   it("takes the full enum name too, for a re-imported export", () => {
-    // The confirmed export writes `product_tier` as the enum name, and the
-    // whole point of that column is that the file can be edited in a
-    // spreadsheet and fed straight back through Bulk Import.
+    // The confirmed export (`export/confirmed.ts`) writes `product_tier` as
+    // the enum name, and Bulk Import reads that column back under the same
+    // header — one of five it reads from that file (`slug`, `title`,
+    // `status`, `product_tier`, `tier`), with `canonical_product_type`
+    // renamed to `category_slug` by hand. The products template's own
+    // example writes the short word instead; both spellings must parse.
     for (const tier of PRODUCT_SIZE_TIERS) {
       expect(parseSizeTierCell(tier)).toBe(tier);
       expect(parseSizeTierCell(tier.toLowerCase())).toBe(tier);

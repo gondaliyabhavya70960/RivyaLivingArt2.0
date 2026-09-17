@@ -53,6 +53,7 @@ const DEFAULT_ROUTES = [
   "/studio/scraper/mapping",
   "/studio/catalog-fill",
   "/studio/import",
+  "/studio/exports",
   "/studio/analytics",
   "/studio/subscribers",
   "/studio/settings",

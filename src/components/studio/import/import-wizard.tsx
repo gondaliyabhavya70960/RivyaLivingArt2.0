@@ -241,7 +241,7 @@ export function ImportWizard() {
         toast.success(
           `Imported ${imported} ${imported === 1 ? "row" : "rows"}.` +
             (res.data.protectedCount > 0
-              ? ` ${res.data.protectedCount} owner-edited ${res.data.protectedCount === 1 ? "row was" : "rows were"} left as edited.`
+              ? ` ${res.data.protectedCount} ${res.data.protectedCount === 1 ? "row was" : "rows were"} left as ${res.data.protectedCount === 1 ? "it is" : "they are"} — owner-edited, or the catalog fill's own.`
               : ""),
         );
       } else {
@@ -419,6 +419,80 @@ export function ImportWizard() {
             <CountChip label="updates" value={preview.counts.update} />
             <CountChip label="errors" value={preview.counts.error} />
           </div>
+
+          {preview.origin === "scraper" && preview.scrapeExport && (
+            <div
+              role="note"
+              aria-label="Product Scraper export"
+              className="rounded-card border border-sapphire-ink/30 bg-sapphire-ink/5 p-4 text-sm"
+            >
+              <p className="font-medium text-foreground">
+                This file is a Product Scraper export
+              </p>
+              <p className="mt-1 text-muted-foreground">
+                Every row will be saved as a draft with the rewrite guard on, so
+                nothing reaches the storefront until you rewrite it and publish
+                it from the product editor. The file&rsquo;s status and list
+                cells are ignored. A row already in the catalogue from the same
+                source is updated in place — its copy flagged for rewrite
+                again, its status and product tier kept — never duplicated.
+              </p>
+              <ul className="mt-3 space-y-1 text-muted-foreground">
+                <li>
+                  <span className="font-semibold tabular-nums text-foreground">
+                    {preview.scrapeExport.autoMappedCategories}
+                  </span>{" "}
+                  {preview.scrapeExport.autoMappedCategories === 1
+                    ? "category was"
+                    : "categories were"}{" "}
+                  matched automatically from the source&rsquo;s own category
+                  names.
+                </li>
+                <li>
+                  <span className="font-semibold tabular-nums text-foreground">
+                    {preview.scrapeExport.suggestedTiers}
+                  </span>{" "}
+                  product{" "}
+                  {preview.scrapeExport.suggestedTiers === 1
+                    ? "tier was"
+                    : "tiers were"}{" "}
+                  suggested from each listing&rsquo;s words and size. Check them
+                  in the product editor before publishing.
+                </li>
+                {preview.productMerge &&
+                  preview.productMerge.sheetTwinCount > 0 && (
+                    <li>
+                      <span className="font-semibold tabular-nums text-foreground">
+                        {preview.productMerge.sheetTwinCount}
+                      </span>{" "}
+                      {preview.productMerge.sheetTwinCount === 1
+                        ? "row is"
+                        : "rows are"}{" "}
+                      already in the catalogue from the catalog fill (your own
+                      import lists) and will be left as{" "}
+                      {preview.productMerge.sheetTwinCount === 1
+                        ? "it is"
+                        : "they are"}
+                      ; their staged rows are marked imported.
+                    </li>
+                  )}
+                {preview.scrapeExport.unmappedCategories > 0 && (
+                  <li className="text-destructive">
+                    <span className="font-semibold tabular-nums">
+                      {preview.scrapeExport.unmappedCategories}
+                    </span>{" "}
+                    {preview.scrapeExport.unmappedCategories === 1
+                      ? "row still needs a category and is"
+                      : "rows still need a category and are"}{" "}
+                    marked as errors below. To import them, add a{" "}
+                    <code className="font-mono text-12">category_slug</code>{" "}
+                    column to the file, fill it with one of your category slugs
+                    for those rows, and upload the file again.
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
 
           {preview.productMerge &&
             preview.productMerge.ownerEditedCount > 0 && (

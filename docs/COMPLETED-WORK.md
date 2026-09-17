@@ -134,6 +134,17 @@ audit's per-tier picture:
   the rewrite guard. The cron drain's silent 401s (no `CRON_SECRET` since B1)
   were found in the runtime logs and fixed by the owner the same night;
   collection ran from 01:40 UTC.
+- **"Tier" means the product tier** (2026-09-17, morning): the four CSV lists
+  are IMPORT LISTS ("List 1 — Owner's store", `src/lib/import-list.ts`, one
+  copy) and the supplier lists are SOURCE tiers, on every catalogue screen;
+  the overview counts the three tiers; Catalog fill forecasts how each list
+  files by the deploy-time rule. **Bulk Import accepts a scraper export** as
+  Products with the review inbox's own guarantees (drafts, the rewrite guard,
+  one row per source id, the staged twin marked imported), auto-mapped
+  categories and suggested tiers, and can no longer publish an untiered row.
+  **Approve** on `/studio/products` is the batch confirm-rewrite: filter,
+  select all matching, approve — guard cleared, rows owner-touched, the tiered
+  ones published, every hold named.
 
 ## 9. Superseded — done differently by a recorded decision (not gaps)
 

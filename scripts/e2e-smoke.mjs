@@ -552,19 +552,34 @@ try {
     const preview = studio.getByRole("button", { name: /preview/i }).first();
     if ((await preview.count()) > 0) {
       const before = await studio.evaluate(
-        () => document.body.innerText.length,
+        () => (document.querySelector("main")?.innerText ?? "").length,
       );
       await preview.click();
+      // A changed innerText is not enough: a preview that reads NO FILE
+      // still renders "created 0 · updated 0 · unchanged 0 · failed 0" and
+      // changes the length — which is exactly the state that held on every
+      // environment until 2026-09-17 while this check stayed green (the
+      // fill resolved data/tiers from a .next chunk folder). So the check
+      // now demands a signal an empty read cannot produce: the run touched
+      // rows. CI seeds the same committed lists, so a real preview always
+      // reports thousands unchanged.
       let answered = false;
-      for (let i = 0; i < 40 && !answered; i += 1) {
+      let read = false;
+      for (let i = 0; i < 40 && !read; i += 1) {
         await studio.waitForTimeout(1500);
         const enabled = await preview.isEnabled().catch(() => false);
-        const after = await studio.evaluate(
-          () => document.body.innerText.length,
+        const text = await studio.evaluate(
+          () => document.querySelector("main")?.innerText ?? "",
         );
-        answered = enabled && after !== before;
+        answered = enabled && text.length !== before;
+        // "unchanged 4,373" / "created 373" — any non-zero row count.
+        read = answered && /\b(created|updated|unchanged)\s+[1-9]/.test(text);
       }
-      check("the catalog-fill Preview answers", answered);
+      check(
+        "the catalog-fill Preview answers",
+        read,
+        answered ? "the preview read zero rows — data/tiers not reachable" : "",
+      );
     } else {
       check("the catalog-fill Preview answers", false, "no Preview button");
     }
@@ -1035,7 +1050,7 @@ try {
     await studio.close();
   } else {
     skip(
-      "Studio checks (login, demo product, media upload, sheet preview, testimonial rule, product CRUD, page builder, site-copy publish, scraper refusal)",
+      "Studio checks (login, demo product, media upload, catalog-fill preview, testimonial rule, product CRUD, page builder, site-copy publish, scraper refusal)",
       "STUDIO_EMAIL/STUDIO_PASSWORD unset",
     );
   }

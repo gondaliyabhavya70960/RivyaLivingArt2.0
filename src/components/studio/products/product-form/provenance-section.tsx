@@ -2,18 +2,27 @@ import { Badge } from "@/components/ui/badge";
 import { FormSection } from "./form-section";
 import { TIER_LABEL, type ProductFormInitial } from "./schema";
 
-/** `sheet:kanha-kreation` → "Owner sheet · kanha-kreation"; else scraper key. */
+/**
+ * `sheet:kanha-kreation` → "Catalog fill · kanha-kreation"; else scraper key.
+ * The `sheet:` prefix is STORED DATA (matched by `startsWith` in half a dozen
+ * queries) and is frozen; only the words a person reads change.
+ */
 function prettySource(importSource: string): string {
   return importSource.startsWith("sheet:")
-    ? `Owner sheet · ${importSource.slice("sheet:".length)}`
+    ? `Catalog fill · ${importSource.slice("sheet:".length)}`
     : `Product scraper · ${importSource}`;
 }
 
 /** Read-only provenance panel for imported products (importSource set). */
-export function ProvenanceSection({ product }: { product: ProductFormInitial }) {
+export function ProvenanceSection({
+  product,
+}: {
+  product: ProductFormInitial;
+}) {
   const { importSource, importRef, tier } = product;
   if (!importSource) return null;
 
+  // A row the catalog fill wrote (import-list CSV), as opposed to the scraper.
   const isSheet = importSource.startsWith("sheet:");
   const isOwnerReady = importSource === "sheet:owner-ready";
 
@@ -36,7 +45,7 @@ export function ProvenanceSection({ product }: { product: ProductFormInitial }) 
           </dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Tier</dt>
+          <dt className="text-muted-foreground">Import list</dt>
           <dd className="mt-0.5">
             {tier != null && TIER_LABEL[tier] ? (
               <Badge variant="outline">{TIER_LABEL[tier]}</Badge>
@@ -50,24 +59,24 @@ export function ProvenanceSection({ product }: { product: ProductFormInitial }) 
       {isSheet ? (
         isOwnerReady ? (
           <p className="text-xs text-muted-foreground">
-            Refreshed by the scheduled sheet import. When this row&rsquo;s sheet
-            content changes, the importer rewrites the listing from the sheet —
-            title, tagline, description, prices, materials, dimensions, care
-            notes, SEO, category, images, timeline, video/3D model URLs, status
-            and featured — so manual edits to those fields survive only until
-            then. Occasions, customization fields and translations are never
-            overwritten by the import.
+            Refreshed by the catalog fill. When this row changes in its
+            import-list CSV, the fill rewrites the listing from the CSV — title,
+            tagline, description, prices, materials, dimensions, care notes,
+            SEO, category, images, timeline, video/3D model URLs, status and
+            featured — so manual edits to those fields survive only until then.
+            Occasions, customization fields and translations are never
+            overwritten by the fill.
           </p>
         ) : (
           <p className="text-xs text-muted-foreground">
-            Refreshed by the scheduled sheet import. When this row&rsquo;s sheet
-            content changes, the importer rewrites title, tagline, description,
+            Refreshed by the catalog fill. When this row changes in its
+            import-list CSV, the fill rewrites title, tagline, description,
             prices, materials, dimensions, care notes, SEO, category, images,
-            tier and stock from the sheet, resets status to Published and
+            import list and stock from the CSV, resets status to Published and
             reassigns featured — so manual edits to those fields (including
             category, featured and status) survive only until then. Occasions,
-            timeline, video/3D model URLs, customization fields and
-            translations are never overwritten by the import.
+            timeline, video/3D model URLs, customization fields and translations
+            are never overwritten by the fill.
           </p>
         )
       ) : (

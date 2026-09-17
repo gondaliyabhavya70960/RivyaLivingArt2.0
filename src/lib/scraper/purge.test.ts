@@ -1,10 +1,26 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  describePurgePlan,
-  isEmptyPurge,
+  IMPORT_LISTS,
+  IMPORT_LIST_NAME,
+  IMPORT_LIST_SHORT,
+  importListLabel,
+} from "@/lib/import-list";
+import {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_NAME,
+  SIZE_TIER_NUMBER,
+  sizeTierStudioLabel,
+} from "@/lib/product-size-tier";
+import {
+  SCRAPE_TIERS,
+  SCRAPE_TIER_SHORT,
   TIER_LABEL,
   TIER_NUMBER,
+  describePurgePlan,
+  isEmptyPurge,
+  scrapeTierStudioLabel,
+  sizeTierNamedBy,
   tierNumbersFor,
 } from "@/lib/scraper/purge";
 
@@ -14,6 +30,9 @@ const COUNTS = {
   jobs: 51,
   catalogProducts: 900,
 };
+
+/** The four retired provenance values — every source tier that is not a size. */
+const RETIRED = SCRAPE_TIERS.filter((tier) => sizeTierNamedBy(tier) === null);
 
 describe("describePurgePlan", () => {
   it("names every number, not just the sources", () => {
@@ -25,7 +44,9 @@ describe("describePurgePlan", () => {
     expect(plan).toContain("38 sources");
     expect(plan).toContain("12,400 staged products");
     expect(plan).toContain("51 scrape jobs");
-    expect(plan).toContain("sheet");
+    // Google Sheets is gone (workstream C); the sentence no longer promises
+    // rows in a spreadsheet the purge cannot reach.
+    expect(plan).not.toMatch(/sheet/i);
   });
 
   it("says catalog products will be KEPT when they are", () => {
@@ -64,25 +85,48 @@ describe("describePurgePlan", () => {
     // Singular all the way through.
     // (was: "imported from IT" rather than
     // vs "from them" — the phrasing moved to tiers.)
-    expect(plan).toContain("1 catalog product in this tier will be KEPT");
+    expect(plan).toContain(
+      "1 catalog product from this source tier will be KEPT",
+    );
+  });
+
+  it('calls the thing being purged a "source tier", never a bare "tier"', () => {
+    // "In this tier" was true when there was one tier system. Now "tier" on
+    // its own is the product tier, and a catalog product is never "in" a
+    // supplier list — it came FROM one.
+    const plan = describePurgePlan("resin goods", COUNTS, {
+      deleteCatalogProducts: false,
+    });
+    expect(plan).not.toMatch(/\bin this tier\b/);
+    expect(plan).toContain("from this source tier");
   });
 });
 
 describe("isEmptyPurge", () => {
   it("is true when there is nothing to remove", () => {
     expect(
-      isEmptyPurge({ sources: 0, stagedProducts: 0, jobs: 0, catalogProducts: 0 }),
+      isEmptyPurge({
+        sources: 0,
+        stagedProducts: 0,
+        jobs: 0,
+        catalogProducts: 0,
+      }),
     ).toBe(true);
   });
 
   it("is false when a source exists even with no products", () => {
     expect(
-      isEmptyPurge({ sources: 1, stagedProducts: 0, jobs: 0, catalogProducts: 0 }),
+      isEmptyPurge({
+        sources: 1,
+        stagedProducts: 0,
+        jobs: 0,
+        catalogProducts: 0,
+      }),
     ).toBe(false);
   });
 });
 
-describe("TIER_LABEL", () => {
+describe("TIER_LABEL — the noun a purge sentence takes", () => {
   it("names every tier — an unlabelled button is unpressable", () => {
     expect(Object.keys(TIER_LABEL).sort()).toEqual([
       "LARGE_FORMAT",
@@ -93,6 +137,138 @@ describe("TIER_LABEL", () => {
       "SMALL_FORMAT",
       "SUPPLIES",
     ]);
+    expect(Object.keys(SCRAPE_TIER_SHORT).sort()).toEqual(
+      Object.keys(TIER_LABEL).sort(),
+    );
+  });
+
+  it("reads the size values as SIZES — a supplier list, not a piece", () => {
+    // "Remove all large-format sources" is a sentence about a list of
+    // sellers. "Remove all collectible sources" would claim the sources sell
+    // only collectibles, which a large-format supplier with a coaster range
+    // does not.
+    expect(TIER_LABEL.LARGE_FORMAT).toBe("Large-format");
+    expect(TIER_LABEL.MEDIUM_FORMAT).toBe("Medium-format");
+    expect(TIER_LABEL.SMALL_FORMAT).toBe("Small-format");
+  });
+
+  it("keeps the retired four as the plain nouns the buttons already say", () => {
+    // The sources screen renders "Remove all resin goods sources" and
+    // friends from these; the retired values were named after the import
+    // lists and keep those words.
+    expect(TIER_LABEL.OWNER).toBe("Owner");
+    expect(TIER_LABEL.RESIN_GOODS).toBe("Resin goods");
+    expect(TIER_LABEL.SUPPLIES).toBe("Supplies");
+    expect(TIER_LABEL.PRINT3D).toBe("3D print");
+  });
+
+  it("carries no numbered prefix and never the word tier — that word is the product tier's", () => {
+    for (const tier of SCRAPE_TIERS) {
+      expect(TIER_LABEL[tier]).not.toMatch(/tier/i);
+      // ("3D print" has a digit in it; the shape being refused is a
+      // numbered prefix, "Tier 4 —" or "List 4 —", not any digit.)
+      expect(TIER_LABEL[tier]).not.toMatch(/^(Tier|List) \d/);
+      expect(SCRAPE_TIER_SHORT[tier]).not.toMatch(/tier/i);
+      // A short form fits a cell: two words at most.
+      expect(SCRAPE_TIER_SHORT[tier].split(" ").length).toBeLessThanOrEqual(2);
+    }
+  });
+});
+
+describe("scrapeTierStudioLabel — the label a tab, a badge or an option shows", () => {
+  it("derives a size value's number and name from the product tier, never types them", () => {
+    // The five hand-typed copies this replaced all said "Tier 1 — Large".
+    // The number and the name now come from product-size-tier.ts, so the
+    // source registry and the product form can never disagree about what
+    // "Tier 1" is called.
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(scrapeTierStudioLabel(tier)).toBe(
+        `Tier ${SIZE_TIER_NUMBER[tier]} — ${SIZE_TIER_NAME[tier]}`,
+      );
+      expect(scrapeTierStudioLabel(tier)).toBe(sizeTierStudioLabel(tier));
+    }
+    expect(scrapeTierStudioLabel("LARGE_FORMAT")).toBe(
+      "Tier 1 — Collectible Furniture & Spatial Art",
+    );
+  });
+
+  it('with the "sources" qualifier, cannot be mistaken for the product-tier option beside it', () => {
+    // The review inbox puts the source-tier filter next to the suggested
+    // product-tier filter. Without the qualifier the two lists of options
+    // would be word-for-word identical.
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      const qualified = scrapeTierStudioLabel(tier, "sources");
+      expect(qualified).toBe(
+        `Tier ${SIZE_TIER_NUMBER[tier]} sources — ${SIZE_TIER_NAME[tier]}`,
+      );
+      expect(qualified).not.toBe(sizeTierStudioLabel(tier));
+    }
+    expect(scrapeTierStudioLabel("RESIN_GOODS", "sources")).toBe(
+      "Resin goods sources",
+    );
+  });
+
+  it("reads a retired provenance value as its noun, with no numbered prefix and no tier", () => {
+    // "Tier 4 — 3D print" would put a fourth tier beside a three-tier
+    // product architecture, and a numbered "Owner" is the label this replaced.
+    expect(RETIRED).toEqual(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D"]);
+    expect(scrapeTierStudioLabel("OWNER")).toBe("Owner's store");
+    expect(scrapeTierStudioLabel("RESIN_GOODS")).toBe("Resin goods");
+    expect(scrapeTierStudioLabel("SUPPLIES")).toBe("Supplies");
+    expect(scrapeTierStudioLabel("PRINT3D")).toBe("3D print");
+    for (const tier of RETIRED) {
+      expect(scrapeTierStudioLabel(tier)).not.toMatch(/tier/i);
+      expect(scrapeTierStudioLabel(tier)).not.toMatch(/^(Tier|List) \d/);
+      expect(scrapeTierStudioLabel(tier, "sources")).not.toMatch(/tier/i);
+    }
+  });
+
+  it("labels every source tier, and no two the same", () => {
+    const plain = SCRAPE_TIERS.map((tier) => scrapeTierStudioLabel(tier));
+    const qualified = SCRAPE_TIERS.map((tier) =>
+      scrapeTierStudioLabel(tier, "sources"),
+    );
+    expect(new Set(plain).size).toBe(SCRAPE_TIERS.length);
+    expect(new Set(qualified).size).toBe(SCRAPE_TIERS.length);
+    for (const label of [...plain, ...qualified]) expect(label).toBeTruthy();
+  });
+
+  it("never reads the same as an import-list label", () => {
+    // The trap this change removes: Product.tier's four lists and
+    // ScrapeSource.tier's three size values both printed as "Tier 1 …" on
+    // adjacent screens. A size source tier must share no label with any
+    // import list, in any of the three vocabularies, and the old catalog-fill
+    // label — "Tier 1" followed by "Owner" — must not come back from here.
+    const importListLabels = new Set(
+      IMPORT_LISTS.flatMap((list) => [
+        importListLabel(list),
+        IMPORT_LIST_NAME[list],
+        IMPORT_LIST_SHORT[list],
+      ]),
+    );
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      for (const label of [
+        TIER_LABEL[tier],
+        SCRAPE_TIER_SHORT[tier],
+        scrapeTierStudioLabel(tier),
+        scrapeTierStudioLabel(tier, "sources"),
+      ]) {
+        expect(importListLabels.has(label)).toBe(false);
+        expect(label).not.toMatch(/^Tier \d — (Owner|Large|Medium|Small)\b/);
+      }
+    }
+    for (const tier of SCRAPE_TIERS) {
+      expect(scrapeTierStudioLabel(tier)).not.toMatch(/^Tier \d — Owner/);
+      expect(scrapeTierStudioLabel(tier, "sources")).not.toMatch(/^Tier \d \w+ — Owner/);
+    }
+  });
+});
+
+describe("sizeTierNamedBy", () => {
+  it("returns the product tier a size value is named after, and null for the rest", () => {
+    for (const tier of PRODUCT_SIZE_TIERS)
+      expect(sizeTierNamedBy(tier)).toBe(tier);
+    for (const tier of RETIRED) expect(sizeTierNamedBy(tier)).toBeNull();
   });
 });
 
@@ -122,6 +298,16 @@ describe("TIER_NUMBER", () => {
   it("gives no two provenance tiers the same number", () => {
     const numbers = Object.values(TIER_NUMBER).filter((n) => n !== null);
     expect(new Set(numbers).size).toBe(numbers.length);
+  });
+
+  it("is unmoved by the relabel: the label says Tier 1, the number stays null", () => {
+    // scrapeTierStudioLabel("LARGE_FORMAT") now reads "Tier 1 — …", which is
+    // exactly the kind of tidy sequence that tempts someone to write 1 here.
+    // The label is the product tier's number; this map is the import list's.
+    for (const tier of PRODUCT_SIZE_TIERS) {
+      expect(scrapeTierStudioLabel(tier)).toMatch(/^Tier \d/);
+      expect(TIER_NUMBER[tier]).toBeNull();
+    }
   });
 });
 

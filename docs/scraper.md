@@ -12,10 +12,16 @@ How a competitor's storefront becomes a row you can review.
 ## Two things called "tier", and a third in the catalogue
 
 Before anything below: `ScrapeSource.tier` (`ScrapeTier`) says **which supplier
-list we went looking in**. `Product.sizeTier` says **what a finished piece is**
-(the owner's three-tier product architecture,
-`docs/plan/07-three-tier-architecture.md`). `Product.tier` is neither — it is the
-owner-sheet import tier, an `Int?` the catalog-fill CSVs write.
+list we went looking in** — the Studio calls it the **source tier**, and its
+words live once, in `src/lib/scraper/purge.ts` (`TIER_LABEL` for a sentence,
+`SCRAPE_TIER_SHORT` for a cell, `scrapeTierStudioLabel` for a tab, badge or
+option — "Tier 1 — Collectible Furniture & Spatial Art" with the product tier's
+own number and name, or the plain noun for a retired value, never "Tier 1 —
+Large"). `Product.sizeTier` says **what a finished piece is** (the owner's
+three-tier product architecture, `docs/plan/07-three-tier-architecture.md`) —
+the plain word **tier** in the Studio. `Product.tier` is neither — it is the
+**import list** a catalogue row came from, an `Int?` the catalog-fill CSVs
+write (`src/lib/import-list.ts`).
 
 `ScrapeTier` carries the three size names — `LARGE_FORMAT`, `MEDIUM_FORMAT`,
 `SMALL_FORMAT` — alongside four retired values (`OWNER`, `RESIN_GOODS`,
@@ -300,6 +306,7 @@ never on the path from scrape to catalogue. `src/actions/research.ts`,
 | Review + promote + notes           | `src/actions/scraper-review.ts` (edit before import, add to catalog) · `src/actions/scraper-shortlist.ts` (funnel moves, notes, tags, the selection resolver) |
 | Research library                   | `src/actions/research.ts`                                                                                     |
 | Merge protection                   | `src/lib/scraper/merge-policy.ts` (also honoured by Bulk Import's products template, `src/actions/import.ts`) |
+| A scraper export through Bulk Import | `src/lib/import/scrape-export.ts` (the remap) · `src/lib/import/product-row.ts` (the writer: the promote path's identity, twin and slug rules; `docs/import/README.md`) |
 
 ## Environment
 

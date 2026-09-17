@@ -77,7 +77,7 @@ const PENDING_LABEL: Record<keyof StudioInboxRows["pending"], string> = {
   products: "product",
   blogPosts: "journal post",
   portfolios: "portfolio piece",
-  importConflicts: "sheet conflict",
+  importConflicts: "import conflict",
 };
 
 const PENDING_VERB: Record<keyof StudioInboxRows["pending"], string> = {
@@ -131,18 +131,22 @@ export function shapeInbox(rows: StudioInboxRows): InboxItem[] {
     tone: job.status === "DONE" ? "success" : "warning",
   }));
 
+  // `ImportRun` is the CATALOG FILL's run record — written by `tier-fill.ts`
+  // and the deploy bootstrap, never by Bulk Import (which writes only an
+  // ActivityLog row). This item used to link to /studio/import, the Bulk
+  // Import wizard, which has no run history to show.
   const importItems: InboxItem[] = rows.importRuns.map((run) => ({
     id: `import-run:${run.id}`,
     kind: "import-run",
     label: run.abortedReason
-      ? `Import run aborted — ${run.trigger}`
-      : `Import run — ${run.trigger}`,
+      ? `Catalog fill run aborted — ${run.trigger}`
+      : `Catalog fill run — ${run.trigger}`,
     detail: run.abortedReason
       ? run.abortedReason
       : `${plural(run.created, "created")}, ${plural(run.updated, "updated")}${
           run.failed > 0 ? `, ${plural(run.failed, "failed")}` : ""
         }`,
-    href: "/studio/import",
+    href: "/studio/catalog-fill",
     at: run.startedAt.toISOString(),
     tone: run.abortedReason || run.failed > 0 ? "warning" : "default",
   }));

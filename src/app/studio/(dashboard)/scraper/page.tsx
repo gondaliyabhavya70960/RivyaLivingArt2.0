@@ -201,7 +201,7 @@ export default async function ScraperPage() {
               href="/studio/catalog-fill"
               className="font-medium text-sapphire-ink hover:underline"
             >
-              Sheet Import
+              Catalog fill
             </Link>{" "}
             —{" "}
             <span className="font-medium text-foreground">

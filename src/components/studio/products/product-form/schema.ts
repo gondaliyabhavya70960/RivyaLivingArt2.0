@@ -14,6 +14,11 @@ import { toTranslationsRecord } from "@/lib/translations-form";
 import { CONTENT_STATUSES } from "@/lib/content-status";
 import { PRODUCT_LIMITS, tooLong } from "@/lib/studio-limits";
 import {
+  IMPORT_LISTS,
+  importListLabel,
+  type ImportList,
+} from "@/lib/import-list";
+import {
   SIZE_TIER_FORM_VALUES,
   sizeTierFromFormValue,
   sizeTierToFormValue,
@@ -50,9 +55,11 @@ export type ProductFormInitial = {
   /** Raw per-locale overrides JSON from the database (`{ [locale]: {…} }`). */
   translations: unknown;
   needsRewrite: boolean;
-  /** Owner-sheet tier (1–4); null for products created in the studio. */
+  /** Import list (1–4) — `Product.tier`, which committed CSV the row came
+   *  from; null for products created in the studio. Not the product tier. */
   tier: number | null;
-  /** The owner's three-tier product architecture. Provenance's `tier` is not this. */
+  /** The product tier — the owner's three-tier architecture. `tier` above is
+   *  provenance, not this. */
   sizeTier: ProductSizeTier | null;
   inStock: boolean;
   /** Import provenance — read-only in the form, shown in the Provenance panel. */
@@ -97,23 +104,32 @@ export const FIELD_TYPE_LABEL: Record<(typeof FIELD_TYPES)[number], string> = {
 export const typeHasOptions = (type: string) =>
   type === "SELECT" || type === "SWATCH" || type === "SIZE";
 
-// ————————————————————— Tiers —————————————————————
+// ————————————————————— Import lists —————————————————————
 
-/** Select values are strings; "none" persists as SQL NULL (studio product). */
-export const TIER_OPTIONS = [
+/**
+ * The `tier` select — `Product.tier`, the IMPORT LIST a row came from. The
+ * exported names and the numeric values are the form contract and stay; the
+ * WORDS come from `src/lib/import-list.ts`, never typed here, because the
+ * form used to carry the third hand-written copy of them and read "Tier 1"
+ * beside a product-tier select that also read "Tier 1".
+ *
+ * Select values are strings; "none" persists as SQL NULL (studio product).
+ */
+export const TIER_OPTIONS: readonly {
+  value: "none" | `${ImportList}`;
+  label: string;
+}[] = [
   { value: "none", label: "— (studio product)" },
-  { value: "1", label: "Tier 1 — Owner" },
-  { value: "2", label: "Tier 2 — Resin goods" },
-  { value: "3", label: "Tier 3 — Supplies" },
-  { value: "4", label: "Tier 4 — 3D printing" },
-] as const;
+  ...IMPORT_LISTS.map((list) => ({
+    value: `${list}` as const,
+    label: importListLabel(list),
+  })),
+];
 
-export const TIER_LABEL: Record<number, string> = {
-  1: "Tier 1 — Owner",
-  2: "Tier 2 — Resin goods",
-  3: "Tier 3 — Supplies",
-  4: "Tier 4 — 3D printing",
-};
+/** `Product.tier` → "List 1 — Owner's store", for the read-only panels. */
+export const TIER_LABEL: Record<number, string> = Object.fromEntries(
+  IMPORT_LISTS.map((list) => [list, importListLabel(list)]),
+);
 
 // ————————————————————— Image roles —————————————————————
 

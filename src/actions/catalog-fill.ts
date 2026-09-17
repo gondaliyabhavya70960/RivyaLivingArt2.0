@@ -47,7 +47,7 @@ async function loadPolicy(): Promise<FillPolicy> {
 }
 
 /**
- * Dry-run the four-tier fill: every read and decision a real run makes,
+ * Dry-run the four-list fill: every read and decision a real run makes,
  * nothing written. Always allowed regardless of the master switch — refusing
  * to even show what a fill WOULD do is how a switch becomes a thing nobody
  * dares touch (`decideFillRun`'s own contract for the PREVIEW trigger).

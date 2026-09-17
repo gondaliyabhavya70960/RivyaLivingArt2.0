@@ -3,7 +3,10 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import type { TierFillDroppedRow } from "@/lib/import/tier-fill";
+import type {
+  TierFillDroppedCounts,
+  TierFillDroppedRow,
+} from "@/lib/import/tier-fill";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -12,21 +15,46 @@ import { cn } from "@/lib/utils";
  * reason (missing fields on N rows) has no per-row identity — the count is
  * the whole story. A row-level reason (gift card, tombstoned, duplicate,
  * over cap) names the row, so the operator can look it up in the CSV.
+ *
+ * `dropped` carries EXAMPLES, up to a hundred per reason
+ * (`summarizeDropped`) — a full run drops tens of thousands of rows and this
+ * list never showed more than a hundred of them anyway. `byReason` and
+ * `total` are the exact numbers; without them (an older stored run) the
+ * examples are all there is, and the counts come from those.
  */
-export function DroppedRows({ dropped }: { dropped: TierFillDroppedRow[] }) {
+export function DroppedRows({
+  dropped,
+  byReason,
+  total,
+}: {
+  dropped: TierFillDroppedRow[];
+  byReason?: TierFillDroppedCounts;
+  total?: number;
+}) {
   const [open, setOpen] = useState(false);
 
   const grouped = useMemo(() => {
-    const byReason = new Map<string, TierFillDroppedRow[]>();
+    const samples = new Map<string, TierFillDroppedRow[]>();
     for (const row of dropped) {
-      const list = byReason.get(row.reason) ?? [];
+      const list = samples.get(row.reason) ?? [];
       list.push(row);
-      byReason.set(row.reason, list);
+      samples.set(row.reason, list);
     }
-    return [...byReason.entries()].sort((a, b) => b[1].length - a[1].length);
-  }, [dropped]);
+    const reasons = new Set([...samples.keys(), ...Object.keys(byReason ?? {})]);
+    return [...reasons]
+      .map(
+        (reason) =>
+          [
+            reason,
+            samples.get(reason) ?? [],
+            byReason?.[reason] ?? samples.get(reason)?.length ?? 0,
+          ] as const,
+      )
+      .sort((a, b) => b[2] - a[2]);
+  }, [dropped, byReason]);
 
-  if (dropped.length === 0) return null;
+  const shown = total ?? dropped.length;
+  if (shown === 0) return null;
 
   return (
     <div className="rounded-card border border-border bg-card">
@@ -37,8 +65,8 @@ export function DroppedRows({ dropped }: { dropped: TierFillDroppedRow[] }) {
         className="flex w-full items-center justify-between gap-3 p-4 text-start"
       >
         <span className="text-sm font-medium text-foreground">
-          {dropped.length.toLocaleString("en-IN")}{" "}
-          {dropped.length === 1 ? "row" : "rows"} not imported
+          {shown.toLocaleString("en-IN")} {shown === 1 ? "row" : "rows"} not
+          imported
         </span>
         {open ? (
           <ChevronUp aria-hidden className="size-4 text-muted-foreground" />
@@ -48,10 +76,12 @@ export function DroppedRows({ dropped }: { dropped: TierFillDroppedRow[] }) {
       </button>
       {open && (
         <div className="space-y-4 border-t border-border p-4 pt-3">
-          {grouped.map(([reason, rows]) => (
+          {grouped.map(([reason, rows, count]) => (
             <div key={reason}>
               <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Badge variant="outline">{rows.length}</Badge>
+                <Badge variant="outline">
+                  {count.toLocaleString("en-IN")}
+                </Badge>
                 {reason}
               </p>
               <ul
@@ -59,7 +89,7 @@ export function DroppedRows({ dropped }: { dropped: TierFillDroppedRow[] }) {
                   "mt-1.5 max-h-40 space-y-1 overflow-y-auto ps-1 text-xs text-muted-foreground",
                 )}
               >
-                {rows.slice(0, 100).map((row, i) => (
+                {rows.map((row, i) => (
                   <li key={`${row.tab}-${row.externalId ?? i}-${i}`}>
                     <span className="font-mono">{row.tab}</span>
                     {row.title && <> — {row.title}</>}
@@ -72,7 +102,9 @@ export function DroppedRows({ dropped }: { dropped: TierFillDroppedRow[] }) {
                     )}
                   </li>
                 ))}
-                {rows.length > 100 && <li>… and {rows.length - 100} more</li>}
+                {count > rows.length && (
+                  <li>… and {(count - rows.length).toLocaleString("en-IN")} more</li>
+                )}
               </ul>
             </div>
           ))}

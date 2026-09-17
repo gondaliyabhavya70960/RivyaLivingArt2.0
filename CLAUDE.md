@@ -70,11 +70,19 @@ tabled there as open questions, not built around.
 **THREE COLUMNS ARE CALLED "tier" AND THEY MEAN DIFFERENT THINGS.** This is the
 expensive trap in that workstream:
 
-- `Product.tier` — `Int?`, the OWNER-SHEET IMPORT tier (1 owner · 2 resin goods ·
-  3 supplies · 4 3D-print), written by `tier-fill.ts` from `data/tiers/*.csv.gz`.
-  It is indexed and it is read by `shop.ts`'s DEFAULT SORT, `search-query.ts`'s
-  group ranking, `groupForTier`, the import validator, the confirmed export and
-  the demo fixtures' zod shape. **Where a product CAME FROM.**
+- `Product.tier` — `Int?`, the IMPORT LIST a row came from (1 the owner's
+  previous store · 2 resin goods · 3 supplies · 4 3D-print), written by
+  `tier-fill.ts` from `data/tiers/*.csv.gz`. It is indexed and it is read by
+  `shop.ts`'s DEFAULT SORT, `search-query.ts`'s group ranking, `groupForTier`,
+  the import validator, the confirmed export and the demo fixtures' zod shape.
+  **Where a product CAME FROM.** **The Studio stopped calling it a tier on
+  2026-09-17.** Every label reads "import list" — "List 1 — Owner's store" —
+  from `src/lib/import-list.ts`, ONE copy pinned by test to the CSV stems and
+  to `PRODUCT_LIMITS`, because "Tier 1 — Owner" and "Tier 1 — Collectible" had
+  sat on adjacent screens meaning different things. The column, its values,
+  the `?tier=` URL param, the saved-view column key, the CSV headers `tier` and
+  `product_tier`, the file stems and the `sheet-import` / `sheet:*` strings
+  are contracts and did not move. Only the words did.
 - `Product.sizeTier` — the size taxonomy, a nullable `ProductSizeTier` enum,
   shipped 2026-09-15. **What a piece IS.** Nullable because three writers create
   products without passing the product form (the scraper's promote, Bulk Import,
@@ -107,11 +115,49 @@ expensive trap in that workstream:
 - `ScrapeSource.tier` — `ScrapeTier`, which supplier list we went looking in.
   Its three SIZE values map to NULL in `TIER_NUMBER` precisely because the four
   old values map onto `Product.tier`'s integers, and numbering a size tier would
-  make a purge delete CSV-imported products.
+  make a purge delete CSV-imported products. **Its Studio word is "source
+  tier"**, and its labels live ONCE in `src/lib/scraper/purge.ts` (`TIER_LABEL`,
+  `SCRAPE_TIER_SHORT`, `scrapeTierStudioLabel` — which derives "Tier 1 —
+  Collectible …" from `SIZE_TIER_NUMBER`/`SIZE_TIER_NAME` and adds "sources"
+  where a product-tier control sits on the same screen); the five hand-typed
+  copies it replaced were deleted on 2026-09-17.
 
 Taking `Product.tier` over for the size taxonomy is a retype of an indexed
 column that live queries sort on — unsafe by the rule above, and it would reach
 production on push.
+
+**"Tier" in the Studio means `sizeTier` (2026-09-17).** Product tier, source
+tier and import list are the three words, and every screen in the catalogue
+flow uses them: the products list and form, the overview (which now carries a
+PRODUCT TIERS strip beside the import-list strip), Catalog fill (its four lists
+are import lists, and each one shows how its rows WOULD file into the three
+tiers by the same rule the deploy-time pass uses), Exports, the scraper's
+registry and inbox (the five hand-typed scrape-tier label copies collapsed
+into `purge.ts`). Two things were BUILT under that change, not just relabelled:
+**Bulk Import accepts a Product Scraper export** — Products type only:
+`src/lib/import/scrape-export.ts` remaps the ScrapeDeck columns onto the
+products template, a blank category is auto-mapped by `matchCategoryId` and a
+blank product tier suggested by `suggestSizeTier`, and every row lands exactly
+as the review inbox's Add to catalog lands it — DRAFT, `needsRewrite`, the
+same `importSource`/`importRef`, the staged twin marked IMPORTED — so the two
+paths are one row to each other and a second upload updates rather than
+duplicates; any other template type still refuses the file, and the refusal
+now says to pick Products. **Approve on `/studio/products`** is the batch
+"confirm rewrite" (`docs/product-lifecycle.md` § Approving): it clears the
+guard on the selection, marks the rows owner-touched and publishes the ones
+with a tier, behind a dialog that says what it lifts; Publish keeps refusing
+flagged rows, because that refusal is the guardrail and Approve is the
+explicit act.
+Three smaller facts from the same change: `product-filter-links.ts` builds a
+`/studio/products` deep link from a filter (the parser's inverse, pinned by
+test to parse back) — the overview's two strips, its Suggest-tiers link and
+catalog fill's list rows go through it, while the overview's status and stock
+strips, `/studio/content-gaps` and the inbox still build the URL as a string;
+move each one through `productListHref` when it is next touched; the `sheet-import` run summary carries `sizeTiers` per list ADDITIVELY
+(older runs lack the key; a reader treats it as optional); and Bulk Import now
+applies the untiered-publish guard the form and bulk Publish apply, scoped to
+the transition the same way — it had been the one writer that could still put
+an untiered product on the shop.
 
 On 2026-09-15 the owner delegated decisions D25–D29 ("decide by yourself and go
 to the next step") rather than answering them individually, so the plan's own
@@ -596,6 +642,14 @@ below are the ones that are expensive to rediscover.
   feature** (`bootstrap.ts` → `import-tiers.ts`). Its settings all default to
   that behaviour, so a fresh environment still self-populates on first boot.
   The blast-radius cap guards CREATES specifically — the direction that hurts.
+  **The Studio's own Preview / Run now read nothing until 2026-09-17**: the
+  fill resolved `data/tiers/` from `__dirname`, which is a `.next/` chunk
+  folder under the running server, so both buttons answered zeros on every
+  environment. The root is `process.cwd()` now, and `next.config.ts` traces
+  `data/tiers/**` and `data/rewrites/**` into the catalog-fill route's
+  function — a `readFileSync` of a computed path is invisible to Vercel's
+  tracing, so without that include the files are simply not in the function.
+  Production's Preview after the merge is the proof; it writes nothing.
 - **Deleting a product never touches the staged scrape rows.** Those record
   what a supplier's site said; a deletion here does not un-happen the scrape.
   The `DeletedImport` tombstone written by the delete is what stops the next

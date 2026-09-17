@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/select";
 import { useSelection } from "@/hooks/use-selection";
 import { useScrapeRunner } from "@/hooks/use-scrape-runner";
+import { SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
 
 export type JobRow = {
   id: string;
@@ -71,20 +72,17 @@ export type JobRow = {
 export type TierCounts = Record<ScrapeTier, number>;
 
 /**
- * The owner's size tiers first — the batch buttons used to list only the four
- * retired provenance tiers, so the reference sites filed under the size
- * tiers on 2026-09-15 could not be queued from here at all. Labels follow the
- * source registry's (`source-list.tsx`).
+ * The source tiers in the owner's order — size tiers first — and their
+ * labels, both read from `purge.ts`. The batch buttons used to list only the
+ * four retired provenance tiers, so the reference sites filed under the size
+ * tiers on 2026-09-15 could not be queued from here at all; then they carried
+ * a fourth hand-typed copy of the labels, which is how "Tier 1 — Large" came
+ * to mean a supplier list on this screen and a product on the next.
  */
-const TIERS: { value: ScrapeTier; label: string }[] = [
-  { value: "LARGE_FORMAT", label: "Tier 1 — Large" },
-  { value: "MEDIUM_FORMAT", label: "Tier 2 — Medium" },
-  { value: "SMALL_FORMAT", label: "Tier 3 — Small" },
-  { value: "OWNER", label: "Owner's list (retired)" },
-  { value: "RESIN_GOODS", label: "Resin goods (retired)" },
-  { value: "SUPPLIES", label: "Supplies (retired)" },
-  { value: "PRINT3D", label: "3D print (retired)" },
-];
+const TIERS = SCRAPE_TIERS.map((value) => ({
+  value,
+  label: scrapeTierStudioLabel(value),
+}));
 
 function hostLabel(input: string): string {
   try {
@@ -138,7 +136,7 @@ export function JobDashboard({
 
   // ————— Batch card —————
   const [batchBusy, setBatchBusy] = useState<string | null>(null);
-  // A tier press fans out across every enabled source in it. That is a
+  // A source-tier press fans out across every enabled source in it. That is a
   // legitimate action and a large one, so it is confirmed with the count it
   // will actually queue rather than fired on the click.
   const [pendingBatch, setPendingBatch] = useState<ScrapeTier | "ALL" | null>(
@@ -190,7 +188,7 @@ export function JobDashboard({
       toast.info(
         skipped.length > 0
           ? `Already scraping: ${skipped.join(", ")}. Nothing new to queue.`
-          : "No enabled, platform-detected sources in this tier.",
+          : "No enabled, platform-detected sources in this source tier.",
       );
       return;
     }
@@ -279,7 +277,7 @@ export function JobDashboard({
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Paste any store URL. The platform is auto-detected and the site is
-            saved into the source registry under the chosen tier.
+            saved into the source registry under the chosen source tier.
           </p>
           <div className="mt-4 space-y-3">
             <div className="space-y-1.5">
@@ -295,7 +293,7 @@ export function JobDashboard({
             </div>
             <div className="flex flex-wrap items-end gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="scrape-tier">Tier</Label>
+                <Label htmlFor="scrape-tier">Source tier</Label>
                 <Select
                   value={tier}
                   onValueChange={(v) => setTier(v as ScrapeTier)}
@@ -334,8 +332,8 @@ export function JobDashboard({
             Batch runs
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Queue every enabled source in a tier. Jobs run one at a time to stay
-            polite to the upstream stores.
+            Queue every enabled source in a source tier. Jobs run one at a time
+            to stay polite to the upstream stores.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {TIERS.map((t) => (
@@ -343,6 +341,11 @@ export function JobDashboard({
                 key={t.value}
                 variant="outline"
                 size="sm"
+                // The label is the full product-tier name ("Tier 1 —
+                // Collectible Furniture & Spatial Art"), wider than a phone
+                // card; a button's default nowrap made the card overflow the
+                // page at 390px. Let it wrap instead.
+                className="h-auto min-h-8 max-w-full whitespace-normal text-start"
                 disabled={batchBusy !== null || tierCounts[t.value] === 0}
                 onClick={() => setPendingBatch(t.value)}
               >
@@ -362,7 +365,7 @@ export function JobDashboard({
               {batchBusy === "ALL" && (
                 <Loader2 className="animate-spin" aria-hidden />
               )}
-              Scrape ALL (tier order)
+              Scrape ALL (source-tier order)
             </Button>
           </div>
         </section>
@@ -392,7 +395,7 @@ export function JobDashboard({
       {jobs.length === 0 ? (
         <EmptyState
           title="No scrape jobs yet"
-          description="Paste a store URL above or queue a tier batch — every run lands its products in the review queue."
+          description="Paste a store URL above or queue a source-tier batch — every run lands its products in the review queue."
         />
       ) : (
         <div
@@ -593,8 +596,8 @@ export function JobDashboard({
             </DialogTitle>
             <DialogDescription>
               {pendingBatch === "ALL"
-                ? "Every enabled source in every tier, in tier order."
-                : "Every enabled source in this tier."}{" "}
+                ? "Every enabled source in every source tier, in source-tier order."
+                : "Every enabled source in this source tier."}{" "}
               They run one at a time to stay polite to the upstream stores, and
               any source already being scraped is skipped.
             </DialogDescription>

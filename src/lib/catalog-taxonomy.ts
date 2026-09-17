@@ -332,11 +332,14 @@ export function groupForCategorySlug(slug: string): CatalogGroup {
 }
 
 /**
- * Ecosystem group from the owner-sheet tier ladder (1 owner originals ·
- * 2 resin goods · 3 supplies · 4 3D print; hand-made studio rows carry
- * NULL). The importer routes each vertical's rows into that group's
- * categories, so tier↔group is 1:1 on the live catalog — used where card
- * data carries no category slug (audit L-S1: the group-aware card CTA).
+ * Ecosystem group from the IMPORT LIST — `Product.tier`, which committed CSV
+ * a row came from (1 owner's store · 2 resin goods · 3 supplies · 4 3D
+ * printing; hand-made studio rows carry NULL; the words live in
+ * `src/lib/import-list.ts`). NOT the product tier (`sizeTier`), which says
+ * what a piece IS. The importer routes each vertical's rows into that
+ * group's categories, so list↔group is 1:1 on the live catalog — used where
+ * card data carries no category slug (audit L-S1: the group-aware card CTA).
+ * The function keeps its name: tests reference it.
  */
 export function groupForTier(tier: number | null | undefined): CatalogGroup {
   if (tier === 3) return "supplies";

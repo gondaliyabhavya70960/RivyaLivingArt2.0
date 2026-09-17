@@ -30,7 +30,7 @@ type Preview = {
 };
 
 /**
- * Remove every website in a tier, and everything that came from it.
+ * Remove every website in a source tier, and everything that came from it.
  *
  * The counts are fetched BEFORE the dialog opens and every one of them is
  * named. "This will remove 38 sources" hides that it also takes twelve
@@ -59,7 +59,7 @@ export function PurgeTierButton({ tier }: { tier: ScrapeTier }) {
     const res = await previewSourcePurge({ tier });
     setBusy(false);
     if (!res.ok || !res.data) {
-      toast.error(!res.ok ? res.error : "Could not read that tier.");
+      toast.error(!res.ok ? res.error : "Could not read that source tier.");
       return;
     }
     if (res.data.sources === 0) {
@@ -111,7 +111,7 @@ export function PurgeTierButton({ tier }: { tier: ScrapeTier }) {
         ) : (
           <Trash2 aria-hidden />
         )}
-        Remove all {label.toLowerCase()}
+        Remove all {label.toLowerCase()} sources
       </Button>
 
       <Dialog open={open} onOpenChange={(o) => !o && setOpen(false)}>
@@ -141,7 +141,8 @@ export function PurgeTierButton({ tier }: { tier: ScrapeTier }) {
                   {preview.catalogProducts.toLocaleString("en-IN")}
                 </span>{" "}
                 live catalog product
-                {preview.catalogProducts === 1 ? "" : "s"} in this tier.
+                {preview.catalogProducts === 1 ? "" : "s"} from this source
+                tier.
                 <span className="mt-1 block text-muted-foreground">
                   They are on the storefront now — including any whose source
                   row was already removed. Untick to remove the suppliers

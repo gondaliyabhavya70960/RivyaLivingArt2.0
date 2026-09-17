@@ -18,26 +18,52 @@ import { mirrorNextCatalogBatch } from "@/actions/catalog-mirror";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
-import { FillPreview } from "@/components/studio/catalog-fill/fill-preview";
+import {
+  FillPreview,
+  SizeTierSplit,
+} from "@/components/studio/catalog-fill/fill-preview";
 import { CatalogFillPolicy } from "@/components/studio/catalog-fill-policy";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
+import {
+  IMPORT_LIST_FILE,
+  IMPORT_LISTS,
+  importListLabel,
+  type ImportList,
+} from "@/lib/import-list";
+import { importListStripHref } from "@/components/studio/products/product-filter-links";
+import type { TierFillSizeTierTally } from "@/lib/import/tier-fill";
 
 export const metadata: Metadata = { title: "Catalog fill" };
 
-const TIER_META: Record<
-  number,
-  { tab: string; label: string; target: string }
-> = {
-  1: { tab: "Tier1_Owner", label: "Tier 1 — Owner", target: "all rows" },
-  2: {
-    tab: "Tier2_ResinGoods",
-    label: "Tier 2 — Resin goods",
-    target: "top 1,000",
-  },
-  3: { tab: "Tier3_Supplies", label: "Tier 3 — Supplies", target: "top 2,500" },
-  4: { tab: "Tier4_3DPrint", label: "Tier 4 — 3D printing", target: "top 500" },
+/**
+ * Preview and Run now execute the whole fill — ~4,400 row reads across the
+ * four lists against the production database. The default function budget is
+ * for a page render, not for that; the review page and the cron routes that
+ * do the same kind of work declare theirs too. (Until 2026-09-17 both
+ * buttons read no file at all and returned in milliseconds, so the budget
+ * never mattered — see ROOT in `tier-fill.ts`.)
+ */
+export const maxDuration = 300;
+
+/**
+ * The owner brief's import volume per list — the caps `tier-fill.ts` applies
+ * (all · 1,000 · 2,500 · 500), as words. The list's name, label and file stem
+ * come from `import-list.ts`, the one copy of that vocabulary.
+ */
+const LIST_TARGET: Record<ImportList, string> = {
+  1: "all rows",
+  2: "top 1,000",
+  3: "top 2,500",
+  4: "top 500",
 };
 
+/**
+ * One list's entry in the stored `sheet-import` meta (`meta.tiers[stem]`) —
+ * `TierFillTierSummary` as JSON. `tier` is the LIST number. `sizeTiers` is
+ * optional HERE and only here: it was added on 2026-09-17, and every run
+ * recorded before that carries no such key, so the table shows "—" for it
+ * rather than a broken cell.
+ */
 type RunTierStats = {
   tier: number;
   detected: number;
@@ -47,6 +73,7 @@ type RunTierStats = {
   unchanged: number;
   failed: number;
   demoted: number;
+  sizeTiers?: TierFillSizeTierTally;
 };
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
@@ -196,7 +223,7 @@ export default async function CatalogFillPage() {
     <div>
       <PageHeader
         title="Catalog fill"
-        description="The four-tier product import from the committed tier CSVs — live catalog state, the last run, and how the pipeline moves data."
+        description="The catalog fill from the four committed import lists in data/tiers/ — where a row came from, not what it is. Product tiers are filed by rule after a fill: Suggest tiers on the products screen shows the plan before it writes."
         actions={
           <>
             <Button asChild variant="outline">
@@ -295,45 +322,49 @@ export default async function CatalogFillPage() {
         <table className="w-full text-sm">
           <thead>
             <StudioTableHead>
-              <th className="py-3 pl-4 pr-4 font-medium">Tier tab</th>
+              <th className="py-3 pl-4 pr-4 font-medium">Import list</th>
               <th className="py-3 pr-4 font-medium">Import target</th>
               <th className="py-3 pr-4 text-right font-medium">Detected</th>
               <th className="py-3 pr-4 text-right font-medium">Published</th>
               <th className="py-3 pr-4 text-right font-medium">Drafts</th>
               <th className="py-3 pr-4 text-right font-medium">No images</th>
               <th className="py-3 pr-4 text-right font-medium">Last run</th>
+              <th className="py-3 pr-4 text-right font-medium">
+                Would file as
+              </th>
             </StudioTableHead>
           </thead>
           <tbody>
-            {[1, 2, 3, 4].map((tier) => {
-              const meta = TIER_META[tier];
-              const run = runByTier.get(tier);
+            {IMPORT_LISTS.map((list) => {
+              const run = runByTier.get(list);
               return (
-                <tr key={tier} className="border-b border-border last:border-0">
+                <tr key={list} className="border-b border-border last:border-0">
                   <td className="py-3 pl-4 pr-4">
                     <Link
-                      href={`/studio/products?tier=${tier}`}
+                      href={importListStripHref(list)}
                       className="font-medium text-foreground hover:text-sapphire-ink"
                     >
-                      {meta.label}
+                      {importListLabel(list)}
                     </Link>
-                    <p className="text-xs text-muted-foreground">{meta.tab}</p>
+                    <p className="font-mono text-xs text-muted-foreground">
+                      data/tiers/{IMPORT_LIST_FILE[list]}.csv.gz
+                    </p>
                   </td>
                   <td className="py-3 pr-4 text-muted-foreground">
-                    {meta.target}
+                    {LIST_TARGET[list]}
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums text-muted-foreground">
                     {run ? run.detected.toLocaleString("en-IN") : "—"}
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums">
-                    {(published.get(tier) ?? 0).toLocaleString("en-IN")}
+                    {(published.get(list) ?? 0).toLocaleString("en-IN")}
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums text-muted-foreground">
-                    {(drafts.get(tier) ?? 0).toLocaleString("en-IN")}
+                    {(drafts.get(list) ?? 0).toLocaleString("en-IN")}
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums">
-                    {(noImage.get(tier) ?? 0) > 0 ? (
-                      <Badge variant="warning">{noImage.get(tier)}</Badge>
+                    {(noImage.get(list) ?? 0) > 0 ? (
+                      <Badge variant="warning">{noImage.get(list)}</Badge>
                     ) : (
                       <span className="text-muted-foreground">0</span>
                     )}
@@ -344,6 +375,15 @@ export default async function CatalogFillPage() {
                         (run.failed > 0 ? ` · ✕${run.failed}` : "") +
                         (run.demoted > 0 ? ` · ↓${run.demoted}` : "")
                       : "no recorded run yet"}
+                  </td>
+                  <td className="py-3 pr-4 text-right text-xs text-muted-foreground">
+                    {/* A run recorded before the tally existed shows a dash,
+                        like Detected does before any run at all. */}
+                    {run?.sizeTiers ? (
+                      <SizeTierSplit tally={run.sizeTiers} />
+                    ) : (
+                      "—"
+                    )}
                   </td>
                 </tr>
               );
@@ -402,24 +442,46 @@ export default async function CatalogFillPage() {
           </div>
           <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>
-              The four tier CSVs are committed to the repository at{" "}
-              <code className="font-mono text-xs">data/tiers/</code>. Refreshing
-              them is a manual run of the{" "}
-              <code className="font-mono text-xs">
-                Fetch product tier sheets
-              </code>{" "}
-              workflow — it is not on a schedule.
+              The four import lists are committed to the repository at{" "}
+              <code className="font-mono text-xs">data/tiers/</code> —{" "}
+              {IMPORT_LISTS.map((list, i) => (
+                <span key={list}>
+                  {i > 0 && ", "}
+                  {importListLabel(list)} (
+                  <code className="font-mono text-xs">
+                    {IMPORT_LIST_FILE[list]}.csv.gz
+                  </code>
+                  )
+                </span>
+              ))}
+              . They are the only copy: the spreadsheet they were exported from
+              is no longer shared, and there is no workflow and no schedule.
+              Refreshing a list means committing a new file.
             </li>
             <li>
-              The next deploy imports them: Tier 1 in full, Tiers 2–4 as the
-              file-ordered top 1,000 / 2,500 / 500. Unchanged rows are skipped;
-              rows that fall out of the selection move to draft — nothing is
-              deleted.
+              A fill — the next deploy with the switch on, or Run now above —
+              imports them: List 1 in full, Lists 2–4 as the file-ordered top
+              1,000 / 2,500 / 500. Unchanged rows are skipped; rows that fall
+              out of the selection move to draft — nothing is deleted.
             </li>
             <li>
               Imported fields (title, description, prices, images, category,
               availability) refresh from the CSV whenever a row changes; change
               the CSV, not the product, for those fields.
+            </li>
+            <li>
+              A list says where a row came from, never which product tier it is.
+              After a fill, the deploy-time pass and the{" "}
+              <Link
+                href="/studio/products"
+                className="font-medium text-foreground underline-offset-2 hover:text-sapphire-ink hover:underline"
+              >
+                Suggest tiers
+              </Link>{" "}
+              button on the products screen file untiered rows by rule — the
+              category first, then the row&rsquo;s own words — and leave
+              supplies untiered. &ldquo;Would file as&rdquo; above is that rule
+              run over the last fill&rsquo;s rows.
             </li>
           </ol>
         </div>

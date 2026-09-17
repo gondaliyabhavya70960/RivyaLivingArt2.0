@@ -100,7 +100,7 @@ export function seedSourceUpsertData(
 }
 
 export const SEED_SOURCES: SeedSource[] = [
-  // ————————— Tier 1 — Owner's list —————————
+  // ————————— Source tier OWNER — "Owner's store" (retired provenance value) —————————
   {
     key: "sumaiya-resin",
     name: "Sumaiya Resin",
@@ -224,7 +224,7 @@ export const SEED_SOURCES: SeedSource[] = [
       "The owner's previous storefront. Answered HTTP 402 (a frozen store) on 2026-09-16 — nothing to collect until it is back. Its catalogue survives as data/tiers/Tier1_Owner.csv.gz.",
   },
 
-  // ————————— Tier 1 — Large (collectible furniture & spatial art) —————————
+  // ————————— Source tier LARGE_FORMAT — "Tier 1 sources — Collectible Furniture & Spatial Art" —————————
   // The owner's own reference set, 2026-09-15. Registered, NOT approved:
   // every one lands policyReviewStatus PENDING, so the gate refuses to collect
   // any of them until a human records a review. Several are design references
@@ -300,7 +300,7 @@ export const SEED_SOURCES: SeedSource[] = [
       "Competitor: epoxy tables, bespoke furniture, commission CTAs. Verified 2026-09-16: WooCommerce Store API, 9 listed tables.",
   },
 
-  // ————————— Tier 2 — Medium (memory & celebration art) —————————
+  // ————————— Source tier MEDIUM_FORMAT — "Tier 2 sources — Memory & Celebration Art" —————————
   {
     key: "vedumi",
     name: "VEDUMI",
@@ -343,7 +343,7 @@ export const SEED_SOURCES: SeedSource[] = [
       "Competitor: engagement trays, ring platters, wedding preservation. Verified 2026-09-16: no catalogue API (Store API 403) but product JSON-LD on every page and a product sitemap; 148 products in a capped run.",
   },
 
-  // ————————— Tier 3 — Small (personal art & gifting) —————————
+  // ————————— Source tier SMALL_FORMAT — "Tier 3 sources — Personal Art & Gifting" —————————
   {
     key: "dinosaur-designs",
     name: "Dinosaur Designs",

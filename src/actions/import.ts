@@ -11,9 +11,7 @@ import {
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import { nullIfEmpty } from "@/lib/utils";
-import { parseSizeTierCell } from "@/lib/product-size-tier";
 import { decideMerge, type MergeAction } from "@/lib/scraper/merge-policy";
-import { safeFetch } from "@/lib/scraper/ssrf";
 import {
   fetchGoogleSheetCsv,
   ImportError,
@@ -22,26 +20,30 @@ import {
   parseXlsx,
 } from "@/lib/import/parse";
 import {
+  buildProductImportContext,
+  importProductRow,
+  type ProductImportContext,
+} from "@/lib/import/product-row";
+import type { ImportOrigin } from "@/lib/import/scrape-export";
+import {
   IMPORT_TYPE_KEYS,
   MAX_IMPORT_ROWS,
-  CUSTOM_FIELD_SLOTS,
   type ImportTypeKey,
 } from "@/lib/import/templates";
 import {
+  buildImageList,
+  identityKey,
   intOrNull,
+  loadExistingProducts,
   normalizeStatus,
-  parseBool,
-  parseOccasions,
   splitList,
   validateRows,
   type ValidatedRow,
 } from "@/lib/import/validate";
 import { slugify } from "@/lib/slug";
-import { ACCEPTED_UPLOAD_TYPES, putFile } from "@/lib/storage";
 import type { Prisma } from "@/generated/prisma/client";
 
 const BATCH_SIZE = 10;
-const MIRROR_MAX_BYTES = 8 * 1024 * 1024; // matches the media library cap
 
 const REVALIDATE_PATHS: Record<ImportTypeKey, string[]> = {
   products: ["/studio/products"],
@@ -126,6 +128,25 @@ export type ImportPreview = {
   productMerge?: {
     verdicts: Record<number, MergeAction>;
     ownerEditedCount: number;
+    /** Scraper origin only: rows whose match is the catalog fill's own
+     *  `sheet:<key>` row. The writer leaves those untouched (the promote
+     *  path's rule) and marks their staged twins imported; the row carries
+     *  a message saying so, and this is the count the notice names. */
+    sheetTwinCount: number;
+  };
+  /**
+   * `"scraper"` when the file is a Product Scraper export read as Products
+   * (`src/lib/import/scrape-export.ts`): every row lands as a draft with the
+   * rewrite guard on, deduplicated on the promote path's own keys. Absent
+   * for an ordinary file.
+   */
+  origin?: ImportOrigin;
+  /** Scraper origin only — what the validator filled in, and what it could
+   *  not, so the wizard can say so before the owner presses Import. */
+  scrapeExport?: {
+    autoMappedCategories: number;
+    suggestedTiers: number;
+    unmappedCategories: number;
   };
 };
 
@@ -164,38 +185,32 @@ export async function previewImport(
 
     const totalRows = rows.length;
     const truncated = totalRows > MAX_IMPORT_ROWS;
-    const validated = await validateRows(
+    const validation = await validateRows(
       typeKey,
       rows.slice(0, MAX_IMPORT_ROWS),
     );
+    const validated = validation.rows;
 
     const counts = { create: 0, update: 0, error: 0, total: validated.length };
     for (const row of validated) counts[row.status] += 1;
 
     let productMerge: ImportPreview["productMerge"];
     if (typeKey === "products") {
-      const slugs = [
-        ...new Set(
-          validated
-            .filter((row) => row.status !== "error")
-            .map((row) => row.data.slug?.trim())
-            .filter((slug): slug is string => Boolean(slug)),
-        ),
-      ];
-      const existing = slugs.length
-        ? await db.product.findMany({
-            where: { slug: { in: slugs } },
-            select: { slug: true, ownerTouched: true, needsRewrite: true },
-          })
-        : [];
-      const bySlug = new Map(existing.map((p) => [p.slug, p]));
+      // The same lookup the writer makes — by slug for an ordinary file, by
+      // the (source_key, external_id) pair for a scraper export — so the
+      // verdict shown here is the verdict the run applies.
+      const attempt = validated.filter((row) => row.status !== "error");
+      const existingByKey = await loadExistingProducts(
+        attempt.map((row) => row.data),
+        validation.origin,
+      );
 
       const verdicts: Record<number, MergeAction> = {};
       let ownerEditedCount = 0;
-      for (const row of validated) {
-        if (row.status === "error") continue;
-        const slug = row.data.slug?.trim();
-        const match = slug ? bySlug.get(slug) : undefined;
+      let sheetTwinCount = 0;
+      for (const row of attempt) {
+        const key = identityKey("products", row.data, validation.origin);
+        const match = key ? existingByKey.get(key) : undefined;
         const verdict = decideMerge(
           match
             ? {
@@ -205,9 +220,23 @@ export async function previewImport(
             : null,
         );
         verdicts[row.index] = verdict;
-        if (verdict === "refresh-availability") ownerEditedCount += 1;
+        // A catalog-fill twin is decided FIRST and never counted as
+        // owner-edited: the writer returns "protected" for it whatever the
+        // overwrite box says, so counting it would put the row under a
+        // warning whose checkbox promises an action the writer refuses.
+        if (
+          validation.origin === "scraper" &&
+          match?.importSource?.startsWith("sheet:")
+        ) {
+          sheetTwinCount += 1;
+          row.messages.push(
+            "Already in the catalogue from the catalog fill — left as it is; its staged row is marked imported.",
+          );
+        } else if (verdict === "refresh-availability") {
+          ownerEditedCount += 1;
+        }
       }
-      productMerge = { verdicts, ownerEditedCount };
+      productMerge = { verdicts, ownerEditedCount, sheetTwinCount };
     }
 
     return {
@@ -218,6 +247,16 @@ export async function previewImport(
         totalRows,
         truncated,
         ...(productMerge ? { productMerge } : {}),
+        ...(validation.origin
+          ? {
+              origin: validation.origin,
+              scrapeExport: {
+                autoMappedCategories: validation.autoMappedCategories,
+                suggestedTiers: validation.suggestedTiers,
+                unmappedCategories: validation.unmappedCategories,
+              },
+            }
+          : {}),
       },
     };
   } catch (error) {
@@ -264,6 +303,8 @@ type ImportContext = {
   blogCategoryIdBySlug: Map<string, string>;
   /** Next display order for rows that do not specify one. */
   nextOrder: number;
+  /** Products only — the writer's own context (`product-row.ts`). */
+  products?: ProductImportContext;
 };
 
 export async function runImport(
@@ -282,7 +323,8 @@ export async function runImport(
 
     // Re-validate server-side — the client only echoes previewed rows,
     // but nothing stops a stale or hand-crafted payload.
-    const validated = await validateRows(typeKey, rows);
+    const validation = await validateRows(typeKey, rows);
+    const validated = validation.rows;
 
     const errors: ImportReport["errors"] = [];
     let skipped = 0;
@@ -296,7 +338,12 @@ export async function runImport(
     }
 
     const attempt = validated.filter((row) => row.status !== "error");
-    const ctx = await buildContext(typeKey, attempt);
+    const ctx = await buildContext(
+      typeKey,
+      attempt,
+      validation.origin,
+      session.user.id,
+    );
 
     let created = 0;
     let updated = 0;
@@ -338,6 +385,17 @@ export async function runImport(
         errors: errors.length,
         total: rows.length,
         ...(overwriteOwnerEdited ? { overwroteOwnerEdited: true } : {}),
+        // A scraper export read as Products records that it was one, and
+        // what the validator filled in on the way — the run's own audit of
+        // how many categories and tiers were ours rather than the file's.
+        ...(validation.origin
+          ? {
+              origin: validation.origin,
+              autoMappedCategories: validation.autoMappedCategories,
+              suggestedTiers: validation.suggestedTiers,
+              unmappedCategories: validation.unmappedCategories,
+            }
+          : {}),
       },
     });
     for (const path of REVALIDATE_PATHS[typeKey]) revalidatePath(path);
@@ -369,6 +427,8 @@ const uniqueHint = (reason: unknown) =>
 async function buildContext(
   typeKey: ImportTypeKey,
   rows: ValidatedRow[],
+  origin: ImportOrigin | undefined,
+  changedBy: string | null,
 ): Promise<ImportContext> {
   const ctx: ImportContext = {
     categoryIdBySlug: new Map(),
@@ -376,7 +436,15 @@ async function buildContext(
     nextOrder: 0,
   };
 
-  if (typeKey === "products" || typeKey === "portfolio") {
+  if (typeKey === "products") {
+    ctx.products = await buildProductImportContext(
+      rows.map((row) => row.data),
+      origin,
+      changedBy,
+    );
+  }
+
+  if (typeKey === "portfolio") {
     const categories = await db.category.findMany({
       select: { id: true, slug: true },
     });
@@ -444,7 +512,8 @@ function importRow(
 ): Promise<"created" | "updated" | "protected"> {
   switch (typeKey) {
     case "products":
-      return importProductRow(row, ctx, overwriteOwnerEdited);
+      if (!ctx.products) throw new Error("Product import context missing.");
+      return importProductRow(row, ctx.products, overwriteOwnerEdited);
     case "categories":
       return importCategoryRow(row, ctx);
     case "blog-posts":
@@ -457,73 +526,6 @@ function importRow(
       return importPortfolioRow(row, ctx);
     case "pages":
       return importPageRow(row);
-  }
-}
-
-function buildImageList(
-  row: Record<string, string>,
-): { url: string; alt: string; order: number }[] {
-  const urls = splitList(row.images);
-  const alts = splitList(row.image_alts);
-  return urls.map((url, i) => ({ url, alt: alts[i] ?? "", order: i }));
-}
-
-/**
- * Mirror a remote image into our storage (folder "products") and register
- * it in the media library. Non-fatal by design: any failure — unreachable
- * host, non-image response, oversize file — keeps the original URL so the
- * row still imports.
- */
-async function mirrorProductImage(url: string): Promise<string> {
-  if (!/^https?:\/\//i.test(url)) return url; // already a local /uploads path
-  if (url.includes(".blob.vercel-storage.com")) return url; // already ours
-
-  try {
-    const response = await safeFetch(url, {
-      signal: AbortSignal.timeout(20_000),
-    });
-    if (!response.ok) return url;
-    const contentType = (response.headers.get("content-type") ?? "")
-      .split(";")[0]
-      .trim();
-    if (!contentType.startsWith("image/") || contentType === "image/svg+xml") {
-      return url;
-    }
-
-    const buffer = Buffer.from(await response.arrayBuffer());
-    if (buffer.length === 0 || buffer.length > MIRROR_MAX_BYTES) return url;
-
-    const ext = ACCEPTED_UPLOAD_TYPES[contentType] ?? ".jpg";
-    const base =
-      slugify(
-        decodeURIComponent(
-          new URL(url).pathname.split("/").pop() ?? "",
-        ).replace(/\.[^.]+$/, ""),
-      ) || "import";
-    const stored = await putFile(buffer, {
-      pathname: `products/${base}${ext}`,
-      contentType,
-    });
-
-    // Best effort — the mirrored file is useful even if the library row fails.
-    await db.media
-      .create({
-        data: {
-          url: stored.url,
-          pathname: stored.pathname,
-          type: "IMAGE",
-          folder: "products",
-          bytes: buffer.length,
-        },
-      })
-      .catch((error) => {
-        console.error(`Media row failed for ${stored.pathname}:`, error);
-      });
-
-    return stored.url;
-  } catch (error) {
-    console.error(`Image mirror failed for ${url}:`, error);
-    return url;
   }
 }
 
@@ -556,160 +558,6 @@ async function importCategoryRow(
     data: { ...data, slug, order: order ?? ctx.nextOrder++ },
   });
   return "created";
-}
-
-function parseCustomFields(row: Record<string, string>): {
-  label: string;
-  type: "SELECT" | "TEXT" | "SWATCH" | "SIZE" | "NUMBER" | "FILE";
-  options: string[];
-  required: boolean;
-  order: number;
-}[] {
-  const fields = [];
-  for (let i = 1; i <= CUSTOM_FIELD_SLOTS; i += 1) {
-    const label = row[`custom${i}_label`]?.trim();
-    if (!label) continue;
-    fields.push({
-      label,
-      type: (row[`custom${i}_type`]?.trim().toUpperCase() ?? "TEXT") as
-        | "SELECT"
-        | "TEXT"
-        | "SWATCH"
-        | "SIZE"
-        | "NUMBER"
-        | "FILE",
-      options: splitList(row[`custom${i}_options`]),
-      required: parseBool(row[`custom${i}_required`]) ?? false,
-      order: fields.length,
-    });
-  }
-  return fields;
-}
-
-async function importProductRow(
-  row: Record<string, string>,
-  ctx: ImportContext,
-  overwriteOwnerEdited: boolean,
-): Promise<"created" | "updated" | "protected"> {
-  const slug = row.slug.trim();
-  const categoryId = ctx.categoryIdBySlug.get(row.category_slug.trim());
-  if (!categoryId) throw new Error(`Unknown category ${row.category_slug}`);
-
-  const existing = await db.product.findUnique({
-    where: { slug },
-    select: { id: true, ownerTouched: true, needsRewrite: true },
-  });
-
-  // H5, extended from the sheet importer and the scraper's promote path to
-  // Bulk Import: an owner-edited row is never silently overwritten by a
-  // stale export re-run through this screen. `previewImport` computed and
-  // showed the same verdict before the operator confirmed, and
-  // `overwriteOwnerEdited` is their explicit "yes, replace it anyway".
-  const tier0 = intOrNull(row.tier);
-  const inStock0 = parseBool(row.in_stock);
-  const verdict = decideMerge(
-    existing
-      ? {
-          ownerTouched: existing.ownerTouched,
-          needsRewrite: existing.needsRewrite,
-        }
-      : null,
-  );
-  if (!overwriteOwnerEdited && existing) {
-    // Only OWNERSHIP protects a row here, which is the same gate tier-fill
-    // applies. `decideMerge`'s other guard verdict, "skip", means "already
-    // rewritten, the SCRAPE has nothing new to say" — a judgement about a
-    // re-scrape of a supplier's page. This importer's incoming row is the
-    // owner's own spreadsheet, so reading "skip" as "protected" made Bulk
-    // Import — one of the three sanctioned ways to fill the catalogue
-    // (HARD RULE 3) — refuse to update almost every existing product,
-    // reporting them as protected rather than written.
-    if (verdict === "refresh-availability") {
-      if (inStock0 !== null) {
-        await db.product.update({
-          where: { id: existing.id },
-          data: { inStock: inStock0 },
-        });
-      }
-      return "protected";
-    }
-  }
-
-  // needsRewrite is intentionally untouched on update: bulk import must
-  // never silently clear the scraper's rewrite guard.
-  //
-  // tier / in_stock (audit L-AD2): validated upstream (tier 1-4 int,
-  // in_stock TRUE/FALSE). An EMPTY cell is "no opinion" — omitted from the
-  // write so an update never clobbers an existing tier or stock flag; on
-  // create the schema defaults apply (tier null, inStock true).
-  const tier = tier0;
-  const inStock = inStock0;
-  // product_tier reads the same way: empty means "no opinion", so a re-import
-  // of an older export never un-tiers a product the owner filed in the studio.
-  // It is a DIFFERENT column from `tier` above — that one is where the row
-  // came from, this one is what the piece is.
-  const sizeTier = parseSizeTierCell(row.product_tier);
-  const base = {
-    ...(tier !== null && tier >= 1 && tier <= 4 ? { tier } : {}),
-    ...(sizeTier !== null ? { sizeTier } : {}),
-    ...(inStock !== null ? { inStock } : {}),
-    title: row.title.trim(),
-    shortTagline: nullIfEmpty(row.short_tagline),
-    description: row.description?.trim() ?? "",
-    priceMin: intOrNull(row.price_min),
-    priceMax: intOrNull(row.price_max),
-    showPrice: parseBool(row.show_price) ?? true,
-    timeline: nullIfEmpty(row.timeline),
-    materials: nullIfEmpty(row.materials),
-    dimensions: nullIfEmpty(row.dimensions),
-    occasions: parseOccasions(row.occasions),
-    careNotes: nullIfEmpty(row.care_notes),
-    status: normalizeStatus(row.status),
-    featured: parseBool(row.featured) ?? false,
-    videoUrl: nullIfEmpty(row.video_url),
-    model3dUrl: nullIfEmpty(row.model3d_url),
-    categoryId,
-    seoTitle: nullIfEmpty(row.seo_title),
-    seoDescription: nullIfEmpty(row.seo_description),
-  };
-
-  // Mirror remote gallery images into our storage before touching the DB
-  // so a slow download never sits inside the transaction.
-  const images: { url: string; alt: string; order: number }[] = [];
-  const sources = buildImageList(row);
-  for (const image of sources) {
-    images.push({ ...image, url: await mirrorProductImage(image.url) });
-  }
-
-  const customFields = parseCustomFields(row);
-
-  await db.$transaction(async (tx) => {
-    const product = existing
-      ? await tx.product.update({ where: { id: existing.id }, data: base })
-      : await tx.product.create({ data: { ...base, slug } });
-
-    // Replace-all strategy for both child collections — mirrors upsertProduct.
-    await tx.productImage.deleteMany({ where: { productId: product.id } });
-    if (images.length > 0) {
-      await tx.productImage.createMany({
-        data: images.map((image) => ({ ...image, productId: product.id })),
-      });
-    }
-
-    await tx.customizationField.deleteMany({
-      where: { productId: product.id },
-    });
-    if (customFields.length > 0) {
-      await tx.customizationField.createMany({
-        data: customFields.map((field) => ({
-          ...field,
-          productId: product.id,
-        })),
-      });
-    }
-  });
-
-  return existing ? "updated" : "created";
 }
 
 async function importBlogPostRow(

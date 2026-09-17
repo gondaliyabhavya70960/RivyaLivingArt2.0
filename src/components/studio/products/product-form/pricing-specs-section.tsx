@@ -10,16 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatPriceBand } from "@/lib/utils";
+import { importListLabel } from "@/lib/import-list";
 import { FormSection, FieldError } from "./form-section";
-import {
-  DimensionsField,
-  MaterialsField,
-  TimelineField,
-} from "./spec-fields";
+import { DimensionsField, MaterialsField, TimelineField } from "./spec-fields";
 import { TIER_OPTIONS, type FormValues } from "./schema";
 import { useIsPrintProduct } from "./use-print-product";
 
-/** Price band, show-price toggle + live preview, stock, tier and spec fields. */
+/** Price band, show-price toggle + live preview, stock, import list and spec fields. */
 export function PricingSpecsSection({
   categories,
 }: {
@@ -104,12 +101,13 @@ export function PricingSpecsSection({
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-1.5">
-          {/* "Import tier", not "Tier". Essentials now carries PRODUCT TIER —
-              the owner's three-world architecture — and two selects on one
-              page both called "Tier" is a question an owner should never have
-              to answer twice. This one is provenance: which CSV the row came
-              from. It is not the same fact and it is not editable content. */}
-          <Label>Import tier</Label>
+          {/* "Import list", never "tier". Essentials carries the PRODUCT
+              TIER — the owner's three-tier architecture — and "tier" on a
+              Studio screen means that and nothing else. This select is
+              `Product.tier`: provenance, which of the four committed CSVs
+              the row came from. It is not the same fact and it is not
+              editable content; its words come from import-list.ts. */}
+          <Label>Import list</Label>
           <Controller
             control={control}
             name="tier"
@@ -118,9 +116,9 @@ export function PricingSpecsSection({
                 <SelectTrigger
                   ref={field.ref}
                   className="w-full"
-                  aria-label="Import tier"
+                  aria-label="Import list"
                 >
-                  <SelectValue placeholder="Import tier" />
+                  <SelectValue placeholder="Import list" />
                 </SelectTrigger>
                 <SelectContent>
                   {TIER_OPTIONS.map((option) => (
@@ -133,9 +131,9 @@ export function PricingSpecsSection({
             )}
           />
           <p className="text-xs text-muted-foreground">
-            Where this row came from in the owner sheet — provenance, not the
-            product tier in Essentials. Tier 4 (or a 3D-print category) swaps
-            in the 3D-printing section below.
+            Which of the four committed CSVs this row came from — provenance,
+            not the product tier in Essentials. {importListLabel(4)} (or a
+            3D-print category) swaps in the 3D-printing section below.
           </p>
         </div>
         <div className="space-y-1.5 sm:pt-6">
@@ -146,7 +144,9 @@ export function PricingSpecsSection({
               <Label className="cursor-pointer font-normal">
                 <Checkbox
                   checked={field.value}
-                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                  onCheckedChange={(checked) =>
+                    field.onChange(checked === true)
+                  }
                 />
                 In stock
               </Label>
@@ -159,7 +159,7 @@ export function PricingSpecsSection({
         </div>
       </div>
 
-      {/* Print products (tier 4 or a print-group category) move these into
+      {/* Print products (import list 4 or a print-group category) move these into
           the dedicated 3D-printing section below — each field is only ever
           mounted once (audit M-A3). */}
       {!isPrint && (

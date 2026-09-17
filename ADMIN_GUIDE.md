@@ -119,37 +119,48 @@ For adding lots of content at once — products, categories, blog posts, FAQs, t
 
 Good to know: up to **500 rows** per file; image columns take public URLs which are downloaded and re-uploaded into your own media storage; blog/page content columns are written in Markdown and converted to the rich editor format automatically.
 
-> ⚠️ **Scraper files are rejected here on purpose.** If a file contains scraper columns (`sourceKey`, `externalId`, `contentHash`…), Bulk Import refuses the whole file and points you to the Scraper review flow — that's the only door for competitor-sourced content, because it enforces the rewrite rule below.
+Two of the product columns are both called "tier", and they are different things: `product_tier` is the **product tier** — what the piece is, Large / Medium / Small (Tier 1 Collectible · Tier 2 Memory · Tier 3 Personal) — and `tier` is the **import list** the row came from, 1–4 (see §20). Leave `tier` blank for a product you made yourself; CONTENT_GUIDE.md has the exact spellings.
+
+> ⚠️ **A scraper file is competitor content, and it can only ever land as drafts.** A Product Scraper CSV (it carries `sourceKey` and `externalId` columns) is accepted here as **Products only**: every row arrives as a Draft flagged "needs rewrite", categories and product tiers are filled in where the listing makes them clear, and the file's status and import-list cells are ignored. Pick any other content type for such a file and Bulk Import refuses the whole file — the rewrite rule below is the only door for competitor-sourced content.
 
 ## 18. Product Scraper (research tool)
 
 The scraper collects competitor products **for research and cataloging speed** — never for copying. Three screens:
 
-**Sources** — a registry of scrape-ready sites in four tiers: Tier 1 (Owner-priority sites), Tier 2 (Resin goods stores), Tier 3 (Supplies), Tier 4 (3D printing). Around 120 curated sources come pre-loaded (the registry is reconciled on every deploy, preserving your verify results and enable/disable choices). Each row shows the detected platform and has a **Verify** button that re-checks the site live. You can add a new source by URL — the Studio fingerprints it automatically; marketplaces (Amazon, Etsy, Flipkart, Meesho, IndiaMART…) are blocked by design, and sites the scraper can't read are saved as disabled with a note.
+**Sources** — a registry of scrape-ready sites, each filed under a **source tier**: which supplier list we went looking in — Large-format, Medium-format or Small-format sellers, plus the four older lists (Owner's store, Resin goods, Supplies, 3D print). A source tier says where a site was found, never what any piece from it is — a large-format studio sells coasters too, so the **product tier** is set per product, not per source. The curated registry comes pre-loaded (it is reconciled on every deploy, preserving your verify results and enable/disable choices). Each row shows the detected platform and has a **Verify** button that re-checks the site live. You can add a new source by URL — the Studio fingerprints it automatically; marketplaces (Amazon, Etsy, Flipkart, Meesho, IndiaMART…) are blocked by design, and sites the scraper can't read are saved as disabled with a note.
 
 **Scrape** (the main Scraper page) — two ways to run:
 
-- **Scrape a website:** paste a store URL, pick its tier, go.
-- **Tier runs:** queue every enabled source in a tier (or "Scrape ALL" in tier order). Jobs run one at a time in small chunks, show live progress, and are **resumable** — if one stops, press Resume. Each finished job has its own **Export CSV** button.
+- **Scrape a website:** paste a store URL, pick its source tier, go.
+- **Source-tier runs:** queue every enabled source in a source tier (or **Scrape ALL (source-tier order)**). Jobs run one at a time in small chunks, show live progress, and are **resumable** — if one stops, press Resume. Each finished job has its own **CSV** button.
 
 **Review** — every scraped product lands here as a card (title, photos, price, source). Filter by source or status, open a card for full detail, then **Approve** or **Reject** (in bulk if you like). Approving opens the import dialog: pick which **Rivya Living Art category** they belong to, and keep **"Mirror images"** on (it copies the photos into your own storage so review works even if the source site changes).
 
 > ⚠️ **The rewrite rule (copyright — not optional).** Approved items are imported as **Drafts** flagged **"needs rewrite"**. Scraped titles, text and photos are the competitor's copyrighted material — reference only. Before publishing you must **rewrite every description in your own words and replace all images with real Rivya Living Art photos**, then tick the confirm-rewrite box on the product form. Until then, publishing is blocked — even bulk publish skips flagged products and tells you how many it skipped.
 
-**Exports** — any set of scraped rows can be exported as a **ScrapeDeck CSV** (26 fixed columns — see CONTENT_GUIDE.md), and the confirmed list exports as CSV or XLSX from **Exports**. Until 2026-09-15 a **Sync to Sheet** button also pushed rows into a Google Sheet; that integration was removed, and you take a file when you want one instead. And remember: those scraper CSVs are for the review workflow only — Bulk Import will reject them.
+**Exports** — three files, three places, and each says what its columns mean:
+
+- **Scraped rows** leave as a **ScrapeDeck CSV** (26 fixed columns — see CONTENT_GUIDE.md): the **CSV** button on a finished job or a source, or — admins only — the **Scraped products** row on **Studio → Exports**, which takes the whole research corpus (capped at 5,000 rows). This file can go back in through Bulk Import as Products, and only as drafts (§17).
+- The scraper's own **confirmed shortlist** — the rows you confirmed one by one in the review inbox — downloads as CSV or XLSX from **Scraper → Confirmed products**.
+- Your **catalogue's confirmed products** download as CSV or Excel from **Studio → Exports → Confirmed products** (24 fixed columns — see CONTENT_GUIDE.md). Two of its columns are both called "tier", and the screen spells out which is which: `product_tier` is the **product tier** — what the piece is, written `LARGE_FORMAT`, `MEDIUM_FORMAT` or `SMALL_FORMAT` (Tier 1 Collectible · Tier 2 Memory · Tier 3 Personal) and blank until someone files it — and `tier` is the **import list** the row came from, `1`–`4` (1 Owner's store · 2 Resin goods · 3 Supplies · 4 3D printing), blank for a product made in the Studio. Quote-only pieces export an empty price, never a zero.
+
+Every export is a snapshot, not a connection: nothing syncs back, and editing a downloaded file never changes the catalogue. (Until 2026-09-15 a **Sync to Sheet** button also pushed rows into a Google Sheet; that integration was removed, and you take a file when you want one instead.)
 
 ## 19. Subscribers
 
 **Subscribers** collects the email addresses people leave in the newsletter signup forms on the website (footer and content pages). The list page shows every subscriber with their signup date, and an **Export CSV** button downloads the whole list so you can use it in any mailing tool. No emails are ever sent automatically — the site only collects; sending is up to you.
 
-## 20. Catalog fill (your four-tier catalog import)
+## 20. Catalog fill (the four import lists)
 
-**Catalog fill** is the status page for the catalog that loads automatically from four tier CSVs committed to the repository — **Tier1_Owner** (all rows), **Tier2_ResinGoods** (top 1,000), **Tier3_Supplies** (top 2,500), **Tier4_3DPrint** (top 500). The import runs on every deploy; this page shows per-tier counts, the last run's created/updated/failed numbers, and how many imported product images still point at external sites. Imported images are copied ("mirrored") into your own storage in batches — a nightly job works through the backlog, and a button on this page runs the next batch on demand.
+**Catalog fill** is the status page for the catalogue that loads from the **four import lists** — CSV files committed to the repository under `data/tiers/`, one per list: **List 1 — Owner's store** (`Tier1_Owner`, all rows), **List 2 — Resin goods** (`Tier2_ResinGoods`, top 1,000), **List 3 — Supplies** (`Tier3_Supplies`, top 2,500) and **List 4 — 3D printing** (`Tier4_3DPrint`, top 500). The file names keep their old "Tier" spelling because they are the stored read path; everything you read on screen says **list**. A list says **where a row came from — never what the piece is.** The **product tier** (Collectible · Memory · Personal — the **Product tier** field on the product form) is a separate field: the fill never sets it, and the page's **Would file as** column is only a forecast of what the rule (below) would decide for the rows the last fill placed.
 
-Three things were added here:
+The fill can run on every deploy; this page shows a row per import list (linked to the products it produced — the Products screen filters by **Import list** and, separately, by **Product tier**), the last run's created/updated/unchanged/failed numbers, and how many imported product images still point at external sites. Imported images are copied ("mirrored") into your own storage in batches — a nightly job works through the backlog, and **Mirror next batch (200)** runs the next batch on demand.
 
-- **Preview** runs the whole four-tier fill as a dry run — nothing is written — and shows exactly what a real run would create, update and skip, with the reason for every dropped row. **Run now** does the real thing without waiting for a deploy (it honours the master switch in Settings).
-- **Conflicts** — when the tier CSV and a studio edit changed the same field of the same product between fills, the fill no longer picks a side quietly. Each conflict is listed by field with both values, and you choose **Keep mine**, **Take imported** or **Skip**.
+What the page lets you do:
+
+- **Preview** runs the whole four-list fill as a dry run — nothing is written — and shows exactly what a real run would create, update and skip, with the reason for every dropped row. **Run now** does the real thing without waiting for a deploy. Both honour the policy card on this same page: **Fill the catalogue from the import-list CSVs** is the master switch (off stops it everywhere, deploys included), **Fill when the site deploys** is the deploy-time trigger, and **Stop if it would add more than** caps how many products one run may create.
+- **Conflicts** — when a list's CSV and a Studio edit changed the same field of the same product between fills, the fill no longer picks a side quietly. Each conflict is listed by field with both values, and you choose **Keep mine**, **Take imported** or **Skip**.
+- **Product tiers are filed by rule, after the fill**, not by the fill: on production and local builds a deploy-time pass, and at any time the **Suggest tiers** button on the Products screen (it shows the plan before it writes), file untiered rows from their category first and their own words second — and leave supplies untiered, because a mold or a pigment is not a piece. Neither ever touches a row you have already tiered.
 
 ## 20b. Emptying the catalogue
 
@@ -172,7 +183,7 @@ history and a customer's own words are never deleted by this.
 
 A `--confirm` run also switches the automatic fill **off**, and that is
 deliberate. Deletions are remembered permanently (a "tombstone" per row), but
-Tiers 2–4 hold far more rows than their caps — 35,128 rows against a cap of
+Lists 2–4 hold far more rows than their caps — 35,128 rows against a cap of
 1,000, for instance — so deleting the current 1,000 just promotes the next
 1,000 on the following deploy. Only switching the fill off actually empties the
 catalogue. Turn it back on from **Catalog fill** whenever you want one again.
