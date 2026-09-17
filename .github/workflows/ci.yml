@@ -115,14 +115,18 @@ jobs:
       # so this database is NOT empty. The detail routes are swept on the
       # Content Lab's deterministic demo slugs (seeded below, after the
       # database tests — which remove any demo set they find — and before
-      # the server starts). /search is a query-only noindex route with
-      # nothing to audit empty.
+      # the server starts). /search is swept WITH a query — it is noindex and
+      # empty it has nothing to audit, but with one it renders four result
+      # groups and it went unaudited long enough to ship a Part 17 breach:
+      # every journal row's accessible name was its title PLUS the whole
+      # untruncated excerpt, ellipsis included. `Geode` is the demo set's own
+      # word (the E2E smoke searches it too), so the sweep is deterministic.
       # D22 gates the portfolio case seed behind an explicit opt-in, so an
       # unset environment gets an empty archive. CI opts in on purpose: the
       # database is a throwaway container and /portfolio below is only worth
       # auditing with cases in it. Production leaves this unset.
       PORTFOLIO_SEED: "1"
-      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander"
+      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander,/search?q=Geode"
       # Arabic is a shipped locale and nothing in CI ever loaded one. The repo
       # carries 29 `rtl:` variants across 19 files and four JS direction
       # inversions (lightbox, gallery, cure line) that no gate protected: a

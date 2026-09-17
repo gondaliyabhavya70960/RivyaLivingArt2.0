@@ -1122,7 +1122,9 @@
       "hints": "↑↓ naviguer · ↵ ouvrir · esc fermer",
       "loading": "Recherche…",
       "countAnnounce": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}"
-    }
+    },
+    "collectionsEyebrow": "collections",
+    "collectionsHeading": "Collections correspondantes"
   },
   "Wishlist": {
     "meta": {

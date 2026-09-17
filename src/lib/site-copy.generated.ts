@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1339 slots · 0 flagged as unreachable from any component.
+ * 1341 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -893,6 +893,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Search.overlay.hints","group":"Shop","section":"overlay","label":"Hints","kind":"body","tier":"editorial","max":400},
   {"key":"Search.overlay.loading","group":"Shop","section":"overlay","label":"Loading","kind":"body","tier":"editorial","max":400},
   {"key":"Search.overlay.countAnnounce","group":"Shop","section":"overlay","label":"Count announce","kind":"body","tier":"editorial","max":400,"vars":["count"]},
+  {"key":"Search.collectionsEyebrow","group":"Shop","section":"general","label":"Collections eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Search.collectionsHeading","group":"Shop","section":"general","label":"Collections heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Wishlist.meta.title","group":"Shop","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Wishlist.meta.description","group":"Shop","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Wishlist.heroEyebrow","group":"Shop","section":"general","label":"Hero eyebrow","kind":"eyebrow","tier":"editorial","max":48},
