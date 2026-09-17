@@ -22,7 +22,11 @@ import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
 import { FieldError } from "@/components/studio/field-error";
 import { FieldHint, describedBy } from "@/components/studio/field-hint";
-import { Pagination, PAGE_SIZE, usePagination } from "@/components/studio/pagination";
+import {
+  Pagination,
+  PAGE_SIZE,
+  usePagination,
+} from "@/components/studio/pagination";
 import { useDismissGuard } from "@/hooks/use-dismiss-guard";
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import { Badge } from "@/components/ui/badge";
@@ -57,7 +61,11 @@ import {
   NEEDS_ATTENTION,
   type SourceHealth,
 } from "@/lib/scraper/health";
-import { SCRAPE_TIERS } from "@/lib/scraper/purge";
+import {
+  SCRAPE_TIERS,
+  SCRAPE_TIER_SHORT,
+  scrapeTierStudioLabel,
+} from "@/lib/scraper/purge";
 import { cn } from "@/lib/utils";
 
 export type SourceRow = {
@@ -96,16 +104,6 @@ export type SourceRow = {
   policyBadge: string | null;
 };
 
-const TIER_SHORT: Record<ScrapeTier, string> = {
-  LARGE_FORMAT: "Large",
-  MEDIUM_FORMAT: "Medium",
-  SMALL_FORMAT: "Small",
-  OWNER: "Owner",
-  RESIN_GOODS: "Resin",
-  SUPPLIES: "Supplies",
-  PRINT3D: "3D print",
-};
-
 type StatusFilter = "ALL" | "ATTENTION" | SourceHealth;
 
 const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
@@ -120,10 +118,20 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
 ];
 
 /** Small health pill used in the status column. */
-function HealthBadge({ health, title }: { health: SourceHealth; title?: string }) {
+function HealthBadge({
+  health,
+  title,
+}: {
+  health: SourceHealth;
+  title?: string;
+}) {
   const meta = HEALTH_META[health];
   return (
-    <Badge variant="outline" className={cn("gap-1.5", meta.className)} title={title}>
+    <Badge
+      variant="outline"
+      className={cn("gap-1.5", meta.className)}
+      title={title}
+    >
       <span aria-hidden className={cn("size-1.5 rounded-full", meta.dot)} />
       {meta.label}
     </Badge>
@@ -135,19 +143,13 @@ export type TierCounts = { all: number } & Record<ScrapeTier, number>;
 /**
  * Tab order: the owner's size tiers first, then the retired provenance ones.
  * The old four stay visible because rows in the database still carry them —
- * hiding a tab would hide those sources rather than retire them.
+ * hiding a tab would hide those sources rather than retire them. The words
+ * on the tabs, the select and the row line come from `purge.ts`
+ * (`scrapeTierStudioLabel`, `SCRAPE_TIER_SHORT`); this file carried its own
+ * copy once, and that copy is how a supplier list came to read "Tier 1 —
+ * Large" beside a product tier that reads "Tier 1 — Collectible …".
  */
 const TIER_ORDER: ScrapeTier[] = [...SCRAPE_TIERS];
-
-const TIER_LABELS: Record<ScrapeTier, string> = {
-  LARGE_FORMAT: "Tier 1 — Large (furniture, tables)",
-  MEDIUM_FORMAT: "Tier 2 — Medium (varmala, clocks, trays)",
-  SMALL_FORMAT: "Tier 3 — Small (rakhis, jewellery)",
-  OWNER: "Owner's list (retired)",
-  RESIN_GOODS: "Resin goods (retired)",
-  SUPPLIES: "Supplies (retired)",
-  PRINT3D: "3D print (retired)",
-};
 
 const PLATFORM_BADGE: Record<
   ScrapePlatform,
@@ -171,7 +173,10 @@ function AddSourceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Radix unmounts content on close, so a fresh body (and fresh field
           state) mounts on every open without any effect. */}
-      <AddSourceBody key={open ? "open" : "closed"} onOpenChange={onOpenChange} />
+      <AddSourceBody
+        key={open ? "open" : "closed"}
+        onOpenChange={onOpenChange}
+      />
     </Dialog>
   );
 }
@@ -269,7 +274,9 @@ function AddSourceBody({
           <p className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{report.added}</span>{" "}
             added ·{" "}
-            <span className="font-medium text-foreground">{report.updated}</span>{" "}
+            <span className="font-medium text-foreground">
+              {report.updated}
+            </span>{" "}
             updated
             {report.failed > 0 && (
               <>
@@ -367,18 +374,18 @@ function AddSourceBody({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="source-tier">Tier (applied to all)</Label>
+            <Label htmlFor="source-tier">Source tier (applied to all)</Label>
             <Select
               value={tier}
               onValueChange={(value) => setTier(value as ScrapeTier)}
             >
               <SelectTrigger id="source-tier" className="w-full">
-                <SelectValue placeholder="Tier" />
+                <SelectValue placeholder="Source tier" />
               </SelectTrigger>
               <SelectContent>
                 {TIER_ORDER.map((t) => (
                   <SelectItem key={t} value={t}>
-                    {TIER_LABELS[t]}
+                    {scrapeTierStudioLabel(t)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -402,7 +409,9 @@ function AddSourceBody({
                   errors.vertical && "source-vertical-error",
                 )}
               />
-              <FieldError id="source-vertical-error">{errors.vertical}</FieldError>
+              <FieldError id="source-vertical-error">
+                {errors.vertical}
+              </FieldError>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="source-country">Country</Label>
@@ -420,7 +429,9 @@ function AddSourceBody({
                   errors.country && "source-country-error",
                 )}
               />
-              <FieldError id="source-country-error">{errors.country}</FieldError>
+              <FieldError id="source-country-error">
+                {errors.country}
+              </FieldError>
             </div>
           </div>
 
@@ -546,7 +557,7 @@ export function SourceList({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [query, setQuery] = useState("");
 
-  // Client-side status filter + name/host search over the tier-scoped rows.
+  // Client-side status filter + name/host search over the source-tier-scoped rows.
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sources.filter((s) => {
@@ -622,9 +633,7 @@ export function SourceList({
     setTogglingId(null);
     if (res.ok) {
       toast.success(
-        source.enabled
-          ? `${source.name} disabled.`
-          : `${source.name} enabled.`,
+        source.enabled ? `${source.name} disabled.` : `${source.name} enabled.`,
       );
       router.refresh();
     } else {
@@ -707,7 +716,7 @@ export function SourceList({
 
   return (
     <>
-      {/* Tier tabs */}
+      {/* Source-tier tabs (`?tier=` — the URL value is the enum, unchanged) */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <TierChip
           active={activeTier === "ALL"}
@@ -719,7 +728,7 @@ export function SourceList({
           <TierChip
             key={tier}
             active={activeTier === tier}
-            label={TIER_LABELS[tier]}
+            label={scrapeTierStudioLabel(tier)}
             count={counts[tier]}
             onClick={() => setTierParam(tier)}
           />
@@ -732,7 +741,11 @@ export function SourceList({
           value={statusFilter}
           onValueChange={(value) => setStatusFilter(value as StatusFilter)}
         >
-          <SelectTrigger size="sm" aria-label="Filter by scrape status" className="w-48">
+          <SelectTrigger
+            size="sm"
+            aria-label="Filter by scrape status"
+            className="w-48"
+          >
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -767,11 +780,11 @@ export function SourceList({
         />
       ) : (
         <div
-            tabIndex={0}
-            role="region"
-            aria-label="Scrape sources"
-            className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
+          tabIndex={0}
+          role="region"
+          aria-label="Scrape sources"
+          className="overflow-x-auto rounded-card border border-border bg-card shadow-e1 [contain:paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        >
           <table className="w-full text-sm">
             <thead>
               <StudioTableHead>
@@ -782,8 +795,18 @@ export function SourceList({
                     aria-label="Select all"
                   />
                 </th>
-                <SortHead label="Source" sortKey="name" sort={sort} onSort={toggle} />
-                <SortHead label="Status" sortKey="status" sort={sort} onSort={toggle} />
+                <SortHead
+                  label="Source"
+                  sortKey="name"
+                  sort={sort}
+                  onSort={toggle}
+                />
+                <SortHead
+                  label="Status"
+                  sortKey="status"
+                  sort={sort}
+                  onSort={toggle}
+                />
                 <SortHead
                   label="Products"
                   sortKey="products"
@@ -816,9 +839,7 @@ export function SourceList({
             </thead>
             <tbody>
               {pageRows.map((source) => (
-                <StudioRow
-                  key={source.id}
-                >
+                <StudioRow key={source.id}>
                   <td className="px-4 py-3">
                     <Checkbox
                       checked={selection.selected.has(source.id)}
@@ -855,7 +876,7 @@ export function SourceList({
                       <ExternalLink aria-hidden className="size-3" />
                     </a>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {TIER_SHORT[source.tier]} · {source.country}
+                      {SCRAPE_TIER_SHORT[source.tier]} · {source.country}
                       {source.supply ? " · Supply" : ""}
                     </p>
                   </td>

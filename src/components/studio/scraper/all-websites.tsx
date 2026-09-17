@@ -23,6 +23,7 @@ import {
   NEEDS_ATTENTION,
   type SourceHealth,
 } from "@/lib/scraper/health";
+import { SCRAPE_TIER_SHORT } from "@/lib/scraper/purge";
 import { cn } from "@/lib/utils";
 
 export type SourceOverviewRow = {
@@ -47,16 +48,6 @@ const PLATFORM_BADGE: Record<
   WOOCOMMERCE: "secondary",
   JSONLD: "secondary",
   UNKNOWN: "outline",
-};
-
-const TIER_SHORT: Record<ScrapeTier, string> = {
-  LARGE_FORMAT: "Large",
-  MEDIUM_FORMAT: "Medium",
-  SMALL_FORMAT: "Small",
-  OWNER: "Owner",
-  RESIN_GOODS: "Resin",
-  SUPPLIES: "Supplies",
-  PRINT3D: "3D print",
 };
 
 type StatusFilter = "ALL" | "ATTENTION" | SourceHealth;
@@ -129,14 +120,20 @@ export function AllWebsites({ sources }: { sources: SourceOverviewRow[] }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-lg text-foreground">
           All websites{" "}
-          <span className="text-sm text-muted-foreground">({sources.length})</span>
+          <span className="text-sm text-muted-foreground">
+            ({sources.length})
+          </span>
         </h2>
         <div className="flex flex-wrap items-center gap-2">
           <Select
             value={statusFilter}
             onValueChange={(v) => setStatusFilter(v as StatusFilter)}
           >
-            <SelectTrigger size="sm" aria-label="Filter by scrape status" className="w-44">
+            <SelectTrigger
+              size="sm"
+              aria-label="Filter by scrape status"
+              className="w-44"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -175,20 +172,44 @@ export function AllWebsites({ sources }: { sources: SourceOverviewRow[] }) {
           <table className="w-full text-sm">
             <thead className="sticky top-0 z-10 bg-card">
               <StudioTableHead>
-                <SortHead label="Source" sortKey="name" sort={sort} onSort={toggle} />
-                <SortHead label="Status" sortKey="status" sort={sort} onSort={toggle} />
-                <SortHead label="Products" sortKey="products" sort={sort} onSort={toggle} numeric />
-                <SortHead label="Platform" sortKey="platform" sort={sort} onSort={toggle} />
-                <SortHead label="Last run" sortKey="lastRun" sort={sort} onSort={toggle} />
+                <SortHead
+                  label="Source"
+                  sortKey="name"
+                  sort={sort}
+                  onSort={toggle}
+                />
+                <SortHead
+                  label="Status"
+                  sortKey="status"
+                  sort={sort}
+                  onSort={toggle}
+                />
+                <SortHead
+                  label="Products"
+                  sortKey="products"
+                  sort={sort}
+                  onSort={toggle}
+                  numeric
+                />
+                <SortHead
+                  label="Platform"
+                  sortKey="platform"
+                  sort={sort}
+                  onSort={toggle}
+                />
+                <SortHead
+                  label="Last run"
+                  sortKey="lastRun"
+                  sort={sort}
+                  onSort={toggle}
+                />
               </StudioTableHead>
             </thead>
             <tbody>
               {sorted.map((s) => {
                 const meta = HEALTH_META[s.health];
                 return (
-                  <StudioRow
-                    key={s.id}
-                  >
+                  <StudioRow key={s.id}>
                     <td className="px-4 py-2.5">
                       <Link
                         href={`/studio/scraper/sources/${s.key}`}
@@ -206,24 +227,34 @@ export function AllWebsites({ sources }: { sources: SourceOverviewRow[] }) {
                         <ExternalLink aria-hidden className="size-3" />
                       </a>
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        {TIER_SHORT[s.tier]}
+                        {SCRAPE_TIER_SHORT[s.tier]}
                       </p>
                     </td>
                     <td className="px-4 py-2.5">
-                      <Badge variant="outline" className={cn("gap-1.5", meta.className)}>
-                        <span aria-hidden className={cn("size-1.5 rounded-full", meta.dot)} />
+                      <Badge
+                        variant="outline"
+                        className={cn("gap-1.5", meta.className)}
+                      >
+                        <span
+                          aria-hidden
+                          className={cn("size-1.5 rounded-full", meta.dot)}
+                        />
                         {meta.label}
                       </Badge>
                     </td>
                     <td className="px-4 py-2.5 text-right tabular-nums">
                       {s.productCount > 0 ? (
-                        <span className="text-foreground">{s.productCount}</span>
+                        <span className="text-foreground">
+                          {s.productCount}
+                        </span>
                       ) : (
                         <span className="text-muted-foreground">0</span>
                       )}
                     </td>
                     <td className="px-4 py-2.5">
-                      <Badge variant={PLATFORM_BADGE[s.platform]}>{s.platform}</Badge>
+                      <Badge variant={PLATFORM_BADGE[s.platform]}>
+                        {s.platform}
+                      </Badge>
                     </td>
                     <td className="whitespace-nowrap px-4 py-2.5 text-xs text-muted-foreground">
                       {s.lastRunAt ?? "—"}
