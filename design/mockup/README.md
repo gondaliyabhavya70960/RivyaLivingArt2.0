@@ -9,11 +9,19 @@ no server) implementing the redesign in `../awwwards-redesign-spec.md`:
 | `pdp.html` | Product page: sticky gallery with hover zoom + lightbox, option pills/swatches, live WhatsApp order preview, spec accordions, story band, related rail, sticky mobile CTA |
 | `custom-order.html` | 4-step commission wizard: meniscus progress line, visual material cards, real image dropzone, live WhatsApp review, animated success state with order number + real wa.me link |
 
-## Assets
+## ⚠️ One manual step (same as the images)
 
-The pages read images from `./assets/*.jpg`. Copy the 14 files listed in
-`public/redesign/README.md` into `design/mockup/assets/` (same set the site
-uses) and everything renders.
+Binary/HTML files can't be written through the API channel that produced
+this branch, so the three `.html` files and the 14 `.jpg` images travel in
+the design handoff. Upload them on github.com into this folder (**Add file →
+Upload files**, commit to `redesign/liquid-luxury`):
+
+- `index.html`, `pdp.html`, `custom-order.html` → `design/mockup/`
+- the 14 `.jpg` assets → `design/mockup/assets/` **and** `public/redesign/`
+  (see `public/redesign/README.md` for the list)
+
+Until then, the live interactive preview saved with the handoff (version
+`9f1c6e0`) shows all three pages working end-to-end.
 
 ## Relationship to the production code
 
