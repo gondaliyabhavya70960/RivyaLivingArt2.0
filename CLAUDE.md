@@ -471,10 +471,22 @@ removes the column that preview left on `ShortlistEntry`.
   matching the video it stands in for. Twelve alt keys described the frame being
   replaced and were rewritten across all nine locales — the rest were left
   alone because the slot→master mapping was chosen to keep them true.
-- Two masters are deliberately unused: `not-found` (the design puts no image on
-  the 404) and `tile-keep` (it belongs to the homepage collection band, which
-  reads the owner's `Category.image`). Both are selectable from
-  /studio/site-images.
+- One master is deliberately unused: `tile-keep` (it belongs to the homepage
+  collection band, which reads the owner's `Category.image`). It is selectable
+  from /studio/site-images.
+  **The 404 carries a picture again (2026-09-17, owner instruction.)** This
+  line used to read "the design puts no image on the 404" and name `not-found`
+  as unused alongside it. Plan §2.10 asks for `visual-404.jpg` full-bleed;
+  REDESIGN.md §11.11 says the page is the heading, a search field, four
+  collections and WhatsApp, "No cartoon". Those are not in conflict — "no
+  cartoon" rules out an illustration apologising for the error, not
+  photography — so §11.11's content is untouched and the vortex sits behind it
+  under a veil weighted to the reading order. Every text node was measured
+  against the rendered pixels rather than the CSS stack: the lowest is 6.94:1
+  against a 4.5 floor. The `/redesign/visual-404.jpg` reference is bundled and
+  NOT a slot: a 404 is what renders when things are already going wrong, and
+  `getSiteImages()` would put a database read on the one page that has to work
+  without one.
 
 ### The studio CMS — one pattern, ten surfaces
 
@@ -985,7 +997,17 @@ compact`, `rule`/`rule-dk`.
   the search overlay are opened through module signals
   (`src/lib/search-signal.ts`), because their triggers are not descendants of
   the components that own them.
-- **The dormant v2 motion layer is gone** (owner decision D18, 2026-09-03).
+- **`Magnetic` is back, by owner instruction (2026-09-17)** — and mounted, on
+  the 404's escape pill and the homepage's commission ask. D18 deleted it for
+  being dormant, not for being wrong, and an unmounted copy is the thing D18
+  was actually about. It sits against a written rule and says so in its own
+  header: REDESIGN.md §3.6 and the contract both say of buttons "No scale or
+  lift on hover — colour and underline only", and a ±6px pull is a lift. §6.2's
+  press-scale is deliberately NOT built, to keep the deviation to what the
+  instruction needed. Guards are `featured-rail.tsx`'s: reduced-motion and
+  coarse-pointer both refuse, and gsap arrives through a dynamic import — the
+  motion budget is unchanged at 48.4 KB.
+- **The rest of the dormant v2 motion layer is gone** (owner decision D18, 2026-09-03).
   `Preloader`, `preloader-signal`, `CursorFollower`, `Magnetic`,
   `KineticHeading`, `SplitTextHeading`, `MobileWhatsappBar` and `WishlistCount`
   were deleted: eight files, zero imports between them and anything mounted,

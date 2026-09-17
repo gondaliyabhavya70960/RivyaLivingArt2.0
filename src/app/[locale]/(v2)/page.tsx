@@ -16,6 +16,8 @@ import {
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import { HeroMedia } from "@/components/storefront/hero-media";
+import { JournalList } from "@/components/storefront/journal-list";
+import { Magnetic } from "@/components/ui/magnetic";
 import { BUNDLED_VIDEOS } from "@/lib/site-videos";
 import { HeroParallax } from "@/components/motion/hero-parallax";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
@@ -321,7 +323,6 @@ export default async function Home({
       date: post.publishedAt,
     };
   });
-  const [featuredPost, ...restPosts] = journal;
 
   const dateFormatter = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
@@ -422,9 +423,11 @@ export default async function Home({
                 The champagne count is unchanged at two — the eyebrow above
                 plus one pill — which is what `redesign-audit.mjs` caps at. A
                 second champagne pill here would fail the build. */}
-            <Button asChild variant="premium" size="lg">
-              <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
-            </Button>
+            <Magnetic>
+              <Button asChild variant="premium" size="lg">
+                <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
+              </Button>
+            </Magnetic>
             <Button asChild variant="secondary" size="lg">
               <Link href="/shop">{t("hero.ctaExplore")}</Link>
             </Button>
@@ -1201,7 +1204,7 @@ export default async function Home({
     Three articles: one large featured, two smaller. No tag wall. The
     ONLY section on the site allowed the heading "Notes from the
     studio" (§6 12 + Part 17's no-duplicate-headings rule). */
-    journal: featuredPost ? (
+    journal: journal.length > 0 ? (
       <section
         id="journal"
         aria-labelledby="journal-heading"
@@ -1220,67 +1223,20 @@ export default async function Home({
               }
             />
           </Reveal>
-          <div className="grid gap-10 lg:grid-cols-12">
-            <article className="group relative flex flex-col gap-4 lg:col-span-7">
-              {featuredPost.cover ? (
-                <MeniscusImage
-                  src={sizedExternalSrc(featuredPost.cover, 1400)}
-                  alt=""
-                  width={1400}
-                  height={875}
-                  sizes="(min-width:1024px) 60vw, 100vw"
-                  unoptimized={!isOptimizableImageSrc(featuredPost.cover)}
-                  className="aspect-[16/10]"
-                  imageClassName="object-cover"
-                />
-              ) : null}
-              {featuredPost.category ? (
-                <p className="u-micro">{featuredPost.category}</p>
-              ) : null}
-              <h3 className="font-display text-h3 leading-h3 text-ink">
-                <Link
-                  href={`/blog/${featuredPost.slug}`}
-                  className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
-                >
-                  {featuredPost.title}
-                </Link>
-              </h3>
-              {featuredPost.excerpt ? (
-                <p className="u-prose font-body text-body text-graphite">
-                  {featuredPost.excerpt}
-                </p>
-              ) : null}
-              {featuredPost.date ? (
-                <p className="u-micro">
-                  {dateFormatter.format(featuredPost.date)}
-                </p>
-              ) : null}
-            </article>
-
-            <div className="flex flex-col gap-8 lg:col-span-4 lg:col-start-9">
-              {restPosts.map((post) => (
-                <article
-                  key={post.id}
-                  className="group relative flex flex-col gap-3"
-                >
-                  {post.category ? (
-                    <p className="u-micro">{post.category}</p>
-                  ) : null}
-                  <h3 className="font-body text-16 leading-snug font-medium text-ink">
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
-                    >
-                      {post.title}
-                    </Link>
-                  </h3>
-                  {post.date ? (
-                    <p className="u-micro">{dateFormatter.format(post.date)}</p>
-                  ) : null}
-                </article>
-              ))}
-            </div>
-          </div>
+          {/* Spec §3.1 S8: an editorial list, not a featured-plus-two grid.
+              Dates are formatted here rather than in the list, which is a
+              client component — `dateFormatter` carries the request's locale
+              and must not be re-derived on the other side of the boundary. */}
+          <JournalList
+            rows={journal.map((post) => ({
+              id: post.id,
+              slug: post.slug,
+              title: post.title,
+              dateLabel: post.date ? dateFormatter.format(post.date) : null,
+              category: post.category,
+              cover: post.cover,
+            }))}
+          />
         </div>
       </section>
     ) : null,
@@ -1292,11 +1248,17 @@ export default async function Home({
     wins: it is the corrective statement, and the footer's own newsletter
     sits three hundred pixels below this line.
 
-    The band is light for a second reason. §3.1 caps a page at three dark
-    bands and forbids two adjacent; the hero, the material story and the
-    bespoke band already spend all three, and the obsidian footer follows
-    immediately — a dark section here would both break the cap and put two
-    dark grounds edge to edge. */
+    The band is light for a second reason, and half of the reason this
+    comment used to give was wrong. It said the hero, the material story and
+    the bespoke band "already spend all three" of §3.1's dark bands; the
+    material story is `bg-mineral`, so only two are spent and the count was
+    never the blocker. The ADJACENCY is: §3.1 forbids two dark grounds edge to
+    edge and the obsidian footer follows immediately, so a dark band here
+    would sit against it however many slots were free.
+
+    Spec §3.1's S9 — "obsidian, resin-mesh behind, one champagne pill" — is
+    therefore built in the footer's own CTA band, which is already obsidian
+    and already last. See `footer.tsx`. */
     closing: (
       <section
         aria-labelledby="closing-heading"

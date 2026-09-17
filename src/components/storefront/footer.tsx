@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
@@ -167,15 +168,53 @@ export function Footer({
       data-theme="navy"
       className={cn("bg-obsidian font-body text-mineral", className)}
     >
-      {/* ————— CTA band (§5.7) ————— */}
-      <div className="border-b border-hairline-dk">
-        <div className="u-shell section-standard flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      {/* ————— CTA band (§5.7) — and this is also spec §3.1's S9 —————
+
+          S9 asks the page to end on "obsidian, resin-mesh at 30% behind, a
+          120px serif line, one champagne pill". That frame cannot be a
+          fourteenth section on the homepage: §3.1 forbids two dark grounds
+          edge to edge, and this band — obsidian, on every page — is what
+          follows immediately. Adding a dark closing section above it would put
+          two dark grounds against each other no matter how many of the three
+          dark slots were still unspent. (The homepage's own comment says all
+          three were spent by "the hero, the material story and the bespoke
+          band"; the material story is `bg-mineral` now, so that count is out
+          of date, but the adjacency it also cites is not and is the real
+          constraint.)
+
+          So S9 lands here, where the page already ends on obsidian: the
+          resin-flow texture behind it, and the line stepped up from `text-h2`
+          to `text-h1` (40 → 88px). NOT `text-hero`: 120px is S9's number for a
+          homepage frame, and this band also closes /privacy and /terms, where
+          a 120px line would shout over the page it is ending.
+
+          Two things S9 lists are deliberately absent. The WhatsApp ghost —
+          audit §2.4's complaint is that this site has too many competing
+          actions, and this band renders on all thirteen routes; one champagne
+          pill is the single ask. And the texture is a bundled reference rather
+          than a site-image slot, for the same reason `sf-grain` and the
+          pour-cure frames are not slots: it is a decorative ground, not
+          editorial imagery, and it renders on every page including the ones
+          that exist for things going wrong. */}
+      <div className="relative overflow-hidden border-b border-hairline-dk">
+        <div aria-hidden className="absolute inset-0">
+          <Image
+            src="/redesign/texture-resin-flow.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            quality={65}
+            className="object-cover opacity-30"
+          />
+          <span className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-obsidian/55" />
+        </div>
+        <div className="relative z-10 u-shell section-standard flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-4">
             <p className="u-micro flex items-center gap-3 text-champagne">
               <span aria-hidden className="block h-px w-6 bg-champagne" />
               {ctaEyebrow}
             </p>
-            <p className="max-w-[16ch] font-display text-h2 leading-h2 text-mineral">
+            <p className="max-w-[16ch] font-display text-h1 leading-h1 tracking-display text-mineral">
               {ctaHeadline}
             </p>
           </div>
