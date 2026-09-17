@@ -142,8 +142,8 @@ export default async function ProductsPage({
       sizeTier: product.sizeTier,
       inStock: product.inStock,
       imported,
-      // Sheet-demoted drafts (audit M-A1): a tiered sheet row sitting in DRAFT
-      // was pushed out by the tier cap on the last import run — distinct from
+      // Fill-demoted drafts (audit M-A1): a catalog-fill row sitting in DRAFT
+      // was pushed out by its import list's cap on the last fill run — distinct from
       // intentional owner drafts. sheet:owner-ready rows import as drafts BY
       // DESIGN (published from the studio later), so they are excluded.
       demoted:

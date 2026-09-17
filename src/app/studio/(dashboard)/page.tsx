@@ -19,6 +19,17 @@ import {
   InquiryStatus,
   ReviewStatus,
 } from "@/generated/prisma/enums";
+import { IMPORT_LISTS, importListLabel } from "@/lib/import-list";
+import {
+  PRODUCT_SIZE_TIERS,
+  sizeTierStudioLabel,
+  type ProductSizeTier,
+} from "@/lib/product-size-tier";
+import {
+  importListStripHref,
+  productListHref,
+  sizeTierStripHref,
+} from "@/components/studio/products/product-filter-links";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
@@ -119,6 +130,7 @@ async function getDashboardData() {
   const [
     counts,
     tierGroups,
+    sizeTierGroups,
     chartRows,
     activeRows,
     approvalRows,
@@ -187,10 +199,20 @@ async function getDashboardData() {
       db.scrapedProduct.count(),
       db.importRun.count(),
     ]),
-    // Catalog composition by sheet tier (published only) for the tier strip.
+    // Catalogue composition by IMPORT LIST — `Product.tier`, which committed
+    // CSV a row came from — published only, for the import-list strip.
     db.product.groupBy({
       by: ["tier"],
       where: { status: ContentStatus.PUBLISHED, tier: { not: null } },
+      _count: { _all: true },
+    }),
+    // Catalogue composition by PRODUCT TIER — `Product.sizeTier`, the
+    // three-tier architecture — over the same published population. No
+    // `not null` here: the null group IS the untiered backlog the strip
+    // has to show.
+    db.product.groupBy({
+      by: ["sizeTier"],
+      where: { status: ContentStatus.PUBLISHED },
       _count: { _all: true },
     }),
     db.inquiry.findMany({
@@ -313,6 +335,7 @@ async function getDashboardData() {
   return {
     counts,
     tierGroups,
+    sizeTierGroups,
     chartSeries: buildDailySeries(chartRows, chartStart, tz),
     sparks: {
       newInquiries: tail(chartRows),
@@ -366,6 +389,7 @@ export default async function DashboardPage() {
       importRuns,
     ],
     tierGroups,
+    sizeTierGroups,
     chartSeries,
     sparks,
     topProducts,
@@ -380,15 +404,16 @@ export default async function DashboardPage() {
       ? "—"
       : `${Math.round((convertedInquiries / totalInquiries) * 100)}%`;
 
-  const tierCounts = new Map(
+  // Import lists: the words come from import-list.ts, never typed here — this
+  // strip carried one of the hand-written "Tier 1 … Tier 4" copies.
+  const importListCounts = new Map(
     tierGroups.map((g) => [g.tier as number, g._count._all]),
   );
-  const TIER_STRIP = [
-    { tier: 1, label: "Tier 1 · Owner" },
-    { tier: 2, label: "Tier 2 · Resin goods" },
-    { tier: 3, label: "Tier 3 · Supplies" },
-    { tier: 4, label: "Tier 4 · 3D printing" },
-  ];
+  // Product tiers: the three named groups plus the null group, which is the
+  // untiered backlog and gets its own cell rather than vanishing.
+  const sizeTierCounts = new Map<ProductSizeTier | null, number>(
+    sizeTierGroups.map((g) => [g.sizeTier, g._count._all]),
+  );
 
   const STRIP =
     "flex min-h-11 items-center justify-between gap-3 rounded-card border border-border bg-card px-4 py-3 shadow-e1";
@@ -469,9 +494,51 @@ export default async function DashboardPage() {
         <TopProductsCard products={topProducts} />
       </div>
 
-      {/* Catalogue composition — one link per sheet tier, published counts,
+      {/* Product tiers — the three-tier architecture, published counts, plus
+          the untiered backlog as its own cell. "Tier" on this page means
+          this; the import lists below are where a row CAME FROM. Each cell
+          deep-links into /studio/products on the sizeTier filter, and
+          product-filter-links.test.ts pins that each href parses back to the
+          filter it means. */}
+      <h2 className="u-micro mb-3">PRODUCT TIERS</h2>
+      <p className="mb-4 max-w-[68ch] text-small leading-relaxed text-graphite">
+        Published products by product tier. The Studio refuses to publish a
+        piece without one. Untiered counts every published row with no tier,
+        which includes the supplies — molds, pigments, filaments — that the
+        rule leaves untiered by design, so{" "}
+        <Link
+          href={productListHref({ sizeTier: "NONE", status: "ALL" })}
+          className="rounded-input font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+        >
+          Suggest tiers
+        </Link>{" "}
+        on the products screen files only the pieces among them.
+      </p>
+      <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {PRODUCT_SIZE_TIERS.map((tier) => (
+          <Link
+            key={tier}
+            href={sizeTierStripHref(tier)}
+            className={STRIP_LINK}
+          >
+            <span className="u-micro">{sizeTierStudioLabel(tier)}</span>
+            <span className="u-num shrink-0 text-20 text-foreground">
+              {num(sizeTierCounts.get(tier) ?? 0)}
+            </span>
+          </Link>
+        ))}
+        <Link href={sizeTierStripHref("NONE")} className={STRIP_LINK}>
+          <span className="u-micro">Untiered</span>
+          <span className="u-num shrink-0 text-20 text-foreground">
+            {num(sizeTierCounts.get(null) ?? 0)}
+          </span>
+        </Link>
+      </div>
+
+      {/* Catalogue composition — one link per import list, published counts,
           plus the live-but-unbuyable out-of-stock slice. Each cell deep-links
-          into /studio/products pre-filtered. */}
+          into /studio/products pre-filtered on `?tier=` — the column value,
+          a contract; only the label reads "List". */}
       <h2 className="u-micro mb-3">CATALOGUE</h2>
       <p className="mb-4 max-w-[68ch] text-small leading-relaxed text-graphite">
         The catalogue is fed by the{" "}
@@ -479,21 +546,22 @@ export default async function DashboardPage() {
           href="/studio/catalog-fill"
           className="rounded-input font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
         >
-          Sheet Import
+          Catalog fill
         </Link>{" "}
-        (four tiers, refreshed automatically), plus manual products, Bulk Import
-        and the Product Scraper.
+        (four import lists — committed CSVs, run from that screen or on deploy
+        while its switch is on), plus manual products, Bulk Import and the
+        Product Scraper.
       </p>
       <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {TIER_STRIP.map(({ tier, label }) => (
+        {IMPORT_LISTS.map((list) => (
           <Link
-            key={tier}
-            href={`/studio/products?tier=${tier}`}
+            key={list}
+            href={importListStripHref(list)}
             className={STRIP_LINK}
           >
-            <span className="u-micro">{label}</span>
-            <span className="u-num text-20 text-foreground">
-              {num(tierCounts.get(tier) ?? 0)}
+            <span className="u-micro">{importListLabel(list)}</span>
+            <span className="u-num shrink-0 text-20 text-foreground">
+              {num(importListCounts.get(list) ?? 0)}
             </span>
           </Link>
         ))}
@@ -581,8 +649,12 @@ export default async function DashboardPage() {
             {num(scrapedRecords)}
           </span>
         </Link>
-        <Link href="/studio/import" className={STRIP_LINK}>
-          <span className="u-micro">Import runs</span>
+        {/* `ImportRun` is the catalog fill's run record (tier-fill.ts and the
+            deploy bootstrap write it; Bulk Import writes only an ActivityLog
+            row), so this links to the screen that shows those runs — it used
+            to point at the Bulk Import wizard, which has no run history. */}
+        <Link href="/studio/catalog-fill" className={STRIP_LINK}>
+          <span className="u-micro">Catalog fill runs</span>
           <span className="u-num text-20 text-foreground">
             {num(importRuns)}
           </span>

@@ -53,7 +53,7 @@ export default async function ImportConflictsPage() {
     <>
       <PageHeader
         title="Import conflicts"
-        description="Fields where the tier CSV and a studio edit both changed the same product since the last fill. Nothing is overwritten until you say so, per field."
+        description="Fields where an import-list CSV and a studio edit both changed the same product since the last fill. Nothing is overwritten until you say so, per field."
         actions={
           <Button asChild variant="ghost" size="sm">
             <Link href="/studio/catalog-fill">

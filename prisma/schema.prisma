@@ -108,16 +108,25 @@ model Product {
   /// this product instead of creating a duplicate.
   importSource   String?
   importRef      String?
-  /// Owner-sheet tier (1 owner · 2 resin goods · 3 supplies · 4 3D-print).
-  /// Null for products created in the studio by hand.
+  /// THE IMPORT LIST (1 owner's store · 2 resin goods · 3 supplies ·
+  /// 4 3D printing): which committed `data/tiers/*.csv.gz` file the row came
+  /// from, written by `tier-fill.ts`. Null for products created in the
+  /// studio by hand.
   ///
-  /// THIS IS PROVENANCE, NOT SIZE — where the row came from. The owner's
-  /// three-tier product architecture lives in `sizeTier` below, on its own
-  /// column, because this one is an indexed Int the shop's default sort and
-  /// nine other readers already depend on.
+  /// THIS IS PROVENANCE, NOT THE PRODUCT TIER — where the row came from. The
+  /// Studio reads it as "List 1 — Owner's store" (`src/lib/import-list.ts`,
+  /// the one copy of those words) and never as "tier": on a Studio screen
+  /// that word means `sizeTier` below, the three-tier architecture. The
+  /// column keeps its name because it is an indexed Int the shop's default
+  /// sort and nine other readers already depend on, and a rename here
+  /// reaches production on push.
   tier           Int?
-  /// The owner's three-tier product architecture
+  /// THE PRODUCT TIER — the owner's three-tier product architecture
   /// (docs/plan/07-three-tier-architecture.md): what a finished piece IS.
+  /// Every "tier" a person reads in the Studio is this column
+  /// (`src/lib/product-size-tier.ts`: "Tier 1 — Collectible Furniture &
+  /// Spatial Art" … "Tier 3 — Personal Art & Gifting"). `tier` above is the
+  /// import list, a different fact.
   ///
   /// NULLABLE ON PURPOSE. Three writers create products without passing the
   /// studio form — the scraper's promote, Bulk Import, and `tier-fill.ts` on

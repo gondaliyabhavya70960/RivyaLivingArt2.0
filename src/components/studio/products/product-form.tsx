@@ -54,7 +54,7 @@ export type { ProductFormInitial } from "./product-form/schema";
  * people. `onInvalid` below reads the first errored field, finds its tab and
  * switches to it, and every tab with an error is marked in the strip.
  *
- * One pair moves: a PRINT product (tier 4, or a print-group category) carries
+ * One pair moves: a PRINT product (import list 4, or a print-group category) carries
  * its video and 3D-model URLs in the General tab's 3D-printing section rather
  * than under Images, so `tabForField` takes that predicate — otherwise a bad
  * URL switched to a tab that did not hold the field and focused an input
@@ -283,7 +283,7 @@ export function ProductForm({
             <TabsContent forceMount value="general" className="space-y-6">
               <EssentialsSection categories={categories} />
               {/* Sections below swap their resin flavor for print fields when
-                  the product is tier 4 or filed in a print-group category
+                  the product is from import list 4 or filed in a print-group category
                   (M-A3). */}
               <PricingSpecsSection categories={categories} />
               <PrintProductionSection categories={categories} />

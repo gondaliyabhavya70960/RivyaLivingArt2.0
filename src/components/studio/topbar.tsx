@@ -36,7 +36,7 @@ const ACTION =
  * `Notifications` was a real count, not a dot — NEW commissions plus the
  * scraper rows waiting on a human — and still is, but the bell now opens
  * `<NotificationsPopover/>` rather than only linking through: five more
- * queues (testimonials, products/posts/pieces in review, sheet conflicts,
+ * queues (testimonials, products/posts/pieces in review, import conflicts,
  * recent scrape/import results, publish activity) surface without a trip to
  * `/studio/activity` first. `newCommissions` is folded into the same list as
  * its own pending item — `getStudioInbox()` deliberately does not query

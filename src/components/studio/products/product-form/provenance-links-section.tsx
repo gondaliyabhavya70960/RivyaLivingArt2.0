@@ -9,22 +9,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldError } from "@/components/studio/field-error";
 import { FormSection } from "@/components/studio/form-section";
+import { IMPORT_LIST_SHORT, importListOf } from "@/lib/import-list";
 import { PRODUCT_LIMITS } from "@/lib/studio-limits";
 
 import type { FormValues } from "./schema";
 
-const TIER_LABELS: Record<number, string> = {
-  1: "Studio original",
-  2: "Resin goods",
-  3: "Supplies",
-  4: "3D print",
-};
+/**
+ * The linked product's import list, in the short form a caption has room
+ * for — from import-list.ts, which replaced the third hand-typed copy of
+ * these words that used to live here. Total over any number: a value outside
+ * the four lists prints as "List n" rather than nothing.
+ */
+function importListCaption(tier: number): string {
+  const list = importListOf(tier);
+  return list ? IMPORT_LIST_SHORT[list] : `List ${tier}`;
+}
 
 /**
- * Cross-tier provenance links (product-ux benchmark gap 3): "Made with" on
- * an art piece names the ACTUAL pigments/resins from the supplies tier; the
- * reverse side renders "What this creates" on the supply's page. Links are
- * owner-picked here — never inferred — so the provenance story stays true.
+ * Cross-list provenance links (product-ux benchmark gap 3): "Made with" on
+ * an art piece names the ACTUAL pigments/resins from the supplies import
+ * list; the reverse side renders "What this creates" on the supply's page.
+ * Links are owner-picked here — never inferred — so the provenance story
+ * stays true.
  */
 export function ProvenanceLinksSection() {
   const {
@@ -75,7 +81,7 @@ export function ProvenanceLinksSection() {
                 {field.title}
                 {field.tier != null && (
                   <span className="ms-2 text-xs text-muted-foreground">
-                    {TIER_LABELS[field.tier] ?? `Tier ${field.tier}`}
+                    {importListCaption(field.tier)}
                   </span>
                 )}
               </span>
@@ -147,7 +153,7 @@ export function ProvenanceLinksSection() {
                   <span className="min-w-0 truncate">{row.title}</span>
                   {row.tier != null && (
                     <span className="ms-auto shrink-0 text-xs text-muted-foreground">
-                      {TIER_LABELS[row.tier] ?? `Tier ${row.tier}`}
+                      {importListCaption(row.tier)}
                     </span>
                   )}
                 </button>

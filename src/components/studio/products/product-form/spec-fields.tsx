@@ -9,7 +9,7 @@ import type { FormValues } from "./schema";
 /**
  * Spec and media-URL fields shared between their home sections and the
  * "3D printing" section. Each field registers exactly once: the sections swap
- * on the print predicate (tier 4, or a print-group category — see
+ * on the print predicate (import list 4, or a print-group category — see
  * `useIsPrintProduct`), so only one instance of a field is ever mounted.
  */
 

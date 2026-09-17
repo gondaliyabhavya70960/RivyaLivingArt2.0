@@ -14,7 +14,7 @@ import { useIsPrintProduct } from "./use-print-product";
 
 /**
  * Print-flavored grouping of the existing spec fields (audit M-A3). Renders
- * while the product belongs to the 3D-print ecosystem — Tier 4 OR a category
+ * while the product belongs to the 3D-print ecosystem — import list 4 OR a category
  * in the "print" catalog group; the same fields hide in Pricing & specs /
  * Care notes / Media meanwhile, so each registers exactly once. Uses only
  * existing Product columns: materials (filament), dimensions (size + pack),

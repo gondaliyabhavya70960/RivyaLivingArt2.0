@@ -93,7 +93,7 @@ export function ConflictList({ conflicts }: { conflicts: ConflictRow[] }) {
     return (
       <EmptyState
         title="No open conflicts"
-        description="A conflict appears when the tier CSV and a studio edit change the same field of the same product after the last fill. Nothing needs a decision right now."
+        description="A conflict appears when an import-list CSV and a studio edit change the same field of the same product after the last fill. Nothing needs a decision right now."
       />
     );
   }

@@ -58,8 +58,8 @@ export function CatalogFillPolicy({
     <section className="rounded-card border border-border bg-card p-5 shadow-e1">
       <h2 className="font-medium text-foreground">Automatic fill</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        The tier CSVs fill the catalogue on every deploy. These decide whether
-        it may, and how much it may add at once.
+        The four import-list CSVs fill the catalogue on every deploy. These
+        decide whether it may, and how much it may add at once.
       </p>
 
       <div className="mt-4 space-y-4">
@@ -68,7 +68,7 @@ export function CatalogFillPolicy({
             htmlFor="fill-enabled"
             className="flex-1 flex-col items-start gap-0.5 font-normal"
           >
-            Fill the catalogue from the tier CSVs
+            Fill the catalogue from the import-list CSVs
             <span className="mt-0.5 block text-xs text-muted-foreground">
               Off stops it everywhere, deploys included.
             </span>

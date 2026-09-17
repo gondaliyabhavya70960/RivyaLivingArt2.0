@@ -3,10 +3,36 @@ import { Download, FileSpreadsheet } from "lucide-react";
 
 import { requireStaffPage } from "@/actions/helpers";
 import { db } from "@/lib/db";
+import { IMPORT_LIST_NAME, IMPORT_LISTS } from "@/lib/import-list";
+import {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_NUMBER,
+  SIZE_TIER_SHORT,
+} from "@/lib/product-size-tier";
 import { PageHeader } from "@/components/studio/page-header";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "Exports" };
+
+/**
+ * The confirmed export carries TWO columns called "tier", and the screen says
+ * which is which in the owner's words. Both cells are written exactly as the
+ * file writes them — `product_tier` is the enum name, `tier` the list number
+ * — and the words beside them come from the two vocabularies, never typed
+ * here: `src/lib/product-size-tier.ts` for the product tier and
+ * `src/lib/import-list.ts` for the import list. The headers themselves are a
+ * contract (`CONFIRMED_EXPORT_COLUMNS` is append-only) and do not change.
+ */
+
+/** "LARGE_FORMAT = Tier 1 Collectible · MEDIUM_FORMAT = Tier 2 Memory · …" */
+const PRODUCT_TIER_CELLS = PRODUCT_SIZE_TIERS.map(
+  (tier) => `${tier} = Tier ${SIZE_TIER_NUMBER[tier]} ${SIZE_TIER_SHORT[tier]}`,
+).join(" · ");
+
+/** "1 = Owner's store · 2 = Resin goods · 3 = Supplies · 4 = 3D printing" */
+const IMPORT_LIST_CELLS = IMPORT_LISTS.map(
+  (list) => `${list} = ${IMPORT_LIST_NAME[list]}`,
+).join(" · ");
 
 /**
  * The Export Centre — where the owner gets their data out.
@@ -48,7 +74,17 @@ export default async function ExportsPage() {
           title="Confirmed products"
           count={confirmedCount}
           noun="confirmed product"
-          description="Exactly the products someone explicitly confirmed — not everything scraped, not everything in the studio. Quote-only pieces export an empty price, never a zero."
+          description="Exactly the products someone explicitly confirmed — not everything scraped, not everything in the studio. Quote-only pieces export an empty price, never a zero. Two of its columns are both called tier; they are different things."
+          columns={[
+            {
+              key: "product_tier",
+              meaning: `the product tier — what the piece is: ${PRODUCT_TIER_CELLS}. Blank until someone files it.`,
+            },
+            {
+              key: "tier",
+              meaning: `the import list — where the row came from: ${IMPORT_LIST_CELLS}. Blank for a product made in the studio.`,
+            },
+          ]}
           links={[
             { href: "/api/studio/export/confirmed", label: "CSV" },
             {
@@ -91,6 +127,7 @@ function ExportRow({
   count,
   noun,
   description,
+  columns,
   links,
 }: {
   title: string;
@@ -98,6 +135,12 @@ function ExportRow({
   /** Singular. Pluralised below, because "1 subscribers" reads as a bug. */
   noun: string;
   description: string;
+  /**
+   * Columns worth a sentence each — the header exactly as the file writes
+   * it, then what the cell means. Only for a file whose headers can be
+   * misread; a subscriber list needs no glossary.
+   */
+  columns?: { key: string; meaning: string }[];
   links: { href: string; label: string; primary?: boolean }[];
 }) {
   const empty = count === 0;
@@ -118,6 +161,18 @@ function ExportRow({
         <p className="mt-2 max-w-[62ch] text-small leading-relaxed text-graphite">
           {description}
         </p>
+        {columns && (
+          <dl className="mt-3 max-w-[62ch] space-y-1.5 text-small leading-relaxed text-graphite">
+            {columns.map((column) => (
+              <div key={column.key} className="flex flex-wrap gap-x-2">
+                {/* The header is a code, not a word — mono, like every other
+                    identifier the Studio prints. */}
+                <dt className="font-mono text-foreground">{column.key}</dt>
+                <dd className="min-w-0 flex-1 basis-60">{column.meaning}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

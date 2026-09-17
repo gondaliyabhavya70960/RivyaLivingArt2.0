@@ -198,7 +198,7 @@ export function MediaSection({
 
       {/* A print product carries these in its dedicated 3D-printing section
           instead, so each field is mounted once. The SAME predicate as that
-          section — tier 4 OR a print-group category — because gating on the
+          section — import list 4 OR a print-group category — because gating on the
           tier alone mounted both copies for a print product filed without
           the tier: two inputs with one id, and a label pointing at the
           wrong one. */}

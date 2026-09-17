@@ -143,7 +143,10 @@ export function CommandPalette({ role }: { role: Role }) {
     {
       label: "Catalog fill",
       href: "/studio/catalog-fill",
-      keywords: "import csv tiers fill catalog sheet",
+      // "sheet" stays: the screen was /studio/sheet-import for a year and
+      // muscle memory still types it. "import list" is the current word for
+      // the four CSVs it reads.
+      keywords: "import list lists csv fill catalog catalog fill sheet",
       icon: Table,
     },
     {
