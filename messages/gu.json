@@ -1257,7 +1257,8 @@
       "eyebrowProcess": "પ્રક્રિયા",
       "eyebrowFinal": "તૈયાર કૃતિ",
       "eyebrowRelated": "એ જ વર્કબેન્ચ પરથી",
-      "eyebrowCommission": "આવી જ બનાવડાવો"
+      "eyebrowCommission": "આવી જ બનાવડાવો",
+      "nextEyebrow": "આગળનો પ્રોજેક્ટ"
     },
     "beforeAfter": {
       "before": "પહેલાં",

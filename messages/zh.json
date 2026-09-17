@@ -1234,7 +1234,8 @@
       "eyebrowProcess": "制作过程",
       "eyebrowFinal": "最终成品",
       "eyebrowRelated": "出自同一张工作台",
-      "eyebrowCommission": "定制类似之作"
+      "eyebrowCommission": "定制类似之作",
+      "nextEyebrow": "下一个项目"
     },
     "beforeAfter": {
       "before": "之前",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { StudioRow } from "@/components/studio/studio-row";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search, Trash2 } from "lucide-react";
@@ -10,6 +11,8 @@ import { toast } from "sonner";
 import type { InquirySource, InquiryStatus } from "@/generated/prisma/enums";
 import { deleteInquiries, setInquiriesStatus } from "@/actions/inquiries";
 import { useSelection } from "@/hooks/use-selection";
+import { isOptimizableImageSrc } from "@/lib/image-src";
+import { cn, monogram } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,6 +48,9 @@ export type InquiryRow = {
   number: string;
   customerName: string;
   phone: string;
+  /** The commissioned product's first image — null for custom orders and
+   *  contact leads, which have no product attached. */
+  thumbnailUrl: string | null;
   source: InquirySource;
   productTitle: string | null;
   status: InquiryStatus;
@@ -52,6 +58,47 @@ export type InquiryRow = {
   /** Pre-formatted on the server to keep hydration deterministic. */
   createdAt: string;
 };
+
+/**
+ * The row's product thumbnail, or the customer's monogram — the same
+ * treatment `commission-board.tsx` has always given its cards (plan §3 S3).
+ * The table did not carry one, so the same pipeline looked like two different
+ * datasets depending on which view the owner was in.
+ */
+function RowThumb({
+  url,
+  customerName,
+  size = "size-10",
+}: {
+  url: string | null;
+  customerName: string;
+  size?: string;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "relative shrink-0 overflow-hidden rounded-image border border-border bg-background",
+        size,
+      )}
+    >
+      {url ? (
+        <Image
+          src={url}
+          alt=""
+          fill
+          sizes="40px"
+          className="object-cover"
+          unoptimized={!isOptimizableImageSrc(url)}
+        />
+      ) : (
+        <span className="u-num absolute inset-0 flex items-center justify-center text-12 text-graphite">
+          {monogram(customerName)}
+        </span>
+      )}
+    </span>
+  );
+}
 
 const INQUIRY_COLUMNS: ColumnDef[] = [
   { key: "source", label: "Source" },
@@ -278,6 +325,11 @@ export function InquiryList({
                     onCheckedChange={() => selection.toggle(inquiry.id)}
                     className="mt-1"
                   />
+                  <RowThumb
+                    url={inquiry.thumbnailUrl}
+                    customerName={inquiry.customerName}
+                    size="size-12"
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="u-micro">{inquiry.number}</p>
                     <h3 className="mt-0.5 flex flex-wrap items-center gap-2 text-small font-medium text-foreground">
@@ -407,18 +459,26 @@ export function InquiryList({
                       </span>
                     </td>
                     <td className="py-3 pe-4 max-xl:sticky max-xl:z-10 max-xl:bg-inherit max-xl:start-30">
-                      <span className="flex flex-wrap items-center gap-2">
-                        <Link
-                          href={`/studio/inquiries/${inquiry.id}`}
-                          className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
-                        >
-                          {inquiry.customerName}
-                        </Link>
-                        {inquiry.isDemo && <DemoBadge />}
+                      <span className="flex items-center gap-3">
+                        <RowThumb
+                          url={inquiry.thumbnailUrl}
+                          customerName={inquiry.customerName}
+                        />
+                        <span className="min-w-0">
+                          <span className="flex flex-wrap items-center gap-2">
+                            <Link
+                              href={`/studio/inquiries/${inquiry.id}`}
+                              className="whitespace-nowrap rounded-input font-medium text-foreground underline-offset-4 outline-none hover:text-sapphire-ink hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                            >
+                              {inquiry.customerName}
+                            </Link>
+                            {inquiry.isDemo && <DemoBadge />}
+                          </span>
+                          <span className="u-num block text-12 text-graphite">
+                            {inquiry.phone}
+                          </span>
+                        </span>
                       </span>
-                      <p className="u-num text-12 text-graphite">
-                        {inquiry.phone}
-                      </p>
                     </td>
                     {columns.isVisible("source") && (
                       <td className="py-3 pe-4">

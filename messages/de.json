@@ -1257,7 +1257,8 @@
       "eyebrowProcess": "der prozess",
       "eyebrowFinal": "das fertige stück",
       "eyebrowRelated": "von derselben werkbank",
-      "eyebrowCommission": "ähnliches beauftragen"
+      "eyebrowCommission": "ähnliches beauftragen",
+      "nextEyebrow": "nächstes projekt"
     },
     "beforeAfter": {
       "before": "vorher",

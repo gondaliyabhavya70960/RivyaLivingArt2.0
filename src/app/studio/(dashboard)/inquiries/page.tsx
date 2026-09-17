@@ -137,7 +137,19 @@ export default async function InquiriesPage({
             status: true,
             isDemo: true,
             createdAt: true,
-            product: { select: { title: true } },
+            product: {
+              select: {
+                title: true,
+                // The row's thumbnail (plan §3 S3). The board has carried one
+                // since it was built; the table did not, so the same pipeline
+                // looked like two different datasets depending on the view.
+                images: {
+                  orderBy: { order: "asc" },
+                  take: 1,
+                  select: { url: true },
+                },
+              },
+            },
           },
           skip: (pageNum - 1) * PAGE_SIZE,
           take: PAGE_SIZE,
@@ -192,6 +204,7 @@ export default async function InquiriesPage({
     number: formatInquiryNumber(inquiry.number),
     customerName: inquiry.customerName,
     phone: inquiry.phone,
+    thumbnailUrl: inquiry.product?.images[0]?.url ?? null,
     source: inquiry.source,
     productTitle: inquiry.product?.title ?? null,
     status: inquiry.status,

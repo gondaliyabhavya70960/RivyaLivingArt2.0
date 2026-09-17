@@ -122,3 +122,36 @@ export function describePlaceholderPublishProblem(input: {
   if (!isPlaceholderAsset(input.coverUrl)) return null;
   return "This product's main image is a concept placeholder, not a photograph of a real piece — it stands in for something that hasn't been made yet. Replace it with a Rivya Living Art photograph, or save this as a draft.";
 }
+
+/**
+ * Why this product may not be published for lack of a photograph, or null if
+ * it may — plan §3 S5's "publish guard: no hero image".
+ *
+ * It lives beside the placeholder rule because they are the same question
+ * asked twice: **what does a customer see?** A placeholder cover shows them
+ * the wrong piece; no cover at all shows them a monogram tile on every rail
+ * the product appears in, and a WhatsApp link preview with no picture at the
+ * moment they are agreeing to buy.
+ *
+ * **Transition-scoped, unlike the placeholder rule right above it.** The
+ * difference is the backlog, which is the same argument `describeSizeTier-
+ * PublishProblem` makes: there are ~27 imageless products already published
+ * on this catalogue and the guard must not lock the owner out of editing
+ * them. The placeholders had no such backlog to pay with, and so are refused
+ * on every save. `/studio/products?status=PUBLISHED&media=none` is the list
+ * to work through, and the Overview counts it.
+ *
+ * `imageCount` rather than a url: a row with images is already past this, and
+ * whether the first one is renderable is `describeConfirmBlockers`' question
+ * on a different screen.
+ */
+export function describeMissingImagePublishProblem(input: {
+  nextStatus: ContentStatus;
+  currentStatus: ContentStatus | null;
+  imageCount: number;
+}): string | null {
+  if (input.nextStatus !== "PUBLISHED") return null;
+  if (input.currentStatus === "PUBLISHED") return null;
+  if (input.imageCount > 0) return null;
+  return "This product has no photograph, so its card would render as a monogram tile everywhere it appears. Add at least one image, or save this as a draft.";
+}

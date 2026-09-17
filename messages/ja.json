@@ -1234,7 +1234,8 @@
       "eyebrowProcess": "制作の流れ",
       "eyebrowFinal": "完成した作品",
       "eyebrowRelated": "同じ作業台から",
-      "eyebrowCommission": "似た作品を依頼する"
+      "eyebrowCommission": "似た作品を依頼する",
+      "nextEyebrow": "次のプロジェクト"
     },
     "beforeAfter": {
       "before": "ビフォー",

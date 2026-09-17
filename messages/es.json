@@ -1257,7 +1257,8 @@
       "eyebrowProcess": "el proceso",
       "eyebrowFinal": "la pieza final",
       "eyebrowRelated": "del mismo banco",
-      "eyebrowCommission": "encarga algo similar"
+      "eyebrowCommission": "encarga algo similar",
+      "nextEyebrow": "siguiente proyecto"
     },
     "beforeAfter": {
       "before": "antes",

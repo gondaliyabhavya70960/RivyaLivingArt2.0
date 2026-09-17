@@ -1257,7 +1257,8 @@
       "eyebrowProcess": "مراحل الصنع",
       "eyebrowFinal": "القطعة النهائية",
       "eyebrowRelated": "من طاولة العمل نفسها",
-      "eyebrowCommission": "اطلب قطعة مشابهة"
+      "eyebrowCommission": "اطلب قطعة مشابهة",
+      "nextEyebrow": "المشروع التالي"
     },
     "beforeAfter": {
       "before": "قبل",

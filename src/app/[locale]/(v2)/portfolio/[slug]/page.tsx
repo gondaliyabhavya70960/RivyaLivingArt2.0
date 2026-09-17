@@ -157,6 +157,51 @@ async function getRelated(portfolioId: string, categoryId: string | null) {
   return [...sameCategory, ...fill];
 }
 
+/**
+ * The NEXT case in the archive's own order — plan §2.7's "next-project giant
+ * link at the foot of a case page".
+ *
+ * Chronological, not related — and NOT one of the three tiles above it. Those
+ * answer "what else is like this"; a giant link repeating one of them is the
+ * same door twice, which is exactly what the first pass of this shipped
+ * (screenshotted: the "next project" was the first related tile, verbatim).
+ * So `exclude` carries the ids already on the screen, and the link means
+ * "the next case you have not been offered yet".
+ *
+ * `createdAt` DESC is the archive's order, so "next" is the case published
+ * just before this one. When everything earlier is already on the screen —
+ * and on the last case in the archive — there is no next, and the block is
+ * not built rather than wrapping to the start and pretending the sequence is
+ * a loop.
+ *
+ * **The tie-break on `id` is not decoration.** A bare `createdAt: { lt }` is
+ * the obvious way to write "the one before this", and it answers NOTHING for
+ * a set seeded in one transaction — every row shares the instant, so every
+ * row is the last one. The demo archive is exactly that set, which is how the
+ * first version of this was caught rendering no link at all on a page with
+ * nineteen cases behind it. Keyset ordering with a second key is the fix, and
+ * it costs one clause.
+ */
+async function getNextCase(
+  portfolio: { id: string; createdAt: Date },
+  exclude: string[],
+) {
+  const demo = await demoWhere();
+  return db.portfolio.findFirst({
+    where: {
+      status: "PUBLISHED",
+      ...demo,
+      id: { notIn: [portfolio.id, ...exclude] },
+      OR: [
+        { createdAt: { lt: portfolio.createdAt } },
+        { createdAt: portfolio.createdAt, id: { lt: portfolio.id } },
+      ],
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: { slug: true, title: true, translations: true },
+  });
+}
+
 const TILE_SIZES = "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw";
 
 type RelatedItem = {
@@ -317,6 +362,12 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
     : null;
 
   const related = await getRelated(portfolio.id, portfolio.categoryId);
+  // Sequenced, not parallel: the next case has to know what the tiles above
+  // it are already showing.
+  const nextCase = await getNextCase(
+    portfolio,
+    related.map((row) => row.id),
+  );
 
   /* ——— serialize/derive plain values on the server ——— */
 
@@ -833,6 +884,35 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 </li>
               ))}
             </ul>
+
+            {/* The next case, as a display-type link (plan §2.7). It lives
+                INSIDE this section rather than as a band of its own: the page
+                documents its dark-band budget above, and a fourth light band
+                between mineral and the sand closer would merge with one of
+                them rather than reading as a step.
+
+                The tiles above answer "what else is like this"; this answers
+                "what comes next", which is why it is the chronological
+                neighbour and not one of them. The last case in the archive
+                has none, and then nothing is built. */}
+            {nextCase ? (
+              <div className="border-t border-hairline pt-10">
+                <p className="u-micro mb-3">{t("nextEyebrow")}</p>
+                <h3 className="font-display text-h1 leading-h1 tracking-display text-ink">
+                  <Link
+                    href={`/portfolio/${nextCase.slug}`}
+                    className="group inline-flex items-baseline gap-4 rounded-input text-balance outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
+                  >
+                    {localize(nextCase, locale, ["title"]).title}
+                    <ArrowRight
+                      aria-hidden
+                      strokeWidth={1.5}
+                      className="size-7 shrink-0 self-center text-sapphire transition-transform duration-(--dur-fast) ease-(--ease-settle) group-hover:translate-x-1 motion-reduce:transition-none rtl:-scale-x-100"
+                    />
+                  </Link>
+                </h3>
+              </div>
+            ) : null}
           </div>
         </section>
       ) : null}
