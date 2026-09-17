@@ -14,7 +14,14 @@ import { z } from "zod";
 
 import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
 import { logActivity } from "@/lib/activity";
+import { db } from "@/lib/db";
+import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
+import { SCRAPE_TIERS } from "@/lib/scraper/purge";
 import { ShortlistState } from "@/lib/scraper/shortlist";
+import {
+  inboxSelection,
+  type InboxSelection,
+} from "@/lib/scraper/shortlist-query";
 import {
   setEntryNote,
   setEntryTags,
@@ -136,5 +143,49 @@ export async function setShortlistTags(
     });
     revalidatePath(REVIEW_PATH);
     revalidatePath(CONFIRMED_PATH);
+  });
+}
+
+// ————————————————————— Selection resolution —————————————————————
+
+const inboxFilterSchema = z.object({
+  sourceKey: z.string().trim().min(1).optional(),
+  sourceTier: z.enum(SCRAPE_TIERS).optional(),
+  sizeTier: z.enum([...PRODUCT_SIZE_TIERS, "NONE"]).optional(),
+  q: z.string().trim().max(200).optional(),
+});
+
+const selectionSchema = z.object({
+  filter: inboxFilterSchema,
+  state: z.union([z.enum(ShortlistState), z.literal("ALL")]),
+  /** An explicit selection instead of the filter — the page's own ticks. */
+  ids: z.array(z.string().min(1)).min(1).max(500).optional(),
+});
+
+export type ResolveInboxSelectionInput = z.input<typeof selectionSchema>;
+export type { InboxSelection };
+
+/**
+ * What a filter (or the page's ticked rows) covers, BEFORE anything moves:
+ * every matching research product for a funnel move, and the subset that
+ * can go into the catalogue with its auto-mapped category and suggested
+ * tier. A read, behind requireStaff like every inbox action — it hands back
+ * staged data. The writes stay `setShortlistState` and
+ * `addScrapedToCatalog`, called in batches by the client, so a 500-row
+ * "select all" is 500 rows of the same audited path rather than a new one.
+ */
+export async function resolveInboxSelection(
+  input: ResolveInboxSelectionInput,
+): Promise<ActionResult<InboxSelection>> {
+  return runAction(async () => {
+    await requireStaff();
+    const p = selectionSchema.parse(input);
+    const categories = await db.category.findMany({
+      select: { id: true, name: true, slug: true },
+    });
+    return inboxSelection(p.filter, p.state, {
+      ids: p.ids,
+      categories,
+    });
   });
 }

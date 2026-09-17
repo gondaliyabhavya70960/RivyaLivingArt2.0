@@ -44,6 +44,21 @@ export type SizeTierSignals = {
 
 export type SizeTierScores = Record<ProductSizeTier, number>;
 
+/**
+ * `fields.productType`, when the adapter recorded one (Shopify does). The
+ * staged row's `fields` column is untyped JSON, so every reader used to carry
+ * its own copy of this guard; one copy here keeps the inbox, the source page
+ * and the selection resolver reading the same key.
+ */
+export function productTypeFromFields(fields: unknown): string | null {
+  return fields &&
+    typeof fields === "object" &&
+    "productType" in fields &&
+    typeof (fields as { productType: unknown }).productType === "string"
+    ? (fields as { productType: string }).productType
+    : null;
+}
+
 /** Any side at or over this pushes LARGE — a table top, a panel, a bench. */
 export const LARGE_MIN_CM = 60;
 /** A longest side at or under this pushes SMALL — jewellery, charms, magnets. */
