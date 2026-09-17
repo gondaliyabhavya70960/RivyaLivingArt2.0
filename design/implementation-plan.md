@@ -1,7 +1,7 @@
-# Rivya Living Art — Full Implementation Plan (v3.2)
-### Every page of the storefront + the Studio · all assets · all motion · all dependencies · zero DB changes
+# Rivya Living Art — Full Implementation Plan (v3.3)
+### Every page of the storefront + the Studio · all assets · all motion · all dependencies · interaction layer · Claude Code prompt · zero DB changes
 
-**Inputs this plan consolidates:** the UI/UX audit v2, the Awwwards-level redesign spec, the three interactive mockups (preview version `9f1c6e0`), PR #96 (`redesign/liquid-luxury`), the repo's own REDESIGN.md / three-tier architecture, and the **Google Drive asset library** (`1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW`) — fully inventoried and visually verified for this revision.
+**Inputs this plan consolidates:** the UI/UX audit v2, the Awwwards-level redesign spec, the three interactive mockups (preview version `9f1c6e0`), PR #96 (merged to `main`), the repo's own REDESIGN.md / three-tier architecture, and the **Google Drive asset library** — https://drive.google.com/drive/folders/1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW — fully inventoried and visually verified (§4.2, file-ID appendix §4.7).
 
 **Legend** — Effort: `S` ≤½ day · `M` 1–2 days · `L` 3–5 days. Priority: **P0** trust/correctness · **P1** conversion & brand · **P2** depth & polish · **P3** award garnish. Asset status: ✅ generated/delivered · 📁 in the Drive library (verified) · 🎬 to produce (brief included) · 📷 must be real photography.
 
@@ -117,7 +117,20 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 | FAQ | Keep; accordion chevron animation; link into PDP care accordion | — | S |
 | Search | Results group: Pieces · Collections · Journal; empty state → commission CTA | — | M |
 | Privacy/Terms | No design change; prose measure 68ch, mono date stamp | — | — |
-| 404/error | `visual-404.jpg` vortex full-bleed ✅ · 200px "Lost in the pour." · one magnetic pill · rename "Back to the studio" → "Back to the collection" | ✅ | S |
+| 404/error | `visual-404.jpg` vortex full-bleed ✅ · 200px "Lost in the pour." · one magnetic pill · rename "Back to the studio" → "Back to the collection" — full spec §2.10 | ✅ | S |
+
+### 2.10 System pages — 404 · error · login · maintenance
+
+**Note:** the storefront has **no customer login by design** (business rule: no accounts; orders finalize on WhatsApp). "Login" = the staff-only Studio login. All four pages share one system-page shell: full-bleed obsidian, one display headline, one action, cure-line at the foot, mono meta line.
+
+| Page | Design & copy | Motion | Assets | Effort |
+|---|---|---|---|---|
+| **404** `/404` | `visual-404.jpg` vortex full-bleed at 60% under obsidian veil · 200px serif "Lost in the pour." (F4 italic on "pour") · mono sub: `ERR-404 / page not found` · one magnetic champagne pill "Back to the collection" · no nav, no footer links | Headline word-rise (F5) · pill magnetic (§6.2) · veil fade 400ms | ✅ `visual-404.jpg` | S |
+| **Error / 500** | Same shell, `texture-resin-flow.jpg` at 20% · "The pour broke." · mono error reference code + `Try again` pill (soft reload) · calm, never alarming | Same as 404, no magnetic on retry | ✅ texture | S |
+| **Studio login** `/studio/login` | Split 50/50: left = calm card (mono label, floating-label inputs §6.8, caps-lock hint, submit pill) · right = `maker-hands.jpg` with "today" strip (new-inquiries count) once authed-data allows; failed login = one 300ms shakeX + vermilion mono error | Card rise 16px/300ms on mount · input focus hairline | ✅ `maker-hands.jpg` (📷 real studio photo replaces later) | S |
+| **Maintenance / coming-soon** | `texture-resin-flow.jpg` veil · "Back when the resin cures." · cure-line progress animation (loops at 90%) · notify-me input → existing subscribers feature | Cure-line loop 2.4s · input = §6.8 | ✅ texture | S |
+
+**Acceptance:** all four render in 9 locales (RTL included) · no layout shift on font load · reduced-motion = static resting frame · `copy:check` green.
 
 ---
 
@@ -127,7 +140,7 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 
 | # | Screen | What to build | Packages | Effort |
 |---|---|---|---|---|
-| S1 | **Login** | Real studio photo or "today" strip (new-inquiries count) in the dead right pane; caps-lock hint; keep the calm card. Interim visual: ✅ `maker-hands.jpg` | — | S 📷 |
+| S1 | **Login** | Real studio photo or "today" strip (new-inquiries count) in the dead right pane; caps-lock hint; keep the calm card. Interim visual: ✅ `maker-hands.jpg` — full spec §2.10 | — | S 📷 |
 | S2 | **Overview (Dashboard)** | Become the morning **action queue**: cards = New inquiries since last visit · Inquiries stuck >24h · Published with rewrite flags · Live products missing images · **Products on placeholder covers (§4.6 lint)** · Drafts >30 days. Each card deep-links to its filtered list | recharts (existing) | M |
 | S3 | **Commissions (Inquiries)** | **Kanban view** (New→Contacted→Quoted→Confirmed→Delivered) beside the table; one-click **"Open WhatsApp + mark Contacted"**; product thumbnail on every row; mobile card-list first | **@dnd-kit/core + sortable (new — §5.2)** | L |
 | S4 | **Products list** | Default filters `Live + missing image`, `No tier`, `Placeholder cover`; thumbnails + rewrite-flag column; bulk: set tier / unpublish / replace cover / **duplicate** | — | M |
@@ -150,7 +163,7 @@ hero-pour · texture-resin-flow · doorway-collectible · doorway-memory · door
 
 ### 4.2 Drive library — verified 📁 (45 images + 26 videos)
 
-Source: Drive folder `1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW`. Own README caveat: portraits are **1122×1402** (brief minimum was 2048×2560) and scenes **1672×941** (minimum 2560×1440) — all AI concept visualisations of placeholder designs. Consequences: fine for cards, rails, PDP stages, dev seeding, and captioned concepts; **not** for full-bleed ≥2000px heroes without an upscale pass (§5.4 step 3).
+Source: Google Drive — https://drive.google.com/drive/folders/1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW (folder ID `1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW`). **This Drive folder is the single source of truth for all generated imagery** — fetch from here (file IDs in §4.7), never invent substitutes. Own README caveat: portraits are **1122×1402** (brief minimum was 2048×2560) and scenes **1672×941** (minimum 2560×1440) — all AI concept visualisations of placeholder designs. Consequences: fine for cards, rails, PDP stages, dev seeding, and captioned concepts; **not** for full-bleed ≥2000px heroes without an upscale pass (§5.4 step 3).
 
 | Group | Files | Subjects (per `asset-index.csv`) | Used for |
 |---|---|---|---|
@@ -224,7 +237,8 @@ Folder IDs: heroes `16MdLIbNyM0LlGqPmS56bcTK7OWbhe4JS` · scenes `1uG6U5sBhds7Xk
 | DB | `prisma` ^7.8 · `@prisma/client` · `@prisma/adapter-pg` · `pg` |
 | Styling core | `tailwindcss` v4 · `@tailwindcss/postcss` · `clsx` · `tailwind-merge` · `class-variance-authority` |
 | Tests / budgets (dev) | `vitest` · `happy-dom` · `playwright-core` · `@axe-core/playwright` · `lighthouse` · `chrome-launcher` · `tsx` |
-| Lightbox, before/after slider, cursor-follow previews, magnetic buttons, kanban columns' empty states | **Custom components on the above** — deliberately no new library |
+| Cursor, magnetic buttons, progress bars, preloader, marquee, skeleton shimmer (§6) | `gsap` + `lenis` + CSS — all installed; no new dep |
+| Lightbox, before/after slider, cursor-follow previews, kanban empty states | **Custom components on the above** — deliberately no new library |
 
 ### 5.2 New packages — exactly one proposed addition
 | Package | Why | Cost |
@@ -234,7 +248,7 @@ Folder IDs: heroes `16MdLIbNyM0LlGqPmS56bcTK7OWbhe4JS` · scenes `1uG6U5sBhds7Xk
 *If we want zero additions: native HTML5 drag-and-drop with a pointer fallback — acceptable but weaker mobile/a11y; call it at S3 build time.*
 
 ### 5.3 System tooling (not npm)
-`ffmpeg` — video transcode/poster extraction (§4.4) · Drive download at 0.6 via browser UI or `rclone` (owner's machine) · nothing else.
+`ffmpeg` — video transcode/poster extraction (§4.4) · Drive download at 0.6 via browser UI, Drive MCP, or `rclone` · nothing else.
 
 ### 5.4 Asset pipeline (new repo script, uses installed `sharp` + `tsx`)
 `scripts/optimize-redesign-assets.mjs`: (1) read `assets-inbox/` (the Drive download drop); (2) resize to slot maxima — hero 2048w / scene 1920w / card 1200w / thumb 640w; (3) AI-upscale flag (`--upscale`) for anything destined full-bleed that misses the 2048×2560 / 2560×1440 minimums (Drive images do — run them through an upscaler first if used beyond card size; card/rail/PDP-stage use is fine as-is); (4) encode WebP q82 (+ keep master PNG out of repo); (5) emit `blurDataURL` map JSON consumed by `site-images.ts`; (6) write to `public/redesign/catalog/{heroes,scenes}/`. Commit output, not sources.
@@ -244,7 +258,35 @@ No payment/checkout/cart libraries (Stripe, Razorpay, Shopify SDKs) · no custom
 
 ---
 
-## 6. Engineering notes (repo-specific)
+## 6. Interaction layer — reference component designs (build once, use everywhere)
+
+Every micro-interaction on the site comes from this table — same eases, same durations, same guards. Eases are the named curves in `src/lib/gsap.ts`: `luxury` (out-expo-ish, entrances) and `settle` (gentle out, hovers). **Global rules:** nothing animates above 60fps budget · every animation has a `prefers-reduced-motion` resting frame (listed) · pointer effects disable on `pointer: coarse` · durations ≤ 600ms except the preloader · no animation blocks input (INP < 200ms).
+
+| # | Component | File | Behavior & animation spec | Package | Resting / reduced-motion |
+|---|---|---|---|---|---|
+| 6.1 | **Custom cursor** | `src/components/ui/cursor.tsx` (client, storefront only) | 8px champagne dot + 36px trailing ring (`gsap.quickTo`, ring lerp 0.15). States: `default` · `link` (ring → 56px + mono label "View") · `drag` on rails (label "Drag") · `media` (label "Open") · text inputs keep native I-beam. `mix-blend-mode: difference` so it survives dark/light bands | gsap | Hidden entirely: native cursor; `pointer: coarse` → never mounted |
+| 6.2 | **Magnetic button** | `src/components/ui/magnetic.tsx` wrapper | Child translates toward cursor ±6px, spring back 400ms `settle`; click = scale 0.96 (120ms) + champagne fill sweep scaleX 0→1 from left (300ms); focus-visible ring 1.5px champagne, offset 3px | gsap | No magnetism; sweep + focus ring kept |
+| 6.3 | **Scroll progress hairline** | `src/components/ui/scroll-progress.tsx` | 2px champagne line pinned to viewport top, `scaleX` = page progress via ScrollTrigger scrub (transform only — no layout) | gsap ScrollTrigger | Static 0-width (hidden) |
+| 6.4 | **Route loading bar** | `src/components/ui/route-progress.tsx` | Top bar on navigation start: trickles to 70% (800ms), completes 100% + fades 200ms on commit; hooks `next-view-transitions` events; never on same-page anchors | next-view-transitions | Thin static bar that simply appears/disappears |
+| 6.5 | **Preloader** (first visit per session only, `sessionStorage` flag) | `src/components/ui/preloader.tsx` | Obsidian veil · cure-line fills 0→100% with mono counter (JetBrains Mono, tabular-nums) · curtain lifts 700ms `luxury` revealing hero already mid-entrance. Max 1.8s, skips if page ready earlier | gsap | Skipped entirely |
+| 6.6 | **Text selection** | `globals.css` `::selection` | Champagne background, obsidian text; on dark bands inverse (sand bg). One rule each, no JS | CSS | Same (selection style is harmless) |
+| 6.7 | **Dropdown / menu** | radix `dropdown-menu` + `src/components/ui/menu.tsx` skin | Panel: fade + y −4→0, 180ms `settle`; item hover = 45% veil slide left→right; typeahead + arrow keys (radix); scrim click closes | @radix-ui/react-dropdown-menu | Instant open/close |
+| 6.8 | **Inputs / floating label** | `src/components/ui/field.tsx` | Label floats up 160ms on focus/fill · focus = champagne hairline grows from left (scaleX) · error = one 300ms shakeX + vermilion mono message · success = champagne check draw | CSS + tailwind | Instant states, no shake |
+| 6.9 | **Accordion** | radix accordion + skin | Height auto-animate 300ms `settle`; chevron rotates 45°→225°; only one open per group on PDP | @radix-ui/react-accordion | Instant expand |
+| 6.10 | **Tabs pill** | radix tabs + skin | Active pill slides via layout animation 250ms `settle`; content crossfades 200ms | @radix-ui/react-tabs | Instant switch |
+| 6.11 | **Card hover** | `catalog-product-card.tsx` skin | Image scale 1.04 (600ms `settle`) + hoverImage crossfade 300ms; title meniscus underline draws; doorway expansion ✅ already shipped (pure CSS flex) | CSS | No scale; crossfade instant |
+| 6.12 | **Toast** | `sonner` restyle | Obsidian glass panel, champagne icon, slide-up 250ms + fade; mono 12px text; max 3 stacked | sonner | Fade only |
+| 6.13 | **Dialog / lightbox** | radix dialog + skin | Veil fade 200ms · panel rise 16px + fade 300ms `luxury` · Esc/scrim close · focus trap (radix) | @radix-ui/react-dialog | Instant |
+| 6.14 | **Marquee whisper** | `src/components/ui/marquee.tsx` | 24px/s linear loop, masked 64px edges, pauses on hover/focus; mono uppercase 11px, champagne separators | CSS | Static centered line |
+| 6.15 | **Tooltip** | radix-style custom | 120ms hover delay, 150ms fade, mono 11px, 4px offset; never on touch | CSS | Same (text only) |
+| 6.16 | **Skeleton** | `skeletons.tsx` restyle | Champagne 6% shimmer sweep 1.6s across obsidian block; matches final layout 1:1 (no CLS) | CSS | Static block |
+| 6.17 | **Empty state** | `empty-state.tsx` + F1-style line art | Line illustration self-draws 600ms (`stroke-dashoffset`) + one next-action pill; used in every Studio list + search empty + 404 family | SVG code | Static illustration |
+
+**Where each lives:** storefront = 6.1–6.5, 6.9–6.16 · Studio = 6.2 (no magnetic), 6.6–6.10, 6.12, 6.13, 6.16, 6.17 · both share 6.6/6.8/6.12. The Studio never gets the cursor, preloader, marquee, or scroll hairline — it is a tool.
+
+---
+
+## 7. Engineering notes (repo-specific)
 
 - **Stack is already correct:** GSAP + ScrollTrigger (`@/lib/gsap`), Lenis (`SmoothScrollProvider` guards), view-transitions, MeniscusImage, SnapRail — new work plugs into these, never around them.
 - **Guards pattern to copy:** `featured-rail.tsx` (PR #96) — SSR-safe default, dynamic import, reduced-motion + coarse-pointer gates.
@@ -254,7 +296,7 @@ No payment/checkout/cart libraries (Stripe, Razorpay, Shopify SDKs) · no custom
 - **No DB/schema changes anywhere in this plan.** Studio-facing data needs (kanban status, marked-deleted) reuse existing fields; the placeholder lint (§4.6) is path-based, computed at render/lint time.
 - **Binary hygiene:** images enter the repo only through the §5.4 pipeline (optimized WebP) or the manual `public/redesign/` upload — never as raw Drive PNGs (~2.2MB each would bloat the repo to ~100MB; pipeline output ≈ 12–18MB total).
 
-## 7. Roadmap
+## 8. Roadmap
 
 | Phase | Window | Contents |
 |---|---|---|
@@ -264,3 +306,65 @@ No payment/checkout/cart libraries (Stripe, Razorpay, Shopify SDKs) · no custom
 | **P3** | Weeks 9–10 | Preloader · SplitText everywhere · cursor system · marquee whisper · **video loops from Drive picks** · award submission assets (case-study video) |
 
 **Definition of done (every phase):** budgets green · reduced-motion resting states verified by hand · 9 locales render · `copy:check` + `tsc` + `eslint` + e2e smoke green · owner walkthrough on the Vercel preview before merge.
+
+---
+
+## 9. Claude Code craft prompt (copy-paste block)
+
+Paste this block into Claude Code at session start — or save it as `CLAUDE.md` in the repo root so it loads automatically every session. It points Claude at the three design docs, the Drive library, and every hard rule. Also saved standalone at `design/claude-code-prompt.md`.
+
+```
+# Rivya Living Art — Build Rules (Liquid Luxury redesign)
+
+You are building the Awwwards-level redesign of rivyalivingart.com:
+Next.js 16 App Router · TypeScript · Tailwind v4 · shadcn-style components ·
+Prisma 7 + Neon · Auth.js v5 (staff only) · next-intl (9 locales, incl. RTL).
+
+READ FIRST (in this repo):
+1. design/implementation-plan.md  — master plan: pages, components, assets, deps
+2. design/awwwards-redesign-spec.md — art direction + 12-motion system
+3. design/ui-ux-audit-report.md — what is broken and why
+4. REDESIGN.md + src/lib/site-images.ts — slot system and repo conventions
+
+HARD RULES — never violate:
+- NO database/schema changes. NO payment/cart/checkout. NO customer accounts
+  (only staff login at /studio). Every order finalizes on WhatsApp.
+- All UI copy goes through messages/en.json (+ 8 locale files), then run
+  `npm run copy:registry`. Never hardcode strings. `npm run copy:check` must pass.
+- Motion only via `@/lib/gsap` (named eases "luxury"/"settle"). Every animation
+  needs a prefers-reduced-motion resting frame and pointer:coarse guards —
+  copy the pattern in src/components/storefront/featured-rail.tsx.
+  GSAP bundle must stay under the 49KB gate (scripts/motion-budget.mjs).
+- Images use the site-image slot system (src/lib/site-images.ts). Never hotlink.
+
+IMAGES — Google Drive library:
+All brand/product imagery lives in:
+https://drive.google.com/drive/folders/1P2HCTmPge6HsEwtoo-xGEzPTSn68oZOW
+The file-ID map of all 45 images + 26 videos is in implementation-plan.md §4.7.
+If a Google Drive MCP tool is available, fetch by file ID. If not, STOP and ask
+me to download the folder into `assets-inbox/`, then run
+`scripts/optimize-redesign-assets.mjs` (plan §5.4) before using any image.
+Anything under `public/redesign/catalog/` is a PLACEHOLDER for a product that
+does not exist — allowed in dev/preview and captioned "concept" frames only,
+never publishable on a real product (plan §4.6). The maker portrait and workshop
+photos are NEVER AI-generated (slot rule §15.2).
+
+DEPENDENCIES:
+Everything needed is already in package.json (plan §5.1). The only approved new
+package is @dnd-kit/core + @dnd-kit/sortable for the Studio kanban. Ask me
+before adding anything else.
+
+BUILD ORDER: follow the roadmap (plan §8). Current phase: P0 → P1.
+Component specs for cursor, progress bars, preloader, dropdowns, buttons,
+inputs, dialogs etc.: plan §6 — use those exact eases/durations, don't invent.
+
+VERIFY BEFORE FINISHING ANY TASK:
+npm run typecheck && npm run lint && npm run copy:check && npm run test:e2e
+Budgets: LCP < 2.5s · CLS < 0.1 · INP < 200ms · hero media ≤ 6MB.
+
+DESIGN LANGUAGE: obsidian + champagne, Instrument Serif / Inter / JetBrains Mono,
+meniscus hairlines, one italic accent word per headline max, max 3 dark bands per
+page and never adjacent. Reference level: Aesop · Cartier · Henge · Lusion.
+```
+
+**Usage:** save as `CLAUDE.md` in the repo root → Claude Code reads it every session automatically; or paste it as the first message of each Claude Code session. Keep it next to the three docs in `design/` — together they are the complete brief.
