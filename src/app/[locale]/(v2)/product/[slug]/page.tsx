@@ -822,7 +822,7 @@ export default async function ProductPage({ params }: PageProps) {
                   <Button asChild variant="primary" size="lg">
                     <a href="#order-panel">{tp("ctaCustomize")}</a>
                   </Button>
-                  <Button asChild variant="whatsapp" size="lg">
+                  <Button asChild variant="secondary" size="lg">
                     <a
                       href={askHref}
                       target="_blank"

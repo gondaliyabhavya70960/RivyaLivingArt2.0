@@ -112,7 +112,7 @@ export function WishlistPanel() {
                 {t("shareLead")}
               </p>
             </div>
-            <Button variant="whatsapp" size="lg" className="shrink-0" asChild>
+            <Button variant="primary" size="lg" className="shrink-0" asChild>
               <a
                 href={waHref}
                 /* Without this the delegated tracker falls back to

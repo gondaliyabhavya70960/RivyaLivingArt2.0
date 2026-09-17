@@ -129,7 +129,7 @@ export function QuickView({
             <Button asChild variant="primary" size="md">
               <MorphLink href={productUrl}>{t("quickViewCustomize")}</MorphLink>
             </Button>
-            <Button asChild variant="whatsapp" size="md">
+            <Button asChild variant="secondary" size="md">
               <a
                 href={waHref}
                 target="_blank"

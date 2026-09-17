@@ -1264,7 +1264,7 @@ function FinalCtaBlock({
         <div className="flex flex-wrap items-center gap-4">
           {data.whatsapp ? (
             data.ctaLabel.trim() ? (
-              <Button asChild variant="whatsapp" size="lg">
+              <Button asChild variant={dark ? "premium" : "primary"} size="lg">
                 <a href={waHref} target="_blank" rel="noopener noreferrer">
                   {data.ctaLabel}
                 </a>

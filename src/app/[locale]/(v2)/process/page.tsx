@@ -351,7 +351,7 @@ export default async function ProcessPage({
             {t("cta.body")}
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Button variant="whatsapp" size="lg" asChild>
+            <Button variant="primary" size="lg" asChild>
               <a
                 href={waHref}
                 target="_blank"

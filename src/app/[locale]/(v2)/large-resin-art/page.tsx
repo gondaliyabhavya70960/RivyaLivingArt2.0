@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
@@ -282,8 +282,12 @@ export default async function LargeResinArtPage({
             className="sf-hero-rise flex flex-wrap items-center gap-4"
             style={{ "--i": 4 } as CSSProperties}
           >
-            <Button variant="whatsapp" size="lg" asChild>
+            <Button variant="secondary" size="lg" asChild>
               <a href={waHref} target="_blank" rel="noopener noreferrer">
+                {/* The label does not say "WhatsApp" and the pill no longer
+                    carries the brand green, so the icon is now the only thing
+                    telling a visitor which app is about to open. */}
+                <MessageCircle aria-hidden strokeWidth={1.5} className="size-4" />
                 {t("hero.startCta")}
                 <span className="sr-only"> {tCommon("openInNewTab")}</span>
               </a>
@@ -746,7 +750,7 @@ export default async function LargeResinArtPage({
             {t("cta.body")}
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Button variant="whatsapp" size="lg" asChild>
+            <Button variant="primary" size="lg" asChild>
               <a href={waHref} target="_blank" rel="noopener noreferrer">
                 {tFooter("chatOnWhatsApp")}
                 <span className="sr-only"> {tCommon("openInNewTab")}</span>

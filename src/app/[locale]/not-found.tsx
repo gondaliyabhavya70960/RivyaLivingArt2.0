@@ -172,7 +172,7 @@ export function NotFoundPanel({
               <Button variant="secondary" size="md" asChild>
                 <Link href="/shop">{copy.home}</Link>
               </Button>
-              <Button variant="whatsapp" size="md" asChild>
+              <Button variant="secondary" size="md" asChild>
                 <a
                   href={waHref}
                   target="_blank"
