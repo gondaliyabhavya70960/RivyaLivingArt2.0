@@ -24,6 +24,20 @@ import { cn } from "@/lib/utils";
  * WhatsApp stays recognisable but integrated: it is the order channel, not the
  * brand. The fill is `whatsapp-deep` rather than the brand green because white
  * on #128C7E is 4.14:1 — short of AA for a 14–16px label.
+ *
+ * AND IT IS THE FINAL ORDER ACTION, NOTHING ELSE. That sentence sat in the
+ * `whatsapp` variant's own comment while sixteen of its twenty call sites were
+ * "ask us a question" links, page heroes and card actions — which is how the
+ * audit came to report (§2.4) that "primary button colour shifts by page" and
+ * that "teal reads like a different product". Green now appears exactly where
+ * an order is sent: Place Order on the PDP and its mobile twin, the custom
+ * brief's submit, and the `/whatsapp-order` fallback when the popup is
+ * blocked. Everywhere else the pill takes its ground's variant — `premium` on
+ * dark, `primary` or `secondary` on light — and the channel is carried by the
+ * label and the MessageCircle icon instead of by colour.
+ *
+ * (`design-lab` keeps one, deliberately: it is the staff variant gallery and
+ * its job is to render every variant, including this one.)
  */
 const buttonVariants = cva(
   [

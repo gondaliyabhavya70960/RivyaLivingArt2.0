@@ -859,7 +859,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             intro={t("ctaBody")}
           />
           <div className="flex flex-wrap items-center gap-4">
-            <Button variant="whatsapp" size="lg" asChild>
+            <Button variant="primary" size="lg" asChild>
               <a
                 href={buildWaLink(waMessage, whatsappNumber)}
                 target="_blank"

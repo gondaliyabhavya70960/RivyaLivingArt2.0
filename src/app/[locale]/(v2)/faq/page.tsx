@@ -210,7 +210,7 @@ export default async function FaqPage({
           <p className="u-lede font-body text-body leading-relaxed text-graphite">
             {t("closingBody")}
           </p>
-          <Button variant="whatsapp" size="lg" asChild className="w-fit">
+          <Button variant="primary" size="lg" asChild className="w-fit">
             <a
               href={waHref}
               target="_blank"

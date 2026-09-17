@@ -169,7 +169,7 @@ export function ContactForm() {
         <p className="u-prose font-body text-body leading-relaxed text-graphite">
           {t("successBody")}
         </p>
-        <Button variant="whatsapp" size="lg" className="w-fit" asChild>
+        <Button variant="primary" size="lg" className="w-fit" asChild>
           <a
             href={buildWaLink(defaultWaGreeting(tWa("greeting")), waNumber)}
             target="_blank"

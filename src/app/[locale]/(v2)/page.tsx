@@ -408,12 +408,24 @@ export default async function Home({
             style={{ "--i": 3 } as CSSProperties}
           >
             {/* Bespoke is the studio's primary ask; browsing the shop is the
-                secondary path. Both buttons already existed — only their
-                weight and href swap. */}
-            <Button asChild variant="primary" size="lg">
+                secondary path.
+
+                The WEIGHTS swap here, not the order. `primary` inverts to a
+                cream fill on a dark band, and audit §2.4 names that as the
+                first of the CTA system's four different-looking primaries
+                ("cream fill on home, solid black in the shop header, black
+                Customize + teal WhatsApp on PDP, teal on /large-resin-art").
+                Spec §1.1's answer is one system: champagne-outline on dark,
+                ink-solid on light. So the ask takes `premium` and the browse
+                path drops to `secondary`.
+
+                The champagne count is unchanged at two — the eyebrow above
+                plus one pill — which is what `redesign-audit.mjs` caps at. A
+                second champagne pill here would fail the build. */}
+            <Button asChild variant="premium" size="lg">
               <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
             </Button>
-            <Button asChild variant="premium" size="lg">
+            <Button asChild variant="secondary" size="lg">
               <Link href="/shop">{t("hero.ctaExplore")}</Link>
             </Button>
           </div>
@@ -1305,7 +1317,7 @@ export default async function Home({
             <Button asChild variant="primary" size="lg">
               <Link href="/custom-order">{t("cta.primary")}</Link>
             </Button>
-            <Button asChild variant="whatsapp" size="lg">
+            <Button asChild variant="secondary" size="lg">
               <a
                 href={waHref}
                 target="_blank"
