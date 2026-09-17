@@ -74,6 +74,47 @@ export async function setInquiriesStatus(
   });
 }
 
+/**
+ * The status half of "reply on WhatsApp and mark contacted" — one act, in the
+ * plan's §3 S3 row, because the two had only ever existed as two.
+ *
+ * It moves NEW → CONTACTED and **nothing else**. The `where` carries
+ * `status: "NEW"`, so opening WhatsApp from a CONFIRMED or IN_PRODUCTION
+ * inquiry cannot walk it backwards down the pipeline — the owner replies to
+ * a customer many times over a commission's life, and only the first of
+ * those replies is a status change. `moved` is false the rest of the time,
+ * and the caller says nothing rather than claiming a change it did not make.
+ */
+export async function markInquiryContacted(
+  id: string,
+): Promise<ActionResult<{ moved: boolean }>> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const inquiryId = z.string().min(1).parse(id);
+
+    const { count } = await db.inquiry.updateMany({
+      where: { id: inquiryId, status: "NEW" },
+      data: { status: "CONTACTED" },
+    });
+
+    if (count > 0) {
+      await logActivity({
+        userId: session.user.id,
+        action: "status-change",
+        entity: "Inquiry",
+        entityId: inquiryId,
+        // `via` separates this from a hand-picked status change in history:
+        // it records that the owner actually opened the conversation.
+        meta: { count, status: "CONTACTED", via: "whatsapp-reply" },
+      });
+      revalidatePath(STUDIO_PATH);
+      revalidatePath(`${STUDIO_PATH}/${inquiryId}`);
+    }
+
+    return { moved: count > 0 };
+  });
+}
+
 export async function updateInquiryPricing(
   id: string,
   input: {

@@ -30,6 +30,11 @@ import {
   productListHref,
   sizeTierStripHref,
 } from "@/components/studio/products/product-filter-links";
+import { buildProductWhere } from "@/components/studio/products/product-filter";
+import {
+  buildActionQueue,
+  staleInquiryWhere,
+} from "@/components/studio/dashboard/action-queue";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/studio/page-header";
@@ -127,6 +132,31 @@ async function getDashboardData() {
   const todayStart = startOfToday(tz, now);
   const chartStart = new Date(todayStart.getTime() - (CHART_DAYS - 1) * DAY_MS);
 
+  // The action queue's five populations. Every one goes through
+  // `buildProductWhere`/the inquiry clause its own card deep-links with, so
+  // the count and the list it opens can never drift apart — and `nowDate` is
+  // shared, so the age windows are one instant rather than five.
+  const nowDate = new Date(now);
+  const queueWhere = {
+    staleInquiries: staleInquiryWhere(nowDate),
+    publishedNoImage: buildProductWhere(
+      { status: "PUBLISHED", media: "none" },
+      nowDate,
+    ),
+    publishedPlaceholder: buildProductWhere(
+      { status: "PUBLISHED", media: "placeholder" },
+      nowDate,
+    ),
+    publishedNeedsRewrite: buildProductWhere(
+      { status: "PUBLISHED", rewrite: "flagged" },
+      nowDate,
+    ),
+    staleDrafts: buildProductWhere(
+      { status: "DRAFT", stale: "30d" },
+      nowDate,
+    ),
+  };
+
   const [
     counts,
     tierGroups,
@@ -198,6 +228,15 @@ async function getDashboardData() {
       db.media.count(),
       db.scrapedProduct.count(),
       db.importRun.count(),
+      // ── the action queue (plan §3 S2) ──────────────────────────────
+      // Each of these is the SAME population its card links to, built from
+      // the same filter vocabulary, so a card that says 27 opens a list of
+      // 27. `queueWhere` is resolved once above against one `now`.
+      db.inquiry.count({ where: queueWhere.staleInquiries }),
+      db.product.count({ where: queueWhere.publishedNoImage }),
+      db.product.count({ where: queueWhere.publishedPlaceholder }),
+      db.product.count({ where: queueWhere.publishedNeedsRewrite }),
+      db.product.count({ where: queueWhere.staleDrafts }),
     ]),
     // Catalogue composition by IMPORT LIST — `Product.tier`, which committed
     // CSV a row came from — published only, for the import-list strip.
@@ -387,6 +426,11 @@ export default async function DashboardPage() {
       mediaFiles,
       scrapedRecords,
       importRuns,
+      staleInquiries,
+      publishedNoImage,
+      publishedPlaceholder,
+      publishedNeedsRewrite,
+      staleDrafts,
     ],
     tierGroups,
     sizeTierGroups,
@@ -399,6 +443,14 @@ export default async function DashboardPage() {
   } = await getDashboardData();
 
   const num = (n: number) => n.toLocaleString("en-IN");
+
+  const queue = buildActionQueue({
+    staleInquiries,
+    publishedNoImage,
+    publishedPlaceholder,
+    publishedNeedsRewrite,
+    staleDrafts,
+  });
   const conversionRate =
     totalInquiries === 0
       ? "—"
@@ -426,6 +478,49 @@ export default async function DashboardPage() {
         title="Overview"
         description="What is waiting on you, what is on the bench, and how the catalogue is holding up."
       />
+
+      {/* ═══ ON YOUR DESK — the action queue (plan §3 S2) ═══
+          Above the KPI cards on purpose: those answer "how is the business
+          doing", this answers "what is waiting on me", and only one of those
+          is why an owner opens the Studio in the morning. A card is built
+          only when its count is non-zero (Part 9), so an empty queue is one
+          line rather than six reassuring zeros nobody keeps reading. */}
+      <section aria-labelledby="queue-heading" className="mb-10">
+        <h2 id="queue-heading" className="u-micro mb-3">
+          On your desk
+        </h2>
+        {queue.length === 0 ? (
+          <p className="rounded-card border border-border bg-card px-5 py-4 text-small text-graphite shadow-e1">
+            Nothing is waiting — every inquiry has had a first reply and every
+            live product has its photograph and its copy.
+          </p>
+        ) : (
+          <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {queue.map((card) => (
+              <li key={card.key}>
+                <Link
+                  href={card.href}
+                  className="group flex h-full flex-col gap-1 rounded-card border border-border bg-card px-5 py-4 outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:border-sapphire-ink/50 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+                >
+                  <span className="flex items-baseline gap-2">
+                    <span className="u-num text-25 leading-none text-foreground">
+                      {num(card.count)}
+                    </span>
+                    <span className="text-small font-medium text-foreground">
+                      {card.title}
+                    </span>
+                    <ArrowRight
+                      aria-hidden
+                      className="ms-auto size-4 shrink-0 self-center text-graphite transition-transform duration-(--dur-fast) ease-(--ease-settle) group-hover:translate-x-0.5 motion-reduce:transition-none rtl:-scale-x-100"
+                    />
+                  </span>
+                  <span className="text-small text-graphite">{card.why}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {/* §12.3 — the four cards, in the spec's order. */}
       <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

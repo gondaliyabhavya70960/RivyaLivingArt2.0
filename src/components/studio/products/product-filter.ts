@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Prisma } from "@/generated/prisma/client";
+import { PLACEHOLDER_ASSET_PREFIX } from "@/lib/placeholder-assets";
 import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
 
 /**
@@ -46,6 +47,27 @@ export const productListFilterSchema = z.object({
     .optional()
     .catch(undefined),
   stock: z.enum(["in", "out"]).optional().catch(undefined),
+  /**
+   * The photography worklist (plan §3 S4) — the two states that stop a row
+   * being publishable, as a filter the owner can pin as a saved view.
+   *
+   * `placeholder` is deliberately "HAS a placeholder image", not "the COVER
+   * is one". The cover is the image with the lowest `order` and Prisma has
+   * no predicate for the related row that sorts first — the bulk publish
+   * guard reads covers in TS for exactly this reason, and a list cannot,
+   * because it pages and counts in the database. A superset that never
+   * misses a blocked row is the right shape for a worklist; the exact set
+   * would need a column, and a column for a path prefix is the thing
+   * `placeholder-assets.ts` exists to avoid.
+   */
+  media: z.enum(["none", "placeholder"]).optional().catch(undefined),
+  /** Rows still carrying the scraper's `needsRewrite` flag — a PDP that
+   *  shows tagline and specs only until someone writes the copy. */
+  rewrite: z.literal("flagged").optional().catch(undefined),
+  /** Untouched for 30 days. The Overview's "drafts going stale" card links
+   *  here with `status=DRAFT`; the param is status-agnostic on purpose, so
+   *  the same age question can be asked of any tab. */
+  stale: z.literal("30d").optional().catch(undefined),
   /** "1" narrows to Content Lab fixtures (`isDemo: true`) — 10 remnants'
    *  demo filter, present on every list that carries `isDemo` rows. */
   demo: z.literal("1").optional().catch(undefined),
@@ -63,15 +85,32 @@ export function parseProductListFilter(raw: {
   tier?: string;
   sizeTier?: string;
   stock?: string;
+  media?: string;
+  rewrite?: string;
+  stale?: string;
   demo?: string;
 }): ProductListFilter {
   const parsed = productListFilterSchema.safeParse(raw);
   return parsed.success ? parsed.data : {};
 }
 
-/** Filter → Prisma where. Absent status means the Published default tab. */
+/** Days of no edit before `?stale=30d` counts a row as going stale. */
+export const STALE_PRODUCT_DAYS = 30;
+
+/**
+ * Filter → Prisma where. Absent status means the Published default tab.
+ *
+ * `now` is injected rather than read from the clock so `?stale=30d`'s
+ * boundary is a value a test can state, and so every query inside one
+ * request — the rows, the per-status counts, the "select all matching"
+ * re-validation in the bulk actions — resolves the SAME instant. A function
+ * that called `Date.now()` itself would give the count and the page slightly
+ * different windows, which on a boundary row shows the owner a total that
+ * does not match what they can see.
+ */
 export function buildProductWhere(
   filter: ProductListFilter,
+  now: Date = new Date(),
 ): Prisma.ProductWhereInput {
   const status = filter.status ?? "PUBLISHED";
   return {
@@ -96,6 +135,24 @@ export function buildProductWhere(
         : {}),
     ...(filter.stock === "in" ? { inStock: true } : {}),
     ...(filter.stock === "out" ? { inStock: false } : {}),
+    ...(filter.media === "none" ? { images: { none: {} } } : {}),
+    ...(filter.media === "placeholder"
+      ? {
+          images: {
+            some: { url: { startsWith: PLACEHOLDER_ASSET_PREFIX } },
+          },
+        }
+      : {}),
+    ...(filter.rewrite === "flagged" ? { needsRewrite: true } : {}),
+    ...(filter.stale === "30d"
+      ? {
+          updatedAt: {
+            lt: new Date(
+              now.getTime() - STALE_PRODUCT_DAYS * 24 * 60 * 60 * 1000,
+            ),
+          },
+        }
+      : {}),
     ...(filter.demo === "1" ? { isDemo: true } : {}),
   };
 }

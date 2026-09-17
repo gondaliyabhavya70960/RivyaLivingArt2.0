@@ -1122,7 +1122,9 @@
       "hints": "↑↓ naviguer · ↵ ouvrir · esc fermer",
       "loading": "Recherche…",
       "countAnnounce": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}"
-    }
+    },
+    "collectionsEyebrow": "collections",
+    "collectionsHeading": "Collections correspondantes"
   },
   "Wishlist": {
     "meta": {
@@ -1255,7 +1257,8 @@
       "eyebrowProcess": "le processus",
       "eyebrowFinal": "la pièce finale",
       "eyebrowRelated": "du même établi",
-      "eyebrowCommission": "commander une pièce similaire"
+      "eyebrowCommission": "commander une pièce similaire",
+      "nextEyebrow": "projet suivant"
     },
     "beforeAfter": {
       "before": "avant",

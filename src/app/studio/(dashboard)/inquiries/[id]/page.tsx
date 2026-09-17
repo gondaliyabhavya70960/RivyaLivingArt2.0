@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, IdCard, ExternalLink, MessageCircle } from "lucide-react";
+import { ArrowLeft, IdCard, ExternalLink } from "lucide-react";
 import { db } from "@/lib/db";
-import { buildWaLink, formatInquiryNumber } from "@/lib/whatsapp";
+import { formatInquiryNumber } from "@/lib/whatsapp";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import {
   STATUS_BADGE_VARIANTS,
   STATUS_LABELS,
 } from "@/components/studio/inquiries/labels";
+import { WhatsAppReplyButton } from "@/components/studio/inquiries/whatsapp-reply-button";
 import {
   CopyMessageButton,
   InquiryPricingForm,
@@ -87,18 +88,12 @@ export default async function InquiryDetailPage({
     !Array.isArray(inquiry.attribution)
       ? Object.entries(inquiry.attribution as Record<string, unknown>)
       : [];
-  // Reply to the CUSTOMER, not the studio's own number (UIUX-604): build the
-  // deep link from inquiry.phone with a short reply opener. CopyMessageButton
-  // still copies the customer's original inbound message.
-  const firstName =
-    inquiry.customerName.trim().split(/\s+/)[0] || inquiry.customerName;
-  const replyGreeting = `Hi ${firstName}, thanks for reaching out to Rivya Living Art about your ${SOURCE_LABELS[
-    inquiry.source
-  ].toLowerCase()}.`;
-  const customerWaLink = buildWaLink(
-    replyGreeting,
-    inquiry.phone.replace(/[^0-9]/g, ""),
-  );
+  // The reply opener and its deep link moved to `src/lib/inquiry-reply.ts`
+  // (UIUX-604's "reply to the CUSTOMER, not the studio's own number" still
+  // holds, in that module): the inquiry LIST now offers the same action, and
+  // two hand-kept copies of the greeting would greet the same customer
+  // differently depending on which screen the owner happened to be on.
+  // CopyMessageButton still copies the customer's original inbound message.
 
   return (
     <div>
@@ -148,11 +143,10 @@ export default async function InquiryDetailPage({
             actions={
               <>
                 <CopyMessageButton message={inquiry.whatsappMessage} />
-                <Button asChild size="sm" className="min-h-11">
-                  <a href={customerWaLink} target="_blank" rel="noreferrer">
-                    <MessageCircle /> Reply on WhatsApp
-                  </a>
-                </Button>
+                <WhatsAppReplyButton
+                  inquiry={inquiry}
+                  className="min-h-11"
+                />
               </>
             }
           >

@@ -12,6 +12,7 @@ import {
 } from "@/lib/product-size-tier";
 import {
   coverUrlOf,
+  describeMissingImagePublishProblem,
   describePlaceholderPublishProblem,
   isPlaceholderAsset,
 } from "@/lib/placeholder-assets";
@@ -332,6 +333,19 @@ export async function upsertProduct(
   });
   if (placeholderProblem) return { ok: false, error: placeholderProblem };
 
+  // PUBLISH GUARD — and nothing NEW reaches the storefront with no photograph
+  // at all (plan §3 S5). Transition-scoped like the size tier and for the same
+  // reason: ~27 imageless rows are already live, and refusing every save would
+  // lock the owner out of the very screens where they would fix them. Reads
+  // the INCOMING images, like its neighbour — this save may be the one that
+  // removed the last picture.
+  const missingImageProblem = describeMissingImagePublishProblem({
+    nextStatus: data.status,
+    currentStatus: existing?.status ?? null,
+    imageCount: data.images.length,
+  });
+  if (missingImageProblem) return { ok: false, error: missingImageProblem };
+
   // Prune per-locale overrides to known locales + translatable fields; an empty
   // result writes SQL NULL so the column stays clean (public site unchanged).
   const normalizedTranslations = normalizeTranslations(
@@ -546,6 +560,7 @@ export async function setProductsStatus(
     skippedRewrite: number;
     skippedUntiered: number;
     skippedPlaceholder: number;
+    skippedNoImage: number;
   }>
 > {
   const session = await requireStaff();
@@ -562,6 +577,7 @@ export async function setProductsStatus(
     let skippedRewrite = 0;
     let skippedUntiered = 0;
     let skippedPlaceholder = 0;
+    let skippedNoImage = 0;
 
     if (parsedStatus.data === "PUBLISHED") {
       // Scraped reference content is never bulk-published silently.
@@ -613,6 +629,24 @@ export async function setProductsStatus(
       );
       skippedPlaceholder = placeholderIds.size;
       targetIds = targetIds.filter((id) => !placeholderIds.has(id));
+
+      // The photograph guard (plan §3 S5). Transition-scoped like the untiered
+      // clause above and UNLIKE the placeholder one, so a batch re-publish of
+      // rows that are already live is never refused — there are imageless rows
+      // already on the shop, and this exists to stop NEW ones joining them.
+      // `images: { none: {} }` is a real predicate, so unlike the cover test
+      // this one is a `where` clause.
+      const imageless = await db.product.findMany({
+        where: {
+          id: { in: targetIds },
+          images: { none: {} },
+          status: { not: "PUBLISHED" },
+        },
+        select: { id: true },
+      });
+      const imagelessIds = new Set(imageless.map((p) => p.id));
+      skippedNoImage = imagelessIds.size;
+      targetIds = targetIds.filter((id) => !imagelessIds.has(id));
     }
 
     const updated =
@@ -634,6 +668,7 @@ export async function setProductsStatus(
         skippedRewrite,
         skippedUntiered,
         skippedPlaceholder,
+        skippedNoImage,
       },
     });
 
@@ -647,7 +682,13 @@ export async function setProductsStatus(
     revalidateTag(CATALOG_NAV_TAG, "max");
     revalidateTag(SHOP_FIRST_PAGE_TAG, "max");
     // (publish/unpublish changes the mega-menu per-category counts).
-    return { updated, skippedRewrite, skippedUntiered, skippedPlaceholder };
+    return {
+      updated,
+      skippedRewrite,
+      skippedUntiered,
+      skippedPlaceholder,
+      skippedNoImage,
+    };
   });
 }
 

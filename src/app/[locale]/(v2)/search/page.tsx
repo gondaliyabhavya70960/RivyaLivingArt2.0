@@ -11,10 +11,15 @@ import { EmptyState } from "@/components/storefront/empty-state";
 import { Eyebrow } from "@/components/storefront/section-heading";
 import { Button } from "@/components/storefront/button";
 import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
+import { CollectionCard } from "@/components/storefront/collection-card";
+import { db } from "@/lib/db";
 import { SITE } from "@/lib/constants";
-import { localize } from "@/lib/localize";
+import { localize, localizeName } from "@/lib/localize";
 import { editorialName } from "@/lib/product-name";
 import { ALL_ECOSYSTEMS } from "@/lib/shop-filters";
+
+/** Shelves are a short answer, never a second catalogue — six is a rail. */
+const COLLECTION_LIMIT = 6;
 import {
   MAX_QUERY,
   MIN_QUERY,
@@ -111,7 +116,16 @@ function ResultRow({
             {title}
           </h3>
           {snippet && (
-            <p className="mt-1.5 line-clamp-2 font-body text-14 leading-relaxed text-graphite">
+            /* `aria-hidden` for the same reason `TitleText` hides the clamped
+               product name (Part 17): the snippet sits INSIDE the link, so it
+               joins the link's accessible name — and it is a `line-clamp-2`
+               preview, so the name a screen reader announced was the whole
+               untruncated excerpt, ellipsis and all. The row's name is its
+               title; the preview is one click from the thing it previews. */
+            <p
+              aria-hidden
+              className="mt-1.5 line-clamp-2 font-body text-14 leading-relaxed text-graphite"
+            >
               {snippet}
             </p>
           )}
@@ -160,16 +174,46 @@ export default async function SearchPage({
   // VERCEL_ENV says so (B0). Left at the NO_DEMO default, this page hid rows
   // the overlay offered — caught by the E2E smoke's /search check (F2).
   const demo = searched ? await demoWhere() : undefined;
-  const [products, posts, portfolios] = searched
+  const [products, posts, portfolios, collectionRows] = searched
     ? await Promise.all([
         searchProducts(query, undefined, { demo }),
         searchPosts(query, undefined, { demo }),
         searchPortfolios(query, undefined, { demo }),
+        // COLLECTIONS — plan §2.9's third group, and the one a visitor
+        // searching "varmala" or "coasters" is usually after: a shelf, not a
+        // single piece. Matched on the category's own name and slug rather
+        // than through the product index, and filtered to shelves that hold
+        // something — a search result that opens an empty shelf is the same
+        // broken promise as a tab that does (§3.3).
+        //
+        // No `demo` clause: a Category is not demo content. Its COUNT carries
+        // one, so a category that exists only for the Content Lab's fixtures
+        // is invisible here with the demo switch off.
+        db.category.findMany({
+          where: {
+            visible: true,
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { slug: { contains: query, mode: "insensitive" } },
+            ],
+            products: { some: { status: "PUBLISHED", ...demo } },
+          },
+          orderBy: { order: "asc" },
+          take: COLLECTION_LIMIT,
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            image: true,
+            translations: true,
+          },
+        }),
       ])
     : [
         { rows: [], total: 0 },
         { rows: [], total: 0 },
         { rows: [], total: 0 },
+        [],
       ];
 
   // Bridge the search rows to the v2.0 catalog card's ShopProductItem shape.
@@ -221,7 +265,8 @@ export default async function SearchPage({
     };
   });
 
-  const total = products.total + posts.total + portfolios.total;
+  const total =
+    products.total + posts.total + portfolios.total + collectionRows.length;
 
   const { whatsappNumber } = await getSiteSettings();
   // Localized prefill (S-01) — precedent: WhatsApp.greeting already reaches
@@ -335,6 +380,33 @@ export default async function SearchPage({
                     </Link>
                   </div>
                 )}
+              </Reveal>
+            )}
+
+            {collectionRows.length > 0 && (
+              <Reveal>
+                <IndexHead
+                  eyebrow={t("collectionsEyebrow")}
+                  heading={t("collectionsHeading")}
+                  count={collectionRows.length}
+                  countLabel={t("sectionCount", {
+                    count: collectionRows.length,
+                  })}
+                />
+                <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3">
+                  {collectionRows.map((collection) => (
+                    <li key={collection.id}>
+                      <CollectionCard
+                        href={`/shop/${collection.slug}`}
+                        name={t("collectionsEyebrow")}
+                        promise={localizeName(collection, locale)}
+                        image={collection.image}
+                        imageAlt=""
+                        ratio="4/5"
+                      />
+                    </li>
+                  ))}
+                </ul>
               </Reveal>
             )}
 

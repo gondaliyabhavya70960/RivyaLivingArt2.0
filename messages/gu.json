@@ -1122,7 +1122,9 @@
       "hints": "↑↓ ખસેડો · ↵ ખોલો · esc બંધ કરો",
       "loading": "શોધી રહ્યા છીએ…",
       "countAnnounce": "{count, plural, =0 {કોઈ પરિણામ નથી} one {# પરિણામ} other {# પરિણામો}}"
-    }
+    },
+    "collectionsEyebrow": "સંગ્રહો",
+    "collectionsHeading": "મળતા આવતા સંગ્રહો"
   },
   "Wishlist": {
     "meta": {
@@ -1255,7 +1257,8 @@
       "eyebrowProcess": "પ્રક્રિયા",
       "eyebrowFinal": "તૈયાર કૃતિ",
       "eyebrowRelated": "એ જ વર્કબેન્ચ પરથી",
-      "eyebrowCommission": "આવી જ બનાવડાવો"
+      "eyebrowCommission": "આવી જ બનાવડાવો",
+      "nextEyebrow": "આગળનો પ્રોજેક્ટ"
     },
     "beforeAfter": {
       "before": "પહેલાં",

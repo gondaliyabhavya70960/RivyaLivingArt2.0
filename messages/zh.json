@@ -1122,7 +1122,9 @@
       "hints": "↑↓ 移动 · ↵ 打开 · esc 关闭",
       "loading": "搜索中…",
       "countAnnounce": "{count, plural, =0 {无结果} other {# 条结果}}"
-    }
+    },
+    "collectionsEyebrow": "系列",
+    "collectionsHeading": "匹配的系列"
   },
   "Blog": {
     "meta": {
@@ -1232,7 +1234,8 @@
       "eyebrowProcess": "制作过程",
       "eyebrowFinal": "最终成品",
       "eyebrowRelated": "出自同一张工作台",
-      "eyebrowCommission": "定制类似之作"
+      "eyebrowCommission": "定制类似之作",
+      "nextEyebrow": "下一个项目"
     },
     "beforeAfter": {
       "before": "之前",

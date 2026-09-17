@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   coverUrlOf,
+  describeMissingImagePublishProblem,
   describePlaceholderPublishProblem,
   isPlaceholderAsset,
   looksLikePlaceholderAsset,
@@ -152,5 +153,52 @@ describe("describePlaceholderPublishProblem", () => {
     })!;
     expect(message).not.toMatch(/\/redesign|catalog\/|PUBLISHED|null/);
     expect(message.toLowerCase()).toContain("draft");
+  });
+});
+
+describe("describeMissingImagePublishProblem", () => {
+  it("refuses a move INTO published with no image", () => {
+    expect(
+      describeMissingImagePublishProblem({
+        nextStatus: "PUBLISHED",
+        currentStatus: "DRAFT",
+        imageCount: 0,
+      }),
+    ).toMatch(/photograph/i);
+  });
+
+  it("allows a save of a row that is ALREADY published", () => {
+    // TRANSITION-scoped, unlike the placeholder rule in the same module — and
+    // the difference is the backlog. ~27 imageless products are already live
+    // on this catalogue; refusing every save would lock the owner out of the
+    // screens where they would fix them. The placeholders had no such backlog
+    // to pay with, which is why that guard is state-scoped instead.
+    expect(
+      describeMissingImagePublishProblem({
+        nextStatus: "PUBLISHED",
+        currentStatus: "PUBLISHED",
+        imageCount: 0,
+      }),
+    ).toBeNull();
+  });
+
+  it("never blocks a draft", () => {
+    expect(
+      describeMissingImagePublishProblem({
+        nextStatus: "DRAFT",
+        currentStatus: null,
+        imageCount: 0,
+      }),
+    ).toBeNull();
+  });
+
+  it("passes a product that has one", () => {
+    expect(
+      describeMissingImagePublishProblem({
+        nextStatus: "PUBLISHED",
+        currentStatus: "DRAFT",
+        imageCount: 1,
+      }),
+    ).toBeNull();
   });
 });

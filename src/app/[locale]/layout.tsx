@@ -8,7 +8,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { routing } from "@/i18n/routing";
 import { getDir, locales } from "@/i18n/config";
-import { instrumentSerif, inter, jetbrainsMono } from "@/app/fonts";
+import {
+  instrumentSerif,
+  instrumentSerifItalic,
+  inter,
+  jetbrainsMono,
+} from "@/app/fonts";
 import { scriptFontClass } from "@/app/fonts-scripts";
 import { OG_LOCALES, SHARED_METADATA } from "@/app/shared-metadata";
 import { cn } from "@/lib/utils";
@@ -249,7 +254,7 @@ export default async function PublicLayout({
         // scopes its own dark bands with data-theme="navy". The v3 trio is
         // the whole type system — Instrument Serif for display, Inter for
         // body and --font-sans, JetBrains Mono for every number.
-        className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+        className={`${instrumentSerif.variable} ${instrumentSerifItalic.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
       >
         <body className="flex min-h-full flex-col">
           <NextIntlClientProvider>

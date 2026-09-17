@@ -1122,7 +1122,9 @@
       "hints": "↑↓ 移動 · ↵ 開く · esc 閉じる",
       "loading": "検索中…",
       "countAnnounce": "{count, plural, =0 {結果なし} other {# 件}}"
-    }
+    },
+    "collectionsEyebrow": "コレクション",
+    "collectionsHeading": "該当するコレクション"
   },
   "Blog": {
     "meta": {
@@ -1232,7 +1234,8 @@
       "eyebrowProcess": "制作の流れ",
       "eyebrowFinal": "完成した作品",
       "eyebrowRelated": "同じ作業台から",
-      "eyebrowCommission": "似た作品を依頼する"
+      "eyebrowCommission": "似た作品を依頼する",
+      "nextEyebrow": "次のプロジェクト"
     },
     "beforeAfter": {
       "before": "ビフォー",

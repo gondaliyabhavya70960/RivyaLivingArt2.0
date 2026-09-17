@@ -34,11 +34,12 @@ export default async function ProductsPage({
     tier?: string;
     sizeTier?: string;
     stock?: string;
+    media?: string;
     demo?: string;
     page?: string;
   }>;
 }) {
-  const { q, status, category, tier, sizeTier, stock, demo, page } =
+  const { q, status, category, tier, sizeTier, stock, media, demo, page } =
     await searchParams;
 
   // One validated filter shape drives the where clause here AND the bulk
@@ -50,6 +51,7 @@ export default async function ProductsPage({
     tier,
     sizeTier,
     stock,
+    media,
     demo,
   });
   const statusTab = filter.status ?? "PUBLISHED";

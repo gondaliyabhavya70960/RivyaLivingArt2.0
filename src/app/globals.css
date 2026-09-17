@@ -375,6 +375,42 @@
   max-width: 52ch;
 }
 
+/* Part 3.2's editorial accent — F4. ONE word or phrase per headline, in the
+   display face's real italic.
+
+   `font-family` is set here and not left to the caller: without it the
+   `italic` a caller writes is a SYNTHESISED oblique of the upright face,
+   because `next/font` hard-defaults a two-style family to `normal` and the
+   upright declaration asks for no style. `--font-display-italic-face` is the
+   drawn italic, loaded lazily (fonts.ts explains why it is a separate
+   instance rather than a second style on the one that holds the LCP). */
+@utility u-accent {
+  font-family: var(--font-display-italic-face), var(--font-display);
+  font-style: italic;
+}
+
+/* …and OFF in the five locales whose display type is not Instrument Serif.
+   `fonts-scripts.ts` falls back to a Noto SANS face for Devanagari,
+   Gujarati, Arabic, Japanese and Simplified Chinese, so an ungated italic
+   would slant a sans — wrong in Devanagari and Gujarati, meaningless in CJK
+   and Arabic, and never what an accent is for. The gate reads `html[lang]`,
+   which the [locale] layout already sets. Two attribute selectors beat the
+   utility's single class, so no `!important` is needed. */
+:is(
+    [lang="ar"],
+    [lang="gu"],
+    [lang="hi"],
+    [lang="ja"],
+    [lang="zh"]
+  )
+  .u-accent {
+  /* Back to the composed display stack — which in these locales already
+     resolves to the script's own Noto face — NOT to `inherit`, which would
+     drop the element to the body face and quietly demote a headline. */
+  font-family: var(--font-display);
+  font-style: normal;
+}
+
 /* Part 3.4 · the three section tiers. `major` is capped at two per page —
    a review rule, not a CSS one. */
 @utility section-major {

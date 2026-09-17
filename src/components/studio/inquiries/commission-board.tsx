@@ -22,6 +22,7 @@ import { StageTimerRing } from "@/components/studio/inquiries/stage-timer-ring";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import type { InquirySource, InquiryStatus } from "@/generated/prisma/enums";
+import { WhatsAppReplyButton } from "@/components/studio/inquiries/whatsapp-reply-button";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import { cn, monogram } from "@/lib/utils";
 
@@ -30,6 +31,8 @@ export type CommissionCard = {
   /** Pre-formatted "#RR-<n>" reference. */
   number: string;
   customerName: string;
+  /** The customer's own number — the card's Reply button deep-links to it. */
+  phone: string;
   source: InquirySource;
   /** Product title, or null for a custom / contact commission. */
   projectTitle: string | null;
@@ -283,6 +286,18 @@ function CommissionCardBody({
             ))}
           </select>
         </label>
+
+        {/* Reply and move in one act (plan §3 S3). The stage select beside it
+            stays the way to move a card WITHOUT replying — this button only
+            ever makes the first move, NEW → Contacted, so it cannot undo a
+            stage the owner set by hand. */}
+        <WhatsAppReplyButton
+          inquiry={card}
+          variant="ghost"
+          size="icon"
+          iconOnly
+          className="ms-auto min-h-9 min-w-9"
+        />
       </div>
     </article>
   );

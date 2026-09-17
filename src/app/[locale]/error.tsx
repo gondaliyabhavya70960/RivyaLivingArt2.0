@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 import { ErrorState } from "@/components/storefront/error-state";
@@ -58,9 +59,29 @@ export default function PublicError({
     <main id="main-content" className="flex-1">
       <section
         data-theme="navy"
-        className="flex min-h-svh items-center bg-obsidian text-mineral"
+        className="relative flex min-h-svh items-center overflow-hidden bg-obsidian text-mineral"
       >
-        <div className="u-shell py-24">
+        {/* The §2.10 backdrop — resin flow, held low. The 404 next door runs
+            its vortex at 70% because the picture IS the page there; here the
+            page is a recovery instruction and the texture is only meant to
+            stop an obsidian rectangle reading as a crash. 20% over obsidian
+            leaves mineral text an order of magnitude above 4.5:1, which is
+            what lets this ship without a veil the 404 needed.
+
+            Bundled, `priority`, and the only asset on the page: an error
+            boundary renders when something already failed, so nothing here
+            may wait on a second network. */}
+        <Image
+          aria-hidden
+          src="/redesign/texture-resin-flow.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          quality={60}
+          className="pointer-events-none object-cover opacity-20"
+        />
+        <div className="relative z-10 u-shell py-24">
           <ErrorState
             headingLevel="h1"
             eyebrow={t("eyebrow")}

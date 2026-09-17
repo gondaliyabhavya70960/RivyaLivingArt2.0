@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { productListHref } from "@/components/studio/products/product-filter-links";
 import { PageHeader } from "@/components/studio/page-header";
 import { db } from "@/lib/db";
 import { Prisma } from "@/generated/prisma/client";
@@ -211,7 +212,10 @@ export default async function ContentGapsPage() {
       title: "Published products with no images",
       why: "Imageless cards fall back to the monogram tile on every rail.",
       count: noImages,
-      href: "/studio/products",
+      // Through `productListHref`, so the link lands on the rows this card
+      // counted rather than on every published product (CLAUDE.md: move each
+      // hand-built product link onto the builder when it is next touched).
+      href: productListHref({ status: "PUBLISHED", media: "none" }),
       hrefLabel: "Products",
       samples: productSamples(noImagesSamples),
     },
