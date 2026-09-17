@@ -61,6 +61,7 @@ export function StudioGallery({
   photos,
   facts = [],
   action,
+  map,
   tone = "mineral",
   className,
 }: {
@@ -72,6 +73,10 @@ export function StudioGallery({
   photos: StudioPhoto[];
   facts?: StudioFact[];
   action?: React.ReactNode;
+  /** An optional map, rendered under the facts it belongs to. Passed in
+   *  rather than built here: `StudioMap` is a client component with its own
+   *  consent gate, and this stays a server component. */
+  map?: React.ReactNode;
   tone?: "mineral" | "sand";
   className?: string;
 }) {
@@ -141,6 +146,8 @@ export function StudioGallery({
             ))}
           </dl>
         ) : null}
+
+        {map}
       </div>
     </section>
   );

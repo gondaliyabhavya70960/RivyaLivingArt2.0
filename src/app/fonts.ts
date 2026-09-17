@@ -33,6 +33,31 @@ export const instrumentSerif = Instrument_Serif({
   preload: true,
 });
 
+/**
+ * The display face's ITALIC, as its own instance — F4.
+ *
+ * Instrument Serif ships one (next's own font table lists both styles for
+ * the family), but `next/font` only falls back to a family's single
+ * available style when there IS exactly one: with two it hard-defaults to
+ * `normal`. The declaration above passes no `style`, so every `italic` class
+ * on a display element — there is one today, the featured rail's end link —
+ * has been painting a SYNTHESISED oblique of the upright face, not the
+ * drawn italic. Nothing looked broken, which is why it survived.
+ *
+ * `preload: false` and a separate variable rather than `style: ["normal",
+ * "italic"]` on the one above: next/font preloads every style a declaration
+ * carries, and Part 3's accent is "once per headline, max" — a face that
+ * rare must not join the two that hold the LCP.
+ */
+export const instrumentSerifItalic = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  variable: "--font-display-italic-face",
+  display: "swap",
+  preload: false,
+});
+
 export const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body-face",

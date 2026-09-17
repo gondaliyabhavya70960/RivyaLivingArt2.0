@@ -13,6 +13,7 @@ import {
   Images,
   Download,
   Import,
+  Workflow,
   Inbox,
   LayoutDashboard,
   LayoutTemplate,
@@ -79,7 +80,18 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       { label: "Categories", href: "/studio/categories", icon: FolderTree },
       { label: "Media Library", href: "/studio/media", icon: ImageIcon },
       { label: "Bulk Import", href: "/studio/import", icon: Import },
-      { label: "Catalog fill", href: "/studio/catalog-fill", icon: Import },
+      // A DIFFERENT icon, deliberately (plan §3 S8). These two sit adjacent
+      // and did the opposite jobs behind the same glyph: Bulk Import is a
+      // file an operator hands over; Catalog fill is a pipeline that runs
+      // itself on deploy. `Workflow` says the second thing; `Import` said the
+      // first twice.
+      //
+      // The LABEL stays "Catalog fill". The plan proposes "Catalog pipeline
+      // (auto)", but the words also render inside a provenance string on the
+      // product form ("Catalog fill · kanha-kreation") and in the activity
+      // log's action map, where the parenthetical reads as a mistake. The
+      // icon carries the distinction the rename was for.
+      { label: "Catalog fill", href: "/studio/catalog-fill", icon: Workflow },
       { label: "Exports", href: "/studio/exports", icon: Download },
     ],
   },

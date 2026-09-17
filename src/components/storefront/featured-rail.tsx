@@ -113,7 +113,7 @@ export function FeaturedRail({
               // widths (measured 144×28): the rail's end-cap is the one way out
               // of a horizontal scroller, and it sat below the floor on the
               // viewport where the scroller is hardest to use.
-              className="inline-flex min-h-11 items-center font-display text-h3 leading-h3 italic text-ink underline decoration-champagne decoration-1 underline-offset-8 outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-champagne-ink motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3"
+              className="inline-flex min-h-11 items-center font-display text-h3 leading-h3 u-accent text-ink underline decoration-champagne decoration-1 underline-offset-8 outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-champagne-ink motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3"
             >
               {endLabel} →
             </Link>

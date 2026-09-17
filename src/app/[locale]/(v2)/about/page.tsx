@@ -20,6 +20,7 @@ import { getSiteImageRefs, getSiteImages } from "@/lib/site-images-server";
 import { SlotImage } from "@/components/storefront/slot-image";
 import type { SiteImageKey } from "@/lib/site-images";
 import { getSiteSettings } from "@/lib/site-settings";
+import { StudioMap } from "@/components/sections/studio-map";
 
 export async function generateMetadata({
   params,
@@ -107,6 +108,7 @@ export default async function AboutPage({
     tProcess,
     tAccordion,
     tCommon,
+    tContact,
     settings,
     images,
     imageRefs,
@@ -117,6 +119,7 @@ export default async function AboutPage({
     getTranslations("Process"),
     getTranslations("AccordionGallery"),
     getTranslations("Common"),
+    getTranslations("Contact.page"),
     getSiteSettings(),
     getSiteImages(),
     // Both resolve from the same cached read, so asking for the refs as well
@@ -458,6 +461,22 @@ export default async function AboutPage({
         heading={t("studio.heading")}
         intro={t("studio.body")}
         facts={studioFacts}
+        /* The audit's "address + map + visiting hours HERE, not only
+           Contact" (§3.7). Same click-to-activate, consent-gated component
+           /contact mounts, and it renders nothing at all without an address
+           — so a studio that has not published one is unchanged. Its three
+           labels are read from the Contact namespace on purpose: the map's
+           words exist once, translated once, rather than in two catalogues
+           drifting apart. */
+        map={
+          <StudioMap
+            address={settings.address}
+            activateLabel={tContact("mapActivate")}
+            noteLabel={tContact("mapNote")}
+            frameTitle={tContact("mapFrameTitle")}
+            className="mt-8"
+          />
+        }
         photos={[
           {
             src: images["about.studio1"],

@@ -191,6 +191,7 @@ export default async function Home({
     imageRefs,
     sections,
     testimonials,
+    workshopSessions,
   ] = await Promise.all([
     // §03 takes four pieces — one hero and three supporting. "featured"
     // sort puts the owner's curated picks first.
@@ -262,6 +263,15 @@ export default async function Home({
     // Returns [] when the owner has published none, and the band renders
     // nothing rather than inventing a customer.
     getTestimonials(3, locale),
+    // The workshops band is an INVITATION, and an invitation to a class
+    // nobody is running is the one kind of content Part 0 forbids — a claim
+    // the data does not support. The same query `/workshops` itself uses
+    // (there is no Workshop model; a session is a published product in the
+    // `workshops` category), so the homepage and the page it links to can
+    // never disagree about whether there is anything to come to.
+    db.product.count({
+      where: { status: "PUBLISHED", category: { slug: "workshops" }, ...demo },
+    }),
   ]);
 
   const waHref = buildWaLink(
@@ -979,7 +989,13 @@ export default async function Home({
 
     Sand ground: §09 above is dark and §10 below is mineral, so this keeps
     the page alternating rather than repeating a ground. */
-    workshops: (
+    /* Rendered ONLY when a session is actually published (plan §2.9 ·
+       audit: "promote on home ONLY when bookable"). `null` is how this page
+       already says "nothing to show" — the section filter and the CureLine's
+       marks both read `sectionNodes[key] != null`, so a band that cannot
+       keep its promise costs the rail a tick rather than leaving a stale one
+       pointing at an element that is not there. */
+    workshops: workshopSessions === 0 ? null : (
       <section
         id="workshops"
         aria-labelledby="workshops-heading"
