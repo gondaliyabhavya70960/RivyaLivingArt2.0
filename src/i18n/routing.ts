@@ -16,9 +16,12 @@ export const routing = defineRouting({
   // query-string-dropping channel that disagreed with the meta on paginated
   // URLs (/blog?page=N) and annotated noindex routes — off (SEO-510).
   alternateLinks: false,
-  // Real translations landed for all 9 locales (I2a/I2b-1…6 + I3 catalog
-  // localization), so Accept-Language negotiation is on: a first-time
-  // non-English browser is redirected to its language root and the choice is
-  // remembered in the NEXT_LOCALE cookie (the switcher always overrides).
+  // Stays ON because it is what keeps the NEXT_LOCALE cookie alive: in
+  // next-intl's `resolveLocale` this one flag gates the cookie (Prio 2) and
+  // the `Accept-Language` header (Prio 3) together, and only the header is
+  // unwanted. `src/proxy.ts` withholds that header instead, so a first visit
+  // is English (audit §2.6 — an English auditor was served the whole site in
+  // Chinese) while a language the visitor actually picked is still
+  // remembered. Turning this to `false` would silently undo the memory too.
   localeDetection: true,
 });

@@ -179,6 +179,45 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "kanhakreation.com" },
     ],
   },
+  /**
+   * Dead ends from an older information architecture (audit §2.7, plan 0.4).
+   *
+   * Both were verified 404 against this build before the rule existed:
+   * `/journal` is the old name for `/blog` and the nav still said "Journal",
+   * so anyone who typed or shared the word landed on nothing; `/collection`
+   * is the old furniture IA and may still be linked externally or indexed.
+   *
+   * Locale-prefixed twins get their own rule. `localePrefix: "as-needed"`
+   * means English lives at `/journal` with no prefix while every other
+   * language carries one (`/hi/journal`), so a single unprefixed rule would
+   * fix English and leave the other eight dead. `:locale` is constrained to
+   * the eight prefixed locales rather than `:path*` so it cannot swallow a
+   * real segment — `/shop/journal`, if that ever exists, is not this.
+   *
+   * Permanent (308): the old URLs are not coming back, and a permanent
+   * redirect is what moves whatever link equity they hold onto the live page.
+   */
+  async redirects() {
+    const PREFIXED_LOCALES = "ar|de|es|fr|gu|hi|ja|zh";
+    const MOVED = [
+      { from: "journal", to: "blog" },
+      { from: "collection", to: "shop" },
+    ];
+    return MOVED.flatMap(({ from, to }) => [
+      { source: `/${from}`, destination: `/${to}`, permanent: true },
+      { source: `/${from}/:path*`, destination: `/${to}/:path*`, permanent: true },
+      {
+        source: `/:locale(${PREFIXED_LOCALES})/${from}`,
+        destination: `/:locale/${to}`,
+        permanent: true,
+      },
+      {
+        source: `/:locale(${PREFIXED_LOCALES})/${from}/:path*`,
+        destination: `/:locale/${to}/:path*`,
+        permanent: true,
+      },
+    ]);
+  },
   async headers() {
     return [
       { source: "/:path*", headers: SECURITY_HEADERS },

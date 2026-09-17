@@ -1,10 +1,10 @@
 import createMiddleware from "next-intl/middleware";
 import NextAuth from "next-auth";
 import {
+  NextRequest,
   NextResponse,
   type NextFetchEvent,
   type NextProxy,
-  type NextRequest,
 } from "next/server";
 import { authConfig } from "@/lib/auth.config";
 import { routing } from "@/i18n/routing";
@@ -61,6 +61,45 @@ const studioAuth = auth((req) => {
 const intlMiddleware = createMiddleware(routing);
 
 /**
+ * Serve English first; remember only a choice the visitor actually made.
+ *
+ * The audit (§2.6) was handed the entire site in Chinese on a first visit,
+ * because `Accept-Language` alone decided the language and did it with a hard
+ * 307 — no consent step, no way back except the footer switcher, which is
+ * itself written in the language the visitor could not read. Reproduced
+ * locally before this change: `GET /` with `Accept-Language: zh-CN` answered
+ * `307 → /zh`.
+ *
+ * The flag that looks like the fix is not one. `routing.localeDetection`
+ * gates BOTH the cookie and the header in next-intl's `resolveLocale` (Prio 2
+ * and Prio 3 of four), so turning it off would take the remembered choice
+ * down with the unwanted negotiation — and the audit asks for English first
+ * *and* cookie memory. Verified in
+ * `node_modules/next-intl/dist/esm/middleware/resolveLocale.js`, not assumed.
+ *
+ * So the header is withheld from the negotiation instead, and everything else
+ * about next-intl's routing is left exactly as it was:
+ *
+ *   Prio 1  path prefix    `/hi/shop` still resolves Hindi      — unchanged
+ *   Prio 2  NEXT_LOCALE    the switcher's choice still wins     — unchanged
+ *   Prio 3  Accept-Language  no header ⇒ falls through          — THIS CHANGE
+ *   Prio 4  defaultLocale  English                              — unchanged
+ *
+ * With no header, `Negotiator` yields no languages and the matcher returns
+ * `defaultLocale`, which under `localePrefix: "as-needed"` needs no redirect —
+ * the same 200 that `GET /` with no `Accept-Language` already produced.
+ *
+ * A visitor who wants another language still gets one in a single click, and
+ * that click is what the cookie records.
+ */
+function withoutLanguageNegotiation(req: NextRequest): NextRequest {
+  if (!req.headers.has("accept-language")) return req;
+  const headers = new Headers(req.headers);
+  headers.delete("accept-language");
+  return new NextRequest(req, { headers });
+}
+
+/**
  * Composed middleware: /studio/** keeps the exact NextAuth guard; everything
  * else runs next-intl's locale routing. The matcher already excludes api/
  * static assets, so this only ever sees studio + localizable public paths.
@@ -69,7 +108,7 @@ export default function proxy(req: NextRequest, event: NextFetchEvent) {
   if (req.nextUrl.pathname.startsWith("/studio")) {
     return studioAuth(req, event);
   }
-  return intlMiddleware(req);
+  return intlMiddleware(withoutLanguageNegotiation(req));
 }
 
 export const config = {
