@@ -5,6 +5,115 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## "Tier" means the product tier — import lists, a scraper export through Bulk Import, Approve on the products list (2026-09-17, morning)
+
+Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #94. The owner, mid-morning, two
+screenshots and one line: `/studio/import` refusing the ScrapeDeck export it had just downloaded
+("cannot enter through Bulk Import"), `/studio/catalog-fill` calling its four CSV lists "Tier 1 —
+Owner … Tier 4 — 3D printing" — solve this, and change the tier concept everywhere in the
+catalogue flow. Then a third: 266 imported rows on the Review tab, all "needs rewrite", Publish
+skipping every one — "need approve, also with select all with related filter".
+
+- **One word per column, and one copy of each.** `Product.sizeTier` is THE tier
+  ("Tier 1 — Collectible …", `product-size-tier.ts`). `Product.tier` is the IMPORT LIST —
+  "List 1 — Owner's store" — from the new `src/lib/import-list.ts` (`IMPORT_LISTS`,
+  `IMPORT_LIST_NAME` / `SHORT` / `FILE`, `importListLabel`, `importListOf`), pinned by test to
+  `PRODUCT_LIMITS` and to the file stems `tier-fill.ts` reads. `ScrapeSource.tier` is the SOURCE
+  tier: the five hand-typed scrape-tier label copies collapsed into `purge.ts` (`TIER_LABEL`
+  nouns, `SCRAPE_TIER_SHORT`, `scrapeTierStudioLabel` deriving "Tier 1 — Collectible …" from
+  `SIZE_TIER_NUMBER` / `SIZE_TIER_NAME`, "Tier 1 sources — …" where a product-tier control sits
+  on the same screen). Every screen reads them: the products list (column "Import list", filter
+  "All import lists", badge "L1 · fill"), the product form (select, provenance panels), the
+  overview (the import-list strip, plus a new PRODUCT TIERS strip — three counts and Untiered,
+  hrefs built by `product-filter-links.ts`, the parser's inverse, pinned to parse back), catalog
+  fill and its conflicts, the inbox item and the overview strip for fill runs (both pointed at
+  `/studio/catalog-fill`; they linked Bulk Import, which never writes an `ImportRun`), the
+  command palette, the activity log (a label map: `sheet-import` → Catalog fill, the raw string
+  kept as a mono suffix), the exports glossary, the scraper registry, inbox and dashboard
+  ("Source tier"). No column, enum, URL param (`?tier=`, `?sizeTier=`), CSV header, file stem,
+  saved-view key or action string changed — only the words.
+- **Catalog fill forecasts the tiers.** Each list's summary carries `sizeTiers` (ADDITIVE —
+  older runs lack the key and the page prints "—"), computed by `suggestCatalogSizeTier` over
+  the canonical category the fill assigns, the deploy-time pass's own rule, for the rows that
+  end up in the catalogue; the page's "Would file as" column and the preview's split
+  ("12 Collectible · 40 Memory · 3 Personal · 118 none") read it; the dropped-row reasons say
+  "list"; the pipeline card that still named a deleted workflow says the four files are
+  committed and refreshing one means committing a new file. Dry run on the 4,385-row database:
+  every tally summed exactly to created + updated + unchanged; List 1 files 2 · 76 · 193 ·
+  102 none, List 3 (supplies) 2,500 none.
+- **Bulk Import accepts a Product Scraper export — as Products.** `src/lib/import/scrape-export.ts`
+  (pure) detects the signature and remaps the 26 ScrapeDeck columns onto the products template
+  (status and list cells always blank, `in_stock` from active / out_of_stock, the identity and
+  source columns carried along); `validate.ts` auto-maps a blank category with `matchCategoryId`,
+  suggests a blank product tier with `suggestSizeTier` (an explicit cell always wins, and the
+  validator's own fills carry a mark so a re-validation counts them as fills), keys identity on
+  `(source_key, external_id)`, and refuses the file for every other type with a message that
+  says to pick Products. `src/lib/import/product-row.ts` is the writer, lifted out of the action
+  so a database test can drive it: a new row lands DRAFT with `needsRewrite`, `importSource` /
+  `importRef` in the promote path's own format (its literal lookup finds the row), the slug
+  uniquified, the staged twin IMPORTED and its shortlist entry CONFIRMED; an UPDATE re-flags the
+  copy and keeps the status — a re-upload never takes a live product off the shop; a catalog-fill
+  `sheet:<key>` twin is left as it is and its twin marked imported, the inbox's rule, and the
+  preview counts them. The wizard says all of it before Import. And the guard this importer was
+  missing: an ordinary file cannot publish an untiered row (`product_tier is required to
+  publish`), scoped to the transition exactly as the form and bulk Publish are.
+- **Approve on `/studio/products`** — the batch "confirm rewrite". `approveProducts` clears the
+  guard on the selection (ids or "all N matching the filter"), marks the rows owner-touched so
+  the next import leaves the copy alone, and publishes the ones with a product tier; an untiered
+  row keeps the approval and waits for a tier, an archived row stays archived, a live one stays
+  live, every hold named in the toast with its remedy. `src/lib/product-approve.ts` is the
+  decision (pure, tested), `approve-dialog.tsx` says what the press lifts, one `ActivityLog`
+  row (`approve`) records it. Publish keeps refusing flagged rows: that refusal is the guardrail
+  and Approve is the explicit act. `docs/product-lifecycle.md` § Approving.
+- **Found by the forecast: the Studio's fill never read a file.** `tier-fill.ts` resolved its
+  data root from `__dirname`, which is the repository under `tsx` (the deploy-time bootstrap)
+  and a chunk folder inside `.next/` under the running server — so Preview and Run now on
+  `/studio/catalog-fill` had answered "0 · 0 · 0 · 0" on every environment since they were
+  built, and nothing said so until a column expected numbers. The root is `process.cwd()`
+  now (the `__dirname` form stays as the fallback), and `next.config.ts` traces
+  `data/tiers/**` and `data/rewrites/**` into the catalog-fill route's function, because a
+  `readFileSync` of a computed path is invisible to Vercel's tracing and the files would
+  otherwise not be in the function at all. Locally the Preview now reads 4,373 rows and
+  prints the split per list; production's Preview is the check after the merge (it is a dry
+  run against the real database — nothing written).
+- **Docs:** `CLAUDE.md`'s three-columns paragraph records the words and the two builds;
+  `docs/import/README.md` (the scraper-export section), `CONTENT_GUIDE` and `ADMIN_GUIDE`
+  (the "scraper CSVs are rejected whole-file" warnings were wrong for HEAD and now describe it),
+  `docs/studio-workflow.md`, `docs/scraper.md`, `data/tiers/README.md`, `docs/plan/07`.
+- **Tests:** `import-list.test.ts` (5), `product-approve.test.ts` (7), `scrape-export.test.ts`
+  (11), `tier-fill.test.ts` (22, was 15), `purge.test.ts` (25), `schema.test.ts`,
+  `product-filter-links.test.ts`, `confirmed.test.ts` pins the full 24-column order and the
+  two tier cells' round trip; `tests/db/bulk-import-scrape-export.test.ts` (8: the refusal by
+  type, the guarded drafts with identity, twin and slug, the second upload, the owner-edited
+  row, the live row kept live, the fill twin left alone, the ordinary file, the publish guard).
+  Unit suite 1,187 green; `npm run test:db` 19 files green; `npm run build`, the e2e smoke
+  (36/36) and `studio-audit.mjs` at 1440 and 390 across 40 Studio routes all clean, and the
+  whole path driven in a real browser: the ScrapeDeck CSV exported (120 rows), uploaded as
+  Products (120 created, 120 categories auto-mapped, 96 tiers suggested, one slug collision
+  uniquified, every twin IMPORTED and CONFIRMED), refused as Portfolio with the new message,
+  then Approve on a tiered selection (24 published) and an untiered one (24 approved, 24 held
+  with the reason).
+- **The review round.** A seven-lens adversarial pass over the diff raised 21 findings and all
+  21 were fixed rather than argued: Approve now revalidates the PDP whenever it clears the
+  guard (a flagged LIVE row renders its tagline instead of its description for a day, so the
+  flag alone is a storefront change), surfaces "No products match the current filter" instead
+  of a generic failure, re-asserts its own plan's conditions inside the transaction and
+  reports the write's real count, and logs `approve-publish` so the notifications bell — which
+  matches on `contains: "publish"` — sees the one press that can put 250 products on the shop;
+  a scraper-origin row mirrors at most six gallery images (`MAX_IMPORT_IMAGES`, now shared with
+  the promote path — a 500-row export was ~5,000 sequential downloads inside one action); the
+  export's formula-injection apostrophe is undone on the way back in (`uncsvCell`, so "-
+  Handmade river table" does not enter the catalogue as "'- Handmade river table") and
+  hand-added `custom1_*` columns survive the remap; a catalog-fill twin no longer appears under
+  the "will overwrite" warning whose checkbox cannot reach it; the fill's dropped rows travel
+  as a hundred examples per reason with exact counts beside them (a full run dropped ~60,000
+  and shipped ~10 MB of JSON to the browser and into `ImportRun.detail`); `/studio/catalog-fill`
+  declares `maxDuration = 300` now that its buttons do real work; the e2e check fails on a
+  preview that read zero rows, which is what it would have caught in the first place; and seven
+  documentation claims that were false were corrected.
+
+---
+
 ## The review inbox selects by filter — source tier, suggested tier, "select all N matching", Add to catalog in batches; the cron that never ran (2026-09-17)
 
 Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #93. The owner, the night the

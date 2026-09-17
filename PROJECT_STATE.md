@@ -8,6 +8,43 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-17 (morning — "tier" means the product tier; Bulk Import takes
+                          a scraper export; Approve on the products list)
+Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main after #94 (ff1f8e4).
+Production:               #94 merged 04:35 UTC and deployed (dpl_C16Li…, READY; its bootstrap
+                          found no pending migration and queued nothing new). The owner then
+                          uploaded the ScrapeDeck export at /studio/import and was refused, and
+                          sent /studio/catalog-fill still calling the CSV lists "Tier 1 — Owner":
+                          solve it, and change the tier concept across the catalogue flow. Then
+                          266 imported rows on the Review tab with Publish skipping all of them:
+                          "need approve, also with select all with related filter".
+What shipped:             src/lib/import-list.ts — ONE copy of the import-list words ("List 1 —
+                          Owner's store"), pinned to PRODUCT_LIMITS and the CSV stems; the
+                          scrape-tier labels collapsed into purge.ts (scrapeTierStudioLabel,
+                          "Source tier"); every catalogue screen reworded, the overview's new
+                          PRODUCT TIERS strip (product-filter-links.ts builds the hrefs), Catalog
+                          fill's "Would file as" forecast (sizeTiers on the run summary, additive)
+                          and its corrected pipeline card; Bulk Import accepts a Product Scraper
+                          export as Products (scrape-export.ts remap, auto-mapped categories,
+                          suggested tiers, product-row.ts writer with the promote path's identity,
+                          twin and slug rules; an update keeps the status; a fill twin is left
+                          alone; other types refuse with "pick Products") and can no longer
+                          publish an untiered row; Approve on /studio/products (product-approve.ts,
+                          approveProducts, approve-dialog.tsx): guard cleared, rows owner-touched,
+                          the tiered ones published, every hold named. No column, enum, URL param,
+                          CSV header, file stem or action string changed.
+Next Exact Task:          THE OWNER: /studio/import → Products → upload the ScrapeDeck CSV → read
+                          the notice → Import; /studio/products?status=REVIEW (or DRAFT) → filter
+                          → Select all N matching → Approve. Answers still owed: Dinosaur Designs
+                          in or out; "his website" = the previous store?; T2/T4/T8 (docs/plan/07).
+                          THE CODE: NEEDED-WORK.md §3 — the collectible card in every grid, the
+                          memory and gift card variants, the List 1 restore button, the Studio
+                          control for maxProducts; the fill writing sizeTier at write time.
+```
+
+## SESSION CHECKPOINT — 2026-09-17 early morning, the inbox selects by filter (superseded by the block above, kept as history)
+
+```text
 Date:                     2026-09-17 (early morning — the inbox selects by filter; the cron runs)
 Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main after #93 (4fd823e).
 Production:               #93 merged 01:12 UTC; the production build queued the nine sources
