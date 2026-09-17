@@ -36,6 +36,10 @@ import {
   describeConfirmRefusal,
 } from "@/lib/scraper/confirm";
 import {
+  type ApproveReport,
+  planProductApproval,
+} from "@/lib/product-approve";
+import {
   buildProductWhere,
   productListFilterSchema,
   type ProductListFilter,
@@ -961,6 +965,97 @@ export async function confirmProducts(
     }
 
     return { confirmed: ready.length, refused };
+  });
+}
+
+/**
+ * Approve — the batch "I have read this copy". Clears the rewrite guard on
+ * every targeted row, marks it owner-touched (a human decided about its
+ * content, so the next import leaves the copy alone — `merge-policy.ts`),
+ * and publishes the rows that can go live under the same two guards Publish
+ * applies. The decision is `planProductApproval`; this applies it in one
+ * transaction so a batch is never half-approved.
+ *
+ * Why a separate action rather than a flag on setProductsStatus: Publish
+ * SKIPPING flagged rows is the guardrail, and an owner pressing Publish
+ * should keep getting that refusal. Approve is the explicit act that lifts
+ * it, behind its own dialog that says what it lifts.
+ */
+export async function approveProducts(
+  target: BulkProductTarget,
+): Promise<ActionResult<ApproveReport>> {
+  const session = await requireStaff();
+  // Resolved BEFORE runAction, the way setProductsStatus and deleteProducts
+  // do it: runAction turns every throw into "Something went wrong", and
+  // "No products match the current filter" (a filter another tab has just
+  // emptied) is the one message the owner needs to read.
+  const resolved = await resolveTargetIds(target);
+  if ("error" in resolved) return { ok: false, error: resolved.error };
+
+  return runAction(async () => {
+    const rows = await db.product.findMany({
+      where: { id: { in: resolved.ids } },
+      select: { id: true, needsRewrite: true, sizeTier: true, status: true },
+    });
+    const plan = planProductApproval(rows);
+    const now = new Date();
+
+    // The publish half re-asserts the conditions it was PLANNED under. The
+    // plan is read outside the transaction, so another session can archive a
+    // row or clear its tier in between; without these clauses that row would
+    // go live anyway, and the toast would count it.
+    const [, published] = await db.$transaction([
+      db.product.updateMany({
+        where: { id: { in: plan.reviewIds } },
+        data: { needsRewrite: false, ownerTouched: true, studioEditedAt: now },
+      }),
+      db.product.updateMany({
+        where: {
+          id: { in: plan.publishIds },
+          sizeTier: { not: null },
+          status: { notIn: ["PUBLISHED", "ARCHIVED"] },
+        },
+        data: { status: "PUBLISHED" },
+      }),
+    ]);
+
+    const report: ApproveReport = {
+      approved: plan.reviewIds.length,
+      published: published.count,
+      untiered: plan.untieredIds.length,
+      alreadyLive: plan.alreadyLive,
+      archived: plan.archived,
+    };
+
+    await logActivity({
+      userId: session.user.id,
+      // The action string CONTAINS "publish" when something went live: the
+      // notifications bell builds its publish queue with
+      // `action: { contains: "publish" }` (`studio-inbox.ts`), and the one
+      // press that can put 250 products on the shop must not be the one it
+      // cannot see.
+      action: report.published > 0 ? "approve-publish" : "approve",
+      entity: "Product",
+      meta: { ...report },
+    });
+
+    revalidatePath("/studio/products");
+    if (plan.reviewIds.length > 0) {
+      // Clearing the rewrite guard IS a storefront change, published rows
+      // included: the PDP renders the tagline instead of the description
+      // while the flag is up, and it caches for a day. So the page paths are
+      // invalidated whenever any row was touched, not only when one went
+      // live.
+      revalidatePublic("product");
+      revalidatePath("/[locale]/product/[slug]", "page");
+    }
+    if (report.published > 0) {
+      // These two only move when a status does — the mega-menu counts and
+      // the cached /shop first page.
+      revalidateTag(CATALOG_NAV_TAG, "max");
+      revalidateTag(SHOP_FIRST_PAGE_TAG, "max");
+    }
+    return report;
   });
 }
 

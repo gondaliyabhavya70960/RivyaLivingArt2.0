@@ -11,6 +11,7 @@ import { Search, Star } from "lucide-react";
 import { toast } from "sonner";
 import type { ContentStatus, ProductSizeTier } from "@/generated/prisma/enums";
 import {
+  approveProducts,
   confirmProducts,
   deleteProducts,
   setProductsCategory,
@@ -21,6 +22,7 @@ import {
   type BulkProductTarget,
 } from "@/actions/products";
 import { formatPriceBand } from "@/lib/utils";
+import { IMPORT_LISTS, importListLabel, importListOf } from "@/lib/import-list";
 import {
   PRODUCT_SIZE_TIERS,
   SIZE_TIER_NAME,
@@ -45,6 +47,8 @@ import {
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ColumnsMenu } from "@/components/studio/columns-menu";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
+import { ApproveProductsDialog } from "@/components/studio/products/approve-dialog";
+import { describeApproval } from "@/lib/product-approve";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import { Pagination, PAGE_SIZE } from "@/components/studio/pagination";
@@ -65,14 +69,16 @@ export type ProductRow = {
   isDemo: boolean;
   featured: boolean;
   needsRewrite: boolean;
-  /** Owner-sheet IMPORT tier (1-4) or null for studio-made products. */
+  /** Import list (1-4) — `Product.tier`, which committed CSV the row came
+   *  from — or null for studio-made products. Not the product tier. */
   tier: number | null;
-  /** The owner's product tier. Null is the backlog this list has to surface. */
+  /** The product tier. Null is the backlog this list has to surface. */
   sizeTier: ProductSizeTier | null;
   inStock: boolean;
-  /** True when the row came from the scheduled sheet import. */
+  /** True when the row is fed by the catalog fill (an import-list CSV). */
   imported: boolean;
-  /** Sheet draft pushed out by the tier cap — not an intentional owner draft. */
+  /** A catalog-fill draft pushed out by its import list's cap — not an
+   *  intentional owner draft. */
   demoted: boolean;
   thumbnailUrl: string | null;
   /** Pre-formatted on the server to keep hydration deterministic. */
@@ -108,12 +114,45 @@ const PRODUCT_COLUMNS: ColumnDef[] = [
   { key: "category", label: "Category" },
   { key: "price", label: "Price" },
   { key: "sizeTier", label: "Product tier" },
-  // Label only — the KEY stays "tier" because saved views persist it.
-  { key: "tier", label: "Import tier" },
+  // Label only — the KEY stays "tier" because saved views persist it. The
+  // column is `Product.tier`, the import list a row came from; "tier" on a
+  // Studio screen means the product tier, so the label does not use it.
+  { key: "tier", label: "Import list" },
   { key: "stock", label: "Stock" },
   { key: "featured", label: "Featured" },
   { key: "updated", label: "Updated" },
 ];
+
+/**
+ * The import-list cell: "L1", with "· fill" on a row the catalog fill still
+ * refreshes (it read "T1 · sheet" until 2026-09-17).
+ *
+ * "L1", NOT `IMPORT_LIST_SHORT`. The width note on the table header is
+ * measured — the margin at 1440 is eight pixels — and "Resin goods" in this
+ * mono cell would spend it. Same footprint as the "T1" it replaces; the
+ * list's full name is the title, one hover away.
+ */
+function ImportListCell({
+  tier,
+  imported,
+}: {
+  tier: number | null;
+  imported: boolean;
+}) {
+  const list = importListOf(tier);
+  if (!list) return <span aria-hidden>—</span>;
+  return (
+    <Badge
+      variant="outline"
+      title={`${importListLabel(list)}${
+        imported ? " · refreshed by the catalog fill" : ""
+      }`}
+    >
+      L{list}
+      {imported ? " · fill" : ""}
+    </Badge>
+  );
+}
 
 /** Sticky right actions column wherever the table scrolls horizontally — i.e.
  *  below `xl`, which is exactly where the wrapper keeps `overflow-x: auto`.
@@ -153,6 +192,7 @@ export function ProductList({
 
   const [search, setSearch] = useState(initialQuery);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [approveOpen, setApproveOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   // Gmail pattern (audit L-AD1): true after "Select all N matching this
   // filter". Only effective while every row on the page is still ticked —
@@ -260,6 +300,32 @@ export function ProductList({
         `${formatCount(refused.length - 4)} more could not be confirmed — filter by what they are missing.`,
       );
     }
+    router.refresh();
+  }
+
+  async function handleApprove() {
+    setBusy(true);
+    const result = await approveProducts(bulkTarget);
+    setBusy(false);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    setApproveOpen(false);
+    const { success, holds } = describeApproval(
+      result.data ?? {
+        approved: 0,
+        published: 0,
+        untiered: 0,
+        alreadyLive: 0,
+        archived: 0,
+      },
+    );
+    if (success) toast.success(success);
+    // Every hold is named with its remedy — "skipped 12" with no reason is
+    // the toast that sends an owner to look for a bug that is a guardrail.
+    for (const hold of holds) toast.warning(hold);
+    clearSelection();
     router.refresh();
   }
 
@@ -509,15 +575,18 @@ export function ProductList({
             updateParams({ tier: value === "ALL" ? undefined : value })
           }
         >
-          <SelectTrigger aria-label="Filter by import tier">
-            <SelectValue placeholder="Import tier" />
+          <SelectTrigger aria-label="Filter by import list">
+            <SelectValue placeholder="Import list" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="ALL">All tiers</SelectItem>
-            <SelectItem value="1">Tier 1 — Owner</SelectItem>
-            <SelectItem value="2">Tier 2 — Resin goods</SelectItem>
-            <SelectItem value="3">Tier 3 — Supplies</SelectItem>
-            <SelectItem value="4">Tier 4 — 3D printing</SelectItem>
+            <SelectItem value="ALL">All import lists</SelectItem>
+            {/* `?tier=1` stays the URL value — it is the column value and a
+                contract; only the words come from import-list.ts. */}
+            {IMPORT_LISTS.map((list) => (
+              <SelectItem key={list} value={String(list)}>
+                {importListLabel(list)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
@@ -712,17 +781,18 @@ export function ProductList({
                   <th className="py-3 pe-4">Status</th>
                   {/* pe-2, not the pe-4 every other column uses. At 1440 the
                       content rail leaves this table 1151px and its intrinsic
-                      width with both tier columns is 1161 — the studio audit
-                      failed /studio/products at exactly 1450-in-1440 when the
-                      product-tier column was added. Eight pixels off each of
-                      these two is the whole margin. Adding a THIRTEENTH column
-                      needs a real answer (a default-hidden column, or moving
-                      the scroll region past xl), not more shaving. */}
+                      width with the product-tier and import-list columns is
+                      1161 — the studio audit failed /studio/products at
+                      exactly 1450-in-1440 when the product-tier column was
+                      added. Eight pixels off each of these two is the whole
+                      margin. Adding a THIRTEENTH column needs a real answer
+                      (a default-hidden column, or moving the scroll region
+                      past xl), not more shaving. */}
                   {columns.isVisible("sizeTier") && (
                     <th className="py-3 pe-2">Product tier</th>
                   )}
                   {columns.isVisible("tier") && (
-                    <th className="py-3 pe-2">Import tier</th>
+                    <th className="py-3 pe-2">Import list</th>
                   )}
                   {columns.isVisible("stock") && (
                     <th className="py-3 pe-4">Stock</th>
@@ -792,9 +862,9 @@ export function ProductList({
                           <Badge
                             variant="outline"
                             className="border-sapphire-ink/30 text-sapphire-ink"
-                            title="Demoted to draft by the sheet import's tier cap — not an intentional owner draft."
+                            title="Demoted to draft by the catalog fill — its import list's cap was reached. Not an intentional owner draft."
                           >
-                            Out of tier cap
+                            Over list cap
                           </Badge>
                         )}
                       </div>
@@ -838,14 +908,10 @@ export function ProductList({
                     )}
                     {columns.isVisible("tier") && (
                       <td className="u-num py-3 pe-2 whitespace-nowrap text-graphite">
-                        {product.tier ? (
-                          <Badge variant="outline">
-                            T{product.tier}
-                            {product.imported ? " · sheet" : ""}
-                          </Badge>
-                        ) : (
-                          <span aria-hidden>—</span>
-                        )}
+                        <ImportListCell
+                          tier={product.tier}
+                          imported={product.imported}
+                        />
                       </td>
                     )}
                     {columns.isVisible("stock") && (
@@ -914,6 +980,12 @@ export function ProductList({
       />
 
       <BulkBar count={effectiveCount} onClear={clearSelection}>
+        {/* Approve is the batch "confirm rewrite" — Publish keeps refusing
+            flagged rows (that refusal is the guardrail), and this is the
+            explicit act that lifts it, behind a dialog that says so. */}
+        <Button size="sm" disabled={busy} onClick={() => setApproveOpen(true)}>
+          Approve
+        </Button>
         <Button
           size="sm"
           variant="secondary"
@@ -1012,6 +1084,14 @@ export function ProductList({
         </Button>
       </BulkBar>
 
+      <ApproveProductsDialog
+        open={approveOpen}
+        onOpenChange={setApproveOpen}
+        count={effectiveCount}
+        busy={busy}
+        onConfirm={handleApprove}
+        filterWide={filterArmed}
+      />
       <ConfirmDeleteDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}

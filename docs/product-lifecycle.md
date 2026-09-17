@@ -78,6 +78,39 @@ only one is worth telling somebody about.
 
 ---
 
+## Approving
+
+`/studio/products` → filter → select (or **Select all N matching**) → **Approve**.
+
+A row that came in through the scraper — the review inbox's **Add to catalog**,
+or a scraper export uploaded to Bulk Import — carries `needsRewrite`. Its title
+and description are another site's words until a person has read and rewritten
+them, and **Publish** and **Confirm** both refuse the row while the flag is up
+(Publish reports the count and the reason; Confirm names the row). The product
+form clears it with the rewrite banner's tick — **I have rewritten this
+content — it is now original.** — one product at a time.
+
+**Approve** is the batch form of that tick. For every selected product it:
+
+- clears `needsRewrite` and marks the row `ownerTouched` — a human decided
+  about its content, so the next import refreshes availability only
+  (`merge-policy.ts`);
+- publishes it, under the same guard Publish applies: a product with no
+  product tier keeps the approval but stays where it is until a tier is set
+  (**Set product tier…** in the same bar, then **Publish**);
+- leaves an archived product archived and a live one live — a filter that
+  reaches into the archive is not a request to put those pieces on sale.
+
+It asks first, and the dialog says what it lifts: scraped listings carry
+another site's words until they are rewritten, so approve only what you have
+read. One `ActivityLog` row (`approve`) records each press with the counts.
+
+The decision is `src/lib/product-approve.ts` (`planProductApproval`); the
+action is `approveProducts` in `src/actions/products.ts`, one transaction, so
+a batch is never half-approved.
+
+---
+
 ## Confirming
 
 `/studio/products` → select → **Confirm**.
