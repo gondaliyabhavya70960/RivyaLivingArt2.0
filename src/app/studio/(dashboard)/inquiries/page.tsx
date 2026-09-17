@@ -10,6 +10,7 @@ import {
   STATUS_LABELS,
   STATUS_ORDER,
 } from "@/components/studio/inquiries/labels";
+import { staleInquiryWhere } from "@/components/studio/dashboard/action-queue";
 import {
   CommissionBoard,
   type CommissionCard,
@@ -57,6 +58,11 @@ const BOARD_CAP = 140;
  * lists do not exist in `InquiryStatus`, so the board is built on the seven
  * real active stages and the terminal pair stays off it.
  */
+/** One clock read per request, outside the component body (purity lint). */
+async function requestClock(): Promise<Date> {
+  return new Date();
+}
+
 export default async function InquiriesPage({
   searchParams,
 }: {
@@ -66,11 +72,16 @@ export default async function InquiriesPage({
     q?: string;
     page?: string;
     view?: string;
+    /** "1" narrows to NEW inquiries whose first reply is already late — the
+     *  Overview's action-queue card links here so the list it opens is
+     *  exactly the rows that card counted. */
+    stale?: string;
     /** Content Lab (batch G): "1" shows only demo fixture inquiries. */
     demo?: string;
   }>;
 }) {
-  const { status, source, q, page, view, demo } = await searchParams;
+  const { status, source, q, page, view, stale, demo } = await searchParams;
+  const requestNow = await requestClock();
   const isBoard = view === "board";
   const demoOnly = demo === "1";
 
@@ -82,6 +93,10 @@ export default async function InquiriesPage({
 
   const where: Prisma.InquiryWhereInput = {
     ...(isStatus(status) ? { status } : {}),
+    // The Overview's action-queue card counts this exact clause, so the list
+    // it opens is the rows it counted. `requestNow` is resolved above, off
+    // the render path — a clock read inside a component is a purity error.
+    ...(stale === "1" ? staleInquiryWhere(requestNow) : {}),
     ...(isSource(source) ? { source } : {}),
     ...(demoOnly ? { isDemo: true } : {}),
     ...(q
