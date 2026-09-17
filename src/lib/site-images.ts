@@ -156,6 +156,7 @@ export const SITE_IMAGE_SLOTS = [
     where: "Homepage · Why Rivya Living Art, first of four",
     ratio: "4:5",
     fallback: "/redesign/maker-hands.jpg",
+    note: "WANTS A REAL PHOTOGRAPH. The bundled default is a generated person at a bench — the file is called maker-hands, but it is a portrait, not hands. §15.2 protects the two MAKER slots and this is not one of them, so nothing is breached; it is still a generated human standing as proof that a human made the work, which is the trust leak audit §2.2 describes. Any real bench photograph is better than this, including one taken on a phone.",
     altKey: "Home.why.proof.handcrafted.alt",
   },
   {
