@@ -18,7 +18,7 @@
 | 0.5 | Locale default = English on first visit + cookie memory (audit §2.6, `src/proxy.ts`) | Code | S |
 | 0.6 | **Drive ingestion:** download `final/product-heroes/` (35 PNG) + `final/room-scenes/` (10 PNG) from Drive → run the optimization pipeline (§5.4) → commit WebP masters to `public/redesign/catalog/heroes/` + `…/scenes/` | Local → GitHub | M |
 | 0.7 | **Visual QA pass** on all 45 Drive images (contact-sheet review; 3 already verified: hero-001 river table, hero-020 varmala frame, scene-001 golden-hour dining — all on-palette). Reject/regenerate anything off-grade | Browser | S |
-| 0.8 | **Video QA pass** on `videos/` (26 Higgsfield MP4s, 0.6–5.8MB): pick hero-loop + maker-loop candidates, check duration/loopability/first-frame; transcode picks per §4.4 | Local (ffmpeg) | S |
+| 0.8 | **Video QA pass** on `videos/` (26 Higgsfield MP4s, 0.6–5.8MB): hero + ambient loops already generated ✅ — QA now picks only a **maker-loop candidate** + social/reel alternates; transcode picks per §4.4 | Local (ffmpeg) | S |
 
 ---
 
@@ -46,7 +46,7 @@ Build these once; every page below consumes them.
 
 | What | Detail | Assets | Effort |
 |---|---|---|---|
-| Hero | New poster already wired via `home.hero` slot → `hero-pour.jpg` ✅. Add: italic accent word (F4), keep `sf-hero-rise` entrance | 🎬/📁 `hero-pour.mp4` 8–12s loop ≤6MB — **first try Drive `videos/` picks (0.8)**; else generate via video tool. Poster = existing jpg → Site Settings hero video field | S |
+| Hero | New poster already wired via `home.hero` slot → `hero-pour.jpg` ✅. Add: italic accent word (F4), keep `sf-hero-rise` entrance | ✅ `hero-pour-loop.mp4` generated — 8s · 1280×720 · 4.1MB (+ WebM 1.6MB + poster jpg); upload via Studio → Site Settings hero video field | S |
 | Manifesto | Keep current `sf-manifesto-brighten` (view-timeline) — matches spec | — | — |
 | Collections → Doors | ✅ shipped (PR #96). Follow-up P2: collapse six tiles to the **three intents** when tier copy lands | doorways ✅ (slot fallbacks) | — |
 | Featured → Rail | ✅ shipped (PR #96). Production imagery = owner's Studio photos; **dev/preview placeholders: Drive heroes 028–035 (small objects) — flagged, never publishable (§4.6 rule)** | 📁 + 📷 | — |
@@ -128,7 +128,7 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 | **404** `/404` | `visual-404.jpg` vortex full-bleed at 60% under obsidian veil · 200px serif "Lost in the pour." (F4 italic on "pour") · mono sub: `ERR-404 / page not found` · one magnetic champagne pill "Back to the collection" · no nav, no footer links | Headline word-rise (F5) · pill magnetic (§6.2) · veil fade 400ms | ✅ `visual-404.jpg` | S |
 | **Error / 500** | Same shell, `texture-resin-flow.jpg` at 20% · "The pour broke." · mono error reference code + `Try again` pill (soft reload) · calm, never alarming | Same as 404, no magnetic on retry | ✅ texture | S |
 | **Studio login** `/studio/login` | Split 50/50: left = calm card (mono label, floating-label inputs §6.8, caps-lock hint, submit pill) · right = `maker-hands.jpg` with "today" strip (new-inquiries count) once authed-data allows; failed login = one 300ms shakeX + vermilion mono error | Card rise 16px/300ms on mount · input focus hairline | ✅ `maker-hands.jpg` (📷 real studio photo replaces later) | S |
-| **Maintenance / coming-soon** | `texture-resin-flow.jpg` veil · "Back when the resin cures." · cure-line progress animation (loops at 90%) · notify-me input → existing subscribers feature | Cure-line loop 2.4s · input = §6.8 | ✅ texture | S |
+| **Maintenance / coming-soon** | `texture-resin-flow.jpg` veil · "Back when the resin cures." · cure-line progress animation (loops at 90%) · notify-me input → existing subscribers feature · optional `pour-swirl-loop.mp4` as ambient background at 30% | Cure-line loop 2.4s · input = §6.8 | ✅ texture + ✅ swirl loop | S |
 
 **Acceptance:** all four render in 9 locales (RTL included) · no layout shift on font load · reduced-motion = static resting frame · `copy:check` green.
 
@@ -158,8 +158,8 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 
 ## 4. Master asset production list
 
-### 4.1 Images — delivered ✅ (14, in handoff; go to `public/redesign/`)
-hero-pour · texture-resin-flow · doorway-collectible · doorway-memory · doorway-gifts · maker-hands · product-bangle · product-varmala-frame · product-coasters · product-platter · insitu-bangle-wrist · insitu-tray-table · testimonial-home · visual-404 — web-optimized JPEG, one grade.
+### 4.1 Images — delivered ✅ (15, in handoff; go to `public/redesign/`)
+hero-pour · texture-resin-flow · doorway-collectible · doorway-memory · doorway-gifts · maker-hands · product-bangle · product-varmala-frame · product-coasters · product-platter · insitu-bangle-wrist · insitu-tray-table · testimonial-home · visual-404 — web-optimized JPEG, one grade. **Plus `og-home.jpg`** (1200×630 social share card — pour photograph + RIVYA wordmark + "Resin, remembered."; wire as the default OG/Twitter image in root layout metadata).
 
 ### 4.2 Drive library — verified 📁 (45 images + 26 videos)
 
@@ -174,18 +174,19 @@ Source: Google Drive — https://drive.google.com/drive/folders/1P2HCTmPge6HsEwt
 | Form studies 📁 | `product-hero-024…027-4x5.png` | Form Study I–III · material panel | Journal covers · texture bands · custom-order material cards (center-crops) · Studio empty-state art |
 | Gift heroes 📁 | `product-hero-028…035-4x5.png` | Serving tray · coaster set · catch-all bowl · bookends · desk piece · paperweight · ring dish · keepsake box | Gift PDP/card placeholders · featured-rail dev content |
 | Room scenes 📁 | `product-scene-001…010-16x9.png` | Interiors for the ten furniture subjects (scene-001 verified — golden-hour river-table room, on-palette) | Large-format case frames (captioned) · PDP in-situ stand-ins · testimonial band rotator |
-| Video clips 📁 | `videos/hf_*.mp4` ×26 (0.6–5.8MB) | Higgsfield resin clips (one verified: shimmering blue resin block on plinth — on-brand) | Hero pour loop + maker polish loop **candidates** — pick at 0.8; losers stay out of the repo |
+| Video clips 📁 | `videos/hf_*.mp4` ×26 (0.6–5.8MB) | Higgsfield resin clips (one verified: shimmering blue resin block on plinth — on-brand) | Maker-loop + social/reel candidates — pick at 0.8; losers stay out of the repo |
 
 Full file-ID appendix (for scripted download): §4.7.
 
 ### 4.3 Images — still to generate 🎬 (me, same prompt family as 4.1)
 Nothing blocking remains after 4.1 + 4.2 — the Drive library closed the gaps (collection cards, PDP in-situ stand-ins, journal covers). Regenerate only what 0.7 rejects. Prompt template: *"[subject], deep sapphire + champagne gold on obsidian/sand, cinematic side light, editorial luxury, photorealistic, no text"* — portraits 1122×1402 minimum, then §5.4 pipeline.
 
-### 4.4 Video 🎬/📁
+### 4.4 Video
 | Asset | Spec | Source |
 |---|---|---|
-| Hero pour loop | 8–12s, 1080p, ≤6MB MP4 (+WebM), muted loop, poster = hero-pour.jpg | **0.8 pick from Drive `videos/`** → ffmpeg transcode; fallback: I generate one via the video tool |
-| Maker polish loop | 6s, ≤3MB | Drive pick or 📷 real bench clip (preferred long-term) |
+| Hero pour loop ✅ | `hero-pour-loop.mp4` — 8s · 1280×720 · 4.1MB (+ `.webm` 1.6MB + `-poster.jpg`), muted loop, poster = hero-pour.jpg | **Generated** (graded to match hero art); Drive clips remain alternates |
+| Dark-band ambient loop ✅ | `pour-swirl-loop.mp4` — 8s top-down bloom/swirl · 4.3MB (+ `.webm` 1.5MB + `-poster.jpg`) | Custom Order hero · maintenance page · testimonial/dark bands |
+| Maker polish loop | 6s, ≤3MB | Drive pick (0.8) or 📷 real bench clip (preferred long-term) |
 | Workshop ambient | 10s, optional | 📷 real only (rule §15.2 spirit) |
 | Pour→cure frames | 121-frame sequence | ✅ already bundled (`public/sequences/pour-cure`) |
 
@@ -206,7 +207,7 @@ Folder IDs: heroes `16MdLIbNyM0LlGqPmS56bcTK7OWbhe4JS` · scenes `1uG6U5sBhds7Xk
 
 **Scenes (product-scene-NNN-16x9.png = ID):** 001 `1u2LZxGMlzbhXw3NYkgMdU_MFWfe-4VQP` · 002 `1NompXwBn-ReuU27jXJAehdZKxnE-Ue6y` · 003 `1F8Nq3JeZhHq-fZ4RT0mk8kg50ACtV684` · 004 `1GCDxoW8mWn-v7-JD_g_Nuky_zBELf4i2` · 005 `1b7u4XxBD6MvIQB7P8uL6SFg4wJBEUPPB` · 006 `1bhrpvhSyC1qHgOdnQWsCotcdnnEenS0Z` · 007 `1HfbjT9-RrVqTb9j7XQHCGHQtopddAHqS` · 008 `1D1wMnVxC1h5UfP4wB-YEo7koRRLLi9KL` · 009 `12lpHEcIFSvJpLDJ5HBWxAdTXppaSzgLb` · 010 `1SCaz-baYnmVFwRczYYtEPstWKcH80VOk`
 
-**Videos (`videos/` — 26 MP4, pick at 0.8):** Aug-12 batch (5 clips, 3.7–5.5MB — richest motion, hero-loop candidates): `17MqLYEXo8Bd0lIMKpNPuOKF6KdBIYmh2` (verified: shimmering blue resin block) · `14ERnjmrC3bXXE9MaPBFj3f1xHqJWJps7` · `1yAom4paJILhLhpLkEIbZbZxLB_EQAaLa` · `1Yx3X35gWAYwIeGMeADQMQAhV6Fg8eTtC` — plus Aug-26 (2 small clips) · Aug-28 (10 clips, 2.4–5.8MB — `16MM-1ODfVhwCWlY77ioYBjRC2fENCDpg` · `1ceD0DbGdi5BpNModsRftHRAyvqk_XLQS` · `1AAWElMHq4d5MCXmguQBGj9ThGbbgVJOg` · `1i_pbw6Y5riTHpXAGAwTMW8TQc86-rSXu` · `1GCQwCgrJavFR4DHktutU-bYylg4Xbgw0` · `1SF7chVscwV4xn--yjZfRYjrFkwAXa6FF` · `1yxt5xVg7LHneWNwZwaUAmM97BJ45iOce` · `14ZEBvf1w8eQnGaaDI4KMi120y1aAhtzu` · `1QySHQBTidIBsREHHtpSwbi1_ZiWLHiqe` · `1C_kR1LyZ-CSOpUsLYqIeEy5wjFiUUubK` · `1VN-NqaDqfkTRFC6MVEQfgKgzJbGbLG6h`) · Sep-4 (9 short clips 0.6–1.4MB — maker-loop candidates): `19ws6XN-YraX7YEtgO7NaGoaHng7onDU6` · `13SKDWEF2o6JqSjnTYTZOp8LW2eyPw4-M` · `1SPNOIZ5HYec9KlhCs5J3i04Era7kugf8` · `1Vsmjj_0fT9tco3o3ATV2DQZgZibZls76` · `1I-Hsb75CRp3YOWk7R67i7aKGyy4gCjjj` · `1X1AqAw9WtnW5bO81sJAw8oFXZBH8HnXt` · `10-AMEBqXahCPt4hvhmajGvb_FZ1PIai0` · `1WJwDAqPwmLZ3UgzX9BrBqaGQTJr21Id_` · `1ydpgt_ky-MwE4RKhl3M4YDkH5XMCg6jC` · `1rXTXhhIMjjzEAM9bqlMIChxjdExjECRF` · `1v-b1fjVR-Q2Y8inNJ9jBlOv4_mWIQXos`
+**Videos (`videos/` — 26 MP4, pick at 0.8):** Aug-12 batch (5 clips, 3.7–5.5MB — richest motion): `17MqLYEXo8Bd0lIMKpNPuOKF6KdBIYmh2` (verified: shimmering blue resin block) · `14ERnjmrC3bXXE9MaPBFj3f1xHqJWJps7` · `1yAom4paJILhLhpLkEIbZbZxLB_EQAaLa` · `1Yx3X35gWAYwIeGMeADQMQAhV6Fg8eTtC` — plus Aug-26 (2 small clips) · Aug-28 (10 clips, 2.4–5.8MB — `16MM-1ODfVhwCWlY77ioYBjRC2fENCDpg` · `1ceD0DbGdi5BpNModsRftHRAyvqk_XLQS` · `1AAWElMHq4d5MCXmguQBGj9ThGbbgVJOg` · `1i_pbw6Y5riTHpXAGAwTMW8TQc86-rSXu` · `1GCQwCgrJavFR4DHktutU-bYylg4Xbgw0` · `1SF7chVscwV4xn--yjZfRYjrFkwAXa6FF` · `1yxt5xVg7LHneWNwZwaUAmM97BJ45iOce` · `14ZEBvf1w8eQnGaaDI4KMi120y1aAhtzu` · `1QySHQBTidIBsREHHtpSwbi1_ZiWLHiqe` · `1C_kR1LyZ-CSOpUsLYqIeEy5wjFiUUubK` · `1VN-NqaDqfkTRFC6MVEQfgKgzJbGbLG6h`) · Sep-4 (9 short clips 0.6–1.4MB — maker-loop candidates): `19ws6XN-YraX7YEtgO7NaGoaHng7onDU6` · `13SKDWEF2o6JqSjnTYTZOp8LW2eyPw4-M` · `1SPNOIZ5HYec9KlhCs5J3i04Era7kugf8` · `1Vsmjj_0fT9tco3o3ATV2DQZgZibZls76` · `1I-Hsb75CRp3YOWk7R67i7aKGyy4gCjjj` · `1X1AqAw9WtnW5bO81sJAw8oFXZBH8HnXt` · `10-AMEBqXahCPt4hvhmajGvb_FZ1PIai0` · `1WJwDAqPwmLZ3UgzX9BrBqaGQTJr21Id_` · `1ydpgt_ky-MwE4RKhl3M4YDkH5XMCg6jC` · `1rXTXhhIMjjzEAM9bqlMIChxjdExjECRF` · `1v-b1fjVR-Q2Y8inNJ9jBlOv4_mWIQXos`
 
 ---
 
@@ -303,7 +304,7 @@ Every micro-interaction on the site comes from this table — same eases, same d
 | **P0** | Week 1 | Phase 0 (~~merge PR~~ done · 14 images · content sweep · redirects · locale · **Drive ingestion 0.6–0.8**) · F6 CTA restyle · Studio S5 publish guard (+placeholder lint) |
 | **P1** | Weeks 2–4 | Home remainder (testimonials band, journal list, final CTA, demote bands) · PDP · Custom Order wizard · Shop tabs + chips · Studio S2 action queue + S3 kanban (+@dnd-kit decision) · F1/F2/F5 foundation |
 | **P2** | Weeks 5–8 | Large format (Drive concept frames) · About · Portfolio · Journal · Contact/404 · Shop tier cards · Studio S7 media + S9 content hub + shell IA |
-| **P3** | Weeks 9–10 | Preloader · SplitText everywhere · cursor system · marquee whisper · **video loops from Drive picks** · award submission assets (case-study video) |
+| **P3** | Weeks 9–10 | Preloader · SplitText everywhere · cursor system · marquee whisper · video loops (hero + ambient ✅ delivered; maker loop from 0.8 pick) · award submission assets (case-study video) |
 
 **Definition of done (every phase):** budgets green · reduced-motion resting states verified by hand · 9 locales render · `copy:check` + `tsc` + `eslint` + e2e smoke green · owner walkthrough on the Vercel preview before merge.
 
