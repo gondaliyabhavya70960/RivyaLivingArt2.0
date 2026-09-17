@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
@@ -501,13 +501,16 @@ export default async function WorkshopsPage({
           <p className="u-prose font-body text-body leading-relaxed text-mist">
             {t("private.body")}
           </p>
-          <Button variant="whatsapp" size="lg" asChild className="w-fit">
+          <Button variant="secondary" size="lg" asChild className="w-fit">
             <a
               href={privateWaHref}
               target="_blank"
               rel="noopener noreferrer"
               data-wa-source="workshops_private"
             >
+              {/* "Plan a private session" never said WhatsApp; the green used
+                  to imply it. With the green gone the icon has to say it. */}
+              <MessageCircle aria-hidden strokeWidth={1.5} className="size-4" />
               {t("private.cta")}
               <ArrowRight
                 aria-hidden

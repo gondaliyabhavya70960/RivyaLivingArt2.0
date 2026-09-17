@@ -235,9 +235,10 @@
     "testimonials": {
       "eyebrow": "palabras amables",
       "heading": "Lo que dicen los coleccionistas",
-      "previous": "Testimonios anteriores",
-      "next": "Testimonios siguientes",
-      "rating": "{rating} de 5 estrellas"
+      "rating": "{rating} de 5 estrellas",
+      "pause": "Pausar los testimonios",
+      "resume": "Reanudar los testimonios",
+      "show": "Mostrar el testimonio {index}"
     },
     "journal": {
       "eyebrow": "desde el diario",

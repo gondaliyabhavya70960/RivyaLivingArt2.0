@@ -235,9 +235,10 @@
     "testimonials": {
       "eyebrow": "freundliche worte",
       "heading": "Was Sammler sagen",
-      "previous": "Vorherige Stimmen",
-      "next": "Nächste Stimmen",
-      "rating": "{rating} von 5 Sternen"
+      "rating": "{rating} von 5 Sternen",
+      "pause": "Stimmen pausieren",
+      "resume": "Stimmen fortsetzen",
+      "show": "Stimme {index} anzeigen"
     },
     "journal": {
       "eyebrow": "aus dem journal",

@@ -235,9 +235,10 @@
     "testimonials": {
       "eyebrow": "كلمات طيبة",
       "heading": "ماذا يقول مقتنو أعمالنا",
-      "previous": "الآراء السابقة",
-      "next": "الآراء التالية",
-      "rating": "{rating} من 5 نجوم"
+      "rating": "{rating} من 5 نجوم",
+      "pause": "إيقاف الشهادات مؤقتًا",
+      "resume": "استئناف الشهادات",
+      "show": "عرض الشهادة {index}"
     },
     "journal": {
       "eyebrow": "من المدوّنة",

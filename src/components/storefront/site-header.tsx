@@ -739,7 +739,7 @@ export function SiteHeader({
                 )}
                 style={{ animationDelay: "0.34s" }}
               >
-                <Button asChild variant="whatsapp" size="md">
+                <Button asChild variant="premium" size="md">
                   <a
                     href={waHref}
                     target="_blank"

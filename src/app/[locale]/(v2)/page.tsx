@@ -8,8 +8,8 @@ import { Button } from "@/components/storefront/button";
 import { CollectionDoors } from "@/components/storefront/collection-doors";
 import { DemoMark } from "@/components/storefront/demo-mark";
 import { FeaturedRail } from "@/components/storefront/featured-rail";
-import { TestimonialCard } from "@/components/storefront/testimonial-card";
-import { SnapRail } from "@/components/storefront/snap-rail";
+import { FeaturedTestimonial } from "@/components/storefront/featured-testimonial";
+import { QuoteRotator } from "@/components/storefront/quote-rotator";
 import { CureLine, type CureMark } from "@/components/storefront/cure-line";
 import {
   Eyebrow,
@@ -408,12 +408,24 @@ export default async function Home({
             style={{ "--i": 3 } as CSSProperties}
           >
             {/* Bespoke is the studio's primary ask; browsing the shop is the
-                secondary path. Both buttons already existed — only their
-                weight and href swap. */}
-            <Button asChild variant="primary" size="lg">
+                secondary path.
+
+                The WEIGHTS swap here, not the order. `primary` inverts to a
+                cream fill on a dark band, and audit §2.4 names that as the
+                first of the CTA system's four different-looking primaries
+                ("cream fill on home, solid black in the shop header, black
+                Customize + teal WhatsApp on PDP, teal on /large-resin-art").
+                Spec §1.1's answer is one system: champagne-outline on dark,
+                ink-solid on light. So the ask takes `premium` and the browse
+                path drops to `secondary`.
+
+                The champagne count is unchanged at two — the eyebrow above
+                plus one pill — which is what `redesign-audit.mjs` caps at. A
+                second champagne pill here would fail the build. */}
+            <Button asChild variant="premium" size="lg">
               <Link href="/custom-order">{t("hero.ctaBespoke")}</Link>
             </Button>
-            <Button asChild variant="premium" size="lg">
+            <Button asChild variant="secondary" size="lg">
               <Link href="/shop">{t("hero.ctaExplore")}</Link>
             </Button>
           </div>
@@ -874,43 +886,30 @@ export default async function Home({
               eyebrow={t("testimonials.eyebrow")}
               title={t("testimonials.heading")}
             />
-            {/* A rail below md (three cards do not fit a phone width without
-                crowding), the original grid at md and above. */}
-            <div className="md:hidden">
-              <SnapRail
-                items={testimonials.map((item) => (
-                  <TestimonialCard
-                    key={item.id}
-                    quote={item.quote}
-                    name={item.name}
-                    location={item.location ?? undefined}
-                    rating={item.rating}
-                    avatarUrl={item.avatarUrl}
-                    demo={item.isDemo}
-                  />
-                ))}
-                itemClassName="w-[85vw] max-w-sm"
-                ariaLabel={t("testimonials.heading")}
-                labels={{
-                  prev: t("testimonials.previous"),
-                  next: t("testimonials.next"),
-                  of: tCommon("of"),
-                }}
-              />
-            </div>
-            <div className="hidden gap-6 md:grid md:grid-cols-3">
-              {testimonials.map((item) => (
-                <TestimonialCard
-                  key={item.id}
-                  quote={item.quote}
-                  name={item.name}
-                  location={item.location ?? undefined}
-                  rating={item.rating}
-                  avatarUrl={item.avatarUrl}
-                  demo={item.isDemo}
-                />
+            {/* One quote at a time, oversized, rather than three cards side
+                by side — spec §3.1 S6. The same three testimonials are still
+                here; they take turns instead of competing, which is the whole
+                difference between a proof band and a review grid.
+
+                `FeaturedTestimonial` was built for this call site and left
+                unmounted ("A2 (homepage) and A3 (PDP) own where it lands"),
+                so this is that landing rather than a new component. It is an
+                async server component, so the slides are rendered here and
+                handed down as nodes — the arrangement `SnapRail` already
+                used. No responsive fork: the rotator is one quote wide at
+                every width, which is exactly what a phone wants too. */}
+            <QuoteRotator
+              items={testimonials.map((item) => (
+                <FeaturedTestimonial key={item.id} testimonial={item} />
               ))}
-            </div>
+              labels={{
+                pause: t("testimonials.pause"),
+                resume: t("testimonials.resume"),
+                show: testimonials.map((_, i) =>
+                  t("testimonials.show", { index: i + 1 }),
+                ),
+              }}
+            />
           </div>
         </section>
       ) : null,
@@ -1318,7 +1317,7 @@ export default async function Home({
             <Button asChild variant="primary" size="lg">
               <Link href="/custom-order">{t("cta.primary")}</Link>
             </Button>
-            <Button asChild variant="whatsapp" size="lg">
+            <Button asChild variant="secondary" size="lg">
               <a
                 href={waHref}
                 target="_blank"

@@ -203,7 +203,7 @@ export default async function ContactPage({
               <p className="u-prose font-body text-body leading-relaxed text-graphite">
                 {t("whatsappBody")}
               </p>
-              <Button variant="whatsapp" size="lg" className="w-fit" asChild>
+              <Button variant="primary" size="lg" className="w-fit" asChild>
                 <a
                   href={waHref}
                   target="_blank"
