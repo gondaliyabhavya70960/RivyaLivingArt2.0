@@ -235,9 +235,10 @@
     "testimonials": {
       "eyebrow": "うれしいお言葉",
       "heading": "コレクターの声",
-      "previous": "前のお客様の声",
-      "next": "次のお客様の声",
-      "rating": "5 つ星のうち {rating}"
+      "rating": "5 つ星のうち {rating}",
+      "pause": "お客様の声を一時停止",
+      "resume": "お客様の声を再開",
+      "show": "お客様の声 {index} を表示"
     },
     "journal": {
       "eyebrow": "ジャーナルより",
