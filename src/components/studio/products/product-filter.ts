@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Prisma } from "@/generated/prisma/client";
+import { PLACEHOLDER_ASSET_PREFIX } from "@/lib/placeholder-assets";
 import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
 
 /**
@@ -46,6 +47,20 @@ export const productListFilterSchema = z.object({
     .optional()
     .catch(undefined),
   stock: z.enum(["in", "out"]).optional().catch(undefined),
+  /**
+   * The photography worklist (plan §3 S4) — the two states that stop a row
+   * being publishable, as a filter the owner can pin as a saved view.
+   *
+   * `placeholder` is deliberately "HAS a placeholder image", not "the COVER
+   * is one". The cover is the image with the lowest `order` and Prisma has
+   * no predicate for the related row that sorts first — the bulk publish
+   * guard reads covers in TS for exactly this reason, and a list cannot,
+   * because it pages and counts in the database. A superset that never
+   * misses a blocked row is the right shape for a worklist; the exact set
+   * would need a column, and a column for a path prefix is the thing
+   * `placeholder-assets.ts` exists to avoid.
+   */
+  media: z.enum(["none", "placeholder"]).optional().catch(undefined),
   /** "1" narrows to Content Lab fixtures (`isDemo: true`) — 10 remnants'
    *  demo filter, present on every list that carries `isDemo` rows. */
   demo: z.literal("1").optional().catch(undefined),
@@ -63,6 +78,7 @@ export function parseProductListFilter(raw: {
   tier?: string;
   sizeTier?: string;
   stock?: string;
+  media?: string;
   demo?: string;
 }): ProductListFilter {
   const parsed = productListFilterSchema.safeParse(raw);
@@ -96,6 +112,14 @@ export function buildProductWhere(
         : {}),
     ...(filter.stock === "in" ? { inStock: true } : {}),
     ...(filter.stock === "out" ? { inStock: false } : {}),
+    ...(filter.media === "none" ? { images: { none: {} } } : {}),
+    ...(filter.media === "placeholder"
+      ? {
+          images: {
+            some: { url: { startsWith: PLACEHOLDER_ASSET_PREFIX } },
+          },
+        }
+      : {}),
     ...(filter.demo === "1" ? { isDemo: true } : {}),
   };
 }

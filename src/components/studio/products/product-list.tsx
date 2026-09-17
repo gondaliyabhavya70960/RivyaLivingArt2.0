@@ -253,6 +253,7 @@ export function ProductList({
   const tierFilter = searchParams.get("tier") ?? "ALL";
   const sizeTierFilter = searchParams.get("sizeTier") ?? "ALL";
   const stockFilter = searchParams.get("stock") ?? "ALL";
+  const mediaFilter = searchParams.get("media") ?? "ALL";
   const demoFilter = searchParams.get("demo") === "1";
 
   const formatCount = (n: number) => n.toLocaleString("en-IN");
@@ -607,6 +608,27 @@ export function ProductList({
             <SelectItem value="ALL">All availability</SelectItem>
             <SelectItem value="in">In stock</SelectItem>
             <SelectItem value="out">Out of stock</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* The photography worklist (plan §3 S4): the two states that stop a
+            row being publishable, side by side with the tier backlog so one
+            screen answers "what is missing". Pin either as a saved view. */}
+        <Select
+          value={mediaFilter}
+          onValueChange={(value) =>
+            updateParams({ media: value === "ALL" ? undefined : value })
+          }
+        >
+          <SelectTrigger aria-label="Filter by imagery">
+            <SelectValue placeholder="Imagery" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Any imagery</SelectItem>
+            <SelectItem value="none">No image at all</SelectItem>
+            {/* "Has", not "cover is" — and the label says so, because the
+                filter cannot ask the database which image sorts first. */}
+            <SelectItem value="placeholder">Has a concept placeholder</SelectItem>
           </SelectContent>
         </Select>
 

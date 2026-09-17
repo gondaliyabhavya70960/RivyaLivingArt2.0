@@ -142,6 +142,8 @@ export default async function InquiriesPage({
             id: true,
             number: true,
             customerName: true,
+            // The card's Reply button builds the customer's own wa.me link.
+            phone: true,
             source: true,
             status: true,
             timeline: true,
@@ -186,6 +188,7 @@ export default async function InquiriesPage({
     id: inquiry.id,
     number: formatInquiryNumber(inquiry.number),
     customerName: inquiry.customerName,
+    phone: inquiry.phone,
     source: inquiry.source,
     projectTitle: inquiry.product?.title ?? null,
     thumbnailUrl: inquiry.product?.images[0]?.url ?? null,

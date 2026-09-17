@@ -25,6 +25,7 @@ import { BulkBar } from "@/components/studio/bulk-bar";
 import { ColumnsMenu } from "@/components/studio/columns-menu";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DemoBadge } from "@/components/studio/demo-badge";
+import { WhatsAppReplyButton } from "@/components/studio/inquiries/whatsapp-reply-button";
 import { EmptyState } from "@/components/studio/page-header";
 import { Pagination } from "@/components/studio/pagination";
 import { SortHead, useSort } from "@/components/studio/sort-header";
@@ -308,6 +309,11 @@ export function InquiryList({
                         {inquiry.createdAt}
                       </span>
                     </div>
+                    <WhatsAppReplyButton
+                      inquiry={inquiry}
+                      variant="outline"
+                      className="mt-3 min-h-11"
+                    />
                   </div>
                 </div>
               </li>
@@ -447,13 +453,26 @@ export function InquiryList({
                       </td>
                     )}
                     <td className="py-3 pe-4 text-end">
-                      <Link
-                        href={`/studio/inquiries/${inquiry.id}`}
-                        className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
-                      >
-                        View
-                        <span className="sr-only"> {inquiry.customerName}</span>
-                      </Link>
+                      <span className="inline-flex items-center gap-1">
+                        {/* Reply WITHOUT opening the inquiry: the queue's job
+                            is to be worked from the queue, and the reply also
+                            marks a NEW row contacted so the list stops
+                            claiming it is still waiting. */}
+                        <WhatsAppReplyButton
+                          inquiry={inquiry}
+                          variant="ghost"
+                          size="icon"
+                          iconOnly
+                          className="min-h-11 min-w-11"
+                        />
+                        <Link
+                          href={`/studio/inquiries/${inquiry.id}`}
+                          className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
+                        >
+                          View
+                          <span className="sr-only"> {inquiry.customerName}</span>
+                        </Link>
+                      </span>
                     </td>
                   </StudioRow>
                 ))}

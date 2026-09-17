@@ -86,3 +86,30 @@ describe("the product-list deep links the overview emits", () => {
     expect(productListHref({})).toBe("/studio/products");
   });
 });
+
+describe("the imagery worklist filter (plan §3 S4)", () => {
+  it("round-trips 'no image at all' into an images-none clause", () => {
+    const href = productListHref({ status: "PUBLISHED", media: "none" });
+    expect(href).toBe("/studio/products?status=PUBLISHED&media=none");
+    expect(parseHref(href)).toEqual({ status: "PUBLISHED", media: "none" });
+    expect(buildProductWhere(parseHref(href))).toMatchObject({
+      status: "PUBLISHED",
+      images: { none: {} },
+    });
+  });
+
+  it("asks for a placeholder ANYWHERE, not for the cover", () => {
+    // The cover is min(order) and Prisma has no predicate for it, so the
+    // filter is a superset that never misses a blocked row. If this ever
+    // becomes an exact cover test, the label in product-list.tsx ("Has a
+    // concept placeholder") has to change with it.
+    const where = buildProductWhere(parseHref(productListHref({ media: "placeholder" })));
+    expect(where).toMatchObject({
+      images: { some: { url: { startsWith: "/redesign/catalog/" } } },
+    });
+  });
+
+  it("drops a media value the schema does not know", () => {
+    expect(parseProductListFilter({ media: "blurry" }).media).toBeUndefined();
+  });
+});
