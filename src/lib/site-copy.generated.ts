@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1330 slots · 0 flagged as unreachable from any component.
+ * 1339 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -529,6 +529,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"CustomOrder.page.step2Body","group":"Commission","section":"page","label":"Step 2 body","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.page.step3Title","group":"Commission","section":"page","label":"Step 3 title","kind":"heading","tier":"editorial","max":80},
   {"key":"CustomOrder.page.step3Body","group":"Commission","section":"page","label":"Step 3 body","kind":"body","tier":"editorial","max":400},
+  {"key":"CustomOrder.page.step4Title","group":"Commission","section":"page","label":"Step 4 title","kind":"heading","tier":"editorial","max":80},
+  {"key":"CustomOrder.page.step4Body","group":"Commission","section":"page","label":"Step 4 body","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.page.proofEyebrow","group":"Commission","section":"page","label":"Proof eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"CustomOrder.page.proofHeading","group":"Commission","section":"page","label":"Proof heading","kind":"heading","tier":"editorial","max":80},
   {"key":"CustomOrder.page.seeCommissions","group":"Commission","section":"page","label":"See commissions","kind":"body","tier":"editorial","max":400},
@@ -630,6 +632,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"CustomOrder.form.rows.name","group":"Commission","section":"form","label":"Name","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.form.rows.phone","group":"Commission","section":"form","label":"Phone","kind":"body","tier":"editorial","max":400},
   {"key":"CustomOrder.form.rows.email","group":"Commission","section":"form","label":"Email","kind":"body","tier":"editorial","max":400},
+  {"key":"CustomOrder.form.noPreference","group":"Commission","section":"form","label":"No preference","kind":"body","tier":"editorial","max":400},
+  {"key":"CustomOrder.form.occasionNone","group":"Commission","section":"form","label":"Occasion none","kind":"body","tier":"editorial","max":400},
   {"key":"Contact.meta.title","group":"Contact","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Contact.meta.description","group":"Contact","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Contact.page.heroEyebrow","group":"Contact","section":"page","label":"Hero eyebrow","kind":"eyebrow","tier":"editorial","max":48},
@@ -836,6 +840,9 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.editorialBreak.imageAlt","group":"Shop","section":"editorialBreak","label":"Image alt","kind":"alt","tier":"editorial","max":160},
   {"key":"Shop.quickViewLabel","group":"Shop","section":"general","label":"Quick view label","kind":"label","tier":"editorial","max":60},
   {"key":"Shop.allSizeTiers","group":"Shop","section":"general","label":"All size tiers","kind":"body","tier":"editorial","max":400},
+  {"key":"Shop.commissionEnd.eyebrow","group":"Shop","section":"commissionEnd","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Shop.commissionEnd.statement","group":"Shop","section":"commissionEnd","label":"Statement","kind":"body","tier":"editorial","max":400},
+  {"key":"Shop.commissionEnd.cta","group":"Shop","section":"commissionEnd","label":"Cta","kind":"cta","tier":"editorial","max":60},
   {"key":"Search.meta.title","group":"Shop","section":"meta","label":"Title","kind":"meta","tier":"editorial","max":160},
   {"key":"Search.meta.description","group":"Shop","section":"meta","label":"Description","kind":"meta","tier":"editorial","max":160},
   {"key":"Search.heroEyebrow","group":"Shop","section":"general","label":"Hero eyebrow","kind":"eyebrow","tier":"editorial","max":48},
@@ -1156,6 +1163,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Product.order.summaryPrice","group":"Shop","section":"order","label":"Summary price","kind":"body","tier":"editorial","max":400},
   {"key":"Product.order.engravingPreview","group":"Shop","section":"order","label":"Engraving preview","kind":"body","tier":"editorial","max":400},
   {"key":"Product.order.engravingPreviewEmpty","group":"Shop","section":"order","label":"Engraving preview empty","kind":"body","tier":"editorial","max":400},
+  {"key":"Product.order.eyebrowPlain","group":"Shop","section":"order","label":"Eyebrow plain","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Product.order.introPlain","group":"Shop","section":"order","label":"Intro plain","kind":"body","tier":"editorial","max":400},
   {"key":"Product.share.hintLabel","group":"Shop","section":"share","label":"Hint label","kind":"label","tier":"editorial","max":60},
   {"key":"Product.share.hintMessage","group":"Shop","section":"share","label":"Hint message","kind":"body","tier":"editorial","max":400,"vars":["title"]},
   {"key":"Product.provenanceLinks.madeWith","group":"Shop","section":"provenanceLinks","label":"Made with","kind":"body","tier":"editorial","max":400},
@@ -1175,6 +1184,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Product.roomContext.caption","group":"Shop","section":"roomContext","label":"Caption","kind":"micro","tier":"interface","max":200},
   {"key":"Product.demoOrderNote","group":"Shop","section":"general","label":"Demo order note","kind":"micro","tier":"interface","max":200},
   {"key":"Product.dimensionsLabel","group":"Shop","section":"general","label":"Dimensions label","kind":"label","tier":"editorial","max":60},
+  {"key":"Product.ctaOrder","group":"Shop","section":"general","label":"Cta order","kind":"body","tier":"editorial","max":400},
   {"key":"Upload.add","group":"System","section":"general","label":"Add","kind":"body","tier":"interface","max":400},
   {"key":"Upload.drop","group":"System","section":"general","label":"Drop","kind":"body","tier":"interface","max":400},
   {"key":"Upload.formats","group":"System","section":"general","label":"Formats","kind":"body","tier":"interface","max":400,"vars":["maxMb"]},
@@ -1239,7 +1249,6 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"LargeFormat.hero.eyebrow","group":"Large format","section":"hero","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"LargeFormat.hero.headline","group":"Large format","section":"hero","label":"Headline","kind":"heading","tier":"editorial","max":80},
   {"key":"LargeFormat.hero.lead","group":"Large format","section":"hero","label":"Lead","kind":"body","tier":"editorial","max":400},
-  {"key":"LargeFormat.hero.startCta","group":"Large format","section":"hero","label":"Start cta","kind":"cta","tier":"editorial","max":60},
   {"key":"LargeFormat.hero.briefCta","group":"Large format","section":"hero","label":"Brief cta","kind":"cta","tier":"editorial","max":60},
   {"key":"LargeFormat.scope.eyebrow","group":"Large format","section":"scope","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"LargeFormat.scope.heading","group":"Large format","section":"scope","label":"Heading","kind":"heading","tier":"editorial","max":80},

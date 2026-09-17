@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
@@ -282,16 +282,12 @@ export default async function LargeResinArtPage({
             className="sf-hero-rise flex flex-wrap items-center gap-4"
             style={{ "--i": 4 } as CSSProperties}
           >
-            <Button variant="secondary" size="lg" asChild>
-              <a href={waHref} target="_blank" rel="noopener noreferrer">
-                {/* The label does not say "WhatsApp" and the pill no longer
-                    carries the brand green, so the icon is now the only thing
-                    telling a visitor which app is about to open. */}
-                <MessageCircle aria-hidden strokeWidth={1.5} className="size-4" />
-                {t("hero.startCta")}
-                <span className="sr-only"> {tCommon("openInNewTab")}</span>
-              </a>
-            </Button>
+            {/* ONE hero CTA (audit §3.6: "Two CTAs … do the same job — keep
+                one (the form)"). Both opened a commission; a visitor choosing
+                between two ways to start the same thing is deciding about US
+                rather than about the piece. The WhatsApp route is not lost —
+                it is the primary action of this page's own closing band, at
+                the point where someone has actually read the page. */}
             <Button variant="premium" size="lg" asChild>
               <Link href="/custom-order">{t("hero.briefCta")}</Link>
             </Button>

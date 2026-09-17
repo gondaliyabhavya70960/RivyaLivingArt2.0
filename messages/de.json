@@ -688,8 +688,10 @@
       "step1Body": "Beschreiben Sie das Stück, hängen Sie Referenzfotos an, wählen Sie eine Budgetspanne — zwei Minuten, ganz unverbindlich.",
       "step2Title": "Wir gestalten & erstellen ein Angebot",
       "step2Body": "Die Person hinter dem Atelier antwortet per WhatsApp mit Skizzen, Materialberatung und einem Festpreis samt Zeitrahmen.",
-      "step3Title": "Gegossen, ausgehärtet & versandt",
-      "step3Body": "Sie erhalten Fortschrittsfotos, während es aushärtet, und anschließend eine sorgfältige Verpackung bis vor Ihre Tür — überallhin in Indien.",
+      "step3Title": "Gegossen, ausgehärtet, vollendet",
+      "step3Body": "Sie bekommen Fortschrittsfotos während der Aushärtung, und das Stück wird von Hand an der Werkbank vollendet, bevor es irgendwohin geht.",
+      "step4Title": "Verpackt & geliefert",
+      "step4Body": "Eine Verpackung, die um das Stück herum gebaut wird, dann Sendungsverfolgung bis zu Ihrer Tür in ganz Indien.",
       "proofEyebrow": "bereits in auftrag gegeben",
       "proofHeading": "Menschen haben uns ihre Ideen anvertraut",
       "seeCommissions": "Aktuelle Auftragsarbeiten ansehen",
@@ -812,7 +814,9 @@
         "name": "Name",
         "phone": "Telefon",
         "email": "E-Mail"
-      }
+      },
+      "noPreference": "Keine Präferenz",
+      "occasionNone": "Noch unklar"
     }
   },
   "Contact": {
@@ -828,7 +832,7 @@
       "gridHeading": "Erreichen Sie uns, wie es Ihnen passt",
       "phoneLabel": "Telefon",
       "whatsappLabel": "WhatsApp",
-      "whatsappBody": "Der schnellste Weg zu uns — sagen Sie Hallo, und wir kümmern uns um den Rest.",
+      "whatsappBody": "Schicken Sie ein Foto, ein Raummaß oder eine schnelle Skizze — was auch immer Sie schon haben. Die Antwort kommt von der Werkbank, nicht aus einer Warteschlange.",
       "whatsappCta": "Auf WhatsApp schreiben",
       "emailLabel": "E-Mail",
       "mapsLabel": "Das Atelier finden",
@@ -1057,7 +1061,12 @@
     },
     "sortName": "Name",
     "quickViewLabel": "Schnellansicht",
-    "allSizeTiers": "Alle Maßstäbe"
+    "allSizeTiers": "Alle Maßstäbe",
+    "commissionEnd": {
+      "eyebrow": "ein einziges stück",
+      "statement": "Nicht gefunden? Es existiert noch nicht — lassen Sie es anfertigen.",
+      "cta": "Anfertigung starten"
+    }
   },
   "Search": {
     "meta": {
@@ -1446,7 +1455,9 @@
       "summaryPiece": "Stück",
       "summaryPrice": "Preis",
       "engravingPreview": "Vorschau",
-      "engravingPreviewEmpty": "Ihre Worte hierher"
+      "engravingPreviewEmpty": "Ihre Worte hierher",
+      "eyebrowPlain": "dieses stück bestellen",
+      "introPlain": "Sagen Sie uns die Stückzahl und alles, was wir wissen sollten, und senden Sie es ab. Preis und Termin bestätigen wir auf WhatsApp — hier wird nichts bezahlt."
     },
     "share": {
       "hintLabel": "Einen Wink geben",
@@ -1474,7 +1485,8 @@
       "caption": "Fotografiert in einem echten Raum, in Originalgröße — kein Studio-Rendering."
     },
     "demoOrderNote": "Dies ist ein Content-Lab-Demostück — die Bestellung wird trotzdem gesendet, mit dem Präfix [DEMO] auf WhatsApp.",
-    "dimensionsLabel": "Abmessungen"
+    "dimensionsLabel": "Abmessungen",
+    "ctaOrder": "Dieses Stück bestellen"
   },
   "Consent": {
     "label": "Einwilligung zu Cookies und Analyse",
@@ -1562,7 +1574,6 @@
       "eyebrow": "großformatige auftragsarbeiten",
       "headline": "Große Resin-Kunst, für Ihren Raum gemacht.",
       "lead": "Ein großes Stück wird um einen Raum herum geplant, bevor es entworfen wird: wo es steht, wie es genutzt wird, wie es durch die Tür kommt. Deshalb beginnt Arbeit in dieser Größe als Gespräch und nicht als Bestellung.",
-      "startCta": "Großen Auftrag beginnen",
       "briefCta": "Auftragsformular öffnen"
     },
     "scope": {

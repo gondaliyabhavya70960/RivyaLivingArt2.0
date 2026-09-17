@@ -62,6 +62,9 @@ export async function generateMetadata({
 
 const PAGE_SIZE = 12;
 
+/** Fewest published posts a category needs before it earns a chip (§3.7). */
+const MIN_CATEGORY_POSTS = 3;
+
 /**
  * Dates are formatted on the server so no client re-render can shift them;
  * the formatter itself is built per request from the active locale.
@@ -355,7 +358,18 @@ export default async function BlogPage({
       // A demo category is listed only while its (demo) posts are shown.
       where: { ...demo, posts: { some: { status: "PUBLISHED", ...demo } } },
       orderBy: { name: "asc" },
-      select: { id: true, name: true, slug: true, translations: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        translations: true,
+        // Counted under the SAME clause the chip's own page will query, so
+        // the number that decides whether a chip exists is the number of
+        // posts that chip would actually show.
+        _count: {
+          select: { posts: { where: { status: "PUBLISHED", ...demo } } },
+        },
+      },
     }),
     // Only the ONE tag a visitor is filtering by is read — the other 194 are
     // never queried, let alone rendered.
@@ -366,6 +380,19 @@ export default async function BlogPage({
         })
       : null,
   ]);
+
+  /**
+   * A chip with one post behind it is a filter that empties the page — the
+   * audit's "cut category chips with < 3 posts" (§3.7). A category is not
+   * deleted by this, only unlisted: its own URL still resolves, and the
+   * category a visitor is standing on keeps its chip whatever its count, so
+   * a shared link never loses the control that would clear it.
+   */
+  const shownCategories = categories.filter(
+    (category) =>
+      category._count.posts >= MIN_CATEGORY_POSTS ||
+      category.slug === activeCategory,
+  );
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const page = Math.min(requestedPage, totalPages);
@@ -469,7 +496,7 @@ export default async function BlogPage({
                 >
                   {t("allPosts")}
                 </ChipLink>
-                {categories.map((category) => (
+                {shownCategories.map((category) => (
                   <ChipLink
                     key={category.id}
                     href={blogHref({

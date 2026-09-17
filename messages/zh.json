@@ -688,8 +688,10 @@
       "step1Body": "描述这件作品，附上参考照片，选择一个预算区间——两分钟即可，绝无任何约束。",
       "step2Title": "我们设计并报价",
       "step2Body": "匠人将在 WhatsApp 上回复你，附上草图、材料建议，以及一个确定的价格与时间安排。",
-      "step3Title": "浇铸、固化，送达",
-      "step3Body": "固化期间，你会收到进度照片；随后，作品将以妥善的包装寄送至印度各地，直达你家门口。",
+      "step3Title": "浇注、固化、修整",
+      "step3Body": "固化期间我们会寄来进度照片，作品在工作台上手工修整后才会出门。",
+      "step4Title": "打包与送达",
+      "step4Body": "依作品量身打包，再以可追踪的方式送达印度各地的家门口。",
       "proofEyebrow": "过往定制",
       "proofHeading": "人们将他们的想法托付于我们",
       "seeCommissions": "查看近期定制之作",
@@ -812,7 +814,9 @@
         "name": "姓名",
         "phone": "电话",
         "email": "邮箱"
-      }
+      },
+      "noPreference": "没有偏好",
+      "occasionNone": "还没想好"
     }
   },
   "Contact": {
@@ -828,7 +832,7 @@
       "gridHeading": "以你喜欢的方式联系我们",
       "phoneLabel": "电话",
       "whatsappLabel": "WhatsApp",
-      "whatsappBody": "联系我们最快的方式——道一声你好，余下的便交给我们。",
+      "whatsappBody": "发一张照片、一个房间尺寸，或随手画的草图——手边有什么都行。回复来自工作台，不是排队系统。",
       "whatsappCta": "在 WhatsApp 上留言",
       "emailLabel": "邮箱",
       "mapsLabel": "找到工作室",
@@ -1057,7 +1061,12 @@
     },
     "sortName": "名称",
     "quickViewLabel": "快速查看",
-    "allSizeTiers": "所有尺度"
+    "allSizeTiers": "所有尺度",
+    "commissionEnd": {
+      "eyebrow": "独一无二",
+      "statement": "没找到？它还不存在——定制一件。",
+      "cta": "开始定制"
+    }
   },
   "Search": {
     "meta": {
@@ -1446,7 +1455,9 @@
       "summaryPiece": "作品",
       "summaryPrice": "价格",
       "engravingPreview": "预览",
-      "engravingPreviewEmpty": "此处是你的文字"
+      "engravingPreviewEmpty": "此处是你的文字",
+      "eyebrowPlain": "订购这件作品",
+      "introPlain": "告诉我们数量和需要留意的事项，然后发送。价格与工期在 WhatsApp 上确认——此处无需付款。"
     },
     "share": {
       "hintLabel": "送个暗示",
@@ -1474,7 +1485,8 @@
       "caption": "在真实房间中按实际尺寸拍摄——并非工作室渲染图。"
     },
     "demoOrderNote": "这是内容实验室的演示商品——订单仍会提交，在 WhatsApp 上会带有 [DEMO] 前缀。",
-    "dimensionsLabel": "尺寸"
+    "dimensionsLabel": "尺寸",
+    "ctaOrder": "订购这件作品"
   },
   "Consent": {
     "label": "Cookie 与分析同意",
@@ -1562,7 +1574,6 @@
       "eyebrow": "大型定制",
       "headline": "大型树脂艺术，为你的空间而作。",
       "lead": "大件作品在设计之前先围绕空间规划：放在哪里、怎么使用、怎么进门。所以这个尺度的工作从一次对话开始，而不是一张订单。",
-      "startCta": "开始大型定制",
       "briefCta": "打开定制表单"
     },
     "scope": {

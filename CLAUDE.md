@@ -549,6 +549,70 @@ Four rules that hold across all of them:
   same commit.** That header rule was broken three times in one week and each
   break was silent — the worst 404'd only the phone layout.
 
+### The redesign asset set (`public/redesign/`, 2026-09-17)
+
+The SECOND generated asset set, and the second blur manifest. Both exist for
+reasons that are expensive to rediscover.
+
+- **`public/redesign/` holds two sets and the difference is binding.** Fifteen
+  BRAND files (`hero-pour`, `texture-resin-flow`, the three doorways, the four
+  product stills, the two in-situ frames, `testimonial-home`, `visual-404`,
+  `og-home`) are publishable and back twelve slot fallbacks. Forty-five
+  CATALOG files under `catalog/{heroes,scenes}/` are placeholders for products
+  that do not exist and may NEVER be the cover of a purchasable one.
+- **`scripts/optimize-redesign-assets.mjs`** is the pipeline (plan §5.4): the
+  Drive drop in `assets-inbox/` (gitignored) → WebP q82 → `catalog/`, plus one
+  LQIP manifest. `--check` verifies without writing. Sources never enter git —
+  the raw PNGs are ~2.2 MB each.
+- **`src/lib/redesign-blur.json` is SEPARATE from `media-v3-blur.json` on
+  purpose.** `media-v3-fetch.mjs` rewrites that file WHOLESALE on every run, so
+  redesign rows added there would survive until the next Part 15 fetch and then
+  vanish, taking every placeholder with them and leaving no test to say why.
+  `lqip.ts` merges the two at read time and `lqip.test.ts` pins that they stay
+  disjoint — a duplicate `src` would mean two generators disagreeing about one
+  picture, resolved silently by insertion order.
+- **`bundledProvenance` counts `/redesign/` as AI**, like `/media/v3/`. Calling
+  it BUNDLED told the §12.5 provenance filter that fourteen generated pictures
+  were photographs.
+- **`src/lib/site-videos.ts` holds the bundled loop defaults** and is
+  deliberately NOT a site-image slot: `importBundledSiteImages` copies slot
+  defaults into Blob and repoints them, and `HeroMedia` derives the WebM twin
+  from the MP4's PATH — a Blob URL has no twin, so the 2 MB MP4 would become
+  the only file every visitor gets. `SiteSettings.heroVideoUrl` is still the
+  override; the bundled loop is only the floor. The delivered loops were
+  re-encoded to meet §15.4 (they arrived at 4.1/4.3 MB against a ≤2.5 MB
+  ceiling, with `moov` AFTER `mdat`, which defeats the `preload="metadata"`
+  the same line requires); `site-videos.test.ts` reads the box order rather
+  than trusting the encode.
+
+### THE PLACEHOLDER RULE — `/redesign/catalog/` is never a product cover
+
+`src/lib/placeholder-assets.ts` is the ONE copy of this vocabulary (path
+prefix, filename pattern, cover resolution, the refusal). Path-based,
+presentation-layer, no column and no migration (plan §4.6, §7).
+
+Why the cover specifically: the PDP resolves `product.ogImage ||
+product.images[0]?.url`, so with no explicit OG image the cover becomes the
+WhatsApp link-preview card — and every order here finalizes in WhatsApp. A
+placeholder cover is the picture a customer sees while agreeing to buy
+something else.
+
+**It refuses on every SAVE, where `describeSizeTierPublishProblem` refuses only
+at the TRANSITION into published — and that difference is deliberate.** The
+size-tier guard exempts already-published rows because a ~4,385-row untiered
+backlog would have made a state-scoped refusal a lockout. That is a PREMISE,
+not a principle, and it is false here: the placeholders arrived with the
+ingestion and nothing points at one. Copying the scoping would have imported
+its known hole — publish clean, swap the cover, re-save — without the 4,385
+rescued rows that pay for it. Applied in `upsertProduct` (reads the INCOMING
+images; the save may be what puts the placeholder there), `setProductsStatus`
+and `approveProducts`. Bulk Import cannot introduce one (`isUrlish` rejects the
+path) and the scraper promote writes DRAFT.
+
+In the bulk path the skip cannot be a `where` clause: the cover is
+min(`order`) and Prisma has no predicate for that, so covers are read and
+filtered in TS.
+
 ### Site Images (`/studio/site-images`)
 
 - The storefront's editorial photography is no longer hardcoded. Every call
@@ -980,6 +1044,37 @@ compact`, `rule`/`rule-dk`.
 - **Surfaces**: 1px hairlines and a mineral → sand shift, never boxes. No drop
   shadows on the storefront — two exceptions, the mobile bottom bar and the
   Studio's bulk-action bar. Blur in exactly one place: the sticky header.
+- **GREEN MEANS AN ORDER IS BEING SENT, AND NOTHING ELSE** (F6, 2026-09-17).
+  `button.tsx`'s `whatsapp` variant had always said "the final order action,
+  nothing else" while sixteen of its twenty call sites were page heroes, card
+  actions and "ask us" links — which is how audit §2.4 came to report that
+  "primary button colour shifts by page". It now appears on exactly four
+  controls: Place Order on the PDP, its mobile sticky twin, the custom brief's
+  submit, and the `/whatsapp-order` fallback. (`design-lab` keeps one: it is
+  the staff variant gallery.) Everywhere else the pill takes its ground's
+  variant — `premium` on dark, `primary`/`secondary` on light — and the channel
+  is carried by the label and the MessageCircle icon. The variant is NOT
+  deleted: REDESIGN.md §3.6 specifies it, and the same section gives the rule
+  that reconciles it with the audit — "it is the order channel, not the brand".
+  `premium` is the one place a champagne fill is sanctioned, at hover, with the
+  label going dark with it.
+- **`CollectionCard` stacks in ONE GRID CELL, and the z-index is the point**
+  (2026-09-17). The caption used to be `absolute … bottom-0` INSIDE the clipped
+  photo box, which made it the nearest positioned ancestor of the link's
+  `after:inset-0` overlay — so the tile's hit area and its focus ring were the
+  caption, not the tile. The photograph was dead to the pointer, against the
+  component's own header ("The whole tile is the target; there is no button"),
+  and `overflow-hidden` cut the ring's 3px offset off. Both layers now sit in
+  `col-start-1 row-start-1`; the caption is ordered by `z-10` **on a grid item,
+  which takes z-index without `position`** — making it `relative` instead would
+  put the overlay back inside the caption and undo the whole thing. Its `z-10`
+  is equally load-bearing in the other direction: the photo layer's children
+  are `absolute`, so they paint above in-flow content, and without it the
+  eyebrow and the arrow render UNDER the photograph while the promise (a
+  `relative` span) renders over it. `overflow-hidden` moved onto an inner
+  `relative` wrapper so the hover scale still clips; `SnapRail`'s `-m-1.5 p-1.5`
+  is the room a 2px ring at 3px offset needs inside a scroll container, which
+  clips on BOTH axes.
 - **Signature devices**: `CureLine` (§2.6) and `MeniscusImage` (§2.7). No image
   on this site fades in; the meniscus reveal replaces every fade-up, and it
   masks rather than clips — a clipped element never loads its image.
@@ -1031,6 +1126,29 @@ compact`, `rule`/`rule-dk`.
   region, focus return) behind the product gallery, the portfolio wall and the
   fullscreen gallery block; `hooks/use-hero-ink.ts` sets the header's
   `data-ink` from an IntersectionObserver over dark bands.
+- **The homepage's two new bands and the one that moved** (2026-09-17).
+  `storefront/quote-rotator.tsx` (S6) stacks every slide in ONE grid cell
+  (`col-start-1 row-start-1`), so the band's height is the tallest quote and
+  rotating never shifts the page; inactive slides carry `aria-hidden` AND
+  `inert`, and the band is NOT a live region — an 8 s rotation announcing
+  itself would interrupt a screen reader mid-sentence for decoration. It pauses
+  on hover, on focus and on an explicit control, and under reduced motion it
+  renders the first quote and stops. Its `labels.show` is a **string array, not
+  a formatter**: a function cannot cross the server/client boundary, and
+  `npm run build` is what catches it.
+  `storefront/journal-list.tsx` (S8) is the journal as rows with a
+  cursor-following preview — written to `style.transform` inside a rAF, never
+  to state, and `position: fixed` + `pointer-events: none` so it can never
+  intercept the click it is previewing. The row title is `text-h3`, not the
+  mockup's 42px: the clamped scale has no step there and Part 3 forbids
+  inventing one.
+  **S9, the closing CTA, lives in the FOOTER's own band** and not as a section
+  of its own. An obsidian band at the end of the homepage would sit adjacent to
+  the obsidian footer, which §3.1 refuses and `describeArrangementProblem`
+  enforces. Putting the treatment (the resin-flow texture at `opacity-30`
+  behind a gradient veil, the heading lifted to `text-h1`) into the band that
+  is ALREADY there spends no new dark band. The homepage comment claiming three
+  were spent was wrong — `material` is `bg-mineral`.
 - **`hero-parallax.tsx` is mounted on the homepage bespoke band** (A2), px-capped
   at `Math.min(40, h * 0.12)`. It was once deleted as dormant and put back: It was deleted
   in the first pass of D18 and put back: the audit files it under §3.2 REFINE,

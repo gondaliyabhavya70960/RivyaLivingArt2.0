@@ -25,6 +25,10 @@ import {
   CONTENT_STATUSES,
   type ContentStatusValue,
 } from "@/lib/content-status";
+import {
+  describePortfolioPublishProblem,
+  portfolioCoverUrl,
+} from "@/lib/portfolio-rules";
 
 const STUDIO_PATH = "/studio/portfolio";
 
@@ -138,6 +142,18 @@ export async function upsertPortfolio(
     };
   }
 
+  // The cover guard, read off the INCOMING images rather than the stored ones
+  // — this save may be the one that removes the last photograph.
+  const coverProblem = describePortfolioPublishProblem({
+    nextStatus: data.status,
+    previousStatus: existing?.status ?? null,
+    afterImageUrl: data.afterImageUrl,
+    images: data.images,
+  });
+  if (coverProblem) {
+    return { ok: false, error: coverProblem };
+  }
+
   // Prune per-locale overrides to known locales + translatable fields; an empty
   // result writes SQL NULL so the column stays clean (public site unchanged).
   const normalizedTranslations = normalizeTranslations(
@@ -243,7 +259,7 @@ const idsSchema = z
 export async function setPortfoliosStatus(
   ids: string[],
   status: ContentStatusValue,
-): Promise<ActionResult<{ updated: number }>> {
+): Promise<ActionResult<{ updated: number; skippedNoCover: number }>> {
   const session = await requireStaff();
 
   const parsed = z
@@ -257,21 +273,52 @@ export async function setPortfoliosStatus(
   }
 
   return runAction(async () => {
-    const { count: updated } = await db.portfolio.updateMany({
-      where: { id: { in: parsed.data.ids } },
-      data: { status: parsed.data.status },
-    });
+    let targetIds = parsed.data.ids;
+    let skippedNoCover = 0;
+
+    if (parsed.data.status === "PUBLISHED") {
+      // The same guard the form applies, scoped the same way: `status: { not:
+      // "PUBLISHED" }` makes this the TRANSITION into published, so a batch
+      // re-publish of rows that are already live is never refused.
+      //
+      // It cannot be a `where` clause — the cover is `afterImageUrl` else the
+      // FIRST gallery image by `order`, and Prisma has no predicate for "the
+      // related row that sorts first". `images: { none: {} }` would answer a
+      // different question and miss a piece whose only image is unrenderable.
+      const candidates = await db.portfolio.findMany({
+        where: { id: { in: targetIds }, status: { not: "PUBLISHED" } },
+        select: {
+          id: true,
+          afterImageUrl: true,
+          images: { orderBy: { order: "asc" }, take: 1, select: { url: true } },
+        },
+      });
+      const blocked = new Set(
+        candidates
+          .filter((row) => portfolioCoverUrl(row) === null)
+          .map((row) => row.id),
+      );
+      skippedNoCover = blocked.size;
+      targetIds = targetIds.filter((id) => !blocked.has(id));
+    }
+
+    const { count: updated } = targetIds.length
+      ? await db.portfolio.updateMany({
+          where: { id: { in: targetIds } },
+          data: { status: parsed.data.status },
+        })
+      : { count: 0 };
 
     await logActivity({
       userId: session.user.id,
       action: parsed.data.status === "PUBLISHED" ? "publish" : "unpublish",
       entity: "Portfolio",
-      meta: { count: updated },
+      meta: { count: updated, skippedNoCover },
     });
 
     revalidatePath(STUDIO_PATH);
     revalidatePublic("portfolio");
-    return { updated };
+    return { updated, skippedNoCover };
   });
 }
 

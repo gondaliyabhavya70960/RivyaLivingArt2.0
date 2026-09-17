@@ -55,6 +55,27 @@ const fieldControlClasses = [
   "in-data-[theme=navy]:placeholder:text-mist in-data-[theme=navy]:focus:border-champagne",
 ].join(" ");
 
+/**
+ * The pill skin, shared by {@link PillField} and the `/design-lab`
+ * `OptionPicker` so the two can never drift into two different pills.
+ *
+ * `h-11` is Part 13's 44px tap floor, not a look — a pill row is the one
+ * control on this site a thumb aims at directly. Selection is carried by
+ * BORDER + WEIGHT + GROUND, never by colour alone (Part 16); the checked
+ * champagne border is the accent on top of three signals that already say it.
+ */
+function pillClasses(checked: boolean): string {
+  return cn(
+    "inline-flex h-11 cursor-pointer items-center rounded-full border px-5 font-body text-14 select-none",
+    "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
+    "peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-3",
+    "peer-disabled:pointer-events-none peer-disabled:opacity-40",
+    checked
+      ? "border-champagne bg-sand font-medium text-ink"
+      : "border-hairline text-ink hover:bg-sand",
+  );
+}
+
 /** Label register — large, per §10.3, and never hidden by a placeholder. */
 const fieldLabelClasses =
   "font-body text-16 font-medium text-ink in-data-[theme=navy]:text-mineral";
@@ -359,4 +380,125 @@ export function TextareaField({
   );
 }
 
-export { fieldControlClasses, fieldLabelClasses };
+/**
+ * A short closed list as a pill radiogroup instead of a native `<select>` —
+ * plan §2.4 and audit §3.5 ("budget and timeline as pills", "occasion as
+ * chips"). Every option is visible at rest, so choosing is one tap rather
+ * than open-scroll-pick, and on a phone it replaces the OS picker sheet that
+ * covers the form the visitor is filling in.
+ *
+ * Built on REAL radio inputs (`sr-only`) with styled labels, so arrow-key
+ * navigation, `name`-based grouping, form semantics and screen-reader
+ * announcements are all native and none of them is re-implemented.
+ *
+ * **An optional field keeps a way back out.** A `<select>` had one — its
+ * placeholder row — and a radiogroup has none: once a radio is checked,
+ * nothing but another radio unchecks it. So an optional pill field renders
+ * `emptyLabel` as its FIRST pill, valued `""`. Without it, tapping any pill
+ * on an optional question would be irreversible, which is a worse control
+ * than the select it replaces.
+ *
+ * The lists behind these are owner-editable (`/studio/forms`), so the row
+ * wraps and nothing here assumes a count — and nothing maps a value to an
+ * icon: the audit asks for "icon chips", but an icon per option would break
+ * the moment an owner adds one, and a chip with no icon beside chips that
+ * have one reads as an error.
+ */
+export function PillField({
+  label,
+  name,
+  options,
+  value,
+  onChange,
+  emptyLabel,
+  optionalLabel,
+  hint,
+  error,
+  disabled,
+  required,
+  className,
+  id,
+}: FieldOwnProps & {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  /** Translated "No preference" — the opt-out pill on an optional field. */
+  emptyLabel?: string;
+  optionalLabel?: string;
+  disabled?: boolean;
+  required?: boolean;
+  className?: string;
+  id?: string;
+}) {
+  const { fieldId, hintId, errorId } = fieldIds(name, id);
+  const choices = emptyLabel
+    ? [{ value: "", label: emptyLabel }, ...options]
+    : options;
+
+  return (
+    <div data-slot="sf-form-field" className={cn("grid gap-2", className)}>
+      <fieldset
+        aria-describedby={describedBy(
+          undefined,
+          hint,
+          hintId,
+          error,
+          errorId,
+        )}
+        aria-invalid={error ? true : undefined}
+      >
+        <legend className={cn(fieldLabelClasses, "mb-3")}>
+          {label}
+          {required ? (
+            <>
+              <span aria-hidden className="text-alert">
+                {" "}
+                *
+              </span>
+              <span className="sr-only"> required</span>
+            </>
+          ) : optionalLabel ? (
+            <span className="font-normal text-graphite in-data-[theme=navy]:text-mist">
+              {" "}
+              {optionalLabel}
+            </span>
+          ) : null}
+        </legend>
+        <div className="flex flex-wrap gap-2">
+          {choices.map((option) => {
+            const inputId = `${fieldId}-${option.value || "none"}`;
+            return (
+              <span key={option.value} className="inline-flex">
+                <input
+                  type="radio"
+                  id={inputId}
+                  name={name}
+                  value={option.value}
+                  checked={value === option.value}
+                  disabled={disabled}
+                  onChange={() => onChange(option.value)}
+                  className="peer sr-only"
+                />
+                <label htmlFor={inputId} className={pillClasses(value === option.value)}>
+                  {option.label}
+                </label>
+              </span>
+            );
+          })}
+        </div>
+      </fieldset>
+      {hint ? (
+        <p id={hintId} className="u-micro">
+          {hint}
+        </p>
+      ) : null}
+      {error ? (
+        <p id={errorId} role="alert" className="font-body text-14 text-alert">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export { fieldControlClasses, fieldLabelClasses, pillClasses };

@@ -135,9 +135,15 @@ export function PortfolioList({
       return;
     }
     const updated = result.data?.updated ?? 0;
-    toast.success(
-      `Moved ${updated} piece${updated === 1 ? "" : "s"} to ${STATUS_BADGE_LABEL[status].toLowerCase()}.`,
-    );
+    const skipped = result.data?.skippedNoCover ?? 0;
+    // The skip NAMES its reason. A bare "moved 4 of 6" leaves the owner to
+    // work out which two and why, on the one screen that already knows.
+    const reason = skipped
+      ? ` ${skipped} skipped — no cover image.`
+      : "";
+    const message = `Moved ${updated} piece${updated === 1 ? "" : "s"} to ${STATUS_BADGE_LABEL[status].toLowerCase()}.${reason}`;
+    if (skipped && updated === 0) toast.error(message);
+    else toast.success(message);
     selection.clear();
     router.refresh();
   }
