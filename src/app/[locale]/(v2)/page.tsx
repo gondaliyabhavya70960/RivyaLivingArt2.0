@@ -5,9 +5,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { Button } from "@/components/storefront/button";
-import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
-import { CollectionCard } from "@/components/storefront/collection-card";
+import { CollectionDoors } from "@/components/storefront/collection-doors";
 import { DemoMark } from "@/components/storefront/demo-mark";
+import { FeaturedRail } from "@/components/storefront/featured-rail";
 import { TestimonialCard } from "@/components/storefront/testimonial-card";
 import { SnapRail } from "@/components/storefront/snap-rail";
 import { CureLine, type CureMark } from "@/components/storefront/cure-line";
@@ -266,7 +266,7 @@ export default async function Home({
     settings.whatsappNumber,
   );
 
-  const [heroPiece, ...supportingPieces] = catalog.items;
+  const [heroPiece] = catalog.items;
   /* registry in code → override in the database → a TOTAL resolver. Every
      other surface in this app follows that shape; this band did not. It read
      `Category.image` alone, so a row whose image was never set fell straight
@@ -474,38 +474,24 @@ export default async function Home({
       <section
         id="pieces"
         aria-labelledby="pieces-heading"
-        className="section-standard bg-sand"
+        className="section-standard overflow-hidden bg-sand"
       >
-        <div className="u-shell flex flex-col gap-12">
-          <SectionHeading
-            id="pieces-heading"
-            eyebrow={t("featured.eyebrow")}
-            title={t("featured.heading")}
-            action={
-              <Button asChild variant="secondary" size="sm">
-                <Link href="/shop">{t("featured.cta")}</Link>
-              </Button>
-            }
-          />
-          <div className="grid gap-8 lg:grid-cols-12">
-            <div className="lg:col-span-7">
-              {/* NOT `priority`. This card sits a full screen below the
-                  hero — 1812px down at 1440x900 — and `priority` preloaded a
-                  full-size image from the third-party catalogue host on the
-                  critical path, competing with the hero poster that IS the
-                  LCP. One priority image per page (§19.4); the hero owns it.
-                  Losing it also gives this card the meniscus reveal every
-                  other card gets, which is what a below-the-fold image
-                  should do. */}
-              <CatalogProductCard item={heroPiece} variant="full" morph />
-            </div>
-            <div className="grid gap-8 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
-              {supportingPieces.map((item) => (
-                <CatalogProductCard key={item.id} item={item} variant="full" />
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* v3.1 — the 1+3 grid becomes a pinned horizontal rail on
+            fine-pointer desktops (overflow-x snap rail elsewhere). Cards are
+            the house CatalogProductCard untouched; the rail changes the room,
+            not the furniture. */}
+        <FeaturedRail
+          items={catalog.items}
+          heading={
+            <SectionHeading
+              id="pieces-heading"
+              eyebrow={t("featured.eyebrow")}
+              title={t("featured.heading")}
+            />
+          }
+          endHref="/shop"
+          endLabel={t("featured.cta")}
+        />
       </section>
     ) : null,
     /* ════════ new · Large format — standard ════════
@@ -615,35 +601,27 @@ export default async function Home({
             title={t("collections.heading")}
             intro={t("collections.intro")}
           />
-          {/* Bento: the lead tile runs two rows tall at desktop widths, the
-              other five share the remaining cells — a doorway with more
-              weight than the others, not six equal boxes. */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-12">
-            {COLLECTION_TILES.map((tile, index) => (
-              <CollectionCard
-                key={tile.key}
-                href={tile.href}
-                name={t(`collections.tiles.${tile.key}.name`)}
-                promise={t(`collections.tiles.${tile.key}.promise`)}
-                image={
-                  /* Five tiles paint the owner's `Category.image`; the sixth
-                     points at /custom-order, which is not a category, so it
-                     falls back to its own slot rather than to the monogram.
-                     A category row whose image the owner has cleared falls
-                     back the same way it always did — to the monogram — which
-                     is a state the category editor can see and fix. */
-                  tile.slug
-                    ? tileImages.get(tile.slug)
-                    : imageRefs["home.collections.create"].url
-                }
-                imageAlt={t(`collections.tiles.${tile.key}.alt`)}
-                ratio={index === 0 ? "4/5" : "3/4"}
-                className={
-                  index === 0 ? "lg:col-span-8 lg:row-span-2" : "lg:col-span-4"
-                }
-              />
-            ))}
-          </div>
+          {/* v3.1 — the bento becomes six hover-expanding doors (pure CSS
+              flex transition; stacked on touch). Same tiles, same
+              destinations, same fallback order — only the vessel changes. */}
+          <CollectionDoors
+            tiles={COLLECTION_TILES.map((tile) => ({
+              href: tile.href,
+              name: t(`collections.tiles.${tile.key}.name`),
+              promise: t(`collections.tiles.${tile.key}.promise`),
+              image:
+                /* Five tiles paint the owner's `Category.image`; the sixth
+                   points at /custom-order, which is not a category, so it
+                   falls back to its own slot rather than to the monogram.
+                   A category row whose image the owner has cleared falls
+                   back the same way it always did — to the monogram — which
+                   is a state the category editor can see and fix. */
+                tile.slug
+                  ? tileImages.get(tile.slug)
+                  : imageRefs["home.collections.create"].url,
+              imageAlt: t(`collections.tiles.${tile.key}.alt`),
+            }))}
+          />
         </div>
       </section>
     ),
