@@ -24,4 +24,11 @@ export const routing = defineRouting({
   // Chinese) while a language the visitor actually picked is still
   // remembered. Turning this to `false` would silently undo the memory too.
   localeDetection: true,
+  // next-intl's default `NEXT_LOCALE` cookie carries no `maxAge`, which makes
+  // it a SESSION cookie — the "memory" audit §2.6 asks for would have died the
+  // moment the visitor closed the browser, and they would have been handed
+  // English again on the next visit having already told us otherwise. A year,
+  // which is what the choice is worth: it is a language, not a preference that
+  // goes stale.
+  localeCookie: { name: "NEXT_LOCALE", sameSite: "lax", maxAge: 60 * 60 * 24 * 365 },
 });

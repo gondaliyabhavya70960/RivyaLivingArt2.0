@@ -16,6 +16,7 @@ import {
   SectionHeading,
 } from "@/components/storefront/section-heading";
 import { HeroMedia } from "@/components/storefront/hero-media";
+import { BUNDLED_VIDEOS } from "@/lib/site-videos";
 import { HeroParallax } from "@/components/motion/hero-parallax";
 import { MeniscusImage } from "@/components/storefront/meniscus-image";
 import { PourCureShowcase } from "@/components/storefront/pour-cure-showcase";
@@ -355,7 +356,11 @@ export default async function Home({
       >
         <div className="absolute inset-0">
           <HeroMedia
-            videoUrl={settings.heroVideoUrl ?? undefined}
+            // The owner's upload wins; the bundled pour loop is the floor.
+            // It used to be `?? undefined`, which meant the delivered film sat
+            // in the repo unreferenced and every environment showed the poster
+            // alone until someone found the Settings field.
+            videoUrl={settings.heroVideoUrl ?? BUNDLED_VIDEOS.homeHero}
             poster={imageRefs["home.hero"]}
             drift
           />
