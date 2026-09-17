@@ -548,6 +548,15 @@ below are the ones that are expensive to rediscover.
   has been idle two minutes and never `isDemo` rows; the per-page CAS on
   `cursorPage` already makes concurrency safe, so the idle rule is politeness
   — a CAS cannot un-send a request to a supplier.
+  **The cron needs `CRON_SECRET` set on the Vercel project, and nothing tells
+  you when it is not.** Vercel sends `Authorization: Bearer <CRON_SECRET>`
+  only when the variable exists; the route fails closed (401) without it, and
+  a 401 on a cron is silent — no dashboard error, no email. Production ran
+  that way from B1 (2026-09-15) until 2026-09-17 01:36 UTC: 144 drain calls
+  in seven days, every one a 401, found only by reading the runtime logs after
+  #93's rollout had queued nine jobs that nothing collected. Adding the
+  variable needs a REDEPLOY to take effect. `DEPLOYMENT.md` §12 names the
+  three routes it protects.
 - **Five consecutive failures pauses a source.** Resume clears the pause AND
   the counter; a success resets it to zero rather than decaying.
 - **`CONFIRMED_PRODUCTS ≡ { p : p.confirmedAt IS NOT NULL }`.** Nothing but the
@@ -675,6 +684,20 @@ below are the ones that are expensive to rediscover.
   CHANGELOG has the table); the seven with no automated path are filed as
   manual research with the reason. **Nothing this queues enters the
   catalogue by itself** — the review inbox stays the only path.
+- **The review inbox selects by FILTER; the writes stay the old ones**
+  (2026-09-17). `/studio/scraper/review` filters by source, by the SOURCE's
+  tier and by the SUGGESTED product tier — two different filters, because a
+  large-format studio sells coasters too; the suggestion is `suggestSizeTier`
+  over the twin at read time, never a column. "Select all N matching" makes
+  the filter the selection on every page (the view caps at 200 rows; the
+  selection does not). `resolveInboxSelection` is a staff-only READ that
+  answers what the filter covers; the moves and the import go through
+  `setShortlistState` and `addScrapedToCatalog` in batches
+  (`src/lib/scraper/inbox-batch.ts`), so a 500-row approval is 500 rows of
+  the same audited path, and a stopped run resumes because every imported
+  twin leaves the importable set. The legacy one-category import dialog and
+  its two actions are gone — an exported `"use server"` function with no
+  caller is still an endpoint.
 - **DROPPING A COLUMN TAKES TWO PRs HERE, and the reason is the generated
   client.** `db.scrapeSource.findMany()` with no `select` makes Prisma emit an
   explicit column list, so the moment a column disappears from the database the

@@ -127,6 +127,13 @@ audit's per-tier picture:
   The owner's previous store is registered. The scraper hub gained the three
   size tiers as batch runs, and every source a product cap. The review inbox
   remains the only path into the catalogue.
+- **The inbox selects by filter** (2026-09-17): the source's tier and the
+  suggested product tier as filters, "Select all N matching" across every
+  page, and Add to catalog in batches through the existing import — each
+  product into its nearest category with its suggested tier, as a DRAFT with
+  the rewrite guard. The cron drain's silent 401s (no `CRON_SECRET` since B1)
+  were found in the runtime logs and fixed by the owner the same night;
+  collection ran from 01:40 UTC.
 
 ## 9. Superseded — done differently by a recorded decision (not gaps)
 

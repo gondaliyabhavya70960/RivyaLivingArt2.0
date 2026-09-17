@@ -5,6 +5,55 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## The review inbox selects by filter — source tier, suggested tier, "select all N matching", Add to catalog in batches; the cron that never ran (2026-09-17)
+
+Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #93. The owner, the night the
+rollout merged: select all with the needed filters — tier, website — then approve. The inbox
+could tick one page of 50 and import everything into ONE category; a rebuild of ~1,400 rows
+across nine sources needed the filter to be the selection.
+
+- **Two filters on `/studio/scraper/review`** beside source, state and search: the SOURCE's
+  tier (`?tier=`, `ScrapeSource.tier`, labels from `TIER_LABEL`) and the SUGGESTED product
+  tier (`?size=`, step 6's `suggestSizeTier` over the twin's title, type, description and
+  dimensions — computed at read time over the whole slice, up to 10,000 rows, never stored;
+  "Unsure" for no suggestion). They are two filters because a large-format studio sells
+  coasters too. Every card shows its suggestion ("Tier 1 · Collectible").
+- **"Select all on this page", then "Select all N matching"** — the selection becomes the
+  filter on every page (the view caps at 200 rows; N is the true total). A filter change or a
+  single untick drops back to the ticks, by the render-time reset `usePagination` already uses.
+- **`resolveInboxSelection`** (staff-only READ in `scraper-shortlist.ts` → `inboxSelection` in
+  `shortlist-query.ts`): every matching research product for a move; the importable subset
+  (a twin not yet IMPORTED) with the auto-mapped category (`matchCategoryId`, the source page's
+  own) and the suggested tier; the first 3,000, with `capped` saying so. The categories are an
+  argument, so the db test hands it its own.
+- **The writes are unchanged.** `setShortlistState` in batches of 500 (its schema's ceiling);
+  `addScrapedToCatalog` in batches of 10 with image mirroring or 100 without
+  (`src/lib/scraper/inbox-batch.ts`). Every imported row leaves the importable set, so a run
+  that stops resumes by pressing Add again. The review page declares `maxDuration = 120` for
+  those actions, as the cron routes do for theirs.
+- **The Add to catalog dialog** (`inbox-add-to-catalog-dialog.tsx`): what the selection
+  resolves to (can be added · already in the catalogue · no matching category · nothing
+  staged), category mode (nearest category per product with a fallback for the unmapped, or
+  one category for all), tier mode (suggested / a tier / untiered), mirror images, a progress
+  bar, per-row failures kept on screen. It replaces the inbox's "Import shortlisted…" dialog
+  (one category for all, APPROVED rows only); `approve-import-dialog.tsx`,
+  `importApprovedScraped` and `setScrapedReviewStatus` are deleted — no caller left, and an
+  exported `"use server"` function is an endpoint whether or not anything calls it.
+- **Production, the same night — the cron that never ran.** `/api/cron/scrape-drain` had
+  answered 401 to all 144 cron calls of the previous seven days: `CRON_SECRET` was never set
+  on the Vercel project, and Vercel sends the bearer only when it exists, so no cron-driven
+  scrape had ever run (nor the image mirror). #93's nine queued jobs sat untouched for half an
+  hour until the runtime logs were read. The owner set the secret and redeployed (01:36 UTC);
+  the drain answered 200 from 01:40 and ran clean through the first hours. `AUTH_URL` was
+  corrected to a full origin in the same pass (03:46 UTC). `DEPLOYMENT.md` §12 now names the
+  three routes the secret protects and the redeploy it needs; `CLAUDE.md` records the silence.
+- **Tests:** `inbox-batch.test.ts` (4) and `tests/db/inbox-selection.test.ts` (4): the source
+  filter reads the source and a mismatch matches nothing; the suggested filter returns exactly
+  the rows the classifier tags, tier by tier, with counts; the resolver's ids, importable rows,
+  category and tier, and the promoted-twin exclusion; an explicit id list and the state filter.
+
+---
+
 ## The catalogue rebuild — every source verified, the automatable ones reviewed and queued; the five briefs audited (2026-09-16, evening)
 
 Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #92. The owner's brief, the
