@@ -2,6 +2,12 @@
 
 **Date:** 2026-09-14 · **Base:** `main` @ `b593f72` · **Branch:** `claude/peaceful-cannon-7dck80`
 
+> **Status, 2026-09-16:** what each workstream's source brief asked for, and what is
+> done or still owed, is kept in [`docs/COMPLETED-WORK.md`](../COMPLETED-WORK.md) and
+> [`docs/NEEDED-WORK.md`](../NEEDED-WORK.md), tier by tier, with the 617 audited rows in
+> [`docs/audits/2026-09-16/`](../audits/2026-09-16/README.md). Workstreams A–D are closed;
+> E has shipped steps 0–8 and the backlog tooling; what remains stops at an owner question.
+
 Five workstreams, one sequence — **E was added on 2026-09-15 and is the one in
 flight**:
 

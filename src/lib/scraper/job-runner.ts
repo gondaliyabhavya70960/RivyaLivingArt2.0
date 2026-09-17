@@ -27,7 +27,10 @@
 import { revalidatePath } from "next/cache";
 
 import type { Prisma } from "@/generated/prisma/client";
-import type { AnalyticsLeague, ScrapeJobStatus } from "@/generated/prisma/enums";
+import type {
+  AnalyticsLeague,
+  ScrapeJobStatus,
+} from "@/generated/prisma/enums";
 import { logActivity } from "@/lib/activity";
 import { db } from "@/lib/db";
 import {
@@ -562,15 +565,21 @@ async function upsertPage(
   // contentHash moves — the same rule, for the same reason, as the price
   // history immediately below. Unchanged rows still bump `lastSeen`, which is
   // what records that we looked and found it listed.
-  await recordResearchSnapshots(jobId, sourceKey, unique, {
-    createdExternalIds: new Set(creates.map((c) => c.externalId)),
-    changedExternalIds: new Set(changed.map((c) => c.product.externalId)),
-    hashByExternalId: new Map(
-      unique.map((p) => [p.externalId, contentHash(p)]),
-    ),
-    rawByExternalId,
-    seenAt: now,
-  }, league);
+  await recordResearchSnapshots(
+    jobId,
+    sourceKey,
+    unique,
+    {
+      createdExternalIds: new Set(creates.map((c) => c.externalId)),
+      changedExternalIds: new Set(changed.map((c) => c.product.externalId)),
+      hashByExternalId: new Map(
+        unique.map((p) => [p.externalId, contentHash(p)]),
+      ),
+      rawByExternalId,
+      seenAt: now,
+    },
+    league,
+  );
 
   // Price history. A point is written on first sighting, to anchor the series,
   // and thereafter only when the price actually MOVES.
@@ -633,6 +642,7 @@ export async function advanceScrapeJob(
         select: {
           baseUrl: true,
           requestDelayMs: true,
+          maxProducts: true,
           // The governance gate is re-checked on every advance, not just at
           // enqueue — see below.
           name: true,
@@ -749,6 +759,7 @@ export async function advanceScrapeJob(
         // The per-source politeness knob (docs/scraper.md "Politeness");
         // a single pasted URL has no source row and gets the shared default.
         requestDelayMs: job.source?.requestDelayMs ?? null,
+        maxProducts: job.source?.maxProducts ?? null,
         scope: job.scope,
       });
 
@@ -794,6 +805,15 @@ export async function advanceScrapeJob(
 
       if (!hasMore) {
         status = "DONE";
+        break;
+      }
+      // The source's own ceiling — the reference rollout's "~500 per tier".
+      // Read like "page cap reached" below: the job is DONE, and the note
+      // says why it stopped short of the catalogue.
+      const cap = job.source?.maxProducts ?? null;
+      if (cap !== null && totalScraped >= cap) {
+        status = "DONE";
+        error = `product cap reached (${cap})`;
         break;
       }
       if (page >= MAX_PAGES_PER_JOB) {

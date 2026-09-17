@@ -53,8 +53,6 @@ const MARKETPLACE_MESSAGE =
  */
 const STALE_RUNNING_MS = 10 * 60 * 1000;
 
-
-
 const createJobSchema = z
   .object({
     sourceId: z.string().min(1).optional(),
@@ -333,17 +331,16 @@ const TIER_RANK: Record<ScrapeTier, number> = {
 
 /**
  * Queue jobs for every enabled, platform-detected source in a tier (or all
- * tiers, in OWNER → RESIN_GOODS → SUPPLIES → PRINT3D order, then by name).
- * The client runs the returned ids sequentially.
+ * tiers, in TIER_RANK order — the size tiers first, largest work first, then
+ * the retired provenance tiers — then by name). The client runs the returned
+ * ids sequentially.
  */
 export async function createTierJobs(
   tier: ScrapeTier | "ALL",
 ): Promise<ActionResult<{ jobIds: string[]; skipped: string[] }>> {
   return runAction(async () => {
     const session = await requireStaff();
-    const parsed = z
-      .enum(["OWNER", "RESIN_GOODS", "SUPPLIES", "PRINT3D", "ALL"])
-      .parse(tier);
+    const parsed = z.enum([...SCRAPE_TIERS, "ALL"]).parse(tier);
 
     const sources = await db.scrapeSource.findMany({
       where: {

@@ -1,5 +1,7 @@
 # A — Storefront & Studio redesign
 
+> **Status, 2026-09-16:** workstream A is closed. Every row of the two UI briefs is checked against HEAD in `docs/audits/2026-09-16/ui-prompts.md`; what is still owed is in `docs/NEEDED-WORK.md`.
+
 > **Blocked on D25 and D29** (see [`README.md`](README.md)). Everything below assumes **D25 = (b)**:
 > a v4 visual layer expressed as a _token extension_ over the same information architecture.
 

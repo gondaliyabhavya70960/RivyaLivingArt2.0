@@ -1,5 +1,7 @@
 # B — Product scraper rebuild
 
+> **Status, 2026-09-16:** B1–B9 shipped. The data-contract depth the source plans asked for (geometry in mm, structured materials, the resin-style vocabulary, finish claims, production flags, FX, per-field provenance, the other analytics modules) is the open list in `docs/NEEDED-WORK.md` §3, with the audit rows in `docs/audits/2026-09-16/implementation-plan.md` §5 and `redesign-plan.md` W2.
+
 > **Blocked on D26.** `CLAUDE.md`'s HARD RULES and `REDESIGN.md` §1.1 currently forbid changing
 > product data, Server Actions and Studio behaviour. This workstream does all three, by design.
 

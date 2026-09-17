@@ -46,7 +46,11 @@ records what shipped, and lists what genuinely remains.
 **`docs/plan/` is IN FORCE for the workstreams noted below.** It plans a
 storefront/Studio redesign, a scraper rebuild against the owner's
 resin-merchandiser brief, the complete removal of Google Sheets, and a
-Drive-sourced media pipeline. `docs/plan/README.md` is the index.
+Drive-sourced media pipeline. `docs/plan/README.md` is the index. **What the five owner briefs asked for, and
+what is done or still owed, is kept in `docs/COMPLETED-WORK.md` and
+`docs/NEEDED-WORK.md`** (tier by tier; the 617 audited rows behind them are in
+`docs/audits/2026-09-16/`). Update those two files when a brief item ships or
+a decision lands — they are the owner's view of the work.
 
 **THE THREE-TIER PRODUCT ARCHITECTURE is in force** and is the newest thing
 here: `docs/plan/07-three-tier-architecture.md`. Large (collectible furniture
@@ -658,6 +662,19 @@ below are the ones that are expensive to rediscover.
   approval — a source with no automated path does not become crawlable by being
   allowed. The owner clears it per source on `/studio/scraper/sources/<key>` or
   in bulk from the registry's selection bar; the record stamps who and when.
+  **The reference rollout (2026-09-16 evening)** is the one deploy-time writer
+  of that record, and it is a ONE-SHOT: `src/lib/scraper/backlog-rollout.ts`
+  carries the owner's written instruction to rebuild the emptied catalogue
+  from the reference sites — reviewer `owner-instruction:2026-09-16`, the
+  authority and the site's own evidence in the note — and `prisma/seed-scrape-backlog.ts`
+  applies it after the registry reconcile: review, enable, `maxProducts` 500,
+  first job. It never touches a source a person has ever reviewed (the
+  `policy-review` activity is the tell), never a source that has ever had a
+  job, and never runs on a preview build. Nine sources were verified
+  automatable with this repo's own scraper before they were listed (the
+  CHANGELOG has the table); the seven with no automated path are filed as
+  manual research with the reason. **Nothing this queues enters the
+  catalogue by itself** — the review inbox stays the only path.
 - **DROPPING A COLUMN TAKES TWO PRs HERE, and the reason is the generated
   client.** `db.scrapeSource.findMany()` with no `select` makes Prisma emit an
   explicit column list, so the moment a column disappears from the database the

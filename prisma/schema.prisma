@@ -817,6 +817,10 @@ model ScrapeSource {
   /// Politeness. Null uses the shared default; a site that rate-limits us can
   /// be slowed without a deploy.
   requestDelayMs     Int?
+  /// The most products one run may stage from this source; null = no ceiling
+  /// but the 40-page cap. Set by the reference rollout (500) and editable in
+  /// the Studio's source registry.
+  maxProducts        Int?
   /// Circuit breaker. Counts consecutive FAILED jobs and resets on the first
   /// success — a source that fails, succeeds, then fails is having a bad day,
   /// not blocking us.

@@ -120,6 +120,36 @@ crawling its catalogue are different acts; only the second needs that review.
 ---
 
 
+### Verified 2026-09-16 — what each site actually yields
+
+Every reference site (and every automatable source on the owner's own list)
+was run through this repository's scraper locally — `fingerprint()`, then a
+full job — before the rollout listed it. The registry (`seed-data.ts`) carries
+the verified platform and the finding on each row; `backlog-rollout.ts`
+carries the review and the evidence.
+
+| Site | Tier | Platform | Staged locally | Filed as |
+| --- | --- | --- | ---: | --- |
+| Korepox Arts | LARGE | WooCommerce | 9 | rollout |
+| Draga & Aurel · Materia Aurea · Scarlet Splendour · WITHIN | LARGE | none usable | 0 | manual research (design references) |
+| Radhika Art | MEDIUM | JSON-LD | 148 | rollout |
+| VEDUMI · The Art Galaxy | MEDIUM | none usable | 0 | manual research |
+| Dinosaur Designs | SMALL | Shopify | 331 | rollout (a reference with foreign prices — the review queue decides) |
+| Resin Art Store India | SMALL | WooCommerce | 31 | rollout |
+| Saashi · Leoberry Gifts · Kanha Kreation · WoodenSure · Resin Arts Jaipur | owner's list | WooCommerce / JSON-LD | 338 · 210 · 151 · 146 · 22 | rollout |
+| The owner's previous store (`store.bhavyagondaliya.co.in`) | owner's list | HTTP 402 | — | manual research; its rows are `data/tiers/Tier1_Owner.csv.gz` |
+
+1,386 rows; by step 6's suggestion 174 Collectible · 452 Memory · 596
+Personal · 164 unsure. The LARGE minimum is met only through the owner's own
+list; the brief's Tier 01 references are design references with nothing to
+collect.
+
+**Status of this document's own asks** — every requirement checked against
+HEAD on 2026-09-16 is in `docs/audits/2026-09-16/three-tier-brief.md` (127
+rows: 61 done · 38 partial · 13 not done · 13 tabled on T2–T9 · 1 refused by
+Part 0); what is buildable now and what waits on an owner answer is in
+`docs/NEEDED-WORK.md` §2–§3, tier by tier.
+
 ## What a survey of the code found, and what it changed
 
 Before any of this was built, eleven read-only agents mapped every surface the

@@ -77,6 +77,13 @@ export type AdapterContext = {
    */
   requestDelayMs?: number | null;
   /**
+   * The source's own ceiling on products per run (`ScrapeSource.maxProducts`),
+   * or null. The runner stops a job at it; the JSON-LD adapter also lets it
+   * raise the discovery cap above the politeness default, since a source the
+   * owner has explicitly sized deserves the pages it asked for.
+   */
+  maxProducts?: number | null;
+  /**
    * What this job was asked to cover (`ScrapeJob.scope`): the whole source
    * (default, every adapter's ordinary behaviour), one category/listing page
    * (`baseUrl` IS that listing, paginated — a platform adapter that already
