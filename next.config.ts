@@ -103,6 +103,20 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  // The catalog fill reads data/tiers/*.csv.gz and data/rewrites/*.json from
+  // disk at request time when the Studio presses Preview or Run now. A Vercel
+  // function only carries the files tracing found imported, and a
+  // readFileSync of a computed path is invisible to it — so without this the
+  // Studio's fill read nothing in production (see ROOT in tier-fill.ts).
+  // ~15 MB gzipped, well under the function limit; the deploy-time bootstrap
+  // does not need it, it runs from the repository checkout.
+  outputFileTracingIncludes: {
+    "/studio/catalog-fill": ["./data/tiers/**/*", "./data/rewrites/**/*"],
+    "/studio/catalog-fill/conflicts": [
+      "./data/tiers/**/*",
+      "./data/rewrites/**/*",
+    ],
+  },
   experimental: {
     // View Transitions (guide Phase 2): Next 16.3 has no viewTransition
     // flag and React 19 stable ships no <ViewTransition>, so the shop-card

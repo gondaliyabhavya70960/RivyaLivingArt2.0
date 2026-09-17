@@ -11,25 +11,42 @@ import {
   CANONICAL_CATEGORIES,
   canonicalCategoryFor,
 } from "@/lib/catalog-taxonomy";
+import { suggestCatalogSizeTier } from "@/lib/catalog-size-tier";
 import { decideFillWrite, type FillPolicy } from "@/lib/import/fill-policy";
+import {
+  PRODUCT_SIZE_TIERS,
+  type ProductSizeTier,
+} from "@/lib/product-size-tier";
 
 /**
- * The four-tier owner-sheet import (owner brief, 2026-08-13) — extracted
- * from `prisma/import-tiers.ts` so the deploy-time script, the studio's
- * Preview button, and its Run now button all call ONE function instead of
- * the script's logic being duplicated (and drifting) across three places.
+ * The four-list catalog fill (owner brief, 2026-08-13) — extracted from
+ * `prisma/import-tiers.ts` so the deploy-time script, the studio's Preview
+ * button, and its Run now button all call ONE function instead of the
+ * script's logic being duplicated (and drifting) across three places.
  * `prisma/import-tiers.ts` is now a thin caller: read settings, build a
  * `FillPolicy`, call `runTierFill({ trigger: "DEPLOY", policy, db })`.
  *
- * Reads the tier tabs of the owner's scraped-products sheet from
- * data/tiers/<Tab>.csv.gz (full export committed by the fetch-tiers Actions
- * workflow) or, until the sheet is link-public, the partial
- * data/tiers/sample/<Tab>.sample.csv extracts. Volumes per the brief:
- * Tier1_Owner ALL rows · Tier2_ResinGoods top 1,000 · Tier3_Supplies
- * top 2,500 · Tier4_3DPrint top 500. "Top" = the sheet's own row order (the
- * tabs carry no ranking column, and the owner's master prompt directs sheet
- * order in that case); rows falling out of the selection demote to DRAFT.
- * The content-quality score below only picks FEATURED merchandising.
+ * Reads the four IMPORT LISTS from data/tiers/<stem>.csv.gz — committed
+ * files, and since 2026-09-15 the ONLY copy: the spreadsheet they were
+ * exported from is un-shared and the workflow that refreshed them is
+ * deleted, so refreshing a list means committing a new file. The partial
+ * data/tiers/sample/<stem>.sample.csv extracts are the fallback when a full
+ * file is absent. Volumes per the brief: List 1 (`Tier1_Owner`) ALL rows ·
+ * List 2 (`Tier2_ResinGoods`) top 1,000 · List 3 (`Tier3_Supplies`) top
+ * 2,500 · List 4 (`Tier4_3DPrint`) top 500. "Top" = the file's own row
+ * order (the lists carry no ranking column, and the owner's master prompt
+ * directs sheet order in that case); rows falling out of the selection
+ * demote to DRAFT. The content-quality score below only picks FEATURED
+ * merchandising.
+ *
+ * VOCABULARY (2026-09-17). `Product.tier`, `TierSpec.tier` and the `tiers`
+ * key of the stored run meta are the IMPORT LIST number — where a row CAME
+ * FROM, `src/lib/import-list.ts`. The file stems, the column and the meta
+ * key are frozen contracts and keep the old word; every word a person reads
+ * says "list". "Tier" in prose here means the PRODUCT tier — the three-tier
+ * architecture, `Product.sizeTier` — which this fill never writes: it is
+ * filed by rule after the fill (`catalog-size-tier.ts`), and `sizeTiers` on
+ * each list's summary is that rule's forecast for the rows the fill placed.
  *
  * Idempotent: rows upsert on the (importSource, importRef) unique pair;
  * unchanged rows (same contentHash → sourceHash) are skipped entirely, so a
@@ -46,7 +63,21 @@ import { decideFillWrite, type FillPolicy } from "@/lib/import/fill-policy";
  * accurate creates/updates/drops without touching the catalog.
  */
 
-const ROOT = path.join(__dirname, "../../..");
+/**
+ * The repository root. Under `tsx` (the deploy-time bootstrap) `__dirname`
+ * is src/lib/import and "../../.." is the root; under Next's compiled server
+ * it is a chunk directory inside .next/, from which "../../.." is nowhere —
+ * so the Studio's Preview and Run now read no file at all and reported zero
+ * rows, on every environment, until 2026-09-17 (the new "Would file as"
+ * forecast is what made an empty result visible). `process.cwd()` is the
+ * project root in both runtimes, and on Vercel the files reach the function
+ * only through `outputFileTracingIncludes` in next.config.ts — which the
+ * cwd-relative path is what makes work. The `__dirname` form stays as the
+ * fallback for a caller whose cwd is somewhere else.
+ */
+const ROOT = existsSync(path.join(process.cwd(), "data", "tiers"))
+  ? process.cwd()
+  : path.join(__dirname, "../../..");
 
 /** Bump when cleanText/normalization changes so existing rows re-import.
  *  n4: stop stamping resin DEFAULT_CARE_NOTES on imports (audit M-A2) —
@@ -99,12 +130,16 @@ function needsRewriteFor(
   return !!vendor && vendor.length > 3 && d.includes(vendor.toLowerCase());
 }
 
+/** One import list: its file stem, its `Product.tier` number and its cap. */
 export type TierSpec = {
   tab: string;
   tier: 1 | 2 | 3 | 4;
   cap: number | null;
 };
 
+/* The stems are frozen (`IMPORT_LIST_FILE` pins them to this table by
+   text), and so is this table's formatting — `import-list.test.ts` reads
+   these lines verbatim. */
 const TIERS: TierSpec[] = [
   { tab: "Tier1_Owner", tier: 1, cap: null },
   { tab: "Tier2_ResinGoods", tier: 2, cap: 1000 },
@@ -112,7 +147,7 @@ const TIERS: TierSpec[] = [
   { tab: "Tier4_3DPrint", tier: 4, cap: 500 },
 ];
 
-/** How many best-scoring Tier-1 rows get featured=true for merchandising. */
+/** How many best-scoring List-1 rows get featured=true for merchandising. */
 const FEATURED_TIER1 = 12;
 
 /** Sources whose stores price in foreign currency while the sheet's currency
@@ -409,6 +444,21 @@ export type TierFillTotals = {
   failed: number;
 };
 
+/** A product tier, or "NONE" for the rows the rule declines to file. */
+export type TierFillSizeTierKey = ProductSizeTier | "NONE";
+
+/**
+ * How many of a list's rows would file into each product tier — the
+ * three-tier architecture, `Product.sizeTier` — by `suggestCatalogSizeTier`,
+ * the SAME rule the deploy-time pass and the Studio's Suggest tiers button
+ * run over the catalogue afterwards. "NONE" counts the rows the rule
+ * declines: supplies (a mold is not Personal Art & Gifting) and rows whose
+ * words say nothing about form. A forecast, not a write — the fill never
+ * sets `sizeTier`.
+ */
+export type TierFillSizeTierTally = Record<TierFillSizeTierKey, number>;
+
+/** One import list's outcome. `tier` is the LIST number (`Product.tier`). */
 export type TierFillTierSummary = {
   tier: number;
   detected: number;
@@ -418,7 +468,54 @@ export type TierFillTierSummary = {
   unchanged: number;
   failed: number;
   demoted: number;
+  /**
+   * ADDED 2026-09-17, additively: the rows that ended up in the catalogue
+   * (created + updated + unchanged) by the product tier they would file
+   * into. Every earlier key keeps its meaning, and a `sheet-import` activity
+   * row or an `ImportRun.detail` written before this date carries no
+   * `sizeTiers` at all — a reader of STORED summaries treats it as optional.
+   */
+  sizeTiers: TierFillSizeTierTally;
 };
+
+/**
+ * How many dropped rows of each reason travel back to the browser and into
+ * `ImportRun.detail`.
+ *
+ * A full run over the four lists drops tens of thousands of rows (Lists 2–4
+ * are capped at 1,000 / 2,500 / 500 out of 34,923 / 21,502 / 7,679), and
+ * every one of them used to ride in the action's response — a ~10 MB JSON
+ * payload for a screen that renders at most 100 per reason and a stored
+ * `detail` column nobody could read. The counts stay exact in
+ * `droppedByReason`; only the examples are trimmed.
+ */
+export const DROPPED_SAMPLES_PER_REASON = 100;
+
+/** Reason → how many rows the run dropped for it, before any trimming. */
+export type TierFillDroppedCounts = Record<string, number>;
+
+/**
+ * The examples the UI shows, and the exact counts beside them. Pure, so the
+ * preview, the real run and the stored record all trim identically.
+ */
+export function summarizeDropped(dropped: TierFillDroppedRow[]): {
+  samples: TierFillDroppedRow[];
+  byReason: TierFillDroppedCounts;
+  total: number;
+} {
+  const byReason: TierFillDroppedCounts = {};
+  const samples: TierFillDroppedRow[] = [];
+  const kept = new Map<string, number>();
+  for (const row of dropped) {
+    byReason[row.reason] = (byReason[row.reason] ?? 0) + 1;
+    const n = kept.get(row.reason) ?? 0;
+    if (n < DROPPED_SAMPLES_PER_REASON) {
+      samples.push(row);
+      kept.set(row.reason, n + 1);
+    }
+  }
+  return { samples, byReason, total: dropped.length };
+}
 
 export type TierFillResult = {
   /** True when the run was refused before touching anything — the master
@@ -426,7 +523,13 @@ export type TierFillResult = {
   aborted: false | { reason: string; detail?: Record<string, unknown> };
   totals: TierFillTotals;
   runSummary: Record<string, TierFillTierSummary>;
+  /** Up to `DROPPED_SAMPLES_PER_REASON` examples per reason, not every row —
+   *  see `summarizeDropped`. The exact numbers are `droppedByReason`. */
   dropped: TierFillDroppedRow[];
+  /** Reason → the true count, untrimmed. */
+  droppedByReason: TierFillDroppedCounts;
+  /** Every dropped row, counted. */
+  droppedTotal: number;
   /** Fields with a sheet/studio conflict this run detected — see the module
    *  note. Computed the same way whether or not this is a dryRun (a preview
    *  can show what WOULD be flagged); zero on the very first run ever, since
@@ -454,7 +557,7 @@ export type RunTierFillOptions = {
 };
 
 export type TierRowPlan = {
-  /** The rows this tier will actually process, in sheet order. */
+  /** The rows this list will actually process, in file order. */
   rows: SheetRow[];
   /** Every row that left the set, and why — one entry per row for a
    *  row-level reason, one summary entry for the tab-wide "missing fields"
@@ -463,16 +566,62 @@ export type TierRowPlan = {
   /** Row count after the gift-card/tombstone screen, before dedupe/cap —
    *  what `runSummary[tab].detected` reports. */
   detectedCount: number;
-  /** `${sourceKey}:${externalId}` keys chosen for Tier-1 merchandising. */
+  /** `${sourceKey}:${externalId}` keys chosen for List-1 merchandising. */
   featuredKeys: Set<string>;
+  /** The product tiers `rows` would file into — `tallySizeTiers(rows)`. */
+  sizeTiers: TierFillSizeTierTally;
 };
 
 /**
- * Pure planner: which rows of one tier's tab are selected, which are
- * dropped and why, and (Tier 1 only) which are featured. Extracted from the
- * write loop below so the row-selection logic — the part an operator
- * actually wants to see in a preview — is testable over fixture rows
- * without a database (tier-fill.test.ts).
+ * The product tier one list row would file into, by the catalogue rule —
+ * `suggestCatalogSizeTier` over the canonical category the fill assigns
+ * (`canonicalCategoryFor`, the same call the write loop makes) and the
+ * row's own title, description and dimensions. Read against the row as the
+ * list gives it: an editorial rewrite (`data/rewrites/`, a few hundred
+ * rows) replaces the description in the catalogue but not here, and the
+ * description is the rule's weakest signal, so the forecast holds.
+ */
+export function fillRowSizeTier(row: SheetRow): TierFillSizeTierKey {
+  const categorySlug = canonicalCategoryFor(
+    row.vertical,
+    [row.category, ...row.fieldsCategories],
+    row.title,
+  );
+  return (
+    suggestCatalogSizeTier({
+      title: row.title,
+      description: row.description,
+      dimensions: row.dimensions,
+      categorySlug,
+    }).tier ?? "NONE"
+  );
+}
+
+/** An empty tally — every product tier and then "NONE" at zero, in the
+ *  order the screen reads them, so a stored row reads the same way. */
+export function emptySizeTierTally(): TierFillSizeTierTally {
+  return {
+    ...Object.fromEntries(PRODUCT_SIZE_TIERS.map((tier) => [tier, 0])),
+    NONE: 0,
+  } as TierFillSizeTierTally;
+}
+
+/** Pure: how many of `rows` would file into each product tier. */
+export function tallySizeTiers(
+  rows: readonly SheetRow[],
+): TierFillSizeTierTally {
+  const tally = emptySizeTierTally();
+  for (const row of rows) tally[fillRowSizeTier(row)]++;
+  return tally;
+}
+
+/**
+ * Pure planner: which rows of one import list are selected, which are
+ * dropped and why, (List 1 only) which are featured, and how the selected
+ * rows would file into the product tiers. Extracted from the write loop
+ * below so the row-selection logic — the part an operator actually wants to
+ * see in a preview — is testable over fixture rows without a database
+ * (tier-fill.test.ts).
  */
 export function planTierRows(
   spec: TierSpec,
@@ -538,7 +687,7 @@ export function planTierRows(
         sourceKey: r.sourceKey,
         externalId: r.externalId,
         title: r.title,
-        reason: "duplicate row in this tab",
+        reason: "duplicate row in this list",
       });
       continue;
     }
@@ -546,8 +695,8 @@ export function planTierRows(
     stage4.push(r);
   }
 
-  // "Top N" = the sheet's own order (owner brief, master prompt): the
-  // tabs carry no ranking/score column, and the brief's rule for that
+  // "Top N" = the file's own order (owner brief, master prompt): the
+  // lists carry no ranking/score column, and the brief's rule for that
   // case is explicit — use the existing sheet order. The quality score
   // below still drives FEATURED merchandising picks, never selection.
   let rows = stage4;
@@ -558,13 +707,13 @@ export function planTierRows(
         sourceKey: r.sourceKey,
         externalId: r.externalId,
         title: r.title,
-        reason: `beyond this tier's cap of ${spec.cap}`,
+        reason: `beyond this list's cap of ${spec.cap}`,
       });
     }
     rows = rows.slice(0, spec.cap);
   }
 
-  // Featured Tier-1 picks: best-scoring owner rows with imagery.
+  // Featured List-1 picks: best-scoring owner rows with imagery.
   const featuredKeys = new Set<string>();
   if (spec.tier === 1) {
     [...rows]
@@ -574,7 +723,13 @@ export function planTierRows(
       .forEach((r) => featuredKeys.add(`${r.sourceKey}:${r.externalId}`));
   }
 
-  return { rows, dropped, detectedCount, featuredKeys };
+  return {
+    rows,
+    dropped,
+    detectedCount,
+    featuredKeys,
+    sizeTiers: tallySizeTiers(rows),
+  };
 }
 
 /** One field of a sheet/studio conflict — see `runTierFill`'s conflict note. */
@@ -817,6 +972,8 @@ export async function runTierFill(
         totals: { created: 0, updated: 0, unchanged: 0, failed: 0 },
         runSummary: {},
         dropped: [],
+        droppedByReason: {},
+        droppedTotal: 0,
         conflictsDetected: 0,
         conflictsWritten: 0,
         ownerReady: null,
@@ -852,12 +1009,16 @@ export async function runTierFill(
 
     // See planTierRows (pure, tested directly in tier-fill.test.ts) for the
     // row-selection logic — which rows are selected, which are dropped and
-    // why, and (Tier 1 only) which are featured.
+    // why, and (List 1 only) which are featured.
     const plan = planTierRows(spec, rawRows, tombstones);
     dropped.push(...plan.dropped);
     const detectedCount = plan.detectedCount;
     const rows = plan.rows;
     const featuredKeys = plan.featuredKeys;
+    // The forecast over the SELECTED rows; a row whose write fails below is
+    // taken back out, so the stored tally counts the rows that ended up in
+    // the catalogue (created + updated + unchanged) and nothing else.
+    const sizeTiers = { ...plan.sizeTiers };
 
     const tierStats = { created: 0, updated: 0, skipped: 0, failed: 0 };
 
@@ -1053,6 +1214,7 @@ export async function runTierFill(
         }
       } catch (error) {
         tierStats.failed++;
+        sizeTiers[fillRowSizeTier(row)]--;
         log(
           `import-tiers: ${spec.tab} row ${row.externalId} failed: ${
             error instanceof Error ? error.message : error
@@ -1061,7 +1223,7 @@ export async function runTierFill(
       }
     }
 
-    // Reconcile: CSV-imported products of this tier that are no longer
+    // Reconcile: CSV-imported products of this list that are no longer
     // in the selected set demote to DRAFT (never deleted — records, images
     // and any inquiries are preserved; owner-created products and the
     // owner-ready batch are never touched). Keeps the published counts at
@@ -1107,6 +1269,7 @@ export async function runTierFill(
       unchanged: tierStats.skipped,
       failed: tierStats.failed,
       demoted: demotedCount,
+      sizeTiers,
     };
 
     log(
@@ -1133,7 +1296,8 @@ export async function runTierFill(
   );
   if (existsSync(gidPath)) {
     const rows = parseCsv(gunzipSync(readFileSync(gidPath)).toString("utf8"));
-    // Schema sniff: the studio template has category_slug; tier tabs don't.
+    // Schema sniff: the studio template has category_slug; the four import
+    // lists don't.
     if (rows.length > 0 && "category_slug" in rows[0]) {
       readyRows = rows;
       log(
@@ -1219,7 +1383,7 @@ export async function runTierFill(
         }
         if (existing) {
           if (existing.ownerTouched) {
-            // H5: owner-edited row — hash refresh only (this tier-1 sheet
+            // H5: owner-edited row — hash refresh only (this List-1 sheet
             // carries no availability column to merge).
             if (!dryRun) {
               await db.product.update({
@@ -1294,7 +1458,7 @@ export async function runTierFill(
       `updated, ${totals.unchanged} unchanged, ${totals.failed} failed.`,
   );
 
-  // Persist the run for the studio's Sheet Import Center (userId null =
+  // Persist the run for the studio's Catalog fill screen (userId null =
   // system actor; the activity feed labels it accordingly). Never in
   // dryRun — a preview leaves no trace beyond what it returns to the caller.
   let importRunId: string | null = null;
@@ -1312,7 +1476,12 @@ export async function runTierFill(
           failed: totals.failed,
           detail: {
             tiers: runSummary,
-            dropped,
+            // Trimmed the same way the response is: the counts are exact,
+            // the examples are capped. A whole run's dropped rows were ~60k
+            // and made this column unreadable.
+            dropped: summarizeDropped(dropped).samples,
+            droppedByReason: summarizeDropped(dropped).byReason,
+            droppedTotal: dropped.length,
           } as unknown as Prisma.InputJsonValue,
           finishedAt: new Date(),
         },
@@ -1356,11 +1525,14 @@ export async function runTierFill(
     }
   }
 
+  const droppedSummary = summarizeDropped(dropped);
   return {
     aborted: false,
     totals,
     runSummary,
-    dropped,
+    dropped: droppedSummary.samples,
+    droppedByReason: droppedSummary.byReason,
+    droppedTotal: droppedSummary.total,
     conflictsDetected: conflictRows.length,
     conflictsWritten: dryRun ? 0 : conflictRows.length,
     ownerReady,
