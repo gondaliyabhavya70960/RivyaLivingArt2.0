@@ -16,13 +16,15 @@ import { markImportedConfirmed } from "@/lib/scraper/shortlist-write";
 import { SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { createWithUniqueSlug, slugify, uniqueSlug } from "@/lib/slug";
+import { MAX_IMPORT_IMAGES } from "@/lib/import/product-row";
 import { putFile } from "@/lib/storage";
 
 const REVIEW_PATH = "/studio/scraper/review";
 const PRODUCTS_PATH = "/studio/products";
 
-/** Only the leading gallery images are imported/mirrored per product. */
-const MAX_IMPORT_IMAGES = 6;
+/** Only the leading gallery images are imported/mirrored per product — the
+ *  cap lives in `product-row.ts` now, shared with Bulk Import's
+ *  scraper-origin path so the two doors cannot drift. */
 const MIRROR_TIMEOUT_MS = 12_000;
 /** Matches the media library cap. */
 const MIRROR_MAX_BYTES = 8 * 1024 * 1024;

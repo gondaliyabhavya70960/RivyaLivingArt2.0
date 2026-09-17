@@ -29,6 +29,23 @@ export function csvCell(value: string): string {
 }
 
 /**
+ * The inverse: strip the guard apostrophe `csvCell` added.
+ *
+ * A spreadsheet consumes it, but a CSV read back by a program does not — and
+ * one of these files is read back by a program now, since a ScrapeDeck export
+ * can be uploaded to Bulk Import. Without this a title the supplier wrote as
+ * "- Handmade river table" would enter the catalogue as "'- Handmade river
+ * table", and the same stray apostrophe would land on the description, the
+ * SEO fields and, worse, on an identity column.
+ *
+ * Scoped to exactly what `csvCell` guards, so a legitimate leading apostrophe
+ * ("'90s revival") survives.
+ */
+export function uncsvCell(value: string): string {
+  return value.replace(/^'(?=[=+\-@\t\r])/, "");
+}
+
+/**
  * Full CSV document: the given header, then the rows, CRLF throughout.
  *
  * CRLF rather than LF because Excel on Windows still treats a lone LF as one

@@ -8,7 +8,35 @@
  * - List cells (images, occasions, tags, options) accept " | " or ","
  *   separators.
  * - Boolean cells accept TRUE/FALSE (also 1/0, yes/no).
+ *
+ * The products template's two "tier" columns mean different things, and the
+ * words come from the two vocabularies rather than being typed here:
+ * `product_tier` is the PRODUCT TIER (`src/lib/product-size-tier.ts`) and
+ * `tier` is the IMPORT LIST (`src/lib/import-list.ts`). The column names are
+ * a contract — every export and every row already written carries them.
  */
+
+import { IMPORT_LIST_NAME, IMPORT_LISTS } from "@/lib/import-list";
+import {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_NAME,
+  SIZE_TIER_SHORT,
+} from "@/lib/product-size-tier";
+
+/** "LARGE (Collectible Furniture & Spatial Art), MEDIUM (…), SMALL (…)". */
+const PRODUCT_TIER_DOC = PRODUCT_SIZE_TIERS.map(
+  (tier) => `${tier.replace("_FORMAT", "")} (${SIZE_TIER_NAME[tier]})`,
+).join(", ");
+
+/** "1 Owner's store · 2 Resin goods · 3 Supplies · 4 3D printing". */
+const IMPORT_LIST_DOC = IMPORT_LISTS.map(
+  (list) => `${list} ${IMPORT_LIST_NAME[list]}`,
+).join(" · ");
+
+/** The short words, for the sentence that says which is which. */
+const PRODUCT_TIER_SHORT_DOC = PRODUCT_SIZE_TIERS.map(
+  (tier) => SIZE_TIER_SHORT[tier],
+).join(", ");
 
 export const IMPORT_TYPE_KEYS = [
   "products",
@@ -115,7 +143,7 @@ export const IMPORT_TEMPLATES: readonly ImportTemplate[] = [
       custom2_options: "",
       custom2_required: "FALSE",
     },
-    docs: "One product per row. category_slug must match an existing category. Occasions, images and custom-field options take comma or | separated lists; custom field types are SELECT, TEXT, SWATCH, SIZE, NUMBER or FILE. product_tier is the PRODUCT tier — LARGE (collectible furniture & spatial art), MEDIUM (memory & celebration art) or SMALL (personal art & gifting); the full names LARGE_FORMAT/MEDIUM_FORMAT/SMALL_FORMAT also work. tier is a different thing: the IMPORT tier 1-4 (1 owner · 2 resin goods · 3 supplies · 4 3D print), which records where a row came from and sorts the shop — products without one sort last. in_stock is TRUE/FALSE (defaults to in stock). Empty product_tier/tier/in_stock cells leave existing values unchanged on update.",
+    docs: `One product per row. category_slug must match an existing category. Occasions, images and custom-field options take comma or | separated lists; custom field types are SELECT, TEXT, SWATCH, SIZE, NUMBER or FILE. product_tier is the product tier (${PRODUCT_TIER_SHORT_DOC}) — ${PRODUCT_TIER_DOC}; the full names LARGE_FORMAT/MEDIUM_FORMAT/SMALL_FORMAT also work. tier is the import list a row came from, 1-4 (${IMPORT_LIST_DOC}) — leave it blank for a studio product; it also sorts the shop, and products without one sort last. in_stock is TRUE/FALSE (defaults to in stock). Empty product_tier/tier/in_stock cells leave existing values unchanged on update. A Product Scraper export (the CSV from Studio → Scraper) can be uploaded here as Products: every row lands as a draft with the rewrite guard on, categories and product tiers are filled in where the listing makes them clear, the file's status cell and its list (tier) cell are ignored, and a product_tier or category_slug cell you add by hand is honoured.`,
   },
   {
     key: "categories",
