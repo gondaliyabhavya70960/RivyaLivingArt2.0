@@ -317,6 +317,7 @@ export function ProductList({
         approved: 0,
         published: 0,
         untiered: 0,
+        placeholder: 0,
         alreadyLive: 0,
         archived: 0,
       },
@@ -357,15 +358,18 @@ export function ProductList({
       updated = 0,
       skippedRewrite = 0,
       skippedUntiered = 0,
+      skippedPlaceholder = 0,
     } = result.data ?? {};
     if (status === "PUBLISHED") {
-      // Both reasons are named. "Skipped 12" with no reason is the toast that
-      // sends an owner to look for a bug that is a guardrail.
+      // All three reasons are named. "Skipped 12" with no reason is the toast
+      // that sends an owner to look for a bug that is a guardrail.
       const skipped = [
         skippedRewrite > 0 &&
           `${formatCount(skippedRewrite)} that still need${skippedRewrite === 1 ? "s" : ""} a rewrite of scraped content`,
         skippedUntiered > 0 &&
           `${formatCount(skippedUntiered)} with no product tier set`,
+        skippedPlaceholder > 0 &&
+          `${formatCount(skippedPlaceholder)} still on a concept placeholder image instead of a photograph`,
       ].filter((line): line is string => typeof line === "string");
       if (skipped.length > 0) {
         toast.warning(

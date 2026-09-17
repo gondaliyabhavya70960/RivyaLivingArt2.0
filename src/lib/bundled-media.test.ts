@@ -6,6 +6,10 @@ import { describe, expect, it } from "vitest";
 import { CANONICAL_CATEGORIES } from "./catalog-taxonomy";
 import blurManifest from "./media-v3-blur.json";
 import redesignBlurManifest from "./redesign-blur.json";
+import {
+  PLACEHOLDER_ASSET_FILENAME,
+  isPlaceholderAsset,
+} from "./placeholder-assets";
 import mediaV3Manifest from "../../docs/media-v3-manifest.json";
 
 /**
@@ -198,12 +202,17 @@ describe("the redesign LQIP manifest", () => {
    * and become publishable by accident, so the two sets are kept apart here.
    */
   it("files every Drive catalog image under the placeholder path", () => {
+    // Both halves of the test read `placeholder-assets.ts` rather than
+    // re-typing the pattern and the prefix. That module is the single copy of
+    // this vocabulary on purpose: CLAUDE.md's scrape-tier story ends with five
+    // hand-written copies and three tiers that shipped invisible, and this
+    // file held copy #2 for exactly one commit.
     const catalog = Object.values(redesignBlurManifest).filter((entry) =>
-      /product-(hero|scene)-\d+/.test(entry.src),
+      PLACEHOLDER_ASSET_FILENAME.test(entry.src),
     );
     expect(catalog.length).toBe(45);
     for (const entry of catalog) {
-      expect(entry.src.startsWith("/redesign/catalog/"), entry.src).toBe(true);
+      expect(isPlaceholderAsset(entry.src), entry.src).toBe(true);
     }
   });
 });

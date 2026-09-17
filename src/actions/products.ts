@@ -10,6 +10,11 @@ import {
   PRODUCT_SIZE_TIERS,
   SIZE_TIER_NAME,
 } from "@/lib/product-size-tier";
+import {
+  coverUrlOf,
+  describePlaceholderPublishProblem,
+  isPlaceholderAsset,
+} from "@/lib/placeholder-assets";
 import { db } from "@/lib/db";
 import { CATALOG_NAV_TAG } from "@/lib/catalog-nav";
 import { SHOP_FIRST_PAGE_TAG } from "@/lib/shop";
@@ -313,6 +318,20 @@ export async function upsertProduct(
   });
   if (sizeTierProblem) return { ok: false, error: sizeTierProblem };
 
+  // PUBLISH GUARD — a concept placeholder is never the cover of a purchasable
+  // product (plan §4.6). Scoped to the STATE, not the transition, unlike its
+  // neighbour above: `placeholder-assets.ts` argues why at length, but the
+  // short version is that the size-tier exemption pays for its hole with 4,385
+  // rescued rows, and there is no comparable backlog here to pay with.
+  //
+  // Reads the INCOMING images rather than the stored row, because this save may
+  // be the thing putting the placeholder there.
+  const placeholderProblem = describePlaceholderPublishProblem({
+    nextStatus: data.status,
+    coverUrl: coverUrlOf(data.images),
+  });
+  if (placeholderProblem) return { ok: false, error: placeholderProblem };
+
   // Prune per-locale overrides to known locales + translatable fields; an empty
   // result writes SQL NULL so the column stays clean (public site unchanged).
   const normalizedTranslations = normalizeTranslations(
@@ -526,6 +545,7 @@ export async function setProductsStatus(
     updated: number;
     skippedRewrite: number;
     skippedUntiered: number;
+    skippedPlaceholder: number;
   }>
 > {
   const session = await requireStaff();
@@ -541,6 +561,7 @@ export async function setProductsStatus(
     let targetIds = resolved.ids;
     let skippedRewrite = 0;
     let skippedUntiered = 0;
+    let skippedPlaceholder = 0;
 
     if (parsedStatus.data === "PUBLISHED") {
       // Scraped reference content is never bulk-published silently.
@@ -568,6 +589,30 @@ export async function setProductsStatus(
       const untieredIds = new Set(untiered.map((p) => p.id));
       skippedUntiered = untieredIds.size;
       targetIds = targetIds.filter((id) => !untieredIds.has(id));
+
+      // The placeholder guard cannot be a `where` clause the way the two above
+      // are: the cover is the image with the LOWEST `order`, and Prisma has no
+      // predicate for "the related row that sorts first" — `images: { some: … }`
+      // would answer "has a placeholder anywhere in the gallery", a different
+      // and much broader question. So the covers are read and filtered here.
+      //
+      // And unlike the untiered clause this carries no `status: { not:
+      // "PUBLISHED" }`: the refusal is state-scoped, so re-publishing a batch
+      // that is already live still drops any row whose cover is a placeholder.
+      const withCovers = await db.product.findMany({
+        where: { id: { in: targetIds } },
+        select: {
+          id: true,
+          images: { orderBy: { order: "asc" }, take: 1, select: { url: true } },
+        },
+      });
+      const placeholderIds = new Set(
+        withCovers
+          .filter((p) => isPlaceholderAsset(p.images[0]?.url))
+          .map((p) => p.id),
+      );
+      skippedPlaceholder = placeholderIds.size;
+      targetIds = targetIds.filter((id) => !placeholderIds.has(id));
     }
 
     const updated =
@@ -584,7 +629,12 @@ export async function setProductsStatus(
       userId: session.user.id,
       action: parsedStatus.data === "PUBLISHED" ? "publish" : "unpublish",
       entity: "Product",
-      meta: { count: updated, skippedRewrite, skippedUntiered },
+      meta: {
+        count: updated,
+        skippedRewrite,
+        skippedUntiered,
+        skippedPlaceholder,
+      },
     });
 
     revalidatePath("/studio/products");
@@ -597,7 +647,7 @@ export async function setProductsStatus(
     revalidateTag(CATALOG_NAV_TAG, "max");
     revalidateTag(SHOP_FIRST_PAGE_TAG, "max");
     // (publish/unpublish changes the mega-menu per-category counts).
-    return { updated, skippedRewrite, skippedUntiered };
+    return { updated, skippedRewrite, skippedUntiered, skippedPlaceholder };
   });
 }
 
@@ -995,9 +1045,17 @@ export async function approveProducts(
   return runAction(async () => {
     const rows = await db.product.findMany({
       where: { id: { in: resolved.ids } },
-      select: { id: true, needsRewrite: true, sizeTier: true, status: true },
+      select: {
+        id: true,
+        needsRewrite: true,
+        sizeTier: true,
+        status: true,
+        images: { orderBy: { order: "asc" }, take: 1, select: { url: true } },
+      },
     });
-    const plan = planProductApproval(rows);
+    const plan = planProductApproval(
+      rows.map((row) => ({ ...row, coverUrl: row.images[0]?.url ?? null })),
+    );
     const now = new Date();
 
     // The publish half re-asserts the conditions it was PLANNED under. The
@@ -1023,6 +1081,7 @@ export async function approveProducts(
       approved: plan.reviewIds.length,
       published: published.count,
       untiered: plan.untieredIds.length,
+      placeholder: plan.placeholderIds.length,
       alreadyLive: plan.alreadyLive,
       archived: plan.archived,
     };
