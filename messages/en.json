@@ -688,8 +688,10 @@
       "step1Body": "Describe the piece, attach reference photos, pick a budget band — two minutes, no commitment.",
       "step2Title": "We design & quote",
       "step2Body": "The maker replies on WhatsApp with sketches, material advice and a fixed price + timeline.",
-      "step3Title": "Poured, cured & shipped",
-      "step3Body": "You get progress photos while it cures, then careful packaging to your door across India.",
+      "step3Title": "Poured, cured & finished",
+      "step3Body": "You get progress photos while it cures, and the piece is hand-finished on the bench before it goes anywhere.",
+      "step4Title": "Packed & delivered",
+      "step4Body": "Careful packaging built around the piece, then tracked delivery to your door across India.",
       "proofEyebrow": "commissioned before",
       "proofHeading": "People trusted us with their ideas",
       "seeCommissions": "See recent commissions",
@@ -812,7 +814,9 @@
         "name": "Name",
         "phone": "Phone",
         "email": "Email"
-      }
+      },
+      "noPreference": "No preference",
+      "occasionNone": "Not sure yet"
     }
   },
   "Contact": {
@@ -828,7 +832,7 @@
       "gridHeading": "Reach us your way",
       "phoneLabel": "Phone",
       "whatsappLabel": "WhatsApp",
-      "whatsappBody": "The fastest way to reach us — say hello and we'll take it from there.",
+      "whatsappBody": "Send a photo, a room measurement or a rough sketch on a napkin — whatever you already have. Replies come from the bench, not a queue.",
       "whatsappCta": "Message on WhatsApp",
       "emailLabel": "Email",
       "mapsLabel": "Find the studio",
@@ -1057,7 +1061,12 @@
       "imageAlt": "A layered resin block read as ocean depth, pale bands running through blue"
     },
     "quickViewLabel": "Quick view",
-    "allSizeTiers": "All scales"
+    "allSizeTiers": "All scales",
+    "commissionEnd": {
+      "eyebrow": "one of one",
+      "statement": "Can't find it? It doesn't exist yet — commission it.",
+      "cta": "Start a commission"
+    }
   },
   "Search": {
     "meta": {
@@ -1446,7 +1455,9 @@
       "summaryPiece": "Piece",
       "summaryPrice": "Price",
       "engravingPreview": "Preview",
-      "engravingPreviewEmpty": "Your words here"
+      "engravingPreviewEmpty": "Your words here",
+      "eyebrowPlain": "order this piece",
+      "introPlain": "Tell us how many and anything we should know, then send it through. We confirm price and timeline on WhatsApp — nothing is paid here."
     },
     "share": {
       "hintLabel": "Drop a hint",
@@ -1474,7 +1485,8 @@
       "caption": "Photographed in a real room, at true scale — not a studio render."
     },
     "demoOrderNote": "This is a Content Lab demo piece — the order still submits, prefixed [DEMO] on WhatsApp.",
-    "dimensionsLabel": "Dimensions"
+    "dimensionsLabel": "Dimensions",
+    "ctaOrder": "Order this piece"
   },
   "Upload": {
     "add": "+ Add references",
@@ -1562,7 +1574,6 @@
       "eyebrow": "large-format commissions",
       "headline": "Large resin art, made to your room.",
       "lead": "A large piece is planned around a room before it is designed: where it sits, how it is used, how it gets through the door. That is why work at this scale begins as a conversation rather than an order.",
-      "startCta": "Start a large commission",
       "briefCta": "Open the commission form"
     },
     "scope": {

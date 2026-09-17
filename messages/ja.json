@@ -688,8 +688,10 @@
       "step1Body": "作品のイメージを書き、参考写真を添え、ご予算の目安をお選びください——2 分ほど、ご依頼の義務はありません。",
       "step2Title": "デザインとお見積もり",
       "step2Body": "作り手が WhatsApp で、スケッチ、素材のご提案、確定価格と納期をお返しします。",
-      "step3Title": "流し込み、硬化、そしてお届け",
-      "step3Body": "硬化していく様子を進捗写真でお届けし、その後は丁寧に梱包して、インド全土のご自宅までお届けします。",
+      "step3Title": "注ぎ、硬化させ、仕上げる",
+      "step3Body": "硬化のあいだ進捗の写真をお送りし、作品は工房で手仕上げをしてから送り出します。",
+      "step4Title": "梱包してお届け",
+      "step4Body": "作品に合わせて組んだ梱包で、インド全土のご自宅まで追跡付きでお届けします。",
       "proofEyebrow": "これまでのご依頼作品",
       "proofHeading": "皆さまが、アイデアを託してくださいました",
       "seeCommissions": "最近のご依頼作品を見る",
@@ -812,7 +814,9 @@
         "name": "お名前",
         "phone": "電話番号",
         "email": "メールアドレス"
-      }
+      },
+      "noPreference": "こだわりなし",
+      "occasionNone": "まだ決めていない"
     }
   },
   "Contact": {
@@ -828,7 +832,7 @@
       "gridHeading": "ご都合のよい方法でご連絡ください",
       "phoneLabel": "電話",
       "whatsappLabel": "WhatsApp",
-      "whatsappBody": "最も早くつながる方法です——まずはひとことお声がけください。そこからお話を進めましょう。",
+      "whatsappBody": "写真でも、部屋の寸法でも、走り書きのスケッチでも — 手元にあるものをお送りください。返信は工房から直接お返しします。",
       "whatsappCta": "WhatsApp でメッセージを送る",
       "emailLabel": "メール",
       "mapsLabel": "スタジオへのアクセス",
@@ -1057,7 +1061,12 @@
     },
     "sortName": "名前順",
     "quickViewLabel": "クイックビュー",
-    "allSizeTiers": "すべてのスケール"
+    "allSizeTiers": "すべてのスケール",
+    "commissionEnd": {
+      "eyebrow": "世界にひとつ",
+      "statement": "見つかりませんか。まだ存在しないだけです — お作りします。",
+      "cta": "オーダーを始める"
+    }
   },
   "Search": {
     "meta": {
@@ -1446,7 +1455,9 @@
       "summaryPiece": "作品",
       "summaryPrice": "価格",
       "engravingPreview": "見本",
-      "engravingPreviewEmpty": "ここにお言葉が入ります"
+      "engravingPreviewEmpty": "ここにお言葉が入ります",
+      "eyebrowPlain": "この作品を注文する",
+      "introPlain": "ご希望の数と伝えておきたいことを書いて送ってください。価格と納期はWhatsAppで確定します — ここでのお支払いはありません。"
     },
     "share": {
       "hintLabel": "さりげなくおねだり",
@@ -1474,7 +1485,8 @@
       "caption": "実際の部屋で、実寸で撮影 — スタジオのレンダリングではありません。"
     },
     "demoOrderNote": "これはコンテンツラボのデモ商品です — 注文は送信されますが、WhatsAppでは [DEMO] が先頭に付きます。",
-    "dimensionsLabel": "寸法"
+    "dimensionsLabel": "寸法",
+    "ctaOrder": "この作品を注文する"
   },
   "Consent": {
     "label": "Cookie と分析への同意",
@@ -1562,7 +1574,6 @@
       "eyebrow": "大型のオーダー",
       "headline": "大きなレジンアートを、あなたの部屋のために。",
       "lead": "大きな作品は、設計する前にまず部屋から考えます。どこに置くのか、どう使うのか、扉を通るのか。だからこのスケールの仕事は、注文ではなく会話から始まります。",
-      "startCta": "大型のご相談を始める",
       "briefCta": "オーダーフォームを開く"
     },
     "scope": {

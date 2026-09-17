@@ -688,8 +688,10 @@
       "step1Body": "Describe la pieza, adjunta fotos de referencia y elige un rango de presupuesto: dos minutos, sin compromiso.",
       "step2Title": "Diseñamos y cotizamos",
       "step2Body": "Quien la crea te responde por WhatsApp con bocetos, consejos sobre materiales y un precio cerrado con su plazo.",
-      "step3Title": "Vertida, curada y enviada",
-      "step3Body": "Recibes fotos del progreso mientras cura y, después, un embalaje cuidadoso hasta tu puerta en toda la India.",
+      "step3Title": "Vertida, curada y acabada",
+      "step3Body": "Recibe fotos del avance mientras cura, y la pieza se acaba a mano en el taller antes de salir.",
+      "step4Title": "Embalada y entregada",
+      "step4Body": "Un embalaje hecho a la medida de la pieza y envío con seguimiento hasta su puerta en toda la India.",
       "proofEyebrow": "encargos anteriores",
       "proofHeading": "Personas que nos confiaron sus ideas",
       "seeCommissions": "Ver encargos recientes",
@@ -812,7 +814,9 @@
         "name": "Nombre",
         "phone": "Teléfono",
         "email": "Correo"
-      }
+      },
+      "noPreference": "Sin preferencia",
+      "occasionNone": "Aún no lo sé"
     }
   },
   "Contact": {
@@ -828,7 +832,7 @@
       "gridHeading": "Contáctanos a tu manera",
       "phoneLabel": "Teléfono",
       "whatsappLabel": "WhatsApp",
-      "whatsappBody": "La forma más rápida de contactarnos: salúdanos y seguimos desde ahí.",
+      "whatsappBody": "Envíe una foto, la medida de la sala o un boceto rápido: lo que ya tenga. Las respuestas salen del taller, no de una cola.",
       "whatsappCta": "Escribir por WhatsApp",
       "emailLabel": "Correo electrónico",
       "mapsLabel": "Encuentra el estudio",
@@ -1057,7 +1061,12 @@
     },
     "sortName": "Nombre",
     "quickViewLabel": "Vista rápida",
-    "allSizeTiers": "Todas las escalas"
+    "allSizeTiers": "Todas las escalas",
+    "commissionEnd": {
+      "eyebrow": "una sola pieza",
+      "statement": "¿No lo encuentra? Todavía no existe: encárguelo.",
+      "cta": "Iniciar un encargo"
+    }
   },
   "Search": {
     "meta": {
@@ -1446,7 +1455,9 @@
       "summaryPiece": "Pieza",
       "summaryPrice": "Precio",
       "engravingPreview": "Vista previa",
-      "engravingPreviewEmpty": "Tus palabras aquí"
+      "engravingPreviewEmpty": "Tus palabras aquí",
+      "eyebrowPlain": "pedir esta pieza",
+      "introPlain": "Díganos cuántas quiere y lo que debamos saber, y envíelo. Confirmamos precio y plazo por WhatsApp: aquí no se paga nada."
     },
     "share": {
       "hintLabel": "Deja una pista",
@@ -1474,7 +1485,8 @@
       "caption": "Fotografiada en una habitación real, a escala real — no es un render de estudio."
     },
     "demoOrderNote": "Esta es una pieza de demostración del Content Lab — el pedido se envía igual, con el prefijo [DEMO] en WhatsApp.",
-    "dimensionsLabel": "Dimensiones"
+    "dimensionsLabel": "Dimensiones",
+    "ctaOrder": "Pedir esta pieza"
   },
   "Consent": {
     "label": "Consentimiento de cookies y analítica",
@@ -1562,7 +1574,6 @@
       "eyebrow": "encargos de gran formato",
       "headline": "Arte en resina a gran escala, hecho para tu sala.",
       "lead": "Una pieza grande se planifica en torno a una sala antes de diseñarse: dónde se apoya, cómo se usa, cómo entra por la puerta. Por eso el trabajo a esta escala empieza como una conversación y no como un pedido.",
-      "startCta": "Iniciar un encargo grande",
       "briefCta": "Abrir el formulario de encargo"
     },
     "scope": {

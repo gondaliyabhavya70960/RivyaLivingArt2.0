@@ -275,9 +275,14 @@ export default async function AboutPage({
           <Eyebrow rule={false} className="text-champagne">
             {t("hero.eyebrow")}
           </Eyebrow>
+          {/* `text-balance` closes the widow the audit names ("Where resin
+              meets / reverence."): the measure cap alone decides WHERE the
+              line breaks but not how evenly, so a three-word headline broke
+              two-and-one. Same device `SectionHeading` already uses for every
+              other title on the site. */}
           <h1
             id="about-heading"
-            className="max-w-[14ch] font-display text-hero leading-hero tracking-display text-mineral"
+            className="max-w-[14ch] font-display text-hero leading-hero tracking-display text-balance text-mineral"
           >
             {t("hero.headline")}
           </h1>

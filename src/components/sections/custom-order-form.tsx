@@ -16,6 +16,7 @@ import { toast } from "@/components/storefront/toast";
 import {
   fieldControlClasses,
   fieldLabelClasses,
+  PillField,
   SelectField,
 } from "@/components/storefront/form-field";
 import { ReferenceImageUploader } from "@/components/storefront/reference-image-uploader";
@@ -639,40 +640,55 @@ export function CustomOrderForm({ options }: { options: FormOptionSet }) {
               disabled={busy}
               onChange={(e) => setMaterial(e.target.value)}
             />
-            <SelectField
+            {/* Occasion, budget and timeline are pills, not selects (plan
+                §2.4 · audit §3.5). All three are short closed lists whose
+                whole point is comparison — a budget band is chosen by
+                looking at the bands — and an OS picker sheet hides the form
+                while you do it. Material stays a select: the spec wants
+                macro thumbnails there, and the four material macros do not
+                map onto the five owner-editable options without inventing
+                the pairing.
+
+                Each one keeps the placeholder's job as a first pill: these
+                fields are optional, and a radiogroup cannot otherwise be
+                un-answered. */}
+            <PillField
               id="custom-occasion"
               name="occasion"
               label={t("occasionLabel")}
               optionalLabel={t("optional")}
-              placeholder={t("occasionPlaceholder")}
+              emptyLabel={t("occasionNone")}
               options={options.OCCASION}
               value={occasion}
               disabled={busy}
-              onChange={(e) => setOccasion(e.target.value)}
+              onChange={setOccasion}
+              className="sm:col-span-2"
             />
-            <SelectField
+            <PillField
               id="custom-budget"
               name="budget"
               label={t("budgetLabel")}
               optionalLabel={t("optional")}
-              placeholder={t("budgetPlaceholder")}
+              emptyLabel={t("noPreference")}
               options={options.BUDGET}
               value={budget}
               disabled={busy}
               hint={t("budgetHint")}
-              onChange={(e) => setBudget(e.target.value)}
+              onChange={setBudget}
+              className="sm:col-span-2"
             />
-            <SelectField
+            <PillField
               id="custom-timeline"
               name="timeline"
               label={t("timelineLabel")}
               optionalLabel={t("optional")}
-              placeholder={t("timelinePlaceholder")}
+              emptyLabel={t("noPreference")}
               options={options.TIMELINE}
               value={timeline}
               disabled={busy}
               hint={t("timelineHint")}
-              onChange={(e) => setTimeline(e.target.value)}
+              onChange={setTimeline}
+              className="sm:col-span-2"
             />
           </div>
         </fieldset>

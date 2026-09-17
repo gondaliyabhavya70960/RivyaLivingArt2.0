@@ -688,8 +688,10 @@
       "step1Body": "Décrivez la pièce, joignez des photos de référence, choisissez une fourchette de budget — deux minutes, sans engagement.",
       "step2Title": "Nous concevons et chiffrons",
       "step2Body": "La personne qui façonne votre pièce vous répond sur WhatsApp avec des croquis, des conseils sur les matériaux et un prix fixe accompagné d'un délai.",
-      "step3Title": "Coulée, durcie et expédiée",
-      "step3Body": "Vous recevez des photos de l'avancement pendant le durcissement, puis un emballage soigné livré jusqu'à votre porte, partout en Inde.",
+      "step3Title": "Coulée, polymérisée, finie",
+      "step3Body": "Vous recevez des photos d'avancement pendant la polymérisation, et la pièce est finie à la main à l'atelier avant de partir.",
+      "step4Title": "Emballée et livrée",
+      "step4Body": "Un emballage conçu autour de la pièce, puis une livraison suivie jusqu'à votre porte partout en Inde.",
       "proofEyebrow": "déjà commandées",
       "proofHeading": "On nous a confié ses plus belles idées",
       "seeCommissions": "Voir les commandes récentes",
@@ -812,7 +814,9 @@
         "name": "Nom",
         "phone": "Téléphone",
         "email": "E-mail"
-      }
+      },
+      "noPreference": "Sans préférence",
+      "occasionNone": "Je ne sais pas encore"
     }
   },
   "Contact": {
@@ -828,7 +832,7 @@
       "gridHeading": "Joignez-nous comme vous préférez",
       "phoneLabel": "Téléphone",
       "whatsappLabel": "WhatsApp",
-      "whatsappBody": "Le moyen le plus rapide de nous joindre — dites-nous bonjour et nous prenons le relais.",
+      "whatsappBody": "Envoyez une photo, les dimensions de la pièce ou un croquis rapide — ce que vous avez déjà. Les réponses viennent de l'atelier, pas d'une file d'attente.",
       "whatsappCta": "Écrire sur WhatsApp",
       "emailLabel": "E-mail",
       "mapsLabel": "Trouver l'atelier",
@@ -1057,7 +1061,12 @@
     },
     "sortName": "Nom",
     "quickViewLabel": "Aperçu rapide",
-    "allSizeTiers": "Toutes les échelles"
+    "allSizeTiers": "Toutes les échelles",
+    "commissionEnd": {
+      "eyebrow": "pièce unique",
+      "statement": "Vous ne le trouvez pas ? Il n'existe pas encore — faites-le créer.",
+      "cta": "Lancer une commande sur mesure"
+    }
   },
   "Search": {
     "meta": {
@@ -1446,7 +1455,9 @@
       "summaryPiece": "Pièce",
       "summaryPrice": "Prix",
       "engravingPreview": "Aperçu",
-      "engravingPreviewEmpty": "Vos mots ici"
+      "engravingPreviewEmpty": "Vos mots ici",
+      "eyebrowPlain": "commander cette pièce",
+      "introPlain": "Indiquez la quantité et tout ce que nous devons savoir, puis envoyez. Nous confirmons le prix et le délai sur WhatsApp — rien n'est payé ici."
     },
     "share": {
       "hintLabel": "Glisser un indice",
@@ -1474,7 +1485,8 @@
       "caption": "Photographiée dans une pièce réelle, à l'échelle réelle — pas un rendu studio."
     },
     "demoOrderNote": "Il s'agit d'une pièce de démonstration du Content Lab — la commande est tout de même envoyée, préfixée [DEMO] sur WhatsApp.",
-    "dimensionsLabel": "Dimensions"
+    "dimensionsLabel": "Dimensions",
+    "ctaOrder": "Commander cette pièce"
   },
   "Consent": {
     "label": "Consentement aux cookies et à la mesure d'audience",
@@ -1562,7 +1574,6 @@
       "eyebrow": "commandes grand format",
       "headline": "De la résine à grande échelle, faite pour votre pièce.",
       "lead": "Une grande pièce se pense autour d'un lieu avant d'être dessinée : où elle se pose, comment elle sert, comment elle passe la porte. C'est pourquoi le travail à cette échelle commence par une conversation plutôt que par une commande.",
-      "startCta": "Lancer une grande commande",
       "briefCta": "Ouvrir le formulaire"
     },
     "scope": {

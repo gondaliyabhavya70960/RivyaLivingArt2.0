@@ -327,6 +327,20 @@ export default async function ProductPage({ params }: PageProps) {
     locale === "en"
       ? tTier
       : await getTranslations({ locale: "en", namespace: "ProductTier" });
+  /**
+   * "Customize this piece" is a promise the panel can only keep when the
+   * owner has given this product something to choose (audit §3.4 row 9).
+   * With no `ProductCustomField` rows the panel is quantity, notes,
+   * references and contact — an ORDER form — and the customize framing sends
+   * a visitor down the page looking for options that are not there.
+   *
+   * Only the FRAMING moves: the anchor button, the section heading and its
+   * intro. The panel itself, the tier CTA and the WhatsApp payload are
+   * untouched, so the order flow §1.1 protects is byte-identical either way.
+   */
+  const hasCustomFields = product.customFields.length > 0;
+  const orderFramingKey = hasCustomFields ? "ctaCustomize" : "ctaOrder";
+
   const tierCopy = tierOrderCopy(product.sizeTier, (key) =>
     tTier.has(key) ? tTier(key) : tTierEn(key),
   );
@@ -820,7 +834,7 @@ export default async function ProductPage({ params }: PageProps) {
                     make the CTA area visually noisy"). */}
                 <div id="pdp-actions" className="mt-8 flex flex-col gap-3">
                   <Button asChild variant="primary" size="lg">
-                    <a href="#order-panel">{tp("ctaCustomize")}</a>
+                    <a href="#order-panel">{tp(orderFramingKey)}</a>
                   </Button>
                   <Button asChild variant="secondary" size="lg">
                     <a
@@ -925,9 +939,11 @@ export default async function ProductPage({ params }: PageProps) {
           <div className="u-shell flex flex-col gap-10">
             <SectionHeading
               id="order-heading"
-              eyebrow={tp("order.eyebrow")}
-              title={tp("ctaCustomize")}
-              intro={tp("order.intro")}
+              eyebrow={tp(
+                hasCustomFields ? "order.eyebrow" : "order.eyebrowPlain",
+              )}
+              title={tp(orderFramingKey)}
+              intro={tp(hasCustomFields ? "order.intro" : "order.introPlain")}
             />
             <ProductOrderPanel
               product={orderPanelProduct}

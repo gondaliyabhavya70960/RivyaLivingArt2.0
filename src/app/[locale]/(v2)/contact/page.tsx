@@ -192,10 +192,8 @@ export default async function ContactPage({
           <div className="grid gap-x-10 gap-y-10 lg:grid-cols-12">
             {/* WHATSAPP — the dominant block. */}
             <div className="flex flex-col gap-6 border-t border-hairline py-10 lg:col-span-7 lg:pe-10">
-              <p className="u-micro flex flex-wrap items-center gap-x-2 text-champagne-ink">
-                <span>{t("whatsappLabel")}</span>
-                <span aria-hidden>·</span>
-                <span className="text-graphite">{t("whatsappMeta")}</span>
+              <p className="u-micro text-champagne-ink">
+                {t("whatsappLabel")}
               </p>
               <p className="font-display text-h2 leading-h2 tracking-display text-ink">
                 {t("whatsappHeadline")}
@@ -219,6 +217,13 @@ export default async function ContactPage({
                   <span className="sr-only"> {tCommon("openInNewTab")}</span>
                 </a>
               </Button>
+              {/* The reply window sits UNDER the button, not on the eyebrow
+                  above the headline (audit §3.6): it is the answer to the
+                  question a visitor asks at the moment of pressing, and
+                  reading it three paragraphs earlier is reading it too soon.
+                  It moved here rather than being repeated — the same line in
+                  two places is the noise this card already had once. */}
+              <p className="u-micro -mt-2">{t("whatsappMeta")}</p>
             </div>
 
             {/* PHONE · EMAIL · STUDIO — the quiet three. */}

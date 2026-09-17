@@ -5,7 +5,7 @@ import { Check, ChevronDown, Minus, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { fieldControlClasses } from "./form-field";
+import { fieldControlClasses, pillClasses } from "./form-field";
 
 /**
  * Customization controls — REDESIGN.md §9.3.
@@ -496,14 +496,11 @@ export function OptionPicker({
               />
               <label
                 htmlFor={inputId}
-                className={cn(
-                  "inline-flex h-11 cursor-pointer items-center rounded-full border px-5 font-body text-14 select-none",
-                  "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
-                  "peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-3",
-                  checked
-                    ? "border-champagne bg-sand font-medium text-ink"
-                    : "border-hairline text-ink hover:bg-sand",
-                )}
+                /* The pill grammar lives once, in form-field.tsx, beside
+                   `PillField` — the custom-order form renders the same pill
+                   on real fields, and two hand-kept copies of it would drift
+                   the day one of them is adjusted. */
+                className={pillClasses(checked)}
               >
                 {option.label}
               </label>

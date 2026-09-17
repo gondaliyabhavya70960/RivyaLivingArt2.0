@@ -130,7 +130,6 @@ export default async function CustomOrderPage({
     t,
     tRoot,
     tHow,
-    tProcess,
     tFaq,
     tPortfolio,
     tCommon,
@@ -144,7 +143,6 @@ export default async function CustomOrderPage({
     // rail below reads its labels straight off the manifest.
     getTranslations("CustomOrder"),
     getTranslations("Home.how"),
-    getTranslations("Process.timeline"),
     getTranslations("Faq"),
     getTranslations("Portfolio"),
     getTranslations("Common"),
@@ -221,13 +219,18 @@ export default async function CustomOrderPage({
         piece.cover !== null,
     );
 
-  /* B2's four steps resolve from existing keys — the commission steps 1–3
-     plus the process timeline's dispatch step. No invented copy. */
+  /* Idea → Quote → Make → Deliver (plan §2.4 · audit §3.5).
+     The fourth step used to borrow `Process.timeline.step6` — "Curing" —
+     while step 03 already read "Poured, cured & shipped": the band said
+     cured twice, and said it AFTER shipping. Step 03 is now the making and
+     step 04 is the delivery that was buried in step 03's last clause, so the
+     four steps are four different things in the order they happen. Both are
+     owner-editable slots like every other line here. */
   const steps = [
     { title: t("step1Title"), body: t("step1Body") },
     { title: t("step2Title"), body: t("step2Body") },
     { title: t("step3Title"), body: t("step3Body") },
-    { title: tProcess("step6Title"), body: tProcess("step6Copy") },
+    { title: t("step4Title"), body: t("step4Body") },
   ];
 
   const sectionNodes: Record<string, ReactNode> = {

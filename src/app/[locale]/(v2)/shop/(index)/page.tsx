@@ -11,6 +11,7 @@ import {
 } from "@/components/storefront/section-heading";
 import { Pagination } from "@/components/storefront/pagination";
 import { ShopExplorer } from "@/components/storefront/shop-explorer";
+import { SnapRail } from "@/components/storefront/snap-rail";
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { groupForCategorySlug } from "@/lib/catalog-taxonomy";
@@ -233,6 +234,9 @@ export default async function ShopPage({
   const t = await getTranslations("Shop");
   const tNav = await getTranslations("Nav");
   const tCommon = await getTranslations("Common");
+  // `SnapRail`'s prev/next/of live in the Lightbox namespace — one set of
+  // carousel words for every rail on the site (see /shop/[category]).
+  const tLightbox = await getTranslations("Lightbox");
   // Refs rather than bare URLs: the editorial break is the one slot this
   // page renders, and the ref carries the 20px LQIP the URL map drops. Same
   // cached read either way — `getSiteImages` is a narrowing of this one.
@@ -351,6 +355,32 @@ export default async function ShopPage({
     // `filters.type` is always set now, so this resolves for every request.
     CATEGORY_TABS.find((tab) => tab.type === filters.type)?.key;
 
+  // A tab that leads to an empty shop is a promise the catalogue cannot keep
+  // (audit §3.3). `categoryOptions` already carries the whole-catalogue count
+  // per shelf — `fetchShopCategoryOptions` counts against `buildProductWhere({})`
+  // and drops the empty ones — so "stocked" is just "some surviving shelf is
+  // inside this tab".
+  //
+  // The membership test is `CATALOG_GROUPS[type].slugs`, deliberately NOT
+  // `groupForCategorySlug` — the two disagree and the QUERY is the one that
+  // matters. `buildProductWhere` filters an ecosystem with
+  // `category.slug in CATALOG_GROUPS[type].slugs`, while `groupForCategorySlug`
+  // answers `art` for anything unlisted. Judging the tab by the catch-all
+  // would keep an `art` tab alive on a category the `art` tab cannot show,
+  // which is the exact failure this hides.
+  const stockedSlugs = new Set(categoryOptions.map((option) => option.slug));
+  const visibleTabs = CATEGORY_TABS.filter((tab) => {
+    // `all` is the way back from every other tab, and the tab the visitor is
+    // standing on stays even when empty — hiding it would leave the row
+    // unmarked and strand a URL that still resolves.
+    if (tab.key === "all" || tab.key === activeTab) return true;
+    if (tab.category) return stockedSlugs.has(tab.category);
+    if (!tab.type || !isEcosystem(tab.type)) return true;
+    return CATALOG_GROUPS[tab.type].slugs.some((slug) =>
+      stockedSlugs.has(slug),
+    );
+  });
+
   return (
     <>
       {/* ═══ 7.1 · Shop masthead — compact, no hero image ═══ */}
@@ -383,7 +413,7 @@ export default async function ShopPage({
       <nav aria-label={t("tabsAria")} className="bg-mineral">
         <div className="u-shell">
           <ul className="flex items-end gap-x-8 gap-y-2 overflow-x-auto border-b border-hairline pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {CATEGORY_TABS.map((tab) => {
+            {visibleTabs.map((tab) => {
               const current = activeTab === tab.key;
               return (
                 <li key={tab.key} className="shrink-0">
@@ -415,27 +445,33 @@ export default async function ShopPage({
               title={t("strip.heading")}
               intro={t("strip.intro")}
             />
-            <ul
-              tabIndex={0}
-              aria-label={t("strip.railLabel")}
-              className="-mx-1 flex snap-x snap-mandatory gap-6 overflow-x-auto px-1 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {stripCollections.map((collection) => (
-                <li
+            {/* The strip used to be hand-rolled snap markup that predated
+                `SnapRail` — same native track, but with no way to tell there
+                was more to the right. `SnapRail` is the same component the
+                collection page's related rail already uses, and it adds the
+                two affordances the spec asks for: a mono `N / M` counter and
+                CarouselNav's prev/next, over a track that still swipes,
+                scrolls and takes Tab exactly as before. */}
+            <SnapRail
+              ariaLabel={t("strip.railLabel")}
+              labels={{
+                prev: tLightbox("prev"),
+                next: tLightbox("next"),
+                of: tLightbox("of"),
+              }}
+              itemClassName="w-[66vw] max-w-[19rem] sm:w-[38vw] lg:w-[17rem]"
+              items={stripCollections.map((collection) => (
+                <CollectionCard
                   key={collection.slug}
-                  className="w-[66vw] max-w-[19rem] shrink-0 snap-start sm:w-[38vw] lg:w-[17rem]"
-                >
-                  <CollectionCard
-                    href={`/shop/${collection.slug}`}
-                    name={groupLabels[groupForCategorySlug(collection.slug)]}
-                    promise={collection.name}
-                    image={categoryImages.get(collection.slug)}
-                    imageAlt=""
-                    ratio="3/4"
-                  />
-                </li>
+                  href={`/shop/${collection.slug}`}
+                  name={groupLabels[groupForCategorySlug(collection.slug)]}
+                  promise={collection.name}
+                  image={categoryImages.get(collection.slug)}
+                  imageAlt=""
+                  ratio="3/4"
+                />
               ))}
-            </ul>
+            />
           </div>
         </section>
       ) : null}

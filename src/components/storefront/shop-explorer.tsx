@@ -838,6 +838,30 @@ export function ShopExplorer({
                 ))}
             </div>
 
+            {/* The shelf's editorial end (plan §2.2 · spec "thin-catalog
+                reframe"): a catalogue this size is not a shortage, it is the
+                point — anything absent is a commission. Gated on there being
+                nothing left to append, so it only ever appears where the grid
+                actually ends; mid-scroll it would read as the end of results
+                and stop a visitor who still has pages to go. */}
+            {!isPending && !loadingMore && !cursor ? (
+              <aside className="mt-16 border-t border-hairline pt-10">
+                <div className="flex flex-col items-start gap-4 border border-hairline bg-sand p-8 md:flex-row md:items-center md:justify-between md:gap-8 md:p-10">
+                  <div className="flex flex-col gap-3">
+                    <p className="u-micro text-graphite">
+                      {t("commissionEnd.eyebrow")}
+                    </p>
+                    <p className="max-w-[34ch] font-display text-h3 leading-h3 tracking-display text-ink">
+                      {t("commissionEnd.statement")}
+                    </p>
+                  </div>
+                  <Button variant="primary" size="lg" asChild>
+                    <Link href="/custom-order">{t("commissionEnd.cta")}</Link>
+                  </Button>
+                </div>
+              </aside>
+            ) : null}
+
             {/* §7.7 — mono counts, a deliberate Load more, never a sentinel. */}
             <div className="mt-16 flex flex-col items-center gap-5 border-t border-hairline pt-10">
               <p className="u-micro">
