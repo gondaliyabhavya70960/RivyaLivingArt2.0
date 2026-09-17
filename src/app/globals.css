@@ -634,9 +634,9 @@
      The bottom bar is the one that actually bites: it is `fixed bottom-0` and
      hides only at `lg`, which print's page box never reaches — so it printed
      across the foot of every storefront sheet. Its in-flow spacer is a bare
-     div with no handle to target and stays; it costs 72px of whitespace at the
-     end of the flow, which is not worth reaching into a storefront component
-     for. */
+     div with no handle to target and stays; it costs 72px of whitespace at
+     the end of the flow, which is not worth reaching into a storefront
+     component for. */
   .sf-grain,
   [data-slot="sf-bottom-bar"] {
     display: none !important;
@@ -651,5 +651,154 @@
   /* A definition row split across the page break loses its label. */
   dl > div {
     break-inside: avoid;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Liquid Luxury v3.1 — collection doors + featured rail
+   (branch redesign/liquid-luxury · spec: design/awwwards-redesign-spec.md)
+   Two presentation-layer components, no token changes. Every transition
+   falls back to none under reduced motion; touch gets the stacked/scrollable
+   variant, never the pinned or hover-dependent one.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ——— CollectionDoors — hover-expanding doorways (CSS only) ——— */
+.cd-doors {
+  display: flex;
+  gap: 8px;
+  height: min(85vh, 820px);
+  min-height: 480px;
+}
+.cd-door {
+  position: relative;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-image, 2px);
+  transition: flex 0.7s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1));
+  outline: none;
+}
+.cd-door:hover {
+  flex: 2.4 1 0%;
+}
+.cd-door:focus-visible {
+  box-shadow: 0 0 0 2px var(--focus, #af915f);
+}
+.cd-media {
+  position: absolute;
+  inset: 0;
+  transition: filter 0.6s ease;
+}
+.cd-media img {
+  transition: transform 1.2s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1));
+}
+@media (hover: hover) and (min-width: 1024px) {
+  .cd-doors:hover .cd-door:not(:hover) .cd-media {
+    filter: brightness(0.55) saturate(0.8);
+  }
+  .cd-door:hover .cd-media img {
+    transform: scale(1.05);
+  }
+}
+.cd-info {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: clamp(16px, 2vw, 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cd-arrow {
+  position: absolute;
+  top: 18px;
+  inset-inline-end: 18px;
+  color: var(--champagne, #af915f);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.5s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform 0.5s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.cd-door:hover .cd-arrow,
+.cd-door:focus-visible .cd-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+@media (max-width: 1023px) {
+  .cd-doors {
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+  }
+  .cd-door {
+    height: 38vh;
+    min-height: 260px;
+    flex: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cd-door,
+  .cd-media,
+  .cd-media img,
+  .cd-arrow {
+    transition: none;
+  }
+}
+
+/* ——— FeaturedRail — pinned horizontal gallery ——— */
+.fr-viewport {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.fr-viewport::-webkit-scrollbar {
+  display: none;
+}
+.fr-viewport.fr-pinned {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+.fr-track {
+  display: flex;
+  gap: clamp(20px, 2.5vw, 48px);
+  width: max-content;
+  will-change: transform;
+}
+.fr-card {
+  position: relative;
+  width: clamp(260px, 24vw, 400px);
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+.fr-idx {
+  position: absolute;
+  top: -0.85em;
+  right: -0.04em;
+  z-index: 0;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: clamp(56px, 6vw, 96px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(16, 24, 32, 0.16);
+  pointer-events: none;
+  user-select: none;
+}
+.fr-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38vw;
+  flex-shrink: 0;
+  scroll-snap-align: end;
+}
+@media (max-width: 1023px) {
+  .fr-end {
+    width: 60vw;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fr-track {
+    will-change: auto;
   }
 }
