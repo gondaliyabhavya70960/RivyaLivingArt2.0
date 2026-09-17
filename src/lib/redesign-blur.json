@@ -1,0 +1,362 @@
+{
+  "doorway-collectible": {
+    "src": "/redesign/doorway-collectible.jpg",
+    "width": 1024,
+    "height": 1536,
+    "blurDataURL": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAACQBQCdASoUAB4APuVepU2pJSOiMAwBIByJZQDM0CFrtFNlHQg2hkOEpnP6Lj41VcF83oRegAD2v57iIf2AWKsOm0HgWBAY8CkG/YF5ckCZertEAIGdxWPPhj5+yV0qOIfJ6+y7KfIkcdZOnJKiXFbkbQmyYbYewgNDSI6r81WToL6n+VS++dB9JKFVeYrg7tfbs/m8zuxHryYAAAA="
+  },
+  "doorway-gifts": {
+    "src": "/redesign/doorway-gifts.jpg",
+    "width": 1024,
+    "height": 1536,
+    "blurDataURL": "data:image/webp;base64,UklGRhwBAABXRUJQVlA4IBABAAAQBgCdASoUAB4APu1gp02ppSOiMAgBMB2JZACuVYyVoqCF3gIL+QG16slmR3gZU2WTydxuoFtJlUAA/vEH08I4RgJC8R/dzktzS08OkwklA+NqVbDgINw/Xe7HhGoo0oKjytFtBitNuR6Gu5aTQAlzi+DPNsE92AtsGH82Ttcitvssvn+JTLY5tz/BbbErsY315GCUsSi/AP5HHNg1f1qPAiYExCyHlZdjrWp2dEcH1rI3kikmIvUb59khdu7Df0QU0CyE3S2cDYyEcY2rb/wCdAIJ17Px4140LIFumTNl3HHcXAjg6y6VcUGOnNwF7azspmNEShKrVuhq5C6ErEGjmoTHaE4LnySFNef6kPMAAA=="
+  },
+  "doorway-memory": {
+    "src": "/redesign/doorway-memory.jpg",
+    "width": 1024,
+    "height": 1536,
+    "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABwBACdASoUAB4APu1gqU2ppaQiMBgMATAdiWQAwqD/AYGwKUTfl79+fzvGoAD+9Bv+VBCIsOM8G4urlWdpCvvtGoYMC3F35tZ0rTkszFn34BevOLgrK7+gAUl7Sz7mOhsp2SbLqTNj1pivP723BL/IWUyHspmKjV8Zk/i40oAVTx1hlCAAAA=="
+  },
+  "hero-pour": {
+    "src": "/redesign/hero-pour.jpg",
+    "width": 1920,
+    "height": 1080,
+    "blurDataURL": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAwCdASoUAAsAPu1iqU2ppaOiMAgBMB2JZQDLLCG6yzE6vovWMwAA/vEgqxQBlo20tVMSpKJNxAHJ+NNHF5u4dOpRDm49l5UBALADBTc2aQKcJXxkAA=="
+  },
+  "insitu-bangle-wrist": {
+    "src": "/redesign/insitu-bangle-wrist.jpg",
+    "width": 1024,
+    "height": 1280,
+    "blurDataURL": "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAAAQBQCdASoUABkAPu1sqlGppaOnqAqpMB2JQBdkH4gm6mr7VZlWy9xCw5oaduMK/rgAAP7voMUHPN3PyrTujHh/iPhVPbuA/GBlA0PT1KFWE7NG7LXCFuhXsqAJfCFPqiFl2FVEZx0G2ilFFlk+wJOIf9O8WbXA9OOH6FPw+oPNjHUcKpe6BilOrNypPWxpcA3xOPSY6TMnUCVAMl0BYVEnwsESVEFAAAA="
+  },
+  "insitu-tray-table": {
+    "src": "/redesign/insitu-tray-table.jpg",
+    "width": 1536,
+    "height": 1024,
+    "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JYwC7IHADM+jaSJ2Kii8AAP7uxHdW9zQNeQ5F5goPON0G9iq7gcrCHBP1pJxOjFxZ955PffaLJYY05fXjoa/SWIP7Ra+0sg/lsQBpiPzZcVZnlxeNF9csgxlw49EYAAA="
+  },
+  "maker-hands": {
+    "src": "/redesign/maker-hands.jpg",
+    "width": 1536,
+    "height": 1024,
+    "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAACwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JQBadA0NsYfhoYIFlAAD+6kwqS59REfXD2DJph6D5b2wkmGR1YC27UIIeDlTMIOJq0BYuIeeAWIERZq8lJ0AbKaoFJv88kRBa5wwDUqKoSAAA"
+  },
+  "og-home": {
+    "src": "/redesign/og-home.jpg",
+    "width": 1200,
+    "height": 630,
+    "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAwCdASoUAAoAPu1iqk2ppaQiMAgBMB2JaQAAXGSmEE/KfAAA/vKg4oeo1+SsJPfAO84HlpVKcS4pvh7uajXf7GuxJEzXFYAAAA=="
+  },
+  "product-bangle": {
+    "src": "/redesign/product-bangle.jpg",
+    "width": 1024,
+    "height": 1280,
+    "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADwBACdASoUABkAPu1irVAppSQisBgIATAdiWQArAAPSqqUKCSodKOJwbRCequQPvAA9x6neQXrgzcZvp+gPtWrLllLmPJRs6cNpSeOe4IMtCxc/jr4NEYWsNUVRIJe+XGg4AIIWLIHpdOwYu3ZFXeyAzNpJQULV2418iKntHp2CCMvQAAAAA=="
+  },
+  "product-coasters": {
+    "src": "/redesign/product-coasters.jpg",
+    "width": 1024,
+    "height": 1280,
+    "blurDataURL": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAACwBQCdASoUABkAPu1mqk8ppaOiKA1RMB2JaACdMtCCmBTozaFRO+bepjM8PkMF+8rIKWGEQAAA/otVcDw6Zi6vrVi6pdT9qXLw7rK72pY4r9pO/nf4Jb65EhO/GKT/bgxFqiJiG17g7U7Kj5Z06VWaukT27Icup0igwuhx2AWwbYdznk2PZKwypNHFYfMmAva5F8mn8eT1HakX3prWJDh59wA6x9AA"
+  },
+  "product-platter": {
+    "src": "/redesign/product-platter.jpg",
+    "width": 1024,
+    "height": 1280,
+    "blurDataURL": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAADQBACdASoUABkAPu1iq1AppSOisBgIATAdiUAVHoFLrOjvw2AT1OHOBnHR+7cJgACfRxvhIs4Y8PiaCcqiGGNMmYlJZdKFU9VlC9y1SZOVer0X+OmZV2S3NnTKTTO7JTKVsZ1CLkOeyKdkFyYVuhfIy2PpWBRDBOxYHxWJ8Dp+EJlW+11DNr25rOXaWozEjoP7kXIAAAA="
+  },
+  "product-varmala-frame": {
+    "src": "/redesign/product-varmala-frame.jpg",
+    "width": 1024,
+    "height": 1280,
+    "blurDataURL": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAACwBACdASoUABkAPu1sq1EppaOiqAqpMB2JQBS1gT7FJfVlx/CD4+FjCts9HkyAAP6M749+OKqRLDLE5wRqkftADky2J2JRpaI4p/OnYZWMGFx45qf8ZwoRonOuLm5DkcB/6UxZ/p9Kvf/VVYqdwsNKxSc4OwLO/YlbgRfkjH4cZfRkSEaVYtTuxvhGC4Tfn+Lc4GnzDFAAAA=="
+  },
+  "testimonial-home": {
+    "src": "/redesign/testimonial-home.jpg",
+    "width": 1024,
+    "height": 1280,
+    "blurDataURL": "data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAADQBQCdASoUABkAPu1sqlEppaOiqAqpMB2JQBOmZi3/y7BZAA0WLMeYdypjyq+8seXF1PxIGqMAAP6FMiRvdyqSOwuHspLbQOe8SdaopX+WspDxOyG+9YB/mCh7oKEIgA0bVfO8BKT1SL16hBpyVV7MC0vH/OufHrD5Wd4v2MmOoKuyDM/Ooo0E9eUQ5V8xRRqWcPU/ycNabMkqdsNHaj+0DA3xu6bgGNuO2iy39v8R/yXAO9xaBdtdlw7LgGEDy2WoiU6Z2+MccIihAbm0ocWEaUERz8vuAzHt+AAA"
+  },
+  "texture-resin-flow": {
+    "src": "/redesign/texture-resin-flow.jpg",
+    "width": 1920,
+    "height": 1080,
+    "blurDataURL": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAABwAwCdASoUAAsAPu1iqU2ppaOiMAgBMB2JZQAARX+Qw+kroPAA/u9kVHisYRY45/8K0kC0VE3eSffJQG7zEc6q7j3V38oAlulXYAAA"
+  },
+  "visual-404": {
+    "src": "/redesign/visual-404.jpg",
+    "width": 1920,
+    "height": 1080,
+    "blurDataURL": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADQAwCdASoUAAsAPu1iqU2ppaQiMAgBMB2JZQDE2B2QT5RGMa7KAAAA/vM08laaaKQO2NSxl/4iObzw1XxICvmYJKGbVMy0RpXgbY199MhCCvnCQi32YvhLxER1Y2Qmj1zmzoAA"
+  },
+  "product-hero-001-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-001-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAAAwBQCdASoUABkAPu1wsFKppiSiqAgBMB2JQBe6AiOD+2JPKz30xdjsRPWZDmWk/4KN2AD+7pX8HGFl8BITr5GT6w/s0MYTJD+h2jh2JeZBiQdNICEzyJsemrpPX8h1flBY5oSzTFCA4X+Y0PXPGVktstAE7/PwTuKXkrbhZ8Bx0jUoOvFMlyUO6DCpXZ2jZQxa7CW9DLChFYAA"
+  },
+  "product-hero-002-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-002-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRs4AAABXRUJQVlA4IMIAAAAwBQCdASoUABkAPu1sqlEppaOiqAqpMB2JYgC06BGth1eUkjOM/VY3CGbOAzQxxmzQAAD+uAHwrIwBqfEKdPzhlaOH1BKDIQD5JplLm42y6i7L8rWFZgi66yfpAvId03+/ptsRSgKfXtiQISZneYOshglPa5wgdfOfHSPGQo1qXa4e+Q+F922zg6eA01buzzVPjDWorjvrprfnOPQEfGhUnQ98OUGGh+219w3fFLJbNsQp6VI/l86WvCmsRwLWU8gAAA=="
+  },
+  "product-hero-003-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-003-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAAAwBQCdASoUABkAPu1wsFIppiSiqAgBMB2JYgDIXBI/RAHTWvrwrrCcA9Uy+FeXsP6IAAD+6jHXLD5DINHHwjcPXFgdw/0KA+3B8uAJaDlVlhUWAR6kRabwC7gwVxkk5zPjou8yurtB5L9xGkR6U7QQsYUdmXoLYPzeYmvmZpAkIFZGvsY/spN82vhwauoP/xDeBdC5yrmtcGxwZv96B+Hj3WDAAA=="
+  },
+  "product-hero-004-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-004-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABQBACdASoUABkAPu1ur1IppiQiqAgBMB2JYwAAKf0sxGt8VMMW90HTkUAAAP7O7M2Wa0ZXYN/pdOqHR8ae3BBFflXkpakIs7WwPIj4T1jdwJXCsiTMfQnqrQPTAeCNkJCcOj91KwwswK/AATAYATQlBBUHrj4eYf61t8bIbCufj0Avjw2XoddMBgJgAAAA"
+  },
+  "product-hero-005-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-005-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAwBQCdASoUABkAPu1qrlCppaQiqAqpMB2JZQAAL9ctfG7vHeu4qgeQkEe6l+H1nNZQAADeCa4fBZ7iK41PLRyB0Q1v22IdIXEmgXiL/CTkJWpQIz0zPPnX+H74ent2rxHV+pkU1DcqHCR1c0SNG5pq8W06Th+8TKMdrEuHA/XJ3/aMmr4HcPwcgnYIAAAA"
+  },
+  "product-hero-006-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-006-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwBACdASoUABkAPu1kqU2ppaQiMAgBMB2JZQDE2B6N0Ty0kEUvNOfQ+kAA/uTatUyhNBh8ZqqOPKROfDvSZofKUGdnlBpIsedj/OouO/wntNIIXvv0+BRwjbgpzKbOoDo0ZWgA"
+  },
+  "product-hero-007-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-007-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABQBQCdASoUABkAPu1ur1KppiQiqAgBMB2JZQDDcBI9SL+23LF7XQfcPTVohF5KVau4gAAA/u8Q5LSn/PIUU5TCzdZZcoEfSBFqWMokCR6Fd7XzoiRcSseuLWNKQf4h39r8IbZLwAb8AGGcxhkT69eVAbGYfxzrxExllj0gXltf2/5WcGAAAA=="
+  },
+  "product-hero-008-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-008-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAACQBACdASoUABkAPu1qsFAppaSiqAqpMB2JZwDL4BI3+uR9kwkHbAV3e3rsrwAA/u66zXntg6kKvvhovfm16U087Po9f5JuuHlFAxzOiHNGqb/NlSgKjiw2l8BhzuhsqLiq/QtqRppVL3jI/sDGU9JABUNE7NDmY9Kz1b1jUCIDRlL/3iEAAA=="
+  },
+  "product-hero-009-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-009-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAAAQBQCdASoUABkAPu1iq1AppSOisBgIATAdiWMAvzgN1Hn2fdSkvKonB7TUlGe6/ZEAAP7ScY7VR2FfVhbWTmrGo5gHl2DtTP5Pv7BMU+C+XDTDnULPXA5zEdbCALWF66ZNDEqKWkVcQZpY5jQrF9lgxl5VEA7WMHdtcB1dSxLGqfYQhgjLqarn/S8rCVbL2gb1NgLiuaQUWlObJDmgX0TSfBXcvAAA"
+  },
+  "product-hero-010-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-010-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAADwBACdASoUABkAPu1srlIppaQiqAgBMB2JZwAAHwenqIfrnteNPWLZTbcQvpB/G7wA/ujx2cNDl2A63VskY4C9wep5MuWvDmv7JStOkaXHHkIrBeFzj11JXexp/9ZikOMdlRAaNF/eb/mER8RU4iwZ+KTshvnrCOL145Gz+s3pTa42WRQi+8VMXg78Y6JI1HJMERRwdsXLqzNZT/Cyz8Bkcd9CBz659s1yrgAA"
+  },
+  "product-hero-011-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-011-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAACwBACdASoUABkAPu1sq08ppqOzsBgIAnAdiWUAuDAQ7rmAlL/On255N8wn9bYAAP7qE+R4BYMNA2k/vewyLUD8hQ6v2AwSkHDwT7M5GebGxvFQFC+S4dIvmXYCQYER8/mOMLeRAAA="
+  },
+  "product-hero-012-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-012-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAACQBACdASoUABkAPu1ur1KppiQiqAgBMB2JYwCw7BDR2w0X+Qd1/jaLkLxTCMQA/tx/ggcJIFN3ZJaMoMxNimpF5PH/VbwiRe6jykA2Bv7iqczWiCQyM2GN0AUGaSEH9WoAL273Wu1F1wPZ4NYhCiP1fWuduXdTqkF3AS/c5Avt9Hn7J6FrMpmkAAA="
+  },
+  "product-hero-013-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-013-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAACwBACdASoUABkAPu1sqlEppaOiqAqpMB2JQBYdgkf9kKzYIVGJaqDwLHzUv6YAAP7aim+hJFOX5bctx/VmB+RguUCj4jiBqlBbmo3Du/7erlzRM7ID/BYov/OAWgPhdTXYX9EzqHg29FbwgjJTF65ABMU9iOaQ5UyWxuL0AcIqjudaWvUNckEUAgb1XAAA"
+  },
+  "product-hero-014-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-014-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACQBACdASoUABkAPu1qrVCppaQiqAqpMB2JYwDA3BGEA2ToTxDKj+KfWoV6HUAA/s9LJh9gMN+rzT/NV9sF8du+MqIpsssOWHnJQp7bun6Vet7Byh6EqwBGOdznVjRldHgnLOv4yO7+IpUXRsu3NrEn+KN5nUN+UeyCDBVNZNQAAAAA"
+  },
+  "product-hero-015-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-015-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAAAwBACdASoUABkAPu1irFAppSQisBgIATAdiUAYG4Ih+jnyyWl51D1iYAAA/oVC/vm0bfz8KaY+JqxLaFCNiCTkJQUFkBOW8zECvH3xA3MI6MJ0iMnEDsN8uy1P2FvcGKT3qpIRcdZnkWqATa36Aih6PjWvBgpNIHAAAA=="
+  },
+  "product-hero-016-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-016-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAACQBQCdASoUABkAPu1qrFCppaQiqAqpMB2JYgC7M47lwwv95c2ePIinorE1jG9Gy7s/xFUEAAD+6/SXi19oWtCgpd0BkeAi9vdt1eLUkMY5hBkueAp/YieDTLgwP4WMJnmfLQ9V8SpbHBiI3WbkKwnEpKaekJLxa0z+HyPyemuPlvVmTGbfwA2OvSUM6L/GSZ+F2Td8aaPb4QGHQAA="
+  },
+  "product-hero-017-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-017-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADwBACdASoUABkAPu1oq08ppiOiMBgIATAdiWMAsOwREbhXSeNyjusLC5ZeMYqa74AA/qo3fVHvFASNtkHLiscB5s6qvED/jiQKUqVvkGm6xjeqqVmuNkMiC3vi4nXTfjNL5N+IMwAidA+HxTe2UGCch3nWAAAA"
+  },
+  "product-hero-018-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-018-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABQBQCdASoUABkAPu1qrVEppaQiqAqpMB2JZQC/OBEc63gAwu1Fyk+eChqHADA+E9dC4gAA/vKhmp7YukJEC5arDrmboc2xVrl6Yh5hqt0x5sHxTNFS6UoKzquXKvt5ekXAJLWYnU6m7xMwwLUjGebbWs8M73aXa9xDrV/imyuoYA7UbJbm9hSFDTp/SEi1hoYAAA=="
+  },
+  "product-hero-019-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-019-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAwBQCdASoUABkAPu1sq1EppaOiqAqpMB2JYwDDNBEcfPJfDzgvZE6BnYkhuugvKnW0YAD+zteQhv/dshu4AUahg+cvxGzYY2juDJnM7w40BiRi9zsKR8DqLFKQI5gHsuk0yWd7rqappEnyQCYxua8yND1czMjqQGyFwQ6xOqj2+TAmAh8Kq6fzbkeAAAAA"
+  },
+  "product-hero-020-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-020-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADwAwCdASoUABkAPu1sq1EppaOiqAqpMB2JQBOgAif2YeL/2ZmDQVl4AP4xgEzFRW/v7OZdnTDZ+qwhIFz0xfUU15WKaVMB3B8Xg8IfQaTEy5b/4VSX75c0axt2DfPLSn3kHf2tS4lFiRvfwfB3UwKuKfXeFLkjPhHrnn7HI8DYZFej3qQAAA=="
+  },
+  "product-hero-021-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-021-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAAAQBQCdASoUABkAPu1sqlEppaOiqAqpMB2JYgC26KnBhHoZP8Zl1Dgu3xRK4nuBHRWgAP7wxXfAlJA5O53OmTwehi+/x+wHmXJTswnvJmra4mlS/QhaWM0wwNEOpbzIDIv/bg2O3ony7gUF+EhcoqmaxakM9F4MeRYcR8aby7Bn31noCRTrT5Dtii8+MPJji52w/Jzqz0/Pi4US15M1k+wvMic0o0AA"
+  },
+  "product-hero-022-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-022-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAABQBACdASoUABkAPu1kqk2ppaQsMAgBgB2JZwDIXCHgpiDD1/nUS7C/r+wAAP7r9Inbf2J80df1mLiaU11blkBeyC6zZ5rQg9FsejpLhROdYhUoR4n5poN2Svih++ZgAAA="
+  },
+  "product-hero-023-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-023-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAADwBACdASoUABkAPu1irE+ppSQiMBgIATAdiWUAsOwQ72h1d22C4zcjunUloakhKRAA/uPQT9R5DcAPvgqvC0yj1SkpJ1iObjSrWv0lEz/Xr66zYgyFGUM8dAriMyDsmpAoHqx4kLxDyT++FdeOWJPw243DxdXCEvLsOSOqf66x/DOGAAA="
+  },
+  "product-hero-024-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-024-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwBACdASoUABkAPu1wsFKppiSiqAgBMB2JZQAAKdXosildiUMpJlcjG/s2Qa4q2AAA/sv+Hs65hzetEgwrb1nMvEaHUsuBmn6s4l8o0eVvim17NJ6Vok8yDCgqBVZ6UN/CfRCPArJrrgAA"
+  },
+  "product-hero-025-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-025-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAwBACdASoUABkAPu1mq06ppaOiKA1RMB2JYwDLaA9muCU/JoMJPkxRSAAA/ttc2bW4UGHhQBvwyDywq2J6GLPWSvF7COF/CcrYsAlREx+6ZvuDEdlcNO5T4rLznGUbuTwF6l4wjG2mB+e5GOiX+7AAAAA="
+  },
+  "product-hero-026-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-026-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAACwBACdASoUABkAPu1iq1AppSOisBgIATAdiWMAuwAQrbPCKV76XHjxvpgx+6wAAP7knTfbj2RRDcxtfaR7btgMBWlWUR3eLQ3FFm3f5OdDUfFG6Nhfv+tnFG5ypTUngiO/9slKYsT/ngU+2YprPV7eE3xk6UK+qM5TeHB9ptK5C7++1Oz3flc1s/ntGNuaCoAAAA=="
+  },
+  "product-hero-027-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-027-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBACdASoUABkAPu1mq0+ppSOiMBgIATAdiWcAwNwYUg5/8OlkDYuiAAD+7tsJfWB3957GB788soswdK6fB8IHsn9pS3FrCgCAOwhBvpgY20z5pCPEMZMnt2WW3wxoIi4U2WLZDRr6uDNEJACrLwokAAA="
+  },
+  "product-hero-028-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-028-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwBACdASoUABkAPulgpE2pJaMiMAwBIB0JQBfJBDwmd89jw2zcviA8K1BegwBDifgA/s6y62abyRFXS3IMDbbqiwfE/hlQoA168Mcv06MyLO5pEpzFw/ydl3VpO7g0pUICDwfy4JnBINAAAAA="
+  },
+  "product-hero-029-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-029-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABQBACdASoUABkAPu1qrVCppaQiqAqpMB2JZQDGfA9pClNWltoKjgjLWzAAAP59Y3VObTrmWJiHrrqaQALonGMyCJg6BEBqlQGbgI7lupeliasvsSaLt5qd7SL2S8AP0yGaZReTYQWoGGeUKOP1QAAA"
+  },
+  "product-hero-030-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-030-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADQBACdASoUABkAPu1or1CppaSiqAqpMB2JQBdgAiMs93rMyT4kbPWiiAqbrVZMAAD+SlNMzCFzMvuqeF406G1yNMQNRk3FuAJKi7VmIuzuMIXfOzi8NGAF4mg7ui8QTbL0toDULj1Ilu83n0QbIuz35NBvslEaIOrV+6yUSygAAA=="
+  },
+  "product-hero-031-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-031-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADQBACdASoUABkAPt1WpU2opKOiN/qoARAbiWUAsQzYgq2sdlttJb7Af0egS9gO4AD+hE3gSYLlHK5pCGi8QGxYkRuf2R+8NfMJjBUWwmzxNmvZkd2tN+gDCDGlIhIM6ofwOqQL7M8+Pm2C7YaQDRN0vFl1mbz0AAA="
+  },
+  "product-hero-032-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-032-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAABQBACdASoUABkAPt1YpE2opSOiN/qoARAbiWUAuwAelQtuPwrCvQQJPdDAAP7pHi8qymqwzimmlJcvahUBIUjAgYp3bolyAdTP9Sc6Rf3od5IxI9Afyaee07kf4KHGiSZUAAAA"
+  },
+  "product-hero-033-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-033-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADwBACdASoUABkAPu1srFEppaQiqAqpMB2JZQDE2BEcX4DWpf31bF0lG8JZ+djkcQAA/u6WSLxPSKBgALGqkiG+7cHPq+mlYNgvKI2/kkXD9KsuAVI3LxWWGFojBEYrBnoru8K9oAQnO57wyxL794hEIbC3za+A3uJIB4qAAAA="
+  },
+  "product-hero-034-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-034-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAADQBACdASoUABkAPu1mq06ppaQiKA1RMB2JQBdgAiOcV1HJPi1uxJ+A4izowSmAAAD+8MjSHS1WjylOTQP9ZdGtkbXveVzf7EK6jgmc321Gzzea58NBHHdo8JkJwlO4dDLbj/Vt7PKy+5td5QhLDejTfuq/nzDM/OqA1cT2Vy16/4uuoAA="
+  },
+  "product-hero-035-4x5": {
+    "src": "/redesign/catalog/heroes/product-hero-035-4x5.webp",
+    "width": 1122,
+    "height": 1402,
+    "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAACwBACdASoUABkAPu1kq0+ppSOtsBgIAbAdiWUAvkgQ44lztFy8NAMiditXoxwAAP7Aj8lTubIm2nw43/GRr2CevFp0uyKvPAGOXhcsimJnwQzc1GGuBAn42W7IBg8fQaQXDPthdkt4XCAA"
+  },
+  "product-scene-001-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-001-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoUAAsAPu1iqU2ppaOiMAgBMB2JZQCdEf/gO+wSz4KjUGFtTMAA/mZ+kn/n8RTm0kjNpKL7wL0r2PZLOoDPD/UnML9oDBrSE89NhN0DaUhyJPG8y1WnspE70jvK+jF7qtR3VwEXnMF5WQPvsa+ceaAA"
+  },
+  "product-scene-002-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-002-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAABwBACdASoUAAsAPu1iqU2ppaOiMAgBMB2JQBOja/23+A+EJB6EbCcGBHfUAAD+ZN2GXgzn4sJxn3UKglEF9Au/EPM2LdHEa0Fjh04JdugJxWG2O7bCVSO7WbIn2hUVSnuDFy7YMDWCTb4srZa/E7KOo+I224pZpZDl5CgsAAA="
+  },
+  "product-scene-003-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-003-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABQBACdASoUAAsAPu1iqU2ppaQiMAgBMB2JZQDG9CH6trVi3Pu8a8CPb+gAAP7sRiMKc6coBtKhiE2lkwotAkaKtStqzWX7XVDis07tQUeTXn+Q4R+/il6A8zmVoBHzi2ozYcZyTa44SrGJet1WhuKgAAA="
+  },
+  "product-scene-004-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-004-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAACwAwCdASoUAAsAPu1iqU2ppaOiMAgBMB2JZQCw7BrEeHyLoBb0AAD+7NiYCrE5/i+OHJLnicP1/atwuLZMwjCG3c90rotLFaSt9FFz50RCvK+/IzD/htBJPZIVFpdnKOyzK0PNL7miTeUfbOwmPwAA"
+  },
+  "product-scene-005-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-005-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADQAwCdASoUAAsAPu1iqU2ppaOiMAgBMB2JQBOgA+wLzu+Ohn13uXAA4nvhi7i/xeFK1+1Q0EsS8dMm9HHXrvksnVyDllSXn6pmpBh9IlM/X8MH0UqRG/6UP+Pt9e18fNBisB4VV9+vBFDqZWJfF9F6GDIkxVEAAAA="
+  },
+  "product-scene-006-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-006-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADwAwCdASoUAAsAPu1iqU2ppaOiMAgBMB2JZQCsAB6XNHZSUVwgjcAAAP5Os6F/O8umSNaZbfd4dO2YqSfZW+yYNp/mX6i74qfhoq5Qw1Qhlt3hAAA="
+  },
+  "product-scene-007-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-007-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAAAQBACdASoUAAsAPu1kqk4ppaQiMAgBMB2JYwDCgCPqguXc0v2SaNSYAAD+7rsIAzwkKRXFCiymNv7wIISIg38jaJoNUyVBBosSeDsATRfV7fO9bVsxZazLXAkVaw+cYp/V/XWCV4U7eF1JBHh8yxtlRZV3M7QAAAA="
+  },
+  "product-scene-008-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-008-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAACwAwCdASoUAAsAPu1iqU2ppaQiMAgBMB2JZQAAVGTNlr5jhaHwwAD+7w0WKL8du9LEVEqhfLE0ZhbeRD3iXF7bbv9OUZWwYf4cRW1tMq51uLW4jGO4yYRDZfPQGYjsKQRwAA=="
+  },
+  "product-scene-009-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-009-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADQAwCdASoUAAsAPu1iqU2ppaOiMAgBMB2JQBOgApGeYeS0U2XRAAAA9iEl7Dzb/Pt4BxaoIj7GBzspUnifNfdrhUOyhEC7gkciJSoBDUxOgdmsTiYCBfV0IeDQkjOYT3PEgfxM6Kcf/la+uuACtJgA"
+  },
+  "product-scene-010-16x9": {
+    "src": "/redesign/catalog/scenes/product-scene-010-16x9.webp",
+    "width": 1672,
+    "height": 941,
+    "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADwAwCdASoUAAsAPu1iqU2ppaQiMAgBMB2JZwC/OBoh4l4HN1sN+KwAAP7Rn570FElQhIurKlwdWya8ClbtNmXj0panV6VkbBHhlNOx3qi2Roifo0xdeyGPgf6SQEfpTeKNire+uo88BU/9XlXVkirAAAA="
+  }
+}

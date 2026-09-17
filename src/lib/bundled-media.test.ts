@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { CANONICAL_CATEGORIES } from "./catalog-taxonomy";
 import blurManifest from "./media-v3-blur.json";
+import redesignBlurManifest from "./redesign-blur.json";
 import mediaV3Manifest from "../../docs/media-v3-manifest.json";
 
 /**
@@ -167,6 +168,42 @@ describe("the Part 15 LQIP manifest", () => {
       );
       expect(entry.width, id).toBeGreaterThan(0);
       expect(entry.height, id).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe("the redesign LQIP manifest", () => {
+  /**
+   * Same contract as the Part 15 manifest above, for the second generated set
+   * (`scripts/optimize-redesign-assets.mjs`). It matters more here, not less:
+   * these files were missing from the repo entirely while eleven slot
+   * fallbacks pointed at them, and the only reason that surfaced was
+   * `site-images.test.ts` asserting the same thing one directory over.
+   */
+  it("describes a file that exists, at the size it recorded", () => {
+    for (const [id, entry] of Object.entries(redesignBlurManifest)) {
+      expect(existsSync(publicPath(entry.src)), `${id} → public${entry.src}`).toBe(
+        true,
+      );
+      expect(entry.blurDataURL.startsWith("data:image/webp;base64,")).toBe(true);
+      expect(entry.width, id).toBeGreaterThan(0);
+      expect(entry.height, id).toBeGreaterThan(0);
+    }
+  });
+
+  /**
+   * The placeholder rule (plan §4.6) is path-based and binding: anything under
+   * `/redesign/catalog/` stands in for a product that does not exist yet. A
+   * catalog file that escaped into the brand directory would lose that marking
+   * and become publishable by accident, so the two sets are kept apart here.
+   */
+  it("files every Drive catalog image under the placeholder path", () => {
+    const catalog = Object.values(redesignBlurManifest).filter((entry) =>
+      /product-(hero|scene)-\d+/.test(entry.src),
+    );
+    expect(catalog.length).toBe(45);
+    for (const entry of catalog) {
+      expect(entry.src.startsWith("/redesign/catalog/"), entry.src).toBe(true);
     }
   });
 });
