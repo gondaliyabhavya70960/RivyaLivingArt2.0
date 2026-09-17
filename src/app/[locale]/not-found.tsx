@@ -90,7 +90,7 @@ export const EN_NOT_FOUND: NotFoundCopy = {
     decor: "Resin home decor",
     gifts: "Gift collections",
   },
-  home: "Back to the studio",
+  home: "Back to the collection",
   whatsapp: "Ask on WhatsApp",
   openInNewTab: "(opens in new tab)",
 };
@@ -161,8 +161,16 @@ export function NotFoundPanel({
             </form>
 
             <div className="mt-2 flex flex-wrap items-center gap-4">
+              {/* Points at /shop, not /. The word was the audit's finding
+                  (§2.7 — "Back to the studio" reads as the admin panel,
+                  because /studio IS the admin panel), and the destination is
+                  the other half of the same fix: a visitor who 404s did so
+                  from a piece or a category, and the catalogue is the useful
+                  landing. The home page is still one click away in the header.
+                  "Search the studio" and "Message the studio" stay as they
+                  are — those mean the atelier, which is correct. */}
               <Button variant="secondary" size="md" asChild>
-                <Link href="/">{copy.home}</Link>
+                <Link href="/shop">{copy.home}</Link>
               </Button>
               <Button variant="whatsapp" size="md" asChild>
                 <a

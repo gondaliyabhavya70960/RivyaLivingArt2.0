@@ -7,7 +7,7 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form";
-import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ImagePlus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { uploadMediaFiles } from "@/actions/media";
 import { MediaPicker } from "@/components/studio/media/media-picker";
@@ -21,6 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { describedBy } from "@/components/studio/field-hint";
+import {
+  coverUrlOf,
+  isPlaceholderAsset,
+  looksLikePlaceholderAsset,
+} from "@/lib/placeholder-assets";
 import { FieldError, FormSection } from "./form-section";
 import { Model3dUrlField, VideoUrlField } from "./spec-fields";
 import { IMAGE_ROLE_OPTIONS, type FormValues } from "./schema";
@@ -72,11 +77,34 @@ export function MediaSection({
     );
   }
 
+  // Surfaced in the board as well as refused in the action, per the repo's own
+  // rule: `runAction` flattens every throw to "something went wrong", so a
+  // guard that only lives server-side tells the owner nothing they can act on.
+  // This warns; `describePlaceholderPublishProblem` is what actually refuses.
+  const coverIsPlaceholder = isPlaceholderAsset(coverUrlOf(watchedImages));
+  const namedLikePlaceholder =
+    !coverIsPlaceholder && looksLikePlaceholderAsset(coverUrlOf(watchedImages));
+
   return (
     <FormSection
       title="Media"
       description="The first image is the cover. Drag order with the arrows."
     >
+      {(coverIsPlaceholder || namedLikePlaceholder) && (
+        <div className="rounded-card border border-warning/40 bg-warning/10 p-5">
+          <div className="flex items-start gap-3">
+            <TriangleAlert
+              aria-hidden
+              className="mt-0.5 size-5 shrink-0 text-warning"
+            />
+            <p className="text-sm text-foreground/90">
+              {coverIsPlaceholder
+                ? "The cover is a concept placeholder — a generated stand-in for a piece that does not exist yet. It cannot be published as a real product; add a Rivya Living Art photograph as the first image, or save this as a draft."
+                : "The cover is named like a concept placeholder. If it is a photograph of a real piece you can publish as normal — this is a reminder, not a block."}
+            </p>
+          </div>
+        </div>
+      )}
       <div>
         <input
           ref={fileInputRef}

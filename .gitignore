@@ -78,3 +78,8 @@ audit/lh-summary.json
 # Playwright MCP session scratch — console logs and page snapshots from a
 # browser session, committed once by accident (D24).
 .playwright-mcp/
+
+# The Drive download drop for scripts/optimize-redesign-assets.mjs (plan §5.4).
+# Raw Higgsfield PNGs are ~2.2MB each; only the pipeline's WebP output is
+# committed, never its sources (plan §7, binary hygiene).
+/assets-inbox

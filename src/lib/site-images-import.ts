@@ -55,11 +55,23 @@ export const blobStorageConfigured = () =>
  * photography — the maker's hands (§15.2 is explicit that the maker is never
  * AI) and the process video with its poster.
  *
+ * `public/redesign` is the SECOND generated set and counts the same way. The
+ * Liquid Luxury brand assets (`design/awwwards-redesign-spec.md` §4, "Delivered
+ * Asset Suite — generated for this redesign") and the Drive catalog library
+ * under `catalog/` are models' work end to end. Classifying them BUNDLED would
+ * have told the Studio's §12.5 provenance filter that fourteen generated
+ * pictures were photographs — the exact claim that filter exists to make
+ * checkable — so the prefix is listed here rather than left to the default.
+ *
  * The path is the honest test because the path is what the manifest is keyed
  * on. Exported so the rule can be asserted rather than trusted.
  */
+const AI_PREFIXES = ["/media/v3/", "/redesign/"];
+
 export function bundledProvenance(file: string): "AI" | "BUNDLED" {
-  return file.startsWith("/media/v3/") ? "AI" : "BUNDLED";
+  return AI_PREFIXES.some((prefix) => file.startsWith(prefix))
+    ? "AI"
+    : "BUNDLED";
 }
 
 export async function importBundledSiteImages(

@@ -663,6 +663,18 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ——— CollectionDoors — hover-expanding doorways (CSS only) ——— */
+/* Part 3.8 is a CLOSED set of four durations — 180 · 350 · 800 · 900ms — and
+   these five rules shipped outside it (0.7s · 0.6s · 1.2s · 0.5s ×2), which is
+   exactly the "a fifth value arrived because it looked right in one place"
+   that `redesign-audit.mjs` exists to catch. It had been failing the homepage
+   since the doors landed. The doors and the sibling dimming now move together
+   on --dur-slow, the image settles on --dur-reveal behind them, and the arrow
+   answers on --dur-base because a small affordance should not take as long as
+   the panel it sits in.
+
+   The `#af915f` fallbacks went with them: every one of these custom
+   properties is defined in tokens.css, so the fallback was dead weight that
+   also put a raw hex in the stylesheet. */
 .cd-doors {
   display: flex;
   gap: 8px;
@@ -675,22 +687,22 @@
   min-width: 0;
   overflow: hidden;
   border-radius: var(--radius-image, 2px);
-  transition: flex 0.7s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1));
+  transition: flex var(--dur-slow) var(--ease-luxury);
   outline: none;
 }
 .cd-door:hover {
   flex: 2.4 1 0%;
 }
 .cd-door:focus-visible {
-  box-shadow: 0 0 0 2px var(--focus, #af915f);
+  box-shadow: 0 0 0 2px var(--focus);
 }
 .cd-media {
   position: absolute;
   inset: 0;
-  transition: filter 0.6s ease;
+  transition: filter var(--dur-slow) var(--ease-luxury);
 }
 .cd-media img {
-  transition: transform 1.2s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1));
+  transition: transform var(--dur-reveal) var(--ease-luxury);
 }
 @media (hover: hover) and (min-width: 1024px) {
   .cd-doors:hover .cd-door:not(:hover) .cd-media {
@@ -713,12 +725,12 @@
   position: absolute;
   top: 18px;
   inset-inline-end: 18px;
-  color: var(--champagne, #af915f);
+  color: var(--champagne);
   opacity: 0;
   transform: translateX(-8px);
   transition:
-    opacity 0.5s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1)),
-    transform 0.5s var(--ease-luxury, cubic-bezier(0.22, 1, 0.36, 1));
+    opacity var(--dur-base) var(--ease-luxury),
+    transform var(--dur-base) var(--ease-luxury);
 }
 .cd-door:hover .cd-arrow,
 .cd-door:focus-visible .cd-arrow {

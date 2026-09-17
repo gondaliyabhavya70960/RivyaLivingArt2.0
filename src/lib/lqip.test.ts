@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { blurFor } from "./lqip";
 import { SITE_IMAGE_SLOTS } from "./site-images";
 import blurManifest from "./media-v3-blur.json";
+import redesignBlurManifest from "./redesign-blur.json";
 
 describe("blurFor", () => {
   it("resolves a bundled Part 15 master's URL to its blur-up placeholder", () => {
@@ -41,5 +42,31 @@ describe("blurFor", () => {
     const overrideUrl = "/uploads/home-hero-repointed-9f8e7d6c.jpg";
     expect(overrideUrl).not.toBe(heroSlot!.fallback);
     expect(blurFor(overrideUrl)).toBeUndefined();
+  });
+
+  /**
+   * The redesign set resolves through the SAME lookup, from its own manifest.
+   * Without this the only thing asserting the merge is the home.hero row above,
+   * which would still pass if the catalog half of the file were dropped.
+   */
+  it("resolves a redesign asset's URL from the second manifest", () => {
+    const [id, entry] = Object.entries(redesignBlurManifest)[0];
+    expect(blurFor(entry.src), id).toBe(entry.blurDataURL);
+  });
+
+  /**
+   * Two generators, two files, one map. If both ever claimed the same `src`,
+   * whichever spread last would win silently and a picture would wear the
+   * other's placeholder — so they must stay disjoint rather than merely
+   * merge cleanly.
+   */
+  it("keeps the two blur manifests disjoint", () => {
+    const partFifteen = new Set(
+      Object.values(blurManifest).map((entry) => entry.src),
+    );
+    const overlap = Object.values(redesignBlurManifest)
+      .map((entry) => entry.src)
+      .filter((src) => partFifteen.has(src));
+    expect(overlap).toEqual([]);
   });
 });

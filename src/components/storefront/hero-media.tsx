@@ -66,11 +66,18 @@ export function HeroMedia({
   const motionPaused = useMotionPaused();
   const [canPlay, setCanPlay] = useState(false);
 
-  /* Only the pipeline's own masters have a WebM twin (public/media/v3/<id>.mp4
-     is written alongside <id>.webm). An owner replacement is a single uploaded
-     file, so nothing is offered for it. */
+  /* Only files this repo ships have a WebM twin: the Part 15 pipeline writes
+     public/media/v3/<id>.mp4 beside <id>.webm, and the redesign handoff's two
+     loops are committed the same way (see `site-videos.ts`). An owner
+     replacement is a single uploaded file — a Blob URL has no twin to derive —
+     so nothing is offered for it, and the MP4 is served alone.
+
+     Derived from the path rather than stored, which is what makes the rule
+     checkable: `site-videos.test.ts` asserts both halves of every bundled pair
+     are on disk, because a .webm that is missing or misnamed fails silently —
+     the browser simply skips the source and downloads the heavier MP4. */
   const webmUrl =
-    videoUrl && /^\/media\/v3\/.+\.mp4$/.test(videoUrl)
+    videoUrl && /^\/(media\/v3|redesign)\/[^/]+\.mp4$/.test(videoUrl)
       ? videoUrl.replace(/\.mp4$/, ".webm")
       : undefined;
 

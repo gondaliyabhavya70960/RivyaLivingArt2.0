@@ -20,6 +20,7 @@
  * `lqip-server.ts`, which imports this module rather than duplicating it.
  */
 import blurManifest from "@/lib/media-v3-blur.json";
+import redesignBlurManifest from "@/lib/redesign-blur.json";
 
 type BlurEntry = {
   src: string;
@@ -28,11 +29,25 @@ type BlurEntry = {
   blurDataURL: string;
 };
 
+/**
+ * Two manifests, one owner each, merged on the way in.
+ *
+ * `media-v3-blur.json` belongs to `scripts/media-v3-fetch.mjs`, which rewrites
+ * it WHOLESALE on every run. A redesign row added there would survive exactly
+ * until the next Part 15 fetch and then disappear, taking its placeholder with
+ * it and leaving no test to say why — so the redesign set keeps its own file,
+ * written by `scripts/optimize-redesign-assets.mjs`, and the two are joined
+ * here at read time instead.
+ *
+ * Neither manifest may claim the same `src`: a duplicate would mean two
+ * generators disagreeing about one picture's placeholder, silently resolved by
+ * insertion order. `lqip.test.ts` pins that they stay disjoint.
+ */
 const BY_SRC = new Map<string, string>(
-  Object.values(blurManifest as Record<string, BlurEntry>).map((entry) => [
-    entry.src,
-    entry.blurDataURL,
-  ]),
+  [
+    ...Object.values(blurManifest as Record<string, BlurEntry>),
+    ...Object.values(redesignBlurManifest as Record<string, BlurEntry>),
+  ].map((entry) => [entry.src, entry.blurDataURL]),
 );
 
 /**
