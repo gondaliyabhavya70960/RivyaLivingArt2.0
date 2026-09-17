@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1329 slots · 0 flagged as unreachable from any component.
+ * 1330 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -194,9 +194,10 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Home.portfolio.projectNumber","group":"Homepage","section":"portfolio","label":"Project number","kind":"body","tier":"editorial","max":400,"vars":["number"]},
   {"key":"Home.testimonials.eyebrow","group":"Homepage","section":"testimonials","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Home.testimonials.heading","group":"Homepage","section":"testimonials","label":"Heading","kind":"heading","tier":"editorial","max":80},
-  {"key":"Home.testimonials.previous","group":"Homepage","section":"testimonials","label":"Previous","kind":"body","tier":"editorial","max":400},
-  {"key":"Home.testimonials.next","group":"Homepage","section":"testimonials","label":"Next","kind":"body","tier":"editorial","max":400},
   {"key":"Home.testimonials.rating","group":"Homepage","section":"testimonials","label":"Rating","kind":"body","tier":"editorial","max":400,"vars":["rating"]},
+  {"key":"Home.testimonials.pause","group":"Homepage","section":"testimonials","label":"Pause","kind":"body","tier":"editorial","max":400},
+  {"key":"Home.testimonials.resume","group":"Homepage","section":"testimonials","label":"Resume","kind":"body","tier":"editorial","max":400},
+  {"key":"Home.testimonials.show","group":"Homepage","section":"testimonials","label":"Show","kind":"body","tier":"editorial","max":400,"vars":["index"]},
   {"key":"Home.journal.eyebrow","group":"Homepage","section":"journal","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Home.journal.heading","group":"Homepage","section":"journal","label":"Heading","kind":"heading","tier":"editorial","max":80},
   {"key":"Home.journal.cta","group":"Homepage","section":"journal","label":"Cta","kind":"cta","tier":"editorial","max":60},

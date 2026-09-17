@@ -235,9 +235,10 @@
     "testimonials": {
       "eyebrow": "de belles paroles",
       "heading": "Ce que disent les collectionneurs",
-      "previous": "Témoignages précédents",
-      "next": "Témoignages suivants",
-      "rating": "{rating} étoiles sur 5"
+      "rating": "{rating} étoiles sur 5",
+      "pause": "Suspendre les témoignages",
+      "resume": "Reprendre les témoignages",
+      "show": "Afficher le témoignage {index}"
     },
     "journal": {
       "eyebrow": "extrait du journal",

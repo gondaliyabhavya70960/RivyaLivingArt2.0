@@ -235,9 +235,10 @@
     "testimonials": {
       "eyebrow": "真挚评价",
       "heading": "藏家心声",
-      "previous": "上一组评价",
-      "next": "下一组评价",
-      "rating": "5 星中的 {rating} 星"
+      "rating": "5 星中的 {rating} 星",
+      "pause": "暂停评价轮播",
+      "resume": "继续评价轮播",
+      "show": "显示第 {index} 条评价"
     },
     "journal": {
       "eyebrow": "来自手记",
