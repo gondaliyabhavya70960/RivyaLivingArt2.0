@@ -12,10 +12,7 @@ import {
   PRODUCT_SIZE_TIERS,
   type ProductSizeTier,
 } from "@/lib/product-size-tier";
-import {
-  markImportedConfirmed,
-  mirrorLegacyReviewStatus,
-} from "@/lib/scraper/shortlist-write";
+import { markImportedConfirmed } from "@/lib/scraper/shortlist-write";
 import { SCRAPER_UA } from "@/lib/scraper/types";
 import { safeFetch } from "@/lib/scraper/ssrf";
 import { createWithUniqueSlug, slugify, uniqueSlug } from "@/lib/slug";
@@ -36,55 +33,6 @@ const IMAGE_EXTENSIONS: Record<string, string> = {
   "image/png": ".png",
   "image/webp": ".webp",
 };
-
-// ————————————————————— Review status —————————————————————
-
-const statusSchema = z.object({
-  ids: z.array(z.string().min(1)).min(1, "Select at least one item."),
-  status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
-});
-
-/**
- * Bulk approve/reject/reset staged products. IMPORTED is terminal and is
- * only ever set by importApprovedScraped — rows already imported are left
- * untouched here.
- *
- * Legacy surface (B7): the review inbox now lives on ShortlistEntry and this
- * action's only remaining caller is the import dialog's approve-first step.
- * The decision is mirrored UP to the entries (APPROVED→SHORTLISTED …) so the
- * two representations cannot drift — with the hard rule that the mirror
- * never moves an entry out of CONFIRMED (see shortlist-write.ts).
- */
-export async function setScrapedReviewStatus(
-  ids: string[],
-  status: "PENDING" | "APPROVED" | "REJECTED",
-): Promise<ActionResult<{ updated: number }>> {
-  return runAction(async () => {
-    const session = await requireStaff();
-    const parsed = statusSchema.parse({ ids, status });
-
-    // Fetch the twins' identity refs BEFORE the update — updateMany returns
-    // a count, not rows.
-    const twins = await db.scrapedProduct.findMany({
-      where: { id: { in: parsed.ids }, reviewStatus: { not: "IMPORTED" } },
-      select: { sourceKey: true, externalId: true },
-    });
-    const res = await db.scrapedProduct.updateMany({
-      where: { id: { in: parsed.ids }, reviewStatus: { not: "IMPORTED" } },
-      data: { reviewStatus: parsed.status },
-    });
-    await mirrorLegacyReviewStatus(twins, parsed.status, session.user.id);
-
-    await logActivity({
-      userId: session.user.id,
-      action: "review",
-      entity: "ScrapedProduct",
-      meta: { status: parsed.status, count: res.count },
-    });
-    revalidatePath(REVIEW_PATH);
-    return { updated: res.count };
-  });
-}
 
 // ————————————————————— Inline edit of a staged row —————————————————————
 
@@ -140,18 +88,12 @@ export async function updateStagedProduct(
   });
 }
 
-// ————————————————————— Import approved → DRAFT products —————————————————————
+// ————————————————————— Import → DRAFT products —————————————————————
 
 // Reviewer notes moved to ShortlistEntry with the B7 inbox rebuild — see
 // setShortlistNote in actions/scraper-shortlist.ts. ScrapedProduct.notes
 // stays in the schema (the backfill carried its contents forward); it is
 // simply no longer edited from the Studio.
-
-const importSchema = z.object({
-  ids: z.array(z.string().min(1)).min(1, "Select at least one item."),
-  categoryId: z.string().min(1, "Pick a category."),
-  mirrorImages: z.boolean(),
-});
 
 export type ImportScrapedReport = {
   /** Newly created draft products. */
@@ -169,11 +111,6 @@ export type ImportScrapedReport = {
   protected: number;
   errors: { title: string; message: string }[];
 };
-
-/** Inner outcome — user-facing failures ride out of runAction as data. */
-type ImportOutcome =
-  | { report: ImportScrapedReport; userError?: never }
-  | { report?: never; userError: string };
 
 function toStringArray(value: unknown): string[] {
   return Array.isArray(value)
@@ -434,94 +371,6 @@ async function importOneScrapedRow(
   });
   await confirmImported();
   return "created";
-}
-
-/**
- * Import APPROVED staging rows as DRAFT products into ONE category (review
- * queue). Rows that are not APPROVED are skipped; per-row failures are
- * collected and the loop continues.
- */
-export async function importApprovedScraped({
-  ids,
-  categoryId,
-  mirrorImages,
-}: {
-  ids: string[];
-  categoryId: string;
-  mirrorImages: boolean;
-}): Promise<ActionResult<ImportScrapedReport>> {
-  const result = await runAction<ImportOutcome>(async () => {
-    const session = await requireStaff();
-    const parsed = importSchema.parse({ ids, categoryId, mirrorImages });
-
-    const category = await db.category.findUnique({
-      where: { id: parsed.categoryId },
-      select: { id: true },
-    });
-    if (!category) {
-      return {
-        userError: "That category no longer exists — refresh and pick another.",
-      };
-    }
-
-    const rows = await db.scrapedProduct.findMany({
-      where: { id: { in: parsed.ids }, reviewStatus: "APPROVED" },
-    });
-
-    let skipped = new Set(parsed.ids).size - rows.length;
-    let imported = 0;
-    let updated = 0;
-    let protectedCount = 0;
-    const errors: ImportScrapedReport["errors"] = [];
-
-    for (const row of rows) {
-      try {
-        const outcome = await importOneScrapedRow(
-          row,
-          parsed.categoryId,
-          parsed.mirrorImages,
-          session.user.id,
-        );
-        if (outcome === "created") imported += 1;
-        else if (outcome === "updated") updated += 1;
-        else if (outcome === "protected") protectedCount += 1;
-        else skipped += 1;
-      } catch (error) {
-        console.error(`Scraped import failed for "${row.title}":`, error);
-        errors.push({
-          title: row.title,
-          message:
-            error instanceof Error
-              ? error.message
-              : "Import failed unexpectedly.",
-        });
-      }
-    }
-
-    await logActivity({
-      userId: session.user.id,
-      action: "scraper-import",
-      entity: "Product",
-      entityId: null,
-      meta: { imported, updated, skipped },
-    });
-    revalidatePath(REVIEW_PATH);
-    revalidatePath(PRODUCTS_PATH);
-
-    return {
-      report: { imported, updated, skipped, protected: protectedCount, errors },
-    };
-  });
-
-  if (!result.ok) return result;
-  const outcome = result.data;
-  if (!outcome || outcome.userError !== undefined) {
-    return {
-      ok: false,
-      error: outcome?.userError ?? "Something went wrong. Please try again.",
-    };
-  }
-  return { ok: true, data: outcome.report };
 }
 
 // ————————————————————— Add to catalog (per-product category) —————————————————————

@@ -15,12 +15,13 @@ import { toast } from "sonner";
 
 import { updateStagedProduct } from "@/actions/scraper-review";
 import {
+  resolveInboxSelection,
   setShortlistNote,
   setShortlistState,
   setShortlistTags,
 } from "@/actions/scraper-shortlist";
 import type { TransitionReport } from "@/actions/scraper-shortlist";
-import { ApproveImportDialog } from "@/components/studio/scraper/approve-import-dialog";
+import { InboxAddToCatalogDialog } from "@/components/studio/scraper/inbox-add-to-catalog-dialog";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { EmptyState } from "@/components/studio/page-header";
 import { FieldError } from "@/components/studio/field-error";
@@ -58,7 +59,21 @@ import {
   SHORTLIST_TRANSITIONS,
   ShortlistState,
 } from "@/lib/scraper/shortlist";
-import type { InboxCounts, InboxRow } from "@/lib/scraper/shortlist-query";
+import type {
+  InboxCounts,
+  InboxFilter,
+  InboxRow,
+  InboxSizeTierFilter,
+} from "@/lib/scraper/shortlist-query";
+import type { ScrapeTier } from "@/generated/prisma/enums";
+import {
+  PRODUCT_SIZE_TIERS,
+  SIZE_TIER_NUMBER,
+  SIZE_TIER_SHORT,
+  sizeTierStudioLabel,
+} from "@/lib/product-size-tier";
+import { MOVE_BATCH, chunk } from "@/lib/scraper/inbox-batch";
+import { SCRAPE_TIERS, TIER_LABEL } from "@/lib/scraper/purge";
 import { useSelection } from "@/hooks/use-selection";
 
 const STATE_BADGE: Record<
@@ -98,14 +113,25 @@ function StateBadge({ state }: { state: ShortlistState }) {
   );
 }
 
-function reportToast(action: string, report: TransitionReport, target: ShortlistState) {
+/** A transition report's counts — one call's, or several batches' added up. */
+type MoveTotals = { moved: number; already: number; blocked: number };
+
+function totalsOf(report: TransitionReport): MoveTotals {
+  return {
+    moved: report.moved,
+    already: report.already,
+    blocked: report.blocked.length,
+  };
+}
+
+function reportToast(action: string, report: MoveTotals, target: ShortlistState) {
   const parts = [`${report.moved} ${action}`];
   if (report.already > 0) parts.push(`${report.already} already there`);
-  if (report.blocked.length > 0) {
+  if (report.blocked > 0) {
     parts.push(
       target === ShortlistState.CONFIRMED
-        ? `${report.blocked.length} skipped — only shortlisted items can be confirmed`
-        : `${report.blocked.length} skipped — that move is not allowed from their state`,
+        ? `${report.blocked} skipped — only shortlisted items can be confirmed`
+        : `${report.blocked} skipped — that move is not allowed from their state`,
     );
   }
   toast.success(parts.join(" · "));
@@ -168,6 +194,15 @@ function InboxCard({
               {row.sourceName}
             </Badge>
             {row.category && <Badge variant="secondary">{row.category}</Badge>}
+            {row.suggestedSizeTier && (
+              <Badge
+                variant="outline"
+                title={`Suggested tier: ${sizeTierStudioLabel(row.suggestedSizeTier)}`}
+              >
+                Tier {SIZE_TIER_NUMBER[row.suggestedSizeTier]} ·{" "}
+                {SIZE_TIER_SHORT[row.suggestedSizeTier]}
+              </Badge>
+            )}
             <Badge variant={row.updated ? "outline" : "secondary"}>
               {row.updated ? "updated" : "new"}
             </Badge>
@@ -659,17 +694,23 @@ export function ShortlistInbox({
   categories,
   counts,
   activeSource,
+  activeSourceTier,
+  activeSizeTier,
   activeState,
   initialQuery,
   truncated,
   totalMatching,
 }: {
   rows: InboxRow[];
-  sources: { key: string; name: string }[];
+  sources: { key: string; name: string; tier: ScrapeTier }[];
   categories: { id: string; name: string }[];
   counts: InboxCounts;
   /** "ALL" or a sourceKey. */
   activeSource: string;
+  /** "ALL" or a ScrapeTier — the SOURCE's list. */
+  activeSourceTier: string;
+  /** "ALL", a ProductSizeTier, or "NONE" — the SUGGESTED product tier. */
+  activeSizeTier: string;
   /** "ALL" or a ShortlistState. */
   activeState: string;
   initialQuery: string;
@@ -680,10 +721,28 @@ export function ShortlistInbox({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // The filter as the server actions take it — what "select all matching"
+  // resolves against, so the bulk bar acts on exactly what the page shows.
+  const filter = useMemo<InboxFilter>(
+    () => ({
+      sourceKey: activeSource !== "ALL" ? activeSource : undefined,
+      sourceTier:
+        activeSourceTier !== "ALL" ? (activeSourceTier as ScrapeTier) : undefined,
+      sizeTier:
+        activeSizeTier !== "ALL"
+          ? (activeSizeTier as InboxSizeTierFilter)
+          : undefined,
+      q: initialQuery || undefined,
+    }),
+    [activeSource, activeSourceTier, activeSizeTier, initialQuery],
+  );
+  const state = activeState as ShortlistState | "ALL";
+  const filterKey = `${activeSource}|${activeSourceTier}|${activeSizeTier}|${activeState}|${initialQuery}`;
+
   const { pageRows, page, setPage, pageCount, total, pageSize } = usePagination(
     rows,
     PAGE_SIZE,
-    `${activeSource}|${activeState}|${initialQuery}`,
+    filterKey,
   );
 
   // Selection is scoped to the visible page.
@@ -692,35 +751,47 @@ export function ShortlistInbox({
     [pageRows],
   );
   const selection = useSelection(rowIds);
-  const rowById = useMemo(
-    () => new Map(rows.map((row) => [row.researchProductId, row])),
-    [rows],
-  );
 
   const [detail, setDetail] = useState<InboxRow | null>(null);
   const [busy, setBusy] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
   const [bulkTarget, setBulkTarget] = useState<ShortlistState>(
     ShortlistState.SHORTLISTED,
   );
 
-  // The import dialog still works on staged twins — the SHORTLISTED mirror
-  // keeps them APPROVED, which is what the promote path reads.
-  const selectedTwins = selection.ids
-    .map((id) => rowById.get(id))
-    .filter((row): row is InboxRow => Boolean(row?.twinId));
-  const shortlistedSelected = selectedTwins.filter(
-    (row) => row.state === ShortlistState.SHORTLISTED,
-  ).length;
+  // "Select all N matching": the selection is the FILTER, on every page,
+  // rather than the ticks on this one. Any change to the filter or to a
+  // single tick drops back to the ticks — the render-time reset pattern
+  // `usePagination` already uses, never a synchronous setState in an effect.
+  const [allMatching, setAllMatching] = useState(false);
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    setAllMatching(false);
+  }
+  const effectiveCount = allMatching ? totalMatching : selection.count;
 
-  function setParam(key: "source" | "status" | "q", value: string) {
+  function clearAll() {
+    setAllMatching(false);
+    selection.clear();
+  }
+
+  function toggleRow(id: string) {
+    setAllMatching(false);
+    selection.toggle(id);
+  }
+
+  function setParam(
+    key: "source" | "tier" | "size" | "status" | "q",
+    value: string,
+  ) {
     const params = new URLSearchParams(searchParams.toString());
     const isDefault =
       key === "status"
         ? value === ShortlistState.NEW
-        : key === "source"
-          ? value === "ALL"
-          : value === "";
+        : key === "q"
+          ? value === ""
+          : value === "ALL";
     if (isDefault) params.delete(key);
     else params.set(key, value);
     const qs = params.toString();
@@ -748,12 +819,57 @@ export function ShortlistInbox({
     if (res.data) {
       reportToast(
         target === ShortlistState.CONFIRMED ? "confirmed" : "moved",
-        res.data,
+        totalsOf(res.data),
         target,
       );
     }
     router.refresh();
     return true;
+  }
+
+  /**
+   * Move every row the filter matches: resolve the ids on the server, then
+   * feed `setShortlistState` in batches of its own ceiling. One toast adds
+   * the batches up, so "312 moved · 4 skipped" reads like a single move.
+   */
+  async function moveAllMatching(target: ShortlistState) {
+    setBusy(true);
+    const resolved = await resolveInboxSelection({ filter, state });
+    if (!resolved.ok || !resolved.data) {
+      setBusy(false);
+      toast.error(resolved.ok ? "Nothing to move." : resolved.error);
+      return;
+    }
+    const totals: MoveTotals = { moved: 0, already: 0, blocked: 0 };
+    let stopped = false;
+    for (const ids of chunk(resolved.data.ids, MOVE_BATCH)) {
+      const res = await setShortlistState(ids, target);
+      if (!res.ok) {
+        toast.error(res.error);
+        stopped = true;
+        break;
+      }
+      if (res.data) {
+        totals.moved += res.data.moved;
+        totals.already += res.data.already;
+        totals.blocked += res.data.blocked.length;
+      }
+    }
+    setBusy(false);
+    if (!stopped) {
+      reportToast(
+        target === ShortlistState.CONFIRMED ? "confirmed" : "moved",
+        totals,
+        target,
+      );
+      if (resolved.data.capped) {
+        toast.info(
+          `The first ${resolved.data.ids.length} of ${resolved.data.totalMatching} matching rows moved — run it again for the rest.`,
+        );
+      }
+    }
+    clearAll();
+    router.refresh();
   }
 
   async function handleDetailTransition(target: ShortlistState, reason: string) {
@@ -853,6 +969,41 @@ export function ShortlistInbox({
           </SelectContent>
         </Select>
 
+        <Select
+          value={activeSourceTier}
+          onValueChange={(value) => setParam("tier", value)}
+        >
+          <SelectTrigger size="sm" aria-label="Filter by the source's tier">
+            <SelectValue placeholder="Source tier" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All source tiers</SelectItem>
+            {SCRAPE_TIERS.map((tier) => (
+              <SelectItem key={tier} value={tier}>
+                {TIER_LABEL[tier]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={activeSizeTier}
+          onValueChange={(value) => setParam("size", value)}
+        >
+          <SelectTrigger size="sm" aria-label="Filter by suggested product tier">
+            <SelectValue placeholder="Suggested tier" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Any suggested tier</SelectItem>
+            {PRODUCT_SIZE_TIERS.map((tier) => (
+              <SelectItem key={tier} value={tier}>
+                {sizeTierStudioLabel(tier)}
+              </SelectItem>
+            ))}
+            <SelectItem value="NONE">Unsure — no suggestion</SelectItem>
+          </SelectContent>
+        </Select>
+
         <form onSubmit={handleSearch} className="flex items-center gap-2">
           <Input
             key={initialQuery}
@@ -891,9 +1042,45 @@ export function ShortlistInbox({
 
       {truncated && (
         <p className="mb-3 text-xs text-muted-foreground">
-          Showing the {pageRows.length} most recently seen of {totalMatching}{" "}
-          matching items — narrow the filters to see the rest.
+          Showing the {rows.length} most recently seen of {totalMatching}{" "}
+          matching items — narrow the filters to see the rest, or select all
+          on this page and then all {totalMatching} matching to act on every
+          one of them.
         </p>
+      )}
+
+      {rows.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+          <label className="inline-flex items-center gap-2">
+            <Checkbox
+              checked={selection.allSelected}
+              onCheckedChange={() => {
+                setAllMatching(false);
+                selection.toggleAll();
+              }}
+              aria-label="Select all on this page"
+            />
+            <span>Select all on this page</span>
+          </label>
+          {selection.allSelected &&
+            !allMatching &&
+            totalMatching > selection.count && (
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="h-auto p-0"
+                onClick={() => setAllMatching(true)}
+              >
+                Select all {totalMatching} matching
+              </Button>
+            )}
+          {allMatching && (
+            <span role="status" className="text-muted-foreground">
+              All {totalMatching} matching items are selected, on every page.
+            </span>
+          )}
+        </div>
       )}
 
       {rows.length === 0 ? (
@@ -907,8 +1094,10 @@ export function ShortlistInbox({
             <InboxCard
               key={row.researchProductId}
               row={row}
-              checked={selection.selected.has(row.researchProductId)}
-              onToggle={() => selection.toggle(row.researchProductId)}
+              checked={
+                allMatching || selection.selected.has(row.researchProductId)
+              }
+              onToggle={() => toggleRow(row.researchProductId)}
               onOpen={() => setDetail(row)}
             />
           ))}
@@ -924,7 +1113,7 @@ export function ShortlistInbox({
         unit="products"
       />
 
-      <BulkBar count={selection.count} onClear={selection.clear}>
+      <BulkBar count={effectiveCount} onClear={clearAll}>
         <Select
           value={bulkTarget}
           onValueChange={(value) => setBulkTarget(value as ShortlistState)}
@@ -948,23 +1137,28 @@ export function ShortlistInbox({
           size="sm"
           variant="secondary"
           disabled={busy}
-          onClick={() => moveIds(selection.ids, bulkTarget)}
+          onClick={() =>
+            allMatching
+              ? moveAllMatching(bulkTarget)
+              : moveIds(selection.ids, bulkTarget)
+          }
         >
-          Move {selection.count} to {SHORTLIST_STATE_LABELS[bulkTarget]}
+          Move {effectiveCount} to {SHORTLIST_STATE_LABELS[bulkTarget]}
         </Button>
-        <Button size="sm" disabled={busy} onClick={() => setImportOpen(true)}>
-          Import shortlisted…
+        <Button size="sm" disabled={busy} onClick={() => setCatalogOpen(true)}>
+          Add to catalog…
         </Button>
       </BulkBar>
 
-      <ApproveImportDialog
-        open={importOpen}
-        onOpenChange={setImportOpen}
-        ids={selectedTwins.map((row) => row.twinId as string)}
-        approvedCount={shortlistedSelected}
+      <InboxAddToCatalogDialog
+        open={catalogOpen}
+        onOpenChange={setCatalogOpen}
+        filter={filter}
+        state={state}
+        ids={allMatching ? null : selection.ids}
         categories={categories}
         onDone={() => {
-          selection.clear();
+          clearAll();
           router.refresh();
         }}
       />

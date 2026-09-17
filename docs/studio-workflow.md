@@ -24,7 +24,13 @@ resumes if interrupted; pressing again while it runs shows you the run rather
 than starting a second.
 
 **2 · Review what came back.** `/studio/scraper/review`. Approve what is worth
-keeping, reject the rest. Nothing reaches the catalogue on its own.
+keeping, reject the rest. Nothing reaches the catalogue on its own. Filter by
+source, by the source's tier, by the tier the classifier suggests, by state or
+by search; tick **Select all on this page**, then **Select all N matching**, to
+act on every page at once. **Move** takes the selection through the funnel;
+**Add to catalog…** puts each product in its nearest category with its
+suggested tier (or one category and one tier for all) as a DRAFT, in batches
+with a progress line — a run that stops resumes by pressing Add again.
 
 **3 · Import the approved rows.** They arrive as **DRAFT** with the rewrite
 guard set — scraped titles and photographs are somebody else's copyrighted

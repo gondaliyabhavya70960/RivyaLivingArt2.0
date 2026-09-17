@@ -19,7 +19,10 @@ import { describeUnauthorizedRun } from "@/lib/scraper/policy";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { matchCategoryId } from "@/lib/scraper/category-map";
-import { suggestSizeTier } from "@/lib/scraper/size-tier-suggest";
+import {
+  productTypeFromFields,
+  suggestSizeTier,
+} from "@/lib/scraper/size-tier-suggest";
 import { describePriceMove } from "@/lib/scraper/price-history";
 import { deriveHealth } from "@/lib/scraper/health";
 
@@ -42,15 +45,6 @@ const getSource = cache((key: string) =>
 const firstString = (value: unknown): string | null =>
   Array.isArray(value)
     ? (value.find((v): v is string => typeof v === "string") ?? null)
-    : null;
-
-/** `fields.productType`, when the adapter recorded one (Shopify does). */
-const productTypeOf = (fields: unknown): string | null =>
-  fields &&
-  typeof fields === "object" &&
-  "productType" in fields &&
-  typeof (fields as { productType: unknown }).productType === "string"
-    ? (fields as { productType: string }).productType
     : null;
 
 function priceLabel(min: number | null, max: number | null): string {
@@ -189,7 +183,7 @@ export default async function SourceDetailPage({
     suggestedSizeTier: suggestSizeTier({
       title: p.title,
       category: p.category,
-      productType: productTypeOf(p.fields),
+      productType: productTypeFromFields(p.fields),
       description: p.description,
       dimensions: p.dimensions,
     }),

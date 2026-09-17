@@ -76,6 +76,29 @@ CSV). Every cell links to the screen its count describes.
 tested without a database) / `stages-server.ts` (the nine counting queries,
 run in parallel) / `src/components/studio/scraper/stage-rail.tsx`.
 
+## Reviewing in bulk
+
+`/studio/scraper/review` filters by source, by the SOURCE's tier (`?tier=`,
+which supplier list the site sits in), by the SUGGESTED product tier
+(`?size=`, step 6's `suggestSizeTier` over the staged twin — computed when
+the page is read, never stored; "Unsure" when nothing scored), by funnel
+state and by search. The view is capped at 200 rows, but the selection is
+not: **Select all on this page**, then **Select all N matching**, makes the
+FILTER the selection on every page. The bulk bar then moves those rows
+through the funnel or adds them to the catalogue.
+
+Nothing new writes. `resolveInboxSelection` (staff-only,
+`src/actions/scraper-shortlist.ts` → `inboxSelection` in
+`src/lib/scraper/shortlist-query.ts`) answers what the filter covers before
+anything moves — every matching research product, and the importable subset
+(a staged twin not yet in the catalogue) with the same category auto-map and
+tier suggestion the source page shows — and the client feeds the existing
+`setShortlistState` (500 per call) and `addScrapedToCatalog` (10 per call
+when mirroring images, 100 otherwise; `src/lib/scraper/inbox-batch.ts`).
+Every imported row leaves the importable set, so a run that stops — a
+timeout, a closed laptop — resumes from where it was. The first 3,000
+matching rows resolve per pass; the dialog says when there are more.
+
 ## Running a scrape
 
 `/studio/scraper` → pick a source → **Scrape ‹source name›**.
@@ -274,7 +297,7 @@ never on the path from scrape to catalogue. `src/actions/research.ts`,
 | Price history                      | `src/lib/scraper/price-history.ts`                                                                            |
 | Validation                         | `src/lib/scraper/validation.ts`                                                                               |
 | Category mapping                   | `src/lib/scraper/category-map.ts` (+ `.test.ts` against the real catalog)                                     |
-| Review + promote + notes           | `src/actions/scraper-review.ts`                                                                               |
+| Review + promote + notes           | `src/actions/scraper-review.ts` (edit before import, add to catalog) · `src/actions/scraper-shortlist.ts` (funnel moves, notes, tags, the selection resolver) |
 | Research library                   | `src/actions/research.ts`                                                                                     |
 | Merge protection                   | `src/lib/scraper/merge-policy.ts` (also honoured by Bulk Import's products template, `src/actions/import.ts`) |
 

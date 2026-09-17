@@ -8,6 +8,42 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-17 (early morning — the inbox selects by filter; the cron runs)
+Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main after #93 (4fd823e).
+Production:               #93 merged 01:12 UTC; the production build queued the nine sources
+                          (saashi, leoberry-gifts, kanha-kreation, woodensure, resin-arts-jaipur,
+                          korepox-arts, resin-art-store-india, radhika-art, dinosaur-designs) and
+                          filed seven as manual research. THEN THE FINDING: /api/cron/scrape-drain
+                          had answered 401 to all 144 cron calls in seven days — CRON_SECRET was
+                          never set on the Vercel project (Vercel sends the bearer only when it
+                          exists), so no cron-driven collection had ever run, nor the image
+                          mirror. The owner set CRON_SECRET and redeployed (01:36 UTC): the drain
+                          answered 200 from 01:40 and ran clean through the first hours. AUTH_URL
+                          corrected to https://www.rivyalivingart.com (redeploy 03:46 UTC).
+What shipped:             the review inbox's "select all with the needed filters": ?tier= (the
+                          SOURCE's tier) and ?size= (the SUGGESTED product tier, computed over the
+                          whole slice at read time), a suggested-tier badge per card, "Select all
+                          on this page" → "Select all N matching" (the filter on every page),
+                          resolveInboxSelection (staff-only read: ids for a move; importable twins
+                          with the auto-mapped category and the suggested tier), funnel moves in
+                          batches of 500 and Add to catalog in batches of 10/100 through the
+                          EXISTING actions, with progress and resume; the legacy one-category
+                          import dialog and its two actions deleted. maxDuration 120 on the
+                          review page. 4 unit + 4 db tests. DEPLOYMENT.md §12 and CLAUDE.md
+                          carry the cron-secret finding.
+Next Exact Task:          THE OWNER: on /studio/scraper confirm the nine sources read Done or
+                          "product cap reached (500)"; on /studio/scraper/review filter by source
+                          tier or suggested tier, Select all matching, Add to catalog; then
+                          /studio/products → publish. Answers still owed: Dinosaur Designs in or
+                          out; "his website" = the previous store?; T2/T4/T8 (docs/plan/07).
+                          THE CODE: NEEDED-WORK.md §3 — the collectible card in every grid, the
+                          memory and gift card variants, the Tier-1 restore button, the Studio
+                          control for maxProducts.
+```
+
+## SESSION CHECKPOINT — 2026-09-16 late evening, the catalogue rebuild begins (superseded by the block above, kept as history)
+
+```text
 Date:                     2026-09-16 (late evening — the catalogue rebuild begins)
 Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main after #92 (91c93b5).
 What shipped:             The reference-site rollout on the owner's written instruction:
