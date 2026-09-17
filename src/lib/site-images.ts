@@ -23,6 +23,15 @@
  *  - `CANONICAL_CATEGORIES[].image` in catalog-taxonomy.ts — those are seed
  *    defaults for `Category.image`, which the owner already edits in the
  *    category editor. Slotting them too would give one picture two owners.
+ *
+ * v3.1 (branch redesign/liquid-luxury): eleven slot fallbacks now point at
+ * the generated `/redesign/*.jpg` asset set (see design/awwwards-redesign-spec.md)
+ * — the hero pour, the resin-flow texture bands, the preservation block and
+ * the four "Why" proof images. Every one remains owner-overridable from
+ * /studio/site-images exactly as before; deleting the override restores the
+ * file named here. The maker (`home.maker` / `about.maker`), workshops band
+ * and large-format hero are deliberately NOT repointed: their slot notes
+ * forbid generated imagery or no suitable asset exists yet.
  */
 
 import { blurFor } from "@/lib/lqip";
@@ -82,7 +91,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Hero",
     where: "Homepage, full-bleed behind the headline",
     ratio: "16:9",
-    fallback: "/media/v3/hero-pour.avif",
+    fallback: "/redesign/hero-pour.jpg",
     note: "This is the largest thing on the site and the page's LCP — keep it under ~300 KB. Used as the poster when a hero video is set in Site Settings.",
   },
   {
@@ -101,7 +110,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Commission band",
     where: "Homepage · 08 Bespoke, behind the dark band at 35% opacity",
     ratio: "16:9",
-    fallback: "/media/v3/bespoke-petals.avif",
+    fallback: "/redesign/texture-resin-flow.jpg",
     note: "Renders dimmed behind text — pick something with a calm, dark area.",
   },
   /* The one collection tile with no category row behind it. The other five
@@ -117,7 +126,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Collections · Commission a piece",
     where: "Homepage · Collections, the tile linking to /custom-order",
     ratio: "3:4",
-    fallback: "/media/v3/tile-create.avif",
+    fallback: "/redesign/doorway-memory.jpg",
     note: "The only collections tile without a category row — the other five take their picture from the category editor.",
     altKey: "Home.collections.tiles.create.alt",
   },
@@ -146,7 +155,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Why · Handcrafted",
     where: "Homepage · Why Rivya Living Art, first of four",
     ratio: "4:5",
-    fallback: "/media/v3/studio-hands.avif",
+    fallback: "/redesign/maker-hands.jpg",
     altKey: "Home.why.proof.handcrafted.alt",
   },
   {
@@ -155,7 +164,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Why · Bespoke",
     where: "Homepage · Why Rivya Living Art, second of four",
     ratio: "4:5",
-    fallback: "/media/v3/varmala-fresh-garland.avif",
+    fallback: "/redesign/doorway-memory.jpg",
     altKey: "Home.why.proof.bespoke.alt",
   },
   {
@@ -164,7 +173,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Why · Slow made",
     where: "Homepage · Why Rivya Living Art, third of four",
     ratio: "4:5",
-    fallback: "/media/v3/story-cure.avif",
+    fallback: "/redesign/texture-resin-flow.jpg",
     altKey: "Home.why.proof.slowMade.alt",
   },
   {
@@ -173,7 +182,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Why · Heirloom",
     where: "Homepage · Why Rivya Living Art, fourth of four",
     ratio: "4:5",
-    fallback: "/media/v3/story-polish.avif",
+    fallback: "/redesign/hero-pour.jpg",
     altKey: "Home.why.proof.heirloom.alt",
   },
   /* Furniture and room tiles (Home.furniture / Home.rooms, off by default —
@@ -293,7 +302,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Hero texture",
     where: "About, full-bleed behind the headline",
     ratio: "21:9",
-    fallback: "/media/v3/texture-band.avif",
+    fallback: "/redesign/texture-resin-flow.jpg",
     note: "A macro texture reads better here than a scene — the headline sits on top of it.",
   },
   {
@@ -736,7 +745,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Hero",
     where: "Commission a piece, the left half of the split hero",
     ratio: "4:5",
-    fallback: "/media/v3/varmala-block-cure.avif",
+    fallback: "/redesign/doorway-memory.jpg",
     altKey: "CustomOrder.page.heroImageAlt",
   },
   {
@@ -754,7 +763,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Archive banner",
     where: "Portfolio, full-bleed behind the headline",
     ratio: "21:9",
-    fallback: "/media/v3/texture-band.avif",
+    fallback: "/redesign/texture-resin-flow.jpg",
   },
   {
     key: "shop.editorialBreak",
@@ -822,7 +831,7 @@ export const SITE_IMAGE_SLOTS = [
     label: "Login backdrop",
     where: "The /studio sign-in screen",
     ratio: "16:9",
-    fallback: "/media/v3/login-backdrop.avif",
+    fallback: "/redesign/texture-resin-flow.jpg",
     note: "Staff only — nobody outside the studio ever sees this.",
   },
 ] as const satisfies readonly SiteImageSlot[];
