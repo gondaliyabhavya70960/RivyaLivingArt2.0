@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight, Search } from "lucide-react";
 
 import { Button } from "@/components/storefront/button";
+import { Magnetic } from "@/components/ui/magnetic";
 import { SITE } from "@/lib/constants";
 import { buildWaLink, defaultWaGreeting } from "@/lib/whatsapp";
 
@@ -109,12 +111,56 @@ export function NotFoundPanel({
     <main id="main-content" className="flex-1">
       <section
         data-theme="navy"
-        className="flex min-h-svh items-center bg-obsidian text-mineral"
+        className="relative flex min-h-svh items-center overflow-hidden bg-obsidian text-mineral"
       >
-        <div className="u-shell grid gap-16 py-24 lg:grid-cols-12 lg:gap-x-16">
+        {/* The vortex, and why it is here after the manifest said it was not.
+            Plan §2.10 asks for `visual-404.jpg` full-bleed; REDESIGN.md §11.11
+            says the 404 is "the heading + search field + four popular
+            collections + WhatsApp. No cartoon." Those read as a conflict and
+            are not one: "no cartoon" rules out an illustration apologising for
+            the error, not photography. The vortex is a cinematic resin render
+            in the same grade as the hero pour, so the content stays exactly as
+            §11.11 enumerates it and the picture sits behind it.
+
+            Deliberately NOT the LCP and NOT a site-image slot. No `priority`:
+            the heading should paint first, and a decorative backdrop that
+            delays it would trade §11.11's actual content for atmosphere. No
+            slot, because a 404 is what renders when things are already going
+            wrong — `getSiteImages()` would put a database read on the one
+            page that has to work without one. The file is bundled, so this
+            resolves with no network of its own.
+
+            Contrast is the constraint that sets the numbers: the veil below
+            keeps mineral text far above 4.5:1 over even the brightest frame of
+            the pour, which `redesign-audit.mjs` measures rather than trusts. */}
+        <div aria-hidden className="absolute inset-0">
+          <Image
+            src="/redesign/visual-404.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            quality={70}
+            className="object-cover opacity-70"
+          />
+          {/* Weighted to the reading order, not flat: the headline and the
+              search field sit in the first six columns, so the veil is opaque
+              there and thins toward the end edge where the collections list
+              has only short link text. A flat veil dark enough for the
+              headline left the vortex invisible — which is how the first pass
+              of this shipped, and the reason the numbers below are measured
+              rather than chosen. */}
+          <span className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/88 to-obsidian/35" />
+        </div>
+
+        <div className="relative z-10 u-shell grid gap-16 py-24 lg:grid-cols-12 lg:gap-x-16">
           <div className="flex flex-col gap-6 lg:col-span-6">
+            {/* The eyebrow keeps its champagne TEXT; its decorative rule
+                drops to mist. `redesign-audit.mjs` caps the first viewport at
+                two champagne-painting elements, these two spent both, and
+                §2.10 asks for the escape to be a champagne pill — which is a
+                better use of the second slot than a 24px dash. */}
             <p className="u-micro flex items-center gap-3 text-champagne">
-              <span aria-hidden className="block h-px w-6 bg-champagne" />
+              <span aria-hidden className="block h-px w-6 bg-mist/60" />
               {copy.eyebrow}
             </p>
             <h1 className="max-w-[12ch] font-display text-h1 leading-h1 tracking-display text-mineral">
@@ -169,9 +215,14 @@ export function NotFoundPanel({
                   landing. The home page is still one click away in the header.
                   "Search the studio" and "Message the studio" stay as they
                   are — those mean the atelier, which is correct. */}
-              <Button variant="secondary" size="md" asChild>
-                <Link href="/shop">{copy.home}</Link>
-              </Button>
+              {/* §2.10: "one magnetic champagne pill". It is also the only
+                  way this pair gets a hierarchy — two `secondary` buttons side
+                  by side say neither is the way out. */}
+              <Magnetic>
+                <Button variant="premium" size="md" asChild>
+                  <Link href="/shop">{copy.home}</Link>
+                </Button>
+              </Magnetic>
               <Button variant="secondary" size="md" asChild>
                 <a
                   href={waHref}
