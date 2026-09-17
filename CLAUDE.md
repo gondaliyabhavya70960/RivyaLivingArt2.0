@@ -1058,6 +1058,23 @@ compact`, `rule`/`rule-dk`.
   that reconciles it with the audit — "it is the order channel, not the brand".
   `premium` is the one place a champagne fill is sanctioned, at hover, with the
   label going dark with it.
+- **`CollectionCard` stacks in ONE GRID CELL, and the z-index is the point**
+  (2026-09-17). The caption used to be `absolute … bottom-0` INSIDE the clipped
+  photo box, which made it the nearest positioned ancestor of the link's
+  `after:inset-0` overlay — so the tile's hit area and its focus ring were the
+  caption, not the tile. The photograph was dead to the pointer, against the
+  component's own header ("The whole tile is the target; there is no button"),
+  and `overflow-hidden` cut the ring's 3px offset off. Both layers now sit in
+  `col-start-1 row-start-1`; the caption is ordered by `z-10` **on a grid item,
+  which takes z-index without `position`** — making it `relative` instead would
+  put the overlay back inside the caption and undo the whole thing. Its `z-10`
+  is equally load-bearing in the other direction: the photo layer's children
+  are `absolute`, so they paint above in-flow content, and without it the
+  eyebrow and the arrow render UNDER the photograph while the promise (a
+  `relative` span) renders over it. `overflow-hidden` moved onto an inner
+  `relative` wrapper so the hover scale still clips; `SnapRail`'s `-m-1.5 p-1.5`
+  is the room a 2px ring at 3px offset needs inside a scroll container, which
+  clips on BOTH axes.
 - **Signature devices**: `CureLine` (§2.6) and `MeniscusImage` (§2.7). No image
   on this site fades in; the meniscus reveal replaces every fade-up, and it
   masks rather than clips — a clipped element never loads its image.

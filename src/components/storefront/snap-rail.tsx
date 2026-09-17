@@ -131,7 +131,14 @@ export function SnapRail({
         role="list"
         aria-label={ariaLabel}
         tabIndex={0}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth [scrollbar-width:none] motion-reduce:scroll-auto md:gap-6 [&::-webkit-scrollbar]:hidden"
+        /* `-m-1.5 p-1.5` is not spacing — it is room for a focus ring.
+           `overflow-x-auto` clips on BOTH axes, and a card's ring is
+           drawn 3px outside its box (5px with the 2px ring), so without
+           this the indicator on
+           the first item and on every item's top and bottom edge is cut
+           off by the scroll container. The negative margin gives the
+           padding back, so nothing moves. */
+        className="-m-1.5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth p-1.5 [scrollbar-width:none] motion-reduce:scroll-auto md:gap-6 [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item, i) => (
           <li
