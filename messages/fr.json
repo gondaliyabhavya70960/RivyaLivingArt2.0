@@ -1764,7 +1764,8 @@
       "nextLabel": "La suite",
       "next1": "Nous lisons votre brief et le confrontons au planning de l'atelier.",
       "next2": "Nous répondons sur WhatsApp avec un devis et un délai.",
-      "next3": "Rien n'est facturé ni engagé tant que vous n'avez pas dit oui."
+      "next3": "Rien n'est facturé ni engagé tant que vous n'avez pas dit oui.",
+      "eyebrowNoReference": "demande reçue"
     }
   }
 }

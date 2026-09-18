@@ -1764,7 +1764,8 @@
       "nextLabel": "What happens next",
       "next1": "We read the brief and check it against the bench schedule.",
       "next2": "We reply on WhatsApp with a quote and a lead time.",
-      "next3": "Nothing is charged, and nothing is committed, until you say yes."
+      "next3": "Nothing is charged, and nothing is committed, until you say yes.",
+      "eyebrowNoReference": "inquiry received"
     }
   }
 }

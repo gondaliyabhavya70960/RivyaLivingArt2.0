@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1382 slots · 0 flagged as unreachable from any component.
+ * 1383 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -1392,4 +1392,5 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"SystemPages.thankYou.next1","group":"System","section":"thankYou","label":"Next 1","kind":"body","tier":"editorial","max":400},
   {"key":"SystemPages.thankYou.next2","group":"System","section":"thankYou","label":"Next 2","kind":"body","tier":"editorial","max":400},
   {"key":"SystemPages.thankYou.next3","group":"System","section":"thankYou","label":"Next 3","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.eyebrowNoReference","group":"System","section":"thankYou","label":"Eyebrow no reference","kind":"eyebrow","tier":"editorial","max":48},
 ] as const;

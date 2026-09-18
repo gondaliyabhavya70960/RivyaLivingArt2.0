@@ -15,6 +15,7 @@ import { BulkBar } from "@/components/studio/bulk-bar";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyTestimonialsArt } from "@/components/icons/empty-art";
 import {
   Pagination,
   PAGE_SIZE,
@@ -210,6 +211,7 @@ export function TestimonialList({
   if (testimonials.length === 0) {
     return (
       <EmptyState
+        art={EmptyTestimonialsArt}
         title="No testimonials yet"
         description="Add your first customer quote to build trust on the storefront."
       />

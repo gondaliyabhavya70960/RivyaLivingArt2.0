@@ -22,6 +22,8 @@ import { StageTimerRing } from "@/components/studio/inquiries/stage-timer-ring";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
 import type { InquirySource, InquiryStatus } from "@/generated/prisma/enums";
+import { Icon } from "@/components/icons";
+import { INQUIRY_STATUS_ICON } from "@/components/icons/status";
 import { WhatsAppReplyButton } from "@/components/studio/inquiries/whatsapp-reply-button";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import { cn, monogram } from "@/lib/utils";
@@ -142,7 +144,18 @@ export function CommissionBoard({
             return (
               <li key={status} className="w-[19rem] shrink-0">
                 <div className="flex items-baseline justify-between gap-2 border-b border-border pb-2">
-                  <h3 className="u-micro text-foreground">
+                  {/* §16 · the stage is never carried by colour alone. Each
+                      lane takes its own mark from the icon registry, keyed off
+                      the real `InquiryStatus` value — so CLOSED and LOST, which
+                      a person has to act on differently, are two shapes rather
+                      than two shades. `aria-hidden`, because the heading beside
+                      it already says the name. */}
+                  <h3 className="u-micro flex items-center gap-2 text-foreground">
+                    <Icon
+                      name={INQUIRY_STATUS_ICON[status]}
+                      size={16}
+                      className="translate-y-px text-graphite"
+                    />
                     {STATUS_LABELS[status]}
                   </h3>
                   <span className="u-num text-small text-graphite">

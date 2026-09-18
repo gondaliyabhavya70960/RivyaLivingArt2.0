@@ -1764,7 +1764,8 @@
       "nextLabel": "Qué pasa ahora",
       "next1": "Leemos tu encargo y lo comparamos con el calendario del taller.",
       "next2": "Respondemos por WhatsApp con un presupuesto y un plazo.",
-      "next3": "No se cobra nada ni se compromete nada hasta que digas que sí."
+      "next3": "No se cobra nada ni se compromete nada hasta que digas que sí.",
+      "eyebrowNoReference": "consulta recibida"
     }
   }
 }

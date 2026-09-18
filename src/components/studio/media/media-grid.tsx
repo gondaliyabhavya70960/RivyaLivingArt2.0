@@ -45,6 +45,7 @@ import {
   type MediaFolder,
 } from "@/components/studio/media/folders";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyMediaArt } from "@/components/icons/empty-art";
 import { StudioRow } from "@/components/studio/studio-row";
 import { StudioTableHead } from "@/components/studio/studio-table-head";
 import { SortHead, type SortState } from "@/components/studio/sort-header";
@@ -744,6 +745,7 @@ export function MediaGrid({
 
       {items.length === 0 ? (
         <EmptyState
+          art={EmptyMediaArt}
           title={
             total === 0
               ? "No files yet"

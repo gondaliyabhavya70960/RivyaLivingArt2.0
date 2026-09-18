@@ -70,10 +70,17 @@ export default async function ThankYouPage({
 
   return (
     <SystemPage
+      // The eyebrow carries the inquiry number when there is one. When there
+      // is not, it takes its OWN line — an earlier cut fell back to the
+      // statement, and the rendered page read "YOUR BRIEF IS ON THE BENCH."
+      // in mono directly above "Your brief is on the bench." in Instrument
+      // Serif. The audit did not catch it (an eyebrow is a <p>, not a
+      // heading, so the duplicated-heading rule never looked at it); a
+      // screenshot did, which is why the definition of done asks for one.
       eyebrow={
         reference
           ? t("thankYou.eyebrow", { number: reference })
-          : t("thankYou.statement")
+          : t("thankYou.eyebrowNoReference")
       }
       statement={t("thankYou.statement")}
       support={t("thankYou.support")}

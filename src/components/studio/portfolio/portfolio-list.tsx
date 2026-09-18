@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyPortfolioArt } from "@/components/icons/empty-art";
 import {
   Pagination,
   PAGE_SIZE,
@@ -138,9 +139,7 @@ export function PortfolioList({
     const skipped = result.data?.skippedNoCover ?? 0;
     // The skip NAMES its reason. A bare "moved 4 of 6" leaves the owner to
     // work out which two and why, on the one screen that already knows.
-    const reason = skipped
-      ? ` ${skipped} skipped — no cover image.`
-      : "";
+    const reason = skipped ? ` ${skipped} skipped — no cover image.` : "";
     const message = `Moved ${updated} piece${updated === 1 ? "" : "s"} to ${STATUS_BADGE_LABEL[status].toLowerCase()}.${reason}`;
     if (skipped && updated === 0) toast.error(message);
     else toast.success(message);
@@ -246,6 +245,7 @@ export function PortfolioList({
 
       {portfolios.length === 0 ? (
         <EmptyState
+          art={EmptyPortfolioArt}
           title="No portfolio pieces found"
           description="Try clearing the filters, or add your first case study to show off finished work."
         />
