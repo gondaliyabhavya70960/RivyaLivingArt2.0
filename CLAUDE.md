@@ -161,10 +161,26 @@ flagged rows, because that refusal is the guardrail and Approve is the
 explicit act.
 Three smaller facts from the same change: `product-filter-links.ts` builds a
 `/studio/products` deep link from a filter (the parser's inverse, pinned by
-test to parse back) — the overview's two strips, its Suggest-tiers link and
-catalog fill's list rows go through it, while the overview's status and stock
-strips, `/studio/content-gaps` and the inbox still build the URL as a string;
-move each one through `productListHref` when it is next touched; the `sheet-import` run summary carries `sizeTiers` per list ADDITIVELY
+test to parse back). **That migration is COMPLETE as of 2026-09-18** — the
+overview's strips, catalog fill, `/studio/content-gaps` and the topbar inbox
+all go through `productListHref` now. Three content-gaps cards stay on the
+BARE list deliberately and say so: the filter vocabulary has no key for
+"missing description", "long title with no display name" or "no occasion
+tags", and a link that silently widened to every product would be worse than
+none.
+
+**Completing it exposed a bug the round-trip tests could not see.** The
+overview's "Live, still awaiting a rewrite" and "Drafts untouched for a month"
+cards linked with `?rewrite=flagged` and `?stale=30d` — both keys were in the
+filter schema AND in `buildProductWhere` from the day they were added, but
+`/studio/products`'s own `searchParams` type never listed them, so the page
+dropped both before the parser ever ran. The cards counted 57 rows and opened
+all 4,373 published ones; the drafts card counted 4 and opened all 12. That is
+precisely the failure `action-queue.ts`'s header says it exists to prevent,
+and the existing tests all passed because they feed a built href back into
+`parseProductListFilter`, which was never the broken part. `product-filter-links.test.ts`
+now reads the PAGE's source and asserts every key the schema can emit is both
+declared and forwarded — the contract that actually broke; the `sheet-import` run summary carries `sizeTiers` per list ADDITIVELY
 (older runs lack the key; a reader treats it as optional); and Bulk Import now
 applies the untiered-publish guard the form and bulk Publish apply, scoped to
 the transition the same way — it had been the one writer that could still put

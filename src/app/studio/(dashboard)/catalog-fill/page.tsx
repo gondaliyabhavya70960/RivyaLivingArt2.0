@@ -30,7 +30,10 @@ import {
   importListLabel,
   type ImportList,
 } from "@/lib/import-list";
-import { importListStripHref } from "@/components/studio/products/product-filter-links";
+import {
+  importListStripHref,
+  productListHref,
+} from "@/components/studio/products/product-filter-links";
 import type { TierFillSizeTierTally } from "@/lib/import/tier-fill";
 
 export const metadata: Metadata = { title: "Catalog fill" };
@@ -473,7 +476,7 @@ export default async function CatalogFillPage() {
               A list says where a row came from, never which product tier it is.
               After a fill, the deploy-time pass and the{" "}
               <Link
-                href="/studio/products"
+                href={productListHref({})}
                 className="font-medium text-foreground underline-offset-2 hover:text-sapphire-ink hover:underline"
               >
                 Suggest tiers

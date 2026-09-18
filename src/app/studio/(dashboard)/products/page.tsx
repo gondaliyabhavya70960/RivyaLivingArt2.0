@@ -35,12 +35,32 @@ export default async function ProductsPage({
     sizeTier?: string;
     stock?: string;
     media?: string;
+    // `rewrite` and `stale` were in the filter vocabulary and the where
+    // builder from the day they were added, but NOT here — so the two
+    // Overview cards that link with them opened the whole Published (or
+    // Draft) tab instead of the rows they counted. That is the exact failure
+    // `action-queue.ts`'s header says it exists to prevent, and it survived
+    // because the test pins `parseProductListFilter` + `buildProductWhere`,
+    // which are both correct; the gap was this page's own contract.
+    rewrite?: string;
+    stale?: string;
     demo?: string;
     page?: string;
   }>;
 }) {
-  const { q, status, category, tier, sizeTier, stock, media, demo, page } =
-    await searchParams;
+  const {
+    q,
+    status,
+    category,
+    tier,
+    sizeTier,
+    stock,
+    media,
+    rewrite,
+    stale,
+    demo,
+    page,
+  } = await searchParams;
 
   // One validated filter shape drives the where clause here AND the bulk
   // actions' select-all-matching path (audit L-AD1) — see product-filter.ts.
@@ -52,6 +72,8 @@ export default async function ProductsPage({
     sizeTier,
     stock,
     media,
+    rewrite,
+    stale,
     demo,
   });
   const statusTab = filter.status ?? "PUBLISHED";

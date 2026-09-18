@@ -558,7 +558,7 @@ export default async function DashboardPage() {
         <StatCard
           label="UPCOMING WORKSHOPS"
           value={num(workshopListings)}
-          href="/studio/products?q=workshop"
+          href={productListHref({ q: "workshop" })}
           note={
             workshopListings === 0
               ? "None published. Workshops are products in the workshops category — there are no scheduled dates in the data."
@@ -660,7 +660,7 @@ export default async function DashboardPage() {
             </span>
           </Link>
         ))}
-        <Link href="/studio/products?stock=out" className={STRIP_LINK}>
+        <Link href={productListHref({ stock: "out" })} className={STRIP_LINK}>
           <span className="u-micro">Published · out of stock</span>
           <span className="u-num text-20 text-foreground">
             {num(outOfStockPublished)}
@@ -669,25 +669,25 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mb-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
-        <Link href="/studio/products" className={STRIP_LINK}>
+        <Link href={productListHref({})} className={STRIP_LINK}>
           <span className="u-micro">Published products</span>
           <span className="u-num text-20 text-foreground">
             {num(publishedProducts)}
           </span>
         </Link>
-        <Link href="/studio/products?status=REVIEW" className={STRIP_LINK}>
+        <Link href={productListHref({ status: "REVIEW" })} className={STRIP_LINK}>
           <span className="u-micro">Products in review</span>
           <span className="u-num text-20 text-foreground">
             {num(reviewProducts)}
           </span>
         </Link>
-        <Link href="/studio/products?status=DRAFT" className={STRIP_LINK}>
+        <Link href={productListHref({ status: "DRAFT" })} className={STRIP_LINK}>
           <span className="u-micro">Draft products</span>
           <span className="u-num text-20 text-foreground">
             {num(draftProducts)}
           </span>
         </Link>
-        <Link href="/studio/products?status=ARCHIVED" className={STRIP_LINK}>
+        <Link href={productListHref({ status: "ARCHIVED" })} className={STRIP_LINK}>
           <span className="u-micro">Archived products</span>
           <span className="u-num text-20 text-foreground">
             {num(archivedProducts)}
