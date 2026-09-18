@@ -175,6 +175,64 @@ premise.**
   one publish bar. That is where S9 stops being a UI composition, and it is the
   owner's call, not a build.
 
+### S7 — two bullets were already built, one shipped, two are deferred on purpose
+
+**Already built, and rebuilding them would have been the waste.** "Used by on
+the card" ships: `findMediaUsageDetails` is computed server-side and renders on
+the grid card, the list column and the drawer. The "large files smart filter"
+ships too: `SIZE_BANDS` gives "2–10 MB" and "Over 10 MB", parsed by the media
+query with a `largest` sort beside it.
+
+**"Set as product cover" is the one that was genuinely missing, and it is a
+FOURTH writer into `ProductImage` — so it takes the guard.** The other three
+(`upsertProduct`, `setProductsStatus`, `approveProducts`) all run
+`describePlaceholderPublishProblem`, because the PDP resolves
+`ogImage || images[0].url`: with no explicit OG image the cover BECOMES the
+WhatsApp link-preview card, which is the picture a customer sees while agreeing
+to buy. A new write path into that table from a screen whose whole job is
+choosing pictures would have re-opened exactly the hole THE PLACEHOLDER RULE
+closes.
+
+Three things the build settled:
+
+- **It never adds a picture.** Only a row already in the product's gallery can
+  be promoted, so the action cannot attach an unrelated library image to a
+  product by URL. `reorderForCover` returns null for a URL it cannot find, and
+  that is the refusal rather than an insert.
+- **It renumbers densely from zero rather than handing the target `min - 1`.**
+  Orders here are owner-edited and arrive with gaps and duplicates; a decrement
+  drifts negative over repeated use and leaves ties that `orderBy: { order:
+  "asc" }` breaks however the planner likes — which is how a cover silently
+  becomes a different picture on the next read. One transaction, because a
+  half-applied reorder leaves two rows claiming the lowest order.
+- **The refusal is stated in the drawer, not only in the action.** Measured, not
+  assumed: clicking it on a placeholder first said "Something went wrong. Please
+  try again." — `runAction` turns every throw into that. The drawer now runs the
+  same pure guard before it calls and renders "Concept placeholder" in place of
+  the button, the way the sections and navigation boards already check theirs.
+
+**Deferred, each for a reason rather than for time:**
+
+- **The 7-day trash needs a migration and does not fit in this PR.** `Media` has
+  no `deletedAt`, and `deleteMediaItems` hard-deletes the blob AND the row, so
+  "7 days" is not derivable from anything stored. `deletedAt DateTime?` is
+  additive and therefore safe by CLAUDE.md's rule — but it still lands on
+  production the moment the branch is pushed, and EVERY `Media` reader needs the
+  exclusion clause in the same commit (`queryMedia`, `folderCounts`,
+  `typeCounts`, `totalCount`, `listMediaForPicker`, `findUnusedMedia`). That is
+  its own PR, and the plan's §7 claim that this workstream needs no schema
+  change is simply wrong for this bullet.
+- **Bulk WebP convert stops at a question nobody has answered.**
+  `replaceMediaFile` overwrites in place, so a bulk convert destroys the
+  original masters irreversibly with no versioning; and `Media.checksum` is
+  `@unique`, so two files converging on identical WebP bytes throw mid-batch.
+  Neither is hard to solve — but "may we destroy the originals?" is the owner's
+  call, not a build decision.
+- **Watermark detection is a research problem wearing an L-effort costume.**
+  Low-res lint is the tractable half (`width`/`height` are already stored, so it
+  is a where-clause and a chip) and is worth doing next; watermark heuristics on
+  arbitrary supplier photography are not.
+
 **Performance & accessibility budgets (every page, no exceptions):** LCP < 2.5s · INP < 200ms · CLS < 0.1 · hero media ≤ 6MB · one `priority` image per page (the hero) · every animation behind `prefers-reduced-motion` with a stated resting frame · `save-data` → no video · Lighthouse ≥ 90 mobile · axe-core clean.
 
 ---
@@ -285,7 +343,7 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 | S4 | **Products list** | Default filters `Live + missing image`, `No tier`, `Placeholder cover`; thumbnails + rewrite-flag column; bulk: set tier / unpublish / replace cover / **duplicate** | — | M |
 | S5 | **Product form + Form Builder** | Per-tier field **templates** one-click applicable (exist since Phase 11 — surface them); gallery uploader slot hints (hero/macro/in-situ/process) + auto-alt suggestions; **publish guard**: no hero image · no tier · `needsRewrite` unresolved · **cover under `/redesign/catalog/` (placeholder)** · spec-lint (imperial-only units / external image URLs / source-brand tokens) → cannot publish | — | L |
 | S6 | **Categories** | Keep; add per-category image-quality hint (ratio + min width from `siteImageMinWidth`) | — | S |
-| S7 | **Media Library** | "Used by" surfaced on card; **"Set as product cover"** action; 7-day **marked-deleted** state before permanent purge; bulk WebP convert/compress (server `sharp` — installed); "large files" smart filter; image lint (watermark/low-res/placeholder-path heuristics) → feeds S2 card | sharp | L |
+| S7 | **Media Library** | "Set as product cover" shipped 2026-09-18. "Used by" and the "large files" filter were ALREADY built; the trash and the WebP bulk are deferred with reasons below | sharp | **PARTIAL ⏳ 2026-09-18** |
 | S8 | **Bulk Import / Catalog fill / Exports** | Rename "Catalog fill" → "Catalog pipeline (auto)" + distinct icon + cross-link from Bulk Import; keep conflict UI; preview stays default-on | exceljs · papaparse (existing) | S |
 | S9 | **Site Content hub** | 5 of 9 surfaces are now one hub — Site Copy · Site Images · Page Sections shipped earlier; Process Steps · Materials folded 2026-09-18. The remaining four, and the "landing flag", are below | @radix-ui/react-tabs | **PARTIAL ⏳ 2026-09-18** |
 | S10 | **Editorial** (Journal · Portfolio · Testimonials · FAQs) | No redesign — add per-list empty states + publish guards (portfolio needs cover; testimonial needs permission — exists) | — | S |

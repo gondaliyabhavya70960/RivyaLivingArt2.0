@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/studio/page-header";
 import {
   folderCounts,
   parseFilters,
+  productCoverTargets,
   queryMedia,
   totalCount,
   typeCounts,
@@ -29,6 +30,12 @@ export default async function MediaPage({
     typeCounts(),
     totalCount(),
   ]);
+
+  // Second pass rather than part of `queryMedia`: it needs the page's URLs,
+  // which only exist once that query has run.
+  const coverTargets = await productCoverTargets(
+    result.rows.map((media) => media.url),
+  );
 
   const items: MediaItem[] = result.rows.map((media) => ({
     id: media.id,
@@ -52,6 +59,7 @@ export default async function MediaPage({
     createdAt: media.createdAt.toISOString(),
     isDemo: media.isDemo,
     usedIn: result.usageDetails.get(media.url) ?? [],
+    coverTargets: coverTargets.get(media.url) ?? [],
   }));
 
   const driver = process.env.BLOB_READ_WRITE_TOKEN

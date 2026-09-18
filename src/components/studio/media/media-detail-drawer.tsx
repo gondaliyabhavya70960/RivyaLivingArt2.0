@@ -4,11 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type KeyboardEvent } from "react";
-import { Star, StarOff, Video, X } from "lucide-react";
+import { ImageUp, Star, StarOff, Video, X } from "lucide-react";
 import { toast } from "sonner";
 
 import {
   replaceMediaFile,
+  setProductCover,
   setVideoPoster,
   updateMediaMeta,
 } from "@/actions/media";
@@ -23,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isOptimizableImageSrc } from "@/lib/image-src";
+import type { ContentStatus } from "@/generated/prisma/client";
 import { formatBytes, formatDuration, usageLink } from "@/lib/media";
+import { describePlaceholderPublishProblem } from "@/lib/placeholder-assets";
 import { cn } from "@/lib/utils";
 import type { MediaItem } from "./media-grid";
 
@@ -95,6 +98,16 @@ function DrawerBody({
   const [saving, setSaving] = useState(false);
   const [replacing, setReplacing] = useState(false);
   const [capturing, setCapturing] = useState(false);
+  const [coverBusy, setCoverBusy] = useState(false);
+
+  /* The same guard the action runs, asked with THIS file's url and the
+     product's own status. Pure and client-safe — `placeholder-assets.ts` is
+     path-based by design, with no column and no query behind it. */
+  const coverProblem = (status: ContentStatus) =>
+    describePlaceholderPublishProblem({
+      nextStatus: status,
+      coverUrl: item.url,
+    });
 
   const replaceInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -325,6 +338,82 @@ function DrawerBody({
           </ul>
         )}
       </div>
+
+      {/* S7 — "Set as product cover". Only the products whose gallery ALREADY
+          holds this image are offered: the action refuses a URL it cannot find
+          in the gallery, so this is the same rule stated in the UI rather than
+          a second one. Attaching a new image to a product is the product
+          form's job and goes through its own validation.
+
+          The cover is the WhatsApp link-preview card (the PDP resolves
+          `ogImage || images[0].url`), which is why the action runs the same
+          placeholder guard the other three ProductImage writers run, and why
+          the description says what is being changed rather than just "cover". */}
+      {item.coverTargets.length > 0 && (
+        <div>
+          <p className="u-micro mb-2">Use as product cover</p>
+          <ul className="space-y-1">
+            {item.coverTargets.map((target) => (
+              <li
+                key={target.id}
+                className="flex items-center justify-between gap-3 text-small"
+              >
+                <Link
+                  href={`/studio/products/${target.id}`}
+                  className="min-w-0 flex-1 truncate text-sapphire-ink underline underline-offset-2"
+                >
+                  {target.title}
+                </Link>
+                {target.isCover ? (
+                  <span className="u-micro shrink-0 text-graphite">
+                    Already the cover
+                  </span>
+                ) : coverProblem(target.status) ? (
+                  /* The refusal, stated HERE as well as in the action.
+                     `runAction` turns every throw into "Something went wrong.
+                     Please try again." — measured, not assumed: clicking this
+                     on a placeholder said exactly that and nothing about why.
+                     The action still throws; this is what the owner reads. */
+                  <span className="u-micro shrink-0 text-alert">
+                    Concept placeholder
+                  </span>
+                ) : (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={coverBusy}
+                    onClick={async () => {
+                      const problem = coverProblem(target.status);
+                      if (problem) {
+                        toast.error(problem);
+                        return;
+                      }
+                      setCoverBusy(true);
+                      const res = await setProductCover({
+                        productId: target.id,
+                        url: item.url,
+                      });
+                      setCoverBusy(false);
+                      if (!res.ok) {
+                        toast.error(res.error);
+                        return;
+                      }
+                      toast.success(
+                        `This is now the first picture on “${target.title}” — and its WhatsApp preview.`,
+                      );
+                      router.refresh();
+                    }}
+                  >
+                    <ImageUp aria-hidden className="size-3.5" strokeWidth={1.5} />
+                    Make cover
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Editable metadata. */}
       <div className="space-y-4">
