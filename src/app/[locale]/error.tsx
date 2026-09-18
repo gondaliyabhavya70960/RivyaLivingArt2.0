@@ -57,6 +57,17 @@ export default function PublicError({
        layouts, which do not wrap this boundary — provide the skip-link target
        here so the root layout's anchor never dangles. */
     <main id="main-content" className="flex-1">
+      {/* §2.10's noindex sweep reaches this boundary too, and it has to be a
+          rendered tag rather than a `metadata` export: an error boundary is a
+          client component, and `export const metadata` is server-only. React
+          19 hoists a `<meta>` from anywhere in the tree into <head>, so this
+          lands in the right place.
+ 
+          Worth doing even though an error response usually carries a 500 that
+          a crawler would not index anyway: this boundary also catches errors
+          thrown AFTER the shell has been sent, where the status line is
+          already a 200 and the tag is the only signal left. */}
+      <meta name="robots" content="noindex, nofollow" />
       <section
         data-theme="navy"
         className="relative flex min-h-svh items-center overflow-hidden bg-obsidian text-mineral"

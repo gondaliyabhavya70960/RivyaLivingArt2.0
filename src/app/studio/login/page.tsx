@@ -79,6 +79,7 @@ export default async function StudioLoginPage({
     reset?: string;
     welcome?: string;
     retryAfter?: string;
+    reason?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -124,6 +125,28 @@ export default async function StudioLoginPage({
                 : "Wrong email or password. Please try again."}
             </AuthBanner>
           )
+        )}
+        {/* §2.10's session-expired state. It is a DISTINCT page state, not a
+            separate route: a session that has ended and a 403 want opposite
+            things — expiry offers re-auth, forbidden offers exit — and the
+            place you re-authenticate is this form. A dedicated
+            /studio/session-expired page would put one extra click in front of
+            the only thing the person can do.
+
+            `?reason=expired` is set by `requireStaffPage` on the branch where
+            the token was valid and is not any more (a password reset bumped
+            `tokenVersion`, or the row is gone). Without it this looked
+            identical to a cold visit, so a staffer mid-edit was shown a bare
+            sign-in form with no hint that they HAD been signed in — and no
+            reassurance about the draft they were working on.
+
+            Tone is neutral, not error: nothing went wrong and nothing the
+            Studio holds was lost. It says nothing about which account, because
+            this page is reachable while signed out. */}
+        {params.reason === "expired" && (
+          <AuthBanner tone="info">
+            Your Studio session ended. Sign in again — nothing was lost.
+          </AuthBanner>
         )}
         {params.reset && (
           <AuthBanner tone="success">

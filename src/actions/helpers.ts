@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { forbidden, redirect } from "next/navigation";
 
 import { defaultLocale, locales } from "@/i18n/config";
 import { auth } from "@/lib/auth";
@@ -42,9 +42,34 @@ export async function requireStaff(roles: Role[] = ["ADMIN", "EDITOR"]) {
 }
 
 /**
- * Page-level twin of requireStaff for studio server components: redirects to
- * the login screen instead of throwing when the principal is no longer valid,
- * so a revoked session can't keep *viewing* the admin either (SEC-106).
+ * Page-level twin of requireStaff for studio server components: answers the
+ * request instead of throwing when the principal is no longer valid, so a
+ * revoked session can't keep *viewing* the admin either (SEC-106).
+ *
+ * ## Its two failures are different questions, and they now get different
+ * ## answers (owner decision 8, §2.10)
+ *
+ * This function used to redirect BOTH of them, and the second redirect was the
+ * problem:
+ *
+ *   no session / stale token   → /studio/login        (unchanged, and right)
+ *   valid session, wrong role  → /studio              (WAS this; now 403)
+ *
+ * An EDITOR who opened an ADMIN-only page was bounced to the dashboard with no
+ * explanation, landed somewhere they had not asked for, and lost the URL they
+ * tried — so they could not tell "you may not see this" from "that link was
+ * broken", and could not show anyone what they had attempted.
+ *
+ * `forbidden()` renders the 403 boundary IN PLACE, at the URL they asked for,
+ * with a real 403 status and Next's own `noindex`. It is an interrupt, so it
+ * unwinds the render: nothing behind the guard has been composed, let alone
+ * sent. `studio/forbidden.tsx` is the UI.
+ *
+ * The session branch stays a redirect on purpose. Those two are not
+ * symmetrical: a forbidden user is signed in and the way out is OUT, while an
+ * expired session's way out is BACK IN, and a login screen is where that
+ * happens. Rendering a 401 page with a "sign in" link would put one extra
+ * click in front of the thing they already have to do.
  */
 export async function requireStaffPage(roles: Role[] = ["ADMIN", "EDITOR"]) {
   const session = await auth();
@@ -55,13 +80,14 @@ export async function requireStaffPage(roles: Role[] = ["ADMIN", "EDITOR"]) {
     select: { role: true, tokenVersion: true },
   });
   if (!fresh || fresh.tokenVersion !== session.user.tokenVersion) {
-    redirect("/studio/login");
+    // The session was valid and is not any more — a password reset bumped
+    // tokenVersion, or the row is gone. `?reason=expired` is what lets the
+    // login screen say so instead of showing a bare form to someone who was
+    // signed in a second ago.
+    redirect("/studio/login?reason=expired");
   }
-  // Valid staff session but insufficient role (an EDITOR opening an
-  // ADMIN-only page): send them to the dashboard, not the login screen —
-  // they ARE logged in, and middleware would bounce login straight back.
   if (!roles.includes(fresh.role)) {
-    redirect("/studio");
+    forbidden();
   }
   session.user.role = fresh.role;
   return session;

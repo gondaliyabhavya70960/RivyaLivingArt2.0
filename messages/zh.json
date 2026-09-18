@@ -1715,5 +1715,56 @@
       "orderSummaryNote": "快速下单——价格与发货将通过 WhatsApp 确认。",
       "orderWaIntro": "您好 Rivya Living Art，\n我想订购："
     }
+  },
+  "SystemPages": {
+    "waysOut": "返回方式",
+    "whatsapp": "WhatsApp",
+    "home": "首页",
+    "shop": "商店",
+    "referenceLabel": "参考编号",
+    "forbidden": {
+      "title": "仅限员工 — Rivya Living Art",
+      "eyebrow": "403 · 仅限员工",
+      "statement": "这张工作台已关闭。",
+      "support": "工作室仅供主理人与员工使用。",
+      "primary": "登录工作室",
+      "secondary": "返回商店"
+    },
+    "gone": {
+      "title": "作品已下架 — Rivya Living Art",
+      "eyebrow": "410 · 作品已下架",
+      "statement": "这件作品已经离开工作室。",
+      "support": "它不再提供。它所属的系列仍然在售。",
+      "primary": "查看该系列",
+      "secondary": "定制类似作品"
+    },
+    "tooMany": {
+      "title": "请求过于频繁 — Rivya Living Art",
+      "eyebrow": "429 · 尝试次数过多",
+      "statement": "请稍等片刻。",
+      "support": "此设备的请求过于频繁。",
+      "countdownLabel": "可再次尝试的时间",
+      "countdownReady": "现在可以再次尝试了。",
+      "secondary": "用 WhatsApp 联系工作室"
+    },
+    "maintenance": {
+      "title": "稍后回来 — Rivya Living Art",
+      "eyebrow": "工作室暂停",
+      "statement": "工作台正在重新整理。",
+      "support": "我们很快会重新开放。",
+      "primary": "用 WhatsApp 联系工作室"
+    },
+    "thankYou": {
+      "title": "您的需求已收到 — Rivya Living Art",
+      "eyebrow": "咨询 {number}",
+      "statement": "您的需求已放上工作台。",
+      "support": "我们会通过 WhatsApp 回复，通常在营业时间内（10:00–20:00 IST）。",
+      "primary": "打开 WhatsApp",
+      "secondary": "返回该系列",
+      "nextLabel": "接下来会怎样",
+      "next1": "我们会阅读您的需求，并对照工作室的排期。",
+      "next2": "我们会通过 WhatsApp 回复报价与制作周期。",
+      "next3": "在您确认之前，不收取任何费用，也没有任何约束。"
+    }
   }
 }

@@ -373,6 +373,31 @@ for (const route of routesArg.split(",")) {
       return true;
     };
 
+    /* A FOURTH thing nobody can see, found the same way as the other three —
+       by a rule firing on a page where the accent was demonstrably used twice.
+
+       `sr-only` is a 1×1 absolutely-positioned box, clipped away, holding real
+       text for assistive technology. It therefore passes every test above: it
+       has a box (1px, not 0), it is `visible`, it is fully opaque, and it
+       paints its own text node. The system pages' primary action carries one —
+       the "(opens in new tab)" hint on the WhatsApp link — which inherits the
+       pill's champagne and was counted as a third champagne object on a page
+       that shows exactly two.
+
+       §3.1 is a rule about how much gold a person SEES. A screen-reader hint
+       is not gold; it has no colour at all in the only medium that consumes
+       it. Anything clipped to a 1×1 box is excluded, which is `sr-only`'s own
+       definition and not a special case for it. */
+    const isScreenReaderOnly = (el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width > 1 || r.height > 1) return false;
+      const cs = getComputedStyle(el);
+      return (
+        cs.position === "absolute" &&
+        (cs.clip !== "auto" || cs.clipPath !== "none" || cs.overflow === "hidden")
+      );
+    };
+
     /* The cure rail is out of scope, for the same reason `--champagne-ink`
        is. §3.1 governs the ACCENT'S visual weight; the rail is navigation,
        1px wide, living in a 56px gutter, and it goes champagne on a dark band
@@ -395,6 +420,7 @@ for (const route of routesArg.split(",")) {
             return false;
           }
           if (!isVisible(el)) return false;
+          if (isScreenReaderOnly(el)) return false;
           const cs = getComputedStyle(el);
           if (
             triple(cs.backgroundColor) === champagne ||
@@ -816,7 +842,30 @@ for (const route of routesArg.split(",")) {
     }
   }
 
-  if (!headerInfo) {
+  /* §2.10's system pages have NO HEADER, by specification — "no nav and no
+     footer link farm on the error family" — and they render outside the (v2)
+     route group, which is where the chrome is mounted. So on those routes a
+     missing header is the design, not a regression, and failing them here was
+     the audit asserting something the spec forbids.
+
+     The distinction is carried by a MARKER the page sets, never by a path
+     list: `SystemPage` renders `data-system-page`, so a route is exempt
+     because of what it IS. A hardcoded list of routes in this file would be a
+     second place to remember to update, and the seventh system page would be
+     failed by a gate that has no idea it exists.
+
+     A route that is NOT marked and has no header still fails, which is the
+     case the rule was written for: the chrome silently failing to mount. */
+  const isSystemPage = await page.evaluate(
+    () => document.querySelector("[data-system-page]") !== null,
+  );
+
+  if (!headerInfo && isSystemPage) {
+    report(
+      "NOTE",
+      "no sticky header — this is a §2.10 system page, which specifies none",
+    );
+  } else if (!headerInfo) {
     report("FAIL", 'no sticky header ([data-slot="sf-site-header"]) found — cannot verify header contrast');
   } else if (!headerInfo.ink) {
     report("FAIL", "sticky header has no data-ink attribute (use-hero-ink.ts)");

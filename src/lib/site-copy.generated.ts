@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1343 slots · 0 flagged as unreachable from any component.
+ * 1382 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -1353,4 +1353,43 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"ProductTier.SMALL_FORMAT.secondaryCta","group":"Shop","section":"SMALL_FORMAT","label":"Secondary cta","kind":"cta","tier":"editorial","max":60},
   {"key":"ProductTier.SMALL_FORMAT.orderSummaryNote","group":"Shop","section":"SMALL_FORMAT","label":"Order summary note","kind":"micro","tier":"interface","max":200},
   {"key":"ProductTier.SMALL_FORMAT.orderWaIntro","group":"Shop","section":"SMALL_FORMAT","label":"Order wa intro","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.waysOut","group":"System","section":"general","label":"Ways out","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.whatsapp","group":"System","section":"general","label":"Whatsapp","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.home","group":"System","section":"general","label":"Home","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.shop","group":"System","section":"general","label":"Shop","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.referenceLabel","group":"System","section":"general","label":"Reference label","kind":"label","tier":"editorial","max":60},
+  {"key":"SystemPages.forbidden.title","group":"System","section":"forbidden","label":"Title","kind":"heading","tier":"editorial","max":80},
+  {"key":"SystemPages.forbidden.eyebrow","group":"System","section":"forbidden","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"SystemPages.forbidden.statement","group":"System","section":"forbidden","label":"Statement","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.forbidden.support","group":"System","section":"forbidden","label":"Support","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.forbidden.primary","group":"System","section":"forbidden","label":"Primary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.forbidden.secondary","group":"System","section":"forbidden","label":"Secondary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.gone.title","group":"System","section":"gone","label":"Title","kind":"heading","tier":"editorial","max":80},
+  {"key":"SystemPages.gone.eyebrow","group":"System","section":"gone","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"SystemPages.gone.statement","group":"System","section":"gone","label":"Statement","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.gone.support","group":"System","section":"gone","label":"Support","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.gone.primary","group":"System","section":"gone","label":"Primary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.gone.secondary","group":"System","section":"gone","label":"Secondary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.tooMany.title","group":"System","section":"tooMany","label":"Title","kind":"heading","tier":"editorial","max":80},
+  {"key":"SystemPages.tooMany.eyebrow","group":"System","section":"tooMany","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"SystemPages.tooMany.statement","group":"System","section":"tooMany","label":"Statement","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.tooMany.support","group":"System","section":"tooMany","label":"Support","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.tooMany.countdownLabel","group":"System","section":"tooMany","label":"Countdown label","kind":"label","tier":"editorial","max":60},
+  {"key":"SystemPages.tooMany.countdownReady","group":"System","section":"tooMany","label":"Countdown ready","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.tooMany.secondary","group":"System","section":"tooMany","label":"Secondary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.maintenance.title","group":"System","section":"maintenance","label":"Title","kind":"heading","tier":"editorial","max":80},
+  {"key":"SystemPages.maintenance.eyebrow","group":"System","section":"maintenance","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"SystemPages.maintenance.statement","group":"System","section":"maintenance","label":"Statement","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.maintenance.support","group":"System","section":"maintenance","label":"Support","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.maintenance.primary","group":"System","section":"maintenance","label":"Primary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.title","group":"System","section":"thankYou","label":"Title","kind":"heading","tier":"editorial","max":80},
+  {"key":"SystemPages.thankYou.eyebrow","group":"System","section":"thankYou","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48,"vars":["number"]},
+  {"key":"SystemPages.thankYou.statement","group":"System","section":"thankYou","label":"Statement","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.support","group":"System","section":"thankYou","label":"Support","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.primary","group":"System","section":"thankYou","label":"Primary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.secondary","group":"System","section":"thankYou","label":"Secondary","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.nextLabel","group":"System","section":"thankYou","label":"Next label","kind":"label","tier":"editorial","max":60},
+  {"key":"SystemPages.thankYou.next1","group":"System","section":"thankYou","label":"Next 1","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.next2","group":"System","section":"thankYou","label":"Next 2","kind":"body","tier":"editorial","max":400},
+  {"key":"SystemPages.thankYou.next3","group":"System","section":"thankYou","label":"Next 3","kind":"body","tier":"editorial","max":400},
 ] as const;
