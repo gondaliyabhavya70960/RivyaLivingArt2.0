@@ -1115,6 +1115,32 @@ export const PAGE_SECTION_LABELS: Record<
   materials: { title: "Materials", path: "/process#materials" },
 };
 
+/**
+ * The sublists that live INSIDE one page — S9's fold of Process Steps and
+ * Materials into the per-page composer's Order tab.
+ *
+ * Derived from the recorded paths rather than from a second hand-written map:
+ * a sublist's path is its parent's path plus a fragment (`/process#stages`),
+ * so the relation is already stated once, in `PAGE_SECTION_LABELS`, and a new
+ * sublist joins its page by being given a fragment path.
+ *
+ * `materials` therefore answers to `process`, not to `about`. Its band renders
+ * on both pages — the header on `/studio/materials` says so — but its RECORDED
+ * home is `/process#materials`, and inventing an about↔materials edge the data
+ * does not state is how two maps start disagreeing. About's own Order tab
+ * still arranges About's bands; the material cards are arranged from Process
+ * or from their own route, and moving one moves it on both pages either way.
+ *
+ * A sublist has no sublists of its own, so it returns empty for one.
+ */
+export function sublistsForPage(pageKey: SectionPageKey): SectionPageKey[] {
+  if (SUBLIST_PAGES.has(pageKey)) return [];
+  const parentPath = PAGE_SECTION_LABELS[pageKey].path;
+  return [...SUBLIST_PAGES].filter(
+    (key) => PAGE_SECTION_LABELS[key].path.split("#")[0] === parentPath,
+  );
+}
+
 export function isSectionPageKey(value: string): value is SectionPageKey {
   return (SECTION_PAGES as readonly string[]).includes(value);
 }

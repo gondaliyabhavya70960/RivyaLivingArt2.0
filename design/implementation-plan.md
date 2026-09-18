@@ -127,6 +127,54 @@ Two details worth keeping:
 driven by real keyboard Tab in a browser: the button takes focus, reaches
 opacity 1, and the pin survives a reload.
 
+### S9 is 5 of 9, and the last four are an owner decision — not more work
+
+**Three were already one hub** before this pass. `site-copy/surface-tabs.tsx`
+composes Site Copy, Site Images and Page Sections as Words · Pictures · Order
+under one surface picker, with `?tab=` in the URL. Rebuilding that would have
+replaced a working screen with a second copy.
+
+**Two more were free, and 2026-09-18 took them.** Process Steps and Materials
+were never separate boards: both are the same `SectionsBoard` filtered to one
+`SectionPageKey`, and both are in `SUBLIST_PAGES`. They now appear as an
+in-hub picker on the **Order** tab of the page they live inside, selected by
+`?board=`.
+
+Three details that are load-bearing:
+
+- **The relation is derived from the recorded paths, not a second map.** A
+  sublist's path is its parent's plus a fragment (`/process#stages`), so
+  `sublistsForPage` reads a fact `PAGE_SECTION_LABELS` already states, and a
+  future sublist joins its page by being given a fragment path. A test asserts
+  every member of `SUBLIST_PAGES` has a fragment whose parent is a real page —
+  otherwise it would silently belong to nothing.
+- **Materials answers to Process, not About.** Its cards render on both pages,
+  and moving one moves it on both; but its recorded home is
+  `/process#materials`, and inventing an about↔materials edge the data does not
+  state is how two maps start disagreeing.
+- **The board's own page switcher is not reused.** It hardcodes
+  `/studio/sections?page=`, which navigates OUT of the hub. It stays hidden
+  (one entry) and the hub draws its own.
+
+Both standalone routes stay live and unchanged, which is the pattern the hub's
+own header already set for the first three.
+
+**The last four stop at an owner question, and one of them stops at a wrong
+premise.**
+
+- **The "Pages + Landing Pages merge via a landing flag" is not buildable as
+  written.** `Page` and `CustomPage` are different models; `/studio/pages`
+  holds two fixed legal rows with creation closed at the action layer
+  (`src/actions/pages.ts`). A flag cannot merge two models, and the thing it
+  would merge is a screen nobody can add a row to.
+- **Navigation, Commission Form, Pages and Landing Pages do not fit the hub's
+  axis.** That axis is one SURFACE × Words/Pictures/Order. Navigation is
+  site-wide, the Commission Form is a form's options, and the two page models
+  are rows rather than surfaces — so folding them in needs a second axis, and
+  a decision about mixing live-save boards with draft-then-publish boards under
+  one publish bar. That is where S9 stops being a UI composition, and it is the
+  owner's call, not a build.
+
 **Performance & accessibility budgets (every page, no exceptions):** LCP < 2.5s · INP < 200ms · CLS < 0.1 · hero media ≤ 6MB · one `priority` image per page (the hero) · every animation behind `prefers-reduced-motion` with a stated resting frame · `save-data` → no video · Lighthouse ≥ 90 mobile · axe-core clean.
 
 ---
@@ -239,7 +287,7 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 | S6 | **Categories** | Keep; add per-category image-quality hint (ratio + min width from `siteImageMinWidth`) | — | S |
 | S7 | **Media Library** | "Used by" surfaced on card; **"Set as product cover"** action; 7-day **marked-deleted** state before permanent purge; bulk WebP convert/compress (server `sharp` — installed); "large files" smart filter; image lint (watermark/low-res/placeholder-path heuristics) → feeds S2 card | sharp | L |
 | S8 | **Bulk Import / Catalog fill / Exports** | Rename "Catalog fill" → "Catalog pipeline (auto)" + distinct icon + cross-link from Bulk Import; keep conflict UI; preview stays default-on | exceljs · papaparse (existing) | S |
-| S9 | **Site Content hub** | Consolidate 9 surfaces (Site Copy · Site Images · Page Sections · Process Steps · Materials · Navigation · Commission Form · Pages · Landing Pages) into one hub with tabs; Pages + Landing Pages merge via a "landing" flag | @radix-ui/react-tabs | L |
+| S9 | **Site Content hub** | 5 of 9 surfaces are now one hub — Site Copy · Site Images · Page Sections shipped earlier; Process Steps · Materials folded 2026-09-18. The remaining four, and the "landing flag", are below | @radix-ui/react-tabs | **PARTIAL ⏳ 2026-09-18** |
 | S10 | **Editorial** (Journal · Portfolio · Testimonials · FAQs) | No redesign — add per-list empty states + publish guards (portfolio needs cover; testimonial needs permission — exists) | — | S |
 | S11 | **Research** (Scraper · Research · Content Gaps) | Collapse into one weekly-tool nav group, hidden from first screen; review inbox defaults: suggested tier + has image + not marketplace; "Add to catalog" always lands draft + needs-rewrite + hidden (existing rule — keep) | — | M |
 | S12 | **Settings / SEO / Users / Subscribers / Content Lab / Activity** | Keep; add Instagram/socials wiring check so the footer icon actually renders (audit §2.3) | — | S |
