@@ -10,7 +10,6 @@ import { ArrowRight, Eye } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { BeforeAfter } from "@/components/portfolio/before-after";
-import { ReadingProgress } from "@/components/blog/reading-progress";
 import { LightboxGallery } from "@/components/portfolio/lightbox-gallery";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
@@ -589,7 +588,6 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           length as a journal article, so it gets the same affordance
           (§11.9). Pure scroll mapping — nothing to collapse under reduced
           motion, and `aria-hidden`, so it adds no announcement. */}
-      <ReadingProgress />
       {/* A Content Lab fixture never presents itself as a real work in
           structured data — the product and journal detail routes already
           withhold theirs. The BreadcrumbList stays: it mirrors navigation the

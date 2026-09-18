@@ -36,6 +36,41 @@ import { cn } from "@/lib/utils";
  * Server-compatible: native elements, no state. Ids derive from `name` (or an
  * explicit `id`), so no hook is needed and a server component can render a
  * complete form.
+ *
+ * ————————————————————————————————————————————————————————————————
+ * §6.8 RECONCILIATION — THIS FILE IS THE SINGLE STOREFRONT FIELD PRIMITIVE.
+ *
+ * The v3 build prompt asks for `src/components/ui/field.tsx` and says to
+ * "reconcile with `storefront/form-field.tsx` and `ui/input.tsx` — one becomes
+ * the single field primitive, and the file says which and why." This is the
+ * which, and here is the why.
+ *
+ * `ui/input.tsx` is a bare shadcn `<input>` with no label, hint, error or aria
+ * wiring, consumed by 52 Studio files. It stays exactly what it is: the
+ * Studio's raw control, inside the Studio's own dense forms.
+ *
+ * This file already owns everything §6.8 is about except the motion — the
+ * always-visible label, the hint, the error, the `aria-describedby` join, the
+ * 16px floor, the RTL-safe rule — across 8 storefront forms. A third file
+ * would have been a second answer to the same question, which is the failure
+ * `docs/redesign-contract.md §11` names by hand. So §6.8's behaviour was added
+ * HERE, and `ui/field.tsx` was not created.
+ *
+ * WHAT §6.8 ASKED FOR AND DID NOT GET, recorded rather than quietly dropped:
+ * **the floating label.** §6.8 wants the label to rise 160ms on focus/fill.
+ * REDESIGN.md §10.3 — which is design law, where §6 is a reference design —
+ * specifies "large inputs, LARGE LABELS, generous whitespace": the label here
+ * is a 16px line that sits above the control and never moves. A floating label
+ * is a small label by construction (it has to fit inside the control at rest),
+ * so the two cannot both be true, and §10.3 wins. Nothing about the decision
+ * is about effort: the register is the point. Flagged in the PR body.
+ *
+ * WHAT IT DID GET, all of it CSS in globals.css (`u-field`, `[data-shake]`):
+ *   · focus draws a champagne hairline from the leading edge via scaleX
+ *   · an errored field holds an alert-coloured rule — a STATE, not a moment
+ *   · `shake` shakes once on a failed submit, never on a keystroke
+ *   · both have a real reduced-motion resting frame, not a 0.01ms one
+ * ————————————————————————————————————————————————————————————————
  */
 
 /**
@@ -47,12 +82,20 @@ const fieldControlClasses = [
   "w-full rounded-none border-0 border-b border-hairline bg-transparent px-0",
   "font-body text-16 text-ink placeholder:text-graphite",
   "transition-colors duration-(--dur-fast) ease-(--ease-luxury) motion-reduce:transition-none",
-  "hover:border-graphite focus:border-sapphire",
+  "hover:border-graphite",
   "disabled:pointer-events-none disabled:opacity-40",
-  "aria-invalid:border-alert",
-  // Dark bands (the footer newsletter, any obsidian panel).
-  "in-data-[theme=navy]:border-hairline-dk in-data-[theme=navy]:text-mineral",
-  "in-data-[theme=navy]:placeholder:text-mist in-data-[theme=navy]:focus:border-champagne",
+  // D30 · the resting rule stays `--hairline` and the FOCUS rule is now drawn
+  // by `u-field::after` (globals.css §6.8) rather than by swapping this
+  // border's colour. Two reasons it moved: a colour swap cannot animate from
+  // an edge, and the old pair (`focus:border-sapphire`, lifted to champagne
+  // only inside `[data-theme=navy]`) resolved sapphire on the obsidian ground
+  // every page now has — 1.9:1, a focus indicator you cannot find.
+  //
+  // `aria-invalid:border-alert` also goes: the same `::after` holds the error
+  // rule, and two rules for one boundary is how they end up disagreeing.
+  //
+  // The three `in-data-[theme=navy]:` overrides are gone for the D30 reason —
+  // each restated what the base already resolves now.
 ].join(" ");
 
 /**
@@ -87,6 +130,12 @@ type FieldOwnProps = {
   hint?: string;
   /** Keep the label for screen readers only (e.g. the newsletter row). */
   hideLabel?: boolean;
+  /**
+   * §6.8 · shake the control once (350ms, x axis, ±4px). Pass this only on a
+   * failed SUBMIT — see FieldShell's note. Deliberately separate from `error`
+   * so a field that is merely invalid while being typed in stays still.
+   */
+  shake?: boolean;
 };
 
 function fieldIds(name: string, id?: string) {
@@ -123,6 +172,7 @@ function FieldShell({
   error,
   errorId,
   className,
+  shake,
   children,
 }: {
   label: string;
@@ -136,6 +186,13 @@ function FieldShell({
   error?: string;
   errorId: string;
   className?: string;
+  /**
+   * §6.8 · shake once. Set it only when a SUBMIT ATTEMPT failed, never from
+   * "the value is currently invalid" — a field that shakes while you type in
+   * it is punishing you for not having finished. `error` alone does not
+   * trigger it, which is why this is a separate prop.
+   */
+  shake?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -160,7 +217,15 @@ function FieldShell({
           </span>
         ) : null}
       </label>
-      {children}
+      {/* §6.8 · `u-field` owns the focus/error rule as an ::after drawn from
+          the leading edge; `data-shake` runs the single 350ms shake. Both are
+          CSS in globals.css. The wrapper is what `:focus-within` and
+          `:has([aria-invalid])` key off, so the control must sit inside it —
+          which is also why the rule survives a control this shell does not
+          know the shape of (input, select, textarea all work unchanged). */}
+      <div className="u-field" {...(shake ? { "data-shake": "" } : {})}>
+        {children}
+      </div>
       {/* Floating helper text (§10.3): mono micro, no box, no icon. */}
       {hint ? (
         <p id={hintId} className="u-micro">
@@ -182,6 +247,7 @@ export function TextField({
   error,
   hint,
   hideLabel,
+  shake,
   optionalLabel,
   className,
   id,
@@ -204,6 +270,7 @@ export function TextField({
       hintId={hintId}
       error={error}
       errorId={errorId}
+      shake={shake}
       className={className}
     >
       <input
@@ -254,6 +321,7 @@ export function SelectField({
   error,
   hint,
   hideLabel,
+  shake,
   optionalLabel,
   className,
   id,
@@ -283,6 +351,7 @@ export function SelectField({
       hintId={hintId}
       error={error}
       errorId={errorId}
+      shake={shake}
       className={className}
     >
       <div className="relative">
@@ -336,6 +405,7 @@ export function TextareaField({
   error,
   hint,
   hideLabel,
+  shake,
   optionalLabel,
   className,
   id,
@@ -358,6 +428,7 @@ export function TextareaField({
       hintId={hintId}
       error={error}
       errorId={errorId}
+      shake={shake}
       className={className}
     >
       <textarea

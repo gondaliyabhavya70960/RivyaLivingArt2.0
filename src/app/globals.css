@@ -254,6 +254,17 @@
     scroll-margin-top: 8.5rem;
   }
 
+  /* Scrollbars. D30 re-tokens these rather than rewriting them, and the one
+     thing NOT to do here is hide them: `scrollbar-width: none` on a Studio
+     table or any scrollable region removes the only affordance that says more
+     content exists below. They stay visible, and they stay thin.
+ 
+     The thumb still routes through `--graphite`, which now resolves the light
+     value (#a9b4bc) — so the same declaration that drew a dark thumb on a
+     cream page draws a light thumb on obsidian, at the same 45% weight.
+     `color-scheme: dark` on `:root` is what makes the UA's own scrollbar (the
+     one these rules do not reach, e.g. in a `<select>` popup) come up dark to
+     match. */
   html {
     scroll-behavior: auto; /* Lenis owns scrolling */
     scrollbar-gutter: stable; /* no layout shift when the scrollbar appears */
@@ -270,6 +281,10 @@
   ::-webkit-scrollbar-thumb {
     background: color-mix(in srgb, var(--graphite) 45%, transparent);
     border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--graphite) 70%, transparent);
   }
 
   ::-webkit-scrollbar-track {
@@ -298,9 +313,30 @@
     letter-spacing: var(--tracking-display);
   }
 
+  /* §6.6 · text selection. Champagne ground, obsidian ink (owner decision 11),
+     replacing the shipped sapphire/mineral pair.
+ 
+     Not a taste change: on the D30 ground, dragging across a paragraph painted
+     #164e6b behind #f4f1e9, and sapphire is only 1.9:1 against obsidian, so a
+     selection was a smear you could barely locate on the page it was on.
+     Champagne behind obsidian is 7.5:1 and reads as a deliberate mark.
+ 
+     The rule is unconditional because the ground is: there is no light surface
+     left on the storefront or in the Studio for an inverse to apply to. The one
+     place a second rule WOULD be needed is print, and paper never carries a
+     selection.
+ 
+     Images and vectors opt out — a translucent wash over a photograph is the
+     browser telling you it thinks the picture is text. */
   ::selection {
-    background: var(--sapphire);
-    color: var(--mineral);
+    background: var(--champagne);
+    color: var(--obsidian);
+  }
+
+  img::selection,
+  svg::selection,
+  video::selection {
+    background: transparent;
   }
 
   :focus-visible {
@@ -876,4 +912,339 @@
   .fr-track {
     will-change: auto;
   }
+}
+
+/* ————————————————————————————————————————————————————————————————
+   §6.8 · FIELD STATES · §6.15 · TOOLTIP
+   The interaction layer's two CSS-only primitives (owner decision 9).
+
+   Both live here rather than in a component because both are pure decoration
+   over markup that already exists: `storefront/form-field.tsx` renders the
+   label/control/hint/error shell and wires every id, and a tooltip is a
+   `<span>` next to the control it describes. Neither needed a client
+   component, and owner decision 13 leaves no budget for one that does.
+   ———————————————————————————————————————————————————————————————— */
+
+/* §6.8 · the focus hairline, drawn from the leading edge.
+ 
+   The storefront field is a 1px rule under a 56px line of type (§10.3, §3.5:
+   separation by whitespace and surface, never by a rounded rectangle). On
+   focus, a champagne rule DRAWS across it — scaleX 0→1 from the start edge —
+   rather than the border simply changing colour.
+ 
+   `transform`, not `width`: a width transition on a border relayouts the field
+   every frame, and §6's global rule caps everything at transform and opacity.
+   `rtl:` is not needed as a utility here because the origin reads
+   `--field-rule-origin`, which the RTL scope below flips — a hard-coded `left`
+   would draw an Arabic field's focus rule from the wrong end. */
+@utility u-field {
+  position: relative;
+  --field-rule-origin: left;
+}
+
+[dir="rtl"] .u-field {
+  --field-rule-origin: right;
+}
+
+.u-field::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--champagne);
+  transform: scaleX(0);
+  transform-origin: var(--field-rule-origin);
+  transition: transform var(--dur-fast) var(--ease-luxury);
+  pointer-events: none;
+}
+
+.u-field:focus-within::after {
+  transform: scaleX(1);
+}
+
+/* An errored field draws its rule in alert and leaves it drawn, because the
+   error is a state rather than a moment — it is still true after focus moves
+   away, and §16 forbids a signal that only exists while you are looking at it.
+   The accompanying sentence is rendered by FieldShell; this is the second,
+   non-colour signal's colour half, never the whole signal. */
+.u-field:has([aria-invalid="true"])::after {
+  background: var(--alert);
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .u-field::after {
+    transition: none;
+  }
+}
+
+/* §6.8 · the error shake. ONE pass, on the x axis only, ±4px.
+ 
+   Duration is `--dur-base` (350ms) where §6.8 asks for 300ms: the contract's
+   §8 allows four durations and 300 is not one of them, and a shake is not
+   worth a fifth. It is triggered by `data-shake` being SET, so it fires when
+   a submit attempt fails and not on every keystroke that leaves the field
+   invalid — an input that shakes while you are typing in it is punishing the
+   person for not having finished.
+ 
+   `prefers-reduced-motion` gets a real resting frame rather than the global
+   0.01ms collapse: a 0.01ms shake still moves the element, and vestibular
+   triggers are exactly what that media query is for. Here it simply does not
+   run, and the alert-coloured rule plus the message carry the state. */
+@keyframes sf-shake-x {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  45% {
+    transform: translateX(4px);
+  }
+  70% {
+    transform: translateX(-2px);
+  }
+  88% {
+    transform: translateX(2px);
+  }
+}
+
+[data-shake] {
+  animation: sf-shake-x var(--dur-base) var(--ease-settle) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-shake] {
+    animation: none;
+  }
+}
+
+/* §6.15 · tooltip. 120ms delay in, 150ms fade, mono 11px, 4px offset.
+ 
+   Three rules that are not style:
+ 
+   · **Keyboard focus reveals it too.** `:focus-visible` is on the same
+     selector as `:hover`. A tooltip that only answers a mouse is a label the
+     keyboard cannot read, and the collapsed Studio rail is nothing BUT
+     icon-only controls.
+   · **Never on touch.** `@media (hover: hover)` — a coarse pointer has no
+     hover state, so a touch "hover" is a tap, and the tooltip would appear at
+     the same instant the control it describes activates.
+   · **It is not the accessible name.** The trigger still carries its own
+     `aria-label` or visible text; this is `aria-hidden` decoration echoing it.
+     A `title`-attribute-style tooltip that IS the name is unreachable for
+     anyone not using a mouse.
+ 
+   150ms is `--dur-fast` (180ms) — same reasoning as the shake above. */
+@utility u-tip {
+  position: relative;
+}
+
+.u-tip > [data-tip] {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  z-index: var(--z-header);
+  translate: -50% 0;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--elev-2);
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-fast) var(--ease-settle),
+    visibility var(--dur-fast);
+  visibility: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .u-tip:hover > [data-tip],
+  .u-tip:focus-within > [data-tip] {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 120ms;
+  }
+}
+
+/* A keyboard user gets it on every pointer class — including a laptop with a
+   touchscreen, which reports `pointer: coarse` and would otherwise have the
+   rule above withheld from it while a physical keyboard is attached. */
+.u-tip:focus-within > [data-tip] {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .u-tip > [data-tip] {
+    transition: none;
+  }
+}
+
+/* ————————————————————————————————————————————————————————————————
+   §6.7 · MENU SKIN
+
+   A SKIN over the Radix primitives, not a replacement for them. The contract
+   is explicit: "Radix keeps typeahead, arrow keys, Escape, scrim-close and
+   focus return — do not reimplement or fork them, and never hand-roll a
+   CSS-only dropdown where the primitive exists." So this file styles what
+   `ui/dropdown-menu.tsx`, `ui/select.tsx` and the `cmdk` palette already
+   render, keyed off the `data-slot` attributes those components set, and adds
+   no behaviour at all.
+
+   Styling them here rather than in each component is what makes "the same
+   menu everywhere" true: the dropdown, the Select, the Studio's row actions
+   and the command palette are four different React components that a person
+   reads as one object, and four class strings is four chances for them to
+   drift.
+
+   §6.7's panel motion (fade + y −4→0 at 180ms `settle`, origin following
+   Radix's own `--radix-*-content-transform-origin`) is already what those
+   components emit through `tw-animate-css`. What is added:
+
+   · **the item hover veil** — a 45% champagne wash sliding from the leading
+     edge, rather than a block of background colour appearing at once
+   · **the champagne tick** on a checked item
+   · **`--alert` on a destructive item**, alongside its existing text colour
+     so the row is not carrying the meaning in colour alone
+   ———————————————————————————————————————————————————————————————— */
+
+/* The veil. `transform`, from the leading edge, under the label — an ::after
+   would paint over the text, and a `background` transition cannot come from a
+   direction. `--menu-veil-origin` (not a hard-coded `left`) is what makes an
+   Arabic menu wash from the right; `[dir="rtl"]` flips it once, here, for all
+   four components. */
+[data-slot="dropdown-menu-item"],
+[data-slot="dropdown-menu-checkbox-item"],
+[data-slot="dropdown-menu-radio-item"],
+[data-slot="select-item"],
+[cmdk-item] {
+  position: relative;
+  isolation: isolate;
+  --menu-veil-origin: left;
+}
+
+[dir="rtl"] [data-slot="dropdown-menu-item"],
+[dir="rtl"] [data-slot="dropdown-menu-checkbox-item"],
+[dir="rtl"] [data-slot="dropdown-menu-radio-item"],
+[dir="rtl"] [data-slot="select-item"],
+[dir="rtl"] [cmdk-item] {
+  --menu-veil-origin: right;
+}
+
+[data-slot="dropdown-menu-item"]::before,
+[data-slot="dropdown-menu-checkbox-item"]::before,
+[data-slot="dropdown-menu-radio-item"]::before,
+[data-slot="select-item"]::before,
+[cmdk-item]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--champagne) 45%, transparent);
+  transform: scaleX(0);
+  transform-origin: var(--menu-veil-origin);
+  transition: transform var(--dur-fast) var(--ease-settle);
+  pointer-events: none;
+}
+
+/* Radix marks the active row `data-highlighted` for BOTH pointer hover and
+   keyboard arrow/typeahead, which is the whole reason the veil keys off it:
+   §6.7 asks for the typeahead highlight to be identical to hover, and this is
+   how it is identical rather than merely similar. */
+[data-slot="dropdown-menu-item"][data-highlighted]::before,
+[data-slot="dropdown-menu-checkbox-item"][data-highlighted]::before,
+[data-slot="dropdown-menu-radio-item"][data-highlighted]::before,
+[data-slot="select-item"][data-highlighted]::before,
+[cmdk-item][data-selected="true"]::before {
+  transform: scaleX(1);
+}
+
+/* A champagne veil at 45% is light enough that the row's ink has to go dark
+   with it, or a highlighted item is mineral-on-champagne at 2.3:1. */
+[data-slot="dropdown-menu-item"][data-highlighted],
+[data-slot="dropdown-menu-checkbox-item"][data-highlighted],
+[data-slot="dropdown-menu-radio-item"][data-highlighted],
+[data-slot="select-item"][data-highlighted],
+[cmdk-item][data-selected="true"] {
+  color: var(--obsidian);
+}
+
+/* Destructive rows keep `--alert` when highlighted instead of inheriting the
+   obsidian above — the veil is the same, the meaning is not. Paired with the
+   row's own icon so the signal is never colour alone (§16). */
+[data-slot="dropdown-menu-item"][data-variant="destructive"][data-highlighted] {
+  color: var(--alert);
+}
+
+[data-slot="dropdown-menu-item"][data-variant="destructive"]::before {
+  background: color-mix(in srgb, var(--alert) 28%, transparent);
+}
+
+/* The checked mark. The dropdown's checkbox/radio indicators are Radix's own
+   `<Check>`/`<Circle>` glyphs with no class of their own, so they are coloured
+   from here. The Select's tick is NOT: it carries a real class in
+   `ui/select.tsx` and is set there, because a selector reaching through two
+   components to recolour a glyph is a rule nobody finds when the glyph moves. */
+[data-slot="dropdown-menu-checkbox-item"] svg,
+[data-slot="dropdown-menu-radio-item"] svg {
+  color: var(--champagne);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="dropdown-menu-item"]::before,
+  [data-slot="dropdown-menu-checkbox-item"]::before,
+  [data-slot="dropdown-menu-radio-item"]::before,
+  [data-slot="select-item"]::before,
+  [cmdk-item]::before {
+    transition: none;
+  }
+}
+
+/* ————————————————————————————————————————————————————————————————
+   §6.1 · CUSTOM CURSOR — the native-cursor half
+
+   `ui/cursor.tsx` draws the dot and the ring; these two rules decide when the
+   SYSTEM cursor is hidden, and they are deliberately the only place that
+   decision is made.
+
+   `data-cursor-live` is set on <html> by the component on mount and removed on
+   unmount, so the native cursor is hidden if and only if a replacement is
+   actually running. Touch, a coarse pointer, reduced motion, the Studio, a
+   crash before mount — in every one of those the attribute is never set and
+   the system cursor is simply the cursor. There is no state in which both are
+   hidden, which is the failure mode that makes a custom cursor unshippable.
+
+   `data-cursor-native` is set while the pointer is over a text-entry surface.
+   The caret comes back, because an I-beam is information — it says where the
+   next character lands — and a decorative ring does not carry that.
+   ———————————————————————————————————————————————————————————————— */
+html[data-cursor-live],
+html[data-cursor-live] * {
+  cursor: none;
+}
+
+html[data-cursor-live][data-cursor-native],
+html[data-cursor-live][data-cursor-native] * {
+  cursor: auto;
+}
+
+/* Belt and braces: even mid-frame, a text control keeps its caret. The
+   component's `data-cursor-native` toggle is driven by `pointermove` and can
+   be one frame behind a fast entry into a field; this rule cannot. */
+html[data-cursor-live] input,
+html[data-cursor-live] textarea,
+html[data-cursor-live] select,
+html[data-cursor-live] [contenteditable],
+html[data-cursor-live] .ProseMirror {
+  cursor: auto;
 }

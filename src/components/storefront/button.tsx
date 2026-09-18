@@ -61,6 +61,28 @@ const buttonVariants = cva(
     "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-obsidian",
     "disabled:pointer-events-none disabled:opacity-40",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    // §6.2 / owner decision 10 · PRESS FEEDBACK IS A CHAMPAGNE FILL SWEEP AND
+    // NOTHING ELSE. Three of the four briefs merged into this work proposed
+    // `scale(0.96–0.97)` and/or a click-origin ripple; REDESIGN.md §3.6 and
+    // docs/redesign-contract.md §6 both say "colour and underline only — no
+    // scale or lift on hover", and this variant's own header says why. So the
+    // button acknowledges a press without moving: a champagne wash scales from
+    // 0 to 1 across it while the pointer is down, and collapses when released.
+    //
+    // `before:`, not `after:` — `after:` is the animated underline that
+    // `secondary` and `ghost` already own, and one pseudo-element cannot be
+    // two things. `-z-10` with `isolate` keeps the wash under the label rather
+    // than washing over it.
+    //
+    // It is scoped to `:active`, so it never fires on hover, on focus, or on a
+    // keyboard user merely tabbing past — a press is a press. Under reduced
+    // motion the wash still appears, it just does not travel: the feedback is
+    // the point, the direction is the decoration.
+    "isolate before:absolute before:inset-0 before:-z-10 before:rounded-[inherit]",
+    "before:origin-left before:scale-x-0 before:bg-champagne/25 rtl:before:origin-right",
+    "before:transition-transform before:duration-(--dur-fast) before:ease-(--ease-luxury)",
+    "active:before:scale-x-100",
+    "motion-reduce:before:transition-none",
   ].join(" "),
   {
     variants: {

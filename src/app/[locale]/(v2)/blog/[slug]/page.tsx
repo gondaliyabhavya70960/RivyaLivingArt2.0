@@ -9,7 +9,6 @@ import { Eye } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { ArticleToc } from "@/components/blog/article-toc";
-import { ReadingProgress } from "@/components/blog/reading-progress";
 import { ShareButtons } from "@/components/product/share-buttons";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
@@ -492,7 +491,6 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <>
-      <ReadingProgress />
       {/* A demo post is not a real article — Part 0 forbids structured data
           that dresses a fixture up as content a search engine should index.
           The breadcrumb trail still describes a real page, demo or not. */}
