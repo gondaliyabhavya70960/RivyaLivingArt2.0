@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { requireStaffPage } from "@/actions/helpers";
 import { PageHeader } from "@/components/studio/page-header";
@@ -26,7 +27,11 @@ import {
   countPendingForSurface,
   readCopyOverridesForStudio,
 } from "@/lib/site-copy-server";
-import { PAGE_SECTION_LABELS } from "@/lib/page-sections";
+import {
+  PAGE_SECTION_LABELS,
+  sublistsForPage,
+  type SectionPageKey,
+} from "@/lib/page-sections";
 import { countPendingSections } from "@/lib/page-sections-server";
 import { buildSectionRows, pageKeyForPath } from "@/lib/page-sections-studio";
 import { blobStorageConfigured } from "@/lib/site-images-import";
@@ -79,7 +84,12 @@ function lookup(tree: MessageTree, key: string): string {
 export default async function SiteCopyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ group?: string; locale?: string; tab?: string }>;
+  searchParams: Promise<{
+    group?: string;
+    locale?: string;
+    tab?: string;
+    board?: string;
+  }>;
 }) {
   const session = await requireStaffPage();
   const params = await searchParams;
@@ -108,6 +118,21 @@ export default async function SiteCopyPage({
       ? requestedTab
       : "words";
 
+  /* S9: the Order tab arranges the page's own bands AND any sublist living
+     inside it — Process Steps and Materials, which are the same
+     `SectionsBoard` filtered to one key and used to be two separate screens.
+     `?board=` picks which; anything unrecognised falls back to the page
+     itself, so a stale link cannot land on an empty panel.
+
+     The board's own page switcher is not reused: it hardcodes
+     `/studio/sections?page=`, which would navigate OUT of this hub. It stays
+     hidden here (one entry) and this screen draws its own, in-hub. */
+  const orderBoards: SectionPageKey[] = pageKey
+    ? [pageKey, ...sublistsForPage(pageKey)]
+    : [];
+  const board: SectionPageKey | null =
+    orderBoards.find((key) => key === params.board) ?? pageKey;
+
   const [overrides, counts, catalogue, imageGroups, sectionData] =
     await Promise.all([
       readCopyOverridesForStudio(locale),
@@ -116,8 +141,8 @@ export default async function SiteCopyPage({
         (m) => m.default as MessageTree,
       ),
       buildSiteImageGroupRows(group),
-      pageKey
-        ? Promise.all([buildSectionRows(pageKey), countPendingSections(pageKey)])
+      board
+        ? Promise.all([buildSectionRows(board), countPendingSections(board)])
         : Promise.resolve(null),
     ]);
 
@@ -238,17 +263,45 @@ export default async function SiteCopyPage({
           )
         }
         order={
-          pageKey && sectionData ? (
-            <SectionsBoard
-              pageKey={pageKey}
-              // One entry hides the board's own page switcher — the surface
-              // picker above the tabs is the switcher here.
-              pages={[{ key: pageKey, title: PAGE_SECTION_LABELS[pageKey].title }]}
-              previewPath={previewPath}
-              sections={sectionData[0]}
-              pending={orderPending}
-              canReset={canReset}
-            />
+          board && sectionData ? (
+            <div className="space-y-6">
+              {/* The in-hub board picker. Only drawn when the page HAS a
+                  sublist, so six of the seven surfaces are unchanged. Plain
+                  links rather than a client control: the whole panel is
+                  server-rendered and the selection is already in the URL. */}
+              {orderBoards.length > 1 ? (
+                <nav
+                  aria-label="Arrangement"
+                  className="flex flex-wrap gap-1.5"
+                >
+                  {orderBoards.map((key) => (
+                    <Link
+                      key={key}
+                      href={`/studio/site-copy?group=${encodeURIComponent(group)}&locale=${locale}&tab=order&board=${key}`}
+                      aria-current={key === board ? "page" : undefined}
+                      scroll={false}
+                      className={
+                        key === board
+                          ? "rounded-md border border-foreground bg-foreground px-3 py-1.5 text-small text-background"
+                          : "rounded-md border border-border px-3 py-1.5 text-small text-graphite transition-colors hover:border-foreground hover:text-foreground"
+                      }
+                    >
+                      {PAGE_SECTION_LABELS[key].title}
+                    </Link>
+                  ))}
+                </nav>
+              ) : null}
+              <SectionsBoard
+                pageKey={board}
+                // One entry hides the board's own page switcher — the picker
+                // above is this screen's, and the board's would leave the hub.
+                pages={[{ key: board, title: PAGE_SECTION_LABELS[board].title }]}
+                previewPath={PAGE_SECTION_LABELS[board].path}
+                sections={sectionData[0]}
+                pending={orderPending}
+                canReset={canReset}
+              />
+            </div>
           ) : null
         }
       />

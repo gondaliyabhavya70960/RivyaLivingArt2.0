@@ -43,6 +43,17 @@ factually wrong here, or forbidden by the contract above. Do not act on it —
 `docs/ui-master-plan-reconciliation.md` verifies all 213 entries against HEAD,
 records what shipped, and lists what genuinely remains.
 
+**`docs/README.md` is the index for this directory** (2026-09-18) — which of
+the 35 loose files are in force, which are dated records D24 forbids
+rewriting, which are superseded, and the THREE paths in here that are read by
+code and must not move (`docs/media-v3-manifest.json`,
+`docs/plan/drive-asset-map.json`, `docs/media-v3-review/`). It is an index
+rather than a rearrangement on purpose: every file here is referenced from
+CLAUDE.md, AGENTS.md, another doc, a dated record or code, so moving them would
+put broken links inside `CHANGELOG.md`, `PROJECT_STATE.md`, `docs/audits/` and
+`RENAME-MIGRATION.md` — records that may not be edited to repair them.
+`docs-index.test.ts` pins it against the tree in both directions.
+
 **`docs/plan/` is IN FORCE for the workstreams noted below.** It plans a
 storefront/Studio redesign, a scraper rebuild against the owner's
 resin-merchandiser brief, the complete removal of Google Sheets, and a

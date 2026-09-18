@@ -1,11 +1,12 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import type { Prisma } from "@/generated/prisma/client";
+import type { ContentStatus, Prisma } from "@/generated/prisma/client";
 import {
   MEDIA_FOLDERS,
   type MediaFolder,
 } from "@/components/studio/media/folders";
+import { isCoverImage } from "@/lib/media-covers";
 import { isSizeBand, SIZE_BANDS, type SizeBand } from "@/lib/media";
 import { findMediaUsageDetails, findUnusedMedia } from "@/lib/media-usages";
 
@@ -280,4 +281,80 @@ export async function typeCounts(): Promise<Record<string, number>> {
 
 export async function totalCount(): Promise<number> {
   return db.media.count();
+}
+
+export type ProductCoverTarget = {
+  id: string;
+  title: string;
+  status: ContentStatus;
+  isCover: boolean;
+};
+
+/**
+ * Which PRODUCTS each of these images belongs to, and whether it is already
+ * that product's cover — S7's "Set as product cover".
+ *
+ * Separate from `findMediaUsageDetails`, which answers a different question.
+ * That one labels a URL with the PLACES that reference it ("Product gallery
+ * ×3") for the delete guard, across a dozen tables, and the header rule on
+ * `media-usages.ts` is that every new media-URL table joins it — a rule that
+ * stays legible only while that file answers exactly one question. This one
+ * needs product IDS and the gallery's order, which the labels deliberately
+ * do not carry.
+ *
+ * Scoped to the page's own rows: the drawer opens one file at a time, but the
+ * grid renders up to a page of them and a per-open round trip would mean a
+ * query on every click.
+ */
+export async function productCoverTargets(
+  urls: string[],
+): Promise<Map<string, ProductCoverTarget[]>> {
+  const out = new Map<string, ProductCoverTarget[]>();
+  if (urls.length === 0) return out;
+
+  const rows = await db.productImage.findMany({
+    where: { url: { in: urls } },
+    select: { url: true, productId: true },
+  });
+  if (rows.length === 0) return out;
+
+  const productIds = [...new Set(rows.map((row) => row.productId))];
+  const products = await db.product.findMany({
+    where: { id: { in: productIds } },
+    select: {
+      id: true,
+      title: true,
+      // Carried so the DRAWER can run `describePlaceholderPublishProblem`
+      // before it calls. `runAction` reports every throw as "something went
+      // wrong", so a refusal checked only in the action tells the owner
+      // nothing about what to do — the same reason the sections and
+      // navigation boards check their guards client-side first.
+      status: true,
+      images: { select: { url: true, order: true } },
+    },
+  });
+  const byId = new Map(products.map((product) => [product.id, product]));
+
+  for (const row of rows) {
+    const product = byId.get(row.productId);
+    if (!product) continue;
+    const list = out.get(row.url) ?? [];
+    // A URL repeated in one gallery must not produce the product twice.
+    if (list.some((entry) => entry.id === product.id)) continue;
+    list.push({
+      id: product.id,
+      title: product.title,
+      status: product.status,
+      isCover: isCoverImage(
+        product.images.map((image, index) => ({
+          id: String(index),
+          url: image.url,
+          order: image.order,
+        })),
+        row.url,
+      ),
+    });
+    out.set(row.url, list);
+  }
+  return out;
 }

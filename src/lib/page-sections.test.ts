@@ -12,6 +12,7 @@ import {
   describeArrangementProblem,
   isSectionPageKey,
   sectionDef,
+  sublistsForPage,
 } from "./page-sections";
 import { PROCESS_STEP_COUNT } from "./process-steps";
 import { GENERATED_COPY_SLOTS } from "./site-copy.generated";
@@ -402,5 +403,47 @@ describe("applyReorder", () => {
       home.map((s) => s.key),
     );
     expect(next.map((s) => s.key)).toEqual(home.map((s) => s.key));
+  });
+});
+
+describe("sublistsForPage — S9's Order-tab fold", () => {
+  it("gives Process its two sublists, in declaration order", () => {
+    expect(sublistsForPage("process")).toEqual(["process-steps", "materials"]);
+  });
+
+  it("gives a page with no fragment-path sublist nothing", () => {
+    // Six of the seven surfaces are unchanged by the fold; the picker is not
+    // drawn for them at all.
+    for (const key of ["home", "about", "large-format", "custom-order", "contact", "workshops"] as const) {
+      expect(sublistsForPage(key)).toEqual([]);
+    }
+  });
+
+  it("does NOT hand Materials to About, though its band renders there", () => {
+    // `materials`' recorded home is `/process#materials`. Its cards do render
+    // on About too, and moving one moves it on both pages — but inventing an
+    // about↔materials edge the data does not state is how two maps begin to
+    // disagree. The relation is derived from the path and nowhere else.
+    expect(sublistsForPage("about")).toEqual([]);
+  });
+
+  it("gives a sublist no sublists of its own", () => {
+    expect(sublistsForPage("process-steps")).toEqual([]);
+    expect(sublistsForPage("materials")).toEqual([]);
+  });
+
+  it("derives from the recorded paths, so a sublist joins by being given one", () => {
+    // The guard against a second hand-written map: every sublist's path must
+    // be some page's path plus a fragment, or it silently belongs to nothing.
+    const pagePaths = new Set(
+      SECTION_PAGES.filter((k) => !SUBLIST_PAGES.has(k)).map(
+        (k) => PAGE_SECTION_LABELS[k].path,
+      ),
+    );
+    for (const key of SUBLIST_PAGES) {
+      const [parent, fragment] = PAGE_SECTION_LABELS[key].path.split("#");
+      expect(fragment, `${key} needs a fragment path`).toBeTruthy();
+      expect(pagePaths.has(parent), `${key} → ${parent}`).toBe(true);
+    }
   });
 });

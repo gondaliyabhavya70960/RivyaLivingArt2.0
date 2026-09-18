@@ -7,6 +7,7 @@ import {
   useSyncExternalStore,
   type ChangeEvent,
 } from "react";
+import type { ContentStatus } from "@/generated/prisma/client";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import Image from "next/image";
 import Link from "next/link";
@@ -93,6 +94,17 @@ export type MediaItem = {
   isDemo: boolean;
   /** Labeled reference sites ("Product gallery ×3") — empty = safe to delete. */
   usedIn: string[];
+  /**
+   * The products whose gallery already holds this image, for S7's "Set as
+   * product cover". Distinct from `usedIn`, which carries labels rather than
+   * ids and covers a dozen tables; promoting a cover needs the product.
+   */
+  coverTargets: {
+    id: string;
+    title: string;
+    status: ContentStatus;
+    isCover: boolean;
+  }[];
 };
 
 /**

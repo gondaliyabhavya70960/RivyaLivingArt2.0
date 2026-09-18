@@ -6,10 +6,17 @@ import path from "node:path";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { requireStaff, runAction, type ActionResult } from "@/actions/helpers";
+import {
+  requireStaff,
+  revalidatePublic,
+  runAction,
+  type ActionResult,
+} from "@/actions/helpers";
 import { MEDIA_FOLDERS } from "@/components/studio/media/folders";
 import { logActivity, snapshotBefore } from "@/lib/activity";
 import { findMediaUsages } from "@/lib/media-usages";
+import { reorderForCover } from "@/lib/media-covers";
+import { describePlaceholderPublishProblem } from "@/lib/placeholder-assets";
 import { db } from "@/lib/db";
 import { seoFilename, splitFilename } from "@/lib/media-filename";
 import { finalizeAsset, MediaTypeMismatchError } from "@/lib/media-ingest";
@@ -748,5 +755,101 @@ export async function setVideoPoster(
     });
     revalidatePath(STUDIO_PATH);
     return { posterUrl };
+  });
+}
+
+
+const coverSchema = z.object({
+  productId: z.string().min(1),
+  url: z.string().min(1),
+});
+
+/**
+ * S7's "Set as product cover" — promote a library image to the front of a
+ * product's gallery.
+ *
+ * ## It is a FOURTH writer into `ProductImage`, so it takes the guard
+ *
+ * The other three — `upsertProduct`, `setProductsStatus`, `approveProducts` —
+ * all run `describePlaceholderPublishProblem`, and THE PLACEHOLDER RULE exists
+ * because the cover is what a customer sees while agreeing to buy: the PDP
+ * resolves `ogImage || images[0].url`, so with no explicit OG image the cover
+ * becomes the WhatsApp link-preview card. A new write path into this table
+ * that skipped the check would re-open exactly the hole the rule closes, from
+ * a screen whose whole job is choosing pictures.
+ *
+ * The guard is asked with the product's CURRENT status, because that is what
+ * this action changes the cover of. A draft may carry a placeholder — it is
+ * not on the shop — and the refusal then fires when someone tries to publish
+ * it, which is the existing behaviour and the right moment.
+ *
+ * ## It never ADDS a picture
+ *
+ * Only a row already in this product's gallery can be promoted, so the action
+ * cannot attach an unrelated library image to a product by URL. Adding an
+ * image is the product form's job and goes through its own validation;
+ * `reorderForCover` returns null for a URL it does not find, and that is the
+ * refusal rather than an insert.
+ */
+export async function setProductCover(
+  input: z.input<typeof coverSchema>,
+): Promise<ActionResult> {
+  return runAction(async () => {
+    const session = await requireStaff();
+    const parsed = coverSchema.parse(input);
+
+    const product = await db.product.findUnique({
+      where: { id: parsed.productId },
+      select: {
+        id: true,
+        slug: true,
+        status: true,
+        images: { select: { id: true, url: true, order: true } },
+      },
+    });
+    if (!product) throw new Error("That product no longer exists.");
+
+    const problem = describePlaceholderPublishProblem({
+      nextStatus: product.status,
+      coverUrl: parsed.url,
+    });
+    if (problem) throw new Error(problem);
+
+    const changes = reorderForCover(product.images, parsed.url);
+    if (changes === null) {
+      // Two different no-ops share this branch on purpose: already the cover,
+      // and not in this gallery. Both mean "nothing to write", and the UI only
+      // offers the button in the one case where there is.
+      return undefined;
+    }
+
+    // One transaction: a half-applied reorder leaves two rows claiming the
+    // lowest order, and `orderBy: { order: "asc" }` then picks between them by
+    // whatever the planner feels like.
+    await db.$transaction(
+      changes.map((change) =>
+        db.productImage.update({
+          where: { id: change.id },
+          data: { order: change.order },
+        }),
+      ),
+    );
+
+    await logActivity({
+      userId: session.user.id,
+      action: "update",
+      entity: "Product",
+      entityId: product.id,
+      meta: { field: "cover", url: parsed.url, moved: changes.length },
+    });
+
+    revalidatePath(STUDIO_PATH);
+    revalidatePath("/studio/products");
+    revalidatePath(`/studio/products/${product.id}`);
+    revalidatePublic("product", product.slug);
+    // The PDP is cached for a day and the cover is its OG image — a stale page
+    // is a stale WhatsApp preview card.
+    revalidatePath("/[locale]/product/[slug]", "page");
+    return undefined;
   });
 }
