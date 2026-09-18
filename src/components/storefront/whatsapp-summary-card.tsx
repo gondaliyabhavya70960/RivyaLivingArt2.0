@@ -102,7 +102,7 @@ export function WhatsAppSummaryCard({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={panelId}
-        className="u-micro flex min-h-14 w-full items-center justify-between gap-3 border-t border-hairline px-5 text-start text-ink outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset motion-reduce:transition-none"
+        className="u-micro flex min-h-14 w-full items-center justify-between gap-3 border-t border-hairline px-5 text-start text-ink outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-ink focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset motion-reduce:transition-none"
       >
         {toggleLabel}
         <ChevronDown

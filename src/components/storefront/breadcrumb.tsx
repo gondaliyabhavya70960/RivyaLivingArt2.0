@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 /* Part 16: 2px sapphire ring at 3px offset, champagne inside a dark band. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
 
 /* The invisible 44px hit band. `inset-x-0` holds it inside the crumb's own
    width, so side-by-side targets never overlap and the 8px separation Part 17
@@ -77,7 +77,7 @@ export function Breadcrumb({
                     "inline-flex items-center rounded-input transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
                     isLast
                       ? "text-ink in-data-[theme=navy]:text-mineral"
-                      : "hover:text-sapphire in-data-[theme=navy]:hover:text-champagne",
+                      : "hover:text-sapphire-ink in-data-[theme=navy]:hover:text-champagne",
                     FOCUS_RING,
                   )}
                 >

@@ -47,7 +47,7 @@ const PROSE_LEGAL = [
   "[&_p]:mt-4",
   "[&_li]:mt-2 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:ps-6",
   "[&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:ps-6",
-  "[&_a]:rounded-input [&_a]:text-sapphire [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
+  "[&_a]:rounded-input [&_a]:text-sapphire-ink [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
   "[&_blockquote]:mt-6 [&_blockquote]:border-t [&_blockquote]:border-champagne [&_blockquote]:pt-4 [&_blockquote]:font-display [&_blockquote]:text-h3 [&_blockquote]:leading-snug [&_blockquote]:text-ink",
   "[&_hr]:my-10 [&_hr]:border-hairline",
   "[&_img]:mt-6 [&_img]:max-w-full [&_img]:rounded-image",
@@ -85,7 +85,7 @@ async function LegalUnavailable() {
     getTranslations("Common"),
   ]);
   return (
-    <section className="section-standard bg-mineral text-ink">
+    <section className="section-standard bg-background text-ink">
       <div className="u-shell">
         <ErrorState
           headingLevel="h1"
@@ -165,7 +165,7 @@ export default async function PrivacyPage({
       {/* ════════ 01 · Masthead — standard ════════ */}
       <section
         aria-labelledby="legal-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <Breadcrumb
@@ -214,7 +214,7 @@ export default async function PrivacyPage({
                   <li key={heading.id}>
                     <a
                       href={`#${heading.id}`}
-                      className="flex min-h-11 items-center py-1 font-body text-14 leading-snug text-graphite transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire motion-reduce:transition-none"
+                      className="flex min-h-11 items-center py-1 font-body text-14 leading-snug text-graphite transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink motion-reduce:transition-none"
                     >
                       {heading.text}
                     </a>

@@ -74,7 +74,7 @@ const MEGA_GROUPS: Array<{ group: CatalogGroup; labelKey: string }> = [
 /** 48px icon action — clears the 44px floor with room, and matches the
  *  CarouselNav circle so every icon-only control on the site is one size. */
 const ICON_ACTION =
-  "relative inline-flex size-12 shrink-0 items-center justify-center rounded-full text-current outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 in-data-[theme=navy]:hover:text-champagne motion-reduce:transition-none";
+  "relative inline-flex size-12 shrink-0 items-center justify-center rounded-full text-current outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-ink focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 in-data-[theme=navy]:hover:text-champagne motion-reduce:transition-none";
 
 export type SiteHeaderProps = {
   /**
@@ -410,7 +410,7 @@ export function SiteHeader({
         <div
           aria-hidden
           className={cn(
-            "absolute inset-x-0 top-0 border-b border-hairline bg-mineral/88 transition-[opacity,height] duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
+            "absolute inset-x-0 top-0 border-b border-hairline bg-obsidian/88 transition-[opacity,height] duration-(--dur-base) ease-(--ease-luxury) motion-reduce:transition-none",
             solid ? "h-16" : "h-20",
             transparent ? "opacity-0" : "opacity-100 backdrop-blur-md",
           )}
@@ -546,7 +546,7 @@ export function SiteHeader({
               onMouseEnter={cancelMegaTimer}
               onMouseLeave={scheduleMegaClose}
               className={cn(
-                "absolute inset-x-0 top-full hidden border-y border-hairline bg-mineral p-8 lg:block",
+                "absolute inset-x-0 top-full hidden border-y border-hairline bg-background p-8 lg:block",
                 megaPresence.closing
                   ? "opacity-0 transition-opacity duration-(--dur-fast) ease-(--ease-luxury)"
                   : "animate-in fade-in slide-in-from-top-[6px] fill-mode-backwards duration-(--dur-fast) ease-(--ease-luxury) motion-reduce:animate-none",
@@ -556,7 +556,7 @@ export function SiteHeader({
                   spans the viewport, the columns line up with the page. */}
               <span
                 aria-hidden
-                className="absolute inset-x-[calc(50%-50vw)] inset-y-0 -z-10 border-y border-hairline bg-mineral"
+                className="absolute inset-x-[calc(50%-50vw)] inset-y-0 -z-10 border-y border-hairline bg-background"
               />
               <div className="grid grid-cols-12 gap-8">
                 <MegaTile
@@ -612,7 +612,7 @@ export function SiteHeader({
                   <Link
                     href="/shop"
                     onClick={() => setMegaOpen(false)}
-                    className="mt-6 inline-flex min-h-11 items-center gap-2 font-body text-16 text-sapphire outline-none transition-colors duration-(--dur-fast) hover:text-sapphire-hi focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+                    className="mt-6 inline-flex min-h-11 items-center gap-2 font-body text-16 text-sapphire-ink outline-none transition-colors duration-(--dur-fast) hover:text-sapphire-hi focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
                   >
                     {tHeader("exploreAll")}
                     <span aria-hidden className="rtl:-scale-x-100">

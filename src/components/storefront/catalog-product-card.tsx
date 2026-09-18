@@ -170,7 +170,7 @@ export function CatalogProductCard({
       ) : null}
 
       {!compact && item.featured ? (
-        <span className="u-micro absolute start-3 top-3 bg-mineral/92 px-2.5 py-1 text-ink">
+        <span className="u-micro absolute start-3 top-3 bg-obsidian/92 px-2.5 py-1 text-ink">
           {t("card.badgeAtelierPick")}
         </span>
       ) : null}
@@ -291,7 +291,7 @@ export function CatalogProductCard({
           </p>
           <p
             aria-hidden
-            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire-ink in-data-[theme=navy]:text-champagne"
           >
             <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
               {t("card.viewPiece")}
@@ -378,7 +378,7 @@ export function CatalogProductCard({
           <p className="u-micro">{availability}</p>
           <p
             aria-hidden
-            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire-ink in-data-[theme=navy]:text-champagne"
           >
             <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
               {t("card.viewPiece")}
@@ -453,7 +453,7 @@ export function CatalogProductCard({
           {item.isDemo ? <DemoMark label={tCommon("demoMark")} /> : null}
           <p
             aria-hidden
-            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire-ink in-data-[theme=navy]:text-champagne"
           >
             <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
               {t("card.viewPiece")}
@@ -522,7 +522,7 @@ export function CatalogProductCard({
         </p>
         <p
           aria-hidden
-          className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+          className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire-ink in-data-[theme=navy]:text-champagne"
         >
           <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
             {t("card.viewPiece")}

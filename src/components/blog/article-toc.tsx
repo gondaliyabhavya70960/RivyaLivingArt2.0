@@ -105,7 +105,7 @@ export function ArticleToc({
                   "flex min-h-11 items-center gap-3 py-1 font-body text-14 leading-snug",
                   "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
                   heading.level > 2 && "ps-4",
-                  active ? "text-ink" : "text-graphite hover:text-sapphire",
+                  active ? "text-ink" : "text-graphite hover:text-sapphire-ink",
                 )}
               >
                 {/* The active mark is a rule, not a fill — the same "you are

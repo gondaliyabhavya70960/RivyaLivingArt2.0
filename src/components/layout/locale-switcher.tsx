@@ -74,7 +74,7 @@ export function LocaleSwitcher({
           <option
             key={code}
             value={code}
-            className="bg-mineral text-ink"
+            className="bg-background text-ink"
           >
             {localeLabels[code]}
           </option>

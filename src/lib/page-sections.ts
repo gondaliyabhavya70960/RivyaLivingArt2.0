@@ -57,7 +57,7 @@ export type SectionDef = {
    * Whether the section paints a dark ground.
    *
    * DECLARED, never derived. The darkness is frequently painted by a child
-   * component — `#material` is a `bg-mineral` section wrapping a
+   * component — `#material` is a `bg-background` section wrapping a
    * `bg-obsidian` scrub — so scanning the section's own classes gets the
    * answer wrong, and the band-rhythm rule depends on getting it right.
    */

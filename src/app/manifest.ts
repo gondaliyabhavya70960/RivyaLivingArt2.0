@@ -31,7 +31,12 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     start_url: "/",
     display: "standalone",
     theme_color: BRAND.obsidian,
-    background_color: BRAND.mineral,
+    // D30 · the splash screen an installed PWA paints while the app boots.
+    // It was `mineral`, which was right when the storefront's first paint was
+    // a cream page; against the obsidian ground it is a full-screen white
+    // flash on every cold launch. Matching `theme_color` makes the splash and
+    // the first frame the same colour, so there is nothing to flash between.
+    background_color: BRAND.obsidian,
     icons: [
       {
         src: icon,

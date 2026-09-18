@@ -115,7 +115,7 @@ export function BeforeAfter({ before, after, className }: BeforeAfterProps) {
       data-theme="navy"
       className={cn(
         "relative aspect-[4/3] cursor-ew-resize touch-none overflow-hidden rounded-image bg-obsidian select-none",
-        "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral",
+        "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background",
         className,
       )}
     >

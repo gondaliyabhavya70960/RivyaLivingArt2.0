@@ -112,7 +112,7 @@ function ResultRow({
         className="group flex items-center justify-between gap-6 py-6 outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3"
       >
         <div className="min-w-0">
-          <h3 className="font-body text-16 leading-snug font-medium text-ink transition-colors duration-(--dur-fast) ease-(--ease-luxury) group-hover:text-sapphire motion-reduce:transition-none">
+          <h3 className="font-body text-16 leading-snug font-medium text-ink transition-colors duration-(--dur-fast) ease-(--ease-luxury) group-hover:text-sapphire-ink motion-reduce:transition-none">
             {title}
           </h3>
           {snippet && (
@@ -133,7 +133,7 @@ function ResultRow({
         <ArrowRight
           aria-hidden
           strokeWidth={1.5}
-          className="size-4 shrink-0 text-sapphire rtl:-scale-x-100"
+          className="size-4 shrink-0 text-sapphire-ink rtl:-scale-x-100"
         />
       </Link>
     </li>
@@ -281,7 +281,7 @@ export default async function SearchPage({
   });
 
   return (
-    <div data-theme="light" className="bg-mineral text-ink">
+    <div data-theme="light" className="bg-background text-ink">
       {/* §1 MASTHEAD on canvas — trail, bronze eyebrow (A2 rule 3), Fraunces
           head with the page's one split-reveal moment, then the GET form
           riding directly beneath. */}
@@ -373,7 +373,7 @@ export default async function SearchPage({
                   <div className="mt-8">
                     <Link
                       href={`/shop?q=${encodeURIComponent(query)}&type=${ALL_ECOSYSTEMS}`}
-                      className="inline-flex min-h-11 items-center gap-1.5 rounded-input font-body text-14 font-medium text-sapphire underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-input font-body text-14 font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
                     >
                       {t("productsShowMore", { total: products.total })}
                       <ArrowRight

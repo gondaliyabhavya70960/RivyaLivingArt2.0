@@ -410,7 +410,7 @@ export default async function ShopCategoryPage({
 
       {/* ═══ 8.2 · Short explanation — cols 1–7, unique per collection ═══ */}
       {category.description ? (
-        <section className="section-standard bg-mineral">
+        <section className="section-standard bg-background">
           <div className="u-shell grid gap-8 lg:grid-cols-12">
             <Reveal className="flex flex-col gap-5 lg:col-span-7">
               <Eyebrow>{t("collection.aboutEyebrow")}</Eyebrow>
@@ -460,7 +460,7 @@ export default async function ShopCategoryPage({
       {/* ═══ 8.4 · The grid — §7.6, category pinned server-side ═══ */}
       <div
         id="pieces"
-        className="scroll-mt-24 bg-mineral pt-6 pb-20 md:pt-10 md:pb-28"
+        className="scroll-mt-24 bg-background pt-6 pb-20 md:pt-10 md:pb-28"
       >
         <ShopExplorer
           initialItems={page.items}
@@ -563,7 +563,7 @@ export default async function ShopCategoryPage({
           and no two headings on a page may read the same (Part 17). */}
       <section
         aria-labelledby="collection-commission-heading"
-        className="bg-mineral"
+        className="bg-background"
       >
         <div className="u-shell section-compact flex flex-col gap-6 border-t border-hairline lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <Reveal className="flex flex-col gap-4">

@@ -27,67 +27,142 @@
   --breakpoint-2xl: 96rem;
 }
 
+/* ————————————————————————————————————————————————————————————————
+   RECORDED DECISION D30 — 2026-09-18 · dark is the only ground
+   (owner instruction, v3 build prompt §0.1–§0.2; D18 format)
+
+   OVERRIDES, and these are the exact sentences being reversed:
+     · REDESIGN.md §3.1 / docs/redesign-contract.md §2 — "Dark bands never sit
+       adjacent; max three dark bands per page."
+     · This file's own line 39, "--mineral: light page ground".
+     · globals.css's `.studio-v2` comment, "the Studio follows the operator's
+       OS scheme".
+
+   The storefront and the Studio both ground on obsidian. There is no toggle,
+   no `next-themes`, no cookie and no anti-FOUC script: one theme cannot flash
+   into another one. The band rhythm those rules governed is replaced by the
+   three-step ELEVATION LADDER below — on a dark ground, higher means a
+   LIGHTER SURFACE, never a heavier shadow.
+
+   HOW THE FLIP IS ACTUALLY DONE, and why it is not 800 hand edits: five raw
+   palette tokens carry a role that is directional, and flipping the token
+   flips every call site at once. This is not a new trick — globals.css's
+   `.studio-v2` dark block has done exactly this since the Studio shipped, and
+   its comment is the one that names the trap:
+
+     --ink        #12141a → #f4f1e9   `text-ink`      193 sites
+     --graphite   #5b6068 → #a9b4bc   `text-graphite` 364 sites
+     --sand       #e7e0d5 → #0f3247   `bg-sand`       113 sites
+     --hairline   ink 12% → mineral 16% `border-hairline` 153 sites
+
+   --mineral IS THE EXCEPTION AND CANNOT FLIP. It is this scheme's `--text`,
+   so a dark mineral is dark body text on obsidian. But it is genuinely
+   bidirectional in src/ — 169 `text-mineral` (light text, must stay light)
+   against 94 `bg-mineral` (page ground, must go dark) — so the 94 grounds
+   were converted BY HAND to `bg-obsidian` / `bg-background` in the same
+   commit, and `--mineral` keeps its light value. Nothing that must follow
+   the scheme may route a BACKGROUND through `--mineral`; use `--bg`,
+   `--surface` or an `--elev-*` step.
+
+   WHAT DELIBERATELY DID NOT FLIP: --obsidian, --deep-ocean, --sapphire,
+   --sapphire-hi, --champagne, --mist, --hairline-dk, --whatsapp. Those eight
+   are anchors — they already named a dark-ground role and re-pointing them
+   would move the ground itself.
+   ———————————————————————————————————————————————————————————————— */
+
 :root {
+  /* The whole document is dark now, so tell the UA: form controls, scrollbars
+     and `Highlight` resolve their own dark defaults instead of painting light
+     widgets we then have to fight. */
+  color-scheme: dark;
+
   /* ————— Part 3.1 · Colour ————————————————————————————————————————
      Thirteen roles, no more. Champagne discipline (never a fill, never a
      button background, never text below 16px, max two per viewport) is a
      review rule, not something CSS can enforce — see globals.css. */
-  --obsidian: #080a0e; /* hero, footer, premium sections, studio UI */
+  --obsidian: #080a0e; /* THE page ground (D30), hero, footer, studio UI */
   --deep-ocean: #08283a; /* brand backgrounds, resin storytelling bands */
-  --sapphire: #164e6b; /* primary action, links, cure-line fill, focus */
+  --sapphire: #164e6b; /* primary action FILL, cure-line fill */
   --sapphire-hi: #1d6389; /* hover only */
-  --mineral: #f4f1e9; /* light page ground */
-  --sand: #e7e0d5; /* warm neutral — alternate ground, card surface */
+  --mineral: #f4f1e9; /* primary TEXT on the dark ground — never a background */
+  --sand: #0f3247; /* D30: the third elevation step (was #e7e0d5, a light ground) */
   --champagne: #b89b63; /* accent: tiny highlights, active states, hairlines */
-  --ink: #12141a; /* body text on light */
-  --graphite: #5b6068; /* secondary text, all mono metadata (5.6:1 on mineral) */
+  --ink: #f4f1e9; /* D30: body text, now light (was #12141a) */
+  --graphite: #a9b4bc; /* D30: secondary text + mono metadata (was #5b6068) */
   --mist: #a9b4bc; /* secondary text on dark (9.4:1 on obsidian) */
-  --hairline: rgba(18, 20, 26, 0.12); /* every divider on light */
+  /* D30: `border-hairline` has 153 call sites that all mean "the divider on
+     this page's ground", and that ground is obsidian now. The two names are
+     deliberately NOT collapsed into one — `--hairline-dk` is still referenced
+     explicitly by the components that were always on a dark band, and a
+     rename would be 153 edits for no rendered change. */
+  --hairline: rgba(244, 241, 233, 0.12);
   --hairline-dk: rgba(244, 241, 233, 0.16); /* every divider on dark */
   --whatsapp: #128c7e; /* WhatsApp actions only, never decorative */
-  --alert: #9b3a2e; /* errors, destructive (6.1:1 on mineral) */
-  --success: #2c6b5b; /* success, in-stock (5.5:1 on mineral) */
+  /* Status inks, lifted to the dark ground. These are NOT invented values —
+     each is the one the Studio's own `prefers-color-scheme: dark` block
+     proved and shipped: the same hue opened up until it clears 4.5:1 on
+     obsidian AND 4.5:1 on the deep-ocean surface. The light-ground values
+     they replace sat at 2–3:1 here. */
+  --alert: #e08575; /* was #9b3a2e */
+  --success: #4fb99a; /* was #2c6b5b */
+
+  /* ————— D30 · the elevation ladder ————————————————————————————————
+     What replaces §3.1's band rhythm. On a dark ground elevation is a
+     LIGHTER SURFACE, not a shadow: a section names a STEP, never a colour.
+     Three steps, and three is the cap — the fourth is where a dark UI starts
+     looking like a stack of grey cards.
+
+       elev-0  #080a0e  the page ground, the footer, a full-bleed hero
+       elev-1  #08283a  a raised panel: a card, a menu, a dialog, a band
+       elev-2  #0f3247  the step above that: a hovered row, a nested panel,
+                        a table header, the one surface that sits ON elev-1
+
+     Derived from `--sand` darkened, per the decision — and `--sand` IS
+     elev-2, so the 113 `bg-sand` call sites that meant "the alternate ground"
+     land on the right rung without being touched. */
+  --elev-0: var(--obsidian);
+  --elev-1: var(--deep-ocean);
+  --elev-2: #0f3247;
 
   /* AA companions. Part 17 puts body text at ≥4.5:1 and large display /
-     mono micro at ≥3:1, so two palette roles need a darker twin for the
-     jobs the base value cannot hold:
-       champagne-ink — champagne is 2.35:1 on mineral, i.e. unusable as text
-                       on light. This value clears AA on BOTH light grounds —
-                       5.4:1 on mineral and 4.6:1 on the darker sand, which is
-                       the one that actually binds. Champagne itself stays for
-                       hairlines, dark-ground micro labels and active marks.
-       whatsapp-deep — white on #128C7E is 4.14:1, short of AA for a 14–16px
-                       button label. 5.2:1 here. The brand green stays for
-                       icons, rules and the block accent. */
-  --champagne-ink: #75602f;
+     mono micro at ≥3:1. D30 flips both: the jobs these twins existed for
+     were "champagne/sapphire as TEXT ON LIGHT", and there is no light ground
+     left, so each now points at the value that clears AA on obsidian.
+       champagne-ink — champagne itself is 7.5:1 on obsidian, so on this
+                       ground the ink IS champagne. (It was #75602f, which is
+                       1.4:1 here — invisible.)
+       whatsapp-deep — unchanged. White on #128C7E is 4.14:1, short of AA for
+                       a 14–16px button label; 5.2:1 here. The brand green
+                       stays for icons, rules and the block accent, and this
+                       pair never sat on the page ground anyway. */
+  --champagne-ink: var(--champagne);
   --whatsapp-deep: #0f7a6d;
-  /* sapphire-ink — the same idea for the other direction. Sapphire is 6.2:1
-     as text on mineral, so on LIGHT grounds the ink is simply sapphire; the
-     Studio's dark scope (globals.css) lifts it, because #164E6B is 2.4:1 as
-     text on obsidian while the sapphire FILL stays correct there (mineral on
-     it is 8:1). Fills, focus rings and the cure line keep `--sapphire`.
-     What reads this: link and label ink, the semantic `accent-foreground`
-     (a text role), and the Select/menu indicator glyphs — a 16px tick and an
-     8px dot are icons held to the 3:1 floor, not fills. */
-  --sapphire-ink: var(--sapphire);
+  /* sapphire-ink — sapphire as TEXT is 2.4:1 on obsidian, so the ink lifts to
+     the value the Studio's dark block already proved: 8.1:1 on obsidian and
+     6.3:1 on the deep-ocean surface, same hue family. The sapphire FILL is
+     untouched — mineral on it is 8:1 — so buttons keep their dark blue and
+     only ink moves. What reads this: link and label ink, the semantic
+     `accent-foreground` (a text role), and the Select/menu indicator glyphs —
+     a 16px tick and an 8px dot are icons held to the 3:1 floor, not fills. */
+  --sapphire-ink: #5fafd6;
 
-  /* Studio-only status extras. The redesign spec defines no warning/info
-     role (the storefront has no use for one); the Studio's data screens do,
-     so both are drawn from the palette rather than invented: warning sits in
-     the champagne family, info in the sapphire family. Both clear AA on
-     mineral. */
-  --warning: #8a6a1e;
-  --info: #1a5f80;
+  /* Studio-only status extras — the redesign spec defines no warning/info
+     role (the storefront has no use for one); the Studio's data screens do.
+     Same lift as --alert/--success above, same source: the Studio's shipped
+     dark block. Was #8a6a1e / #1a5f80. */
+  --warning: #d8b26a;
+  --info: #63b3d8;
 
-  /* Form-control boundary — graphite dropped to the 3:1 non-text floor so a
-     resting input outline is visible without reading as a box (Part 3.5:
-     "1px only, at very low contrast"). */
-  --field-border: #8a8f96;
+  /* Form-control boundary — the 3:1 non-text floor so a resting input outline
+     is visible without reading as a box (Part 3.5: "1px only, at very low
+     contrast"). D30: was #8a8f96, tuned against mineral. */
+  --field-border: #6f7680;
 
-  /* Focus ring (Part 16): 2px sapphire at 3px offset. Scope-resolved — the
-     dark bands below flip it to champagne, which clears 7.5:1 on obsidian
-     where sapphire only reaches 3.2:1. */
-  --focus: var(--sapphire);
+  /* Focus ring (Part 16): 2px at 3px offset, never removed. D30 makes
+     champagne the global value rather than a dark-band override — it clears
+     7.5:1 on obsidian where sapphire only reaches 3.2:1, and obsidian is now
+     every page's ground. */
+  --focus: var(--champagne);
 
   /* ————— Part 3.2 · Type scale ——————————————————————————————————
      One fluid scale, not a desktop set and a mobile set. Mobile floors and
@@ -206,12 +281,20 @@
   --r-lg: 8px; /* modals, sheets, the one drawer surface */
 
   /* Elevation. Part 3.5 removes drop shadows from the storefront entirely —
-     separation is hairlines and a mineral → sand surface shift. The two
-     sanctioned exceptions (mobile bottom bar, Studio bulk-action bar) plus
-     the Studio's own dense surfaces keep these three tiers. */
-  --shadow-e1: 0 1px 2px rgba(8, 10, 14, 0.06);
-  --shadow-e2: 0 4px 12px rgba(8, 10, 14, 0.08);
-  --shadow-e3: 0 12px 32px rgba(8, 10, 14, 0.12);
+     separation is hairlines and a surface shift, which D30 makes the
+     `--elev-*` ladder above. The two sanctioned exceptions (mobile bottom
+     bar, Studio bulk-action bar) plus the Studio's own dense surfaces keep
+     these three tiers.
+
+     D30 re-tuned them rather than deleting them. A shadow calibrated for a
+     mineral ground does nothing on obsidian — 6% black over #080a0e is a
+     0.4% luminance change, i.e. invisible — so the tiers were re-cut against
+     the dark ground and CAPPED at `0 8px 32px rgba(0,0,0,.45)`, the decision's
+     own ceiling, which e3 sits exactly on. They read as depth under a panel
+     edge, never as the separation itself: that is the ladder's job. */
+  --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.38);
+  --shadow-e3: 0 8px 32px rgba(0, 0, 0, 0.45);
 
   /* ————— Part 3.8 · Motion ————————————————————————————————————————
      Two curves, four durations, and nothing else. Three aliases used to sit
@@ -264,27 +347,50 @@
      The storefront consumes the palette names directly; this set exists for
      the shadcn primitives and is re-pointed wholesale by the .studio-v2
      scope in globals.css. */
-  --bg: var(--mineral);
-  --surface: var(--sand);
-  --text: var(--ink);
-  --text-secondary: var(--graphite);
-  --border: var(--hairline);
+  --bg: var(--elev-0);
+  --surface: var(--elev-1);
+  --text: var(--mineral);
+  --text-secondary: var(--mist);
+  --border: var(--hairline-dk);
   --primary: var(--sapphire);
   --primary-hover: var(--sapphire-hi);
   --accent: var(--champagne);
-  --accent-on-light: var(--champagne-ink);
+  /* The name is now a fossil — "on-light" described the ground this token was
+     for, and that ground is gone (D30). It is renamed nowhere on purpose:
+     `--color-accent-on-light` is bridged in globals.css and read by call
+     sites, and a rename is a find-and-replace that changes no pixel. */
+  --accent-on-light: var(--champagne);
 }
 
-/* Dark bands. Every dark section on the storefront scopes itself with
-   data-theme="navy" (the attribute name predates this palette; the surface
-   it now paints is obsidian). Inside it the light-ground roles flip so a
-   band nested in a light page resolves correct inks without per-element
-   overrides — and the focus ring moves to champagne, the only accent that
-   clears 3:1 on obsidian. */
+/* D30 · `[data-theme="navy"]` and `.dark` are now NO-OP ALIASES, and both
+   stay.
+
+   They are kept rather than deleted, which reverses the build prompt's own
+   "remove them once grep shows zero consumers" — because grep does NOT show
+   zero. The attribute has 88 call sites in src/, and the great majority are
+   not the scope itself but the Tailwind VARIANT that reads it:
+   `in-data-[theme=navy]:text-mineral` and its ~87 siblings. Deleting the
+   attribute would not delete those utilities; it would leave every one of
+   them dangling, and the components they belong to would silently lose the
+   state they describe. Deleting the utilities instead is ~88 component edits
+   whose correct outcome is, in every case, the value the base class already
+   resolves to.
+
+   So the scope survives as an alias that re-states the defaults. Every
+   declaration below is IDENTICAL to `:root` — that is the point, and it is
+   what makes the scope inert: a band that still marks itself `data-theme=
+   "navy"` renders exactly as the page around it, and every
+   `in-data-[theme=navy]:` variant resolves to the same paint as its base.
+   The block is therefore free to be removed in a later pass, one component
+   at a time, with a rendered diff of zero at every step.
+
+   Do NOT "simplify" this by giving one of these a different value. The
+   moment a declaration here diverges from `:root`, 88 call sites acquire a
+   second appearance nobody asked for. */
 .dark,
 [data-theme="navy"] {
-  --bg: var(--obsidian);
-  --surface: var(--deep-ocean);
+  --bg: var(--elev-0);
+  --surface: var(--elev-1);
   --text: var(--mineral);
   --text-secondary: var(--mist);
   --border: var(--hairline-dk);

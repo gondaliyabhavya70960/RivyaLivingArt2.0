@@ -476,7 +476,7 @@ export default async function Home({
       <section
         id="manifesto"
         aria-labelledby="manifesto-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <Reveal className="u-shell flex flex-col items-center gap-8 text-center">
           {/* The manifesto's own scroll-linked brighten (§14, view-timeline —
@@ -532,7 +532,7 @@ export default async function Home({
       <section
         id="large-format"
         aria-labelledby="large-format-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -589,7 +589,7 @@ export default async function Home({
       <section
         id="material"
         aria-labelledby="material-heading"
-        className="bg-mineral"
+        className="bg-background"
       >
         <PourCureShowcase
           eyebrow={t("showcase.eyebrow")}
@@ -682,7 +682,7 @@ export default async function Home({
           <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {FURNITURE_KINDS.map((kind) => (
               <li key={kind.key} className="flex flex-col gap-4">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-mineral">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-background">
                   <MeniscusImage
                     src={images[kind.slot]}
                     blurDataURL={imageRefs[kind.slot].blurDataUrl}
@@ -721,7 +721,7 @@ export default async function Home({
       <section
         id="maker"
         aria-labelledby="maker-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
           <MeniscusImage
@@ -759,7 +759,7 @@ export default async function Home({
       <section
         id="rooms"
         aria-labelledby="rooms-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -891,7 +891,7 @@ export default async function Home({
         <section
           id="words"
           aria-labelledby="words-heading"
-          className="section-standard bg-mineral"
+          className="section-standard bg-background"
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading
@@ -1057,7 +1057,7 @@ export default async function Home({
       <section
         id="print"
         aria-labelledby="print-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell grid items-center gap-12 lg:grid-cols-12">
           <Reveal className="flex flex-col gap-6 lg:col-span-5">
@@ -1165,7 +1165,7 @@ export default async function Home({
     why: (
       <section
         aria-labelledby="why-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <Reveal>
@@ -1267,7 +1267,7 @@ export default async function Home({
     The band is light for a second reason, and half of the reason this
     comment used to give was wrong. It said the hero, the material story and
     the bespoke band "already spend all three" of §3.1's dark bands; the
-    material story is `bg-mineral`, so only two are spent and the count was
+    material story is `bg-background`, so only two are spent and the count was
     never the blocker. The ADJACENCY is: §3.1 forbids two dark grounds edge to
     edge and the obsidian footer follows immediately, so a dark band here
     would sit against it however many slots were free.
@@ -1278,7 +1278,7 @@ export default async function Home({
     closing: (
       <section
         aria-labelledby="closing-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-8">
           <Reveal>

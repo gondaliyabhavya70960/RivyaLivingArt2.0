@@ -106,7 +106,7 @@ const PROSE_ARTICLE = [
   "[&_p]:mt-5",
   "[&_li]:mt-2 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:ps-6",
   "[&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:ps-6",
-  "[&_a]:rounded-input [&_a]:text-sapphire [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
+  "[&_a]:rounded-input [&_a]:text-sapphire-ink [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
   /* The pull-quote (§11.9). */
   "[&_blockquote]:mt-12 [&_blockquote]:border-t [&_blockquote]:border-champagne [&_blockquote]:pt-6 [&_blockquote]:font-display [&_blockquote]:text-h3 [&_blockquote]:leading-statement [&_blockquote]:tracking-display [&_blockquote]:text-ink",
   "[&_blockquote_p]:mt-0",
@@ -435,7 +435,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const collectionsTone = collectionCards.length > 0 ? flipTone() : null;
   const relatedTone = related.length > 0 ? flipTone() : null;
   const toneClass = (value: "sand" | "mineral" | null) =>
-    value === "sand" ? "bg-sand" : "bg-mineral";
+    value === "sand" ? "bg-sand" : "bg-background";
 
   const minutes = readMinutes(lp.content);
   // Server-side date formatting in the request locale (no client hydration).
@@ -500,7 +500,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* ════════ 01 · Trail — compact ════════ */}
-      <section className="section-compact bg-mineral">
+      <section className="section-compact bg-background">
         <div className="u-shell flex flex-col gap-6">
           {preview && post.status === "DRAFT" ? (
             <p className="inline-flex w-fit items-center gap-2.5 rounded-full border border-hairline bg-sand px-5 py-2.5 font-body text-14 text-ink">
@@ -540,7 +540,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           Category · title · standfirst · the mono byline row. */}
       <section
         aria-labelledby="article-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-6">
           <Eyebrow>
@@ -629,7 +629,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                     <Link
                       key={tag.id}
                       href={`/blog?tag=${encodeURIComponent(tag.slug)}`}
-                      className="inline-flex h-11 shrink-0 items-center rounded-full border border-hairline px-4 font-body text-small whitespace-nowrap text-ink transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:bg-mineral hover:text-sapphire motion-reduce:transition-none"
+                      className="inline-flex h-11 shrink-0 items-center rounded-full border border-hairline px-4 font-body text-small whitespace-nowrap text-ink transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:bg-elev-2 hover:text-sapphire-ink motion-reduce:transition-none"
                     >
                       {localizeName(tag, locale)}
                     </Link>

@@ -15,7 +15,7 @@ import {
  */
 export default function ShopLoading() {
   return (
-    <div role="status" aria-busy="true" className="bg-mineral">
+    <div role="status" aria-busy="true" className="bg-background">
       {/* Masthead */}
       <div className="u-shell section-compact flex flex-col gap-6">
         <SkeletonLine className="h-4 w-40" />

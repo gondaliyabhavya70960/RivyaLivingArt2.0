@@ -61,7 +61,7 @@ export const HEALTH_META: Record<SourceHealth, HealthMeta> = {
   },
   RUNNING: {
     label: "Running",
-    className: "border-sapphire/40 text-sapphire",
+    className: "border-sapphire/40 text-sapphire-ink",
     dot: "bg-sapphire",
     rank: 3,
   },

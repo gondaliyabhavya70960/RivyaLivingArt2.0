@@ -238,7 +238,7 @@ export function ReferenceImageUploader({
                   );
                   inputRef.current?.click();
                 }}
-                className="inline-flex min-h-11 items-center font-body text-14 font-medium text-sapphire underline underline-offset-4 outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
+                className="inline-flex min-h-11 items-center font-body text-14 font-medium text-sapphire-ink underline underline-offset-4 outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
               >
                 {t("retry")}
               </button>

@@ -86,7 +86,7 @@ const EDITORIAL_BREAK_AFTER = 9;
 
 /* Part 16: 2px sapphire ring at 3px offset, champagne inside a dark band. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background";
 
 export type ShopCategoryOption = {
   slug: string;
@@ -444,7 +444,7 @@ export function ShopExplorer({
     <div>
       {/* ═══ TOOLBAR — §7.4, 64px, sticky beneath the 64px scrolled header.
           No blur: Part 3.5 reserves it for the header alone. ═══ */}
-      <div className="sticky top-16 z-(--z-bar) border-y border-hairline bg-mineral">
+      <div className="sticky top-16 z-(--z-bar) border-y border-hairline bg-background">
         <div className="u-shell flex h-16 items-center gap-2 md:gap-6">
           <form
             role="search"
@@ -509,7 +509,7 @@ export function ShopExplorer({
             <MenuPrimitive.Trigger
               className={cn(
                 "inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full px-2 font-body text-small text-ink md:gap-2 md:px-3",
-                "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire motion-reduce:transition-none",
+                "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink motion-reduce:transition-none",
                 FOCUS_RING,
               )}
             >
@@ -531,7 +531,7 @@ export function ShopExplorer({
                 align="end"
                 sideOffset={8}
                 aria-label={t("toolbar.sortMenuLabel")}
-                className="z-(--z-dialog) min-w-56 rounded-card border border-hairline bg-mineral p-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none"
+                className="z-(--z-dialog) min-w-56 rounded-card border border-hairline bg-background p-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none"
               >
                 {SORTS.map((key) => (
                   <MenuPrimitive.Item
@@ -539,7 +539,7 @@ export function ShopExplorer({
                     onSelect={() => apply({ sort: key })}
                     className={cn(
                       "flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-input px-3 font-body text-small text-ink outline-none select-none",
-                      "data-highlighted:bg-sand data-highlighted:text-sapphire",
+                      "data-highlighted:bg-sand data-highlighted:text-sapphire-ink",
                       key === sort && "font-medium",
                     )}
                   >
@@ -548,7 +548,7 @@ export function ShopExplorer({
                       <Check
                         aria-hidden
                         strokeWidth={1.5}
-                        className="size-4 text-sapphire"
+                        className="size-4 text-sapphire-ink"
                       />
                     ) : null}
                   </MenuPrimitive.Item>
@@ -573,7 +573,7 @@ export function ShopExplorer({
               />
               {t("toolbar.filterLabel")}
               {chips.length > 0 ? (
-                <span className="u-num text-12 text-sapphire">
+                <span className="u-num text-12 text-sapphire-ink">
                   {chips.length}
                 </span>
               ) : null}
@@ -585,7 +585,7 @@ export function ShopExplorer({
                 data-theme="light"
                 aria-describedby={undefined}
                 className={cn(
-                  "fixed z-(--z-dialog) flex flex-col bg-mineral text-ink outline-none",
+                  "fixed z-(--z-dialog) flex flex-col bg-background text-ink outline-none",
                   // Mobile: a bottom sheet at 85dvh, sliding up (§4.6).
                   "inset-x-0 bottom-0 h-[85dvh] rounded-t-card",
                   "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
@@ -983,7 +983,7 @@ function FilterRow({
         "flex min-h-11 w-full items-center justify-between gap-4 rounded-input px-2 text-start font-body text-small",
         "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
         disabled ? "cursor-default opacity-40" : "hover:bg-sand",
-        selected ? "font-medium text-sapphire" : "text-ink",
+        selected ? "font-medium text-sapphire-ink" : "text-ink",
         FOCUS_RING,
       )}
     >

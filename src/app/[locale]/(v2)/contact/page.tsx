@@ -180,7 +180,7 @@ export default async function ContactPage({
     channels: (
       <section
         aria-labelledby="channels-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -240,7 +240,7 @@ export default async function ContactPage({
                   </p>
                   <a
                     href={channel.href}
-                    className="inline-flex min-h-11 max-w-full items-center font-body text-20 break-words text-ink transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire motion-reduce:transition-none [overflow-wrap:anywhere]"
+                    className="inline-flex min-h-11 max-w-full items-center font-body text-20 break-words text-ink transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-ink motion-reduce:transition-none [overflow-wrap:anywhere]"
                   >
                     {channel.value}
                   </a>
@@ -284,7 +284,7 @@ export default async function ContactPage({
                       href={settings.mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex min-h-11 items-center gap-2 font-body text-16 font-medium text-sapphire underline underline-offset-4 transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi motion-reduce:transition-none"
+                      className="inline-flex min-h-11 items-center gap-2 font-body text-16 font-medium text-sapphire-ink underline underline-offset-4 transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi motion-reduce:transition-none"
                     >
                       {t("mapsCta")}
                       <ArrowRight

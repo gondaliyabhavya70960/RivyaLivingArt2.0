@@ -514,7 +514,7 @@ export default async function PortfolioPage({
       {/* ════════ 02 · The wall — standard, on mineral ════════ */}
       <section
         aria-labelledby="wall-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-10">
           <h2 id="wall-heading" className="sr-only">
@@ -670,7 +670,7 @@ function ChipLink({
         "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
         "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3",
         active
-          ? "border-sand bg-sand font-medium text-sapphire"
+          ? "border-sand bg-sand font-medium text-sapphire-ink"
           : "border-hairline bg-transparent text-ink hover:bg-sand",
       )}
     >

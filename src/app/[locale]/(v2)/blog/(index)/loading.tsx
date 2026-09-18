@@ -15,7 +15,7 @@ export default function BlogLoading() {
   return (
     <div role="status" aria-busy="true">
       {/* 01 · Masthead + category rail */}
-      <section className="section-standard bg-mineral">
+      <section className="section-standard bg-background">
         <div className="u-shell flex flex-col gap-12">
           <SkeletonLine className="h-4 w-40" />
 
@@ -57,7 +57,7 @@ export default function BlogLoading() {
       </section>
 
       {/* 03 · The archive — three up, no borders */}
-      <section className="section-standard bg-mineral">
+      <section className="section-standard bg-background">
         <div className="u-shell flex flex-col gap-12">
           <div className="flex flex-col gap-4">
             <SkeletonLine className="h-4 w-28" />

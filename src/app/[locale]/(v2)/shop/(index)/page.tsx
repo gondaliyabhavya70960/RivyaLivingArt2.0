@@ -386,7 +386,7 @@ export default async function ShopPage({
       {/* ═══ 7.1 · Shop masthead — compact, no hero image ═══ */}
       <section
         aria-labelledby="shop-heading"
-        className="section-compact bg-mineral"
+        className="section-compact bg-background"
       >
         <div className="u-shell flex flex-col gap-6">
           <Breadcrumb
@@ -410,7 +410,7 @@ export default async function ShopPage({
 
       {/* ═══ 7.2 · Category switcher — large text tabs, sapphire underline
           on the active one. Not a row of buttons. ═══ */}
-      <nav aria-label={t("tabsAria")} className="bg-mineral">
+      <nav aria-label={t("tabsAria")} className="bg-background">
         <div className="u-shell">
           <ul className="flex items-end gap-x-8 gap-y-2 overflow-x-auto border-b border-hairline pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {visibleTabs.map((tab) => {
@@ -480,7 +480,7 @@ export default async function ShopPage({
       {/* The page links carry `#pieces`, so a page turn lands on the toolbar
           rather than scrolling the masthead and the collection strip again.
           scroll-mt clears the 64px sticky header. */}
-      <div id="pieces" className="scroll-mt-16 bg-mineral pb-20 md:pb-28">
+      <div id="pieces" className="scroll-mt-16 bg-background pb-20 md:pb-28">
         <ShopExplorer
           initialItems={page.items}
           initialCursor={page.nextCursor}
@@ -557,7 +557,7 @@ function cnTab(current: boolean): string {
     "-mb-px inline-flex min-h-14 items-center border-b-2 font-display text-h3 leading-none whitespace-nowrap",
     "pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:justify-center",
     "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
-    "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral",
+    "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background",
     current
       ? "border-sapphire text-ink"
       : "border-transparent text-graphite hover:text-ink",

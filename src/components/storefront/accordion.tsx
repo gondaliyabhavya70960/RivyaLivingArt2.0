@@ -65,7 +65,7 @@ import { cn } from "@/lib/utils";
 
 /* Part 16: 2px sapphire ring at 3px offset, champagne inside a dark band. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
 
 /* ————————————————————— deep-link hash ————————————————————— */
 
@@ -363,7 +363,7 @@ function CopyLink({
         onClick={() => void copy()}
         className={cn(
           "absolute end-0 top-1.5 inline-flex size-11 items-center justify-center rounded-input text-graphite",
-          "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire motion-reduce:transition-none",
+          "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink motion-reduce:transition-none",
           "in-data-[theme=navy]:text-mist in-data-[theme=navy]:hover:text-champagne",
           FOCUS_RING,
         )}
@@ -402,7 +402,7 @@ export function AccordionTrigger({
         className={cn(
           /* §4.6: 56px rows. py-4 around a single line lands exactly there. */
           "flex min-h-14 w-full flex-1 items-center justify-between gap-4 py-4 text-start font-body text-body text-ink",
-          "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire motion-reduce:transition-none",
+          "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink motion-reduce:transition-none",
           "in-data-[theme=navy]:text-mineral in-data-[theme=navy]:hover:text-champagne",
           /* Part 16: disabled is 40% opacity; the reason belongs to the caller. */
           "disabled:pointer-events-none disabled:opacity-40",

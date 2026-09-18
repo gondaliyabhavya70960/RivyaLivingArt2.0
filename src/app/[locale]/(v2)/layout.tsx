@@ -66,7 +66,7 @@ export default async function V2Layout({
     links.map((link) => ({ label: link.label, href: link.href }));
 
   return (
-    <div data-theme="light" className="flex flex-1 flex-col bg-mineral">
+    <div data-theme="light" className="flex flex-1 flex-col bg-background">
       <DraftRibbon />
       {/* Part 14 opens with "motion should communicate craftsmanship, not a
           technology demo", and its budget forbids anything that delays the LCP.
@@ -130,7 +130,7 @@ export default async function V2Layout({
       <main
         id="main-content"
         data-theme="light"
-        className="flex-1 bg-mineral font-body text-ink"
+        className="flex-1 bg-background font-body text-ink"
       >
         {children}
       </main>

@@ -152,7 +152,7 @@ export default async function StudioLayout({
       </main>
       {/* Sonner's `richColors` paints its OWN palette — the success toast is
           a hardcoded `hsl(143, 85%, 96%)`, nowhere near this repo's
-          `--success` (#2c6b5b) — so every confirmation in the Studio arrived
+          `--success` — so every confirmation in the Studio arrived
           in a green the design system does not contain. The flag stays on,
           because it is what gives success/error/warning distinct treatments
           at all; its variables are repointed at the tokens instead. They
@@ -164,8 +164,14 @@ export default async function StudioLayout({
           time and the declaration is dropped SILENTLY — the first version of
           this used `var(--card)`, which does not exist here, and every toast
           came out with a transparent background while the text colours looked
-          right. Measured, not assumed (see the PR). The dark block re-points
-          the same names, so it follows for free. */}
+          right. Measured, not assumed (see the PR).
+
+          D30 (tokens.css) deleted the `prefers-color-scheme: dark` block this
+          last sentence used to point at ("the dark block re-points the same
+          names, so it follows for free"). Nothing here needs updating for
+          that: the names are still `--surface`, `--text` and `--border`, and
+          their values now come straight from `:root` instead of from a media
+          query. The Studio is dark unconditionally, so the toasts are too. */}
       <Toaster
         position="top-right"
         richColors

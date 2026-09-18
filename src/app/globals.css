@@ -35,6 +35,13 @@
   /* ————— Part 3.1 · Palette → utilities —————————————————————————— */
   --color-obsidian: var(--obsidian);
   --color-deep-ocean: var(--deep-ocean);
+  /* D30 · the elevation ladder as utilities: `bg-elev-0|1|2`. A section names
+     a STEP, not a colour — `bg-elev-1` says "this panel is one above the
+     page", where `bg-deep-ocean` says only "this panel is blue" and leaves
+     the next reader to work out whether that was the rung or the hue. */
+  --color-elev-0: var(--elev-0);
+  --color-elev-1: var(--elev-1);
+  --color-elev-2: var(--elev-2);
   --color-sapphire: var(--sapphire);
   --color-sapphire-hi: var(--sapphire-hi);
   --color-sapphire-ink: var(--sapphire-ink);
@@ -187,53 +194,38 @@
    editorial restraint does not apply here: the Studio is allowed density,
    the two sanctioned shadows, and a tighter radius. Champagne stays the
    active-item marker only. */
-.studio-v2 {
-  /* `light dark`, not a forced value: forcing `light` made lightningcss drop
-     the @media dark block below as unreachable. */
-  color-scheme: light dark;
-  --bg: var(--mineral);
-  --surface: #ffffff;
-  --text: var(--ink);
-  --text-secondary: var(--graphite);
-  --border: var(--hairline);
-  --focus: var(--sapphire);
-}
+/* D30 (tokens.css) · the Studio is FORCED dark and no longer follows the
+   operator's OS.
 
-@media (prefers-color-scheme: dark) {
-  .studio-v2 {
-    --bg: var(--obsidian);
-    --surface: var(--deep-ocean);
-    --text: var(--mineral);
-    --text-secondary: var(--mist);
-    --border: var(--hairline-dk);
-    --focus: var(--champagne);
-    /* Status inks lift on obsidian — the light-ground values sit at 2–3:1
-       there. Each is the same hue opened up until it clears 4.5:1 on
-       obsidian and 4.5:1 on the deep-ocean surface. */
-    --alert: #e08575;
-    --success: #4fb99a;
-    --warning: #d8b26a;
-    --info: #63b3d8;
-    --champagne-ink: var(--champagne);
-    /* Sapphire as TEXT is 2.4:1 on obsidian. Lifted to 8.1:1 on obsidian and
-       6.3:1 on the deep-ocean surface, same hue family. The sapphire FILL is
-       untouched — porcelain on it already clears 8:1 — so buttons keep their
-       dark blue and only ink moves. */
-    --sapphire-ink: #5fafd6;
-    --field-border: #6f7680;
-    /* Named palette tokens the Studio's own surfaces consume directly
-       (text-ink, bg-sand, text-graphite) flip with the scope so an
-       un-semantic utility is never a light patch on a dark screen. Mineral
-       is the exception and CANNOT flip: it is this scheme's `--text`, so a
-       dark mineral would be dark body text on obsidian. The line below keeps
-       it at its light value on purpose — which is why nothing that must
-       follow the scheme may route a BACKGROUND through `--mineral` (the
-       popover pair did, and every menu came out cream-on-cream). */
-    --mineral: #f4f1e9;
-    --ink: #f4f1e9;
-    --sand: #0f3247;
-    --graphite: #a9b4bc;
-  }
+   What used to be here: a light `.studio-v2` block plus a
+   `@media (prefers-color-scheme: dark)` twin that re-pointed fourteen tokens.
+   That media query is GONE — not moved, not disabled. Its fourteen values
+   were not thrown away either: every one of them was promoted into `:root`
+   in tokens.css, because this block is where they were proved. The Studio
+   had a working dark scheme before the storefront did, and D30's whole
+   palette is that scheme, read out of this file.
+
+   So the scope now has almost nothing to say: `:root` is already dark, and
+   the Studio's job here is only to declare the two places it DIFFERS from
+   the storefront. An operator in OS-light gets the dark Studio, which is the
+   decision — a tool whose contrast changes with the time of day is a tool
+   whose screenshots cannot be compared.
+
+   `color-scheme: dark` rather than the old `light dark`: the comment that
+   pair carried ("forcing `light` made lightningcss drop the @media dark
+   block as unreachable") described a hazard that cannot exist now, because
+   there is no @media dark block left to drop. */
+.studio-v2 {
+  color-scheme: dark;
+  /* The Studio's surface sits one rung ABOVE the storefront's. Its screens
+     are dense — tables, forms, side rails — and a panel that has to read as
+     a distinct plane at 13px needs more separation than an editorial band at
+     64px does. This is the one token the scope overrides, and the reason it
+     is the only one. */
+  --surface: var(--elev-1);
+  /* Focus stays champagne (:root), matching the storefront: the ring is a
+     safety affordance and it should not mean two different things on two
+     halves of the same product. */
 }
 
 /* Part 3.6 · the Studio's buttons carry no decorative sweep — the storefront
@@ -396,14 +388,7 @@
    and Arabic, and never what an accent is for. The gate reads `html[lang]`,
    which the [locale] layout already sets. Two attribute selectors beat the
    utility's single class, so no `!important` is needed. */
-:is(
-    [lang="ar"],
-    [lang="gu"],
-    [lang="hi"],
-    [lang="ja"],
-    [lang="zh"]
-  )
-  .u-accent {
+:is([lang="ar"], [lang="gu"], [lang="hi"], [lang="ja"], [lang="zh"]) .u-accent {
   /* Back to the composed display stack — which in these locales already
      resolves to the script's own Noto face — NOT to `inherit`, which would
      drop the element to the body face and quietly demote a headline. */
@@ -672,12 +657,21 @@
   :root,
   .studio-v2 {
     color-scheme: light;
-    /* Paper is white — that is the one value here that is a printing fact
-       rather than a palette choice. Everything else references the token that
-       already owns the role: the first cut hardcoded #12141a and #5b6068,
-       which are byte-for-byte --ink and --graphite, and invented
-       rgba(18,20,26,.28) for a divider role --hairline already defines.
-       Re-typing a token's value is how the two drift apart later. */
+    /* D30 BROKE THE INDIRECTION THIS BLOCK WAS BUILT ON, and the fix is to
+       stop indirecting — the literals below are correct BECAUSE they are
+       literals.
+
+       What was here: `--text: var(--ink)` and `--text-secondary:
+       var(--graphite)`, under a comment arguing that naming the token beats
+       re-typing its value, since --ink WAS #12141a. D30 flipped both tokens to
+       their light-on-dark values (#f4f1e9 and #a9b4bc), so those two lines now
+       resolve to cream text on white paper — the exact failure this block
+       exists to prevent, reached from the other direction.
+
+       Paper has one ground and one ink and neither follows a theme, which is
+       why these no longer reference a palette that is free to move under them.
+       The values are the pre-D30 tokens restated verbatim: #12141a was --ink,
+       #5b6068 was --graphite, rgba(18,20,26,.12) was --hairline. */
     --bg: #ffffff;
     --surface: #ffffff;
     --text: var(--ink);

@@ -1000,7 +1000,7 @@ export function CustomOrderForm({ options }: { options: FormOptionSet }) {
             className="fixed inset-0 z-40 bg-obsidian/50"
           />
         ) : null}
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-mineral">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-background">
           <button
             ref={sheetTriggerRef}
             type="button"

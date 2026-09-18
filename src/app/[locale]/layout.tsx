@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { ViewTransitions } from "next-view-transitions";
@@ -24,9 +24,18 @@ import { WhatsAppTracker } from "@/components/analytics/whatsapp-tracker";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { WaNumberProvider } from "@/components/providers/wa-number-provider";
 import { JsonLd } from "@/components/seo/json-ld";
+import { BRAND } from "@/lib/brand-colors";
 import { SITE } from "@/lib/constants";
 import { toOpeningHours } from "@/lib/opening-hours";
 import { getSiteSettings } from "@/lib/site-settings";
+
+/**
+ * D30 · the browser's own chrome — the mobile address bar, and the tab strip
+ * on some desktop builds — is painted from this, not from the page's CSS. A
+ * dark storefront under a white system bar is the one light patch no
+ * stylesheet can reach.
+ */
+export const viewport: Viewport = { themeColor: BRAND.obsidian };
 
 /** Site-wide Organization + LocalBusiness schema — emitted once per page. */
 const BUSINESS_JSONLD = {
@@ -250,10 +259,15 @@ export default async function PublicLayout({
       <html
         lang={locale}
         dir={getDir(locale)}
-        // No root `dark` class: every public page grounds on mineral and
-        // scopes its own dark bands with data-theme="navy". The v3 trio is
-        // the whole type system — Instrument Serif for display, Inter for
-        // body and --font-sans, JetBrains Mono for every number.
+        // No root `dark` class, and D30 is why there is still none: the
+        // ground is obsidian in `:root` itself, so there is no second scheme
+        // for a class to select. `.dark` and `[data-theme="navy"]` survive as
+        // no-op aliases (tokens.css) purely so the 88 `in-data-[theme=navy]:`
+        // utilities in src/ keep resolving; adding one here would select the
+        // same values the document already has.
+        //
+        // The v3 trio is the whole type system — Instrument Serif for
+        // display, Inter for body and --font-sans, JetBrains Mono for numbers.
         className={`${instrumentSerif.variable} ${instrumentSerifItalic.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
       >
         <body className="flex min-h-full flex-col">

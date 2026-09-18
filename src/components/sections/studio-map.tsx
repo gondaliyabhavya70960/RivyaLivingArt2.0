@@ -69,7 +69,7 @@ export function StudioMap({
         <button
           type="button"
           onClick={() => setActive(true)}
-          className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:bg-mineral motion-reduce:transition-none"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:bg-elev-2 motion-reduce:transition-none"
         >
           <MapPin
             aria-hidden

@@ -197,7 +197,7 @@ export default async function ProcessPage({
     stages: (
       <section
         aria-labelledby="stages-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-16">
           <SectionHeading
@@ -279,7 +279,7 @@ export default async function ProcessPage({
     timelines: (
       <section
         aria-labelledby="timelines-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading

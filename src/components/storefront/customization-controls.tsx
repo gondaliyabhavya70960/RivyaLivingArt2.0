@@ -41,7 +41,7 @@ import { fieldControlClasses, pillClasses } from "./form-field";
 
 /* Part 16: 2px sapphire ring at 3px offset. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background";
 
 const LABEL = "font-body text-14 font-medium text-ink";
 
@@ -169,7 +169,7 @@ export function ColourSwatches({
                 className={cn(
                   "flex size-11 items-center justify-center rounded-full transition-shadow duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
                   selected
-                    ? "ring-2 ring-champagne ring-offset-2 ring-offset-mineral"
+                    ? "ring-2 ring-champagne ring-offset-2 ring-offset-background"
                     : "ring-1 ring-hairline group-hover/swatch:ring-ink/30",
                 )}
               >

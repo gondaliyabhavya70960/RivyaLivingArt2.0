@@ -26,7 +26,7 @@ export function ResponsiveTab() {
               src="/"
               title={`Homepage preview at ${width} pixels wide`}
               style={{ width, height: 900 }}
-              className="border border-hairline bg-white"
+              className="border border-hairline bg-background"
             />
           </div>
         ))}

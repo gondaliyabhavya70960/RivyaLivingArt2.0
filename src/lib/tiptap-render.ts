@@ -110,7 +110,7 @@ export const PROSE_LEGAL_CLASS = [
   "[&_p]:mt-4 [&_p]:leading-relaxed [&_p]:text-foreground/75",
   "[&_li]:mt-2 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:ps-6",
   "[&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:ps-6",
-  "[&_a]:text-sapphire [&_a]:underline",
+  "[&_a]:text-sapphire-ink [&_a]:underline",
   "[&_blockquote]:mt-6 [&_blockquote]:border-s-2 [&_blockquote]:border-sapphire/40 [&_blockquote]:ps-4 [&_blockquote]:italic",
   "[&_hr]:my-10 [&_hr]:border-foreground/10",
   "[&_img]:mt-6 [&_img]:max-w-full [&_img]:rounded-xl",
