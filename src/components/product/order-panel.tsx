@@ -796,12 +796,12 @@ function OrderField({
               placeholder={t("choose", { label: field.label.toLowerCase() })}
             />
           </SelectTrigger>
-          <SelectContent className="rounded-card border-hairline bg-mineral text-ink">
+          <SelectContent className="rounded-card border-hairline bg-background text-ink">
             {field.options.map((option) => (
               <SelectItem
                 key={option}
                 value={option}
-                className="rounded-input font-body text-ink focus:bg-sand focus:text-sapphire [&_svg]:text-sapphire"
+                className="rounded-input font-body text-ink focus:bg-sand focus:text-sapphire-ink [&_svg]:text-sapphire-ink"
               >
                 {option}
               </SelectItem>

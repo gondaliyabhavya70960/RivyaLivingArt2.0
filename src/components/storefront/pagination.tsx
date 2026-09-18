@@ -51,14 +51,14 @@ function pageWindow(current: number, total: number): (number | "gap")[] {
 
 /* Part 16: 2px sapphire ring at 3px offset, champagne inside a dark band. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
 
 const TARGET =
   "inline-flex size-11 shrink-0 items-center justify-center transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none";
 
 const ARROW = cn(
   TARGET,
-  "rounded-input text-ink hover:text-sapphire in-data-[theme=navy]:text-mineral in-data-[theme=navy]:hover:text-champagne",
+  "rounded-input text-ink hover:text-sapphire-ink in-data-[theme=navy]:text-mineral in-data-[theme=navy]:hover:text-champagne",
   FOCUS_RING,
 );
 

@@ -57,7 +57,7 @@ export async function FeaturedTestimonial({
     <figure
       data-slot="sf-featured-testimonial"
       className={cn(
-        "grid gap-10 bg-mineral md:grid-cols-12 md:items-center",
+        "grid gap-10 bg-background md:grid-cols-12 md:items-center",
         className,
       )}
     >

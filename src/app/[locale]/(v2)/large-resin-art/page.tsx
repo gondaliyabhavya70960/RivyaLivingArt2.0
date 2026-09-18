@@ -301,7 +301,7 @@ export default async function LargeResinArtPage({
       <section
         id="scope"
         aria-labelledby="scope-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -456,7 +456,7 @@ export default async function LargeResinArtPage({
       <section
         id="materials"
         aria-labelledby="materials-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <Reveal>
@@ -525,7 +525,7 @@ export default async function LargeResinArtPage({
           <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {FURNITURE_KINDS.map((kind) => (
               <li key={kind.key} className="flex flex-col gap-4">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-mineral">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-background">
                   <MeniscusImage
                     src={images[kind.slot]}
                     blurDataURL={imageRefs[kind.slot].blurDataUrl}
@@ -565,7 +565,7 @@ export default async function LargeResinArtPage({
         <section
           id="work"
           aria-labelledby="work-heading"
-          className="section-standard bg-mineral"
+          className="section-standard bg-background"
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading
@@ -634,7 +634,7 @@ export default async function LargeResinArtPage({
         <section
           id="faq"
           aria-labelledby="lf-faq-heading"
-          className="section-standard bg-mineral"
+          className="section-standard bg-background"
         >
           <div className="u-shell grid gap-12 lg:grid-cols-12">
             <SectionHeading
@@ -733,7 +733,7 @@ export default async function LargeResinArtPage({
       <section
         id="commission"
         aria-labelledby="commission-heading"
-        className="section-major bg-mineral"
+        className="section-major bg-background"
       >
         <div className="u-shell flex flex-col items-start gap-8">
           <h2

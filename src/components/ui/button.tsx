@@ -23,10 +23,18 @@ const buttonVariants = cva(
           // the LOCAL ink, so the same variant reads porcelain on the dark
           // canvas and midnight inside paper bands.
           "border border-foreground/25 bg-transparent text-foreground hover:border-foreground/50 hover:bg-foreground/[0.05]",
-        // Light chip for dark gradient bands (gradient-dopamine, midnight hero).
-        // Fixed porcelain/midnight — must NOT flip with the theme token, since
-        // it always sits on a dark surface (DS-702).
-        inverse: "bg-mineral text-obsidian shadow-e1 hover:bg-sand",
+        // Light chip for dark bands. Fixed porcelain/midnight — must NOT flip
+        // with the theme token, since it always sits on a dark surface
+        // (DS-702), and under D30 every surface is one.
+        //
+        // The hover had to move: it was `bg-sand`, and D30 re-pointed --sand
+        // from #e7e0d5 to the elev-2 step, so hovering a light chip dropped it
+        // to a dark panel with obsidian text on it — 1.2:1, and only on hover,
+        // which is the hardest kind of contrast bug to see in a screenshot.
+        // Dimming the chip's own mineral keeps the direction of travel (a
+        // light thing getting slightly less bright) without routing through a
+        // token that is free to move again.
+        inverse: "bg-mineral text-obsidian shadow-e1 hover:bg-mineral/85",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         // Text, so the AA companion: identical to sapphire on the light ground,
         // lifted in the Studio's dark scheme where raw sapphire is 1.7:1 on a card.

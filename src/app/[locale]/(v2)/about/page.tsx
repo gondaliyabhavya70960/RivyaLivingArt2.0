@@ -301,7 +301,7 @@ export default async function AboutPage({
     story: (
       <section
         aria-labelledby="story-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-16">
           <SectionHeading
@@ -431,7 +431,7 @@ export default async function AboutPage({
     materials: (
       <section
         aria-labelledby="materials-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <Reveal>

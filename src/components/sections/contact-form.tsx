@@ -230,7 +230,7 @@ export function ContactForm() {
           {t("commissionNudge")}{" "}
           <Link
             href="/custom-order"
-            className="font-medium text-sapphire underline underline-offset-4 hover:text-sapphire-hi"
+            className="font-medium text-sapphire-ink underline underline-offset-4 hover:text-sapphire-hi"
           >
             {t("commissionNudgeCta")}
           </Link>

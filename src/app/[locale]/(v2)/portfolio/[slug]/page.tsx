@@ -10,7 +10,6 @@ import { ArrowRight, Eye } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { localeAlternates } from "@/i18n/seo";
 import { BeforeAfter } from "@/components/portfolio/before-after";
-import { ReadingProgress } from "@/components/blog/reading-progress";
 import { LightboxGallery } from "@/components/portfolio/lightbox-gallery";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/storefront/breadcrumb";
@@ -589,7 +588,6 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           length as a journal article, so it gets the same affordance
           (§11.9). Pure scroll mapping — nothing to collapse under reduced
           motion, and `aria-hidden`, so it adds no announcement. */}
-      <ReadingProgress />
       {/* A Content Lab fixture never presents itself as a real work in
           structured data — the product and journal detail routes already
           withhold theirs. The BreadcrumbList stays: it mirrors navigation the
@@ -657,7 +655,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           rail in 9–12. */}
       <section
         aria-labelledby="story-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell grid gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="flex flex-col gap-6 lg:col-span-7">
@@ -781,7 +779,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
       portfolio.videoUrl ? (
         <section
           aria-labelledby="process-heading"
-          className="section-standard bg-mineral"
+          className="section-standard bg-background"
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading
@@ -864,7 +862,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
       {relatedItems.length > 0 ? (
         <section
           aria-labelledby="related-heading"
-          className="section-standard bg-mineral"
+          className="section-standard bg-background"
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading
@@ -901,13 +899,13 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 <h3 className="font-display text-h1 leading-h1 tracking-display text-ink">
                   <Link
                     href={`/portfolio/${nextCase.slug}`}
-                    className="group inline-flex items-baseline gap-4 rounded-input text-balance outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
+                    className="group inline-flex items-baseline gap-4 rounded-input text-balance outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-ink focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
                   >
                     {localize(nextCase, locale, ["title"]).title}
                     <ArrowRight
                       aria-hidden
                       strokeWidth={1.5}
-                      className="size-7 shrink-0 self-center text-sapphire transition-transform duration-(--dur-fast) ease-(--ease-settle) group-hover:translate-x-1 motion-reduce:transition-none rtl:-scale-x-100"
+                      className="size-7 shrink-0 self-center text-sapphire-ink transition-transform duration-(--dur-fast) ease-(--ease-settle) group-hover:translate-x-1 motion-reduce:transition-none rtl:-scale-x-100"
                     />
                   </Link>
                 </h3>

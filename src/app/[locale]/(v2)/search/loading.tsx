@@ -16,7 +16,7 @@ export default function SearchLoading() {
     <section
       role="status"
       aria-busy="true"
-      className="mx-auto w-full max-w-shell bg-mineral px-5 pt-4 pb-16 md:px-6 md:pb-24"
+      className="mx-auto w-full max-w-shell bg-background px-5 pt-4 pb-16 md:px-6 md:pb-24"
     >
       {/* Breadcrumb line */}
       <Skeleton className="h-4 w-36" />

@@ -171,7 +171,7 @@ function ChipLink({
       className={cn(
         CHIP,
         active
-          ? "bg-sand font-medium text-sapphire"
+          ? "bg-sand font-medium text-sapphire-ink"
           : "bg-transparent text-ink hover:bg-sand",
       )}
     >
@@ -459,7 +459,7 @@ export default async function BlogPage({
           Trail, eyebrow, the page's single h1, and the category rail. */}
       <section
         aria-labelledby="journal-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <Breadcrumb
@@ -520,7 +520,7 @@ export default async function BlogPage({
                       tag: localizeName(activeTagRow, locale),
                     })}
                   >
-                    <span className="text-sapphire">
+                    <span className="text-sapphire-ink">
                       {t("taggedLabel", {
                         tag: localizeName(activeTagRow, locale),
                       })}
@@ -581,7 +581,7 @@ export default async function BlogPage({
           {gridPosts.length > 0 || totalPages > 1 ? (
             <section
               aria-labelledby="archive-heading"
-              className="section-standard bg-mineral"
+              className="section-standard bg-background"
             >
               <div className="u-shell flex flex-col gap-12">
                 <SectionHeading

@@ -178,7 +178,7 @@ export function Footer({
           two dark grounds against each other no matter how many of the three
           dark slots were still unspent. (The homepage's own comment says all
           three were spent by "the hero, the material story and the bespoke
-          band"; the material story is `bg-mineral` now, so that count is out
+          band"; the material story is `bg-background` now, so that count is out
           of date, but the adjacency it also cites is not and is the real
           constraint.)
 

@@ -107,7 +107,7 @@ export default async function FaqPage({
       {/* ════════ 01 · Masthead — standard ════════ */}
       <section
         aria-labelledby="faq-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <Breadcrumb

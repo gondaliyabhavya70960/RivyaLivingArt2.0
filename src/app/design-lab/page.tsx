@@ -29,7 +29,7 @@ function TabNav({ active }: { active: TabKey }) {
   return (
     <nav
       aria-label="Design lab sections"
-      className="sticky top-0 z-10 border-b border-hairline bg-mineral/95 backdrop-blur"
+      className="sticky top-0 z-10 border-b border-hairline bg-obsidian/95 backdrop-blur"
     >
       <div className="mx-auto flex max-w-6xl flex-wrap gap-1 px-6 py-3">
         {TABS.map((tab) => (

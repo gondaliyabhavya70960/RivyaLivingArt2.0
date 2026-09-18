@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 
 /* Part 16: 2px sapphire ring at 3px offset, champagne inside a dark band. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background in-data-[theme=navy]:focus-visible:ring-offset-obsidian";
 
 /* h-11 is the Part 17 tap floor; rounded-full is the one full-round shape in
    the system (Part 3.5), shared with buttons. */
@@ -56,7 +56,7 @@ export function FilterChip({
         PILL,
         FOCUS_RING,
         selected
-          ? "bg-sand font-medium text-sapphire in-data-[theme=navy]:text-champagne"
+          ? "bg-sand font-medium text-sapphire-ink in-data-[theme=navy]:text-champagne"
           : "bg-transparent text-ink hover:bg-sand in-data-[theme=navy]:text-mineral",
       )}
     >
@@ -122,7 +122,7 @@ export function ActiveFilters({
           className={cn(
             PILL,
             FOCUS_RING,
-            "bg-sand text-sapphire hover:text-ink in-data-[theme=navy]:text-champagne",
+            "bg-sand text-sapphire-ink hover:text-ink in-data-[theme=navy]:text-champagne",
           )}
         >
           {filter.label}
@@ -137,7 +137,7 @@ export function ActiveFilters({
         onClick={onClearAll}
         className={cn(
           "inline-flex h-11 shrink-0 items-center rounded-input px-2 font-body text-small text-graphite underline underline-offset-4",
-          "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire motion-reduce:transition-none",
+          "transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink motion-reduce:transition-none",
           "in-data-[theme=navy]:hover:text-champagne",
           FOCUS_RING,
         )}

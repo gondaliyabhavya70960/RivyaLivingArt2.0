@@ -218,7 +218,7 @@ export function CureLine({
                 </span>
                 <span
                   className={cn(
-                    "u-micro absolute start-8 whitespace-nowrap bg-mineral/95 px-2 py-1 opacity-0 transition-opacity duration-(--dur-fast) ease-(--ease-settle) group-hover/cure:opacity-100 group-focus-within/cure:opacity-100 motion-reduce:transition-none in-data-[theme=navy]:bg-obsidian/95",
+                    "u-micro absolute start-8 whitespace-nowrap bg-obsidian/95 px-2 py-1 opacity-0 transition-opacity duration-(--dur-fast) ease-(--ease-settle) group-hover/cure:opacity-100 group-focus-within/cure:opacity-100 motion-reduce:transition-none in-data-[theme=navy]:bg-obsidian/95",
                     i === active &&
                       "text-ink in-data-[theme=navy]:text-mineral",
                   )}

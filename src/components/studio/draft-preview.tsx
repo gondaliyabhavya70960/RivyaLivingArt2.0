@@ -131,7 +131,7 @@ export function DraftPreviewDialog({
             src={src}
             title={`Draft preview of ${path} at ${width} pixels wide`}
             className={cn(
-              "mx-auto block h-[70vh] border border-hairline bg-white",
+              "mx-auto block h-[70vh] border border-hairline bg-background",
             )}
             style={{ width }}
           />
@@ -270,7 +270,7 @@ export function DraftPreviewPanel({
             key={`${version}-${reloads}`}
             src={src}
             title={`Draft preview of ${path} at ${DOCKED_WIDTH} pixels wide`}
-            className="block h-[min(844px,calc(100svh-19rem))] border-0 bg-white"
+            className="block h-[min(844px,calc(100svh-19rem))] border-0 bg-background"
             style={{ width: DOCKED_WIDTH }}
           />
         )}

@@ -747,7 +747,7 @@ export default async function ProductPage({ params }: PageProps) {
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* pb reserves room for the sticky action bar above the mobile nav. */}
-      <div data-theme="light" className="bg-mineral pb-36 text-ink lg:pb-0">
+      <div data-theme="light" className="bg-background pb-36 text-ink lg:pb-0">
         {/* ═══ 9.1 / 9.2 · The commerce split — 60 / 40 ═══ */}
         <section className="section-compact">
           <div className="u-shell">
@@ -900,7 +900,7 @@ export default async function ProductPage({ params }: PageProps) {
         {roomContextImage ? (
           <section
             aria-labelledby="room-context-heading"
-            className="section-standard bg-mineral"
+            className="section-standard bg-background"
           >
             <div className="u-shell grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
               <MeniscusImage
@@ -938,7 +938,7 @@ export default async function ProductPage({ params }: PageProps) {
         <section
           id="order-panel"
           aria-labelledby="order-heading"
-          className="section-standard scroll-mt-24 bg-mineral"
+          className="section-standard scroll-mt-24 bg-background"
         >
           <div className="u-shell flex flex-col gap-10">
             <SectionHeading
@@ -1032,7 +1032,7 @@ export default async function ProductPage({ params }: PageProps) {
                               <li key={link.slug}>
                                 <Link
                                   href={`/product/${link.slug}`}
-                                  className="inline-flex min-h-11 items-center rounded-full border border-hairline px-4 font-body text-14 text-ink outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:border-ink/40 hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
+                                  className="inline-flex min-h-11 items-center rounded-full border border-hairline px-4 font-body text-14 text-ink outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:border-ink/40 hover:text-sapphire-ink focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
                                 >
                                   {link.name}
                                 </Link>
@@ -1133,7 +1133,7 @@ export default async function ProductPage({ params }: PageProps) {
             `SnapRail` below it (Part 3: never infinite, but a phone-width
             4-up grid crushes every card to a sliver). ═══ */}
         {relatedItems.length > 0 || sameTitleItems.length > 0 ? (
-          <section className="section-standard bg-mineral">
+          <section className="section-standard bg-background">
             <div className="u-shell flex flex-col gap-12">
               {sameTitleItems.length > 0 ? (
                 <div className="flex flex-col gap-8">

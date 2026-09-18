@@ -312,7 +312,7 @@ export default async function CustomOrderPage({
       <section
         id="kinds"
         aria-labelledby="kinds-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -390,7 +390,7 @@ export default async function CustomOrderPage({
       <section
         id="brief"
         aria-labelledby="brief-heading"
-        className="section-major scroll-mt-24 bg-mineral"
+        className="section-major scroll-mt-24 bg-background"
       >
         <div className="u-shell flex flex-col gap-14">
           <SectionHeading
@@ -443,7 +443,7 @@ export default async function CustomOrderPage({
         <section
           id="work"
           aria-labelledby="work-heading"
-          className="section-standard bg-mineral"
+          className="section-standard bg-background"
         >
           <div className="u-shell flex flex-col gap-12">
             <SectionHeading

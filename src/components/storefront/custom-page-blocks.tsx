@@ -106,7 +106,7 @@ const PROSE_BLOCK = [
   "[&_p]:mt-4",
   "[&_li]:mt-2 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:ps-6",
   "[&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:ps-6",
-  "[&_a]:rounded-input [&_a]:text-sapphire [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
+  "[&_a]:rounded-input [&_a]:text-sapphire-ink [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-sapphire-hi",
   "[&_blockquote]:mt-6 [&_blockquote]:border-t [&_blockquote]:border-champagne [&_blockquote]:pt-4 [&_blockquote]:font-display [&_blockquote]:text-h3 [&_blockquote]:leading-snug [&_blockquote]:text-ink",
   "[&_hr]:my-10 [&_hr]:border-hairline",
   "[&_img]:mt-6 [&_img]:max-w-full [&_img]:rounded-image",
@@ -115,7 +115,7 @@ const PROSE_BLOCK = [
 
 const GROUND_CLASS: Record<BlockGround, string> = {
   obsidian: "bg-obsidian text-mineral",
-  mineral: "bg-mineral",
+  mineral: "bg-background",
   sand: "bg-sand",
 };
 

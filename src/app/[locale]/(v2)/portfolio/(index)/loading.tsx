@@ -20,7 +20,7 @@ const RATIOS = ["aspect-[4/3]", "aspect-[4/5]", "aspect-[4/3]", "aspect-[4/3]"];
 
 export default function PortfolioLoading() {
   return (
-    <div role="status" aria-busy="true" className="bg-mineral">
+    <div role="status" aria-busy="true" className="bg-background">
       {/* Dark hero band — trail, eyebrow, headline, standfirst, index line. */}
       <section
         data-theme="navy"
@@ -38,7 +38,7 @@ export default function PortfolioLoading() {
         </div>
       </section>
 
-      <section className="section-standard bg-mineral">
+      <section className="section-standard bg-background">
         <div className="u-shell flex flex-col gap-10">
           {/* Chip row */}
           <div className="flex flex-wrap gap-2">

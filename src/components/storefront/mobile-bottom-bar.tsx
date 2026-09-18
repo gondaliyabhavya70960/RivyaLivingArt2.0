@@ -54,7 +54,7 @@ export function MobileBottomBar({ waHref }: { waHref: string }) {
       <nav
         data-slot="sf-bottom-bar"
         aria-label={t("primaryMobile")}
-        className="fixed inset-x-0 bottom-0 z-(--z-bar) bg-mineral shadow-[0_-1px_0_var(--hairline)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-(--z-bar) bg-background shadow-[0_-1px_0_var(--hairline)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <ul className="flex items-stretch">

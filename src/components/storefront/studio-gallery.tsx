@@ -90,7 +90,7 @@ export function StudioGallery({
       aria-labelledby={headingId}
       className={cn(
         "section-standard",
-        tone === "sand" ? "bg-sand" : "bg-mineral",
+        tone === "sand" ? "bg-sand" : "bg-background",
         className,
       )}
     >
@@ -131,7 +131,7 @@ export function StudioGallery({
                       href={fact.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-input underline decoration-hairline underline-offset-4 outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
+                      className="rounded-input underline decoration-hairline underline-offset-4 outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
                     >
                       {fact.value}
                       {fact.newTabLabel ? (

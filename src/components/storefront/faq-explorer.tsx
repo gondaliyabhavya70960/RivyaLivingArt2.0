@@ -172,7 +172,7 @@ export function FaqExplorer({
                   className={cn(
                     "flex min-h-11 items-start gap-3 py-2 font-body text-14 leading-snug",
                     "transition-colors duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
-                    active ? "text-ink" : "text-graphite hover:text-sapphire",
+                    active ? "text-ink" : "text-graphite hover:text-sapphire-ink",
                   )}
                 >
                   {/* A rule, not a fill — the site's one "you are here" mark. */}

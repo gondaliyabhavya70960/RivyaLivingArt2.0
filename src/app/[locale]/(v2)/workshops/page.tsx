@@ -229,7 +229,7 @@ export default async function WorkshopsPage({
     why: (
       <section
         aria-labelledby="benefits-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -334,7 +334,7 @@ export default async function WorkshopsPage({
     sessions: (
       <section
         aria-labelledby="sessions-heading"
-        className="section-standard bg-mineral"
+        className="section-standard bg-background"
       >
         <div className="u-shell flex flex-col gap-12">
           <SectionHeading
@@ -382,7 +382,7 @@ export default async function WorkshopsPage({
                       <h3 className="font-display text-h3 leading-h3 text-ink">
                         <Link
                           href={`/product/${workshop.slug}`}
-                          className="rounded-input outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
+                          className="rounded-input outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-sapphire-ink focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 motion-reduce:transition-none"
                         >
                           {wl.title}
                         </Link>

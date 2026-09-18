@@ -50,7 +50,7 @@ function pad(value: number): string {
 
 /* Part 16: 2px sapphire ring at 3px offset. */
 const FOCUS_RING =
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-mineral";
+  "outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-3 focus-visible:ring-offset-background";
 
 /**
  * ProductGallery — REDESIGN.md §9.1.

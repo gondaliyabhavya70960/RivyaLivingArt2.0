@@ -25,7 +25,7 @@ const badgeVariants = cva(
       variant: {
         /* Curation. The one badge that is a judgement rather than a fact. */
         atelierPick:
-          "bg-mineral/92 text-ink in-data-[theme=navy]:bg-obsidian/80 in-data-[theme=navy]:text-mineral",
+          "bg-obsidian/92 text-ink in-data-[theme=navy]:bg-obsidian/80 in-data-[theme=navy]:text-mineral",
         /* Facts about how the piece is made and when it arrives. */
         madeToOrder:
           "border border-hairline bg-transparent text-graphite in-data-[theme=navy]:border-hairline-dk in-data-[theme=navy]:text-mist",

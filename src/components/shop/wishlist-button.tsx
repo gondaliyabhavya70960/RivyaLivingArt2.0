@@ -53,7 +53,7 @@ export function WishlistButton({
     >
       <Heart
         aria-hidden
-        className={cn("size-4", saved && "fill-current text-sapphire")}
+        className={cn("size-4", saved && "fill-current text-sapphire-ink")}
       />
     </button>
   );

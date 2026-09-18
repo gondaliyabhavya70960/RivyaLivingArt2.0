@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
@@ -7,6 +7,9 @@ import { DraftRibbon } from "@/components/storefront/draft-ribbon";
 import { Footer, type FooterNavLink } from "@/components/storefront/footer";
 import { MobileBottomBar } from "@/components/storefront/mobile-bottom-bar";
 import { SearchOverlay } from "@/components/storefront/search-overlay";
+import { Cursor } from "@/components/ui/cursor";
+import { RouteProgress } from "@/components/ui/route-progress";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { SiteHeader } from "@/components/storefront/site-header";
 import { SfToaster } from "@/components/storefront/toast";
 import { WhatsAppFab } from "@/components/storefront/whatsapp-fab";
@@ -66,8 +69,34 @@ export default async function V2Layout({
     links.map((link) => ({ label: link.label, href: link.href }));
 
   return (
-    <div data-theme="light" className="flex flex-1 flex-col bg-mineral">
+    <div data-theme="light" className="flex flex-1 flex-col bg-background">
       <DraftRibbon />
+      {/* §6.3 + §6.4 · the two progress bars, mounted once for the whole
+          storefront. They share `--z-progress` and the same 2px strip at the
+          top of the viewport; the route bar wins when both would show, and it
+          says so by setting `data-route-busy` on <html> (route-progress.tsx).
+
+          `Suspense` is a hard requirement, not caution: RouteProgress reads
+          `useSearchParams()` to notice a commit that only changed the query
+          (a shop facet, a page number), and Next opts the whole route out of
+          static generation if that hook is not inside a boundary. The
+          storefront's 13 routes × 9 locales are prerendered on purpose — see
+          the locale layout's note on keeping the database fan-out off the
+          request path — so an unwrapped hook here would have cost the site its
+          static tree to draw a loading bar. The fallback is null because
+          there is nothing to hold space for: the bar is `fixed` and 2px. */}
+      <ScrollProgress />
+      <Suspense fallback={null}>
+        <RouteProgress />
+      </Suspense>
+      {/* §6.1 · the custom cursor, on owner instruction. STOREFRONT ONLY —
+          mounted here rather than in the root [locale] layout, and never in
+          the Studio tree, which is a tool: a ring that trails the pointer
+          across a data table costs precision for decoration. It removes
+          itself on touch, on a coarse pointer and under reduced motion, and
+          the native cursor is hidden only while it is actually running (see
+          `data-cursor-live` in globals.css). */}
+      <Cursor />
       {/* Part 14 opens with "motion should communicate craftsmanship, not a
           technology demo", and its budget forbids anything that delays the LCP.
           Two ornaments failed both tests: the first-visit brand preloader (a
@@ -130,7 +159,7 @@ export default async function V2Layout({
       <main
         id="main-content"
         data-theme="light"
-        className="flex-1 bg-mineral font-body text-ink"
+        className="flex-1 bg-background font-body text-ink"
       >
         {children}
       </main>

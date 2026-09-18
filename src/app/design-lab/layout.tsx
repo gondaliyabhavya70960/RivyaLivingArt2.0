@@ -39,7 +39,7 @@ export default async function DesignLabLayout({
       lang="en"
       className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-mineral font-body text-ink">
+      <body className="min-h-full bg-background font-body text-ink">
         {/* Bare intl context (locale + the full English catalogue): the lab
             sits outside the [locale] tree, but several live primitives call
             useTranslations/getTranslations (CatalogProductCard, RatingStars,

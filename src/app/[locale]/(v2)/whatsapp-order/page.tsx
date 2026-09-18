@@ -126,7 +126,7 @@ export default async function WhatsappOrderPage({
       : t("bodySaved");
 
   return (
-    <section className="section-standard bg-mineral">
+    <section className="section-standard bg-background">
       <div className="u-shell grid gap-12 lg:grid-cols-12">
         {/* ————— the statement ————— */}
         <div className="flex flex-col gap-6 lg:col-span-7">
@@ -167,7 +167,7 @@ export default async function WhatsappOrderPage({
             {/* No WhatsApp at all → the studio's number, dialable. */}
             <a
               href={`tel:${phoneTel}`}
-              className="inline-flex min-h-11 items-center gap-2 font-mono text-16 text-sapphire outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi motion-reduce:transition-none"
+              className="inline-flex min-h-11 items-center gap-2 font-mono text-16 text-sapphire-ink outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi motion-reduce:transition-none"
             >
               <Phone
                 aria-hidden
@@ -203,7 +203,7 @@ export default async function WhatsappOrderPage({
             {t("changedMind")}{" "}
             <Link
               href="/shop"
-              className="font-medium text-sapphire underline underline-offset-4 transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi motion-reduce:transition-none"
+              className="font-medium text-sapphire-ink underline underline-offset-4 transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:text-sapphire-hi motion-reduce:transition-none"
             >
               {t("keepBrowsing")}
             </Link>
