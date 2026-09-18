@@ -5,18 +5,20 @@
  *
  *     CONFIRMED_PRODUCTS  ≡  { p : p.confirmedAt !== null }
  *
- * Not every scraped product. Not every studio product. Not everything that
- * happens to be sitting in the Google Sheet. Only rows an operator explicitly
- * blessed. There is deliberately no code path from scrape to confirmed.
+ * Not every scraped product. Not every studio product. Not everything the
+ * scraper staged. Only rows an operator explicitly blessed. There is
+ * deliberately no code path from scrape to confirmed.
+ *
+ * (The line above used to say "sitting in the Google Sheet". That integration
+ * was deleted with workstream C on 2026-09-15 — no credential in this repo
+ * reaches Google and nothing writes to a spreadsheet. The confirmed list is
+ * exported from /studio/exports as CSV or XLSX.)
  *
  * Pure module: the checks below decide, and they are the interesting part, so
  * they live where a test can reach them without a database.
  */
 
-/** The tab the confirmed list is written to. Its own tab, on purpose. */
-export const CONFIRMED_SHEET_TAB = "CONFIRMED_PRODUCTS";
-
-/** Product ID first: it is the stable reference in every other tab. */
+/** Product ID first: it is the stable reference wherever a row is quoted. */
 export const CONFIRMED_COLUMNS: readonly string[] = [
   "Product ID",
   "Slug",

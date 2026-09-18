@@ -6,17 +6,23 @@
  * at [REDACTED]:5432` — no host, no clue which variable it read. That matters
  * here because the CLI and the running app deliberately read DIFFERENT ones:
  * prisma.config.ts prefers the UNPOOLED URL (migrations take advisory locks,
- * which Neon's pgbouncer host does not support) while src/lib/db.ts uses the
- * pooled DATABASE_URL. So the site can serve perfectly while every build dies,
- * and the error names neither variable.
+ * which a pgbouncer-style pooler does not support) while src/lib/db.ts uses
+ * the pooled DATABASE_URL. So the site can serve perfectly while every build
+ * dies, and the error names neither variable.
+ *
+ * THE VENDOR NAMES IN THIS FILE WERE STALE. It said "Neon" throughout; this
+ * project's database is Prisma Postgres (`db.prisma.io`) — which the script
+ * itself prints on every build, so the comment was contradicted by its own
+ * output. The MECHANISM is unchanged and is why the handshake below exists:
+ * it is a property of any pooled, proxied Postgres, not of one vendor.
  *
  * This prints the resolved host (never the credentials), resolves DNS, opens a
  * TCP socket AND completes a real Postgres handshake.
  *
  * The handshake is the part that matters. A bare TCP probe proves almost
- * nothing against Neon: every connection lands on Neon's SHARED proxy, which
- * accepts the socket whether or not your compute is reachable behind it, and
- * routes by SNI once TLS starts. A first version of this script reported
+ * nothing against a hosted Postgres: every connection lands on a SHARED
+ * proxy, which accepts the socket whether or not the database is reachable
+ * behind it, and routes by SNI once TLS starts. A first version of this script reported
  * "tcp open" on all three URLs in the same build where migrate died with
  * P1001 — true, and useless. Only `SELECT 1` distinguishes "the proxy answered"
  * from "the database answered".
@@ -136,8 +142,8 @@ for (const name of CANDIDATES) {
     console.log(`${pad}psql ✓ connected and queried${retried ? " (needed TLS — add sslmode=require to the URL)" : ""}`);
   } else {
     // The server's own words are the diagnosis: "password authentication
-    // failed", "database does not exist", Neon's "Couldn't connect to compute
-    // node", a TLS error, or a timeout.
+    // failed", "database does not exist", a proxy's "couldn't connect to the
+    // compute node", a TLS error, or a timeout.
     console.log(`${pad}psql ✗${err.code ? ` [${err.code}]` : ""} ${err.message}`);
   }
 }

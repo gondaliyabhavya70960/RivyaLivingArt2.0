@@ -1,3 +1,4 @@
+import { productListHref } from "@/components/studio/products/product-filter-links";
 import { db } from "@/lib/db";
 
 import { IMPORT_CONFLICT_STATUS } from "@/lib/import-status";
@@ -65,7 +66,7 @@ export type StudioInboxRows = {
 const PENDING_HREF = {
   testimonials: "/studio/testimonials?status=PENDING_REVIEW",
   scrapedProducts: "/studio/scraper/review",
-  products: "/studio/products?status=REVIEW",
+  products: productListHref({ status: "REVIEW" }),
   blogPosts: "/studio/blog?status=REVIEW",
   portfolios: "/studio/portfolio?status=REVIEW",
   importConflicts: "/studio/catalog-fill/conflicts",

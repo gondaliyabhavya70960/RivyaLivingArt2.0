@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { IMPORT_LISTS } from "@/lib/import-list";
@@ -5,6 +8,7 @@ import { PRODUCT_SIZE_TIERS } from "@/lib/product-size-tier";
 import {
   buildProductWhere,
   parseProductListFilter,
+  productListFilterSchema,
   type ProductListFilter,
 } from "./product-filter";
 import {
@@ -111,5 +115,86 @@ describe("the imagery worklist filter (plan §3 S4)", () => {
 
   it("drops a media value the schema does not know", () => {
     expect(parseProductListFilter({ media: "blurry" }).media).toBeUndefined();
+  });
+});
+
+/**
+ * THE GAP THIS CLOSES, and why the tests above did not catch it.
+ *
+ * `productListHref` builds its URL from `productListFilterSchema.shape`, so it
+ * can emit ANY key the schema declares. `parseProductListFilter` and
+ * `buildProductWhere` both handle all of them — and every test above proves
+ * that, by feeding a built href straight back into the parser.
+ *
+ * None of that touches the page. `/studio/products` declares its own
+ * `searchParams` type and hand-lists the keys it forwards, and on 2026-09-18
+ * that list was missing `rewrite` and `stale`. So the Overview's "Live, still
+ * awaiting a rewrite" card counted N rows and opened all ~4,400 published
+ * ones, and "Drafts untouched for a month" opened every draft — the exact
+ * failure `action-queue.ts`'s own header says it exists to prevent. Both
+ * params had been in the schema and the where clause since the day they were
+ * added; only the page never read them.
+ *
+ * A round-trip test cannot see this: the parser is correct, and the page is
+ * an RSC module vitest cannot import (it pulls in `next/link` and the Prisma
+ * client). So this reads the page's SOURCE, the way `sidebar.test.ts` and
+ * `docs-index.test.ts` already read theirs, and asserts the contract that
+ * actually broke.
+ */
+describe("the list page reads every key a deep link can carry", () => {
+  const PAGE = readFileSync(
+    join(process.cwd(), "src/app/studio/(dashboard)/products/page.tsx"),
+    "utf8",
+  );
+
+  /** The `searchParams: Promise<{ … }>` block. */
+  const typeBlock = (() => {
+    const start = PAGE.indexOf("searchParams: Promise<{");
+    expect(start, "searchParams type block not found").toBeGreaterThan(-1);
+    const end = PAGE.indexOf("}>;", start);
+    return PAGE.slice(start, end);
+  })();
+
+  /** The object literal handed to `parseProductListFilter`. */
+  const callBlock = (() => {
+    const start = PAGE.indexOf("parseProductListFilter({");
+    expect(start, "parseProductListFilter call not found").toBeGreaterThan(-1);
+    const end = PAGE.indexOf("});", start);
+    return PAGE.slice(start, end);
+  })();
+
+  const FILTER_KEYS = Object.keys(productListFilterSchema.shape);
+
+  it("declares every filter key in its searchParams type", () => {
+    expect(FILTER_KEYS.length).toBeGreaterThan(5);
+    const missing = FILTER_KEYS.filter(
+      (key) => !new RegExp(`\\b${key}\\?:`).test(typeBlock),
+    );
+    expect(
+      missing,
+      "these keys can be emitted into a link but the page does not declare them",
+    ).toEqual([]);
+  });
+
+  it("forwards every filter key into the parser", () => {
+    // Word-boundary matched: `q` is one letter and would otherwise match
+    // almost anything in the block.
+    const missing = FILTER_KEYS.filter(
+      (key) => !new RegExp(`(^|[\\s,{])${key}\\s*[,}]`, "m").test(callBlock),
+    );
+    expect(
+      missing,
+      "these keys reach the page and are then dropped before the parser",
+    ).toEqual([]);
+  });
+
+  it("covers the two params the Overview's action queue links with", () => {
+    // Named explicitly so the regression that happened has its own failure
+    // message, not just a diff of a key list.
+    for (const key of ["rewrite", "stale"]) {
+      expect(FILTER_KEYS).toContain(key);
+      expect(typeBlock).toContain(`${key}?:`);
+      expect(callBlock).toContain(key);
+    }
   });
 });

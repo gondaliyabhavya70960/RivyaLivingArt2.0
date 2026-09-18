@@ -194,7 +194,7 @@ export default async function ContentGapsPage() {
       title: "Products with no product tier",
       why: "Every piece belongs to one of the three worlds — collectible, memory or personal — and the tier decides how it is presented and where it is found. A draft cannot be published without one. NOT filtered to published rows: the point of this card is the whole backlog.",
       count: noSizeTier,
-      href: "/studio/products?sizeTier=NONE&status=ALL",
+      href: productListHref({ sizeTier: "NONE", status: "ALL" }),
       hrefLabel: "Products with no tier",
       samples: productSamples(noSizeTierSamples),
     },
@@ -203,7 +203,11 @@ export default async function ContentGapsPage() {
       title: "Products without a description",
       why: "An empty description ships a thin PDP and a weak meta description.",
       count: noDescription,
-      href: "/studio/products",
+      // Bare on purpose: the filter vocabulary has no "missing description"
+      // key, so there is no URL that lands on these rows. The samples below
+      // are the way in until one exists — a deep link that silently widened
+      // to every product would be worse than none.
+      href: productListHref({}),
       hrefLabel: "Products",
       samples: productSamples(noDescriptionSamples),
     },
@@ -224,7 +228,13 @@ export default async function ContentGapsPage() {
       title: "Awaiting editorial rewrite",
       why: "needsRewrite rows hide their scraped copy until rewritten — the PDP shows tagline + specs only.",
       count: needsRewrite,
-      href: "/studio/products",
+      // Counted as `{ ...published, needsRewrite: true }` above, so the link
+      // says exactly that. It used to open every published product, which is
+      // the "card says 27, list shows 4,399" failure. The `rewrite` param was
+      // in the filter schema and the where clause all along — until
+      // 2026-09-18 the LIST PAGE did not read it, so this link could not have
+      // worked even when written correctly.
+      href: productListHref({ status: "PUBLISHED", rewrite: "flagged" }),
       hrefLabel: "Products",
       samples: productSamples(needsRewriteSamples),
     },
@@ -233,7 +243,8 @@ export default async function ContentGapsPage() {
       title: "Marketplace-length titles without a display name",
       why: "Cards derive a short name automatically; an owner-set Display name always reads better.",
       count: longTitleNoDisplay,
-      href: "/studio/products",
+      // Bare: no filter key for "long title, no display name" (see above).
+      href: productListHref({}),
       hrefLabel: "Products",
       samples: productSamples(longTitleSamples),
     },
@@ -242,7 +253,8 @@ export default async function ContentGapsPage() {
       title: "Products with no occasion tags",
       why: "The home shop-by-occasion doorways stay hidden until pieces are tagged.",
       count: untaggedOccasions,
-      href: "/studio/products",
+      // Bare: no filter key for "no occasion tags" (see above).
+      href: productListHref({}),
       hrefLabel: "Products",
       samples: [],
     },

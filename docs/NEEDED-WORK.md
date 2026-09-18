@@ -133,10 +133,15 @@ rows named.
   precision@k evaluation set, an adapter snapshot-regression suite.
 
 ### Hygiene (one-line PRs)
-- `src/ResinRivaFavicon.svg`, `src/ResinRivaLogo.svg` (zero importers).
-- Dead `CONFIRMED_SHEET_TAB` and "Google Sheet" wording in
-  `src/lib/scraper/confirm.ts`.
-- Stale "Neon" comments in `scripts/db-preflight.mjs`.
+- ~~`src/ResinRivaFavicon.svg`, `src/ResinRivaLogo.svg` (zero importers)~~ —
+  **DONE 2026-09-18**, with the two stray root screenshots (`ar-drawer-360.png`,
+  `shop-360.png`) that had no reference anywhere either.
+- ~~Dead `CONFIRMED_SHEET_TAB` and "Google Sheet" wording in
+  `src/lib/scraper/confirm.ts`~~ — **DONE 2026-09-18.** The const had zero
+  consumers; the header now says what replaced the spreadsheet.
+- ~~Stale "Neon" comments in `scripts/db-preflight.mjs`~~ — **DONE 2026-09-18.**
+  The vendor name was wrong (this is Prisma Postgres, which the script prints
+  on every build); the mechanism the comments explain is unchanged.
 - A CI grep that fails if Google Sheets code returns; a redirect or notice
   on the old `/studio/scraper/sheets` bookmark; `301`s for removed catalogue
   pages.
