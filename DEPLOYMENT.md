@@ -71,7 +71,7 @@ Notes:
 ## 7. Custom domain — www.rivyalivingart.com
 
 1. Project → **Domains** → Add → `www.rivyalivingart.com`.
-2. At the DNS provider for `bhavyagondaliya.co.in`, add the **CNAME** record Vercel shows: host `store` → `cname.vercel-dns.com` (Vercel displays the exact target — use what the dashboard says).
+2. At the DNS provider for `rivyalivingart.com`, add the **CNAME** record Vercel shows: host `www` → `cname.vercel-dns.com` (Vercel displays the exact target — use what the dashboard says). Until 2026-09-18 this step named `bhavyagondaliya.co.in` and host `store`, left over from the pre-rename domain — following it would have pointed a record on the wrong zone while the section header asked for `www.rivyalivingart.com`.
 3. Wait for DNS + automatic HTTPS to go green in the dashboard.
 4. Confirm `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` both say `https://www.rivyalivingart.com`, **with the `https://`** — login and wa.me messages depend on them, and a scheme-less host is what took `/studio` down (docs/troubleshooting.md).
 

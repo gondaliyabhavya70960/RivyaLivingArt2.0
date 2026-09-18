@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -31,8 +32,16 @@ import {
   Menu,
   Hammer,
   Palette,
+  Pin,
 } from "lucide-react";
 import type { Role } from "@/generated/prisma/client";
+import {
+  getPinsServerSnapshot,
+  getPinsSnapshot,
+  pinnedItemsOf,
+  subscribePins,
+  togglePin,
+} from "@/lib/studio-pins";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -93,6 +102,19 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       // icon carries the distinction the rename was for.
       { label: "Catalog fill", href: "/studio/catalog-fill", icon: Workflow },
       { label: "Exports", href: "/studio/exports", icon: Download },
+      // The three research surfaces, folded in from their own group (S13,
+      // 2026-09-18). They looked like a separate concern and are not: every
+      // one of them exists to decide what goes INTO this catalogue. The
+      // scraper's output lands in the review inbox, Research reads the staged
+      // rows, and Content Gaps names what the catalogue is missing — so they
+      // sit after the surfaces that fill it, in the order a row travels.
+      //
+      // Content Gaps had already been moved once, out of "today", because an
+      // analysis screen beside the dashboard left the scraper's own analysis
+      // two groups away. This puts all three in one place instead.
+      { label: "Product Scraper", href: "/studio/scraper", icon: Radar },
+      { label: "Research", href: "/studio/research", icon: FlaskConical },
+      { label: "Content Gaps", href: "/studio/content-gaps", icon: ListChecks },
     ],
   },
   {
@@ -100,7 +122,12 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
     // "registry → overrides → total resolver" family. Process Steps and
     // Materials are Page Sections pre-filtered (`SUBLIST_PAGES`), so they
     // belong beside it rather than in a group of their own.
-    heading: "site content",
+    //
+    // "content", not "site content" (S13, 2026-09-18). The qualifier was
+    // doing no work: nothing else in this Studio is content that is not the
+    // site's, and S13 names the five groups as Today · Catalogue · Content ·
+    // Editorial · Settings.
+    heading: "content",
     items: [
       { label: "Site Copy", href: "/studio/site-copy", icon: Type },
       { label: "Site Images", href: "/studio/site-images", icon: Images },
@@ -143,21 +170,6 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
         label: "Landing Pages",
         href: "/studio/custom-pages",
         icon: Megaphone,
-      },
-    ],
-  },
-  {
-    // Looking outward at what other makers sell. Content Gaps was filed under
-    // "overview", which put an analysis screen next to the dashboard and left
-    // the scraper's own analysis surfaces two groups away.
-    heading: "research",
-    items: [
-      { label: "Product Scraper", href: "/studio/scraper", icon: Radar },
-      { label: "Research", href: "/studio/research", icon: FlaskConical },
-      {
-        label: "Content Gaps",
-        href: "/studio/content-gaps",
-        icon: ListChecks,
       },
     ],
   },
@@ -205,10 +217,35 @@ export function StudioNav({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const pinned = useSyncExternalStore(
+    subscribePins,
+    getPinsSnapshot,
+    getPinsServerSnapshot,
+  );
+
+  /* S13's pinned row. It FILTERS the nav rather than mapping the stored list,
+     so an href that has since been renamed or removed drops out instead of
+     rendering a dead link — and the row keeps the sidebar's own order rather
+     than the order things were pinned in, so it reads like a shortcut to the
+     nav below it and not like a second, differently-sorted nav.
+
+     Admin-only rows are filtered per section below; a pinned one is filtered
+     here for the same reason, so an editor who once had ADMIN cannot keep a
+     shortcut to Users. */
+  const pinnedItems = pinnedItemsOf(SECTIONS, pinned).filter(
+    (item) => !item.adminOnly || role === "ADMIN",
+  );
+
+  const sections: { heading: string; items: NavItem[] }[] = [
+    ...(pinnedItems.length > 0
+      ? [{ heading: "pinned", items: pinnedItems }]
+      : []),
+    ...SECTIONS,
+  ];
 
   return (
     <nav aria-label="Studio" className="flex flex-col gap-7">
-      {SECTIONS.map((section) => {
+      {sections.map((section) => {
         const items = section.items.filter(
           (item) => !item.adminOnly || role === "ADMIN",
         );
@@ -240,15 +277,23 @@ export function StudioNav({
                     </li>
                   );
                 }
+                const isPinned = pinned.includes(item.href);
                 return (
-                  <li key={item.href}>
+                  /* `relative` so the pin button can sit at the end of the row
+                     WITHOUT nesting a button inside the link — nested
+                     interactive elements are invalid and unreachable by
+                     keyboard in that order. `group/row` drives its hover
+                     reveal; it is always visible once pinned, and always
+                     reachable by Tab regardless, because a control that only
+                     exists on hover is a control a keyboard cannot find. */
+                  <li key={item.href} className="group/row relative">
                     <Link
                       href={item.href}
                       onClick={onNavigate}
                       title={item.label}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex min-h-11 items-center gap-3 border-s-2 px-3 py-2 text-small outline-none transition-colors max-lg:justify-center [[data-sidebar-collapsed]_&]:lg:justify-center duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset motion-reduce:transition-none",
+                        "flex min-h-11 items-center gap-3 border-s-2 px-3 py-2 pe-10 text-small outline-none transition-colors max-lg:justify-center max-lg:pe-3 [[data-sidebar-collapsed]_&]:lg:justify-center [[data-sidebar-collapsed]_&]:lg:pe-3 duration-(--dur-fast) ease-(--ease-settle) focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset motion-reduce:transition-none",
                         active
                           ? "border-champagne bg-mineral/6 font-medium text-mineral"
                           : "border-transparent text-mist hover:bg-mineral/4 hover:text-mineral",
@@ -263,6 +308,45 @@ export function StudioNav({
                         {item.label}
                       </span>
                     </Link>
+                    <button
+                      type="button"
+                      onClick={() => togglePin(item.href)}
+                      aria-pressed={isPinned}
+                      className={cn(
+                        /* `focus:` for the OPACITY, `focus-visible:` for the RING, and
+                           the split is deliberate. `:focus-visible` decides
+                           whether to DRAW a focus ring; whether a focused
+                           control can be SEEN at all should not depend on how
+                           the focus arrived. `:focus-visible` does not match a
+                           programmatic `.focus()`, so a script moving focus here
+                           — a skip link, a restore after a dialog — would land
+                           on an invisible button.
+
+                           Keyboard Tab is covered twice over, by this and by
+                           `group-focus-within/row` on the row; the belt is
+                           cheap and the braces are the case above. */
+                        "absolute end-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-mist outline-none transition-[color,opacity] duration-(--dur-fast) ease-(--ease-settle) hover:text-mineral focus:opacity-100 focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none",
+                        /* Icon-only widths have no room beside the label, and
+                           the whole row is 44px there — a 36px overlay would
+                           eat most of the tap target it sits on. */
+                        "max-lg:hidden [[data-sidebar-collapsed]_&]:lg:hidden",
+                        isPinned
+                          ? "text-champagne opacity-100"
+                          : "opacity-0 group-hover/row:opacity-100 group-focus-within/row:opacity-100",
+                      )}
+                    >
+                      <Pin
+                        aria-hidden
+                        className="size-3.5"
+                        strokeWidth={1.5}
+                        fill={isPinned ? "currentColor" : "none"}
+                      />
+                      <span className="sr-only">
+                        {isPinned
+                          ? `Unpin ${item.label}`
+                          : `Pin ${item.label}`}
+                      </span>
+                    </button>
                   </li>
                 );
               })}

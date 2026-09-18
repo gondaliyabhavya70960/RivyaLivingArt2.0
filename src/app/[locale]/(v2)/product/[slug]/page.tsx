@@ -134,9 +134,12 @@ const RAIL_SELECT = {
   seoDescription: true,
   translations: true,
   // D21: carried through so the rail's cards get the mono meta line, the
-  // hover clip and the demo mark same as every other catalog card.
+  // hover clip and the demo mark same as every other catalog card. `timeline`
+  // joined them for the memory variant's lead-time line; this select already
+  // fetched it for the PDP's own lead-time chip.
   materials: true,
   dimensions: true,
+  timeline: true,
   videoUrl: true,
   isDemo: true,
   category: {
@@ -490,6 +493,7 @@ export default async function ProductPage({ params }: PageProps) {
       featured: row.featured,
       materials: row.materials?.trim() || null,
       dimensions: row.dimensions?.trim() || null,
+      timeline: row.timeline?.trim() || null,
       videoUrl: row.videoUrl?.trim() || null,
       isDemo: row.isDemo,
     };

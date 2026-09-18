@@ -21,13 +21,11 @@ import {
   AccordionTrigger,
 } from "@/components/storefront/accordion";
 import { Button } from "@/components/storefront/button";
-import {
-  CatalogProductCard,
-  shelfVariant,
-} from "@/components/storefront/catalog-product-card";
+import { CatalogProductCard } from "@/components/storefront/catalog-product-card";
 import { EmptyState } from "@/components/storefront/empty-state";
 import { ActiveFilters } from "@/components/storefront/filter-chip";
 import { ProductCardSkeleton } from "@/components/storefront/skeletons";
+import { cardVariantFor, shelfVariant } from "@/lib/card-meta";
 import type { ShopProductItem } from "@/lib/shop";
 import {
   CATALOG_GROUPS,
@@ -386,11 +384,26 @@ export function ShopExplorer({
       onRemove: () => apply({ sizeTier: undefined }),
     });
 
-  /* One ratio per grid (§4.6). The shelf decides once — a supplies view of
-     pigments and parts goes compact and denser; anything with real pieces in
-     it stays editorial. Deciding per card would leave 1:1 tiles interleaved
-     with 4:5 ones and every row ragged. */
+  /* One RATIO per grid, one VARIANT per product — and the split between
+     those two words is the whole rule (§4.6 + docs/plan/07).
+
+     The shelf decides the ratio once: a supplies view of pigments and parts
+     goes compact and denser, anything with real pieces in it stays editorial.
+     Deciding THAT per card would interleave 1:1 tiles with 4:5 ones and leave
+     every row ragged.
+
+     The tier then decides the CONTENT inside that ratio — `collectible`,
+     `memory`, `gift`, or `full` for the untiered backlog. Mixing those in one
+     grid is safe precisely because none of them is `compact`: all four render
+     the 4:5 stage, so the ragged-row problem the shelf exists to prevent
+     cannot arise from this branch.
+
+     A compact shelf keeps compact and asks no tier question. That grid is
+     parts rather than pieces, its rows are untiered anyway, and a 1:1 supplies
+     tile is not somewhere a tier variant has anything to say. */
   const gridVariant = shelfVariant(items);
+  const variantFor = (item: ShopProductItem) =>
+    gridVariant === "compact" ? "compact" : cardVariantFor(item);
 
   const cards = items.map((item, index) => {
     const entering = enterFrom !== null && index >= enterFrom;
@@ -407,7 +420,7 @@ export function ShopExplorer({
         {/* The first row carries the LCP: eager, never revealed (Part 14). */}
         <CatalogProductCard
           item={item}
-          variant={gridVariant}
+          variant={variantFor(item)}
           morph
           priority={index < 3}
         />

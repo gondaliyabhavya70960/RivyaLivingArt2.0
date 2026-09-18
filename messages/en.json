@@ -979,6 +979,7 @@
       "customize": "Customize",
       "viewDetails": "View details",
       "optionsCount": "{count} options",
+      "choicesCount": "{count, plural, one {# choice} other {# choices}}",
       "wishlistSave": "Save {title} to your wishlist",
       "wishlistRemove": "Remove {title} from your wishlist",
       "madeToOrder": "Made to order",

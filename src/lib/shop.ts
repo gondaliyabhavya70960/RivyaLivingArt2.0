@@ -181,6 +181,13 @@ export type ShopProductItem = {
    */
   materials: string | null;
   dimensions: string | null;
+  /**
+   * The lead time as the owner typed it ("3 weeks", "10–14 days"). Read by
+   * the MEMORY card variant, where "how long until I have it" is the
+   * question a commemorative piece raises. Same non-translation rationale as
+   * the two above.
+   */
+  timeline: string | null;
   /** Card-hover clip, owner-supplied. Never autoplays on the first (priority) row. */
   videoUrl: string | null;
   /** Synthetic Content Lab row — the card renders `<DemoMark/>` when true. */
@@ -299,6 +306,11 @@ export const CARD_SELECT = {
   // clip and the demo mark — none of these were on the card row before.
   materials: true,
   dimensions: true,
+  // The lead time, for the MEMORY card variant (step 8). An owner-typed
+  // string, same class as materials/dimensions and localized the same way:
+  // not at all. It renders beside a translated label, never inside a
+  // translated sentence.
+  timeline: true,
   videoUrl: true,
   isDemo: true,
   category: { select: { name: true, translations: true } },
@@ -351,6 +363,7 @@ export function toShopProductItem(
     ...(duplicateCount != null && duplicateCount > 1 ? { duplicateCount } : {}),
     materials: row.materials?.trim() || null,
     dimensions: row.dimensions?.trim() || null,
+    timeline: row.timeline?.trim() || null,
     videoUrl: row.videoUrl?.trim() || null,
     isDemo: row.isDemo,
   };

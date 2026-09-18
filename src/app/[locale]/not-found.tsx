@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight, Search } from "lucide-react";
 
+import { KineticHeading } from "@/components/motion/kinetic-heading";
 import { Button } from "@/components/storefront/button";
 import { Magnetic } from "@/components/ui/magnetic";
 import { SITE } from "@/lib/constants";
@@ -163,9 +164,17 @@ export function NotFoundPanel({
               <span aria-hidden className="block h-px w-6 bg-mist/60" />
               {copy.eyebrow}
             </p>
-            <h1 className="max-w-[12ch] font-display text-h1 leading-h1 tracking-display text-mineral">
-              {copy.heading}
-            </h1>
+            {/* F5's word-rise (plan §2.10, "Headline word-rise"). Above the
+                fold by construction — the first element of a `min-h-svh`
+                section — so it animates on paint rather than on scroll; the
+                component's header has why that is the design rather than a
+                shortcut. The eyebrow above is deliberately not animated, so
+                the heading owns the whole stagger and starts at `--i: 0`. */}
+            <KineticHeading
+              as="h1"
+              text={copy.heading}
+              className="max-w-[12ch] font-display text-h1 leading-h1 tracking-display text-mineral"
+            />
             <p className="u-lede font-body text-body leading-relaxed text-mist">
               {copy.body}
             </p>

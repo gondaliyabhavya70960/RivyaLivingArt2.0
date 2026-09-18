@@ -49,7 +49,7 @@ import {
 } from "@/components/ui/select";
 import { useSelection } from "@/hooks/use-selection";
 import { useScrapeRunner } from "@/hooks/use-scrape-runner";
-import { SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
+import { OFFERED_SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
 
 export type JobRow = {
   id: string;
@@ -78,8 +78,14 @@ export type TierCounts = Record<ScrapeTier, number>;
  * tiers on 2026-09-15 could not be queued from here at all; then they carried
  * a fourth hand-typed copy of the labels, which is how "Tier 1 — Large" came
  * to mean a supplier list on this screen and a product on the next.
+ *
+ * OFFERED, not every value: a "Scrape all resin goods" button fans out over a
+ * tier the registry no longer files anything under, so it queues nothing and
+ * reads as a broken button. The retired values still VALIDATE — the action's
+ * zod schema is built from the full `SCRAPE_TIERS` — so a job already queued
+ * against one still runs.
  */
-const TIERS = SCRAPE_TIERS.map((value) => ({
+const TIERS = OFFERED_SCRAPE_TIERS.map((value) => ({
   value,
   label: scrapeTierStudioLabel(value),
 }));
