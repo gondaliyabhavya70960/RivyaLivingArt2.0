@@ -1753,19 +1753,6 @@
       "statement": "工作台正在重新整理。",
       "support": "我们很快会重新开放。",
       "primary": "用 WhatsApp 联系工作室"
-    },
-    "thankYou": {
-      "title": "您的需求已收到 — Rivya Living Art",
-      "eyebrow": "咨询 {number}",
-      "statement": "您的需求已放上工作台。",
-      "support": "我们会通过 WhatsApp 回复，通常在营业时间内（10:00–20:00 IST）。",
-      "primary": "打开 WhatsApp",
-      "secondary": "返回该系列",
-      "nextLabel": "接下来会怎样",
-      "next1": "我们会阅读您的需求，并对照工作室的排期。",
-      "next2": "我们会通过 WhatsApp 回复报价与制作周期。",
-      "next3": "在您确认之前，不收取任何费用，也没有任何约束。",
-      "eyebrowNoReference": "已收到咨询"
     }
   }
 }

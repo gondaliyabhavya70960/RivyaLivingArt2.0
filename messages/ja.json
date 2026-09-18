@@ -1753,19 +1753,6 @@
       "statement": "作業台を整えています。",
       "support": "まもなく再開します。",
       "primary": "WhatsApp でスタジオに連絡"
-    },
-    "thankYou": {
-      "title": "ご依頼を承りました — Rivya Living Art",
-      "eyebrow": "お問い合わせ {number}",
-      "statement": "ご依頼を作業台に置きました。",
-      "support": "WhatsApp でご返信します。通常は営業時間内です（10:00–20:00 IST）。",
-      "primary": "WhatsApp を開く",
-      "secondary": "コレクションに戻る",
-      "nextLabel": "この後の流れ",
-      "next1": "ご依頼を読み、工房の制作予定と照らし合わせます。",
-      "next2": "お見積もりと納期を WhatsApp でお送りします。",
-      "next3": "お客様がご承諾されるまで、費用も確約も発生しません。",
-      "eyebrowNoReference": "お問い合わせを受領"
     }
   }
 }

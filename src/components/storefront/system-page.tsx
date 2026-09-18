@@ -7,7 +7,24 @@ import { cn } from "@/lib/utils";
  * §2.10 · THE SHARED SYSTEM-PAGE SHELL.
  *
  * One layout for every page that renders when the normal page could not: 403,
- * 410, 429, maintenance, session-expired, and the post-inquiry thank-you.
+ * 410, 429 and maintenance.
+ *
+ * §2.10 ALSO LISTS A POST-INQUIRY THANK-YOU, AND THIS SHELL DOES NOT PROVIDE
+ * ONE — because the repo already had it under another name. `/whatsapp-order`
+ * (`app/[locale]/(v2)/whatsapp-order/page.tsx`) is the landing pad every
+ * inquiry actually reaches: `custom-order-form.tsx` pushes to it after the
+ * Server Action returns, and it carries what a thank-you built here could not —
+ * the saved WhatsApp message behind a claim token, a fresh deep link, a copy
+ * button, the real inquiry number, and a heading that changes with the source
+ * the inquiry came from.
+ *
+ * A `/thank-you` route WAS built on this shell first, in nine locales, before
+ * anyone grepped for the page that already existed. It was deleted rather than
+ * left beside its twin: nothing routed to it, and a dead route that looks like
+ * the live one is the ambiguity owner decision D18 was approved to remove.
+ * CLAUDE.md says it in one line — "Read a file before you decide it is missing.
+ * grep before you create."
+ *
  * Its shape is §2.10's list, in the order a stuck visitor needs it:
  *
  *   full-bleed obsidian · mono eyebrow carrying the index · one Instrument

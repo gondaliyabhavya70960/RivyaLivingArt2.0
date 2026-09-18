@@ -531,7 +531,12 @@ export function ShopExplorer({
                 align="end"
                 sideOffset={8}
                 aria-label={t("toolbar.sortMenuLabel")}
-                className="z-(--z-dialog) min-w-56 rounded-card border border-hairline bg-background p-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none"
+                className=// `bg-card` (= --surface = elev-1), not `bg-background` (= elev-0). The
+                // ladder's own note calls elev-1 "a raised panel: a card, a MENU,
+                // a dialog" — a menu painted the page's own obsidian, separated
+                // only by a 12%-alpha hairline (~1.4:1), is a floating panel with
+                // no floor under it.
+                "z-(--z-dialog) min-w-56 rounded-card border border-hairline bg-card p-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none"
               >
                 {SORTS.map((key) => (
                   <MenuPrimitive.Item
@@ -585,7 +590,14 @@ export function ShopExplorer({
                 data-theme="light"
                 aria-describedby={undefined}
                 className={cn(
-                  "fixed z-(--z-dialog) flex flex-col bg-background text-ink outline-none",
+                  /* Same fix as the sort menu above, and this one was worse:
+                     the drawer panel painted `bg-background` over a
+                     `bg-obsidian/60` overlay with NO border of its own (the only
+                     hairline was on the inner header), so the sheet and the page
+                     behind it were the same colour with no boundary at all —
+                     1.00:1. elev-1 plus a leading-edge hairline gives it a floor
+                     and an edge. */
+                  "fixed z-(--z-dialog) flex flex-col border-hairline bg-card text-ink outline-none",
                   // Mobile: a bottom sheet at 85dvh, sliding up (§4.6).
                   "inset-x-0 bottom-0 h-[85dvh] rounded-t-card",
                   "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",

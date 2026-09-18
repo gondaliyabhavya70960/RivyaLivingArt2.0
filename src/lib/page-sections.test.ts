@@ -215,7 +215,16 @@ describe("the arrangement guardrails", () => {
     expect(describeArrangementProblem(sections)).toMatch(/cannot be hidden/);
   });
 
-  it("refuses a fourth dark band", () => {
+  /* D30 retired both band-rhythm rules, and these two tests are kept — inverted
+     — rather than deleted, because a removed test leaves no record that the
+     behaviour was REVERSED rather than lost.
+
+     They used to assert a refusal. They now assert the arrangement is allowed,
+     and the reason is in `describeArrangementProblem`: `[data-theme="navy"]` is
+     a no-op alias, so "two adjacent dark bands" is two bands of the page's own
+     obsidian, and the refusal's advice — "put a light section between them" —
+     named a light ground that D30 removed from the design. */
+  it("allows a fourth dark band, which D30 made meaningless", () => {
     const sections = [
       ...shipped(),
       {
@@ -226,26 +235,25 @@ describe("the arrangement guardrails", () => {
         hideable: true,
       },
     ];
-    const problem = describeArrangementProblem(sections);
-    expect(problem).toMatch(/4 dark bands/);
-    // The refusal has to name them, or the owner has nothing to act on.
-    expect(problem).toMatch(/Hero/);
+    expect(describeArrangementProblem(sections)).toBeNull();
   });
 
-  it("refuses two dark bands sitting edge to edge", () => {
-    const problem = describeArrangementProblem([
-      { key: "a", label: "Hero", dark: true, visible: true, hideable: false },
-      {
-        key: "b",
-        label: "Commission band",
-        dark: true,
-        visible: true,
-        hideable: true,
-      },
-    ]);
-    expect(problem).toMatch(/edge to edge/);
-    expect(problem).toMatch(/Hero/);
-    expect(problem).toMatch(/Commission band/);
+  it("allows two dark bands sitting edge to edge", () => {
+    // The arrangement the old rule called impossible is now the default: on an
+    // obsidian ground every band is this colour, so there is nothing to see at
+    // the seam and nothing the owner could put there instead.
+    expect(
+      describeArrangementProblem([
+        { key: "a", label: "Hero", dark: true, visible: true, hideable: false },
+        {
+          key: "b",
+          label: "Commission band",
+          dark: true,
+          visible: true,
+          hideable: true,
+        },
+      ]),
+    ).toBeNull();
   });
 
   it("counts only the sections that show", () => {
@@ -266,9 +274,11 @@ describe("the arrangement guardrails", () => {
     ).toBeNull();
   });
 
-  it("sees through a hidden light section between two dark ones", () => {
-    // Hiding the light band in the middle is what makes the two dark ones
-    // adjacent — the rule has to read the rendered order, not the stored one.
+  it("no longer cares that hiding a light section makes two dark ones adjacent", () => {
+    // This case was the sharpest version of the old rule: hiding the middle
+    // band is what CREATED the adjacency, so the guard had to read the rendered
+    // order rather than the stored one. That reading was correct and is now
+    // moot — the adjacency it detected has no visual consequence on one ground.
     expect(
       describeArrangementProblem([
         { key: "a", label: "Hero", dark: true, visible: true, hideable: false },
@@ -281,7 +291,7 @@ describe("the arrangement guardrails", () => {
           hideable: true,
         },
       ]),
-    ).toMatch(/edge to edge/);
+    ).toBeNull();
   });
 
   it("allows an empty page rather than throwing on one", () => {
@@ -296,7 +306,7 @@ describe("the arrangement guardrails", () => {
     expect(describeArrangementProblem(allHidden)).toMatch(/cannot lose all/);
   });
 
-  it("still refuses a fourth dark band once the sections list is long", () => {
+  it("does not fire the hide-everything guard just because some are hidden", () => {
     // The "hide everything" guard above must not fire just because SOME
     // sections are hidden — only when NONE are left showing.
     const sections = shipped().map((s) =>

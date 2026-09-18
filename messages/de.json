@@ -1753,19 +1753,6 @@
       "statement": "Die Werkbank wird neu hergerichtet.",
       "support": "Wir öffnen in Kürze wieder.",
       "primary": "Dem Studio auf WhatsApp schreiben"
-    },
-    "thankYou": {
-      "title": "Ihr Briefing liegt auf der Werkbank — Rivya Living Art",
-      "eyebrow": "anfrage {number}",
-      "statement": "Ihr Briefing liegt auf der Werkbank.",
-      "support": "Wir antworten auf WhatsApp, meist innerhalb der Öffnungszeiten (10:00–20:00 IST).",
-      "primary": "WhatsApp öffnen",
-      "secondary": "Zurück zur Kollektion",
-      "nextLabel": "Wie es weitergeht",
-      "next1": "Wir lesen das Briefing und gleichen es mit dem Werkstattplan ab.",
-      "next2": "Wir antworten auf WhatsApp mit Preis und Lieferzeit.",
-      "next3": "Es wird nichts berechnet und nichts verbindlich, bis Sie zustimmen.",
-      "eyebrowNoReference": "anfrage erhalten"
     }
   }
 }

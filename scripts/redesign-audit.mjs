@@ -327,9 +327,18 @@ for (const route of routesArg.split(",")) {
        the rule reported zero on every page and had never once fired. Both
        sides are now normalized to an `r,g,b` triple.
 
-       `--champagne-ink` (#75602f) is deliberately NOT counted: it is the AA
-       companion that exists so champagne-coloured TEXT is legible, and §3.1
-       is a rule about the accent's visual weight, not about that fallback. */
+       `--champagne-ink` USED to be excluded here, on the argument that it was
+       the AA companion (#75602f) that exists so champagne-coloured TEXT stays
+       legible on a light ground, and that §3.1 governs the accent's visual
+       weight rather than that fallback.
+
+       D30 dissolved that distinction: `--champagne-ink: var(--champagne)`,
+       because on obsidian champagne itself is 7.5:1 and needs no darker twin.
+       The two names now resolve to ONE value, so the exclusion cannot be
+       expressed even in principle — and should not be, since an element
+       painting champagne-ink is now painting champagne and does spend the
+       viewport's budget. It is counted, by the same comparison as everything
+       else. Nothing was removed to make that true; the token move did it. */
     const rgb = (hex) => {
       const h = hex.trim().replace("#", "");
       if (h.length !== 6) return null;
@@ -673,14 +682,26 @@ for (const route of routesArg.split(",")) {
   if (audit.majors > 2) {
     report("FAIL", `${audit.majors} section-major (max 2)`);
   }
+  /* D30's three band rules are NOTES now, not failures — the other half of the
+     same reconciliation as `src/lib/page-sections.ts`.
+
+     They counted `[data-theme="navy"]`, which tokens.css declares a NO-OP ALIAS
+     whose every value is identical to `:root`. So on the dark ground these
+     measure how many sections still carry a marker, not how much dark is on the
+     page — and "the last band runs into the obsidian footer" is now true of
+     every page by construction, because the page itself is obsidian.
+
+     Failing CI on them would have made the ground the design chose illegal.
+     They are still COUNTED and still printed, because the marker's distribution
+     is the migration's own progress bar: as sections move onto the `--elev-*`
+     ladder these numbers fall, and a reader can watch that happen. When the
+     last `data-theme="navy"` leaves src/, this block and the measurement above
+     it go together. */
   if (audit.bands > 3) {
-    report("FAIL", `${audit.bands} dark bands (max 3)`);
+    report("NOTE", `${audit.bands} sections still marked data-theme="navy" (inert under D30)`);
   }
   if (audit.adjacent > 0) {
-    report("FAIL", `${audit.adjacent} pair(s) of adjacent dark bands`);
-  }
-  if (audit.darkRunIntoFooter) {
-    report("FAIL", "the page's last band is dark and runs straight into the obsidian footer");
+    report("NOTE", `${audit.adjacent} adjacent pair(s) still marked navy (inert under D30)`);
   }
   if (audit.overflow > 1) {
     report("FAIL", `horizontal overflow ${audit.overflow}px`);

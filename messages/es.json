@@ -1753,19 +1753,6 @@
       "statement": "Estamos preparando el banco de nuevo.",
       "support": "Volveremos a abrir en breve.",
       "primary": "Escribir al estudio por WhatsApp"
-    },
-    "thankYou": {
-      "title": "Tu encargo está en el banco — Rivya Living Art",
-      "eyebrow": "consulta {number}",
-      "statement": "Tu encargo está en el banco.",
-      "support": "Respondemos por WhatsApp, normalmente en horario de taller (10:00–20:00 IST).",
-      "primary": "Abrir WhatsApp",
-      "secondary": "Volver a la colección",
-      "nextLabel": "Qué pasa ahora",
-      "next1": "Leemos tu encargo y lo comparamos con el calendario del taller.",
-      "next2": "Respondemos por WhatsApp con un presupuesto y un plazo.",
-      "next3": "No se cobra nada ni se compromete nada hasta que digas que sí.",
-      "eyebrowNoReference": "consulta recibida"
     }
   }
 }
