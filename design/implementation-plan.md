@@ -87,6 +87,46 @@ What the spec asked for is kept: rotateX 8°, a 50ms stagger, trigger at 85% of
 the viewport, and `--ease-luxury` — which IS `power4.out` (`cubic-bezier(0.16,
 1, 0.3, 1)`), so the house token was already the requested curve.
 
+### S13 shipped — five groups, a pinned row, and one thing already built
+
+**The ⌘K palette was not rebuilt.** `command-palette.tsx` and `topbar.tsx`
+already surface it. The row asked for it because the plan was written against
+an older tree; building it again would have replaced a working surface with a
+second copy.
+
+**Five groups from six.** "site content" dropped a qualifier that did no work —
+nothing in this Studio is content that is not the site's — and "research"
+folded into "catalogue". That fold is not tidying: the Product Scraper,
+Research and Content Gaps all exist to decide what goes INTO the catalogue, and
+they now sit after the surfaces that fill it, in the order a row travels. The
+test gained a second assertion that every folded href survived, because a
+regroup that silently drops a surface looks exactly like a regroup that did
+not.
+
+**The pinned row is browser storage, not a column.** A pin is one person's
+shortcut on one machine: no visitor sees it, nothing reads it back, and a
+table would mean a production migration on push for a preference that is
+already wrong when two people share an ADMIN login. `src/lib/studio-pins.ts`
+holds it, reads and writes wrapped because a private window makes the accessor
+throw, with a module-level store so the fixed sidebar and the mobile drawer —
+both mounted at once — stay in step without an effect.
+
+Two details worth keeping:
+
+- **It filters the nav rather than mapping the stored list.** Storage outlives
+  a rename, so a mapped list would render a dead link forever. A pinned href
+  the nav no longer has simply drops out, and the row keeps the sidebar's own
+  order so it reads as a shortcut into the nav below rather than a second,
+  differently-sorted one. `pinnedItemsOf` is pure and tested.
+- **`focus:` sets the opacity; `focus-visible:` sets the ring.**
+  `:focus-visible` decides whether to DRAW a ring — it should not decide
+  whether a focused control can be SEEN, and it does not match a programmatic
+  `.focus()`, so a script restoring focus would land on an invisible button.
+
+`studio-audit.mjs` clean across 40 routes at 1440 and 390, and the pin was
+driven by real keyboard Tab in a browser: the button takes focus, reaches
+opacity 1, and the pin survives a reload.
+
 **Performance & accessibility budgets (every page, no exceptions):** LCP < 2.5s · INP < 200ms · CLS < 0.1 · hero media ≤ 6MB · one `priority` image per page (the hero) · every animation behind `prefers-reduced-motion` with a stated resting frame · `save-data` → no video · Lighthouse ≥ 90 mobile · axe-core clean.
 
 ---
@@ -203,7 +243,7 @@ Index = editorial list + cursor-preview covers; featured = 70vh cover + oversize
 | S10 | **Editorial** (Journal · Portfolio · Testimonials · FAQs) | No redesign — add per-list empty states + publish guards (portfolio needs cover; testimonial needs permission — exists) | — | S |
 | S11 | **Research** (Scraper · Research · Content Gaps) | Collapse into one weekly-tool nav group, hidden from first screen; review inbox defaults: suggested tier + has image + not marketplace; "Add to catalog" always lands draft + needs-rewrite + hidden (existing rule — keep) | — | M |
 | S12 | **Settings / SEO / Users / Subscribers / Content Lab / Activity** | Keep; add Instagram/socials wiring check so the footer icon actually renders (audit §2.3) | — | S |
-| S13 | **Studio shell** | Sidebar → **Today · Catalogue · Content · Editorial · Settings** (~18 items) + pin/favorites row; ⌘K palette surfaced in topbar (`cmdk` — installed); no new tokens | cmdk | M |
+| S13 | **Studio shell** | Sidebar → **Today · Catalogue · Content · Editorial · Settings** + pin/favorites row. The ⌘K palette was ALREADY in the topbar and was not rebuilt | — (code) | **DONE ✅ 2026-09-18** |
 
 ---
 

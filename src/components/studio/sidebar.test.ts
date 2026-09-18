@@ -93,16 +93,41 @@ describe("studio sidebar", () => {
     // under `catalog`, the scraper's analysis screens under `growth`, and
     // Process Steps and Materials in a two-item group whose own comment said
     // they belonged with Page Sections.
-    const headings = [...source.matchAll(/heading:\s*"([^"]+)"/g)].map(
+    //
+    // Five since 2026-09-18 (S13): "site content" dropped its qualifier, and
+    // "research" folded into "catalogue" because all three of its surfaces
+    // exist to decide what goes INTO the catalogue.
+    //
+    // Scoped to the SECTIONS literal, not the whole file. `StudioNav` builds a
+    // sixth group at render time — `{ heading: "pinned" }`, from browser
+    // storage — and a bare file-wide match picked that up too. What this test
+    // is for is the REGISTRY's shape; a group that exists only when a person
+    // has pinned something is not part of it.
+    const registry = source.slice(
+      source.indexOf("export const SECTIONS"),
+      source.indexOf("export function StudioNav"),
+    );
+    const headings = [...registry.matchAll(/heading:\s*"([^"]+)"/g)].map(
       (m) => m[1],
     );
     expect(headings).toEqual([
       "today",
       "catalogue",
-      "site content",
+      "content",
       "editorial",
-      "research",
       "settings",
     ]);
+  });
+
+  it("keeps every route that the folded research group held", () => {
+    // Folding a group must move its items, never drop them. This is the check
+    // that a regroup did not quietly delete a surface.
+    for (const href of [
+      "/studio/scraper",
+      "/studio/research",
+      "/studio/content-gaps",
+    ]) {
+      expect(source).toContain(`href: "${href}"`);
+    }
   });
 });
