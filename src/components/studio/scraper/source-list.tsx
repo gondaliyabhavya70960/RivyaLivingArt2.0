@@ -62,7 +62,8 @@ import {
   type SourceHealth,
 } from "@/lib/scraper/health";
 import {
-  SCRAPE_TIERS,
+  scrapeTierChips,
+  scrapeTierOptions,
   SCRAPE_TIER_SHORT,
   scrapeTierStudioLabel,
 } from "@/lib/scraper/purge";
@@ -141,15 +142,26 @@ function HealthBadge({
 export type TierCounts = { all: number } & Record<ScrapeTier, number>;
 
 /**
- * Tab order: the owner's size tiers first, then the retired provenance ones.
- * The old four stay visible because rows in the database still carry them —
- * hiding a tab would hide those sources rather than retire them. The words
- * on the tabs, the select and the row line come from `purge.ts`
+ * Source tiers on this screen come from `purge.ts`, and the two call sites
+ * ask it DIFFERENT questions.
+ *
+ * The tab row asks `scrapeTierChips(counts)`: the four current tiers, plus any
+ * retired provenance tier that still HOLDS rows. Those four used to be
+ * unconditional, under a note saying that hiding a tab would hide the sources
+ * behind it rather than retire them. The concern is right; the count answers
+ * it as a fact instead of by keeping four dead tabs on every screen — the tab
+ * goes with the last SUPPLIES source and returns the moment one is filed
+ * again.
+ *
+ * The add form asks `scrapeTierOptions()`: the four current tiers only.
+ * Filing something NEW under a retired value is precisely the thing being
+ * retired, and a picker is where that happens.
+ *
+ * The words on the tabs, the select and the row line come from `purge.ts`
  * (`scrapeTierStudioLabel`, `SCRAPE_TIER_SHORT`); this file carried its own
  * copy once, and that copy is how a supplier list came to read "Tier 1 —
  * Large" beside a product tier that reads "Tier 1 — Collectible …".
  */
-const TIER_ORDER: ScrapeTier[] = [...SCRAPE_TIERS];
 
 const PLATFORM_BADGE: Record<
   ScrapePlatform,
@@ -383,7 +395,7 @@ function AddSourceBody({
                 <SelectValue placeholder="Source tier" />
               </SelectTrigger>
               <SelectContent>
-                {TIER_ORDER.map((t) => (
+                {scrapeTierOptions().map((t) => (
                   <SelectItem key={t} value={t}>
                     {scrapeTierStudioLabel(t)}
                   </SelectItem>
@@ -724,7 +736,7 @@ export function SourceList({
           count={counts.all}
           onClick={() => setTierParam("ALL")}
         />
-        {TIER_ORDER.map((tier) => (
+        {scrapeTierChips(counts).map((tier) => (
           <TierChip
             key={tier}
             active={activeTier === tier}

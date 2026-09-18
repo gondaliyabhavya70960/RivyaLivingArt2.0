@@ -73,7 +73,7 @@ import {
   sizeTierStudioLabel,
 } from "@/lib/product-size-tier";
 import { MOVE_BATCH, chunk } from "@/lib/scraper/inbox-batch";
-import { SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
+import { OFFERED_SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
 import { useSelection } from "@/hooks/use-selection";
 
 const STATE_BADGE: Record<
@@ -995,7 +995,10 @@ export function ShortlistInbox({
             {/* "Tier 1 sources — …": the qualifier is what tells this list
                 of options from the product-tier filter's, next to it, whose
                 options read "Tier 1 — …" for the same three names. */}
-            {SCRAPE_TIERS.map((tier) => (
+            {/* The offered tiers only. A staged row from a retired-tier
+                source still appears under "All source tiers" — it is the
+                filter that is unlisted, not the rows. */}
+            {OFFERED_SCRAPE_TIERS.map((tier) => (
               <SelectItem key={tier} value={tier}>
                 {scrapeTierStudioLabel(tier, "sources")}
               </SelectItem>

@@ -204,25 +204,22 @@ export const SEED_SOURCES: SeedSource[] = [
       "NO scrapeable catalog (verified: enquiry-only). Do NOT scrape; her category lines are covered by the Phase 11 category structure.",
   },
 
-  // The owner's PREVIOUS storefront, registered on the owner's 2026-09-16
-  // instruction ("put his website in the scraper and in the competitor list").
-  // It answered HTTP 402 — a frozen store — to every probe that day, so there
-  // is nothing to collect until it is back; its rows survive as
-  // data/tiers/Tier1_Owner.csv.gz, which /studio/catalog-fill can re-import.
-  {
-    key: "rivya-previous-store",
-    name: "Rivya — previous store (store.bhavyagondaliya.co.in)",
-    baseUrl: "https://store.bhavyagondaliya.co.in",
-    tier: "OWNER",
-    vertical: "resin",
-    country: "IN",
-    platform: "UNKNOWN",
-    supply: false,
-    enabled: false,
-    collectionMode: "MANUAL_RESEARCH",
-    notes:
-      "The owner's previous storefront. Answered HTTP 402 (a frozen store) on 2026-09-16 — nothing to collect until it is back. Its catalogue survives as data/tiers/Tier1_Owner.csv.gz.",
-  },
+  // The owner's PREVIOUS storefront is NOT registered here, and its removal on
+  // 2026-09-18 is the owner's instruction, not a cleanup: every reference to
+  // `store.bhavyagondaliya.co.in` comes out of live code. It had been listed
+  // since 2026-09-16 under an earlier instruction ("put his website in the
+  // scraper and in the competitor list"), disabled and MANUAL_RESEARCH, and it
+  // answered HTTP 402 — a frozen store — to every probe that day, so it never
+  // collected anything.
+  //
+  // Nothing is lost with it. That catalogue is `data/tiers/Tier1_Owner.csv.gz`,
+  // committed, and /studio/catalog-fill imports it — which is also why the
+  // string "sheet:*" and `Product.tier === 1` still mean "the owner's previous
+  // store" everywhere they appear. Those are stored data and did not move.
+  //
+  // `applySeedSources` only ever UPSERTS, so dropping the entry here does not
+  // delete a row an environment already has; it stops being re-seeded. Removing
+  // the row itself is the operator's call on /studio/scraper/sources.
 
   // ————————— Source tier LARGE_FORMAT — "Tier 1 sources — Collectible Furniture & Spatial Art" —————————
   // The owner's own reference set, 2026-09-15. Registered, NOT approved:
@@ -343,6 +340,33 @@ export const SEED_SOURCES: SeedSource[] = [
       "Competitor: engagement trays, ring platters, wedding preservation. Verified 2026-09-16: no catalogue API (Store API 403) but product JSON-LD on every page and a product sitemap; 148 products in a capped run.",
   },
 
+  {
+    key: "varmala-preservation",
+    name: "Varmala Preservation",
+    baseUrl: "https://varmalapreservation.com",
+    tier: "MEDIUM_FORMAT",
+    vertical: "resin",
+    country: "IN",
+    platform: "WOOCOMMERCE",
+    supply: false,
+    enabled: false,
+    notes:
+      "Comparator: a Jaipur studio dedicated to varmala and wedding-flower preservation — frames, planters, LED globes, ₹2,499–₹10,999. The deepest Tier 2 catalogue found. Verified 2026-09-18: WooCommerce Store API answers, 643 products, robots.txt allows /wp-json/wc/store/v1/products.",
+  },
+  {
+    key: "canvas-by-priya",
+    name: "Canvas by Priya",
+    baseUrl: "https://canvasbypriya.in",
+    tier: "MEDIUM_FORMAT",
+    vertical: "resin",
+    country: "IN",
+    platform: "WOOCOMMERCE",
+    supply: false,
+    enabled: false,
+    notes:
+      "Comparator: wedding-card and bangle preservation, baby-cord keepsakes, geode wall clocks. Verified 2026-09-18: WooCommerce Store API, 204 products, robots.txt allows the Store API. Filed MEDIUM_FORMAT for its centre of gravity, but it CROSS-FILES — the same catalogue carries ₹16,999–₹24,999 epoxy river tables, which are LARGE_FORMAT pieces. Source tier is where we went looking; the review inbox's suggested product tier is what files each row.",
+  },
+
   // ————————— Source tier SMALL_FORMAT — "Tier 3 sources — Personal Art & Gifting" —————————
   {
     key: "dinosaur-designs",
@@ -369,6 +393,45 @@ export const SEED_SOURCES: SeedSource[] = [
     enabled: false,
     notes:
       "Competitor: rakhi, jewellery, coasters, broad small-product taxonomy. Verified 2026-09-16: WooCommerce Store API, 31 products (pooja thalis, trays, candles).",
+  },
+  {
+    key: "leafy-affair",
+    name: "Leafy Affair",
+    baseUrl: "https://leafyaffair.com",
+    tier: "SMALL_FORMAT",
+    vertical: "resin",
+    country: "IN",
+    platform: "SHOPIFY",
+    supply: false,
+    enabled: false,
+    notes:
+      "Comparator: preserved real flowers, ferns and dandelion seed set in resin as necklaces, earrings, rings, bookmarks and rakhis — the Tier 3 vocabulary almost item for item. Verified 2026-09-18: Shopify catalogue API, 223 products on the first page, robots.txt allows /products.json.",
+  },
+  {
+    key: "bling-on",
+    name: "Bling On",
+    baseUrl: "https://blingon.co.in",
+    tier: "SMALL_FORMAT",
+    vertical: "resin",
+    country: "IN",
+    platform: "WOOCOMMERCE",
+    supply: false,
+    enabled: false,
+    notes:
+      "Comparator: the widest Tier 3 assortment found — dried-flower resin earrings, bookmarks and paper clips, pendants, brooches, coaster sets, trinket trays, ₹220–₹1,999. Verified 2026-09-18: WooCommerce Store API, 639 products, robots.txt allows the Store API.",
+  },
+  {
+    key: "sixtin",
+    name: "Sixtin",
+    baseUrl: "https://www.sixtin.in",
+    tier: "SMALL_FORMAT",
+    vertical: "resin",
+    country: "IN",
+    platform: "WOOCOMMERCE",
+    supply: false,
+    enabled: false,
+    notes:
+      "Comparator: the low-price end of Tier 3 — resin jhumkas, studs and pendants from ₹160, a Delhi maker with a published workshop address. Verified 2026-09-18: WooCommerce Store API, 85 products, robots.txt allows the Store API.",
   },
 ];
 

@@ -13,12 +13,17 @@ import {
   sizeTierStudioLabel,
 } from "@/lib/product-size-tier";
 import {
+  OFFERED_SCRAPE_TIERS,
+  RETIRED_SCRAPE_TIERS,
   SCRAPE_TIERS,
   SCRAPE_TIER_SHORT,
   TIER_LABEL,
   TIER_NUMBER,
   describePurgePlan,
   isEmptyPurge,
+  isRetiredScrapeTier,
+  scrapeTierChips,
+  scrapeTierOptions,
   scrapeTierStudioLabel,
   sizeTierNamedBy,
   tierNumbersFor,
@@ -326,5 +331,69 @@ describe("tierNumbersFor", () => {
 
   it("collapses duplicates", () => {
     expect(tierNumbersFor(["OWNER", "OWNER"])).toEqual([1]);
+  });
+});
+
+describe("the offered / retired split", () => {
+  it("partitions SCRAPE_TIERS exactly — no value in both, none in neither", () => {
+    // The failure this catches: a new enum value added to `SCRAPE_TIERS` and
+    // to neither list. It would validate, it would save, and it would appear
+    // in no picker on any screen — unofferable, which is the same silent hole
+    // the `SCRAPE_TIERS` tuple itself was introduced to close.
+    const offered = new Set<string>(OFFERED_SCRAPE_TIERS);
+    const retired = new Set<string>(RETIRED_SCRAPE_TIERS);
+    expect(offered.size + retired.size).toBe(SCRAPE_TIERS.length);
+    for (const tier of SCRAPE_TIERS) {
+      expect(offered.has(tier) !== retired.has(tier)).toBe(true);
+    }
+  });
+
+  it("keeps OWNER offered, though it is not a size tier either", () => {
+    // `RETIRED` above is "every tier that names no size", which includes
+    // OWNER. `RETIRED_SCRAPE_TIERS` is a different set and deliberately does
+    // not: the owner's own store is still somewhere a source gets filed. Two
+    // similar names, two meanings — pinned so neither drifts onto the other.
+    expect(RETIRED).toContain("OWNER");
+    expect(isRetiredScrapeTier("OWNER")).toBe(false);
+    expect(OFFERED_SCRAPE_TIERS).toContain("OWNER");
+  });
+
+  it("never drops a retired value from SCRAPE_TIERS itself", () => {
+    // The zod schemas in the actions are built from this tuple. Narrowing it
+    // would make an existing RESIN_GOODS row unsaveable and unpurgeable — the
+    // Studio refusing a value its own database holds.
+    for (const tier of RETIRED_SCRAPE_TIERS) {
+      expect(SCRAPE_TIERS).toContain(tier);
+    }
+  });
+
+  it("offers four options for a new source and never a retired one", () => {
+    expect(scrapeTierOptions()).toEqual([
+      "LARGE_FORMAT",
+      "MEDIUM_FORMAT",
+      "SMALL_FORMAT",
+      "OWNER",
+    ]);
+  });
+
+  it("adds the row's own retired value when editing, so a Select has its value", () => {
+    // Without this the edit form renders a placeholder and the first save
+    // silently retypes the source to whatever the operator picks.
+    expect(scrapeTierOptions("SUPPLIES")).toContain("SUPPLIES");
+    expect(scrapeTierOptions("SUPPLIES")).not.toContain("PRINT3D");
+    // Order stays SCRAPE_TIERS order, not "current first".
+    expect(scrapeTierOptions("SUPPLIES").at(-1)).toBe("SUPPLIES");
+  });
+
+  it("shows a retired tab only while it still holds rows", () => {
+    const empty = scrapeTierChips({ LARGE_FORMAT: 5, RESIN_GOODS: 0 });
+    expect(empty).not.toContain("RESIN_GOODS");
+    expect(empty).toEqual(OFFERED_SCRAPE_TIERS);
+
+    const held = scrapeTierChips({ RESIN_GOODS: 3 });
+    expect(held).toContain("RESIN_GOODS");
+    // Hiding the tab would hide the three sources behind it rather than
+    // retire them — which is why the rule is a count and not a list.
+    expect(held).not.toContain("SUPPLIES");
   });
 });

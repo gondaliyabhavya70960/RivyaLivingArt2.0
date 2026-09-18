@@ -22,8 +22,12 @@ describe("normalizeSiteUrl", () => {
     expect(normalizeSiteUrl("www.rivyalivingart.com")).toBe(
       "https://www.rivyalivingart.com",
     );
-    expect(normalizeSiteUrl("store.bhavyagondaliya.co.in")).toBe(
-      "https://store.bhavyagondaliya.co.in",
+    // A subdomain host, to cover the case where the dashboard value has more
+    // than two labels. It used to be the owner's previous store; that domain
+    // is out of this repo entirely (2026-09-18), and a test fixture is still
+    // a reference.
+    expect(normalizeSiteUrl("shop.example.co.in")).toBe(
+      "https://shop.example.co.in",
     );
   });
 

@@ -62,6 +62,82 @@ export const SCRAPE_TIERS = [
 ] as const satisfies readonly ScrapeTier[];
 
 /**
+ * The source tiers the Studio OFFERS when something is being FILED — the add-
+ * source form, the batch-scrape buttons, the inbox's source-tier filter.
+ *
+ * `SCRAPE_TIERS` stays whole and is still what the zod schemas validate
+ * against, because these two lists answer different questions. OFFER is "where
+ * may a new source go"; the full tuple is "what may a row legally hold". A
+ * source filed under SUPPLIES in 2026 still has to load, save and be purgeable
+ * today, and narrowing the schema would make an existing row unsaveable — the
+ * Studio would refuse a value its own database is holding.
+ *
+ * Nothing is dropped from the enum. Removing an enum value is a destructive
+ * migration, it reaches production on push, and it buys nothing: the cost of
+ * a retired value is that it appears in pickers, and that is what this list
+ * fixes.
+ */
+export const OFFERED_SCRAPE_TIERS = [
+  "LARGE_FORMAT",
+  "MEDIUM_FORMAT",
+  "SMALL_FORMAT",
+  "OWNER",
+] as const satisfies readonly ScrapeTier[];
+
+/**
+ * The provenance values kept only so existing rows read, save and purge.
+ *
+ * `purge.test.ts` pins that these two lists partition `SCRAPE_TIERS` exactly —
+ * a new enum value that lands in neither would be silently unofferable, which
+ * is the same failure the `SCRAPE_TIERS` tuple was introduced to stop.
+ */
+export const RETIRED_SCRAPE_TIERS = [
+  "RESIN_GOODS",
+  "SUPPLIES",
+  "PRINT3D",
+] as const satisfies readonly ScrapeTier[];
+
+/** True for a value kept for compatibility rather than offered. */
+export function isRetiredScrapeTier(tier: ScrapeTier): boolean {
+  return (RETIRED_SCRAPE_TIERS as readonly ScrapeTier[]).includes(tier);
+}
+
+/**
+ * The options a tier picker should show: the offered four, plus `current` when
+ * the row being edited already carries a retired value.
+ *
+ * That second clause is the whole reason this is a function. A bare
+ * `OFFERED_SCRAPE_TIERS` in an edit form renders a `Select` whose value is not
+ * among its items — Radix shows the placeholder, and the first save silently
+ * retypes the source to whatever the operator picks. Showing the row's own
+ * value keeps the edit honest: it can be moved off a retired tier, never onto
+ * one it was not already on.
+ */
+export function scrapeTierOptions(current?: ScrapeTier | null): ScrapeTier[] {
+  return SCRAPE_TIERS.filter(
+    (tier) => !isRetiredScrapeTier(tier) || tier === current,
+  );
+}
+
+/**
+ * The tier chips/tabs a registry list should show: the offered four, plus any
+ * retired tier that still HOLDS rows.
+ *
+ * A fact check, not a hardcoded list — the tab disappears when the last
+ * SUPPLIES source is purged and comes back if one is ever filed again, so the
+ * retirement never hides a row from the person who has to deal with it. That
+ * concern is why these tabs were all unconditional before, and the count is
+ * what answers it without leaving four dead tabs on every screen.
+ */
+export function scrapeTierChips(
+  counts: Partial<Record<ScrapeTier, number>>,
+): ScrapeTier[] {
+  return SCRAPE_TIERS.filter(
+    (tier) => !isRetiredScrapeTier(tier) || (counts[tier] ?? 0) > 0,
+  );
+}
+
+/**
  * A source tier's matching `Product.tier` — its import list — or null when it
  * has none.
  *

@@ -28,13 +28,64 @@ Build these once; every page below consumes them.
 
 | # | Item | Spec | Packages | Effort |
 |---|---|---|---|---|
-| F1 | **Icon set** | 6 custom duotone SVGs (1.5px stroke + champagne fill accent): `pour` · `gild` · `cure` · `polish` · `preserve` · `print`. Self-drawing on first scroll-in (`stroke-dashoffset`, 600ms). Live in `src/components/icons/` beside the Lucide set. Hand-authored SVG — no library | — (code) | M 🎬 |
+| F1 | **Icon set** | ~~6 custom duotone SVGs … beside the Lucide set~~ | — | **CLOSED ❌ 2026-09-18 — see below** |
 | F2 | **Vector motifs** | `meniscus-line.svg` (3 stroke weights) — draws under section eyebrows; `flow-contours.svg` — 3–5 topographic curves at 8% opacity behind dark bands, 2% scroll drift. Hand-authored SVG | — (code) | S 🎬 |
 | F3 | **Grain** | Already shipped as inline SVG (`sf-grain` in globals.css) — keep opacity ≤ 2–6% per surface | — | — ✅ |
 | F4 | **Italic-accent utility** | `@utility u-accent { font-style: italic; }` scoped to display font; once per headline max (Instrument Serif italic). Never in non-Latin locales — gate via `locale` check | tailwindcss v4 | S |
-| F5 | **Kinetic heading helper** | Re-register `SplitText` in `src/lib/gsap.ts` (GSAP ≥3.13 ships it free — repo has 3.15, zero added weight beyond the plugin itself); `KineticHeading` client component: word-split rise + rotateX 8°, stagger 0.05s, `power4.out`, trigger 85%. Guards identical to `SmoothScrollProvider` | gsap | M |
+| F5 | **Kinetic heading helper** | `KineticHeading` — word-split rise + rotateX 8°, 50ms stagger, `--ease-luxury`, trigger 85%. **Built WITHOUT `SplitText`** (see below): words are split in the component, motion is a CSS keyframe, the trigger is one IntersectionObserver | — (code) | **DONE ✅ 2026-09-18** |
 | F6 | **CTA restyle** | Retire teal everywhere (`variant="whatsapp"` → champagne-on-dark / ink-on-light per audit §2.4); one hover sweep (background scaleX 0→1 from left, 300ms); magnetic pull on desktop pills (guard pattern in `featured-rail.tsx`) | tailwindcss · gsap (magnetic) | M |
 | F7 | **Copy/i18n rule** | Every new string lands in `messages/en.json` + the other 8 locale files (English fallback acceptable interim) → `npm run copy:registry` → CI gate `copy:check` | next-intl | per-page |
+
+### F1 is closed — §3.7 wins, and it takes three downstream rows with it
+
+REDESIGN.md §3.7, verbatim: *"One family: **Lucide**, stroke `1.5px`, 24px box.
+**Never mix icon sets.**"* F1 asks for six hand-authored duotone SVGs living
+"beside the Lucide set", which is mixing icon sets by definition. Part 0 says
+REDESIGN.md wins all conflicts, so F1 cannot be built as specified.
+
+Two independent reasons say the same thing, so this is not a single-clause call:
+
+1. **Its motion is off-token.** "Self-drawing … 600ms" is not one of Part 3.8's
+   four durations (180 · 350 · 800 · 900). A compliant F1 would have to change
+   its own animation spec before it could ship.
+2. **The second half of §3.7 kills the demand, not just the supply:**
+   *"**Never** an icon per benefit — the 'Why Rivya Living Art' and 'What we
+   hold to' blocks use mono numerals and photography instead."* Every surface
+   that wanted these icons is a benefit list.
+
+**What that closes downstream**, each already built the way §3.7 asks:
+
+| Row | Wanted | Ships instead |
+|---|---|---|
+| 2.6 About value icons | 4 animated value icons | mono numerals (`about/page.tsx`) — §3.7's own named example |
+| 2.9 Contact 2×2 cards | animated-icon cards | hairline cards, no icon per benefit |
+| 2.3 PDP trust chips | icon trust chips | hairline-bordered mono chips above the CTA (`product/[slug]/page.tsx:815`) — §9.2 keeps the CTA area quiet |
+
+The one place a bespoke mark is still open is **F2's `flow-contours`**, which is
+a background motif rather than an icon: §3.7 governs the icon *system*, and a
+topographic texture behind a dark band is not something a visitor reads as an
+action. F2 is unaffected by this closure.
+
+### F5 shipped without SplitText — the budget made the better design
+
+The recorded blocker was weight: `SplitText` is ~3.6 KB gzipped against ~600
+bytes of headroom under the 49 KB motion ceiling. The resolution is not a
+smaller plugin but no plugin: **a word-split rise does not need a JavaScript
+animation runtime.**
+
+`src/components/motion/kinetic-heading.tsx` splits the text into words and
+renders each in a span carrying its index as `--i`; `globals.css` holds the
+keyframe; one `IntersectionObserver` at `threshold: 0.15` adds the class that
+starts it. No GSAP, no ScrollTrigger, no scroll-linked timeline.
+
+**It costs ZERO measured bytes**, and that is a fact about the gate rather than
+a rounding claim. `scripts/motion-budget.mjs`: *"Only the chunks that CONTAIN a
+motion library, never the component chunks that import one."* A component whose
+only imports are React and the DOM never lands in a counted chunk.
+
+What the spec asked for is kept: rotateX 8°, a 50ms stagger, trigger at 85% of
+the viewport, and `--ease-luxury` — which IS `power4.out` (`cubic-bezier(0.16,
+1, 0.3, 1)`), so the house token was already the requested curve.
 
 **Performance & accessibility budgets (every page, no exceptions):** LCP < 2.5s · INP < 200ms · CLS < 0.1 · hero media ≤ 6MB · one `priority` image per page (the hero) · every animation behind `prefers-reduced-motion` with a stated resting frame · `save-data` → no video · Lighthouse ≥ 90 mobile · axe-core clean.
 

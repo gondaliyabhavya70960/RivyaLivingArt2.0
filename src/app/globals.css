@@ -507,6 +507,39 @@
     }
   }
 
+  /* F5 — the kinetic heading (`components/motion/kinetic-heading.tsx`). One
+     span per word, `--i` set inline, rising from an 8° x-axis tilt.
+
+     `perspective()` sits INSIDE the transform list rather than on the
+     heading, so each word gets its own vanishing point and the heading's own
+     layout box is never given a 3D context — a `perspective` on the parent
+     would make every descendant a containing block for fixed positioning.
+
+     The rise is `0.4em`, not px: this class lands on `text-h1`, which is a
+     clamped scale, and a fixed distance would read as a different gesture at
+     360px than at 1440px. Part 3 forbids inventing a step; deriving from the
+     element's own size invents nothing.
+
+     No scroll trigger — see the component's header. Its only mount is above
+     the fold, where an observer cannot fire, and CSS scroll-linked timelines
+     are a Part 14 failure that `redesign-audit.mjs` gates on. */
+  .sf-word-rise {
+    display: inline-block;
+    transform-origin: 50% 100%;
+    animation: sf-word-rise var(--dur-reveal) var(--ease-luxury) both;
+    animation-delay: calc(var(--i, 0) * 50ms);
+  }
+  @keyframes sf-word-rise {
+    from {
+      opacity: 0;
+      transform: perspective(600px) rotateX(8deg) translateY(0.4em);
+    }
+    to {
+      opacity: 1;
+      transform: perspective(600px) rotateX(0deg) translateY(0);
+    }
+  }
+
   /* Hero media drift — an AMBIENT loop on the wrapper AROUND the poster
      `<Image>`, never the `<img>` itself (hero-media.tsx), so the LCP
      element's own box is never transformed. Turned off once the ambient
