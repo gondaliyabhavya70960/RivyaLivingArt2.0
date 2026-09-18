@@ -30,6 +30,7 @@ import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { WhatsAppReplyButton } from "@/components/studio/inquiries/whatsapp-reply-button";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyInquiriesArt } from "@/components/icons/empty-art";
 import { Pagination } from "@/components/studio/pagination";
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import { useColumnVisibility } from "@/hooks/use-column-visibility";
@@ -296,6 +297,7 @@ export function InquiryList({
 
       {inquiries.length === 0 ? (
         <EmptyState
+          art={EmptyInquiriesArt}
           title="No inquiries found"
           description="Try clearing the filters — WhatsApp orders sent from the public site will appear here."
         />
@@ -530,7 +532,10 @@ export function InquiryList({
                           className="inline-flex min-h-11 items-center rounded-input px-2 text-small font-medium text-sapphire-ink underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-focus"
                         >
                           View
-                          <span className="sr-only"> {inquiry.customerName}</span>
+                          <span className="sr-only">
+                            {" "}
+                            {inquiry.customerName}
+                          </span>
                         </Link>
                       </span>
                     </td>

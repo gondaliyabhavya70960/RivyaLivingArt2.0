@@ -29,6 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyScraperArt } from "@/components/icons/empty-art";
 import {
   Pagination,
   PAGE_SIZE,
@@ -49,7 +50,10 @@ import {
 } from "@/components/ui/select";
 import { useSelection } from "@/hooks/use-selection";
 import { useScrapeRunner } from "@/hooks/use-scrape-runner";
-import { OFFERED_SCRAPE_TIERS, scrapeTierStudioLabel } from "@/lib/scraper/purge";
+import {
+  OFFERED_SCRAPE_TIERS,
+  scrapeTierStudioLabel,
+} from "@/lib/scraper/purge";
 
 export type JobRow = {
   id: string;
@@ -400,6 +404,7 @@ export function JobDashboard({
       <h2 className="font-display text-lg text-foreground">Recent jobs</h2>
       {jobs.length === 0 ? (
         <EmptyState
+          art={EmptyScraperArt}
           title="No scrape jobs yet"
           description="Paste a store URL above or queue a source-tier batch — every run lands its products in the review queue."
         />

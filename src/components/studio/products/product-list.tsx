@@ -51,6 +51,7 @@ import { ApproveProductsDialog } from "@/components/studio/products/approve-dial
 import { describeApproval } from "@/lib/product-approve";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyProductsArt } from "@/components/icons/empty-art";
 import { Pagination, PAGE_SIZE } from "@/components/studio/pagination";
 import { SortHead, useSort } from "@/components/studio/sort-header";
 import type { ColumnDef } from "@/lib/column-visibility";
@@ -631,7 +632,9 @@ export function ProductList({
             <SelectItem value="none">No image at all</SelectItem>
             {/* "Has", not "cover is" — and the label says so, because the
                 filter cannot ask the database which image sorts first. */}
-            <SelectItem value="placeholder">Has a concept placeholder</SelectItem>
+            <SelectItem value="placeholder">
+              Has a concept placeholder
+            </SelectItem>
           </SelectContent>
         </Select>
 
@@ -689,6 +692,7 @@ export function ProductList({
 
       {products.length === 0 ? (
         <EmptyState
+          art={EmptyProductsArt}
           title="No products found"
           description="Try clearing the filters, or add your first product to start building the catalog."
         />

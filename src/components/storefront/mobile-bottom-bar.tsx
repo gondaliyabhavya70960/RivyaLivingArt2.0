@@ -88,10 +88,23 @@ export function MobileBottomBar({ waHref }: { waHref: string }) {
               target="_blank"
               rel="noopener noreferrer"
               data-wa-source="bottom-bar"
-              className={cn(item, "text-whatsapp-deep")}
+              /* D30 · `--whatsapp-deep` is a FILL value. Its whole reason for
+                 existing is that white on the brand green (#128C7E) is 4.14:1,
+                 short of AA for a button label — so it is the darker green a
+                 white label sits ON. Used as TEXT on the obsidian ground this
+                 bar now has, it measures 3.80:1, under the 4.5 floor for an
+                 11px micro label. `axe` caught it at 390px and only at 390px,
+                 because this bar is `lg:hidden`.
+ 
+                 The brand green itself is the right ink here: 4.79:1 on
+                 obsidian, and Part 3.1 already assigns `--whatsapp` to "icons,
+                 rules and the block accent" — which is exactly what an icon
+                 and an 11px label are. Nothing new was introduced, and the
+                 fill pair is untouched wherever a real button uses it. */
+              className={cn(item, "text-whatsapp")}
             >
               <MessageCircle aria-hidden strokeWidth={1.5} className="size-5" />
-              <span className="u-micro leading-none text-whatsapp-deep">
+              <span className="u-micro leading-none text-whatsapp">
                 {t("whatsapp")}
               </span>
               <span className="sr-only">{tCommon("openInNewTab")}</span>

@@ -1715,5 +1715,57 @@
       "orderSummaryNote": "Commande rapide — le prix et l'expédition sont confirmés sur WhatsApp.",
       "orderWaIntro": "Bonjour Rivya Living Art,\nJe souhaite commander :"
     }
+  },
+  "SystemPages": {
+    "waysOut": "Sorties",
+    "whatsapp": "WhatsApp",
+    "home": "Accueil",
+    "shop": "Boutique",
+    "referenceLabel": "Référence",
+    "forbidden": {
+      "title": "Réservé à l'équipe — Rivya Living Art",
+      "eyebrow": "403 · réservé à l'équipe",
+      "statement": "Cet établi est fermé.",
+      "support": "Le studio est réservé à la propriétaire et à l'équipe.",
+      "primary": "Se connecter au studio",
+      "secondary": "Retour à la boutique"
+    },
+    "gone": {
+      "title": "Pièce retirée — Rivya Living Art",
+      "eyebrow": "410 · pièce retirée",
+      "statement": "Cette pièce a quitté l'atelier.",
+      "support": "Elle n'est plus proposée. La collection à laquelle elle appartenait est toujours là.",
+      "primary": "Voir la collection",
+      "secondary": "Commander une pièce semblable"
+    },
+    "tooMany": {
+      "title": "Trop de requêtes — Rivya Living Art",
+      "eyebrow": "429 · trop de tentatives",
+      "statement": "Laissez un instant à l'établi.",
+      "support": "Trop de requêtes depuis cet appareil.",
+      "countdownLabel": "Vous pourrez réessayer dans",
+      "countdownReady": "Vous pouvez réessayer maintenant.",
+      "secondary": "Écrire à l'atelier sur WhatsApp"
+    },
+    "maintenance": {
+      "title": "De retour bientôt — Rivya Living Art",
+      "eyebrow": "atelier fermé",
+      "statement": "L'établi est en cours de remise en ordre.",
+      "support": "Nous rouvrons sous peu.",
+      "primary": "Écrire à l'atelier sur WhatsApp"
+    },
+    "thankYou": {
+      "title": "Votre brief est sur l'établi — Rivya Living Art",
+      "eyebrow": "demande {number}",
+      "statement": "Votre brief est sur l'établi.",
+      "support": "Nous répondons sur WhatsApp, en général pendant les heures d'atelier (10:00–20:00 IST).",
+      "primary": "Ouvrir WhatsApp",
+      "secondary": "Retour à la collection",
+      "nextLabel": "La suite",
+      "next1": "Nous lisons votre brief et le confrontons au planning de l'atelier.",
+      "next2": "Nous répondons sur WhatsApp avec un devis et un délai.",
+      "next3": "Rien n'est facturé ni engagé tant que vous n'avez pas dit oui.",
+      "eyebrowNoReference": "demande reçue"
+    }
   }
 }

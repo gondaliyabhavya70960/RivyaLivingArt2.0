@@ -1715,5 +1715,57 @@
       "orderSummaryNote": "Quick order — price and dispatch are confirmed on WhatsApp.",
       "orderWaIntro": "Hello Rivya Living Art,\nI would like to order:"
     }
+  },
+  "SystemPages": {
+    "waysOut": "Ways out",
+    "whatsapp": "WhatsApp",
+    "home": "Home",
+    "shop": "Shop",
+    "referenceLabel": "Reference",
+    "forbidden": {
+      "title": "Staff only — Rivya Living Art",
+      "eyebrow": "403 · staff only",
+      "statement": "This bench is closed.",
+      "support": "Studio is for the owner and staff.",
+      "primary": "Sign in to Studio",
+      "secondary": "Back to the store"
+    },
+    "gone": {
+      "title": "Piece retired — Rivya Living Art",
+      "eyebrow": "410 · piece retired",
+      "statement": "This piece has left the studio.",
+      "support": "It is no longer offered. The collection it belonged to is still here.",
+      "primary": "View the collection",
+      "secondary": "Commission something similar"
+    },
+    "tooMany": {
+      "title": "Too many requests — Rivya Living Art",
+      "eyebrow": "429 · too many taps",
+      "statement": "Give the bench a moment.",
+      "support": "Too many requests from this device.",
+      "countdownLabel": "You can try again in",
+      "countdownReady": "You can try again now.",
+      "secondary": "WhatsApp the studio"
+    },
+    "maintenance": {
+      "title": "Back shortly — Rivya Living Art",
+      "eyebrow": "atelier closed",
+      "statement": "The bench is being reset.",
+      "support": "We will reopen shortly.",
+      "primary": "WhatsApp the studio"
+    },
+    "thankYou": {
+      "title": "Your brief is on the bench — Rivya Living Art",
+      "eyebrow": "inquiry {number}",
+      "statement": "Your brief is on the bench.",
+      "support": "We reply on WhatsApp, usually within working hours (10:00–20:00 IST).",
+      "primary": "Open WhatsApp",
+      "secondary": "Back to the collection",
+      "nextLabel": "What happens next",
+      "next1": "We read the brief and check it against the bench schedule.",
+      "next2": "We reply on WhatsApp with a quote and a lead time.",
+      "next3": "Nothing is charged, and nothing is committed, until you say yes.",
+      "eyebrowNoReference": "inquiry received"
+    }
   }
 }

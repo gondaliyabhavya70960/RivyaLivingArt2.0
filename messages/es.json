@@ -1715,5 +1715,57 @@
       "orderSummaryNote": "Pedido rápido: el precio y el envío se confirman por WhatsApp.",
       "orderWaIntro": "Hola Rivya Living Art,\nMe gustaría hacer este pedido:"
     }
+  },
+  "SystemPages": {
+    "waysOut": "Salidas",
+    "whatsapp": "WhatsApp",
+    "home": "Inicio",
+    "shop": "Tienda",
+    "referenceLabel": "Referencia",
+    "forbidden": {
+      "title": "Solo personal — Rivya Living Art",
+      "eyebrow": "403 · solo personal",
+      "statement": "Este banco está cerrado.",
+      "support": "El estudio es para la propietaria y el equipo.",
+      "primary": "Entrar al estudio",
+      "secondary": "Volver a la tienda"
+    },
+    "gone": {
+      "title": "Pieza retirada — Rivya Living Art",
+      "eyebrow": "410 · pieza retirada",
+      "statement": "Esta pieza ha salido del estudio.",
+      "support": "Ya no se ofrece. La colección a la que pertenecía sigue aquí.",
+      "primary": "Ver la colección",
+      "secondary": "Encargar algo parecido"
+    },
+    "tooMany": {
+      "title": "Demasiadas solicitudes — Rivya Living Art",
+      "eyebrow": "429 · demasiados intentos",
+      "statement": "Dale un momento al banco.",
+      "support": "Demasiadas solicitudes desde este dispositivo.",
+      "countdownLabel": "Puedes volver a intentarlo en",
+      "countdownReady": "Ya puedes volver a intentarlo.",
+      "secondary": "Escribir al estudio por WhatsApp"
+    },
+    "maintenance": {
+      "title": "Volvemos enseguida — Rivya Living Art",
+      "eyebrow": "taller cerrado",
+      "statement": "Estamos preparando el banco de nuevo.",
+      "support": "Volveremos a abrir en breve.",
+      "primary": "Escribir al estudio por WhatsApp"
+    },
+    "thankYou": {
+      "title": "Tu encargo está en el banco — Rivya Living Art",
+      "eyebrow": "consulta {number}",
+      "statement": "Tu encargo está en el banco.",
+      "support": "Respondemos por WhatsApp, normalmente en horario de taller (10:00–20:00 IST).",
+      "primary": "Abrir WhatsApp",
+      "secondary": "Volver a la colección",
+      "nextLabel": "Qué pasa ahora",
+      "next1": "Leemos tu encargo y lo comparamos con el calendario del taller.",
+      "next2": "Respondemos por WhatsApp con un presupuesto y un plazo.",
+      "next3": "No se cobra nada ni se compromete nada hasta que digas que sí.",
+      "eyebrowNoReference": "consulta recibida"
+    }
   }
 }

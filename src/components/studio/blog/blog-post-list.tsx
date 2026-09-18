@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { BulkBar } from "@/components/studio/bulk-bar";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyJournalArt } from "@/components/icons/empty-art";
 import {
   Pagination,
   PAGE_SIZE,
@@ -242,6 +243,7 @@ export function BlogPostList({
 
       {posts.length === 0 ? (
         <EmptyState
+          art={EmptyJournalArt}
           title="No posts found"
           description="Try clearing the filters, or write your first post to start the blog."
         />

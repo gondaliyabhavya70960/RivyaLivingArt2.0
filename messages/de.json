@@ -1715,5 +1715,57 @@
       "orderSummaryNote": "Schnellbestellung – Preis und Versand werden auf WhatsApp bestätigt.",
       "orderWaIntro": "Hallo Rivya Living Art,\nich möchte Folgendes bestellen:"
     }
+  },
+  "SystemPages": {
+    "waysOut": "Wege hinaus",
+    "whatsapp": "WhatsApp",
+    "home": "Startseite",
+    "shop": "Shop",
+    "referenceLabel": "Referenz",
+    "forbidden": {
+      "title": "Nur für Mitarbeitende — Rivya Living Art",
+      "eyebrow": "403 · nur für mitarbeitende",
+      "statement": "Diese Werkbank ist geschlossen.",
+      "support": "Das Studio ist für die Inhaberin und das Team.",
+      "primary": "Beim Studio anmelden",
+      "secondary": "Zurück zum Shop"
+    },
+    "gone": {
+      "title": "Stück zurückgezogen — Rivya Living Art",
+      "eyebrow": "410 · stück zurückgezogen",
+      "statement": "Dieses Stück hat das Studio verlassen.",
+      "support": "Es wird nicht mehr angeboten. Die Kollektion, zu der es gehörte, gibt es weiterhin.",
+      "primary": "Kollektion ansehen",
+      "secondary": "Ähnliches Stück beauftragen"
+    },
+    "tooMany": {
+      "title": "Zu viele Anfragen — Rivya Living Art",
+      "eyebrow": "429 · zu viele versuche",
+      "statement": "Geben Sie der Werkbank einen Moment.",
+      "support": "Zu viele Anfragen von diesem Gerät.",
+      "countdownLabel": "Sie können es erneut versuchen in",
+      "countdownReady": "Sie können es jetzt erneut versuchen.",
+      "secondary": "Dem Studio auf WhatsApp schreiben"
+    },
+    "maintenance": {
+      "title": "Gleich zurück — Rivya Living Art",
+      "eyebrow": "atelier geschlossen",
+      "statement": "Die Werkbank wird neu hergerichtet.",
+      "support": "Wir öffnen in Kürze wieder.",
+      "primary": "Dem Studio auf WhatsApp schreiben"
+    },
+    "thankYou": {
+      "title": "Ihr Briefing liegt auf der Werkbank — Rivya Living Art",
+      "eyebrow": "anfrage {number}",
+      "statement": "Ihr Briefing liegt auf der Werkbank.",
+      "support": "Wir antworten auf WhatsApp, meist innerhalb der Öffnungszeiten (10:00–20:00 IST).",
+      "primary": "WhatsApp öffnen",
+      "secondary": "Zurück zur Kollektion",
+      "nextLabel": "Wie es weitergeht",
+      "next1": "Wir lesen das Briefing und gleichen es mit dem Werkstattplan ab.",
+      "next2": "Wir antworten auf WhatsApp mit Preis und Lieferzeit.",
+      "next3": "Es wird nichts berechnet und nichts verbindlich, bis Sie zustimmen.",
+      "eyebrowNoReference": "anfrage erhalten"
+    }
   }
 }

@@ -6,8 +6,9 @@ import {
   setRequestLocale,
 } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { defaultLocale } from "@/i18n/config";
 import { draftMode } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Eye, MessageCircle } from "lucide-react";
 
 import {
@@ -276,6 +277,33 @@ export default async function ProductPage({ params }: PageProps) {
 
   const product = await getProduct(slug);
   if (!product) notFound();
+
+  // §2.10 · ARCHIVED IS 410, NOT 404, AND THE SCHEMA ALREADY SAID SO.
+  //
+  // `ContentStatus.ARCHIVED` is documented in prisma/schema.prisma as "Retired
+  // but kept. Never public, never orderable" — a piece that existed, that we
+  // still know about, and that is not coming back. That is the definition of
+  // 410. A DRAFT is a 404: never published, and may yet be. Until this line,
+  // every non-published status went through one `notFound()` and told a
+  // returning customer that a piece they had seen "isn't here", as though they
+  // had mistyped the URL.
+  //
+  // The redirect is PERMANENT (308) and carries the piece's own category, so
+  // the 410 page can offer the collection it belonged to rather than a generic
+  // /shop — §2.10: "one link to a live collection, never a soft 404."
+  //
+  // Why a redirect rather than a 410 on this URL: a page cannot set its own
+  // status in the App Router, and middleware — which can — runs at the edge
+  // with no database and so cannot know a slug is archived. 308 → 410 is the
+  // ceiling of what is expressible, and a crawler following it drops the URL
+  // just as it would for a bare 410. `src/app/[locale]/gone/page.tsx` has the
+  // full account.
+  if (product.status === "ARCHIVED" && !preview) {
+    permanentRedirect(
+      `${locale === defaultLocale ? "" : `/${locale}`}/gone?in=${encodeURIComponent(product.category.slug)}`,
+    );
+  }
+
   if (product.status !== "PUBLISHED" && !preview) notFound();
   // A demo piece is a 404 unless the owner shows demo content (or staff preview).
   if (product.isDemo && !preview && !(await showDemoContent())) notFound();

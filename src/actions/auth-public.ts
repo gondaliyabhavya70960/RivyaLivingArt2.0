@@ -54,6 +54,34 @@ const signupSchema = z
     message: "Passwords do not match",
   });
 
+/**
+ * §2.10 · the first-run bootstrap's SECOND gate, and the window it closes.
+ *
+ * The existing gate — "closed the moment the studio has any account" — is the
+ * strong one and stays first. But it leaves a real window open: between a
+ * fresh deployment and the owner's own first sign-up, the user table is empty,
+ * and anyone who finds `/studio/signup` becomes the ADMIN. That window is
+ * usually minutes and has been hours; it is not theoretical, because the route
+ * is guessable from the product name alone.
+ *
+ * `STUDIO_SIGNUP_EMAILS` (comma-separated) closes it: when set, only those
+ * addresses may bootstrap. When UNSET the behaviour is byte-for-byte what it
+ * was, which is deliberate — this ships to a production environment that has
+ * already bootstrapped, and a gate that defaults to closed would be a change
+ * nobody asked for on every other environment (previews, a contributor's
+ * local database) where the first sign-up is the normal path.
+ *
+ * The refusal is the SAME `?closed=1` the already-bootstrapped case uses, on
+ * purpose: telling an unlisted address "you are not on the allowlist" confirms
+ * that an allowlist exists and that their guess was otherwise well-formed.
+ */
+function signupAllowlist(): string[] {
+  return (process.env.STUDIO_SIGNUP_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 export async function signUpFirstAdmin(formData: FormData) {
   // Closed the moment the studio has any account.
   if ((await db.user.count()) > 0) {
@@ -73,6 +101,15 @@ export async function signUpFirstAdmin(formData: FormData) {
   }
 
   const { name, email, password } = parsed.data;
+
+  // Checked AFTER the schema so the address is already trimmed and
+  // lower-cased — comparing raw form input against a configured list is how an
+  // allowlist ends up rejecting the owner for typing a capital letter.
+  const allowlist = signupAllowlist();
+  if (allowlist.length > 0 && !allowlist.includes(email)) {
+    redirect("/studio/signup?closed=1");
+  }
+
   const hashedPassword = await hash(password, BCRYPT_ROUNDS);
 
   try {

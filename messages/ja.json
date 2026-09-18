@@ -1715,5 +1715,57 @@
       "orderSummaryNote": "クイック注文——価格と発送は WhatsApp で確認します。",
       "orderWaIntro": "Rivya Living Art様、\n以下を注文したいです："
     }
+  },
+  "SystemPages": {
+    "waysOut": "戻り先",
+    "whatsapp": "WhatsApp",
+    "home": "ホーム",
+    "shop": "ショップ",
+    "referenceLabel": "参照番号",
+    "forbidden": {
+      "title": "スタッフ専用 — Rivya Living Art",
+      "eyebrow": "403 · スタッフ専用",
+      "statement": "この作業台は閉じています。",
+      "support": "スタジオはオーナーとスタッフのための場所です。",
+      "primary": "スタジオにサインイン",
+      "secondary": "ストアに戻る"
+    },
+    "gone": {
+      "title": "取り扱い終了 — Rivya Living Art",
+      "eyebrow": "410 · 取り扱い終了",
+      "statement": "この作品はスタジオを離れました。",
+      "support": "現在はお取り扱いがありません。属していたコレクションはこちらにあります。",
+      "primary": "コレクションを見る",
+      "secondary": "似た作品を依頼する"
+    },
+    "tooMany": {
+      "title": "リクエストが多すぎます — Rivya Living Art",
+      "eyebrow": "429 · 試行回数超過",
+      "statement": "少しだけお待ちください。",
+      "support": "この端末からのリクエストが多すぎます。",
+      "countdownLabel": "再試行できるまで",
+      "countdownReady": "再試行できます。",
+      "secondary": "WhatsApp でスタジオに連絡"
+    },
+    "maintenance": {
+      "title": "まもなく再開します — Rivya Living Art",
+      "eyebrow": "アトリエ休止中",
+      "statement": "作業台を整えています。",
+      "support": "まもなく再開します。",
+      "primary": "WhatsApp でスタジオに連絡"
+    },
+    "thankYou": {
+      "title": "ご依頼を承りました — Rivya Living Art",
+      "eyebrow": "お問い合わせ {number}",
+      "statement": "ご依頼を作業台に置きました。",
+      "support": "WhatsApp でご返信します。通常は営業時間内です（10:00–20:00 IST）。",
+      "primary": "WhatsApp を開く",
+      "secondary": "コレクションに戻る",
+      "nextLabel": "この後の流れ",
+      "next1": "ご依頼を読み、工房の制作予定と照らし合わせます。",
+      "next2": "お見積もりと納期を WhatsApp でお送りします。",
+      "next3": "お客様がご承諾されるまで、費用も確約も発生しません。",
+      "eyebrowNoReference": "お問い合わせを受領"
+    }
   }
 }

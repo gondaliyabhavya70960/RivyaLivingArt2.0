@@ -1248,3 +1248,48 @@ html[data-cursor-live] [contenteditable],
 html[data-cursor-live] .ProseMirror {
   cursor: auto;
 }
+
+/* ————————————————————————————————————————————————————————————————
+   §6.17 · EMPTY-STATE SELF-DRAW
+
+   One keyframe for every mark in `components/icons/empty-art.tsx`, which is
+   possible only because each path there carries `pathLength="1"`: SVG
+   normalises the path's length to 1, so a dasharray of 1 and an offset from
+   1 to 0 draws ANY path completely, whatever its real length. Without it each
+   mark would need its own measured dash value, and a path edited later would
+   silently stop drawing all the way — a bug that looks like a design choice.
+
+   REDUCED MOTION GETS A REAL RESTING FRAME, not a 0.01ms version of the same
+   animation. The global collapse in tokens.css would leave this running for
+   a hundredth of a second, which on a line drawing is a flicker rather than
+   an absence. Here the animation simply does not exist and the offset is 0,
+   so the mark renders complete. A drawing that traces itself is precisely the
+   attention-grabbing effect that media query is asked for.
+   ———————————————————————————————————————————————————————————————— */
+@keyframes sf-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sf-draw [pathLength],
+.sf-draw path,
+.sf-draw circle,
+.sf-draw rect {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: sf-draw var(--dur-slow) var(--ease-luxury) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-draw [pathLength],
+  .sf-draw path,
+  .sf-draw circle,
+  .sf-draw rect {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

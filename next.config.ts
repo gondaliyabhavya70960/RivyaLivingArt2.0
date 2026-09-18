@@ -139,6 +139,23 @@ const nextConfig: NextConfig = {
     // through the loading boundary instead — see ENG-813).
     globalNotFound: true,
     /**
+     * `forbidden()` and `unauthorized()` — owner decision 8, and the reason
+     * they are worth a flag.
+     *
+     * `requireStaffPage` used to answer BOTH of its failure modes with a
+     * redirect: no session → /studio/login, valid session but wrong role →
+     * /studio. The second one is the problem. An EDITOR who opens an
+     * ADMIN-only page is bounced to the dashboard with no explanation, lands
+     * somewhere they did not ask for, and has no way to tell "you may not see
+     * this" from "that link was wrong" — and the URL they typed is gone, so
+     * they cannot even show anyone what they tried.
+     *
+     * `forbidden()` renders the 403 boundary IN PLACE, at the URL they asked
+     * for, with a real 403 status. The interrupt also cannot leak: it unwinds
+     * the render, so nothing behind the guard has been sent.
+     */
+    authInterrupts: true,
+    /**
      * Caps the static-generation worker COUNT, because the prerender's
      * database fan-out is what it multiplies.
      *

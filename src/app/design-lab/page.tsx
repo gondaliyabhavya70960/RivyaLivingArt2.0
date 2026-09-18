@@ -9,6 +9,7 @@ import { MotionTab } from "@/components/design-lab/motion";
 import { ResponsiveTab } from "@/components/design-lab/frames";
 import { StatesTab } from "@/components/design-lab/states";
 import { ContentTab } from "@/components/design-lab/content";
+import { IconsTab } from "@/components/design-lab/icons";
 
 const TABS = [
   { key: "components", label: "Components" },
@@ -17,6 +18,11 @@ const TABS = [
   { key: "responsive", label: "Responsive" },
   { key: "states", label: "States" },
   { key: "content", label: "Content" },
+  // §4.5's Icons sheet. Seventh tab, and the registry's own review surface:
+  // every hand-authored mark at 16/20/24 on all three elevation steps, with
+  // its name string — which is the only way to tell whether a 24px drawing
+  // still holds its shape in a 16px table row.
+  { key: "icons", label: "Icons" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -132,6 +138,7 @@ export default async function DesignLabPage({
         {tab === "responsive" && <ResponsiveTab />}
         {tab === "states" && <StatesTab />}
         {tab === "content" && <ContentTab />}
+        {tab === "icons" && <IconsTab />}
       </div>
     </main>
   );

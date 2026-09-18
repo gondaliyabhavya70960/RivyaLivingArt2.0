@@ -6,14 +6,23 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { authConfig } from "@/lib/auth.config";
 import { clientIp, rateLimitDurable } from "@/lib/rate-limit";
+import {
+  LOGIN_MAX_PER_EMAIL,
+  LOGIN_MAX_PER_IP,
+  LOGIN_WINDOW_MS,
+} from "@/lib/auth-limits";
 import type { Role } from "@/generated/prisma/enums";
 
-// Brute-force throttle for the single-admin login. Windows are generous for
-// a human but shut down online password guessing. Durable-store backed
-// (SEC-102) so the budget survives serverless cold starts and fan-out.
-export const LOGIN_WINDOW_MS = 15 * 60_000;
-export const LOGIN_MAX_PER_EMAIL = 5;
-export const LOGIN_MAX_PER_IP = 15;
+// Brute-force throttle for the single-admin login. The three numbers moved to
+// `auth-limits.ts` so a page can read the window without pulling NextAuth,
+// bcrypt and a database client in with it; they are re-exported here so every
+// existing `from "@/lib/auth"` import is untouched. See that file for why the
+// 429 page reads the window instead of restating it.
+export {
+  LOGIN_WINDOW_MS,
+  LOGIN_MAX_PER_EMAIL,
+  LOGIN_MAX_PER_IP,
+} from "@/lib/auth-limits";
 
 /** The two keys a login attempt is counted against, and their limits. */
 export function loginLimitKeys(email: string, ip: string) {

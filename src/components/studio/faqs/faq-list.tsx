@@ -26,6 +26,7 @@ import { toTranslationsRecord } from "@/lib/translations-form";
 import { ConfirmDeleteDialog } from "@/components/studio/confirm-delete-dialog";
 import { FieldError } from "@/components/studio/field-error";
 import { EmptyState } from "@/components/studio/page-header";
+import { EmptyFaqsArt } from "@/components/icons/empty-art";
 import {
   Pagination,
   PAGE_SIZE,
@@ -408,6 +409,7 @@ export function FaqList({ faqs }: { faqs: FaqRow[] }) {
   if (faqs.length === 0) {
     return (
       <EmptyState
+        art={EmptyFaqsArt}
         title="No FAQs yet"
         description="Answer the questions shoppers ask most — delivery times, care, customisation."
         action={<NewFaqButton />}
