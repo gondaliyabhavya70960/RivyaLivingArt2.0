@@ -351,7 +351,7 @@ export const SEED_SOURCES: SeedSource[] = [
     supply: false,
     enabled: false,
     notes:
-      "Comparator: a Jaipur studio dedicated to varmala and wedding-flower preservation — frames, planters, LED globes, ₹2,499–₹10,999. The deepest Tier 2 catalogue found. Verified 2026-09-18: WooCommerce Store API answers, 643 products, robots.txt allows /wp-json/wc/store/v1/products.",
+      "Comparator: a Jaipur studio (Krishna Tower, Ajmer Rd) dedicated to varmala and wedding-flower preservation — frames, planters, LED globes. The deepest Tier 2 catalogue found. Verified 2026-09-18: WooCommerce Store API answers, 643 products, prices ₹299–₹27,499 on page 1, robots.txt allows /wp-json/wc/store/v1/products. Its mass is MEDIUM (324 Flower Preservation Frame · 257 Varmala Preservation · 161 Couple Photo Frame) with a SMALL tail (43 Epoxy Resin Jewelry, 12 keychains) and one LARGE row — so the review inbox's suggested product tier will differ from this source tier on some rows, which is the two-filter inbox working.",
   },
   {
     key: "canvas-by-priya",

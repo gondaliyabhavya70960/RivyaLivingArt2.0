@@ -989,7 +989,8 @@
         "sizeLabel": "寸法",
         "materialsLabel": "素材",
         "priceOnRequest": "価格はお問い合わせください"
-      }
+      },
+      "choicesCount": "{count, plural, other {#つの選択肢}}"
     },
     "collection": {
       "count": "{count, plural, =0 {作品はまだありません} one {# 点} other {# 点}}",

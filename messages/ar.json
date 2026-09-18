@@ -989,7 +989,8 @@
         "sizeLabel": "المقاس",
         "materialsLabel": "الخامات",
         "priceOnRequest": "السعر عند الطلب"
-      }
+      },
+      "choicesCount": "{count, plural, zero {# خيارات} one {خيار واحد} two {خياران} few {# خيارات} many {# خيارًا} other {# خيار}}"
     },
     "collection": {
       "count": "{count, plural, =0 {لا قطع بعد} one {# قطعة} two {قطعتان} few {# قطع} many {# قطعة} other {# قطعة}}",

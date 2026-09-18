@@ -219,7 +219,10 @@ export default async function SearchPage({
   // Bridge the search rows to the v2.0 catalog card's ShopProductItem shape.
   // The select stays the search page's own (no customFields fetch — the query
   // helpers are unchanged), so variant chips stay empty and the card simply
-  // skips that line.
+  // skips that line. `materials`, `dimensions` and `timeline` are null here
+  // for the same reason: search ranks and lists, and widening its select to
+  // fill three optional card lines would cost every query for a line each
+  // variant already knows how to omit.
   const productItems: ShopProductItem[] = products.rows.map((p) => {
     const lp = localize(p, locale, ["title", "displayName", "shortTagline"]);
     return {
@@ -259,6 +262,7 @@ export default async function SearchPage({
       // step 8's facet gives the search select a reason to fetch it.
       materials: null,
       dimensions: null,
+      timeline: null,
       videoUrl: null,
       sizeTier: null,
       isDemo: p.isDemo,

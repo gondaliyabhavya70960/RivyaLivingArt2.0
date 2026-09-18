@@ -989,7 +989,8 @@
         "sizeLabel": "Tamaño",
         "materialsLabel": "Materiales",
         "priceOnRequest": "Precio a consultar"
-      }
+      },
+      "choicesCount": "{count, plural, one {# opción} other {# opciones}}"
     },
     "collection": {
       "count": "{count, plural, =0 {Aún sin piezas} one {# pieza} other {# piezas}}",

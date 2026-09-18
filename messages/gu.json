@@ -989,7 +989,8 @@
         "sizeLabel": "માપ",
         "materialsLabel": "સામગ્રી",
         "priceOnRequest": "કિંમત વિનંતી પર"
-      }
+      },
+      "choicesCount": "{count, plural, one {# વિકલ્પ} other {# વિકલ્પો}}"
     },
     "collection": {
       "count": "{count, plural, =0 {હજી કોઈ કૃતિ નહીં} one {# કૃતિ} other {# કૃતિઓ}}",

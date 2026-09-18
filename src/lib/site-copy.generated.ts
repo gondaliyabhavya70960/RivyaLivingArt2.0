@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1342 slots · 0 flagged as unreachable from any component.
+ * 1343 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -774,6 +774,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Shop.card.customize","group":"Shop","section":"card","label":"Customize","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.card.viewDetails","group":"Shop","section":"card","label":"View details","kind":"body","tier":"editorial","max":400},
   {"key":"Shop.card.optionsCount","group":"Shop","section":"card","label":"Options count","kind":"body","tier":"editorial","max":400,"vars":["count"]},
+  {"key":"Shop.card.choicesCount","group":"Shop","section":"card","label":"Choices count","kind":"body","tier":"editorial","max":400,"vars":["count"]},
   {"key":"Shop.card.wishlistSave","group":"Shop","section":"card","label":"Wishlist save","kind":"body","tier":"editorial","max":400,"vars":["title"]},
   {"key":"Shop.card.wishlistRemove","group":"Shop","section":"card","label":"Wishlist remove","kind":"body","tier":"editorial","max":400,"vars":["title"]},
   {"key":"Shop.card.madeToOrder","group":"Shop","section":"card","label":"Made to order","kind":"body","tier":"editorial","max":400},

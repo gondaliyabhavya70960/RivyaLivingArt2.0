@@ -13,6 +13,8 @@ import {
   accessibleCardName,
   cardMetaLine,
   collectibleCardMeta,
+  giftCardMeta,
+  memoryCardMeta,
   type CardVariant,
 } from "@/lib/card-meta";
 import {
@@ -25,38 +27,6 @@ import { cn, formatPriceBand, monogram } from "@/lib/utils";
 
 const CARD_SIZES = "(min-width:1024px) 30vw, (min-width:640px) 45vw, 50vw";
 const COMPACT_SIZES = "(min-width:1024px) 18vw, (min-width:640px) 25vw, 45vw";
-
-/**
- * Below this the piece is a part, not a piece — REDESIGN.md §4.6: "Compact
- * variant for items under ₹1,000 … This is what stops a ₹8 part sharing
- * visual furniture with a ₹16,499 frame."
- */
-export const COMPACT_PRICE_CEILING = 1000;
-
-/**
- * The variant for a WHOLE grid, decided by what is in it.
- *
- * §4.6 asks for two things that pull against each other: a compact card for
- * items under ₹1,000, and "never mix random aspect ratios in one grid".
- * Deriving the variant per card satisfies the first and breaks the second —
- * a 1:1 tile beside a 4:5 one makes every row ragged. So the *shelf* picks:
- * when most of what is on it is parts rather than pieces, the whole grid goes
- * compact (and denser, 4–6 up, as the spec's own note says); otherwise every
- * card is full. One ratio per context, which is the rule the image-discipline
- * paragraph actually turns on.
- */
-export function shelfVariant(
-  items: readonly Pick<ShopProductItem, "showPrice" | "priceMin">[],
-): "full" | "compact" {
-  const priced = items.filter(
-    (item) => item.showPrice && item.priceMin != null,
-  );
-  if (priced.length < 4) return "full";
-  const parts = priced.filter(
-    (item) => (item.priceMin as number) < COMPACT_PRICE_CEILING,
-  ).length;
-  return parts / priced.length >= 0.7 ? "compact" : "full";
-}
 
 /**
  * The PLP / rail card — REDESIGN.md §4.6 `ProductCard`.
@@ -102,10 +72,11 @@ export function CatalogProductCard({
    *  per page — duplicate names make the browser skip the whole transition. */
   morph?: boolean;
   /** `full` and `compact` are decided per GRID, not per card — see
-   *  `shelfVariant`. `collectible` is the LARGE_FORMAT tier's variant
-   *  (docs/plan/07 step 7): a tier-homogeneous grid passes it by context, a
-   *  mixed grid asks `cardVariantFor`. Defaults to `full` so a card dropped
-   *  anywhere without thought is the editorial one. */
+   *  `shelfVariant`. `collectible`, `memory` and `gift` are the three tier
+   *  variants (docs/plan/07 steps 7–8): a tier-homogeneous grid passes one by
+   *  context, a mixed grid asks `cardVariantFor`. Defaults to `full` so a card
+   *  dropped anywhere without thought is the editorial one — which is also
+   *  what the untiered backlog gets. */
   variant?: CardVariant;
   /** The first row of the first grid carries the LCP — those images load
    *  eagerly and are never revealed. */
@@ -125,6 +96,8 @@ export function CatalogProductCard({
 
   const compact = variant === "compact";
   const collectible = variant === "collectible";
+  const memory = variant === "memory";
+  const gift = variant === "gift";
 
   const stage = (
     <div
@@ -335,6 +308,168 @@ export function CatalogProductCard({
             stacking order (see the full variant): the WhatsApp thread is the
             consultation. */}
         <div className="relative z-10 mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <CardAskWhatsApp title={item.title} slug={item.slug} />
+        </div>
+      </article>
+    );
+  }
+
+  /* ————— Memory: the MEDIUM_FORMAT tier (docs/plan/07). The brief calls
+     this tier's product "guided customization" — so the card answers the two
+     questions the `full` card leaves open for a commemorative piece: what do
+     I get to choose, and how long until I have it.
+
+     No materials/dimensions line here, deliberately. That is the collectible
+     card's content because a collectible IS an object; this tier is a service
+     that ends in one, and the size of the finished block is not what a person
+     comparing two varmala studios is weighing.
+
+     The choice count is a NUMBER through translated copy. `variantChips`
+     holds strings built in `shop.ts` as hardcoded English ("Colours +3",
+     "Sizes S/M/L") and rendered nowhere today — painting them here would put
+     English on a card in nine locales. ————— */
+  if (memory) {
+    const meta = memoryCardMeta(item);
+    /* Composed with the site's mono separator, the way `cardMetaLine` already
+       joins materials and dimensions. Both halves are translated or
+       owner-typed; neither is a sentence with a word order to get wrong. */
+    const availability = meta.availability === "madeToOrder"
+      ? [t("card.madeToOrder"), meta.leadTime].filter(Boolean).join(" · ")
+      : t("card.badgeOutOfStock");
+    return (
+      <article
+        data-slot="sf-catalog-card"
+        data-variant="memory"
+        className={cn("group relative", className)}
+      >
+        {stage}
+        <div className="mt-4 flex flex-col gap-1.5">
+          {meta.occasion || item.isDemo ? (
+            <div className="flex items-center gap-2">
+              {meta.occasion ? (
+                <p className="u-micro">{meta.occasion}</p>
+              ) : null}
+              {item.isDemo ? <DemoMark label={tCommon("demoMark")} /> : null}
+            </div>
+          ) : null}
+          <h3 className="font-body text-16 leading-snug font-medium text-ink in-data-[theme=navy]:text-mineral">
+            <MorphLink
+              href={`/product/${item.slug}`}
+              className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
+            >
+              <TitleText
+                full={accessibleCardName(item)}
+                visible={item.displayTitle}
+                clamp={2}
+              />
+            </MorphLink>
+          </h3>
+          {meta.choices > 0 ? (
+            <p className="u-micro">
+              {t("card.customize")} ·{" "}
+              {t("card.choicesCount", { count: meta.choices })}
+            </p>
+          ) : null}
+          <p className="u-num text-16 text-ink in-data-[theme=navy]:text-mineral">
+            {meta.price.kind === "onRequest"
+              ? t("card.collectible.priceOnRequest")
+              : meta.price.label}
+          </p>
+          <p className="u-micro">{availability}</p>
+          <p
+            aria-hidden
+            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+          >
+            <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
+              {t("card.viewPiece")}
+            </span>
+            <ArrowRight
+              aria-hidden
+              strokeWidth={1.5}
+              className="size-4 rtl:-scale-x-100"
+            />
+          </p>
+        </div>
+
+        {/* Both controls, as the full card has: this tier's whole proposition
+            is the conversation about what gets made, so the WhatsApp thread
+            is not an afterthought here. */}
+        <div className="relative z-10 mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <QuickViewTrigger item={item} />
+          <CardAskWhatsApp title={item.title} slug={item.slug} />
+        </div>
+      </article>
+    );
+  }
+
+  /* ————— Gift: the SMALL_FORMAT tier (docs/plan/07) — "efficient grid,
+     quick personalization, variants, price visible".
+
+     "Price visible" is the line that shapes it: the price comes FIRST, in the
+     display face, where every other variant puts it under the title in body
+     size. Density comes from dropping the category eyebrow and the materials
+     line — not from dropping the affordance, so "View piece" stays.
+
+     It can still resolve to "price on request". "Price visible" is how this
+     tier is MEANT to be filled in, not a promise the card can keep on a row
+     with no published figure. ————— */
+  if (gift) {
+    const meta = giftCardMeta(item);
+    return (
+      <article
+        data-slot="sf-catalog-card"
+        data-variant="gift"
+        className={cn("group relative", className)}
+      >
+        {stage}
+        <div className="mt-4 flex flex-col gap-1">
+          <p className="u-num text-20 text-ink in-data-[theme=navy]:text-mineral">
+            {meta.price.kind === "onRequest"
+              ? t("card.collectible.priceOnRequest")
+              : meta.price.label}
+          </p>
+          <h3 className="font-body text-16 leading-snug font-medium text-ink in-data-[theme=navy]:text-mineral">
+            <MorphLink
+              href={`/product/${item.slug}`}
+              className="outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-focus focus-visible:after:ring-offset-3"
+            >
+              <TitleText
+                full={accessibleCardName(item)}
+                visible={item.displayTitle}
+                clamp={2}
+              />
+            </MorphLink>
+          </h3>
+          <p className="u-micro">
+            {meta.availability === "madeToOrder"
+              ? t("card.madeToOrder")
+              : t("card.badgeOutOfStock")}
+            {meta.choices > 0
+              ? ` · ${t("card.choicesCount", { count: meta.choices })}`
+              : null}
+          </p>
+          {/* The demo mark sits on its own row here rather than beside an
+              eyebrow, because this variant has no eyebrow to sit beside. */}
+          {item.isDemo ? <DemoMark label={tCommon("demoMark")} /> : null}
+          <p
+            aria-hidden
+            className="mt-1 inline-flex w-fit items-center gap-1.5 font-body text-14 text-sapphire in-data-[theme=navy]:text-champagne"
+          >
+            <span className="relative after:absolute after:-bottom-0.5 after:start-0 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-(--dur-fast) after:ease-(--ease-luxury) group-hover:after:w-full group-focus-within:after:w-full motion-reduce:after:transition-none">
+              {t("card.viewPiece")}
+            </span>
+            <ArrowRight
+              aria-hidden
+              strokeWidth={1.5}
+              className="size-4 rtl:-scale-x-100"
+            />
+          </p>
+        </div>
+
+        {/* Quick view IS the quick personalization this tier asks for — the
+            panel carries the customization fields without a page load. */}
+        <div className="relative z-10 mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <QuickViewTrigger item={item} />
           <CardAskWhatsApp title={item.title} slug={item.slug} />
         </div>
       </article>

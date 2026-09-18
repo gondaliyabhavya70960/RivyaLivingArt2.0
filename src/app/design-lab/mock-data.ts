@@ -13,6 +13,13 @@ import type { ShopProductItem } from "@/lib/shop";
  *
  * Images are v3 masters and the legacy `/mock/*.webp` set already bundled
  * under `public/` — real files on disk, never invented paths.
+ *
+ * The four rows deliberately span three card variants — SMALL_FORMAT (gift),
+ * MEDIUM_FORMAT (memory) and two untiered (full) — so the lab shows what
+ * `cardVariantFor` actually does rather than one shape four times. The fourth
+ * carries `timeline: null` on purpose: the memory and gift variants both have
+ * to render a row that has no lead time, and a lab where every row is filled
+ * in never shows the empty case.
  */
 
 export const MOCK_PRODUCTS: ShopProductItem[] = [
@@ -43,6 +50,7 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     featured: true,
     materials: "Epoxy resin, 24k gold leaf",
     dimensions: "10 cm Ø · set of 4",
+    timeline: "7–10 days",
     videoUrl: null,
     isDemo: false,
   },
@@ -73,6 +81,7 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     featured: false,
     materials: "Resin, quartz, gold leaf",
     dimensions: "38 × 24 cm",
+    timeline: "3 weeks",
     videoUrl: null,
     isDemo: false,
   },
@@ -100,6 +109,7 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     duplicateCount: 3,
     materials: "Crystal-clear resin, preserved garland",
     dimensions: null,
+    timeline: "4–5 weeks",
     videoUrl: null,
     isDemo: false,
   },
@@ -126,6 +136,7 @@ export const MOCK_PRODUCTS: ShopProductItem[] = [
     featured: false,
     materials: null,
     dimensions: null,
+    timeline: null,
     videoUrl: null,
     isDemo: true,
   },

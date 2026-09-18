@@ -201,19 +201,147 @@ the untiered backlog visible and bulk-fixable.
 Recorded rather than resolved, because each one overrides a rule the owner set.
 Work below them proceeds; these are the parts that stop at a question.
 
+**Reviewed 2026-09-18 on the owner's instruction to "address the owner
+inquiries (T2–T11)".** Six rows closed, one half-closed, three still an owner's
+call. The rule applied: **a row closes when spec precedence settles it, or when
+the thing it asks for turns out to already exist.** Nothing that breaches Part 0
+was built or decided here — those carry a recommendation and stay open, which is
+what "needs an owner decision" means. The reasoning for each close is below the
+table; the recommendations for the three open rows are below that.
+
 | # | The brief asks for | What it overrides | Status |
 |---|---|---|---|
 | **T1** | Tier 03 "Add to Cart / Checkout" | Part 0: no payment gateway, no cart payment, no accounts | **RESOLVED — Part 0 wins.** Tier 03 is fast ORDERING through WhatsApp. See above. |
-| **T2** | Header nav: Collectible Design · Memory Art · Personal Art & Gifts · Custom Commission | REDESIGN.md §5.2 names the four items (Shop · Bespoke · Studio · Journal) and `e2e-smoke.mjs` asserts them BY LABEL | Open. A four-item swap is a §5.2 change plus a smoke-test change. |
-| **T3** | Seven new structured product fields (finish, price type, fulfilment, personalization type, commission flag, preservation flag, edition) | REDESIGN.md §1.1 lists "product data" first under do-not-change | Open. `sizeTier` alone is justified by this document; seven more fields is a separate authorization. |
+| **T2** | Header nav: Collectible Design · Memory Art · Personal Art & Gifts · Custom Commission | REDESIGN.md §5.2 names the four items (Shop · Bespoke · Studio · Journal) and `e2e-smoke.mjs` asserts them BY LABEL | **CLOSED 2026-09-18 — §5.2 wins.** The four items stand. The brief's intent is reachable without touching them; see the recommendation below. |
+| **T3** | Seven new structured product fields (finish, price type, fulfilment, personalization type, commission flag, preservation flag, edition) | REDESIGN.md §1.1 lists "product data" first under do-not-change | **CLOSED 2026-09-18 — no column is needed.** All seven already exist as a column, a model or an owner-controlled `lexical`/`occasions` row. Mapping below. |
 | **T4** | Tier 02's "Upload Memory" and its 7-step guided path | §1.1 names "customization logic" and "image upload" under do-not-change; the e2e smoke asserts the current PDP → `wa.me` round trip | Open, and the largest piece of work in the brief. |
-| **T5** | "Made-to-order vs ready-to-ship" as a new field | `Product.inStock` ALREADY means made-to-order on the card (`card.madeToOrder` renders when `inStock` is true) | Two columns for one fact. Use the existing one. |
-| **T6** | "Price on request" as a price type | The PDP emits `AggregateOffer` JSON-LD for every non-demo row, and `formatPriceBand` returns a hardcoded English `"Enquire"` outside next-intl | **Half closed (2026-09-16).** The `"Enquire"` leak is fixed at every storefront site (hero, summary, card); `showPrice: false` already yields the localized "price on request" and suppresses the JSON-LD offer. A price TYPE field stays T3. |
-| **T7** | Deliberately different photography per tier | 78 image slots share 25 files today; the tier sets are ungenerated and the Higgsfield workspace is out of credits | Blocked on assets, not on code. |
-| **T8** | A homepage "three worlds" band | §3.1 (max three dark bands, never adjacent — the homepage already declares exactly three) and the §6 record that a "three studios" block was DELETED for competing with the collections band | Open. The band has to REPLACE something, not be added. |
-| **T9** | LARGE's "Consultation / Request Quote" | `InquirySource` is exactly `PRODUCT \| CUSTOM_ORDER \| CONTACT`; `Inquiry` has no scheduling and no priority column | Open. The CTA promises a record the schema cannot hold. |
-| **T10** | A `/collectible-design` destination | `/large-resin-art` already exists — 846 lines, a sections-board entry, a footer link, a sitemap entry and a 64-key × 9-locale namespace. §1.1 protects existing URLs | Use the route that exists. A rename is worse than a duplicate. |
-| **T11** | "Movable without a deploy" | A slug map is deploy-bound; a per-product column leaves owner-created categories untiered | The column is the closer of the two, and step 2 is what makes it true in practice. |
+| **T5** | "Made-to-order vs ready-to-ship" as a new field | `Product.inStock` ALREADY means made-to-order on the card (`card.madeToOrder` renders when `inStock` is true) | **CLOSED 2026-09-18 — use `inStock`.** Two columns for one fact. `collectibleCardMeta` already reads it as `availability`. |
+| **T6** | "Price on request" as a price type | The PDP emits `AggregateOffer` JSON-LD for every non-demo row, and `formatPriceBand` returns a hardcoded English `"Enquire"` outside next-intl | **Half closed (2026-09-16).** The `"Enquire"` leak is fixed at every storefront site (hero, summary, card); `showPrice: false` already yields the localized "price on request" and suppresses the JSON-LD offer. A price TYPE field was the rest of T3 — now **CLOSED 2026-09-18** (`showPrice` IS the price type), so this row closes with it. |
+| **T7** | Deliberately different photography per tier | 78 image slots share 25 files today; the tier sets are ungenerated and the Higgsfield workspace is out of credits | Open — but **not a decision**. Blocked on assets, not on code or on an answer. Nothing to close until there are files. |
+| **T8** | A homepage "three worlds" band | §3.1 (max three dark bands, never adjacent — the homepage already declares exactly three) and the §6 record that a "three studios" block was DELETED for competing with the collections band | Open — an owner's call. The band has to REPLACE something, not be added; a recommendation is below. |
+| **T9** | LARGE's "Consultation / Request Quote" | `InquirySource` is exactly `PRODUCT \| CUSTOM_ORDER \| CONTACT`; `Inquiry` has no scheduling and no priority column | **HALF CLOSED 2026-09-18.** "Request Quote" closes — it is a copy variant of an existing CTA over an existing record. "Consultation" stays open: it promises scheduling the schema cannot hold. |
+| **T10** | A `/collectible-design` destination | `/large-resin-art` already exists — 846 lines, a sections-board entry, a footer link, a sitemap entry and a 64-key × 9-locale namespace. §1.1 protects existing URLs | **CLOSED 2026-09-18 — use `/large-resin-art`.** §1.1 protects the URL; a rename is worse than a duplicate and a duplicate splits the index. |
+| **T11** | "Movable without a deploy" | A slug map is deploy-bound; a per-product column leaves owner-created categories untiered | **CLOSED 2026-09-18 — DELIVERED, not decided.** `Product.sizeTier` shipped 2026-09-15; it is per-product, the Studio's product form edits it, and no deploy is involved. |
+
+### Why each closed row closed (2026-09-18)
+
+**T2 — the four header items stand.** REDESIGN.md §5.2 names them, Part 0 says
+REDESIGN.md wins every conflict, so this is settled by precedence and not by
+preference. Two facts make the swap worse than it looks: `e2e-smoke.mjs`
+asserts the four BY LABEL, so the nav is a contract test, not a style choice;
+and the proposed items are four INTENTS where the current four are a shop, a
+commission path, a story and a journal — replacing them would leave no header
+route to Bespoke, Studio or Journal at all.
+
+**T3 — nothing needs a column.** This is the expensive one to have got wrong,
+because it is a seven-column migration onto a live, indexed table that would
+reach production on push. All seven already have a home:
+
+| The brief's field | Where it already lives |
+|---|---|
+| finish | `Product.lexical` — the owner's own labelled spec rows ("Finish · Hand-polished"), editable in the product form |
+| price type | `Product.showPrice` + `priceMin`/`priceMax`. False yields the localized "price on request" and suppresses the JSON-LD offer — that IS the type (T6) |
+| fulfilment | `Product.inStock` — reads as "Made to order" on the card (T5) |
+| personalization type | `CustomizationField` — a whole per-product model with a `FieldType` enum, `options`, `required` and `order` |
+| commission flag | Derived, already: `hasCustomFields` drives the PDP's `orderFramingKey` between `ctaCustomize` and `ctaOrder`. A piece with customization fields IS the commission path |
+| preservation flag | `Category` (`varmala-preservation`, `wedding-photo-frames`) plus `Product.occasions` |
+| edition | `Product.lexical`, same as finish |
+
+A column would not add expressiveness here; it would add a second place for
+each fact to disagree with the first. `Product.tier` versus `Product.sizeTier`
+is what that costs, and this document already carries the scar.
+
+**T5 — `inStock` is the fulfilment fact.** `collectibleCardMeta` reads it as
+`availability` and the card renders `card.madeToOrder` from it. A second column
+would let a row say "ready to ship" and "out of stock" at once.
+
+**T6 — `showPrice` is the price type.** The `"Enquire"` leak was fixed at every
+storefront site on 2026-09-16; the only thing left in this row was a price TYPE
+field, which was T3, which is now closed.
+
+**T9's "Request Quote" half.** The PDP already picks its CTA framing —
+`orderFramingKey = hasCustomFields ? "ctaCustomize" : "ctaOrder"`. A LARGE piece
+with `showPrice: false` already shows "price on request", so "Request Quote" is
+a third framing key over the record that already exists: an `Inquiry` with
+`source: PRODUCT`, saved before the `wa.me` redirect. No schema moves. What does
+NOT close is **"Consultation"** — booking a time is scheduling, `Inquiry` has no
+slot, no calendar and no priority column, and a CTA that promises a record
+nothing writes is worse than no CTA.
+
+**T10 — `/large-resin-art` is the route.** §1.1 protects existing URLs. A rename
+breaks the footer link, the sections-board entry, the sitemap and 64 keys × 9
+locales; a duplicate splits the index against itself.
+
+**T11 — already delivered.** `Product.sizeTier` shipped 2026-09-15: per product,
+nullable, edited in the Studio's product form, with `catalog-size-tier.ts`
+filing the untiered backlog by rule and a **Suggest tiers** button on
+`/studio/products`. Moving a piece between tiers is a save, not a deploy. This
+row was a design question before the column existed and is a statement of fact
+after it.
+
+### Step 8 shipped the memory and gift cards — and found the wiring missing
+
+`cardVariantFor` existed from step 7 and **nothing called it.** The shop grid
+asked `shelfVariant` only, and `collectible` reached the screen through one
+hand-passed `variant="collectible"` prop on the large-format page's band. A
+variant nobody asks for is the unmounted-component problem owner decision D18
+is actually about, so step 8 is two things: the two new variants, and the
+branch that reaches all three.
+
+**The wiring keeps §4.6's rule by splitting one word into two.** The shelf
+still decides the RATIO once per grid — that is what stops a 1:1 tile sitting
+beside a 4:5 one — and the tier now decides the CONTENT inside it. Mixing
+`collectible`, `memory`, `gift` and `full` in one grid is safe precisely
+because none of them is `compact`: all four render the same 4:5 stage.
+
+**`shelfVariant` had to learn that a tiered row is never a part.** Its
+"is this a piece?" test was price — under ₹1,000 means a part — which was the
+only signal available before `sizeTier` existed. It conflates a ₹8 bezel
+finding with a ₹399 resin jhumka. Measured on the catalogue: all 12 published
+LARGE_FORMAT rows and 373 of 425 SMALL_FORMAT rows sit under ₹1,000, so the
+large-format grid — the editorial tier, by definition — rendered as a dense
+supplies shelf, and `gift` could never appear on the tier it was built for.
+A row with a `sizeTier` is now a piece whatever it costs; the price heuristic
+still decides the untiered ones, which is where the molds and pigments are.
+`shelfVariant` moved to `card-meta.ts` in the same change, because it had no
+test at all while it lived in a component file the pure-lib suite cannot
+import.
+
+**No column was added**, per T3 above. `memory` reads `categoryName`,
+`timeline`, `variantChips.length` and the price; `gift` reads the price,
+`variantChips.length` and `inStock`. The one new string is
+`Shop.card.choicesCount`, in all nine locales.
+
+**The choice count is a NUMBER, deliberately.** `variantChips` holds strings
+built in `shop.ts` as hardcoded English — "Colours +3", "Sizes S/M/L" — and
+rendered nowhere before this. Painting them on a card would have put English
+on the shop grid in nine languages.
+
+### The three still open, and what is recommended
+
+**T4 — Tier 02's "Upload Memory" and its 7-step guided path.** Still the largest
+piece in the brief and still an owner's call: §1.1 names "customization logic"
+and "image upload" under do-not-change, and the e2e smoke asserts the current
+PDP → `wa.me` round trip. *Recommendation:* if it is wanted, build it as a
+SEPARATE route rather than as a change to the PDP — the existing custom-brief
+page already uploads reference images through `uploadReferenceImages` and
+already ends at WhatsApp, so a guided path is a new entry point onto a flow that
+exists, and the PDP's round trip stays untouched and still asserted.
+
+**T7 — photography per tier.** Not a decision; blocked on files. The Higgsfield
+workspace is out of credits and the tier sets are ungenerated, so nothing here
+can be answered by choosing. *Recommendation:* leave it until there are assets;
+`media-v3-fetch.mjs --planned` is the queue.
+
+**T8 — a homepage "three worlds" band.** Still an owner's call, for the reason
+recorded: §3.1 caps the homepage at three dark bands, never adjacent, and it
+already declares exactly three — so this band must REPLACE something. The sharper
+objection is the §6 record that a "three studios" block was DELETED for competing
+with the collections band, and a three-worlds band is that block under a new
+name. *Recommendation:* do not add a band. Make the **existing collections band**
+tier-aware instead — it is `bg-mineral`, it already occupies the slot, and the
+three tiers are what it is trying to say. That spends no dark band, replaces
+nothing, and does not re-create a block the site removed on purpose.
 
 ---
 
