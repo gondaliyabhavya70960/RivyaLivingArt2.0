@@ -16,3 +16,10 @@ export { KanbanBoard } from "./kanban-board";
 export { KanbanColumn, KanbanEmptyColumn } from "./kanban-column";
 export { KanbanCardShell, KanbanMoveSelect } from "./kanban-card";
 export type { KanbanMoveOption } from "./kanban-card";
+export {
+  resolveKanbanView,
+  readStoredView,
+  writeStoredView,
+  useStoredView,
+} from "./view-preference";
+export type { KanbanView } from "./view-preference";
