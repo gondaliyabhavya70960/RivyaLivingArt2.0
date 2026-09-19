@@ -15,6 +15,7 @@ import {
   CommissionBoard,
   type CommissionCard,
 } from "@/components/studio/inquiries/commission-board";
+import { buildBoardWhere } from "@/components/studio/inquiries/board-filter";
 import {
   InquiryList,
   type InquiryRow,
@@ -159,10 +160,16 @@ export default async function InquiriesPage({
     db.inquiry.groupBy({ by: ["status"], _count: { _all: true } }),
     isBoard
       ? db.inquiry.findMany({
-          where: {
-            status: { in: STATUS_ORDER },
-            ...(demoOnly ? { isDemo: true } : {}),
-          },
+          // PR-5: the board honors the table's filters at last — source,
+          // search, stale, demo — while lanes stay the seven active statuses
+          // (the ?status= tab drives the table only).
+          where: buildBoardWhere({
+            source: isSource(source) ? source : undefined,
+            q,
+            stale,
+            demoOnly,
+            now: requestNow,
+          }),
           orderBy: { createdAt: "desc" },
           take: BOARD_CAP,
           select: {
@@ -314,6 +321,8 @@ export default async function InquiriesPage({
           counts={countsByStatus}
           shown={cards.length}
           total={activeTotal}
+          activeSource={source ?? "ALL"}
+          initialQuery={q ?? ""}
         />
       ) : (
         <InquiryList
