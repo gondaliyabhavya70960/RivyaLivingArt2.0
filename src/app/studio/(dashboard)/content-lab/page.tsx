@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { requireStaffPage } from "@/actions/helpers";
 import { db } from "@/lib/db";
 import { demoStatus } from "@/lib/demo/apply";
+import { getDemoInventory } from "@/actions/demo";
 import { describeDemoHost } from "@/lib/demo/guard";
 import { Role } from "@/generated/prisma/enums";
 import { PageHeader } from "@/components/studio/page-header";
@@ -11,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { CountsTable } from "@/components/studio/content-lab/counts-table";
 import { ActionsPanel } from "@/components/studio/content-lab/actions-panel";
 import { PublicToggle } from "@/components/studio/content-lab/public-toggle";
+import { DemoManager } from "@/components/studio/content-lab/demo-manager";
 
 export const metadata: Metadata = { title: "Content Lab" };
 
@@ -32,13 +34,19 @@ const timeFormatter = new Intl.DateTimeFormat("en-IN", {
 export default async function ContentLabPage() {
   await requireStaffPage([Role.ADMIN]);
 
-  const [status, settings] = await Promise.all([
+  const [status, settings, inventory] = await Promise.all([
     demoStatus(db),
     db.siteSettings.findUnique({
       where: { id: "main" },
       select: { demoContentPublic: true },
     }),
+    getDemoInventory(),
   ]);
+  const inventoryRows = inventory.ok ? (inventory.data ?? []) : [];
+  const demoTotal = Object.values(status.counts).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
   const host = describeDemoHost(process.env.DATABASE_URL);
 
   return (
@@ -116,6 +124,15 @@ export default async function ContentLabPage() {
           description="Every row seeded by Content Lab carries isDemo: true — this is that count, table by table."
         >
           <CountsTable counts={status.counts} />
+        </FormSection>
+      </div>
+
+      <div className="mt-6">
+        <FormSection
+          title="Demo data manager"
+          description="Pick what to remove: a whole content type, or individual rows inside one. Every id is re-checked against isDemo on the server before anything is deleted, and a media file that genuine content also uses is kept."
+        >
+          <DemoManager inventory={inventoryRows} total={demoTotal} />
         </FormSection>
       </div>
     </div>

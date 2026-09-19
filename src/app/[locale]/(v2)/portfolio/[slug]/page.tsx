@@ -2,6 +2,8 @@ import { detailOpenGraph } from "@/app/shared-metadata";
 import { cache } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { isConceptStudy } from "@/lib/portfolio-kind";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -359,6 +361,11 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
   const category = portfolio.category
     ? localize(portfolio.category, locale, TRANSLATABLE_FIELDS.category)
     : null;
+  // Read from `portfolio`, not `lp`: the marker lives in resultsMeta, which
+  // the comment above lists among the fields `localize` deliberately leaves
+  // alone, so the localized copy carries it unchanged either way — taking it
+  // from the source row is just saying which one is authoritative.
+  const conceptStudy = isConceptStudy(portfolio.resultsMeta);
 
   const related = await getRelated(portfolio.id, portfolio.categoryId);
   // Sequenced, not parallel: the next case has to know what the tiles above
@@ -647,6 +654,22 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           <p className="u-micro text-champagne">
             {category?.name ?? t("fallbackCategory")}
           </p>
+
+          {/* A concept study is speculative studio work, not a delivered
+              commission, and the portfolio is exactly where that difference
+              misleads if it is not said out loud. Neutral hairline rather
+              than champagne: the category line above already spends one of
+              §3.1's two champagne elements, and a second here would put the
+              label in the design audit's way on every case page. */}
+          {conceptStudy && (
+            <p className="u-micro mt-4 inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-mist">
+              <span>{t("conceptStudy")}</span>
+              <span aria-hidden="true">·</span>
+              <span className="normal-case tracking-normal">
+                {t("conceptStudyNote")}
+              </span>
+            </p>
+          )}
         </div>
       </section>
 

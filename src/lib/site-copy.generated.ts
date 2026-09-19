@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1373 slots · 0 flagged as unreachable from any component.
+ * 1375 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -1011,6 +1011,8 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Portfolio.case.eyebrowRelated","group":"Portfolio","section":"case","label":"Eyebrow related","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Portfolio.case.eyebrowCommission","group":"Portfolio","section":"case","label":"Eyebrow commission","kind":"eyebrow","tier":"editorial","max":48},
   {"key":"Portfolio.case.nextEyebrow","group":"Portfolio","section":"case","label":"Next eyebrow","kind":"eyebrow","tier":"editorial","max":48},
+  {"key":"Portfolio.case.conceptStudy","group":"Portfolio","section":"case","label":"Concept study","kind":"body","tier":"editorial","max":400},
+  {"key":"Portfolio.case.conceptStudyNote","group":"Portfolio","section":"case","label":"Concept study note","kind":"micro","tier":"interface","max":200},
   {"key":"Portfolio.beforeAfter.before","group":"Portfolio","section":"beforeAfter","label":"Before","kind":"body","tier":"editorial","max":400},
   {"key":"Portfolio.beforeAfter.after","group":"Portfolio","section":"beforeAfter","label":"After","kind":"body","tier":"editorial","max":400},
   {"key":"Portfolio.beforeAfter.sliderLabel","group":"Portfolio","section":"beforeAfter","label":"Slider label","kind":"label","tier":"editorial","max":60},

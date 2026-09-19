@@ -611,7 +611,12 @@ export async function removeDemo(db: PrismaClient): Promise<DemoCounts> {
   return demoCounts(db);
 }
 
-async function demoCounts(db: PrismaClient): Promise<DemoCounts> {
+/**
+ * Exported so the SCOPED removal in ./selective.ts can report what is left
+ * without duplicating the twelve counts — one definition of "how much demo
+ * data is in here", which is the point of the file.
+ */
+export async function demoCounts(db: PrismaClient): Promise<DemoCounts> {
   const [
     BlogCategory,
     BlogPost,

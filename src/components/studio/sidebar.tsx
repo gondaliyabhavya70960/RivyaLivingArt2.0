@@ -7,6 +7,7 @@ import {
   Activity,
   BarChart3,
   FileText,
+  ClipboardList,
   FlaskConical,
   FolderTree,
   HelpCircle,
@@ -188,6 +189,16 @@ export const SECTIONS: { heading: string; items: NavItem[] }[] = [
       { label: "SEO", href: "/studio/seo", icon: Search, adminOnly: true },
       { label: "Users", href: "/studio/users", icon: Users, adminOnly: true },
       { label: "Subscribers", href: "/studio/subscribers", icon: Mail },
+      // Content Health (genuine content) sits ABOVE Content Lab (synthetic
+      // fixtures) deliberately: the real-content screen is the one an owner
+      // wants almost every time, and the fixtures screen is the one that does
+      // damage if opened by mistake.
+      {
+        label: "Content Health",
+        href: "/studio/content-health",
+        icon: ClipboardList,
+        adminOnly: true,
+      },
       {
         label: "Content Lab",
         href: "/studio/content-lab",

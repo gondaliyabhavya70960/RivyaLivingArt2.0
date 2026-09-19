@@ -1259,7 +1259,9 @@
       "eyebrowFinal": "la pièce finale",
       "eyebrowRelated": "du même établi",
       "eyebrowCommission": "commander une pièce similaire",
-      "nextEyebrow": "projet suivant"
+      "nextEyebrow": "projet suivant",
+      "conceptStudy": "Étude conceptuelle",
+      "conceptStudyNote": "Une étude de design de l'atelier, et non une pièce sur commande."
     },
     "beforeAfter": {
       "before": "avant",

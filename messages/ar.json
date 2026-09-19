@@ -1259,7 +1259,9 @@
       "eyebrowFinal": "القطعة النهائية",
       "eyebrowRelated": "من طاولة العمل نفسها",
       "eyebrowCommission": "اطلب قطعة مشابهة",
-      "nextEyebrow": "المشروع التالي"
+      "nextEyebrow": "المشروع التالي",
+      "conceptStudy": "دراسة تصميمية",
+      "conceptStudyNote": "دراسة تصميمية من الأستوديو، وليست قطعة بتكليف من عميل."
     },
     "beforeAfter": {
       "before": "قبل",

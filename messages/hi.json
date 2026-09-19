@@ -1259,7 +1259,9 @@
       "eyebrowFinal": "तैयार कृति",
       "eyebrowRelated": "उसी वर्कबेंच से",
       "eyebrowCommission": "ऐसी ही बनवाएँ",
-      "nextEyebrow": "अगला प्रोजेक्ट"
+      "nextEyebrow": "अगला प्रोजेक्ट",
+      "conceptStudy": "कॉन्सेप्ट स्टडी",
+      "conceptStudyNote": "स्टूडियो का एक डिज़ाइन अध्ययन, ग्राहक के लिए बनाई गई कृति नहीं।"
     },
     "beforeAfter": {
       "before": "पहले",
