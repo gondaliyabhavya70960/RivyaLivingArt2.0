@@ -51,7 +51,15 @@ export function clientIp(headers: Headers): string {
 export function retryAfterHeaders(
   retryAfterSeconds: number,
 ): Record<string, string> {
-  return { "retry-after": String(Math.max(1, Math.ceil(retryAfterSeconds))) };
+  // Rounded UP: a client told to wait 30 when the window has 30.2 left
+  // retries early and is refused again, which is a retry storm made of
+  // well-behaved clients. Non-finite input falls back to 1 rather than
+  // printing `Retry-After: NaN` — no caller passes one today, and a header
+  // that is silently unparseable is the kind of thing nobody notices.
+  const seconds = Number.isFinite(retryAfterSeconds)
+    ? Math.max(1, Math.ceil(retryAfterSeconds))
+    : 1;
+  return { "retry-after": String(seconds) };
 }
 
 export function rateLimit(
