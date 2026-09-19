@@ -54,6 +54,11 @@ import { EmptyState } from "@/components/studio/page-header";
 import { EmptyProductsArt } from "@/components/icons/empty-art";
 import { Pagination, PAGE_SIZE } from "@/components/studio/pagination";
 import { SortHead, useSort } from "@/components/studio/sort-header";
+import {
+  resolveKanbanView,
+  useStoredView,
+} from "@/components/studio/kanban";
+import { ProductsKanban } from "@/components/studio/products/products-kanban";
 import type { ColumnDef } from "@/lib/column-visibility";
 import type {
   ProductListFilter,
@@ -172,6 +177,8 @@ export function ProductList({
   page,
   pageCount,
   total,
+  kanbanLanes,
+  kanbanLaneCap,
 }: {
   products: ProductRow[];
   categories: { id: string; name: string }[];
@@ -186,10 +193,27 @@ export function ProductList({
   page: number;
   pageCount: number;
   total: number;
+  /** Board view data: per-status capped rows + the cap the server applied.
+   *  Present whenever the page is served, so Table↔Kanban is a render
+   *  decision, not a refetch. */
+  kanbanLanes: Record<ContentStatus, ProductRow[]>;
+  kanbanLaneCap: number;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // Table | Kanban — the URL wins when it carries a real value (shareable),
+  // otherwise the per-device preference. Toggling writes BOTH, so a refresh,
+  // a shared link and the next visit all land on the same view.
+  const [storedView, setStoredView] = useStoredView(
+    "rr-studio-products-view",
+  );
+  const view = resolveKanbanView(searchParams.get("view"), storedView);
+  const setView = (next: "table" | "kanban") => {
+    setStoredView(next);
+    updateParams({ view: next === "kanban" ? "kanban" : undefined });
+  };
 
   const [search, setSearch] = useState(initialQuery);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -470,44 +494,84 @@ export function ProductList({
 
   return (
     <div>
-      {/* Status tabs with live counts (audit M-A1) — Published is the default
-          view so the 3,500+ auto-demoted drafts never bury the live catalog. */}
-      <div
-        role="group"
-        aria-label="Filter by status"
-        className="mb-4 flex w-fit max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-card p-1 [scrollbar-width:none]"
-      >
-        {STATUS_TABS.map((tab) => {
-          const active = statusTab === tab.value;
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              aria-pressed={active}
-              onClick={() =>
-                updateParams({
-                  status: tab.value === "PUBLISHED" ? undefined : tab.value,
-                })
-              }
-              className={
-                active
-                  ? "inline-flex min-h-11 items-center gap-2 rounded-full bg-foreground/6 px-5 text-small font-medium text-foreground"
-                  : "inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-small text-graphite outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none"
-              }
-            >
-              {tab.label}
-              <span
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        {/* Status tabs with live counts (audit M-A1) — the table's view of one
+            status at a time. Hidden on the board, which IS the all-status view
+            (lanes carry the same counts on their headers). */}
+        {view === "table" ? (
+          <div
+            role="group"
+            aria-label="Filter by status"
+            className="flex w-fit max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-card p-1 [scrollbar-width:none]"
+          >
+            {STATUS_TABS.map((tab) => {
+              const active = statusTab === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() =>
+                    updateParams({
+                      status: tab.value === "PUBLISHED" ? undefined : tab.value,
+                    })
+                  }
+                  className={
+                    active
+                      ? "inline-flex min-h-11 items-center gap-2 rounded-full bg-foreground/6 px-5 text-small font-medium text-foreground"
+                      : "inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-small text-graphite outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none"
+                  }
+                >
+                  {tab.label}
+                  <span
+                    className={
+                      active
+                        ? "u-num text-12 text-sapphire-ink"
+                        : "u-num text-12 text-graphite"
+                    }
+                  >
+                    {formatCount(statusCounts[tab.value])}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div aria-hidden />
+        )}
+
+        {/* Table | Board — the prompt's view toggle. The table (with its full
+            bulk system) stays the default; the board is the visual workflow.
+            URL wins over the stored preference, toggling writes both. */}
+        <div
+          role="group"
+          aria-label="View"
+          className="flex w-fit items-center gap-1 rounded-full border border-border bg-card p-1"
+        >
+          {(
+            [
+              { value: "table", label: "Table" },
+              { value: "kanban", label: "Board" },
+            ] as const
+          ).map((option) => {
+            const active = view === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setView(option.value)}
                 className={
                   active
-                    ? "u-num text-12 text-sapphire-ink"
-                    : "u-num text-12 text-graphite"
+                    ? "inline-flex min-h-11 items-center rounded-full bg-foreground/6 px-5 text-small font-medium text-foreground"
+                    : "inline-flex min-h-11 items-center rounded-full px-5 text-small text-graphite outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:text-foreground focus-visible:ring-2 focus-visible:ring-focus motion-reduce:transition-none"
                 }
               >
-                {formatCount(statusCounts[tab.value])}
-              </span>
-            </button>
-          );
-        })}
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Filters */}
@@ -654,7 +718,15 @@ export function ProductList({
         <ColumnsMenu tableKey="products" columns={PRODUCT_COLUMNS} />
       </div>
 
-      {/* Cross-page selection banner (audit L-AD1, Gmail pattern). */}
+      {view === "kanban" ? (
+        <ProductsKanban
+          lanes={kanbanLanes}
+          counts={statusCounts}
+          laneCap={kanbanLaneCap}
+        />
+      ) : (
+        <>
+          {/* Cross-page selection banner (audit L-AD1, Gmail pattern). */}
       {selection.allSelected && total > rowIds.length && (
         <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card border border-border bg-card px-4 py-3 text-small text-foreground">
           {filterArmed ? (
@@ -1001,16 +1073,18 @@ export function ProductList({
         </>
       )}
 
-      <Pagination
-        page={page}
-        pageCount={pageCount}
-        total={total}
-        pageSize={PAGE_SIZE}
-        onPageChange={(next) =>
-          updateParams({ page: next > 1 ? String(next) : undefined })
-        }
-        unit="products"
-      />
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            total={total}
+            pageSize={PAGE_SIZE}
+            onPageChange={(next) =>
+              updateParams({ page: next > 1 ? String(next) : undefined })
+            }
+            unit="products"
+          />
+        </>
+      )}
 
       <BulkBar count={effectiveCount} onClear={clearSelection}>
         {/* Approve is the batch "confirm rewrite" — Publish keeps refusing
