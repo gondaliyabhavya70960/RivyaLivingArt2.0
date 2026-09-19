@@ -85,24 +85,78 @@ The storefront is localized: a 9-locale next-intl tree (English, Hindi, Gujarati
 
 **Admin (`/studio`):** Dashboard (KPIs/charts) · Products (with per-product Custom Form Builder) · Categories · Portfolio · Blog · Media Library (Vercel Blob) · Inquiries / WhatsApp Orders · Testimonials · FAQs · Subscribers · SEO · Site Settings · Pages · **Bulk Import (Google Sheets/CSV)** · **Catalog fill** (four-tier CSV catalog import) · **Product Scraper** (tiered source registry → scrape → review → approve → draft import with rewrite guard) · User Roles · Activity Logs
 
-## Documentation
+## Repository map
 
-| File                                                 | Purpose                                                                                                     |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [CLAUDE.md](./CLAUDE.md)                             | **Project instructions** — current repo reality, hard rules, conventions. Read this first in every session. |
-| [REDESIGN.md](./REDESIGN.md)                         | **Master design spec** (v3 Liquid Luxury) — tokens, motion, sections, studio                                |
-| [DESIGN.md](./DESIGN.md)                             | Superseded v2.0 Midnight Gild spec — history only                                                           |
-| [CONTEXT.md](./CONTEXT.md)                           | Historical v1 build memory (phase log) — superseded by CLAUDE.md + REDESIGN.md                              |
-| [INSTALL.md](./INSTALL.md)                           | Local development setup                                                                                     |
-| [DEPLOYMENT.md](./DEPLOYMENT.md)                     | Vercel deployment, Neon + Blob integration, custom domain                                                   |
-| [ADMIN_GUIDE.md](./ADMIN_GUIDE.md)                   | Plain-language guide for the owner: studio, products, imports, scraper                                      |
-| [CONTENT_GUIDE.md](./CONTENT_GUIDE.md)               | Content standards + every Google Sheet / CSV import template                                                |
-| [SEO_GUIDE.md](./SEO_GUIDE.md)                       | SEO system, schema markup, per-page metadata                                                                |
-| [BACKUP_GUIDE.md](./BACKUP_GUIDE.md)                 | Neon point-in-time recovery, Blob inventory, git                                                            |
-| [WHATSAPP_ORDER_GUIDE.md](./WHATSAPP_ORDER_GUIDE.md) | WhatsApp ordering system: message format, wa.me rules, testing                                              |
-| [COMPETITOR.md](./COMPETITOR.md)                     | Top-20 competitor research (populated in Phase 11)                                                          |
-| [docs/plan/README.md](./docs/plan/README.md)         | The five workstreams currently in force: storefront/Studio redesign · scraper rebuild · Sheets removal · Drive asset pipeline · the three-tier product architecture |
-| [docs/plan/07-three-tier-architecture.md](./docs/plan/07-three-tier-architecture.md) | **The product architecture** — Large (collectible furniture & spatial art) · Medium (memory & celebration art) · Small (personal art & gifting). Read before touching cards, the PDP, navigation, facets or scraper classification |
+Every top-level entry, and what each root document is FOR. `docs/README.md` is
+the same index for `docs/` (35 loose files and seven subdirectories), and
+`docs/plan/README.md` for the workstream plans.
+
+**Nothing here is filed by tidiness, and that is deliberate.** Measured on
+2026-09-19: every non-blog markdown file in this repository has at least one
+inbound reference, and several of those referrers are DATED RECORDS — owner
+decision D24 says a dated document is never rewritten, because editing what it
+said at the time falsifies it. So a file cannot be moved and its links
+repaired; moving it would simply break `CHANGELOG.md`, `PROJECT_STATE.md`,
+`docs/audits/` and `RENAME-MIGRATION.md` and leave them broken. This map is the
+answer to "where is everything", and it is the answer a rearrangement was not
+allowed to give.
+
+### Top-level directories
+
+| Path         | What it is                                                                                                                                                                                                |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/`       | The application. Storefront routes in `src/app/[locale]/(v2)` (next-intl, nine locales incl. RTL), staff panel in `src/app/studio`, route guard at `src/proxy.ts` (Next 16 renamed middleware → proxy)    |
+| `public/`    | Shipped media. `public/media/v3/` is the Part 15 asset set, `public/redesign/` the Liquid Luxury set (`catalog/` there is placeholders — never a product cover), `public/sequences/` the 121 scrub frames |
+| `prisma/`    | Schema, 72 migrations, `bootstrap.ts` (runs on every build), the demo fixtures and the 55 seeded blog bodies in `prisma/blog-content/`                                                                    |
+| `scripts/`   | The gates and the pipelines — `redesign-audit.mjs`, `a11y-audit.mjs`, `keyboard-audit.mjs`, `alt-audit.mjs`, `e2e-smoke.mjs`, `studio-audit.mjs`, the media fetchers, `migrate-deploy.mjs`                |
+| `tests/`     | Database-backed tests (`npm run test:db`). The unit suite lives beside its source in `src/lib`                                                                                                            |
+| `messages/`  | The nine locale files. English first, then the batch — `scripts/i18n-missing.mjs` is the gate                                                                                                             |
+| `data/`      | **Read by code.** `data/tiers/*.csv.gz` is the catalogue importer's only source and `data/rewrites/*.json` its editorial copy; `next.config.ts` traces both into the catalog-fill route                   |
+| `docs/`      | The documentation tree. **Start at `docs/README.md`** — half of what is there is dated or superseded, and that page is what tells them apart. Three paths in it are pipeline inputs that must not move    |
+| `design/`    | The reference design: `implementation-plan.md` (§4.5's icon brief, §6's interaction table), `awwwards-redesign-spec.md`, the UI/UX audit, `mockup/`. Reference, not law — `REDESIGN.md` outranks it       |
+| `QA/`        | The 14-part QA audit from the v1 build (architecture, security, performance, a11y, data, scraper…). A dated record                                                                                        |
+| `audit/`     | `BASELINE.md` and `FINDINGS.md` — the 2026-07 forensic audit. A dated record                                                                                                                              |
+| `.github/`   | `workflows/ci.yml` (the gate on every PR) and the pull-request template                                                                                                                                   |
+| `.claude/`   | Agent configuration: skills, agent definitions and settings                                                                                                                                               |
+| `.hallmark/` | One log from the superseded Midnight Gallery design system (2026-08-12). History                                                                                                                          |
+
+### Root documents
+
+**In force** — read these:
+
+| File                                                 | Purpose                                                                                                                                                                          |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [CLAUDE.md](./CLAUDE.md)                             | **Read first.** Current repo reality, the hard rules, the conventions, and the traps that cost a production incident to learn. Outranks every other document where they disagree |
+| [REDESIGN.md](./REDESIGN.md)                         | **The design spec** (v3 Liquid Luxury) — tokens, motion, every section, the Studio. `docs/redesign-contract.md` is the short version                                             |
+| [AGENTS.md](./AGENTS.md)                             | Working agreement for agents: branch and PR conventions, the definition of done                                                                                                  |
+| [README.md](./README.md)                             | This page — the business model, the stack, and the map above                                                                                                                     |
+| [INSTALL.md](./INSTALL.md)                           | Local development setup                                                                                                                                                          |
+| [DEPLOYMENT.md](./DEPLOYMENT.md)                     | Vercel, Neon and Blob, the custom domain, the cron secret, and the optional edge rate limit                                                                                      |
+| [ADMIN_GUIDE.md](./ADMIN_GUIDE.md)                   | Plain-language guide for the owner: the Studio, products, imports, the scraper                                                                                                   |
+| [CONTENT_GUIDE.md](./CONTENT_GUIDE.md)               | Content standards and every CSV / XLSX import template                                                                                                                           |
+| [SEO_GUIDE.md](./SEO_GUIDE.md)                       | The SEO system, schema markup, per-page metadata                                                                                                                                 |
+| [BACKUP_GUIDE.md](./BACKUP_GUIDE.md)                 | Point-in-time recovery, the Blob inventory, git                                                                                                                                  |
+| [WHATSAPP_ORDER_GUIDE.md](./WHATSAPP_ORDER_GUIDE.md) | The ordering system: message format, `wa.me` rules, how to test it                                                                                                               |
+| [COMPETITOR.md](./COMPETITOR.md)                     | Competitor research — reference only; no catalogue content comes from it                                                                                                         |
+
+**Dated records** — never rewritten (D24). Read them as history, not instruction:
+
+| File                                   | Purpose                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------ |
+| [CHANGELOG.md](./CHANGELOG.md)         | What shipped, newest first, each entry naming its phase                  |
+| [PROJECT_STATE.md](./PROJECT_STATE.md) | Session checkpoints, newest at the top, each older one marked superseded |
+
+**Superseded** — kept because deleting them would destroy the only account of
+decisions that were really made:
+
+| File                       | Superseded by                                         |
+| -------------------------- | ----------------------------------------------------- |
+| [DESIGN.md](./DESIGN.md)   | `REDESIGN.md`. v2.0 "Midnight Gild"                   |
+| [CONTEXT.md](./CONTEXT.md) | `CLAUDE.md` + `PROJECT_STATE.md`. The v1 build memory |
+
+`src/lib/repo-map.test.ts` pins this map against the tree in both directions:
+a new root document or top-level directory that is not listed fails, and so
+does a row pointing at something that no longer exists.
 
 ## Build Phases
 
