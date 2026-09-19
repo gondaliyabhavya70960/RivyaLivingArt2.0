@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { setInquiriesStatus } from "@/actions/inquiries";
@@ -13,6 +13,9 @@ import {
   STATUS_LABELS,
   STATUS_ORDER,
 } from "@/components/studio/inquiries/labels";
+import {
+  applyOptimisticMove,
+} from "@/components/studio/inquiries/board-filter";
 import {
   priorityFromBand,
   stageTimer,
@@ -34,6 +37,18 @@ import { INQUIRY_STATUS_ICON } from "@/components/icons/status";
 import { WhatsAppReplyButton } from "@/components/studio/inquiries/whatsapp-reply-button";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import { cn, monogram } from "@/lib/utils";
+import { useSelection } from "@/hooks/use-selection";
+import { BulkBar } from "@/components/studio/bulk-bar";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export type CommissionCard = {
   id: string;
@@ -103,36 +118,109 @@ const MOVE_OPTIONS: readonly KanbanMoveOption<InquiryStatus>[] =
  * extracted from this file with zero visual or behavioural change, which is
  * the proof the extraction is faithful. Products and the scraper review
  * build their boards from the same set.
+ *
+ * **PR-5 — filters, bulk, and optimistic moves.**
+ * The board finally honors the table's filters (source, search, stale, demo
+ * — `?status=` stays the table's tab, since the board IS the all-status
+ * view). Cards can be ticked for a bulk lane move through the same
+ * `setInquiriesStatus`. And a single move is OPTIMISTIC: the card changes
+ * lanes immediately and rolls back if the server refuses, with the busy fade
+ * saying "confirming" until the refresh lands. Lane headers stay the SERVER'S
+ * true totals — an optimistic card settles the counts on the refresh, never
+ * by hand.
  */
 export function CommissionBoard({
   cards,
   counts,
   shown,
   total,
+  activeSource,
+  initialQuery,
 }: {
   cards: CommissionCard[];
   /** True per-status totals (the board renders a capped slice). */
   counts: Map<InquiryStatus, number>;
   shown: number;
   total: number;
+  /** The current source filter ("ALL" or an InquirySource) — board filter row. */
+  activeSource: string;
+  /** The current search text — board filter row. */
+  initialQuery: string;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  // Optimistic lanes. The reset follows the repo's render-time pattern (no
+  // synchronous setState in an effect): when the server sends new cards —
+  // after our own refresh or any navigation — the optimistic copy is rebuilt.
+  const [optimisticCards, setOptimisticCards] = useState(cards);
+  const [prevCards, setPrevCards] = useState(cards);
+  if (prevCards !== cards) {
+    setPrevCards(cards);
+    setOptimisticCards(cards);
+  }
+
+  const [search, setSearch] = useState(initialQuery);
+  const [bulkTarget, setBulkTarget] = useState<InquiryStatus>("CONTACTED");
+
+  const cardIds = useMemo(
+    () => optimisticCards.map((card) => card.id),
+    [optimisticCards],
+  );
+  const selection = useSelection(cardIds);
+
+  function updateParams(next: Record<string, string | undefined>) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(next)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
+
+  function handleSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    updateParams({ q: search.trim() || undefined });
+  }
 
   const move = (card: CommissionCard, next: InquiryStatus) => {
     if (next === card.status) return;
     setBusyId(card.id);
+    // Optimistic: the card jumps now; the old array is the rollback.
+    const rollback = optimisticCards;
+    setOptimisticCards(applyOptimisticMove(optimisticCards, card.id, next));
     startTransition(async () => {
       const result = await setInquiriesStatus([card.id], next);
       setBusyId(null);
       if (!result.ok) {
+        setOptimisticCards(rollback);
         toast.error(result.error);
         return;
       }
       toast.success(
         `${card.customerName} moved to ${STATUS_LABELS[next].toLowerCase()}.`,
       );
+      router.refresh();
+    });
+  };
+
+  const moveSelection = () => {
+    const ids = selection.ids;
+    if (ids.length === 0) return;
+    startTransition(async () => {
+      const result = await setInquiriesStatus(ids, bulkTarget);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(
+        `${ids.length} commission${ids.length === 1 ? "" : "s"} moved to ${STATUS_LABELS[bulkTarget].toLowerCase()}.`,
+      );
+      selection.clear();
       router.refresh();
     });
   };
@@ -148,6 +236,40 @@ export function CommissionBoard({
 
   return (
     <div>
+      {/* Board filters (PR-5) — the table's source + search clauses, now
+          honoured by the lanes too. The status tab stays the table's own:
+          this board is the all-status pipeline by definition. */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <Select
+          value={activeSource}
+          onValueChange={(value) =>
+            updateParams({ source: value === "ALL" ? undefined : value })
+          }
+        >
+          <SelectTrigger aria-label="Filter by source">
+            <SelectValue placeholder="Source" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All sources</SelectItem>
+            {(Object.keys(SOURCE_LABELS) as InquirySource[]).map((source) => (
+              <SelectItem key={source} value={source}>
+                {SOURCE_LABELS[source]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <form onSubmit={handleSearch} className="flex items-center gap-2">
+          <Input
+            name="q"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search name or phone…"
+            aria-label="Search commissions"
+            className="w-56"
+          />
+        </form>
+      </div>
+
       {shown < total && (
         <p className="u-micro mb-3">
           SHOWING THE {shown} MOST RECENT OF {total} · OPEN THE TABLE FOR THE
@@ -156,7 +278,7 @@ export function CommissionBoard({
       )}
       <KanbanBoard>
         {STATUS_ORDER.map((status) => {
-          const lane = cards.filter((card) => card.status === status);
+          const lane = optimisticCards.filter((card) => card.status === status);
           const laneTotal = counts.get(status) ?? 0;
           return (
             <KanbanColumn
@@ -184,6 +306,8 @@ export function CommissionBoard({
                     card={card}
                     busy={pending && busyId === card.id}
                     onMove={(next) => move(card, next)}
+                    checked={selection.selected.has(card.id)}
+                    onToggle={() => selection.toggle(card.id)}
                   />
                 </li>
               ))}
@@ -191,6 +315,27 @@ export function CommissionBoard({
           );
         })}
       </KanbanBoard>
+
+      <BulkBar count={selection.count} onClear={selection.clear}>
+        <Select
+          value={bulkTarget}
+          onValueChange={(value) => setBulkTarget(value as InquiryStatus)}
+        >
+          <SelectTrigger size="sm" aria-label="Move selection to">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SELECTABLE_STATUSES.map((status) => (
+              <SelectItem key={status} value={status}>
+                {STATUS_LABELS[status]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button size="sm" variant="secondary" disabled={pending} onClick={moveSelection}>
+          Move {selection.count} to {STATUS_LABELS[bulkTarget]}
+        </Button>
+      </BulkBar>
     </div>
   );
 }
@@ -199,10 +344,14 @@ function CommissionCardBody({
   card,
   busy,
   onMove,
+  checked,
+  onToggle,
 }: {
   card: CommissionCard;
   busy: boolean;
   onMove: (next: InquiryStatus) => void;
+  checked: boolean;
+  onToggle: () => void;
 }) {
   const timer: StageTimer = stageTimer(new Date(card.createdAtIso));
   const priority = priorityFromBand(timer.band);
@@ -212,6 +361,12 @@ function CommissionCardBody({
   return (
     <KanbanCardShell busy={busy}>
       <div className="flex items-start gap-3">
+        <Checkbox
+          checked={checked}
+          onCheckedChange={onToggle}
+          aria-label={`Select ${card.customerName}'s commission`}
+          className="mt-1"
+        />
         {/* Thumbnail — the commissioned product's own first image, or the
             customer's monogram when the commission has no product attached
             (custom orders and contact leads never do). */}
