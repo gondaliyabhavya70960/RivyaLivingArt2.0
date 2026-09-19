@@ -129,3 +129,36 @@ Nothing here is required and nothing breaks without it. Turn it on only if the
 runtime logs show automated traffic worth turning away — a rate limit is the
 one setting whose failure mode is refusing real customers, and every order on
 this site finalises through a form.
+
+## 14. Who deploys — and how to make production deploys manual
+
+**Owner instruction, 2026-09-19:** _"dont push any new change in production on
+versel i will do manual to production to this."_ No agent deploys this site.
+Work ends at a pushed branch and a draft pull request; the owner merges, and
+merging is what deploys. The rule is recorded in `CLAUDE.md` and `AGENTS.md`
+because that is where an agent reads it.
+
+**A rule in a document does not stop a platform.** Vercel builds `main` on
+every merge and promotes the result to production, whoever merged and for
+whatever reason. If the owner wants the platform to enforce the rule rather
+than trusting people to follow it, turn automatic production deploys off:
+
+- **Project → Settings → Git → Ignored Build Step.** Set it to
+  `exit 0` — Vercel skips the build. Production is then deployed only by
+  promoting a preview from the dashboard, or with `vercel --prod` from a
+  machine that is logged in. Preview deployments for pull requests are
+  unaffected, so the PR previews and their checks keep working.
+- **Or Project → Settings → Git → Production Branch**, pointed at a branch
+  nobody merges into (for example `release`). `main` then behaves as a preview
+  branch, and a production deploy is an explicit merge into `release`.
+
+The first is reversible in one click and is the lighter of the two.
+
+**Whichever is chosen, one hazard does not go away.** `npm run build` runs
+`prisma migrate deploy`, and Vercel runs that build for **preview**
+deployments against the **production database** — so a branch carrying a
+migration reaches production the moment it is pushed, whether or not the site
+is ever deployed from it. §4's env vars and the "A MIGRATION HERE IS A
+PRODUCTION MIGRATION, ON PUSH" section of `CLAUDE.md` are the full account.
+The real fix is a separate preview database, or gating `migrate deploy` on
+`VERCEL_ENV=production`; neither is done.
