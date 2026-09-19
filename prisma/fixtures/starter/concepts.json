@@ -1,1 +1,258 @@
-[]
+[
+  {
+    "title": "Coastal Resin Dining Table — Concept Study",
+    "slug": "concept-coastal-resin-dining-table",
+    "brief": "A self-set design study from the studio's bench: what would a dining table look like if it carried the exact mood of the studio's ocean pours — deep sapphire channels running between two live-edge slabs, with the gold-leaf veining of a shoreline seen from above? The brief sets the constraints a real commission would: seat six comfortably, survive daily family use, and stay readable as art from across the room.",
+    "process": "The study proposes a river-table build: two seasoned hardwood slabs laid live-edge-inward, a layered pour of art-grade, UV-stabilised epoxy in three depths of blue, and gold leaf worked into the final flood coat while it is still moving. Layered pours cure over days each, which is where the depth comes from — the same slow schedule the studio's journal describes as non-negotiable. Legs in darkened steel to keep the slab visually floating.",
+    "story": "This is a design study, not a delivered commission — no client room, no order book entry. It exists because the studio's portfolio of delivered work is rich in small keepsakes and thin on the large-format furniture the studio is built around, and a visitor deciding on a dining table deserves to see how the studio thinks about one. The imagery is the studio's approved concept visualisation from the shared Drive library, reused deliberately rather than regenerated. When a real coastal table is commissioned and delivered, its photographs will take this page's place.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Dining table — concept study",
+      "material": "Live-edge hardwood + art-grade epoxy, proposed",
+      "technique": "River pour, layered ocean pigments, gold leaf",
+      "size": "Indicative 180 × 90 cm — final dimensions set per room",
+      "timeline": "Indicative 4–6 weeks for a real commission"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE approved Drive asset (owner to confirm colour fit at publish)",
+        "alt": "Concept visualisation of a live-edge dining table with a deep blue resin river channel and gold veining",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-001-4x5.png"
+      },
+      {
+        "purpose": "in-room context — REUSE approved Drive asset",
+        "alt": "Concept visualisation of the coastal dining table in a dining room setting",
+        "prompt": "",
+        "aspectRatio": "16:9",
+        "filename": "product-scene-001-16x9.png"
+      }
+    ]
+  },
+  {
+    "title": "Forest Green Side Table — Concept Study",
+    "slug": "concept-forest-green-side-table",
+    "brief": "A self-set study in restraint: a side table in deep forest green — emerald rather than neon — with the pigment concentrated at the centre and thinning toward clear edges, so the wood stays part of the conversation. The imagined placement is beside a reading chair, holding exactly one book, one lamp and one cup of chai.",
+    "process": "The study proposes a single thick pour over a prepared hardwood round, green built in translucent layers so light still travels through the edge. A matte-satin top coat instead of full gloss — the studio's care guide notes gloss shows every fingerprint at arm's length, and a side table lives at arm's length. Brass hairpin legs to lift the colour off the floor.",
+    "story": "A concept study, clearly labelled as such — it has not been commissioned, built or delivered. It documents how the studio would approach an emerald pour: which pigments layer without going muddy, and why the clear-edge treatment keeps green from swallowing a small room. The imagery referenced is the studio's approved side-table concept visualisation; the owner confirms the colourway matches before this page is ever published. A real forest-green commission will replace it with photography.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Side table — concept study",
+      "material": "Hardwood round + art-grade epoxy, proposed",
+      "technique": "Layered translucent pour, satin finish",
+      "size": "Indicative 45 cm diameter — set per commission",
+      "timeline": "Indicative 2–3 weeks for a real commission"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE candidate; owner to confirm the asset's colourway reads forest green before publish, otherwise generate from the prompt below",
+        "alt": "Concept visualisation of a matched pair of side tables with resin tops",
+        "prompt": "Editorial product photograph of a round side table, deep forest-green translucent epoxy top with pigment concentrated at the centre fading to a clear edge, visible hardwood rim, brass hairpin legs, styled beside a linen reading chair with one book and a ceramic chai cup, soft window light, warm neutral room, premium handcrafted Indian studio aesthetic, photorealistic, 4:5 portrait",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-008-4x5.png"
+      },
+      {
+        "purpose": "in-room context — REUSE candidate, same colour check",
+        "alt": "Concept visualisation of the side tables placed in a living room corner",
+        "prompt": "Wide editorial interior shot of the forest-green resin side table beside an armchair in a warm Indian living room, floor lamp glow, terracotta and cream palette, photorealistic, 16:9",
+        "aspectRatio": "16:9",
+        "filename": "product-scene-008-16x9.png"
+      }
+    ]
+  },
+  {
+    "title": "Ocean Coffee Table — Concept Study",
+    "slug": "concept-ocean-coffee-table",
+    "brief": "A self-set study in the studio's signature subject: a coffee table that reads as a shallow lagoon — pale sand tones at the rim, deepening through turquoise to sapphire at the basin's centre, with the white lacing of a receding wave frozen mid-movement. The constraint: all of the drama, none of the fragility — a table that coasters and conversation can actually live on.",
+    "process": "The study proposes a shallow-basin build: a formed recess in the hardwood top so the ocean reads as depth rather than surface print, ocean pigments poured in four graded layers, and the wave lacing created with a heat gun and white alcohol ink in the final hour of workability. Full-gloss finish on the basin, satin on the surrounding wood — the contrast is the design.",
+    "story": "This is a concept study — speculative design work by the studio, not a client commission and not a delivered piece. It shows the studio's reasoning about its most-requested subject: why the basin build beats a flat pour for an ocean table, and how the gloss-satin split keeps the table usable. Imagery is the studio's approved coffee-table concept visualisation, reused from the shared Drive library. Real delivered ocean tables will be photographed and published as genuine projects as they leave the bench.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Coffee table — concept study",
+      "material": "Hardwood + art-grade epoxy, proposed",
+      "technique": "Shallow-basin ocean pour, alcohol-ink lacing",
+      "size": "Indicative 100 × 60 cm — set per room",
+      "timeline": "Indicative 3–4 weeks for a real commission"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE approved Drive asset (owner to confirm at publish)",
+        "alt": "Concept visualisation of a shallow-basin coffee table with an ocean-coloured resin pour",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-003-4x5.png"
+      },
+      {
+        "purpose": "in-room context — REUSE approved Drive asset",
+        "alt": "Concept visualisation of the ocean coffee table in a living room setting",
+        "prompt": "",
+        "aspectRatio": "16:9",
+        "filename": "product-scene-003-16x9.png"
+      }
+    ]
+  },
+  {
+    "title": "Botanical Preservation Panel — Concept Study",
+    "slug": "concept-botanical-preservation-panel",
+    "brief": "A self-set study in the studio's most emotional craft: a wall panel that preserves an entire season of a garden — marigold, jasmine and fern laid as a botanical horizon and sealed in clear art-grade resin. The study asks the question every preservation client asks: how much can one panel hold before it stops being composition and becomes clutter?",
+    "process": "The study proposes the studio's standard preservation discipline: flowers dried flat and slow until fully moisture-free (rushed drying browns petals from inside), a layout approved as a full-size mock-up photograph before any pour, and three thin sealing coats rather than one deep pour so each bloom sits exactly where it was placed. Clear, not tinted — the flowers are the colour.",
+    "story": "A concept study, not a delivered commission — no family's flowers were used, and the panel exists as design thinking rather than as an object. It is the companion study to the studio's published varmala-preservation guides: where those explain the real process step by step, this explores the compositional limits. Imagery is the studio's approved preservation concept visualisation from the Drive library. When a real botanical panel is commissioned, its story — with the client's own words where permission is granted — replaces this page.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Preservation wall panel — concept study",
+      "material": "Dried botanicals + art-grade epoxy, proposed",
+      "technique": "Flat-dried preservation, thin layered sealing coats",
+      "size": "Indicative 60 × 45 cm — set per commission",
+      "timeline": "Indicative 4–6 weeks including drying time"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE approved Drive asset (owner to confirm composition fit at publish)",
+        "alt": "Concept visualisation of a framed preservation piece with flowers sealed in clear resin",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-020-4x5.png"
+      },
+      {
+        "purpose": "alternate framing — REUSE approved Drive asset",
+        "alt": "Concept visualisation of a solid resin block preserving flowers",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-021-4x5.png"
+      }
+    ]
+  },
+  {
+    "title": "Champagne Resin Console — Concept Study",
+    "slug": "concept-champagne-resin-console",
+    "brief": "A self-set study in quiet luxury: a narrow console for an entryway, champagne and ivory pours with a whisper of gold leaf — a piece that has to impress in the three seconds a guest takes to hang their coat, and then stay out of the way. The constraint that makes it interesting: narrow span, no sag, ever.",
+    "process": "The study proposes a reinforced build: a slim hardwood carcass with a hidden steel spine, the champagne pour laid in warm translucent layers over an ivory base, gold leaf applied sparingly along one edge — the studio's own token rule made physical, one accent, never the whole surface. Satin finish; an entryway console is touched daily.",
+    "story": "This is a concept study — it has not been built for any client, and it makes no claim otherwise. It records how the studio thinks about restraint: champagne as a whisper rather than a shout, and why the structural spine matters more than the pour on a narrow span. The imagery referenced is the studio's approved console concept visualisation; the owner confirms the colourway reads champagne before publish, and regenerates from the documented prompt if it does not. A delivered console will be photographed as a genuine project.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Console table — concept study",
+      "material": "Hardwood, steel spine + art-grade epoxy, proposed",
+      "technique": "Warm translucent layers, restrained gold leaf, satin finish",
+      "size": "Indicative 120 × 35 cm — set per entryway",
+      "timeline": "Indicative 3–4 weeks for a real commission"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE candidate; owner to confirm the asset's colourway reads champagne/ivory before publish, otherwise generate from the prompt below",
+        "alt": "Concept visualisation of a narrow console table with a resin top",
+        "prompt": "Editorial product photograph of a narrow entryway console table, champagne and ivory epoxy top with a single restrained gold-leaf edge, slim dark steel legs, styled against a warm plaster wall with a small brass bowl and dried pampas stem, soft directional light, premium understated Indian studio aesthetic, photorealistic, 4:5 portrait",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-005-4x5.png"
+      },
+      {
+        "purpose": "alternate angle — REUSE candidate, same colour check",
+        "alt": "Concept visualisation of a sculptural console table",
+        "prompt": "Editorial product photograph of the champagne console from a three-quarter angle showing the narrow span and hidden-structure slimness, entryway setting with a mirror above, warm neutral palette, photorealistic, 4:5 portrait",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-006-4x5.png"
+      }
+    ]
+  },
+  {
+    "title": "3D Printed Desk Sculpture — Concept Study",
+    "slug": "concept-3d-printed-desk-sculpture",
+    "brief": "A self-set study at the seam of the studio's two crafts: a sculptural desk object whose lattice form is 3D printed and whose base is a poured resin plinth — printed precision above, hand-poured depth below. The brief imagines the object a founder or a designer keeps within arm's reach: small, weighty, impossible to ignore.",
+    "process": "The study proposes printing the lattice in a fine-resolution resin print for edge sharpness, post-curing, then hand-finishing — sanded, primed and painted in a single deep tone so the geometry does the talking. The plinth is a small block pour of the studio's ocean palette, cast in a silicone mould, with the lattice set into the final layer so print and pour are one object, not two parts glued together.",
+    "story": "A concept study — designed by the studio, not ordered by any client. It explores the studio's honest answer to \"can 3D printing feel premium?\": only when the print is the beginning of the making, not the end. Imagery is the studio's approved concept visualisation of a 3D-plus-resin lattice object from the Drive library. Delivered hybrid pieces will be published as genuine projects with their own photographs.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Desk sculpture — concept study",
+      "material": "Resin print + art-grade epoxy plinth, proposed",
+      "technique": "Fine-resolution print, hand finishing, cast-in hybrid pour",
+      "size": "Indicative 15 cm tall — set per commission",
+      "timeline": "Indicative 2–3 weeks for a real commission"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE approved Drive asset (owner to confirm at publish)",
+        "alt": "Concept visualisation of a lattice-form desk object combining 3D printing and resin",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-016-4x5.png"
+      },
+      {
+        "purpose": "alternate study — REUSE approved Drive asset",
+        "alt": "Concept visualisation of a parametric vessel form",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-017-4x5.png"
+      }
+    ]
+  },
+  {
+    "title": "Anniversary Memory Object — Concept Study",
+    "slug": "concept-anniversary-memory-object",
+    "brief": "A self-set study in the smallest scale the studio works in: a palm-sized keepsake that holds one date, one name and one dried bloom — the object version of a whispered anniversary gift. The design question: how little can a memory object carry and still feel like an heirloom rather than a trinket?",
+    "process": "The study proposes a small solid-block pour: a single dried bloom (jasmine or rose, flat-dried), the date and name laid as fine vinyl beneath the pour so the text reads through the depth, and a hand-polished finish on all six faces — small pieces show every shortcut. Packaged in the studio's standard gift box with a care card, because a memory object is handed over at a moment, not just delivered.",
+    "story": "This is a concept study — no couple, no real date, no delivered gift. It exists to show how the studio thinks about scale: that the discipline of a dining table and the discipline of a 200-gram keepsake are the same discipline. Imagery is the studio's approved keepsake concept visualisation from the Drive library. Real anniversary pieces — made from real dates and real blooms, shared only with the customer's permission — will take this page's place as they are delivered.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Memory keepsake — concept study",
+      "material": "Dried bloom, vinyl text + art-grade epoxy, proposed",
+      "technique": "Solid-block pour, hand-polished faces",
+      "size": "Indicative palm-sized block — set per commission",
+      "timeline": "Indicative 2–3 weeks for a real commission"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE approved Drive asset (owner to confirm at publish)",
+        "alt": "Concept visualisation of a small resin keepsake with a preserved bloom inside",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-022-4x5.png"
+      },
+      {
+        "purpose": "set context — REUSE approved Drive asset",
+        "alt": "Concept visualisation of a set of small resin keepsakes",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-023-4x5.png"
+      }
+    ]
+  },
+  {
+    "title": "Corporate Award Object — Concept Study",
+    "slug": "concept-corporate-award-object",
+    "brief": "A self-set study for the studio's corporate-gifting bench: an award object that a company would actually keep on the shelf after the ceremony — not another acrylic trophy. The imagined brief, as a real one would read: fifty identical-but-personal pieces, one brand colour, one event date, a budget band, and a deadline that cannot move.",
+    "process": "The study proposes a repeatable build: a cast desk piece in a neutral pour carrying the brand colour as a single restrained layer, the logo set cleanly beneath the surface, and each recipient's name added as an individual final layer so fifty pieces share one design and no two share a name. Repeatability is engineered at the mould stage — the same discipline the studio's bulk-order FAQ describes: a sample first, then the run.",
+    "story": "A concept study — no company ordered this, and no ceremony handed it out. It documents how the studio approaches bulk work without losing the handmade point: the design repeats, the making stays personal. Imagery is the studio's approved desk-piece concept visualisation from the Drive library. When a real corporate run is delivered, the client name and photographs — published with permission — will replace this study.",
+    "location": "Surat studio",
+    "year": 2026,
+    "resultsMeta": {
+      "type": "Corporate award — concept study",
+      "material": "Art-grade epoxy, brand-colour layer, proposed",
+      "technique": "Mould-cast repeatability, per-recipient personalisation",
+      "size": "Indicative desk-piece scale — set per commission",
+      "timeline": "Indicative 3–5 weeks for a 50-piece run"
+    },
+    "images": [
+      {
+        "purpose": "hero — REUSE approved Drive asset (owner to confirm at publish)",
+        "alt": "Concept visualisation of a resin desk piece suitable as a corporate award",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-032-4x5.png"
+      },
+      {
+        "purpose": "alternate scale — REUSE approved Drive asset",
+        "alt": "Concept visualisation of a small resin paperweight",
+        "prompt": "",
+        "aspectRatio": "4:5",
+        "filename": "product-hero-033-4x5.png"
+      }
+    ]
+  }
+]

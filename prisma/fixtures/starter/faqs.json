@@ -1,1 +1,212 @@
-[]
+[
+  {
+    "question": "How do I order a piece from Rivya Living Art?",
+    "answer": "Everything is made to order, and every order is finalised personally on WhatsApp. Browse the collection, open the piece closest to what you want, choose your customisation options and send the enquiry — it reaches our studio inbox and opens a WhatsApp conversation at the same time. We discuss your piece, confirm the price and timeline, and only then begin. There is no cart and no online payment: the conversation is the checkout.",
+    "group": "ordering"
+  },
+  {
+    "question": "What happens after I send an enquiry?",
+    "answer": "You are redirected to WhatsApp with your enquiry already written out, so nothing has to be retyped. We reply as soon as we can, usually the same day, discuss size, colours and references, and share a final quote. Work begins once the advance is settled, and the balance is due before dispatch. You hear from us at each stage rather than having to ask.",
+    "group": "ordering"
+  },
+  {
+    "question": "Can I commission something that isn't on the website at all?",
+    "answer": "Yes — some of our favourite work started as one sentence and a photograph. The Custom Order page is exactly for that: describe the piece, share references, and tell us the room or the occasion. If it involves resin, preservation, personalised art or 3D printing, we will tell you honestly what is possible, what it would take, and what it would cost before you commit to anything.",
+    "group": "ordering"
+  },
+  {
+    "question": "What references should I share for a custom piece?",
+    "answer": "Whatever you have is enough to start. Room photos help us judge scale and light; Pinterest boards and screenshots tell us the mood; a rough sketch with measurements is gold. For photo pieces, send the original image at full resolution — as a document rather than a compressed photo where possible. We review everything and tell you plainly what will translate well into resin and what will not.",
+    "group": "ordering"
+  },
+  {
+    "question": "Can you make a piece to exact dimensions?",
+    "answer": "Yes — dimensions are part of the consultation, not a fixed menu. Measure the space the piece will live in (and the doorways it must pass through) and share those numbers on WhatsApp. We confirm final dimensions with you before anything is poured or cut, because a centimetre agreed on paper is easier than a centimetre argued over at delivery.",
+    "group": "ordering"
+  },
+  {
+    "question": "Can I choose the colours for my piece?",
+    "answer": "Colour is one of the main reasons people commission us. Share a palette, a photo of the room, or even a fabric swatch, and we will propose pigment combinations — from deep ocean blues to muted neutrals. Resin reads differently in different light, so we discuss how the colours will behave in your space before the pour. The final colour direction is always approved by you first.",
+    "group": "ordering"
+  },
+  {
+    "question": "How do I approve the design before you start?",
+    "answer": "Before any material is poured, you approve the design on WhatsApp — the layout, colours, dimensions and any personalisation, confirmed in writing. For preservation pieces this includes how your flowers or photographs will sit. Nothing irreversible happens until you have said yes to that final brief, which is why the approval step matters more than any other.",
+    "group": "ordering"
+  },
+  {
+    "question": "Can I change my mind after the design is approved?",
+    "answer": "Small adjustments are usually possible before the first pour — tell us as early as you can. Once resin is mixed and poured, the piece physically cannot be unpoured, and changes become a new piece rather than an edit. We would rather you take an extra day at the approval stage than wish for one later, so we never rush you past it.",
+    "group": "ordering"
+  },
+  {
+    "question": "What exactly is resin art?",
+    "answer": "Resin art begins as two liquids — a resin and a hardener — that are coloured with pigments, poured in layers, and cure into a solid, glassy material over days. Flowers, gold leaf, photographs or wood can be sealed inside permanently. The result sits somewhere between glass, stone and lacquer: deep, glossy and completely solid. Every Rivya piece is poured by hand in our Surat studio.",
+    "group": "resin"
+  },
+  {
+    "question": "Will my piece look exactly like the photos on the website?",
+    "answer": "It will look like the same design family — never a photocopy. Resin moves as it is poured, and that movement is the art: the exact lacing in an ocean pour or the veining in a geode edge forms in the moment and cannot be repeated. What we guarantee is the palette, the composition and the quality; what makes your piece yours is that its details exist nowhere else.",
+    "group": "resin"
+  },
+  {
+    "question": "Why do colours sometimes look different in person?",
+    "answer": "Two honest reasons. Screens render colour differently from room light — a sapphire blue at midnight on a phone is not the same blue beside a sunny window. And resin is translucent in layers, so the wall or wood behind it changes what you see. If an exact match matters for your room, tell us during the consultation and we will plan the palette around your lighting.",
+    "group": "resin"
+  },
+  {
+    "question": "Does resin yellow over time?",
+    "answer": "Cheap resin does; good resin cared for sensibly does not. We use art-grade, UV-stabilised epoxy as standard, which resists yellowing dramatically better than industrial tabletop resin. Two habits protect any piece further: keep it out of prolonged direct sunlight, and away from sustained heat. Deeply pigmented pieces — our ocean blues especially — are the most forgiving of all over the years.",
+    "group": "resin"
+  },
+  {
+    "question": "Is resin art durable enough for everyday use?",
+    "answer": "Cured epoxy is hard, water-resistant and does not chip like ceramic or glass — trays, coasters and tables are made to be used, not just looked at. Its few real enemies are abrasion, sustained high heat and harsh solvents, all easy to avoid with ordinary care. Treat a resin surface the way you would treat a good wooden table and it will outlast trends.",
+    "group": "resin"
+  },
+  {
+    "question": "Can resin handle hot cups, plates or pans?",
+    "answer": "Warm mugs are fine; sustained high heat is not. Cured resin softens well before it burns, and a softened surface takes impressions — so a kettle straight off the stove or a hot serving pan needs a trivet, exactly as it would on polished wood. Coasters under very hot drinks keep the finish glassy for decades rather than years.",
+    "group": "resin"
+  },
+  {
+    "question": "Does resin scratch? How do I protect the finish?",
+    "answer": "Everyday contact will not scratch it, but grit dragged across the surface will dull it over time — dust is mildly abrasive, which is why a soft, slightly damp microfibre cloth is the whole cleaning kit. Keep sharp or rough-bottomed objects off high-gloss surfaces, use felt pads under décor, and never reach for scouring pads, acetone or strong alcohol-based cleaners.",
+    "group": "resin"
+  },
+  {
+    "question": "What sizes can you make tables and large pieces in?",
+    "answer": "From a two-person side table to a dining table that seats the whole family — the size is set by your room, not by a catalogue. During consultation we work from your measurements: the space, the seating, and the clearances around it. Very large spans are planned pour by pour for structural soundness, and we tell you honestly if a size asks for a design change.",
+    "group": "furniture"
+  },
+  {
+    "question": "Which woods do you build furniture with?",
+    "answer": "We work with seasoned hardwoods chosen for each piece — sheesham, teak, mango and acacia are the usual family, often with a live edge kept where the slab asks for it. The wood matters as much as the resin: it carries the warmth, the grain and the story. During consultation we propose the species that suits your design, your room and your budget.",
+    "group": "furniture"
+  },
+  {
+    "question": "How heavy is a resin table, and is my floor okay with it?",
+    "answer": "Solid wood and epoxy are dense materials — a large dining table can weigh as much as a comparable solid-wood table, sometimes more. Any normal home floor handles this comfortably; it is the moving, not the standing, that needs planning. We discuss access — stairs, lifts, door widths — before dispatch so delivery day has no surprises.",
+    "group": "furniture"
+  },
+  {
+    "question": "Will you help me choose the right size and design for my room?",
+    "answer": "That is what the consultation is for. Share the room's measurements and a few photos, tell us how you live — daily family dinners, occasional hosting, a statement corner — and we will propose sizes, shapes and palettes that fit. A table that is ten centimetres too large for its room never stops being wrong, and we would rather say so on WhatsApp than deliver it.",
+    "group": "furniture"
+  },
+  {
+    "question": "How is a large table delivered and set up?",
+    "answer": "Large pieces travel crated — corner-protected, foam-cushioned, marked fragile — with the carrier booked for the piece's size and weight. We coordinate the delivery window with you on WhatsApp and guide you on placement, levelling and first care. For very large pieces, plan for two or more people on receiving day; the crate and the table both ask for it.",
+    "group": "furniture"
+  },
+  {
+    "question": "How do I care for a resin table day to day?",
+    "answer": "The same gentle routine as any resin piece, plus table habits: wipe with a soft, damp microfibre cloth, use coasters and trivets for hot dishes, placemats under rough-bottomed serveware, and felt pads under anything that lives on the surface. Keep it out of hours of direct sun where the room allows. That is genuinely all a well-made table asks for.",
+    "group": "furniture"
+  },
+  {
+    "question": "Can you make matching pieces — a dining table with a coffee table or console?",
+    "answer": "Yes, and matched sets are some of the most satisfying work we do. Pieces can share a palette, a pour style or a wood species so they read as one family across a home. Sets also plan well in stages — many clients start with one anchor piece and add companions over time, and we keep the colour recipe noted so the family grows consistently.",
+    "group": "furniture"
+  },
+  {
+    "question": "What kinds of things can you 3D print?",
+    "answer": "Custom décor and gifts are our focus: name plates, figurines, desk pieces, lithophane photo panels, prototypes and one-off objects designed around an occasion. 3D printing also combines beautifully with resin — printed forms can be cast into tabletops or wall art. If you have an idea that does not fit a category, ask anyway; the honest answer is usually more interesting than the category list.",
+    "group": "3d-printing"
+  },
+  {
+    "question": "I only have a photo or an idea — no files. Can you still make it?",
+    "answer": "Yes — most clients start exactly there. Share photos, a sketch or a description on WhatsApp and we discuss what the object should be; a 3D model is then prepared as part of the commission and approved by you before printing. For photo work like lithophanes, send the sharpest original you have — the print can only be as good as the image it is built from.",
+    "group": "3d-printing"
+  },
+  {
+    "question": "I already have a 3D model file. Can you print it?",
+    "answer": "Almost certainly — share the file (STL or OBJ are the usual formats) and we will check it for printability: wall thickness, overhangs, size, and the right material for what it needs to do. If the model needs repairs or adjustments we will tell you what and why before quoting. Your design stays yours; we print, we do not reuse client files.",
+    "group": "3d-printing"
+  },
+  {
+    "question": "What is the difference between PLA, PETG and resin prints?",
+    "answer": "In plain terms: PLA prints are crisp, matte and great for décor that lives indoors; PETG is tougher and more heat-tolerant, suited to pieces that will be handled often or sit near a warm window; resin prints are smooth and highly detailed, ideal for figurines and fine work. We recommend the material after hearing what the piece is for — there is always a right answer per object.",
+    "group": "3d-printing"
+  },
+  {
+    "question": "Can 3D printed pieces be painted or finished?",
+    "answer": "Yes — finishing is where a print becomes a piece. Depending on the object we can sand, prime, paint or clear-coat it, and printed parts can be combined with wood or set into resin pours. Discuss the look you want during the consultation: a raw layered print has its own charm, but a finished, painted piece is usually what people picture when they say premium.",
+    "group": "3d-printing"
+  },
+  {
+    "question": "Is there anything 3D printing cannot do?",
+    "answer": "Honestly, yes — and we will always say so upfront. Very large objects are printed in sections and joined; thin, stressed parts have strength limits; and printed pieces are not meant for direct food contact or permanent outdoor life unless specifically planned for it. If your idea needs something printing cannot deliver, we will tell you and suggest the resin or handcrafted route instead.",
+    "group": "3d-printing"
+  },
+  {
+    "question": "Can you add names, dates or messages to a piece?",
+    "answer": "That is the heart of what we do. Names, wedding dates, a line of handwriting, a short mantra — text can be set into the resin itself, layered as vinyl beneath the pour, or engraved, depending on the piece. Share the exact wording (and spelling — we copy it letter for letter) during the consultation and approve the layout before it becomes permanent.",
+    "group": "personalisation"
+  },
+  {
+    "question": "Can my photographs go inside resin?",
+    "answer": "Yes — photographs can be sealed permanently inside frames, panels and keepsakes. Send the original at full resolution, 2000px or wider where possible, as a document rather than a compressed chat photo. We check every image first and tell you honestly if it will not print well; a good photo inside resin looks lit from within, and we want that for you.",
+    "group": "personalisation"
+  },
+  {
+    "question": "Do you make corporate or bulk gifts?",
+    "answer": "Yes — desk pieces, awards, festive gifting and client hampers, personalised per recipient where needed. Bulk work plans exactly like a commission: share the occasion, quantity, budget band and deadline on WhatsApp, and we propose pieces that scale honestly. Handmade work has real lead times, so the earlier the conversation starts — especially before Diwali and wedding season — the better.",
+    "group": "personalisation"
+  },
+  {
+    "question": "Can you add our company logo or branding?",
+    "answer": "Yes — logos can be printed, engraved or sealed into resin pieces, and colours can be matched to your brand palette. Share the logo as a vector file (SVG, AI or PDF) if you have one, or the highest-resolution image available. We confirm the layout and colours with you before production, and for larger runs a sample can be made first.",
+    "group": "personalisation"
+  },
+  {
+    "question": "Is there a minimum quantity for bulk orders?",
+    "answer": "No rigid minimum — but honesty about scale: a single personalised piece and a hundred personalised pieces are priced differently because the making is different. Small runs are welcome; larger runs earn better per-piece pricing and need more planning time. Tell us the quantity and deadline and we will tell you plainly what is possible and what it costs.",
+    "group": "personalisation"
+  },
+  {
+    "question": "What is varmala preservation, and how does it work?",
+    "answer": "Your wedding garland is dried carefully, arranged into a design you approve, and sealed permanently inside art-grade resin — as a frame, a block, a clock or a tabletop piece. The flowers keep their colour and form for decades instead of crumbling in a cupboard. It is one of the most meaningful things we make, and we treat it that way.",
+    "group": "preservation"
+  },
+  {
+    "question": "My wedding was months ago. Is it too late to preserve my varmala?",
+    "answer": "Usually not — dried flowers preserve beautifully, and many pieces are made from garlands saved months or even years earlier. What matters is how they were kept: dry, away from damp and direct sun. Send us a photo of the flowers as they are now and we will tell you honestly what they can still become; you might be surprised how much is recoverable.",
+    "group": "preservation"
+  },
+  {
+    "question": "How should I store my varmala before handing it over?",
+    "answer": "The first 48 hours matter most. Keep the garland cool and airy — a refrigerator shelf (not the freezer) inside a loose paper bag works well; avoid sealed plastic, which traps moisture and invites mould. Do not spray water or perfume on it. Then get it to us as soon as you can; if you are outside Surat, we will guide you on packing it safely for courier.",
+    "group": "preservation"
+  },
+  {
+    "question": "Can you preserve other flowers and memories, not just varmala?",
+    "answer": "Yes — anniversary bouquets, baby's first flowers, blooms from a parent's garden, even notes or small keepsakes can be dried and cast into memory art. The process is the same: dry, design, approve, pour. Each material behaves a little differently in resin, so send us a photo of what you have and we will tell you what to expect from it.",
+    "group": "preservation"
+  },
+  {
+    "question": "How long does preservation take, and when should I book?",
+    "answer": "Plan for several weeks end to end: the flowers need thorough drying before any resin touches them, and layered pours cure over days, not hours. Wedding season fills the calendar fast, so the best time to book is before the wedding — tell us the date and we will plan the slot and guide you on the handover.",
+    "group": "preservation"
+  },
+  {
+    "question": "I am in Surat or Gujarat. Is delivery faster or different for me?",
+    "answer": "Surat is home — local orders can skip the courier where practical, and we arrange handover or local delivery directly on WhatsApp. Gujarat-wide orders still travel protected, but transit is naturally shorter than pan-India. If you are nearby and commissioning something large, collecting it directly from the studio can also be discussed.",
+    "group": "shipping"
+  },
+  {
+    "question": "How do large furniture pieces travel across India?",
+    "answer": "Large pieces are crated in wood — corner-protected, foam-cushioned, marked fragile — and booked with carriers suited to the size and weight. Transit adds roughly 3–7 days after the making time, and we share dispatch details on WhatsApp so you know when to expect it. If anything arrives damaged, photograph it and message us within 48 hours and we will make it right.",
+    "group": "shipping"
+  },
+  {
+    "question": "Can I track my order once it is dispatched?",
+    "answer": "Yes — when your piece ships we share the carrier and tracking details on WhatsApp, and we stay in the conversation until it is safely in your hands. For large crated furniture, delivery is coordinated with you directly, since a crate does not fit the usual doorstep-drop model. You will never have to guess where your piece is.",
+    "group": "shipping"
+  },
+  {
+    "question": "Do you ship internationally?",
+    "answer": "Our regular shipping is pan-India, and that is where our packing and courier systems are proven. International orders can be discussed — they involve customs, longer transit and freight costs that vary too much to promise in a sentence. If you are outside India and want a piece, message us on WhatsApp and we will work out what is realistic for your country.",
+    "group": "shipping"
+  }
+]
