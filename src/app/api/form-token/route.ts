@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 
 import { issueFormToken } from "@/lib/form-token";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, retryAfterHeaders } from "@/lib/rate-limit";
 
 /**
  * Issues the signed form-mount timestamp the public forms send back with
@@ -18,7 +18,19 @@ export async function GET(): Promise<Response> {
     limit: 120,
     windowMs: 600_000,
   });
-  if (!limited.ok) return new Response(null, { status: 429 });
+  // 429 with `Retry-After`, and DELIBERATELY with no body that distinguishes
+  // it from any other failure the client sees. 120 tokens per ten minutes is
+  // far above any human filling forms, so a throttled caller here is a script
+  // or a large shared NAT; telling the first one which of the spam checks it
+  // tripped is the oracle `passesSpamChecks`'s generic copy exists to withhold.
+  // `use-form-token.ts` therefore treats this exactly like a network blip —
+  // the submit that follows fails the min-fill check once and the retry works.
+  if (!limited.ok) {
+    return new Response(null, {
+      status: 429,
+      headers: retryAfterHeaders(limited.retryAfterSeconds),
+    });
+  }
 
   return Response.json(
     { token: issueFormToken() },

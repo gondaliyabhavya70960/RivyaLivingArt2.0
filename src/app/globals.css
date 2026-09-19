@@ -1326,3 +1326,71 @@ html[data-cursor-live] .ProseMirror {
     stroke-dashoffset: 0;
   }
 }
+
+/* ————————————————————————————————————————————————————————————————
+   §2.10 · THE MAINTENANCE CURE LOOP — a resin level that never reaches the
+   rim, because the work is not finished.
+
+   It fills to 90%, holds there, fades out and starts again. The 90% is the
+   whole idea: a bar that completes says "done" on a page whose only message
+   is "not yet", and a bar that completes and restarts says it repeatedly.
+
+   ## IT IS NOT A PROGRESS BAR, AND MUST NEVER BE MARKED AS ONE
+
+   Nothing here measures anything. The markup is `aria-hidden` with no `role`,
+   no `aria-valuenow` and no percentage printed beside it — `route-progress`
+   and `scroll-progress` are the two indicators on this site that DO track a
+   real quantity, and they are the reason this one has to be told apart from
+   them. A decorative loop wearing `role="progressbar"` tells a screen-reader
+   user the site is 90% back.
+
+   ## 4.8s, where the token scale stops at 900ms
+
+   The four duration tokens describe interactions — a hover, a reveal — and
+   the contract's "a third is a bug" is about those. This is ambient, in the
+   same class as `sf-hero-drift`'s 6s breathing poster, and an interaction
+   duration on a loop would read as a machine working rather than resin
+   curing. The eases are still the house curves.
+
+   ## REDUCED MOTION GETS A LINE, NOT A FAST LOOP
+
+   `animation: none` plus a resting frame at 90%. The global collapse in
+   tokens.css would otherwise leave a 0.01ms animation whose `both` fill lands
+   on the last keyframe — which is `opacity: 0`, an invisible rail. The
+   resting state has to be authored, not derived.
+   ———————————————————————————————————————————————————————————————— */
+@keyframes sf-cure-loop {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  55% {
+    transform: scaleX(0.9);
+    opacity: 1;
+  }
+  84% {
+    transform: scaleX(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0.9);
+    opacity: 0;
+  }
+}
+
+.sf-cure-loop {
+  transform-origin: left;
+  animation: sf-cure-loop 4.8s var(--ease-luxury) infinite;
+}
+
+[dir="rtl"] .sf-cure-loop {
+  transform-origin: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-cure-loop {
+    animation: none;
+    transform: scaleX(0.9);
+    opacity: 1;
+  }
+}

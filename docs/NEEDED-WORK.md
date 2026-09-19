@@ -163,3 +163,33 @@ D29, the 49 KB motion budget). Supabase, Cloudinary, Neon, `app/(studio)`,
 own list and the ten reference sites stand instead). Anything Google Sheets.
 Order-status lookup by phone (a customer-facing account feature §1.1 keeps
 off-limits). The full audit tables record each one with its rule.
+
+## 5. What closed on 2026-09-18/19, and what it left
+
+Appended rather than edited in place: §1–§4 were written against HEAD
+`91c93b5` (D24). The dark redesign (PRs #106–#108 and the PR carrying this
+section) closed the storefront and Studio design rows and the six system
+pages; `docs/COMPLETED-WORK.md` §10 lists them.
+
+**Nothing new is owed by engineering.** What the redesign leaves is the same
+two kinds of thing the sections above already name:
+
+- **Owner inputs**, unchanged and still the gate on everything visual: real
+  photography (the two maker slots are still AI generations §15.2 forbids),
+  testimonials with `permissionStatus: GRANTED`, the address and socials,
+  portfolio rows with a `beforeImageUrl` so the before/after slider has data.
+  A dark ground does not make an empty catalogue look fuller.
+- **Owner decisions**, unchanged: the T2–T11 questions tabled in
+  `docs/plan/07-three-tier-architecture.md` — the header's nav items, the
+  homepage band, Tier 02's guided path, the seven proposed product fields.
+
+Two smaller things the redesign surfaced and deliberately did not build, both
+recorded where they belong rather than here:
+
+- **An unsaved-changes guard for the browser Back button.** The Studio forms
+  warn on tab close and on in-app navigation; the history API's back entry is
+  not coverable without hijacking the back button, which is worse than the
+  problem.
+- **A rate-limit rule at the edge.** `/too-many-requests` is built, localized
+  and audited, and nothing routes to it on purpose — see DEPLOYMENT.md §13.
+  Turning one on is an operations decision, not a build.

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, retryAfterHeaders } from "@/lib/rate-limit";
 import { slugify } from "@/lib/slug";
 import { putFile } from "@/lib/storage";
 
@@ -29,9 +29,20 @@ export async function POST(request: Request): Promise<NextResponse> {
   const ip = clientIp(request.headers);
   const limited = rateLimit(`upload:${ip}`, { limit: 30, windowMs: 600_000 });
   if (!limited.ok) {
+    // The wait is NAMED rather than described. `upload-client.ts` renders
+    // `payload.error` verbatim to the visitor, and "a few minutes" was a guess
+    // the server did not have to make — it knows exactly when the oldest hit
+    // in the window expires. `Retry-After` carries the same number for any
+    // client that is not a person.
+    const minutes = Math.ceil(limited.retryAfterSeconds / 60);
     return NextResponse.json(
-      { error: "Too many uploads — please wait a few minutes and try again." },
-      { status: 429 },
+      {
+        error:
+          minutes <= 1
+            ? "Too many uploads — please wait a minute and try again."
+            : `Too many uploads — please wait about ${minutes} minutes and try again.`,
+      },
+      { status: 429, headers: retryAfterHeaders(limited.retryAfterSeconds) },
     );
   }
 
@@ -78,7 +89,9 @@ async function handleBlobClientUpload(request: Request): Promise<NextResponse> {
     return NextResponse.json(
       {
         error:
-          error instanceof Error ? error.message : "Upload failed — please try again.",
+          error instanceof Error
+            ? error.message
+            : "Upload failed — please try again.",
       },
       { status: 400 },
     );
@@ -87,7 +100,9 @@ async function handleBlobClientUpload(request: Request): Promise<NextResponse> {
 
 /** Multipart fallback: local dev and environments without Vercel Blob.
  *  (Rate limiting is applied once in POST, before this branch.) */
-async function handleMultipartFallback(request: Request): Promise<NextResponse> {
+async function handleMultipartFallback(
+  request: Request,
+): Promise<NextResponse> {
   let form: FormData;
   try {
     form = await request.formData();
@@ -115,13 +130,17 @@ async function handleMultipartFallback(request: Request): Promise<NextResponse> 
   for (const file of files) {
     if (!ALLOWED_TYPES[file.type]) {
       return NextResponse.json(
-        { error: `"${file.name}" isn't a supported image — use JPG, PNG or WebP.` },
+        {
+          error: `"${file.name}" isn't a supported image — use JPG, PNG or WebP.`,
+        },
         { status: 400 },
       );
     }
     if (file.size > MAX_FILE_BYTES) {
       return NextResponse.json(
-        { error: `"${file.name}" is over 5MB — please choose a smaller image.` },
+        {
+          error: `"${file.name}" is over 5MB — please choose a smaller image.`,
+        },
         { status: 400 },
       );
     }

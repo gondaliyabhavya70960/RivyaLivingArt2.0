@@ -234,6 +234,62 @@ export const WhatsAppIcon = (p: IconProps) => (
   </Svg>
 );
 
+/* ————————————————————— REASSURANCE MARKS —————————————————————
+   §4.5's trust set, built to the COPY THAT EXISTS rather than to the brief's
+   list. The brief named five marks — hand · shield · rotate · clock · chat.
+   The PDP's trust list (§9.2) has three rows per ecosystem and they are:
+   hand-poured, shipped safely, and confirmed on WhatsApp / quality-checked.
+   There is no returns row and no lead-time row in that list, so `rotate` and
+   `clock` would be two marks with nothing to sit beside — and a mark drawn
+   before its sentence exists is how a legend ends up promising a policy this
+   business does not have. `chat` is the WhatsApp mark above; it was already
+   drawn, and a second one would be a second answer to the same question.
+
+   They are DELIBERATELY NOT ANIMATED, where the brief says "animated Lucide
+   trust set". The list sits directly under Place Order, which is the most
+   decisive moment on the site; motion there pulls the eye off the button, and
+   Part 14 rejects motion that is a demonstration rather than a signal. */
+
+/** Hand-poured: a hand, and the drop it is under. */
+export const HandPouredIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 2.5c1.4 2 2.2 3.4 2.2 4.4a2.2 2.2 0 0 1-4.4 0c0-1 .8-2.4 2.2-4.4Z" />
+    <path d="M4.5 14.5v-2a1.3 1.3 0 0 1 2.6 0v1" />
+    <path d="M7.1 12.3v-1.6a1.3 1.3 0 0 1 2.6 0v1.6" />
+    <path d="M9.7 12.3v-1.1a1.3 1.3 0 0 1 2.6 0v1.1" />
+    <path d="M12.3 12.6v-.9a1.3 1.3 0 0 1 2.6 0v3.6a6 6 0 0 1-6 6h-.6a5 5 0 0 1-3.8-1.8L2 16.6a1.3 1.3 0 0 1 2-1.7l1.6 1.7" />
+  </Svg>
+);
+
+/** Shipped safely: a crate, strapped. */
+export const ShippedSafelyIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3.5 7.2 12 3l8.5 4.2v9.6L12 21l-8.5-4.2Z" />
+    <path d="M3.5 7.2 12 11.5l8.5-4.3" />
+    <path d="M12 11.5V21" />
+    <path d="M7.75 5.1 16.25 9.3" />
+  </Svg>
+);
+
+/** Quality-checked: a shield, and the mark made on it. */
+export const QualityCheckedIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 2.8 19.5 5.4v5.8c0 4.2-3 7.9-7.5 9.9-4.5-2-7.5-5.7-7.5-9.9V5.4Z" />
+    <path d="m8.8 11.6 2.2 2.2 4.2-4.4" />
+  </Svg>
+);
+
+/** View in your space: the piece, and the room it is placed into. */
+export const ViewInSpaceIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3.5 8.2V5.2a1.7 1.7 0 0 1 1.7-1.7h3" />
+    <path d="M15.8 3.5h3a1.7 1.7 0 0 1 1.7 1.7v3" />
+    <path d="M20.5 15.8v3a1.7 1.7 0 0 1-1.7 1.7h-3" />
+    <path d="M8.2 20.5h-3a1.7 1.7 0 0 1-1.7-1.7v-3" />
+    <path d="M12 7.6 15.8 9.7v4.2L12 16.1l-3.8-2.2V9.7Z" />
+  </Svg>
+);
+
 /* ————————————————————— STATUS MARKS —————————————————————
    Read from prisma/schema.prisma, never from a brief. Each one is a SHAPE a
    person can tell apart at 16px without reading its colour — §16 forbids

@@ -56,14 +56,36 @@ import { cn } from "@/lib/utils";
  * `docs/redesign-contract.md §11` names by hand. So §6.8's behaviour was added
  * HERE, and `ui/field.tsx` was not created.
  *
- * WHAT §6.8 ASKED FOR AND DID NOT GET, recorded rather than quietly dropped:
- * **the floating label.** §6.8 wants the label to rise 160ms on focus/fill.
- * REDESIGN.md §10.3 — which is design law, where §6 is a reference design —
- * specifies "large inputs, LARGE LABELS, generous whitespace": the label here
- * is a 16px line that sits above the control and never moves. A floating label
- * is a small label by construction (it has to fit inside the control at rest),
- * so the two cannot both be true, and §10.3 wins. Nothing about the decision
- * is about effort: the register is the point. Flagged in the PR body.
+ * RECORDED DECISION D32 (2026-09-19) — THERE IS NO FLOATING LABEL, AND THIS
+ * IS THE RATIFIED POSITION RATHER THAN AN OMISSION.
+ *
+ * §6.8 asks for one: the label rises 160ms on focus/fill. REDESIGN.md §10.3
+ * — design law, where §6 is a reference design — says:
+ *
+ * > "large inputs, large labels, generous whitespace, floating helper text"
+ *
+ * A floating label is a SMALL label by construction: it has to fit inside the
+ * control at rest, which is why every implementation of the pattern shrinks it
+ * to 12-13px on focus. So §6.8 and §10.3 cannot both be true of the same
+ * label, and §10.3 wins — the label here is a 16px line that sits above the
+ * control and never moves.
+ *
+ * It was put to the owner as an open question on 2026-09-18 and delegated back
+ * ("the floating label decision … DO THIS"), the same way D25–D29 were
+ * delegated, so the recommendation stands as the decision. Two things make it
+ * the right one rather than merely the cheaper one:
+ *
+ * - **The register is the point.** §10.3's large label is what makes a form on
+ *   this site read like the rest of it. A 12px label that animates is a
+ *   different product's form dropped into this one.
+ * - **A floating label has nowhere to put the hint.** §10.3's "floating helper
+ *   text" is the mono micro line below the control, and it is already there.
+ *   Float the label into the control and the hint either collides with it or
+ *   moves below the rule, which is where the ERROR lives.
+ *
+ * `form-field.test.ts` pins it: the label is rendered unconditionally at
+ * `text-16`, never behind a focus or fill state. If a future change wants the
+ * float back, that test is where to reverse this note — not around it.
  *
  * WHAT IT DID GET, all of it CSS in globals.css (`u-field`, `[data-shake]`):
  *   · focus draws a champagne hairline from the leading edge via scaleX
@@ -509,13 +531,7 @@ export function PillField({
   return (
     <div data-slot="sf-form-field" className={cn("grid gap-2", className)}>
       <fieldset
-        aria-describedby={describedBy(
-          undefined,
-          hint,
-          hintId,
-          error,
-          errorId,
-        )}
+        aria-describedby={describedBy(undefined, hint, hintId, error, errorId)}
         aria-invalid={error ? true : undefined}
       >
         <legend className={cn(fieldLabelClasses, "mb-3")}>
@@ -550,7 +566,10 @@ export function PillField({
                   onChange={() => onChange(option.value)}
                   className="peer sr-only"
                 />
-                <label htmlFor={inputId} className={pillClasses(value === option.value)}>
+                <label
+                  htmlFor={inputId}
+                  className={pillClasses(value === option.value)}
+                >
                   {option.label}
                 </label>
               </span>

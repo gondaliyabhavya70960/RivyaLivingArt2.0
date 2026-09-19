@@ -5,6 +5,73 @@ Newest first. Every entry names the phase it belongs to.
 
 ---
 
+## The site goes dark, and the interaction layer arrives (2026-09-18/19)
+
+Branch `claude/jolly-bardeen-u6pxpx`. The owner, with five craft briefs attached: "start to work
+on redesign according given document and improve design … add custom 404, login and these types
+of pages … and add scroll, mouse pointer, text selection, loading bar and progress bar, dropdown
+style, button click, and this type of component with all needed animation and all … I need a full
+website and admin panel in dark mode … add related and needed icon and vector in studio."
+Then, on the two questions the first pass left open: "the floating label decision, and priority on
+the seven unbuilt items. DO THIS."
+
+Four PRs: #106 (blocks A and C), #107 (B and D), #108 (the half of the dark flip that did not
+land), and the one carrying this entry.
+
+- **RECORDED DECISION D30 — the ground is dark, everywhere.** `tokens.css` carries the decision
+  and quotes the three sentences it reverses. Five tokens flipped and took ~820 call sites with
+  them: `--ink` and `--mineral` are now the light inks, `--graphite` the secondary, `--sand` the
+  third elevation step, and `--alert` / `--success` were relit for a dark ground. `--mineral`
+  itself could not flip — 169 `text-mineral` against 94 `bg-mineral` is genuinely bidirectional
+  — so the 94 grounds were converted by hand. `.dark` and `[data-theme="navy"]` survive as
+  NO-OP ALIASES so the ~88 `in-data-[theme=navy]:` utilities keep resolving.
+- **D30's other half: the band-rhythm guard is retired.** "Max three dark bands, never adjacent"
+  described a light page. On an obsidian ground it blocked Publish with advice
+  ("put a light section between them") that named a section type the page no longer has. Both
+  rules are gone from `describeArrangementProblem`, the three tests are INVERTED rather than
+  deleted, and `redesign-audit.mjs` reports the counts as NOTEs.
+- **Six system pages** — 403, 410, 429, maintenance, the root loading state and the 404's return
+  — on one `SystemPage` shell, with REAL status codes: App Router exposes only
+  `notFound()`/`forbidden()`/`unauthorized()`, so `src/proxy.ts` issues them by rewriting a route
+  to ITSELF with a status. `internalPath()` is the load-bearing helper — under `as-needed`
+  prefixing the URL is `/gone` and the route is `/en/gone`. `MAINTENANCE_MODE` is an env flag,
+  not a column, because the thing most likely to be down is the database. The `/thank-you` page
+  built in the first pass was DELETED: `/whatsapp-order` already was it.
+- **The interaction layer** — §6.1 cursor (fine-pointer only, rAF, no `difference` blend on a
+  near-black ground), §6.3 scroll hairline, §6.4 route bar (a capture-phase click filter plus a
+  pathname commit watch, because App Router has no `routeChangeStart`), §6.6 selection, §6.7 menu
+  skin, §6.8 field rule and shake, §6.15 tooltip, §6.17 empty-state self-draw. The blog's own
+  reading-progress bar was deleted in favour of the global one.
+- **39 hand-authored marks, 10 empty-state drawings, and the enums they answer to.** The status
+  maps are `Record<Enum, IconName>` against the GENERATED Prisma client, so a new schema value
+  fails `tsc` until it has a mark. Marks for statuses three briefs proposed and this schema does
+  not have ("poured", "shipped", five roles) were not drawn.
+- **RECORDED DECISION D32 — there is no floating label.** §6.8 wants one; REDESIGN.md §10.3's
+  "large inputs, large labels" forbids one, since a floating label is small by construction. §10.3
+  is law where §6 is a reference design, so §10.3 wins; the owner delegated the call the way
+  D25–D29 were delegated. `form-field.test.ts` pins the label's register and refuses the
+  positioning vocabulary, so the next reader reverses the note rather than working around it.
+- **The seven unbuilt items, triaged and closed.** Built: the `<model-viewer>` AR control is now
+  ours (the library's 40px white fab is in a shadow root, carries a physical `right` and an
+  English label; slotting also makes model-viewer hide it where AR cannot start); the maintenance
+  page's §2.10 cure loop, which fills to 90% and never completes, with an authored
+  reduced-motion frame; `scripts/alt-audit.mjs` (`npm run alt:check`, mounted in CI) catching the
+  two alt failures a rendered audit cannot see — an English alt literal on a nine-locale surface,
+  and copy that announces the medium; `src/lib/chart-theme.ts`, one copy of the chart vocabulary,
+  because recharts takes colours as strings and a hex there passes every gate this repo has;
+  §4.5's trust marks on the PDP and its duotone map behind `/contact`'s click-to-activate panel.
+  DECLINED with the reason in the file that would have held them: a Tiptap bubble menu (there is
+  no bubble menu — building one is Studio behaviour, not a visual layer), `meniscus-line` (the
+  divider exists as `rule`), `flow-contours` (the texture exists as a photograph), the six
+  unspecified duotone marks, and a categorical chart palette nobody has a second series for.
+- **429s now carry `Retry-After`** (`retryAfterHeaders`, one copy) and the upload error names the
+  real wait instead of guessing "a few minutes". Nothing app-side navigates to
+  `/too-many-requests` and that is recorded as the decision: the limiter is per-instance and keyed
+  on one forwarded hop, so a navigation limiter would wall off a whole office or CGNAT range.
+  DEPLOYMENT.md §13 documents the edge rule that IS its producer.
+- **Zero migrations, across all four PRs.** Nothing in this work touches the schema, so nothing
+  reached production on push.
+
 ## "Tier" means the product tier — import lists, a scraper export through Bulk Import, Approve on the products list (2026-09-17, morning)
 
 Branch `claude/inspiring-cerf-2ymgwf`, restarted from main after #94. The owner, mid-morning, two

@@ -8,6 +8,46 @@
 ## SESSION CHECKPOINT
 
 ```text
+Date:                     2026-09-18/19 (the dark redesign and the interaction layer)
+Branch:                   claude/jolly-bardeen-u6pxpx, restarted from main after #107, stacked on
+                          the #108 fix branch.
+PRs:                      #106 (blocks A + C) and #107 (B + D) MERGED. #108 (the half of the dark
+                          flip that did not land) open, green, mergeable_state clean. This branch
+                          carries the seven triaged items and the dated records.
+The owner asked for:      "start to work on redesign according given document and improve design
+                          … add custom 404, login and these types of pages … and add scroll,
+                          mouse pointer, text selection, loading bar and progress bar, dropdown
+                          style, button click, and this type of component with all needed
+                          animation and all … I need a full website and admin panel in dark mode
+                          … add related and needed icon and vector in studio." Five craft briefs
+                          attached. Then: "the floating label decision, and priority on the seven
+                          unbuilt items. DO THIS."
+What shipped:             D30 — the dark ground, in tokens.css, with the three sentences it
+                          reverses quoted in its own header; the band-rhythm guard retired and
+                          its three tests inverted. Six system pages (403 · 410 · 429 ·
+                          maintenance · root loading · the 404's picture) on one SystemPage
+                          shell, with REAL status codes issued by src/proxy.ts rewriting a route
+                          to itself. The §6 interaction layer: cursor, scroll hairline, route
+                          bar, selection, menu skin, field rule and shake, tooltip, empty-state
+                          self-draw. 43 hand-authored marks + 10 empty-state drawings + a duotone
+                          map, with the status maps typed against the generated Prisma enums.
+                          D32 — no floating label (§10.3 beats §6.8), pinned by test.
+                          Retry-After on both API 429s; the alt-text audit in CI; one copy of the
+                          chart vocabulary; the AR control; the maintenance cure loop.
+Migrations:               NONE, across all four PRs. Nothing here touches the schema, so nothing
+                          reached production on push.
+Verified locally:         typecheck · lint · vitest · copy:check · i18n (0 missing) · build ·
+                          redesign-audit and a11y-audit over 21 routes at 1440 and 390 · the RTL
+                          set including /ar/gone and /ar/maintenance · keyboard-audit ·
+                          e2e 36/36 · studio-audit over 40 routes at both widths.
+Still the owner's:        Rotating the Studio password (it has now appeared in shared chats
+                          three times, including this session's uploads — nothing in any branch
+                          carries it). Merging #108 and this PR.
+```
+
+## SESSION CHECKPOINT — 2026-09-17 morning, "tier" means the product tier (superseded by the block above, kept as history)
+
+```text
 Date:                     2026-09-17 (morning — "tier" means the product tier; Bulk Import takes
                           a scraper export; Approve on the products list)
 Branch:                   claude/inspiring-cerf-2ymgwf, restarted from main after #94 (ff1f8e4).
@@ -507,6 +547,13 @@ than a silent 400.
 ---
 
 ## NEXT EXACT TASK
+
+**Two owner acts, and no pending engineering on the redesign.** #108 and the PR carrying this
+checkpoint are green and waiting to be merged, and the Studio password still needs rotating — it
+has appeared in shared chats three times, and no branch here has ever carried it. Everything the
+2026-09-18/19 briefs asked for is built or declined with its reason in the file that would have
+held it (see the SESSION CHECKPOINT above and the CHANGELOG entry it points at). The paragraph
+below is the older gate list and is kept as written.
 
 **Owner decision gates.** The ungated half of Transformation Phase 1a shipped on 2026-09-03 (see the
 SESSION CHECKPOINT block above); what remains of Phase 1a (D18, D22, D23, D24, D28) and every later

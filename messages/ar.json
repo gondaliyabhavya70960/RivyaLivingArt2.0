@@ -1392,7 +1392,8 @@
       "railLabel": "صور المنتج",
       "modelLoading": "جارٍ تحميل العرض ثلاثي الأبعاد…",
       "modelFailed": "تعذّر تحميل العرض ثلاثي الأبعاد.",
-      "modelRetry": "حاول مرة أخرى"
+      "modelRetry": "حاول مرة أخرى",
+      "arView": "شاهده في مساحتك"
     },
     "referenceUploader": {
       "addImages": "أضف صورًا مرجعية",

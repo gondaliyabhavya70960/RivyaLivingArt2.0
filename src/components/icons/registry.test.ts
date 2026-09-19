@@ -61,6 +61,9 @@ const strip = (src: string) =>
 
 const SOURCE = strip(readFileSync(join(__dirname, "registry.tsx"), "utf8"));
 const EMPTY_ART = strip(readFileSync(join(__dirname, "empty-art.tsx"), "utf8"));
+const BRAND_MARKS = strip(
+  readFileSync(join(__dirname, "brand-marks.tsx"), "utf8"),
+);
 
 describe("icon registry · style contract", () => {
   it("draws every mark on the 24px grid", () => {
@@ -91,6 +94,7 @@ describe("icon registry · style contract", () => {
     // the one place a hand-authored SVG would most plausibly smuggle one in.
     expect(SOURCE).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
     expect(EMPTY_ART).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+    expect(BRAND_MARKS).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
   });
 
   it("keeps one stroke width for the 24px set", () => {
@@ -172,5 +176,20 @@ describe("the name union", () => {
   it("lists every mark exactly once", () => {
     expect(new Set(ICON_NAMES).size).toBe(ICON_NAMES.length);
     expect(ICON_NAMES.length).toBe(Object.keys(ICONS).length);
+  });
+});
+
+describe("brand marks", () => {
+  it("draws in one ink, at two opacities", () => {
+    // The whole reason `brand-marks.tsx` is not in the registry is that it
+    // paints AREAS. Those areas are `currentColor` at a low opacity, never a
+    // second colour: a champagne wash across a 4:3 panel would be the largest
+    // fill on the page, and the palette rule says champagne is never a fill.
+    const fills = [...BRAND_MARKS.matchAll(/fill="([^"]+)"/g)].map((m) => m[1]);
+    expect(new Set(fills)).toEqual(new Set(["none", "currentColor"]));
+    const strokes = [...BRAND_MARKS.matchAll(/stroke="([^"]+)"/g)].map(
+      (m) => m[1],
+    );
+    expect(new Set(strokes)).toEqual(new Set(["currentColor", "none"]));
   });
 });

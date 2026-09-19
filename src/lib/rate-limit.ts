@@ -15,7 +15,9 @@ type Bucket = { timestamps: number[] };
 const buckets = new Map<string, Bucket>();
 const MAX_BUCKETS = 10_000;
 
-export type RateLimitResult = { ok: true } | { ok: false; retryAfterSeconds: number };
+export type RateLimitResult =
+  | { ok: true }
+  | { ok: false; retryAfterSeconds: number };
 
 /**
  * Best-effort client IP from a request's headers, for rate-limit keying. Reads
@@ -28,6 +30,36 @@ export type RateLimitResult = { ok: true } | { ok: false; retryAfterSeconds: num
  */
 export function clientIp(headers: Headers): string {
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anon";
+}
+
+/**
+ * The `Retry-After` header for a 429, in ONE place.
+ *
+ * RFC 9110 §10.2.3: a 429 SHOULD carry it, and without it a client that wants
+ * to back off politely has to guess — which in practice means retrying
+ * immediately, which is the thing the limiter is for. Every 429 this project
+ * returns goes through here so the header cannot be added to one route and
+ * forgotten on the next.
+ *
+ * Seconds, integer, at least 1 — `Retry-After: 0` is a legal instruction to
+ * retry at once, which is never what a limiter means.
+ *
+ * It is also what `/too-many-requests?retry=` reads (see that page's header):
+ * the page clamps whatever it is given, because a query parameter is visitor
+ * input, but the number it is MEANT to be given is this one.
+ */
+export function retryAfterHeaders(
+  retryAfterSeconds: number,
+): Record<string, string> {
+  // Rounded UP: a client told to wait 30 when the window has 30.2 left
+  // retries early and is refused again, which is a retry storm made of
+  // well-behaved clients. Non-finite input falls back to 1 rather than
+  // printing `Retry-After: NaN` — no caller passes one today, and a header
+  // that is silently unparseable is the kind of thing nobody notices.
+  const seconds = Number.isFinite(retryAfterSeconds)
+    ? Math.max(1, Math.ceil(retryAfterSeconds))
+    : 1;
+  return { "retry-after": String(seconds) };
 }
 
 export function rateLimit(
@@ -56,7 +88,10 @@ export function rateLimit(
 
   if (bucket.timestamps.length >= limit) {
     const retryAfterMs = bucket.timestamps[0] + windowMs - now;
-    return { ok: false, retryAfterSeconds: Math.max(1, Math.ceil(retryAfterMs / 1000)) };
+    return {
+      ok: false,
+      retryAfterSeconds: Math.max(1, Math.ceil(retryAfterMs / 1000)),
+    };
   }
 
   // `record: false` peeks (checks) without consuming budget — used to gate

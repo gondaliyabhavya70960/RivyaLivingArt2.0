@@ -1392,7 +1392,8 @@
       "railLabel": "Produktbilder",
       "modelLoading": "3D-Ansicht wird geladen …",
       "modelFailed": "Die 3D-Ansicht konnte nicht geladen werden.",
-      "modelRetry": "Erneut versuchen"
+      "modelRetry": "Erneut versuchen",
+      "arView": "Im Raum ansehen"
     },
     "referenceUploader": {
       "addImages": "Referenzbilder hinzufügen",

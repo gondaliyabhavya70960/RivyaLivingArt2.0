@@ -1392,7 +1392,8 @@
       "railLabel": "Product images",
       "modelLoading": "Loading the 3D view…",
       "modelFailed": "The 3D view didn’t load.",
-      "modelRetry": "Try again"
+      "modelRetry": "Try again",
+      "arView": "View in your space"
     },
     "referenceUploader": {
       "addImages": "Add reference images",

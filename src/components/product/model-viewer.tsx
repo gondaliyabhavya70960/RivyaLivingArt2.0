@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
+import { Icon } from "@/components/icons";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
 /**
@@ -119,6 +120,42 @@ export function ModelViewer({ src, alt, poster }: ModelViewerProps) {
       {...(prefersReducedMotion ? {} : { "auto-rotate": "" })}
       ar=""
       style={{ width: "100%", height: "100%" }}
-    />
+    >
+      {/* THE AR CONTROL IS OURS, and that is the whole reason it is here.
+          The library's default is a 40px white circle pinned `bottom: 16px;
+          right: 16px` with a grey glyph inside it — a look this site does not
+          have anywhere, a physical `right` that does not mirror in Arabic, an
+          English `aria-label` on a nine-locale page, and 40px against Part
+          13's 44px tap floor. None of that is reachable from outside: it lives
+          in the element's shadow root and the one `::part` it exposes
+          (`default-ar-button`) disappears the moment a mark is slotted in.
+
+          Slotting is also what makes the visibility correct. model-viewer
+          hides the whole `ar-button` slot (`.slot.ar-button:not(.enabled)`)
+          when the device cannot start an AR session, so this control is absent
+          on every desktop rather than present and dead — which is why it is
+          NOT gated here by a `canActivateAR` check of our own that would have
+          to guess the same thing one render later.
+
+          `pointer-events-auto` is set explicitly rather than relied on. The
+          shadow wrapper carries `.slot { pointer-events: none }` and restores
+          it with `.slot > *`, but that selector matches the `<slot>` ELEMENT,
+          not the node assigned to it — slotted content inherits from its
+          light-DOM parent instead. The chain happens to give `auto` today;
+          declaring it means a click cannot depend on that.
+
+          `bottom-4 end-4` is the default's placement in logical properties,
+          so it sits bottom-left in Arabic without a second rule; the wrapper
+          is `position: absolute`, which makes it the containing block in the
+          flattened tree. */}
+      <button
+        slot="ar-button"
+        type="button"
+        className="pointer-events-auto absolute bottom-4 end-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-champagne/50 bg-obsidian/80 px-4 font-mono text-12 tracking-[0.12em] text-champagne uppercase backdrop-blur-sm transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:border-champagne focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian motion-reduce:transition-none"
+      >
+        <Icon name="view-in-space" size={16} />
+        {t("gallery.arView")}
+      </button>
+    </model-viewer>
   );
 }
