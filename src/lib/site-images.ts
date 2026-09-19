@@ -25,7 +25,7 @@
  *    category editor. Slotting them too would give one picture two owners.
  *
  * v3.1 (branch redesign/liquid-luxury): eleven slot fallbacks now point at
- * the generated `/redesign/*.jpg` asset set (see design/awwwards-redesign-spec.md)
+ * the generated `/redesign/*.jpg` asset set (see docs/reference-design/awwwards-redesign-spec.md)
  * — the hero pour, the resin-flow texture bands, the preservation block and
  * the four "Why" proof images. Every one remains owner-overridable from
  * /studio/site-images exactly as before; deleting the override restores the

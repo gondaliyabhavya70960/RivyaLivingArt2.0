@@ -9,7 +9,7 @@ Two sets live here, and the difference between them is binding.
 `insitu-{bangle-wrist,tray-table}` · `testimonial-home` · `visual-404` ·
 `og-home` (1200x630 social card).
 
-Spec: `design/awwwards-redesign-spec.md` §4. Twelve site-image slot fallbacks
+Spec: `docs/reference-design/awwwards-redesign-spec.md` §4. Twelve site-image slot fallbacks
 in `src/lib/site-images.ts` resolve to these; each stays owner-overridable from
 **Studio → Site Images**, and deleting the override restores the file named
 here.
@@ -56,4 +56,4 @@ node scripts/optimize-redesign-assets.mjs           # build
 node scripts/optimize-redesign-assets.mjs --check   # verify, write nothing
 ```
 
-File IDs for a scripted download are in `design/implementation-plan.md` §4.7.
+File IDs for a scripted download are in `docs/reference-design/implementation-plan.md` §4.7.

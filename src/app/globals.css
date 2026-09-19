@@ -788,7 +788,7 @@
 
 /* ═══════════════════════════════════════════════════════════════════════
    Liquid Luxury v3.1 — collection doors + featured rail
-   (branch redesign/liquid-luxury · spec: design/awwwards-redesign-spec.md)
+   (branch redesign/liquid-luxury · spec: docs/reference-design/awwwards-redesign-spec.md)
    Two presentation-layer components, no token changes. Every transition
    falls back to none under reduced motion; touch gets the stacked/scrollable
    variant, never the pinned or hover-dependent one.

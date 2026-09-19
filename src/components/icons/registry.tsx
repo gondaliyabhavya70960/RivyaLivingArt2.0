@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
    ## WHAT IS NOT HERE, AND WHY
 
    `lucide-react` stays for functional Studio UI (owner decision 14 — which
-   corrects `design/implementation-plan.md §4.5`'s "zero libraries" line to
+   corrects `docs/reference-design/implementation-plan.md §4.5`'s "zero libraries" line to
    mean "no SECOND icon package"). Search, edit, delete, save, settings,
    chevron, close and their kind are interface glyphs a person already knows;
    replacing them with abstract brand art costs recognition and buys nothing.

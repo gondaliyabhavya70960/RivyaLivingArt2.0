@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 
    ## §4.5's REMAINING ROWS, AND WHY THEY ARE NOT DRAWN (2026-09-19)
 
-   `design/implementation-plan.md §4.5` lists seven things. Four are built —
+   `docs/reference-design/implementation-plan.md §4.5` lists seven things. Four are built —
    the Studio empty-state set (ten marks in `empty-art.tsx`, where the plan
    asked for three), the trust set (in `registry.tsx`, cut to the three rows
    the PDP's copy actually has), this map, and the craft registry itself.
