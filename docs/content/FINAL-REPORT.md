@@ -174,15 +174,17 @@ Failed: **0**
 Warnings: 0 test warnings (one informational npm `install-scripts` notice at
 install time). `test:e2e` not run — CI job requiring app+DB, not a code
 conclusion. Live QA findings are registered in `QA-CONTENT-REPORT.md`
-(Q1 soft-404, Q2 media alt text).
+(Q1 soft-404 — mitigated by design, Q2 media alt text).
 
 ## Owner Action Required
 
 1. **Publish concept studies** after their imagery is confirmed (14 Drive
    reuses) or generated (2 prompts in the fixture) — Studio → Portfolio,
    they sit as labelled drafts.
-2. **Q1 — soft 404**: decide whether in-tree `notFound()` should return a
-   real 404 (small code change, real SEO hygiene).
+2. ~~Q1 — soft 404~~ **Closed — mitigated by design (ENG-813)**: both
+   not-found boundaries serve `noindex` (verified in live HTML), so the
+   200-status panel never enters the index. The residual 200 is the accepted
+   ISR trade-off and is now pinned by `not-found.test.ts`.
 3. **Q2 — media alt text**: 2,854 library files lack alt text; an assisted
    alt-writing pass can be scheduled.
 4. **`hf_` grading pass**: one afternoon over the two big sessions (08-28,

@@ -16,7 +16,7 @@ were submitted, no demo data written, nothing deleted._
 | Locale behaviour | **Pass** | `/hi` serves `lang="hi"` with fully translated title and content; default locale stays unprefixed |
 | WhatsApp fallback route | **Pass** | `/whatsapp-order` → HTTP 200, claim-token gated (ENG-811) |
 | Global 404 | **Pass** | Unknown routes return a real HTTP 404 with the branded panel |
-| **Unknown product/blog/category slugs** | **FAIL — soft 404** | `/product/<bad-slug>` returns **HTTP 200** with the "Piece not found" branded panel (same for blog/category). Truly unknown routes correctly return 404. The in-tree `notFound()` path streams a 200 — the codebase's own comment in `global-not-found.tsx` documents this trade-off. Google treats these as soft 404s: wasted crawl, no clear "gone" signal |
+| **Unknown product/blog/category slugs** | **Pass with note (soft-404 mitigated)** | `/product/<bad-slug>` returns HTTP 200 with the branded not-found panel — the documented ENG-813 trade-off — **but** serves `<meta name="robots" content="noindex"/>`, so it never enters the index. Truly unknown routes return a real 404. Residual: crawl-waste only |
 | Demo content visibility | **Pass** | Zero demo rows in production; nothing synthetic can render (host guard held since deploy) |
 | Desktop rendering | **Pass** | All audited pages |
 | Tablet/mobile viewports | **Not certified here** | Viewport-specific QA needs a device lab; responsive Tailwind layout in use. Left to owner spot-check — flagged, not glossed |
@@ -86,7 +86,7 @@ conclusion.
 
 | ID | Severity | Finding | Status |
 | --- | --- | --- | --- |
-| Q1 | Medium (SEO) | Soft 404: unknown product/blog/category slugs return HTTP 200 with the not-found panel | Open — fix decision needed (in-tree `notFound()` vs the comment in `global-not-found.tsx`) |
+| Q1 | Low (SEO) | Soft 404: unknown product/blog/category slugs return HTTP 200 with the not-found panel — **mitigated by design (ENG-813)**: both not-found boundaries declare `robots: { index: false }`, verified served in live HTML (`<meta name="robots" content="noindex"/>`). The 200 is the accepted ISR residual; a real status would cost ISR caching on every product/blog/category page — a regression worse than the cosmetic status line. Now pinned by `src/app/[locale]/not-found.test.ts` | Closed — mitigated, residual accepted |
 | Q2 | Low (a11y/SEO) | 2,854 of 2,854 media-library files have no alt text; inherited everywhere used | Open — owner pass, or an assisted alt-writing task |
 | Q3 | Note | Public pages serve stale content for one cache window after Studio writes (observed: `/faq` showed 6 briefly after the apply, correct 48 on fresh fetch) | By design — ISR; not a bug |
 | — | — | ~~Portfolio public index renders empty state~~ **Withdrawn** — browser verification shows the index renders all 20 cases across two pages with working filters. The earlier finding was a fetch artifact, corrected in PAGE-CONTENT-AUDIT.md Finding 1 | Closed — no defect exists |
