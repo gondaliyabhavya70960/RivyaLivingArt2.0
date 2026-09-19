@@ -1,0 +1,498 @@
+[
+  {
+    "match": "media/v3/tile-preserve.avif",
+    "alt": "A shallow round block of clear resin with deep sapphire depth, pressed marigold and rose petals suspended inside it, on a dark teak table"
+  },
+  {
+    "match": "media/v3/tile-keep.avif",
+    "alt": "An empty teakwood picture frame standing on edge, its inner border a poured band of deep sapphire resin with one fine gold vein"
+  },
+  {
+    "match": "media/v3/tile-live.avif",
+    "alt": "A resin-and-teak serving board leaning against a low round resin bowl, both poured in deep ocean blue with a single gold vein"
+  },
+  {
+    "match": "media/v3/tile-gift.avif",
+    "alt": "A resin coaster, a domed paperweight and a pendant arranged in a shallow open box lined with dark paper"
+  },
+  {
+    "match": "media/v3/tile-create.avif",
+    "alt": "An empty round silicone mould, two mixing cups and a stirring stick, one cup holding deep sapphire resin caught mid-stir"
+  },
+  {
+    "match": "media/v3/tile-print.avif",
+    "alt": "A translucent blue 3D-printed lattice vessel, the light raking across its fine print layers"
+  },
+  {
+    "match": "media/v3/story-pour.avif",
+    "alt": "Deep sapphire resin pouring in one unbroken ribbon into a shallow round mould against a matte black backdrop"
+  },
+  {
+    "match": "media/v3/story-gild.avif",
+    "alt": "Gold leaf flakes drifting and suspended inside settling translucent blue resin, each flake catching the light at a different angle"
+  },
+  {
+    "match": "media/v3/story-cure.avif",
+    "alt": "Poured resin moulds curing under a single warm work lamp in a dark studio, deep shadow beyond the pool of light"
+  },
+  {
+    "match": "media/v3/story-polish.avif",
+    "alt": "Water beading on a mirror-polished resin surface, deep sapphire depth and floating gold flakes visible beneath"
+  },
+  {
+    "match": "media/v3/macro-epoxy.avif",
+    "alt": "The bevelled edge of a slab of cured clear resin, refracting a thin band of sapphire"
+  },
+  {
+    "match": "media/v3/macro-teak.avif",
+    "alt": "Seasoned teak grain meeting a poured edge of deep blue resin, the join line sharp and the wood pores in focus"
+  },
+  {
+    "match": "media/v3/macro-pigment.avif",
+    "alt": "A loose heap of deep ocean blue mineral pigment, individual grains resolved along the lit edge"
+  },
+  {
+    "match": "media/v3/macro-flower.avif",
+    "alt": "A single pressed dried flower lying flat, its petal veins and translucency raked by the light"
+  },
+  {
+    "match": "media/v3/hero-pour.avif",
+    "alt": "Liquid deep sapphire resin flowing across raw dark teakwood, threads of gold leaf swirling through it"
+  },
+  {
+    "match": "media/v3/texture-band.avif",
+    "alt": "Extreme macro of a cured resin surface: one champagne gold vein through deep sapphire, detail falling away into a quiet dark field"
+  },
+  {
+    "match": "media/v3/bespoke-petals.avif",
+    "alt": "Gloved hands arranging marigold and rose petals inside an empty silicone mould under warm side light"
+  },
+  {
+    "match": "media/v3/workshop-table.avif",
+    "alt": "A long studio table set for eight with mixing cups, gloves, pigment jars and empty moulds, lit by morning light"
+  },
+  {
+    "match": "media/v3/workshop-private.avif",
+    "alt": "Four people seated along a studio table, their hands working resin and moulds in warm ambient light"
+  },
+  {
+    "match": "media/v3/print-head.avif",
+    "alt": "An FDM print head laying translucent blue filament layer by layer, a warm work lamp raking across the fresh layer lines"
+  },
+  {
+    "match": "media/v3/studio-hands.avif",
+    "alt": "Gloved hands drawing fine wave patterns across deep blue liquid resin with a precision heat gun"
+  },
+  {
+    "match": "media/v3/login-backdrop.avif",
+    "alt": "Soft-focus dark navy resin swirling with golden light deep inside, an abstract ambient backdrop"
+  },
+  {
+    "match": "media/v3/not-found.avif",
+    "alt": "A single empty, freshly demoulded silicone mould lying on a pale stone ground"
+  },
+  {
+    "match": "media/v3/studio-interior.avif",
+    "alt": "A dark artisan studio at night, a single warm work lamp over a bench of curing moulds"
+  },
+  {
+    "match": "images/blog/3d-printed-architectural-models-business-displays.webp",
+    "alt": "A detailed 3D-printed architectural model beside branded resin display pieces on a studio shelf"
+  },
+  {
+    "match": "images/blog/3d-printed-gifts-that-surprise-people.webp",
+    "alt": "A hand-finished 3D-printed gift with resin detailing, presented on a studio workbench"
+  },
+  {
+    "match": "images/blog/3d-printing-materials-explained-for-buyers.webp",
+    "alt": "PLA, PETG and resin-printed sample pieces side by side on a maker's bench"
+  },
+  {
+    "match": "images/blog/anniversary-gifts-by-year-resin-ideas.webp",
+    "alt": "A polished resin keepsake holding a dried flower, made for an anniversary milestone"
+  },
+  {
+    "match": "images/blog/baby-milestone-keepsakes-in-resin.webp",
+    "alt": "A tiny handprint preserved inside a clear resin keepsake block on a nursery shelf"
+  },
+  {
+    "match": "images/blog/birthday-gifts-by-personality-type.webp",
+    "alt": "A personalised resin gift with gold detailing, wrapped as a birthday surprise"
+  },
+  {
+    "match": "images/blog/bulk-ordering-handcrafted-gifts-guide.webp",
+    "alt": "Rows of matching handcrafted resin gifts in progress on the studio's production bench"
+  },
+  {
+    "match": "images/blog/caring-for-resin-trays-coasters-drinkware.webp",
+    "alt": "A glossy resin tray and coaster set being wiped with a soft microfibre cloth"
+  },
+  {
+    "match": "images/blog/christmas-new-year-resin-gift-ideas.webp",
+    "alt": "Festive resin ornaments and keepsakes styled for Christmas and New Year gifting"
+  },
+  {
+    "match": "images/blog/client-gifts-brand-engraving-logo-trays-desk-pieces.webp",
+    "alt": "A resin desk tray with an engraved company logo, styled as a client gift"
+  },
+  {
+    "match": "images/blog/combining-3d-printing-with-resin-art.webp",
+    "alt": "A 3D-printed lattice form set into a poured resin block, the hybrid craft on the studio bench"
+  },
+  {
+    "match": "images/blog/commission-journey-brief-to-dispatch.webp",
+    "alt": "A commissioned resin piece moving from sketch to pour on the studio's workbench"
+  },
+  {
+    "match": "images/blog/complete-resin-care-guide.webp",
+    "alt": "Hands polishing a glossy resin surface to a mirror finish with a soft cloth"
+  },
+  {
+    "match": "images/blog/complete-varmala-preservation-guide.webp",
+    "alt": "A wedding varmala being arranged for preservation inside a clear resin frame"
+  },
+  {
+    "match": "images/blog/conference-event-mementos-guests-keep.webp",
+    "alt": "Personalised resin mementos with event branding, lined up for a conference"
+  },
+  {
+    "match": "images/blog/corporate-diwali-gifting-beyond-dry-fruit-box.webp",
+    "alt": "A premium resin Diwali gift with gold accents, styled beyond the usual hamper"
+  },
+  {
+    "match": "images/blog/custom-3d-printed-desk-accessories-home-office.webp",
+    "alt": "Custom 3D-printed desk accessories arranged on a home-office desk"
+  },
+  {
+    "match": "images/blog/custom-nameplates-3d-printed-vs-cast-resin.webp",
+    "alt": "A 3D-printed nameplate beside a cast resin one, the two crafts compared side by side"
+  },
+  {
+    "match": "images/blog/diwali-gifting-guide-diyas-tea-light-holders-trays.webp",
+    "alt": "Resin diyas and tea-light holders glowing on a festive Diwali tray"
+  },
+  {
+    "match": "images/blog/does-resin-yellow-uv-quality.webp",
+    "alt": "A clear resin piece catching sunlight, showing the colour stability of art-grade epoxy"
+  },
+  {
+    "match": "images/blog/employee-milestone-awards-in-resin.webp",
+    "alt": "A personalised resin award with a name cast in, made for an employee milestone"
+  },
+  {
+    "match": "images/blog/engagement-tray-traditions-modern-resin.webp",
+    "alt": "A decorated engagement ring tray in deep-blue resin with gold accents"
+  },
+  {
+    "match": "images/blog/first-anniversary-preservation-too-late.webp",
+    "alt": "A year-dried wedding flower being arranged into a resin preservation frame"
+  },
+  {
+    "match": "images/blog/gifting-varmala-preservation-surprise.webp",
+    "alt": "A finished varmala preservation frame presented as a surprise gift"
+  },
+  {
+    "match": "images/blog/gifts-for-people-who-have-everything.webp",
+    "alt": "A one-of-one resin keepsake made for someone who has everything"
+  },
+  {
+    "match": "images/blog/housewarming-gifts-that-feel-bespoke.webp",
+    "alt": "A bespoke resin nameplate styled at the entrance of a new home"
+  },
+  {
+    "match": "images/blog/how-custom-3d-printing-works-home-decor.webp",
+    "alt": "A custom 3D print taking shape layer by layer on the studio printer"
+  },
+  {
+    "match": "images/blog/how-to-commission-custom-art-no-design-ideas.webp",
+    "alt": "Reference photos and rough sketches spread out before a custom art commission"
+  },
+  {
+    "match": "images/blog/how-to-store-varmala-before-preservation.webp",
+    "alt": "A fresh wedding varmala resting in a loose paper bag, ready for the studio"
+  },
+  {
+    "match": "images/blog/how-we-colour-resin-pigments-inks-ocean-palette.webp",
+    "alt": "Pigments and inks being folded into deep-ocean resin on the colour bench"
+  },
+  {
+    "match": "images/blog/is-resin-art-worth-the-price.webp",
+    "alt": "A finished resin artwork beside the raw materials and hours that went into it"
+  },
+  {
+    "match": "images/blog/lithophanes-photos-you-can-light-up.webp",
+    "alt": "A 3D-printed lithophane panel glowing as a family photo appears from behind the light"
+  },
+  {
+    "match": "images/blog/made-to-order-vs-mass-production.webp",
+    "alt": "A single handmade resin piece beside rows of identical factory-made decor"
+  },
+  {
+    "match": "images/blog/miniatures-figurines-from-photos-honest-guide.webp",
+    "alt": "A small resin figurine modelled from a customer's photograph, on the finishing bench"
+  },
+  {
+    "match": "images/blog/minimalist-vs-statement-resin-pieces.webp",
+    "alt": "A quiet minimalist resin piece beside a bold statement pour, two signature styles"
+  },
+  {
+    "match": "images/blog/monsoon-humidity-care-resin-art-indian-homes.webp",
+    "alt": "A resin artwork kept safe through monsoon humidity in an Indian home"
+  },
+  {
+    "match": "images/blog/navratri-festive-home-styling-resin-accents.webp",
+    "alt": "Festive resin accents styled for Navratri in a warm home corner"
+  },
+  {
+    "match": "images/blog/packing-resin-art-safely-travel-moving.webp",
+    "alt": "A resin artwork wrapped in foam and corner protectors, ready for a wooden crate"
+  },
+  {
+    "match": "images/blog/personalised-3d-printed-kids-room-decor.webp",
+    "alt": "Colourful personalised 3D-printed decor on the wall of a child's room"
+  },
+  {
+    "match": "images/blog/preserving-wedding-elements-beyond-varmala.webp",
+    "alt": "Wedding invitations, haldi flowers and chunari arranged for resin preservation"
+  },
+  {
+    "match": "images/blog/rakhi-gifts-with-meaning-resin-keepsakes.webp",
+    "alt": "Handcrafted resin rakhis, keychains and keepsakes for Raksha Bandhan"
+  },
+  {
+    "match": "images/blog/resin-vs-glass-vs-acrylic-vs-wood.webp",
+    "alt": "Resin, glass, acrylic and wood samples compared side by side on the material bench"
+  },
+  {
+    "match": "images/blog/resin-wall-art-size-palette-placement.webp",
+    "alt": "A large resin wall panel hung at eye level in a styled living room"
+  },
+  {
+    "match": "images/blog/resin-wedding-photo-frames-guide.webp",
+    "alt": "A teakwood wedding photo frame with resin detailing and a soft LED glow"
+  },
+  {
+    "match": "images/blog/revive-gloss-older-resin-pieces.webp",
+    "alt": "An older resin piece being polished back to a glassy shine at home"
+  },
+  {
+    "match": "images/blog/river-tables-resin-furniture-indian-interiors.webp",
+    "alt": "A river table with a deep-blue resin channel in a warm Indian living room"
+  },
+  {
+    "match": "images/blog/styling-resin-decor-vignettes-that-work.webp",
+    "alt": "A styled vignette of resin art, books and a brass lamp on a console table"
+  },
+  {
+    "match": "images/blog/tools-of-the-trade-resin-studio.webp",
+    "alt": "The resin studio's tools laid out: torches, spatulas, pigments and a level bench"
+  },
+  {
+    "match": "images/blog/varmala-frame-styles-sizes-explained.webp",
+    "alt": "Varmala preservation frames in different sizes and styles, from 8x8 to LED-lit"
+  },
+  {
+    "match": "images/blog/varmala-preservation-myths-debunked.webp",
+    "alt": "A finished varmala frame showing what preserved flowers really look like years on"
+  },
+  {
+    "match": "images/blog/varmala-preservation-studio-process.webp",
+    "alt": "A varmala being dried, arranged and cast in resin, step by step in the studio"
+  },
+  {
+    "match": "images/blog/wedding-season-gifting-calendar-lead-times.webp",
+    "alt": "A calendar marked with wedding-season order dates for handcrafted resin gifts"
+  },
+  {
+    "match": "images/blog/what-makes-good-reference-photo.webp",
+    "alt": "A sharp, well-lit reference photo beside the resin portrait it became"
+  },
+  {
+    "match": "images/blog/why-blue-resin-endures-ocean-geode-styles.webp",
+    "alt": "A dramatic ocean-blue resin wave with white lacing and gold veins, made at the studio bench"
+  },
+  {
+    "match": "images/blog/why-resin-art-cannot-be-rushed.webp",
+    "alt": "Resin curing slowly in moulds under a studio lamp, layer by layer over days"
+  },
+  {
+    "match": "product-hero-001-4x5.png",
+    "alt": "A live-edge dining table with a deep-blue resin river channel and gold veining, studio concept render"
+  },
+  {
+    "match": "product-hero-002-4x5.png",
+    "alt": "A dining table with a full-pour deep-blue resin surface, studio concept render"
+  },
+  {
+    "match": "product-hero-003-4x5.png",
+    "alt": "A coffee table with a shallow resin basin in ocean blues, studio concept render"
+  },
+  {
+    "match": "product-hero-004-4x5.png",
+    "alt": "A circular centre table with a concentric resin pour, studio concept render"
+  },
+  {
+    "match": "product-hero-005-4x5.png",
+    "alt": "A narrow console table with a resin top, studio concept render"
+  },
+  {
+    "match": "product-hero-006-4x5.png",
+    "alt": "A console table with a sculptural base and resin surface, studio concept render"
+  },
+  {
+    "match": "product-hero-007-4x5.png",
+    "alt": "A single-slab desk with a resin pour, studio concept render"
+  },
+  {
+    "match": "product-hero-008-4x5.png",
+    "alt": "A matched pair of side tables with resin tops, studio concept render"
+  },
+  {
+    "match": "product-hero-009-4x5.png",
+    "alt": "An entryway bench with a resin inlay, studio concept render"
+  },
+  {
+    "match": "product-hero-010-4x5.png",
+    "alt": "A monumental long-span table with a resin pour, studio concept render"
+  },
+  {
+    "match": "product-hero-011-4x5.png",
+    "alt": "A wall panel with a horizon band of ocean-blue resin, studio concept render"
+  },
+  {
+    "match": "product-hero-012-4x5.png",
+    "alt": "A wall panel with a vertical drop of flowing resin, studio concept render"
+  },
+  {
+    "match": "product-hero-013-4x5.png",
+    "alt": "A triptych of resin wall panels in sequence, studio concept render"
+  },
+  {
+    "match": "product-hero-014-4x5.png",
+    "alt": "A layered resin wall relief with deep dimensional texture, studio concept render"
+  },
+  {
+    "match": "product-hero-015-4x5.png",
+    "alt": "A circular resin wall piece, studio concept render"
+  },
+  {
+    "match": "product-hero-016-4x5.png",
+    "alt": "A lattice-form desk object combining 3D printing and resin, studio concept render"
+  },
+  {
+    "match": "product-hero-017-4x5.png",
+    "alt": "A parametric vessel with a resin pour, studio concept render"
+  },
+  {
+    "match": "product-hero-018-4x5.png",
+    "alt": "A fabricated desk object with resin detailing, studio concept render"
+  },
+  {
+    "match": "product-hero-019-4x5.png",
+    "alt": "An architectural study cast in resin, studio concept render"
+  },
+  {
+    "match": "product-hero-020-4x5.png",
+    "alt": "A framed varmala preservation with flowers sealed in clear resin, studio concept render"
+  },
+  {
+    "match": "product-hero-021-4x5.png",
+    "alt": "A solid resin block preserving wedding flowers, studio concept render"
+  },
+  {
+    "match": "product-hero-022-4x5.png",
+    "alt": "A small resin keepsake with a preserved bloom, studio concept render"
+  },
+  {
+    "match": "product-hero-023-4x5.png",
+    "alt": "A set of small resin keepsakes, studio concept render"
+  },
+  {
+    "match": "product-hero-024-4x5.png",
+    "alt": "A resin form study in deep ocean tones, studio concept render"
+  },
+  {
+    "match": "product-hero-025-4x5.png",
+    "alt": "A second resin form study, studio concept render"
+  },
+  {
+    "match": "product-hero-026-4x5.png",
+    "alt": "A material panel showing resin depth and pigment, studio concept render"
+  },
+  {
+    "match": "product-hero-027-4x5.png",
+    "alt": "A third resin form study, studio concept render"
+  },
+  {
+    "match": "product-hero-028-4x5.png",
+    "alt": "A resin serving tray with an ocean pour, studio concept render"
+  },
+  {
+    "match": "product-hero-029-4x5.png",
+    "alt": "A set of resin coasters in ocean blues, studio concept render"
+  },
+  {
+    "match": "product-hero-030-4x5.png",
+    "alt": "A resin catch-all bowl, studio concept render"
+  },
+  {
+    "match": "product-hero-031-4x5.png",
+    "alt": "A matched pair of resin bookends, studio concept render"
+  },
+  {
+    "match": "product-hero-032-4x5.png",
+    "alt": "A resin desk piece suited to a corporate award, studio concept render"
+  },
+  {
+    "match": "product-hero-033-4x5.png",
+    "alt": "A resin paperweight with deep-blue depth, studio concept render"
+  },
+  {
+    "match": "product-hero-034-4x5.png",
+    "alt": "A small resin ring dish, studio concept render"
+  },
+  {
+    "match": "product-hero-035-4x5.png",
+    "alt": "A resin keepsake box, studio concept render"
+  },
+  {
+    "match": "product-scene-001-16x9.png",
+    "alt": "A live-edge dining table with a resin river channel in a dining room, studio concept render"
+  },
+  {
+    "match": "product-scene-002-16x9.png",
+    "alt": "A full-pour resin dining table placed in a dining room, studio concept render"
+  },
+  {
+    "match": "product-scene-003-16x9.png",
+    "alt": "An ocean coffee table in a living room setting, studio concept render"
+  },
+  {
+    "match": "product-scene-004-16x9.png",
+    "alt": "A circular resin centre table in a living room, studio concept render"
+  },
+  {
+    "match": "product-scene-005-16x9.png",
+    "alt": "A narrow resin console in an entryway, studio concept render"
+  },
+  {
+    "match": "product-scene-006-16x9.png",
+    "alt": "A sculptural-base resin console styled in a room, studio concept render"
+  },
+  {
+    "match": "product-scene-007-16x9.png",
+    "alt": "A single-slab resin desk in a home office, studio concept render"
+  },
+  {
+    "match": "product-scene-008-16x9.png",
+    "alt": "A matched pair of resin side tables in a living room, studio concept render"
+  },
+  {
+    "match": "product-scene-009-16x9.png",
+    "alt": "A resin-inlay bench in an entryway, studio concept render"
+  },
+  {
+    "match": "product-scene-010-16x9.png",
+    "alt": "A monumental resin table in a large room, studio concept render"
+  }
+]

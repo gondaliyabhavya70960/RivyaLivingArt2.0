@@ -25,7 +25,8 @@
     "copy:registry": "node scripts/site-copy-registry.mjs",
     "copy:check": "node scripts/site-copy-registry.mjs --check",
     "alt:check": "node scripts/alt-audit.mjs",
-    "products:purge": "tsx scripts/purge-products.ts"
+    "products:purge": "tsx scripts/purge-products.ts",
+    "alt:backfill": "tsx scripts/alt-backfill.ts"
   },
   "dependencies": {
     "@google/model-viewer": "^4.3.1",

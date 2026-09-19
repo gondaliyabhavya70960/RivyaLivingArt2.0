@@ -68,6 +68,7 @@ reference already points.
 | `import/`                          | Bulk Import's own notes                                                                                                                                                                 |
 | `content/`                         | **IN FORCE (2026-09-19).** Why Content Lab reads zero on production, what the live site actually has, the starter-content system, the competitor research and the demo-data manager      |
 | `optimization/`                    | **IN FORCE (2026-09-19).** The optimization + Kanban program: measured baseline, component audit, findings register, Kanban spec and the 8-PR implementation plan      |
+| `alt-backfill/`                    | Reviewed media-alt batches (Q2) — `batch-01-bundled.json` (124 entries: v3 masters, blog covers, catalog concepts), applied with `npm run alt:backfill -- <batch> --apply` |
 
 ### Assets
 
