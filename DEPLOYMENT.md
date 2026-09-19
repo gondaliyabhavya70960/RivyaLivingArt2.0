@@ -103,3 +103,29 @@ The Vercel **Hobby** plan is officially non-commercial. When the store goes comm
 ## 12. Cron jobs
 
 Three Vercel crons ship in `vercel.json`: `/api/cron/scrape-drain` every ten minutes (drives unattended scrape jobs forward — the review inbox fills through it), `/api/cron/publish-scheduled` hourly (scheduled content goes live), and `/api/cron/mirror-images` daily at 02:30 UTC (mirrors imported catalog images into Blob in batches; the Catalog fill page shows the backlog and can run a batch on demand). Every route authenticates via a `Bearer` header — set the `CRON_SECRET` env var (§4) **and redeploy**. Vercel sends the header automatically on cron invocations, but only when the variable exists: without it each tick is a silent 401 — no dashboard error, no email, no collection. That was production's state from 2026-09-15 to 2026-09-17, found only in the runtime logs. A staff session is accepted too, so the owner can kick any of the three from the browser while logged into the Studio.
+
+## 13. Rate limiting at the edge (optional) — and the page it points at
+
+The app limits **forms and API calls**, never page views: the contact,
+subscribe and order actions answer in place, the Studio login shows its own
+countdown, and `/api/upload` and `/api/form-token` return a 429 carrying
+`Retry-After`. None of them navigates the visitor anywhere, on purpose — the
+reasoning is recorded in `src/app/[locale]/too-many-requests/page.tsx`.
+
+`/too-many-requests` exists for the other kind of throttling: a rule at the
+edge, where the count is per-visitor rather than per-serverless-instance.
+`src/proxy.ts` rewrites that path **to itself with a real 429 status**, so a
+firewall rule pointed at it produces a correct response rather than a 200 that
+merely looks like an error page.
+
+To turn one on: Vercel dashboard → the project → **Firewall** → *Rate Limiting*
+→ add a rule (for example 200 requests / 60s per IP across `/*`), action
+**Rewrite**, destination `/too-many-requests`. Append `?retry=<seconds>`
+matching the rule's window and the page counts that number down instead of
+falling back to the login window; the value is clamped to an hour, because a
+query parameter is visitor input.
+
+Nothing here is required and nothing breaks without it. Turn it on only if the
+runtime logs show automated traffic worth turning away — a rate limit is the
+one setting whose failure mode is refusing real customers, and every order on
+this site finalises through a form.

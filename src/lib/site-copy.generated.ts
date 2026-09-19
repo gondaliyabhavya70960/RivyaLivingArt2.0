@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1372 slots · 0 flagged as unreachable from any component.
+ * 1373 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -1108,6 +1108,7 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"Product.gallery.modelLoading","group":"Shop","section":"gallery","label":"Model loading","kind":"body","tier":"editorial","max":400},
   {"key":"Product.gallery.modelFailed","group":"Shop","section":"gallery","label":"Model failed","kind":"body","tier":"editorial","max":400},
   {"key":"Product.gallery.modelRetry","group":"Shop","section":"gallery","label":"Model retry","kind":"body","tier":"editorial","max":400},
+  {"key":"Product.gallery.arView","group":"Shop","section":"gallery","label":"Ar view","kind":"body","tier":"editorial","max":400},
   {"key":"Product.referenceUploader.addImages","group":"Shop","section":"referenceUploader","label":"Add images","kind":"body","tier":"editorial","max":400},
   {"key":"Product.referenceUploader.hint","group":"Shop","section":"referenceUploader","label":"Hint","kind":"micro","tier":"interface","max":200,"vars":["maxImages","maxMb"]},
   {"key":"Product.referenceUploader.errorTooMany","group":"Shop","section":"referenceUploader","label":"Error too many","kind":"body","tier":"editorial","max":400,"vars":["max"]},

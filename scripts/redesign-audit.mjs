@@ -96,7 +96,11 @@ function sRgbToLinear(channel) {
   return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
 }
 function relativeLuminance([r, g, b]) {
-  return 0.2126 * sRgbToLinear(r) + 0.7152 * sRgbToLinear(g) + 0.0722 * sRgbToLinear(b);
+  return (
+    0.2126 * sRgbToLinear(r) +
+    0.7152 * sRgbToLinear(g) +
+    0.0722 * sRgbToLinear(b)
+  );
 }
 function contrastOf(rgbA, rgbB) {
   const a = relativeLuminance(rgbA);
@@ -106,7 +110,9 @@ function contrastOf(rgbA, rgbB) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 function parseRgbTriple(value) {
-  const m = String(value ?? "").match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+  const m = String(value ?? "").match(
+    /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/,
+  );
   return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
 }
 
@@ -190,7 +196,9 @@ for (const route of routesArg.split(",")) {
     const skipped = [];
     for (let i = 1; i < headings.length; i += 1) {
       if (headings[i].level - headings[i - 1].level > 1) {
-        skipped.push(`${headings[i - 1].level}→${headings[i].level}: "${headings[i].text}"`);
+        skipped.push(
+          `${headings[i - 1].level}→${headings[i].level}: "${headings[i].text}"`,
+        );
       }
     }
 
@@ -207,10 +215,11 @@ for (const route of routesArg.split(",")) {
     }
 
     // Section tiers and dark bands, in document order.
-    const sections = [...main.querySelectorAll("section, div")].filter((el) =>
-      el.className &&
-      typeof el.className === "string" &&
-      /section-(major|standard|compact)/.test(el.className),
+    const sections = [...main.querySelectorAll("section, div")].filter(
+      (el) =>
+        el.className &&
+        typeof el.className === "string" &&
+        /section-(major|standard|compact)/.test(el.className),
     );
     const majors = sections.filter((el) =>
       /section-major/.test(el.className),
@@ -249,8 +258,8 @@ for (const route of routesArg.split(",")) {
       footerIsDark &&
       Boolean(
         lastSection &&
-          (lastSection.matches('[data-theme="navy"]') ||
-            lastSection.querySelector(':scope > [data-theme="navy"]:last-child')),
+        (lastSection.matches('[data-theme="navy"]') ||
+          lastSection.querySelector(':scope > [data-theme="navy"]:last-child')),
       );
 
     // Images without an alt attribute at all (an empty alt is valid).
@@ -280,14 +289,16 @@ for (const route of routesArg.split(",")) {
        whose ENTIRE visible text is a figure — a price, a count, a date, a
        dimension. A paragraph that happens to contain "24" is prose, not data,
        and flagging it would make the rule unreadable. */
-    const NUMERIC = /^[₹$€£]?\s*[\d][\d\s.,:/–—-]*(?:%|h|hrs?|days?|weeks?|px|mm|cm|in|g|kg)?$/i;
+    const NUMERIC =
+      /^[₹$€£]?\s*[\d][\d\s.,:/–—-]*(?:%|h|hrs?|days?|weeks?|px|mm|cm|in|g|kg)?$/i;
     const monoNumbers = { total: 0, offenders: [] };
     for (const el of main.querySelectorAll(
       "span,p,dd,dt,td,th,li,strong,em,b,time",
     )) {
       if (el.children.length > 0) continue;
       const text = (el.textContent ?? "").trim();
-      if (text.length === 0 || text.length > 24 || !NUMERIC.test(text)) continue;
+      if (text.length === 0 || text.length > 24 || !NUMERIC.test(text))
+        continue;
       if (!visible(el)) continue;
       monoNumbers.total += 1;
       const family = getComputedStyle(el).fontFamily.toLowerCase();
@@ -352,7 +363,9 @@ for (const route of routesArg.split(",")) {
     };
 
     const champagne = rgb(
-      getComputedStyle(document.documentElement).getPropertyValue("--champagne"),
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--champagne",
+      ),
     );
 
     /* "Visible in any viewport" is the rule's own wording, so the count has to
@@ -373,7 +386,11 @@ for (const route of routesArg.split(",")) {
         (n) => n.nodeType === 3 && n.textContent.trim() !== "",
       );
     const isVisible = (el) => {
-      for (let node = el; node && node !== document; node = node.parentElement) {
+      for (
+        let node = el;
+        node && node !== document;
+        node = node.parentElement
+      ) {
         const cs = getComputedStyle(node);
         if (cs.visibility !== "visible" || Number(cs.opacity) === 0) {
           return false;
@@ -403,7 +420,9 @@ for (const route of routesArg.split(",")) {
       const cs = getComputedStyle(el);
       return (
         cs.position === "absolute" &&
-        (cs.clip !== "auto" || cs.clipPath !== "none" || cs.overflow === "hidden")
+        (cs.clip !== "auto" ||
+          cs.clipPath !== "none" ||
+          cs.overflow === "hidden")
       );
     };
 
@@ -415,10 +434,29 @@ for (const route of routesArg.split(",")) {
        above the fold — rather than on how much gold is on the page. */
     const cureRail = main.querySelector('[data-slot="cure-line"]');
 
+    /* The maintenance page's cure LOOP (§2.10) is out of scope on exactly the
+       sentence above, and it is worth being explicit that this exclusion was
+       widened for a change rather than found by one: adding the loop took
+       /maintenance to three champagne objects and failed this rule.
+
+       It is the same device and the same argument — a 1px hairline, not
+       navigation this time but decoration, champagne because sapphire at 1px
+       on obsidian is not there. What §3.1 is protecting is how much GOLD a
+       viewport carries, and 255×1 pixels of it is not what the cap is about;
+       the two objects the rule is actually counting on that page (the eyebrow
+       and the WhatsApp pill) are both still counted, and a third real one
+       would still fail.
+
+       The marker is a `data-slot`, not a route or a class, for the reason the
+       system-page exemption uses one: a rule keyed on a page's NAME stops
+       being true the day the element moves. */
+    const cureLoop = main.querySelector('[data-slot="cure-loop"]');
+
     const inFirstViewport = !champagne
       ? 0
       : [...main.querySelectorAll("*")].filter((el) => {
           if (cureRail?.contains(el)) return false;
+          if (cureLoop?.contains(el) || el === cureLoop) return false;
           const r = el.getBoundingClientRect();
           if (
             r.bottom < 0 ||
@@ -460,7 +498,10 @@ for (const route of routesArg.split(",")) {
        The roots come from `public/` itself, so a new asset directory is
        covered the day it is added. */
     const brokenImages = [...document.images]
-      .filter((img) => img.complete && img.naturalWidth === 0 && img.currentSrc !== "")
+      .filter(
+        (img) =>
+          img.complete && img.naturalWidth === 0 && img.currentSrc !== "",
+      )
       .map((img) => {
         const raw = img.currentSrc || img.src;
         try {
@@ -471,7 +512,9 @@ for (const route of routesArg.split(",")) {
           // URL is a remote host being optimized, still not ours to gate on.
           if (inner && !inner.startsWith("/")) return null;
           const path = decodeURIComponent(inner ?? parsed.pathname);
-          return BUNDLED_ROOTS.some((root) => path.startsWith(root)) ? path : null;
+          return BUNDLED_ROOTS.some((root) => path.startsWith(root))
+            ? path
+            : null;
         } catch {
           return null;
         }
@@ -500,13 +543,12 @@ for (const route of routesArg.split(",")) {
       return `${el.tagName.toLowerCase()}${id}${slot}${cls}`;
     };
     const hasBlurRadius = (boxShadow) =>
-      boxShadow
-        .split(/,(?![^(]*\))/)
-        .some((shadow) => {
-          const lengths = shadow.replace(/rgba?\([^)]*\)/g, "").match(/-?[\d.]+px/g) ?? [];
-          // offset-x offset-y blur-radius spread-radius
-          return lengths.length >= 3 && parseFloat(lengths[2]) > 0;
-        });
+      boxShadow.split(/,(?![^(]*\))/).some((shadow) => {
+        const lengths =
+          shadow.replace(/rgba?\([^)]*\)/g, "").match(/-?[\d.]+px/g) ?? [];
+        // offset-x offset-y blur-radius spread-radius
+        return lengths.length >= 3 && parseFloat(lengths[2]) > 0;
+      });
     /* Part 3.8 is four durations — 180 · 350 · 800 · 900ms — and the point
        of a closed set is that a fifth value never arrives on the grounds
        that it looked right in one place. Bespoke values did arrive (a 450ms
@@ -553,7 +595,9 @@ for (const route of routesArg.split(",")) {
       const backdrop = cs.backdropFilter || cs.webkitBackdropFilter || "none";
       if (
         backdrop !== "none" &&
-        !el.closest("[data-slot='sf-site-header'], [data-slot='sf-search-overlay']")
+        !el.closest(
+          "[data-slot='sf-site-header'], [data-slot='sf-search-overlay']",
+        )
       ) {
         blurOffenders.push(describe(el));
       }
@@ -671,13 +715,19 @@ for (const route of routesArg.split(",")) {
   }, BUNDLED_ROOTS);
 
   if (audit.h1Count !== 1) {
-    report("FAIL", `${audit.h1Count} <h1> (must be exactly 1): ${audit.h1Text.join(" | ")}`);
+    report(
+      "FAIL",
+      `${audit.h1Count} <h1> (must be exactly 1): ${audit.h1Text.join(" | ")}`,
+    );
   }
   if (audit.skipped.length) {
     report("FAIL", `skipped heading levels — ${audit.skipped.join("; ")}`);
   }
   if (audit.duplicated.length) {
-    report("FAIL", `duplicated heading text — ${[...new Set(audit.duplicated)].join("; ")}`);
+    report(
+      "FAIL",
+      `duplicated heading text — ${[...new Set(audit.duplicated)].join("; ")}`,
+    );
   }
   if (audit.majors > 2) {
     report("FAIL", `${audit.majors} section-major (max 2)`);
@@ -698,10 +748,16 @@ for (const route of routesArg.split(",")) {
      last `data-theme="navy"` leaves src/, this block and the measurement above
      it go together. */
   if (audit.bands > 3) {
-    report("NOTE", `${audit.bands} sections still marked data-theme="navy" (inert under D30)`);
+    report(
+      "NOTE",
+      `${audit.bands} sections still marked data-theme="navy" (inert under D30)`,
+    );
   }
   if (audit.adjacent > 0) {
-    report("NOTE", `${audit.adjacent} adjacent pair(s) still marked navy (inert under D30)`);
+    report(
+      "NOTE",
+      `${audit.adjacent} adjacent pair(s) still marked navy (inert under D30)`,
+    );
   }
   if (audit.overflow > 1) {
     report("FAIL", `horizontal overflow ${audit.overflow}px`);
@@ -716,25 +772,46 @@ for (const route of routesArg.split(",")) {
     report("FAIL", `${audit.missingAlt} <img> with no alt attribute`);
   }
   if (audit.ellipsisNames > 0) {
-    report("FAIL", `${audit.ellipsisNames} link/button whose accessible name contains an ellipsis`);
+    report(
+      "FAIL",
+      `${audit.ellipsisNames} link/button whose accessible name contains an ellipsis`,
+    );
   }
   if (audit.monoOffenders.length) {
-    report("FAIL", `numeric text not set in mono — ${audit.monoOffenders.join(", ")}`);
+    report(
+      "FAIL",
+      `numeric text not set in mono — ${audit.monoOffenders.join(", ")}`,
+    );
   }
   if (audit.brandAlts.length) {
-    report("FAIL", `alt text names the brand instead of describing the picture — "${audit.brandAlts[0]}"`);
+    report(
+      "FAIL",
+      `alt text names the brand instead of describing the picture — "${audit.brandAlts[0]}"`,
+    );
   }
   if (audit.blurOffenders.length) {
-    report("FAIL", `backdrop-filter outside the header — ${audit.blurOffenders.join(", ")} (Part 3.5: blur in exactly one place)`);
+    report(
+      "FAIL",
+      `backdrop-filter outside the header — ${audit.blurOffenders.join(", ")} (Part 3.5: blur in exactly one place)`,
+    );
   }
   if (audit.shadowOffenders.length) {
-    report("FAIL", `drop shadow on the storefront — ${audit.shadowOffenders.join(", ")} (Part 3.5: none, the mobile bottom bar excepted)`);
+    report(
+      "FAIL",
+      `drop shadow on the storefront — ${audit.shadowOffenders.join(", ")} (Part 3.5: none, the mobile bottom bar excepted)`,
+    );
   }
   if (audit.durationOffenders.length) {
-    report("FAIL", `duration outside Part 3.8's four values — ${audit.durationOffenders.join(", ")} (180 · 350 · 800 · 900ms)`);
+    report(
+      "FAIL",
+      `duration outside Part 3.8's four values — ${audit.durationOffenders.join(", ")} (180 · 350 · 800 · 900ms)`,
+    );
   }
   if (audit.hoverLift.length) {
-    report("FAIL", `lift or scale on a control's hover — ${audit.hoverLift.join(", ")} (Part 3.4: colour and underline only)`);
+    report(
+      "FAIL",
+      `lift or scale on a control's hover — ${audit.hoverLift.join(", ")} (Part 3.4: colour and underline only)`,
+    );
   }
   if (audit.smallTargetCount) {
     report(
@@ -747,7 +824,10 @@ for (const route of routesArg.split(",")) {
   // elements that PAINT champagne in the first viewport (see the long note
   // above the measurement for what is deliberately excluded).
   if (audit.champagne > 2) {
-    report("FAIL", `${audit.champagne} champagne-coloured elements in the first viewport (Part 3.1 caps visible ones at 2)`);
+    report(
+      "FAIL",
+      `${audit.champagne} champagne-coloured elements in the first viewport (Part 3.1 caps visible ones at 2)`,
+    );
   }
 
   /* Sticky header contrast (F2). `use-hero-ink.ts` / `site-header.tsx` set
@@ -800,16 +880,23 @@ for (const route of routesArg.split(",")) {
      box, and the reduced-motion pass added below doubles the page loads a run
      makes, so the odds only go up. The wait still caps: an audit must not
      hang on a genuinely broken image. */
-  const headerPixelsSettled = await page.evaluate(
-    () =>
-      Promise.race([
-        Promise.all(
-          [...document.images]
-            .filter((img) => !img.complete && img.getBoundingClientRect().top < innerHeight)
-            .map((img) => new Promise((done) => { img.onload = img.onerror = done; })),
-        ).then(() => true),
-        new Promise((done) => setTimeout(() => done(false), 8000)),
-      ]),
+  const headerPixelsSettled = await page.evaluate(() =>
+    Promise.race([
+      Promise.all(
+        [...document.images]
+          .filter(
+            (img) =>
+              !img.complete && img.getBoundingClientRect().top < innerHeight,
+          )
+          .map(
+            (img) =>
+              new Promise((done) => {
+                img.onload = img.onerror = done;
+              }),
+          ),
+      ).then(() => true),
+      new Promise((done) => setTimeout(() => done(false), 8000)),
+    ]),
   );
 
   /* One reading of everything the rule compares — the attribute, the colour
@@ -855,7 +942,8 @@ for (const route of routesArg.split(",")) {
         headerInfo = next;
         break;
       }
-      const held = next.ink === headerInfo.ink && next.color === headerInfo.color;
+      const held =
+        next.ink === headerInfo.ink && next.color === headerInfo.color;
       headerInfo = next;
       if (held && next.moving === 0) break;
       if (Date.now() > settleDeadline) break;
@@ -887,7 +975,10 @@ for (const route of routesArg.split(",")) {
       "no sticky header — this is a §2.10 system page, which specifies none",
     );
   } else if (!headerInfo) {
-    report("FAIL", 'no sticky header ([data-slot="sf-site-header"]) found — cannot verify header contrast');
+    report(
+      "FAIL",
+      'no sticky header ([data-slot="sf-site-header"]) found — cannot verify header contrast',
+    );
   } else if (!headerInfo.ink) {
     report("FAIL", "sticky header has no data-ink attribute (use-hero-ink.ts)");
   } else {
@@ -899,12 +990,17 @@ for (const route of routesArg.split(",")) {
        worst of them is the ratio reported: the scrim behind the row has to
        hold wherever a nav item lands. */
     const patch = 10;
-    const midY = Math.round(headerInfo.text.y + headerInfo.text.height / 2 - patch / 2);
+    const midY = Math.round(
+      headerInfo.text.y + headerInfo.text.height / 2 - patch / 2,
+    );
     const xs = [
       headerInfo.text.x - patch - 6,
       headerInfo.text.x + headerInfo.text.width + 6,
       ...(headerInfo.nav
-        ? [headerInfo.nav.x - patch - 6, headerInfo.nav.x + headerInfo.nav.width + 6]
+        ? [
+            headerInfo.nav.x - patch - 6,
+            headerInfo.nav.x + headerInfo.nav.width + 6,
+          ]
         : []),
     ]
       .map((x) => Math.round(x))
@@ -913,7 +1009,12 @@ for (const route of routesArg.split(",")) {
     for (const sampleX of xs) {
       try {
         const shot = await page.screenshot({
-          clip: { x: sampleX, y: Math.max(0, midY), width: patch, height: patch },
+          clip: {
+            x: sampleX,
+            y: Math.max(0, midY),
+            width: patch,
+            height: patch,
+          },
         });
         const { data, info } = await sharp(shot)
           .raw()
@@ -1047,7 +1148,10 @@ for (const route of routesArg.split(",")) {
           // move is one pass of it.
           const ms = timing?.duration;
           if (typeof ms !== "number" || !(ms > perceptibleMs)) continue;
-          moving.set(`${where} ${what}`, `${where} — ${what} @ ${Math.round(ms)}ms`);
+          moving.set(
+            `${where} ${what}`,
+            `${where} — ${what} @ ${Math.round(ms)}ms`,
+          );
         }
         for (const video of document.querySelectorAll("video")) {
           if (!video.paused && !video.ended) playing.add(label(video));

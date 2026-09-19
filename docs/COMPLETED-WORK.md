@@ -158,3 +158,42 @@ audit's per-tier picture:
 | "Confirmed research never becomes a product" | owner-approved promote is a sanctioned path; still no auto-confirm | HARD RULES |
 | Delete `data/tiers`, `ImportConflict`, the fill switches | kept — they are the CSV importer, not Google | `docs/plan/03` |
 | Six-week sequence, named branches, `docs/project/*` charters | `docs/plan/README.md` phases 0–9 on `claude/*` PR branches | — |
+
+## 10. The dark redesign and the interaction layer (2026-09-18/19)
+
+Added after the audit above, not folded into it: the sections numbered 1–9
+were written against HEAD `91c93b5` and say what was true then (D24). This is
+what shipped since, across PRs #106, #107, #108 and the one carrying this
+section. The full account is the CHANGELOG entry "The site goes dark, and the
+interaction layer arrives".
+
+- **The whole site and the Studio are dark** — recorded decision D30 in
+  `src/styles/tokens.css`, which quotes the three sentences it reverses.
+  `.dark` and `[data-theme="navy"]` remain as no-op aliases so the ~88
+  `in-data-[theme=navy]:` utilities still resolve. The band-rhythm guard
+  ("max three dark bands, never adjacent") is retired with it — on an
+  obsidian ground it refused Publish and named a section type the page no
+  longer has — and its three tests are inverted rather than deleted.
+- **Six system pages with real status codes**: 403, 410, 429, maintenance,
+  the root loading state, and the 404's photography. App Router exposes only
+  `notFound()` / `forbidden()` / `unauthorized()`, so `src/proxy.ts` issues
+  the rest by rewriting a route to itself with a status.
+- **The §6 interaction layer**: custom cursor, scroll hairline, route bar,
+  text selection, dropdown skin, field rule and shake, tooltip, empty-state
+  self-draw. Motion budget unchanged — no new GSAP.
+- **43 hand-authored marks, 10 empty-state drawings and a duotone map.** The
+  status maps are `Record<Enum, IconName>` against the generated Prisma
+  client, so a new schema value fails `tsc` until it has a mark.
+- **Recorded decision D32** — no floating label; REDESIGN.md §10.3's "large
+  labels" beats the reference design's §6.8, and `form-field.test.ts` pins it.
+- **The seven items left open by the first pass are closed**: the AR control,
+  the maintenance cure loop, `npm run alt:check` in CI, one copy of the chart
+  vocabulary, §4.5's trust marks and contact map are BUILT; a Tiptap bubble
+  menu, `meniscus-line`, `flow-contours`, six unspecified duotone marks and a
+  categorical chart palette are DECLINED, each with its reason in the file
+  that would have held it.
+- **`Retry-After` on every 429** (`retryAfterHeaders`, one copy) and the
+  upload error names the real wait. Nothing app-side navigates to
+  `/too-many-requests`, by decision; DEPLOYMENT.md §13 documents the edge rule
+  that is its producer.
+- **Zero migrations** in any of the four PRs.

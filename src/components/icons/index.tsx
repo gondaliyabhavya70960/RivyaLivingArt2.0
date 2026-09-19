@@ -46,6 +46,12 @@ export const ICONS = {
   "print-layer": R.PrintLayerIcon,
   bench: R.BenchIcon,
   whatsapp: R.WhatsAppIcon,
+  // reassurance (§4.5's trust set, minus the two marks whose sentence does
+  // not exist — see the registry's own note)
+  "hand-poured": R.HandPouredIcon,
+  "shipped-safely": R.ShippedSafelyIcon,
+  "quality-checked": R.QualityCheckedIcon,
+  "view-in-space": R.ViewInSpaceIcon,
   // status
   "status-draft": R.StatusDraftIcon,
   "status-review": R.StatusReviewIcon,

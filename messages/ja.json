@@ -1392,7 +1392,8 @@
       "railLabel": "商品画像",
       "modelLoading": "3Dビューを読み込んでいます…",
       "modelFailed": "3Dビューを読み込めませんでした。",
-      "modelRetry": "再試行"
+      "modelRetry": "再試行",
+      "arView": "自分の空間で見る"
     },
     "referenceUploader": {
       "addImages": "参考画像を追加",

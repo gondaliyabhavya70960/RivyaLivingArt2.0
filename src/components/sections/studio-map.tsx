@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin } from "lucide-react";
 
+import { ContactMapMark } from "@/components/icons/brand-marks";
 import { cn } from "@/lib/utils";
 
 /**
@@ -69,17 +69,17 @@ export function StudioMap({
         <button
           type="button"
           onClick={() => setActive(true)}
-          className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:bg-elev-2 motion-reduce:transition-none"
+          className="group/map absolute inset-0 flex flex-col items-center justify-center gap-3 text-center outline-none transition-colors duration-(--dur-fast) ease-(--ease-luxury) hover:bg-elev-2 motion-reduce:transition-none"
         >
-          <MapPin
-            aria-hidden
-            strokeWidth={1.5}
-            className="size-6 text-graphite"
-          />
-          <span className="font-body text-16 font-medium text-ink">
+          {/* §4.5's map vector, behind the label rather than beside it. It is
+              a suggestion of a map and not a plan of anywhere (see its own
+              header) — which is why it can sit at this size without breaking
+              rule 2 above. The real address is text, beside this panel. */}
+          <ContactMapMark className="absolute inset-0 h-full w-full opacity-70 transition-opacity duration-(--dur-base) ease-(--ease-settle) group-hover/map:opacity-100 motion-reduce:transition-none" />
+          <span className="relative font-body text-16 font-medium text-ink">
             {activateLabel}
           </span>
-          <span className="u-micro max-w-[28ch]">{noteLabel}</span>
+          <span className="u-micro relative max-w-[28ch]">{noteLabel}</span>
         </button>
       )}
     </div>

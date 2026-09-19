@@ -1392,7 +1392,8 @@
       "railLabel": "ઉત્પાદનના ફોટા",
       "modelLoading": "3D દૃશ્ય લોડ થઈ રહ્યું છે…",
       "modelFailed": "3D દૃશ્ય લોડ થઈ શક્યું નહીં.",
-      "modelRetry": "ફરી પ્રયાસ કરો"
+      "modelRetry": "ફરી પ્રયાસ કરો",
+      "arView": "તમારી જગ્યામાં જુઓ"
     },
     "referenceUploader": {
       "addImages": "સંદર્ભ ફોટા ઉમેરો",

@@ -11,6 +11,11 @@ import {
 } from "recharts";
 import type { TooltipContentProps } from "recharts";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import {
+  CHART_AREA_GRADIENT,
+  CHART_AXIS_TICK,
+  CHART_INK,
+} from "@/lib/chart-theme";
 
 export type InquiriesChartPoint = {
   /** UTC day key, `YYYY-MM-DD`. */
@@ -83,20 +88,21 @@ export function InquiriesChart({ data }: { data: InquiriesChartPoint[] }) {
             accessibilityLayer={false}
           >
             <defs>
+              {/* Colours come from `@/lib/chart-theme` — see its header for
+                  why a chart is the one surface where a raw hex survives
+                  every gate this repo runs. */}
               <linearGradient id="inquiries-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="0%"
-                  stopColor="var(--sapphire-ink)"
-                  stopOpacity={0.24}
-                />
-                <stop
-                  offset="100%"
-                  stopColor="var(--sapphire-ink)"
-                  stopOpacity={0}
-                />
+                {CHART_AREA_GRADIENT.map(({ offset, opacity }) => (
+                  <stop
+                    key={offset}
+                    offset={offset}
+                    stopColor={CHART_INK.series}
+                    stopOpacity={opacity}
+                  />
+                ))}
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} stroke="var(--border)" />
+            <CartesianGrid vertical={false} stroke={CHART_INK.grid} />
             <XAxis
               dataKey="day"
               tickLine={false}
@@ -104,7 +110,7 @@ export function InquiriesChart({ data }: { data: InquiriesChartPoint[] }) {
               tickMargin={8}
               minTickGap={32}
               interval="preserveStartEnd"
-              tick={{ fontSize: 12, fill: "var(--graphite)" }}
+              tick={CHART_AXIS_TICK}
               tickFormatter={formatDay}
             />
             <YAxis
@@ -112,23 +118,23 @@ export function InquiriesChart({ data }: { data: InquiriesChartPoint[] }) {
               width={30}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 12, fill: "var(--graphite)" }}
+              tick={CHART_AXIS_TICK}
             />
             <Tooltip
-              cursor={{ stroke: "var(--border)" }}
+              cursor={{ stroke: CHART_INK.grid }}
               content={ChartTooltip}
             />
             <Area
               type="monotone"
               dataKey="count"
-              stroke="var(--sapphire-ink)"
+              stroke={CHART_INK.series}
               strokeWidth={2}
               fill="url(#inquiries-fill)"
               isAnimationActive={!prefersReducedMotion}
               activeDot={{
                 r: 4,
-                fill: "var(--sapphire-ink)",
-                stroke: "var(--surface)",
+                fill: CHART_INK.series,
+                stroke: CHART_INK.surface,
                 strokeWidth: 2,
               }}
             />

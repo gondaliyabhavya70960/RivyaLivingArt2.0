@@ -1392,7 +1392,8 @@
       "railLabel": "उत्पाद की तस्वीरें",
       "modelLoading": "3D दृश्य लोड हो रहा है…",
       "modelFailed": "3D दृश्य लोड नहीं हो सका।",
-      "modelRetry": "फिर से कोशिश करें"
+      "modelRetry": "फिर से कोशिश करें",
+      "arView": "अपनी जगह में देखें"
     },
     "referenceUploader": {
       "addImages": "संदर्भ तस्वीरें जोड़ें",

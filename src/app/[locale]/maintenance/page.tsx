@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 
+import { CureLoop } from "@/components/storefront/cure-loop";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 import { SystemPage } from "@/components/storefront/system-page";
 import { routing } from "@/i18n/routing";
@@ -69,6 +70,11 @@ export default async function MaintenancePage({
       footer={footer}
       atmosphere={{ src: "/redesign/texture-resin-flow.jpg", opacity: 0.25 }}
     >
+      {/* §2.10's cure loop. It sits ABOVE the field rather than beside the
+          statement: the line is the answer to "how long", and putting it next
+          to the one control on the page keeps that question and its only
+          honest reply — leave an address — in the same glance. */}
+      <CureLoop className="mb-8" />
       {/* `source` is stored on the Subscriber row, so the owner can see which
           of these addresses arrived while the site was down. The component
           reads its own copy from the `Newsletter` namespace — it is the ONE

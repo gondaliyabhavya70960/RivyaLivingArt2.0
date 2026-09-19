@@ -54,6 +54,13 @@ jobs:
       # until they go looking for it.
       - run: npm run copy:check
 
+      # Alt text, read from the SOURCE rather than from a render. The design
+      # audit catches a missing `alt` and a brand-name alt on the page it can
+      # see; this catches the English alt literal on a nine-locale surface and
+      # the copy that announces the medium ("Image of …"), neither of which
+      # looks wrong in the one language the audits render.
+      - run: npm run alt:check
+
       # A key added to `en.json` and nowhere else renders as its own dotted
       # path in eight languages, and nothing else in this pipeline notices.
       # The script already exited 1 on a missing key — it was simply never

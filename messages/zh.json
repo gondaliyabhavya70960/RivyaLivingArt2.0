@@ -1392,7 +1392,8 @@
       "railLabel": "作品图片",
       "modelLoading": "正在加载 3D 视图…",
       "modelFailed": "3D 视图加载失败。",
-      "modelRetry": "重试"
+      "modelRetry": "重试",
+      "arView": "在你的空间中查看"
     },
     "referenceUploader": {
       "addImages": "添加参考图片",

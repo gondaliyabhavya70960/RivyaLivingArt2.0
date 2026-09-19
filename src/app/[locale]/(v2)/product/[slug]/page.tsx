@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { Icon } from "@/components/icons";
 import type { Metadata } from "next";
 import {
   getMessages,
@@ -663,8 +664,7 @@ export default async function ProductPage({ params }: PageProps) {
   // paints its hardcoded English "Enquire" in all nine locales (T6), and
   // demo-product-001 — the PDP CI audits — is exactly that row.
   const priceLabel =
-    product.showPrice &&
-    (product.priceMin != null || product.priceMax != null)
+    product.showPrice && (product.priceMin != null || product.priceMax != null)
       ? formatPriceBand(product.priceMin, product.priceMax)
       : tCommon("enquire");
 
@@ -892,24 +892,35 @@ export default async function ProductPage({ params }: PageProps) {
                 {/* §9.2 — the trust list moves BELOW the CTA, as a
                     hairline-divided mono list, where it reassures rather
                     than delays. Voiced per ecosystem (audit H1). */}
+                {/* §4.5's trust set, on the rows that actually exist. The
+                    mark is `aria-hidden` and the sentence is the label —
+                    Part 16 forbids a signal carried by a picture alone, and
+                    the reason this list reassures is that it is readable, not
+                    that it has icons. Three per ecosystem, and the WhatsApp
+                    mark is the one already drawn for the order channel. */}
                 <ul className="mt-10 border-t border-hairline">
                   {(group === "art"
-                    ? [
-                        tp("trust.artHandmade"),
-                        tp("trust.shipping"),
-                        tp("trust.artConfirm"),
-                      ]
-                    : [
-                        tp("trust.functionalQuality"),
-                        tp("trust.shipping"),
-                        tp("trust.functionalConfirm"),
-                      ]
-                  ).map((point) => (
+                    ? ([
+                        ["hand-poured", tp("trust.artHandmade")],
+                        ["shipped-safely", tp("trust.shipping")],
+                        ["whatsapp", tp("trust.artConfirm")],
+                      ] as const)
+                    : ([
+                        ["quality-checked", tp("trust.functionalQuality")],
+                        ["shipped-safely", tp("trust.shipping")],
+                        ["whatsapp", tp("trust.functionalConfirm")],
+                      ] as const)
+                  ).map(([mark, point]) => (
                     <li
-                      key={point}
-                      className="u-micro border-b border-hairline py-4 leading-relaxed"
+                      key={mark}
+                      className="u-micro flex items-start gap-3 border-b border-hairline py-4 leading-relaxed"
                     >
-                      {point}
+                      {/* No colour of its own: the mark inherits `u-micro`'s
+                          ink through `currentColor`. Champagne here would be
+                          three accents in one viewport, and the contract caps
+                          it at two. */}
+                      <Icon name={mark} size={16} className="mt-0.5" />
+                      <span>{point}</span>
                     </li>
                   ))}
                 </ul>
