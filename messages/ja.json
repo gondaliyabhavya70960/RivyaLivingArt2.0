@@ -1236,7 +1236,9 @@
       "eyebrowFinal": "完成した作品",
       "eyebrowRelated": "同じ作業台から",
       "eyebrowCommission": "似た作品を依頼する",
-      "nextEyebrow": "次のプロジェクト"
+      "nextEyebrow": "次のプロジェクト",
+      "conceptStudy": "コンセプトスタディ",
+      "conceptStudyNote": "スタジオによるデザイン習作であり、受注制作品ではありません。"
     },
     "beforeAfter": {
       "before": "ビフォー",

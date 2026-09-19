@@ -66,6 +66,7 @@ reference already points.
 | `NEEDED-WORK.md`                   | What is still owed, tier by tier, plus the tabled owner questions that block real work                                                                                                  |
 | `ui-master-plan-reconciliation.md` | All 213 entries of `RIVYA LIVING ART_2.0_UI_MASTER_PLAN.md` verified against HEAD. **Read this instead of that plan**, which is not a plan for this repo                                |
 | `import/`                          | Bulk Import's own notes                                                                                                                                                                 |
+| `content/`                         | **IN FORCE (2026-09-19).** Why Content Lab reads zero on production, what the live site actually has, the starter-content system, the competitor research and the demo-data manager      |
 
 ### Assets
 

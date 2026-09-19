@@ -1259,7 +1259,9 @@
       "eyebrowFinal": "the final piece",
       "eyebrowRelated": "from the same bench",
       "eyebrowCommission": "commission similar",
-      "nextEyebrow": "next project"
+      "nextEyebrow": "next project",
+      "conceptStudy": "Concept study",
+      "conceptStudyNote": "A design study by the studio, not a commissioned piece."
     },
     "beforeAfter": {
       "before": "before",

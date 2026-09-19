@@ -1236,7 +1236,9 @@
       "eyebrowFinal": "最终成品",
       "eyebrowRelated": "出自同一张工作台",
       "eyebrowCommission": "定制类似之作",
-      "nextEyebrow": "下一个项目"
+      "nextEyebrow": "下一个项目",
+      "conceptStudy": "概念研究",
+      "conceptStudyNote": "工作室的设计研究，并非客户定制作品。"
     },
     "beforeAfter": {
       "before": "之前",
