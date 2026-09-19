@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
+import { useIsTouch } from "@/hooks/use-is-touch";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
 // Type-only view of the GSAP module — ships no code (H12).
@@ -31,12 +32,11 @@ export interface RevealProps {
  * 400–800ms entrance window. SSR and the initial client render always emit
  * plain, fully visible markup — the hidden state only applies once the
  * dynamically imported runtime lands, so content is never hidden without JS.
- * Under reduced motion the effect bails before the import (static render).
+ * Under reduced motion AND on touch-primary devices the effect bails before
+ * the import (PR-6: static render, zero motion bytes — the same degraded
+ * path, and the same guard, as SmoothScrollProvider and HeroParallax).
  * For BELOW-the-fold sections only: the from-state applies when the runtime
- * lands, so an above-the-fold Reveal would flash on slow connections. The
- * hero used to reveal through `SplitTextHeading`, which D18 deleted with the
- * rest of the dormant v2 motion layer; giving the hero its own entrance is
- * roadmap Phase 1b's `sf-hero-rise`, gated on owner decision D20.
+ * lands, so an above-the-fold Reveal would flash on slow connections.
  */
 export function Reveal({
   children,
@@ -48,10 +48,18 @@ export function Reveal({
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  // PERF (A1/PR-6): bail on touch before the GSAP import, on the same guard
+  // SmoothScrollProvider (PERF-009) and HeroParallax already use — a low-end
+  // phone runs no ScrollTrigger work and downloads no motion bytes for this,
+  // and the content shows exactly as it does under reduced motion. This was
+  // the last unguarded scroll effect: mobile Lighthouse measured script
+  // evaluation and layout as the entire TBT problem.
+  const isTouch = useIsTouch();
+  const disabled = prefersReducedMotion || isTouch;
 
   useEffect(() => {
     const el = ref.current;
-    if (prefersReducedMotion || !el) return;
+    if (disabled || !el) return;
 
     let cancelled = false;
     // Set once the dynamic import lands, so unmount before (or during) the
@@ -119,7 +127,7 @@ export function Reveal({
       cancelled = true;
       cleanup?.();
     };
-  }, [prefersReducedMotion, delay, y, stagger, once]);
+  }, [disabled, delay, y, stagger, once]);
 
   return (
     <div ref={ref} className={className}>
