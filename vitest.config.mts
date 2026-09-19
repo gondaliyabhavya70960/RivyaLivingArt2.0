@@ -13,7 +13,10 @@ export default defineConfig({
   test: {
     // scripts/ is in scope for the build tooling that has its own judgement to
     // pin — `migrate-retry` decides whether a failed deploy is worth rerunning.
-    include: ["src/**/*.test.ts", "scripts/**/*.test.mjs"],
+    // The .tsx pattern arrived with the Kanban primitives (PR-2): presentational
+    // components are tested via SSR static markup + happy-dom, which is the
+    // same no-browser philosophy, one file type later.
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx", "scripts/**/*.test.mjs"],
     environment: "node",
     env: {
       DATABASE_URL: "postgresql://test@127.0.0.1:5433/test",

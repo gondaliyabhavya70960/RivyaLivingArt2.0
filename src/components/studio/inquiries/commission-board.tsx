@@ -21,6 +21,13 @@ import {
 import { StageTimerRing } from "@/components/studio/inquiries/stage-timer-ring";
 import { DemoBadge } from "@/components/studio/demo-badge";
 import { EmptyState } from "@/components/studio/page-header";
+import {
+  KanbanBoard,
+  KanbanCardShell,
+  KanbanColumn,
+  KanbanMoveSelect,
+  type KanbanMoveOption,
+} from "@/components/studio/kanban";
 import type { InquirySource, InquiryStatus } from "@/generated/prisma/enums";
 import { Icon } from "@/components/icons";
 import { INQUIRY_STATUS_ICON } from "@/components/icons/status";
@@ -63,6 +70,12 @@ const PRIORITY_TONE = {
   alert: "border-alert/40 bg-alert/8 text-alert",
 } as const;
 
+const MOVE_OPTIONS: readonly KanbanMoveOption<InquiryStatus>[] =
+  SELECTABLE_STATUSES.map((status) => ({
+    value: status,
+    label: STATUS_LABELS[status],
+  }));
+
 /**
  * Commission board — REDESIGN.md §12.4.
  *
@@ -78,11 +91,18 @@ const PRIORITY_TONE = {
  * off the board, where a lost lead cannot occupy a lane.
  *
  * **No drag-and-drop.** §12.4 makes it optional and requires keyboard parity
- * if it ships. A status `<select>` on every card is the keyboard path, it is
- * also the fastest pointer path (one click, no drop target to miss), and it
- * goes through the existing `setInquiriesStatus` Server Action unchanged — so
- * adding drag on top would buy a second way to do the same thing and a second
- * way for it to disagree with the server. Left out on purpose.
+ * if it ships. The per-card move select (`KanbanMoveSelect`) is the keyboard
+ * path, it is also the fastest pointer path (one click, no drop target to
+ * miss), and it goes through the existing `setInquiriesStatus` Server Action
+ * unchanged — so adding drag on top would buy a second way to do the same
+ * thing and a second way for it to disagree with the server. Left out on
+ * purpose (KANBAN-SPEC records the decision so it stays out).
+ *
+ * **Built on the shared Kanban primitives** (`components/studio/kanban`) —
+ * this board was their reference implementation: the primitives were
+ * extracted from this file with zero visual or behavioural change, which is
+ * the proof the extraction is faithful. Products and the scraper review
+ * build their boards from the same set.
  */
 export function CommissionBoard({
   cards,
@@ -134,54 +154,43 @@ export function CommissionBoard({
           FULL LIST
         </p>
       )}
-      {/* One horizontal scroller for the whole board — columns keep a fixed
-          width so a long lane never squeezes its neighbours to nothing. */}
-      <div className="relative -mx-5 overflow-x-auto px-5 pb-2 sm:-mx-8 sm:px-8">
-        <ol className="flex min-w-max items-start gap-4">
-          {STATUS_ORDER.map((status) => {
-            const lane = cards.filter((card) => card.status === status);
-            const laneTotal = counts.get(status) ?? 0;
-            return (
-              <li key={status} className="w-[19rem] shrink-0">
-                <div className="flex items-baseline justify-between gap-2 border-b border-border pb-2">
-                  {/* §16 · the stage is never carried by colour alone. Each
-                      lane takes its own mark from the icon registry, keyed off
-                      the real `InquiryStatus` value — so CLOSED and LOST, which
-                      a person has to act on differently, are two shapes rather
-                      than two shades. `aria-hidden`, because the heading beside
-                      it already says the name. */}
-                  <h3 className="u-micro flex items-center gap-2 text-foreground">
-                    <Icon
-                      name={INQUIRY_STATUS_ICON[status]}
-                      size={16}
-                      className="translate-y-px text-graphite"
-                    />
-                    {STATUS_LABELS[status]}
-                  </h3>
-                  <span className="u-num text-small text-graphite">
-                    {laneTotal}
-                  </span>
-                </div>
-                {lane.length === 0 ? (
-                  <p className="u-micro mt-4 px-1">Nothing at this stage</p>
-                ) : (
-                  <ul className="mt-3 space-y-3">
-                    {lane.map((card) => (
-                      <li key={card.id}>
-                        <CommissionCardBody
-                          card={card}
-                          busy={pending && busyId === card.id}
-                          onMove={(next) => move(card, next)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
+      <KanbanBoard>
+        {STATUS_ORDER.map((status) => {
+          const lane = cards.filter((card) => card.status === status);
+          const laneTotal = counts.get(status) ?? 0;
+          return (
+            <KanbanColumn
+              key={status}
+              icon={
+                /* §16 · the stage is never carried by colour alone. Each lane
+                   takes its own mark from the icon registry, keyed off the
+                   real `InquiryStatus` value — so CLOSED and LOST, which a
+                   person has to act on differently, are two shapes rather
+                   than two shades. `aria-hidden`, because the heading beside
+                   it already says the name. */
+                <Icon
+                  name={INQUIRY_STATUS_ICON[status]}
+                  size={16}
+                  className="translate-y-px text-graphite"
+                />
+              }
+              label={STATUS_LABELS[status]}
+              count={laneTotal}
+              empty={lane.length === 0}
+            >
+              {lane.map((card) => (
+                <li key={card.id}>
+                  <CommissionCardBody
+                    card={card}
+                    busy={pending && busyId === card.id}
+                    onMove={(next) => move(card, next)}
+                  />
+                </li>
+              ))}
+            </KanbanColumn>
+          );
+        })}
+      </KanbanBoard>
     </div>
   );
 }
@@ -201,12 +210,7 @@ function CommissionCardBody({
     card.projectTitle ?? `${SOURCE_LABELS[card.source]} commission`;
 
   return (
-    <article
-      className={cn(
-        "rounded-card border border-border bg-card p-3 shadow-e1 transition-opacity duration-(--dur-fast) ease-(--ease-settle) motion-reduce:transition-none",
-        busy && "opacity-60",
-      )}
-    >
+    <KanbanCardShell busy={busy}>
       <div className="flex items-start gap-3">
         {/* Thumbnail — the commissioned product's own first image, or the
             customer's monogram when the commission has no product attached
@@ -279,26 +283,16 @@ function CommissionCardBody({
           {priority.label} · {timer.bandLabel}
         </span>
 
-        {/* The keyboard-and-pointer path for moving a card between lanes.
-            A native select, not a listbox: it is one control, it is reachable
-            with a single Tab, and it works on a phone. */}
-        <label className="flex items-center gap-2">
-          <span className="sr-only">
-            Stage for {card.customerName}&rsquo;s commission
-          </span>
-          <select
-            value={card.status}
-            disabled={busy}
-            onChange={(event) => onMove(event.target.value as InquiryStatus)}
-            className="min-h-9 rounded-input border border-field bg-transparent px-2 text-small text-foreground outline-none transition-colors duration-(--dur-fast) ease-(--ease-settle) hover:border-sapphire-ink/50 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:opacity-40 motion-reduce:transition-none"
-          >
-            {SELECTABLE_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {STATUS_LABELS[status]}
-              </option>
-            ))}
-          </select>
-        </label>
+        {/* The keyboard-and-pointer path for moving a card between lanes —
+            the shared `KanbanMoveSelect`: a native select, reachable with a
+            single Tab, working on a phone. */}
+        <KanbanMoveSelect
+          value={card.status}
+          options={MOVE_OPTIONS}
+          disabled={busy}
+          onMove={onMove}
+          ariaLabel={`Stage for ${card.customerName}’s commission`}
+        />
 
         {/* Reply and move in one act (plan §3 S3). The stage select beside it
             stays the way to move a card WITHOUT replying — this button only
@@ -312,6 +306,6 @@ function CommissionCardBody({
           className="ms-auto min-h-9 min-w-9"
         />
       </div>
-    </article>
+    </KanbanCardShell>
   );
 }
