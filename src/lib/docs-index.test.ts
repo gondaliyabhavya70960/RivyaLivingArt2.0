@@ -48,7 +48,21 @@ describe("docs/README.md", () => {
   it("indexes nothing that no longer exists", () => {
     // The other direction: a file renamed or deleted leaves a row pointing at
     // nothing, and a reader follows it before they notice.
-    const present = new Set(readdirSync(DOCS));
+    // Every name under docs/, at any depth. It was the top level only until
+    // `reference-design/` arrived (2026-09-19) and its files started being
+    // named in the index: the shallow read made every row about a
+    // subdirectory's contents look dangling, and the fix on offer was to keep
+    // growing the hand-written exception list below — which is the thing that
+    // rots. The rule this asserts is "no row points at nothing", and a file
+    // one level down is not nothing.
+    const present = new Set<string>();
+    const walk = (dir: string) => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        present.add(entry.name);
+        if (entry.isDirectory()) walk(join(dir, entry.name));
+      }
+    };
+    walk(DOCS);
     const referenced = [...INDEX.matchAll(/`([A-Za-z0-9._-]+\.(?:md|json))`/g)]
       .map((match) => match[1])
       // Rows that deliberately name files OUTSIDE docs/ — the spec, the build

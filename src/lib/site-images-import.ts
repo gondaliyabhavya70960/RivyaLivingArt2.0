@@ -56,7 +56,7 @@ export const blobStorageConfigured = () =>
  * AI) and the process video with its poster.
  *
  * `public/redesign` is the SECOND generated set and counts the same way. The
- * Liquid Luxury brand assets (`design/awwwards-redesign-spec.md` §4, "Delivered
+ * Liquid Luxury brand assets (`docs/reference-design/awwwards-redesign-spec.md` §4, "Delivered
  * Asset Suite — generated for this redesign") and the Drive catalog library
  * under `catalog/` are models' work end to end. Classifying them BUNDLED would
  * have told the Studio's §12.5 provenance filter that fourteen generated
