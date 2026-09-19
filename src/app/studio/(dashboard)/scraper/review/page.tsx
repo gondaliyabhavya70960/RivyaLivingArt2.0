@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/studio/page-header";
-import { ShortlistInbox } from "@/components/studio/scraper/shortlist-inbox";
+import { ShortlistView } from "@/components/studio/scraper/shortlist-view";
 import { Button } from "@/components/ui/button";
 import type { ScrapeTier } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
@@ -54,9 +54,13 @@ export default async function ScrapeReviewPage({
     size?: string;
     status?: string;
     q?: string;
+    /** Grid | Board — read by the view switch; the page feeds the board's
+     *  all-state rows only when it is asked for, so the grid's default
+     *  render costs exactly what it always has. */
+    view?: string;
   }>;
 }) {
-  const { source, tier, size, status, q } = await searchParams;
+  const { source, tier, size, status, q, view } = await searchParams;
 
   const sourceFilter = source && source !== "ALL" ? source : undefined;
   const sourceTier = parseSourceTier(tier);
@@ -69,19 +73,34 @@ export default async function ScrapeReviewPage({
     q: q || undefined,
   };
 
-  const [counts, { rows, truncated, totalMatching }, categories, sourceList] =
-    await Promise.all([
-      inboxCounts(filter),
-      inboxRows(filter, stateFilter),
-      db.category.findMany({
-        orderBy: { order: "asc" },
-        select: { id: true, name: true },
-      }),
-      db.scrapeSource.findMany({
-        select: { key: true, name: true, tier: true },
-        orderBy: { key: "asc" },
-      }),
-    ]);
+  const kanban = view === "kanban";
+  const [
+    counts,
+    { rows, truncated, totalMatching },
+    categories,
+    sourceList,
+    boardResult,
+  ] = await Promise.all([
+    inboxCounts(filter),
+    inboxRows(filter, stateFilter),
+    db.category.findMany({
+      orderBy: { order: "asc" },
+      select: { id: true, name: true },
+    }),
+    db.scrapeSource.findMany({
+      select: { key: true, name: true, tier: true },
+      orderBy: { key: "asc" },
+    }),
+    // The board is the all-state view — it cannot render three lanes empty
+    // on the grid's per-state slice. Queried only when the board is asked
+    // for (stateFilter === "ALL" already IS that query, so reuse it).
+    kanban && stateFilter !== "ALL"
+      ? inboxRows(filter, "ALL")
+      : Promise.resolve(null),
+  ]);
+  const board = kanban
+    ? (boardResult ?? { rows, truncated, totalMatching })
+    : { rows: [], truncated: false, totalMatching: 0 };
 
   return (
     <>
@@ -99,8 +118,11 @@ export default async function ScrapeReviewPage({
           </div>
         }
       />
-      <ShortlistInbox
+      <ShortlistView
         rows={rows}
+        boardRows={board.rows}
+        boardTruncated={board.truncated}
+        boardTotalMatching={board.totalMatching}
         sources={sourceList}
         categories={categories}
         counts={counts}
