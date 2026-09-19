@@ -261,6 +261,36 @@ kept current — the plan records what was true when it was written.
   widths and Lighthouse. All of it gates the build.
 - typecheck: `npm run typecheck` (tsc --noEmit)
 
+### NOTHING SHIPS TO PRODUCTION WITHOUT THE OWNER (2026-09-19, owner instruction)
+
+> "dont push any new change in production on versel i will do manual to
+> production to this"
+
+**An agent never deploys this site.** Work goes to a branch and a draft pull
+request, and stops there. The owner merges, and the owner decides when a change
+reaches www.rivyalivingart.com. Do not merge a pull request, do not enable
+auto-merge, do not promote a deployment from the Vercel dashboard, and do not
+ask for the rule to be waived for a change that "cannot break anything" — the
+owner's control over what is live is the point, not a risk assessment.
+
+**Know which of your actions actually touch production, because two of them
+do and the obvious one does not:**
+
+| Action                             | Reaches production?                                                                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Pushing a branch                   | **The DATABASE, yes** — if the branch carries a migration. See the section below; this is the repository's most expensive trap |
+| Opening or updating a pull request | No                                                                                                                             |
+| Merging to `main`                  | **Yes** — Vercel builds `main` automatically. This is the owner's act, never an agent's                                        |
+| A Vercel PREVIEW deployment        | The site, no. The database, yes, through the migration path above                                                              |
+
+So "I only pushed a branch" is not by itself a claim that production is
+untouched — check whether the branch carries a migration before saying it.
+
+**Making the deploy itself manual is a Vercel setting, not a promise.** This
+rule governs agents; it cannot stop Vercel building `main` on merge.
+`DEPLOYMENT.md` §14 records how to turn automatic production deploys off if the
+owner wants the platform to enforce what this section asks of people.
+
 ### A MIGRATION HERE IS A PRODUCTION MIGRATION, ON PUSH
 
 `npm run build` is `scripts/migrate-deploy.mjs && tsx prisma/bootstrap.ts &&

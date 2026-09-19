@@ -267,3 +267,15 @@ reproducing the failure first, then showing it gone.
 
 Work happens on feature branches off `main`, one phase per PR, with the verification
 evidence in the PR body. Pull requests are opened as drafts. The owner merges.
+
+**And the owner deploys.** Owner instruction, 2026-09-19: _"dont push any new change in
+production on versel i will do manual to production to this."_ An agent's work ends at a
+pushed branch and a draft PR. Never merge, never enable auto-merge, never promote a
+deployment from the Vercel dashboard. Merging `main` is what puts a change on
+www.rivyalivingart.com, and that is the owner's act.
+
+Be accurate when you report what you did: pushing a BRANCH does not deploy the site, but
+it **does** reach the production database if the branch carries a migration — Vercel runs
+`migrate deploy` for preview builds against production. `CLAUDE.md` has the table and the
+whole trap; `DEPLOYMENT.md` §14 has how to make the deploy itself manual in Vercel, since
+a rule in a document cannot stop a platform.
