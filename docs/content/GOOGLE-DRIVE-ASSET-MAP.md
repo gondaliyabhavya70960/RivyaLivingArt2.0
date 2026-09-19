@@ -59,21 +59,23 @@ variants. Keep the masters in Drive as the regeneration base.
 | `asset-index.csv` | Index | Names, IDs, dimensions, SHA-256 per image | Reference for the ingestion manifest | Current | **KEEP** |
 | `README.txt` | Doc | Library scope + honest quality notes | Reference | Current | **KEEP** |
 
-## `images/` — historical `hf_` image library (100+ PNG masters)
+## `images/` — historical `hf_` image library (~101+ PNG masters)
 
-100 files on the first API page, more pages behind it (the prompt CSVs suggest
-~250 generated prompts). All named `hf_YYYYMMDD_HHMMSS_<uuid>.png`, 5–50 MB
-each, generated 2026-08-09 → 2026-09-05.
+~101 files enumerated across two API listing passes (the connector's paged
+listing repeats pages rather than converging — the folder may hold more).
+All named `hf_YYYYMMDD_HHMMSS_<uuid>.png`, 5–50 MB each, generated
+2026-08-09 → 2026-09-05. **Indexed 2026-09-19**: session clusters, size
+stats and the grading protocol now live in `docs/content/DRIVE-HF-INDEX.md`.
 
 | Drive asset | Type | Intended use | Current website use | Quality | Action |
 | --- | --- | --- | --- | --- | --- |
-| `hf_*.png` (100+ files) | AI images, historical | None recorded — no index, no manifest, no subject list | Not integrated anywhere | Ungraded — visually unreviewed at scale | **REVIEW** — owner/index pass before any use; filenames carry no meaning, and the `hf_` prefix is history, not a verdict (craft prompt: these remain valid if visually appropriate) |
+| `hf_*.png` (~101+ files) | AI images, historical | None recorded — no subject list until the index pass | Not integrated anywhere | Ungraded at file level; session clusters mapped | **REVIEW** — grade per `DRIVE-HF-INDEX.md` protocol; filenames carry no meaning, and the `hf_` prefix is history, not a verdict (craft prompt: these remain valid if visually appropriate) |
 
 ## `videos/` — historical `hf_` video library (26 MP4s)
 
 | Drive asset | Type | Intended use | Current website use | Quality | Action |
 | --- | --- | --- | --- | --- | --- |
-| `hf_*.mp4` (26 files, 0.6–5.8 MB) | AI video, historical | None recorded | Not integrated; current motion comes from `assets/` loops | Ungraded | **REVIEW** — same index pass as the images |
+| `hf_*.mp4` (26 files, 0.6–5.8 MB) | AI video, historical | None recorded | Not integrated; current motion comes from `assets/` loops | Ungraded; session counts exact in `DRIVE-HF-INDEX.md` | **REVIEW** — same grading pass as the images |
 
 ## Historical workflow files (root)
 
@@ -89,10 +91,10 @@ each, generated 2026-08-09 → 2026-09-05.
    it was never generated (it must be a frame of the matching hero video).
    `assets/hero-pour-loop-poster.jpg` covers the current loop; flag only if the
    hero creative changes.
-2. **No index for `images/` and `videos/`** — the single largest unstructured
-   pool of brand visuals. An `asset-index.csv` for those two folders (subject,
-   quality, keep/review) is the cheapest high-value asset task; it needs the
-   owner's eye, not generation.
+2. ~~No index for `images/` and `videos/`~~ — **resolved 2026-09-19**:
+   `docs/content/DRIVE-HF-INDEX.md` maps the library (session clusters, size
+   stats, grading protocol). Remaining: the owner's grading pass itself,
+   starting with the two big sessions (08-28, 09-04).
 3. **Recommended future structure** (craft prompt Phase 17): `brand/`,
    `assets/` (curated, current), `generated/final`, `generated/archive`,
    `historical/images`, `historical/videos`, `reference/prompts`. Reorganising
@@ -101,5 +103,6 @@ each, generated 2026-08-09 → 2026-09-05.
 
 ## Related
 
+- `docs/content/DRIVE-HF-INDEX.md` — the `hf_` library, indexed
 - `docs/content/CONTENT-INVENTORY.md` — content counts, entity by entity
 - `docs/content/CONTENT-AUDIT.md` — why the demo content is not on the site
