@@ -28,7 +28,7 @@ were submitted, no demo data written, nothing deleted._
 | Login | **Pass** | Credentials flow works; forgot-password link present |
 | Overview | **Pass** | Real metrics render: 1,083 published products (T1 55 / T2 547 / T3 481 / untiered 0), 10 in review, 16 drafts, 55 journal, 20 portfolio, 0 testimonials, 0 demo records, 2,854 media, 1,407 scraped, 424 catalog-fill runs |
 | Products / Categories | **Pass** | Listed with tier architecture and filters |
-| Portfolio | **Pass — and diagnostic gold** | All 20 cases are **PUBLISHED**, 0 drafts/review/archived, `isDemo:false`. The public index's empty state is therefore an **index-side rendering bug, not a data problem** (header count works, grid does not) |
+| Portfolio | **Pass** | All 20 cases are **PUBLISHED**, 0 drafts/review/archived, `isDemo:false` — and the public index itself renders them correctly (browser-verified: 12+8 tiles, 7 filter chips with counts). The earlier "empty index" reading was a fetch artifact; there is no index bug |
 | Journal | **Pass** | 55 published, 0 without cover image |
 | FAQs | **Pass** | Was 6/6 published → 48/48 after the starter apply |
 | Testimonials | **Pass (correct zero)** | 0 rows; publish requires `permissionStatus: GRANTED` — the no-invented-words rule is enforced in code |
@@ -89,7 +89,7 @@ conclusion.
 | Q1 | Medium (SEO) | Soft 404: unknown product/blog/category slugs return HTTP 200 with the not-found panel | Open — fix decision needed (in-tree `notFound()` vs the comment in `global-not-found.tsx`) |
 | Q2 | Low (a11y/SEO) | 2,854 of 2,854 media-library files have no alt text; inherited everywhere used | Open — owner pass, or an assisted alt-writing task |
 | Q3 | Note | Public pages serve stale content for one cache window after Studio writes (observed: `/faq` showed 6 briefly after the apply, correct 48 on fresh fetch) | By design — ISR; not a bug |
-| — | Medium | **Portfolio public index renders empty state while 20 cases are PUBLISHED** (from PAGE-CONTENT-AUDIT Finding 1, now confirmed from inside Studio) | Open — index-side rendering bug; code fix offered as next PR |
+| — | — | ~~Portfolio public index renders empty state~~ **Withdrawn** — browser verification shows the index renders all 20 cases across two pages with working filters. The earlier finding was a fetch artifact, corrected in PAGE-CONTENT-AUDIT.md Finding 1 | Closed — no defect exists |
 | — | Info | Viewport (tablet/mobile) certification not executable from this environment | Owner spot-check |
 
 ## Related
