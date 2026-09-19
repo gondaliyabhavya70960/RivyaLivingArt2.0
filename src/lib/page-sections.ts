@@ -1250,20 +1250,45 @@ export function describeArrangementProblem(
     return "Every section here would be hidden, and the page cannot lose all of them. Leave at least one showing.";
   }
 
-  const darkShown = shown.filter((s) => s.dark);
-  if (darkShown.length > 3) {
-    return `The page would have ${darkShown.length} dark bands — ${darkShown
-      .map((s) => s.label)
-      .join(
-        ", ",
-      )}. The design allows three. Hide one before turning another on.`;
-  }
+  /* ————————————————————————————————————————————————————————————————
+     THE TWO BAND-RHYTHM RULES ARE GONE, AND THIS IS THE OTHER HALF OF D30.
 
-  for (let i = 1; i < shown.length; i += 1) {
-    if (shown[i].dark && shown[i - 1].dark) {
-      return `${shown[i - 1].label} and ${shown[i].label} are both dark bands and would sit edge to edge. Put a light section between them.`;
-    }
-  }
+     They were:
+
+       · "The page would have N dark bands. The design allows three. Hide one
+          before turning another on."
+       · "X and Y are both dark bands and would sit edge to edge. Put a light
+          section between them."
+
+     D30 (src/styles/tokens.css) reversed the rule they enforced — REDESIGN.md
+     §3.1's "dark bands never sit adjacent; max three per page" — and replaced
+     it with the three-step elevation ladder. It said, in its own header, that
+     the rule was "rewritten in the same PR, not silently broken". THIS FILE IS
+     WHERE THAT DID NOT HAPPEN: the decision landed in the token layer and the
+     enforcement stayed behind for a day, refusing arrangements on a ground
+     where every band paints the same colour.
+
+     The second rule was the live defect. `[data-theme="navy"]` is a NO-OP
+     ALIAS now — tokens.css declares every value in it identical to `:root` on
+     purpose — so two adjacent "dark" bands are two bands of the page's own
+     obsidian with nothing between them to see. The guard refused that
+     arrangement and told the owner to "put a light section between them", and
+     there is no light section to put: `--mineral` is documented "never a
+     background". It was impossible advice on a real Publish button
+     (`src/actions/page-sections.ts` calls this, and the sections board calls
+     it again before the action) — an owner following it to the letter could
+     not comply.
+
+     `SectionDef.dark` is deliberately NOT deleted with them. It still records
+     which sections were authored as dark bands, `page-sections.test.ts` still
+     reads it, and the elevation ladder will want that provenance when sections
+     start naming a step. What is gone is the arithmetic that treated it as a
+     budget.
+
+     What still guards this function: the single-h1 rule, the unhideable-section
+     rule and the everything-hidden rule, all above. Those are about structure,
+     which the ground colour never changed.
+     ———————————————————————————————————————————————————————————————— */
 
   return null;
 }

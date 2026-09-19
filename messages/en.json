@@ -1753,19 +1753,6 @@
       "statement": "The bench is being reset.",
       "support": "We will reopen shortly.",
       "primary": "WhatsApp the studio"
-    },
-    "thankYou": {
-      "title": "Your brief is on the bench — Rivya Living Art",
-      "eyebrow": "inquiry {number}",
-      "statement": "Your brief is on the bench.",
-      "support": "We reply on WhatsApp, usually within working hours (10:00–20:00 IST).",
-      "primary": "Open WhatsApp",
-      "secondary": "Back to the collection",
-      "nextLabel": "What happens next",
-      "next1": "We read the brief and check it against the bench schedule.",
-      "next2": "We reply on WhatsApp with a quote and a lead time.",
-      "next3": "Nothing is charged, and nothing is committed, until you say yes.",
-      "eyebrowNoReference": "inquiry received"
     }
   }
 }

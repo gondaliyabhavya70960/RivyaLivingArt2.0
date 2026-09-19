@@ -5,7 +5,7 @@
  * CI runs `--check` and fails when this file is stale, so a new key cannot
  * ship without a slot for the owner to edit it in.
  *
- * 1383 slots · 0 flagged as unreachable from any component.
+ * 1372 slots · 0 flagged as unreachable from any component.
  */
 import type { CopySlot } from "./site-copy";
 
@@ -1382,15 +1382,4 @@ export const GENERATED_COPY_SLOTS: readonly CopySlot[] = [
   {"key":"SystemPages.maintenance.statement","group":"System","section":"maintenance","label":"Statement","kind":"body","tier":"editorial","max":400},
   {"key":"SystemPages.maintenance.support","group":"System","section":"maintenance","label":"Support","kind":"body","tier":"editorial","max":400},
   {"key":"SystemPages.maintenance.primary","group":"System","section":"maintenance","label":"Primary","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.title","group":"System","section":"thankYou","label":"Title","kind":"heading","tier":"editorial","max":80},
-  {"key":"SystemPages.thankYou.eyebrow","group":"System","section":"thankYou","label":"Eyebrow","kind":"eyebrow","tier":"editorial","max":48,"vars":["number"]},
-  {"key":"SystemPages.thankYou.statement","group":"System","section":"thankYou","label":"Statement","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.support","group":"System","section":"thankYou","label":"Support","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.primary","group":"System","section":"thankYou","label":"Primary","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.secondary","group":"System","section":"thankYou","label":"Secondary","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.nextLabel","group":"System","section":"thankYou","label":"Next label","kind":"label","tier":"editorial","max":60},
-  {"key":"SystemPages.thankYou.next1","group":"System","section":"thankYou","label":"Next 1","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.next2","group":"System","section":"thankYou","label":"Next 2","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.next3","group":"System","section":"thankYou","label":"Next 3","kind":"body","tier":"editorial","max":400},
-  {"key":"SystemPages.thankYou.eyebrowNoReference","group":"System","section":"thankYou","label":"Eyebrow no reference","kind":"eyebrow","tier":"editorial","max":48},
 ] as const;

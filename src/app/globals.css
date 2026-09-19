@@ -217,15 +217,26 @@
    there is no @media dark block left to drop. */
 .studio-v2 {
   color-scheme: dark;
-  /* The Studio's surface sits one rung ABOVE the storefront's. Its screens
-     are dense — tables, forms, side rails — and a panel that has to read as
-     a distinct plane at 13px needs more separation than an editorial band at
-     64px does. This is the one token the scope overrides, and the reason it
-     is the only one. */
-  --surface: var(--elev-1);
-  /* Focus stays champagne (:root), matching the storefront: the ring is a
-     safety affordance and it should not mean two different things on two
-     halves of the same product. */
+  /* THIS SCOPE OVERRIDES NOTHING, and saying so is the point.
+
+     It carried a comment claiming "the Studio's surface sits one rung ABOVE
+     the storefront's" — with `--surface: var(--elev-1)` under it, which is
+     byte-identical to the `:root` declaration in tokens.css. The scope
+     re-stated a value instead of changing one, and the comment described a
+     lift that was never in the CSS. The declaration is gone rather than
+     corrected upward: raising the Studio to `--elev-2` would be a real visual
+     change to 40 screens, and it is not one this pass measured or asked for.
+
+     What the scope IS still for: `color-scheme: dark`, which tells the UA to
+     render its own widgets — scrollbars inside a table, a native `<select>`
+     popup, form controls the stylesheet cannot reach — dark rather than light.
+     That is not cosmetic here; without it the Studio's densest screens sprout
+     light chrome the tokens never touch.
+
+     Everything else the Studio needs it now inherits, because `:root` is dark.
+     Before D30 this block re-pointed fourteen tokens under a
+     `prefers-color-scheme: dark` media query; every one of those values was
+     promoted into `:root`, which is where D30's palette came from. */
 }
 
 /* Part 3.6 · the Studio's buttons carry no decorative sweep — the storefront
@@ -710,15 +721,37 @@
        #5b6068 was --graphite, rgba(18,20,26,.12) was --hairline. */
     --bg: #ffffff;
     --surface: #ffffff;
-    --text: var(--ink);
-    --text-secondary: var(--graphite);
-    --border: var(--hairline);
+    --text: #12141a;
+    --text-secondary: #5b6068;
+    --border: rgba(18, 20, 26, 0.12);
+    /* The palette tokens the card's own utilities reach for directly
+       (`text-ink`, `bg-sand`, `border-hairline`, `text-graphite`) have to come
+       back to their paper values too — pinning only the semantic layer above
+       would leave a `text-ink` heading cream on white. --mineral is the mirror
+       image of its screen rule: on paper it is the GROUND, never the text. */
+    --ink: #12141a;
+    --graphite: #5b6068;
+    --mineral: #ffffff;
+    --sand: #f4f1e9;
+    --hairline: rgba(18, 20, 26, 0.12);
+    --hairline-dk: rgba(18, 20, 26, 0.12);
+    --elev-0: #ffffff;
+    --elev-1: #ffffff;
+    --elev-2: #f4f1e9;
+    /* Status inks come back to their pre-D30, dark-on-white values. The screen
+       set (#e08575 &c.) is light by construction and prints as near-nothing. */
+    --alert: #9b3a2e;
+    --success: #2c6b5b;
+    --warning: #8a6a1e;
+    --info: #1a5f80;
+    --champagne-ink: #75602f;
+    --sapphire-ink: #164e6b;
   }
 
   html,
   body {
     background: #ffffff !important;
-    color: var(--ink) !important;
+    color: #12141a !important;
   }
 
   /* The card's route renders no chrome — its root layout is children plus

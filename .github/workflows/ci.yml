@@ -126,7 +126,14 @@ jobs:
       # database is a throwaway container and /portfolio below is only worth
       # auditing with cases in it. Production leaves this unset.
       PORTFOLIO_SEED: "1"
-      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander,/search?q=Geode"
+      # The system-page family (§2.10) is audited alongside the public routes.
+      # It was NOT, for the whole of the redesign that introduced it: the pages
+      # shipped green because they were swept by hand, and nothing would have
+      # caught the next regression on them. /gone and /too-many-requests are
+      # rewritten to a real 410/429 by src/proxy.ts — the audits read the
+      # rendered document and do not care about the status line, so they sweep
+      # exactly as any other route.
+      AUDIT_ROUTES: "/,/shop,/about,/process,/large-resin-art,/custom-order,/contact,/faq,/portfolio,/workshops,/blog,/privacy,/terms,/product/demo-product-001,/shop/gift-collections,/blog/demo-post-001,/portfolio/demo-case-001,/p/demo-lander,/search?q=Geode,/gone,/too-many-requests,/maintenance"
       # Arabic is a shipped locale and nothing in CI ever loaded one. The repo
       # carries 29 `rtl:` variants across 19 files and four JS direction
       # inversions (lightbox, gallery, cure line) that no gate protected: a
@@ -137,7 +144,7 @@ jobs:
       # The demo PDP, a category page and the demo lander join the RTL set
       # for the same reason: a gallery, a card grid and a block page are
       # layout families the six chrome routes do not cover.
-      AR_ROUTES: "/ar,/ar/shop,/ar/about,/ar/contact,/ar/privacy,/ar/large-resin-art,/ar/process,/ar/product/demo-product-001,/ar/shop/gift-collections,/ar/p/demo-lander"
+      AR_ROUTES: "/ar,/ar/shop,/ar/about,/ar/contact,/ar/privacy,/ar/large-resin-art,/ar/process,/ar/product/demo-product-001,/ar/shop/gift-collections,/ar/p/demo-lander,/ar/gone,/ar/maintenance"
       BASE_URL: http://127.0.0.1:3000
 
     steps:

@@ -39,8 +39,16 @@ const buttonVariants = cva(
         // Text, so the AA companion: identical to sapphire on the light ground,
         // lifted in the Studio's dark scheme where raw sapphire is 1.7:1 on a card.
         link: "text-sapphire-ink underline-offset-4 hover:underline",
+        // D30 flipped `--alert` from #9b3a2e to #e08575 so it could be read as
+        // TEXT on obsidian (7.3:1 there). That makes it a LIGHT fill, and a
+        // light fill takes a dark label: white on it is 2.70:1, where it was
+        // 6.91:1 before the flip. Obsidian on it is 7.34:1.
+        //
+        // This is the same bug as the mobile bar's WhatsApp label (ce6354e) and
+        // it was missed because that fix was made site-by-site instead of
+        // sweeping the class. `scripts/fill-contrast.mjs` is that sweep.
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20",
+          "bg-destructive text-obsidian hover:bg-destructive/90 focus-visible:ring-destructive/20",
       },
       size: {
         sm: "h-9 gap-1.5 px-5 text-sm",

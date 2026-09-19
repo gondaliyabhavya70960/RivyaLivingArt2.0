@@ -1753,19 +1753,6 @@
       "statement": "L'établi est en cours de remise en ordre.",
       "support": "Nous rouvrons sous peu.",
       "primary": "Écrire à l'atelier sur WhatsApp"
-    },
-    "thankYou": {
-      "title": "Votre brief est sur l'établi — Rivya Living Art",
-      "eyebrow": "demande {number}",
-      "statement": "Votre brief est sur l'établi.",
-      "support": "Nous répondons sur WhatsApp, en général pendant les heures d'atelier (10:00–20:00 IST).",
-      "primary": "Ouvrir WhatsApp",
-      "secondary": "Retour à la collection",
-      "nextLabel": "La suite",
-      "next1": "Nous lisons votre brief et le confrontons au planning de l'atelier.",
-      "next2": "Nous répondons sur WhatsApp avec un devis et un délai.",
-      "next3": "Rien n'est facturé ni engagé tant que vous n'avez pas dit oui.",
-      "eyebrowNoReference": "demande reçue"
     }
   }
 }
