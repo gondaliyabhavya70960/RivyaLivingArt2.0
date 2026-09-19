@@ -1,1 +1,132 @@
-[]
+[
+  {
+    "source": "Reziwood",
+    "url": "https://reziwood.com/",
+    "title": "Reziwood — Epoxy Resin Art Designer Furniture India",
+    "category": "resin-furniture",
+    "price": "Not listed on homepage; leads with 50% off first order + free shipping in India",
+    "description": "Full-range Indian resin studio: dining/coffee/live-edge tables, wall art and panels, wall clocks, mirrors, lamps — plus varmala preservation frames and spiritual Namokar-mantra panels. Claims 500+ completed projects and pan-India delivery (Mumbai, Delhi, Bengaluru, Hyderabad, Pune, Ahmedabad, Chennai, Jaipur). Customisation covers wood species, resin colours/effects, size/thickness, finishing, edge detail and base structure.",
+    "tags": ["direct-competitor", "india", "furniture", "preservation", "wall-art", "full-range"],
+    "notes": "The closest category match to Rivya's full range found in this round. Content notes: very SEO-stuffed copy (keyword repetition in nearly every sentence) — ranks but reads thin; a real opening for Rivya's calmer editorial voice. Conversion flow: standard e-commerce with discount-led entry — different from Rivya's WhatsApp consultation model; their range breadth (mirrors, lamps, mantra panels) is the takeaway for category expansion. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Woodensure",
+    "url": "https://www.woodensure.com/dining-table/epoxy-resin-dining-table",
+    "title": "Woodensure — Epoxy Resin Dining Tables, India",
+    "category": "resin-furniture",
+    "materials": "Acacia and mango hardwood, crystal-clear epoxy",
+    "price": "₹25,000–₹1,00,000+ stated on page; discount-led (up to 66% + 5% extra off), free shipping",
+    "description": "Indian epoxy dining-table specialist. Sells size, wood species and epoxy-design customisation with transparent price education: size, wood grade, design complexity and customisation named as the four price drivers. Nationwide delivery.",
+    "tags": ["india", "dining-table", "pricing", "discount-model"],
+    "notes": "Pricing presentation is the lesson: they publish the ₹25k–₹1L+ range openly and explain the drivers, which pre-answers the question Rivya handles one-to-one on WhatsApp. Rivya's price-band-on-PDP + final-quote-on-WhatsApp is defensible, but the four-drivers explanation is worth borrowing into FAQ/journal framing. Heavy discounting (66% off) positions them budget-mid — Rivya should not chase that league. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Sansara Living",
+    "url": "https://www.sansaraliving.com/",
+    "title": "Sansara Living — Custom Wood & Epoxy Resin Furniture",
+    "category": "resin-furniture",
+    "description": "Made-to-order Indian studio: solid wood and epoxy river tables (dining, centre, coffee, side, nesting), office desks, benches and décor. Every product made to order; customisation by wood species, dimensions and finish. Manufactures and exports across India.",
+    "tags": ["india", "furniture", "made-to-order", "custom"],
+    "notes": "Positioning twin on paper: custom, made-to-order, wood species choice. Their site copy is calmer and more craft-led than the discount players — the tone Rivya is competing with for the same reader. UX note: category architecture is furniture-type-first (dining/centre/coffee/side), whereas Rivya browses by collection/look — worth watching which converts better in the same league. Desk research, 2026-09-19."
+  },
+  {
+    "source": "ThunderWood Studio",
+    "url": "https://thunderwood.studio/collections/all",
+    "title": "ThunderWood Studio — Custom Epoxy Resin Tables",
+    "category": "resin-furniture",
+    "price": "Quote on specification for custom; in-stock pieces sold directly online",
+    "description": "Epoxy table studio (also sells via Etsy) with a self-serve customization tool: table type → shape → wood → design family (ocean art, live edge, wood-in-centre, custom) → epoxy colour (blue, green, red, pearl white, turquoise and more, plus clear river) → leg colour (black, brown, gold, gray, stainless, white). Ships worldwide.",
+    "tags": ["international", "customization-tool", "product-ux", "etsy"],
+    "notes": "Product UX benchmark: the step-by-step customization wizard is the strongest self-serve flow seen this round — it is effectively a structured version of what Rivya's CustomizationField + WhatsApp step does conversationally. Rivya should NOT clone the checkout, but the option vocabulary (design family → colour → legs) maps cleanly onto the commission form's dropdowns. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Seawave Table",
+    "url": "https://seawavetable.com/collections/custom-epoxy-resin-table",
+    "title": "Seawave Table — Custom Epoxy Resin Tables",
+    "category": "resin-furniture",
+    "description": "Custom epoxy table shop: river resin tables and architectural resin furniture across a range of designs.",
+    "tags": ["international", "furniture", "custom"],
+    "notes": "Single-note record from the collection page: breadth of pre-designed custom templates is the merchandising idea — sell the design, then vary the size. Rivya's catalogue already works this way via collections; nothing to change, noted for completeness. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Shaahi Decor",
+    "url": "https://shaahidecor.com/collections/varmala-preservation",
+    "title": "Shaahi Decor — Wedding Varmala Preservation",
+    "category": "preservation",
+    "price": "₹1,500–₹50,000+ stated in their FAQ, depending on frame, resin design, size and customisation",
+    "description": "Indian preservation specialist with 181 varmala products listed: showpieces, jaimala wooden frames, sehra and kaleera preservation, resin photo frames with floating floral layouts, name/date engraving. Ships across India with damage-resistant packaging.",
+    "tags": ["india", "varmala", "preservation", "faq", "direct-competitor"],
+    "notes": "FAQ insight — the deepest preservation FAQ found: preservation-quality guarantee, add-ons mid-process, progress updates before the final stage, and how to choose a frame for your decor. The progress-update promise is a trust signal Rivya already has informally on WhatsApp and could state explicitly. Category takeaway: they merchandise sehra/kaleera/wedding-card preservation as separate SKUs — adjacent lines Rivya's 'preserve other memories' answer already covers narratively. Desk research, 2026-09-19."
+  },
+  {
+    "source": "ResinVilla",
+    "url": "https://www.resinvilla.com/products/wooden-frame-varmala-preservation",
+    "title": "ResinVilla — Varmala Preservation Wooden Frame",
+    "category": "preservation",
+    "dimensions": "8\", 10\", 12\", 14\", 16\", 18\", 24\" sizes; 12\" × 12\" × 1\" square shown",
+    "price": "₹4,500 for the 12\" frame (list ₹5,000); ₹200 varmala pickup anywhere in India",
+    "description": "Indian resin art brand selling varmala preservation in wooden frames across seven sizes, personalisation available. Clear 3-step How It Works: send your varmala → choose frame and design → crafting and delivery. Offers a paid garland pickup service pan-India.",
+    "tags": ["india", "varmala", "preservation", "logistics"],
+    "notes": "The ₹200 pickup-anywhere-in-India line is the operationally interesting bit — it converts the biggest preservation friction (how do I get the garland to the studio?) into a priced service. Rivya currently guides courier packing over WhatsApp; a named pickup/drop service for Surat and a priced courier-assist for other cities is worth an owner decision. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Viva Gifts",
+    "url": "https://vivagifts.in/product-category/resin-products/varmala-preservation/",
+    "title": "Viva Gifts — Varmala Preservation",
+    "category": "preservation",
+    "price": "From ₹800; full varmala in design frame ₹8,500 marked down to ₹5,500",
+    "description": "Indian gifting shop with a varmala preservation category: full and half-filled design frames, preserved anywhere in India. Aggressively discounted entry pricing.",
+    "tags": ["india", "varmala", "budget", "gifting"],
+    "notes": "The ₹800 entry point defines the bottom of the preservation market. Useful as a league marker: this tier competes on price with small frames and heavy discounting — Rivya's heirloom framing and art-grade material story should stay visibly above it rather than match it. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Diviner Saga (IndiaMART)",
+    "url": "https://www.indiamart.com/diviner-saga/resin-varmala-preservation-garlandsehra-frames.html",
+    "title": "Diviner Saga — Resin Varmala Preservation, Jaipur",
+    "category": "preservation",
+    "dimensions": "8×8, 10×10, 12×12, 14×14 inch frames; teakwood",
+    "price": "₹1,999–₹6,500 by size; resin clocks ₹2,200 (MOQ 5); making time 15–20 days",
+    "description": "Jaipur-based manufacturer on IndiaMART: varmala, sehra and kaleera preservation frames, wedding-card preservation, resin wall clocks. Teakwood frames, 15–20 day making time, shipping at actuals.",
+    "tags": ["india", "varmala", "jaipur", "b2b-marketplace", "pricing"],
+    "notes": "Transparent size-by-size price ladder (₹2.5k/₹3.5k/₹4.5k/₹6.5k) and a stated 15–20 day making time — the two facts preservation buyers ask first. IndiaMART presence with MOQs marks them volume-oriented; Rivya's single-piece bespoke positioning stays different, but the size-price ladder is a clean model for how preservation price bands could be presented on PDPs. Desk research, 2026-09-19."
+  },
+  {
+    "source": "iamRapid",
+    "url": "https://iamrapid.com/",
+    "title": "iamRapid — Online 3D Printing Services, India",
+    "category": "3d-printing",
+    "materials": "FDM, SLA, SLS, MJF; 50+ materials",
+    "price": "From ₹3/cm³, published on the homepage",
+    "description": "Indian digital-manufacturing platform: upload a CAD file, instant rule-based quote in ~60 seconds, production and QC, doorstep delivery from 24 hours with live tracking. Free STL error detection, wall-thickness analysis, NDA and IP protection, GST invoices. Claims 30,000+ components and 1,000+ customers.",
+    "tags": ["india", "3d-printing", "instant-quote", "platform", "benchmark"],
+    "notes": "The self-serve benchmark for 3D printing in India: published per-cm³ pricing, instant quote, automated file checks, NDA. Rivya's handmade, design-led 3D printing (décor, gifts, hybrid resin work) is a different league — clients bring ideas, not CAD files — but two things transfer: the plain-language material guidance (Rivya's PLA/PETG/resin FAQ already does this) and stating file-checking as a named step. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Make3D",
+    "url": "https://make3d.in/",
+    "title": "Make3D — Industrial 3D Printers & Printing Services, Surat",
+    "category": "3d-printing",
+    "description": "Surat-based ISO 9001:2015 and CE-certified 3D printer manufacturer (desktop to large-format FDM and high-precision resin printers) with on-demand printing services. Serves product development, manufacturing, jewellery, education and R&D. Claims 27,000+ parts printed, 2,500+ clients, pan-India installations.",
+    "tags": ["india", "surat", "3d-printing", "manufacturer", "same-city"],
+    "notes": "Same-city player: Surat's own industrial 3D printing company. Their league is industrial machines and engineering parts — not a decor competitor, but the name a Surat customer may already know, so Rivya's 3D printing pages should stay visibly design-and-decor-led to avoid being read as a smaller Make3D. Potential local ecosystem contact rather than a threat. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Black Forest Wood Co.",
+    "url": "https://blackforestwood.com/",
+    "title": "Black Forest Wood Co. — River Tables, Canada",
+    "category": "resin-furniture",
+    "price": "Large commission tables publicly discussed in the $14,000–$50,000 range; also sells river-table plans at $2,999",
+    "description": "North American river-table studio famous for very large resin commissions (doors, 20-ft tables, celebrity builds) and an enormous YouTube how-to presence. Sells plans and resin supplies alongside furniture.",
+    "tags": ["international", "luxury", "content-marketing", "pricing-ceiling"],
+    "notes": "The global price ceiling for the craft — proof that large-format resin commissions hold five-figure USD pricing at the top end. The transferable play is content: their YouTube how-to library IS their marketing, which is exactly the motion Rivya's journal has started (process journals, honest guides). Also notable: selling plans/supplies monetises the DIY audience Rivya's workshop category could address later. Desk research, 2026-09-19."
+  },
+  {
+    "source": "Xometry",
+    "url": "https://www.xometry.com/capabilities/3d-printing-service/",
+    "title": "Xometry — Custom Online 3D Printing Services",
+    "category": "3d-printing",
+    "description": "International manufacturing marketplace: upload CAD, quote and lead time in seconds, prototypes through production-grade volumes.",
+    "tags": ["international", "3d-printing", "platform", "instant-quote"],
+    "notes": "International instant-quote benchmark, recorded for the same UX lesson as iamRapid: instant pricing is what online buyers of *parts* expect — and it is precisely what custom art cannot and should not offer. Rivya's consultation-first flow is the right call for made-to-order art; recorded here so the decision reads as a choice, not a gap. Desk research, 2026-09-19."
+  }
+]
