@@ -6,7 +6,6 @@ import Image, { getImageProps } from "next/image";
 import { useIsTouch } from "@/hooks/use-is-touch";
 import { MotionPauseToggle, useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
-import { useSaveData } from "@/hooks/use-save-data";
 import { isOptimizableImageSrc } from "@/lib/image-src";
 import type { SiteImageRef } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
@@ -84,16 +83,7 @@ export function HeroMedia({
 
   // Eligible = would play if not paused; the toggle must stay mounted while
   // paused, or the visitor could never resume.
-  /* The loop is ~1.6 MB and `autoPlay` overrides `preload="metadata"`, so an
-     eligible visitor downloads all of it. Three things can decline it, and
-     each is a different person: reduced motion (it may harm), a coarse
-     pointer (a phone, which pays for the bytes), and now Data Saver or a
-     2G-class connection (a desktop that is ALSO paying — a tethered laptop,
-     café wifi, a rural line). The poster is `priority` and the LCP element in
-     every case, so declining costs the animation and nothing else. */
-  const saveData = useSaveData();
-  const eligible =
-    Boolean(videoUrl) && !prefersReducedMotion && !isTouch && !saveData;
+  const eligible = Boolean(videoUrl) && !prefersReducedMotion && !isTouch;
   const playing = eligible && !motionPaused;
 
   const posterUrl = posterProps.poster
@@ -128,10 +118,7 @@ export function HeroMedia({
       // without one (an owner upload predating the capture) renders as
       // before.
       {...(posterProps.poster?.blurDataUrl
-        ? {
-            placeholder: "blur" as const,
-            blurDataURL: posterProps.poster.blurDataUrl,
-          }
+        ? { placeholder: "blur" as const, blurDataURL: posterProps.poster.blurDataUrl }
         : {})}
     />
   );
