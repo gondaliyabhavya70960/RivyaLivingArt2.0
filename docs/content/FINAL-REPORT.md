@@ -22,10 +22,11 @@ only one of which was a problem:
    were all built; the FAQs, concept studies and research records had simply
    never been authored. **This was the real gap, and it is now closed.**
 
-A third finding emerged during QA: the portfolio **public index** renders
-its empty state while 20 cases are PUBLISHED (detail pages and the sitemap
-serve them fine) — an index-side rendering bug, unrelated to content
-authorship. See Owner Action Required.
+One QA finding was filed and then withdrawn on browser verification: the
+portfolio public index initially appeared to render its empty state — a
+fetch artifact. The index renders all 20 cases across two pages with
+working category filters. No defect exists (see PAGE-CONTENT-AUDIT.md
+Finding 1 for the correction).
 
 ## Existing Content Found
 
@@ -177,21 +178,17 @@ conclusion. Live QA findings are registered in `QA-CONTENT-REPORT.md`
 
 ## Owner Action Required
 
-1. **Portfolio index bug** (highest value): the public `/portfolio` index
-   shows its empty state while 20 cases are PUBLISHED — index-side rendering
-   bug, data confirmed good from inside Studio. A code fix is offered as the
-   next PR.
-2. **Publish concept studies** after their imagery is confirmed (14 Drive
+1. **Publish concept studies** after their imagery is confirmed (14 Drive
    reuses) or generated (2 prompts in the fixture) — Studio → Portfolio,
    they sit as labelled drafts.
-3. **Q1 — soft 404**: decide whether in-tree `notFound()` should return a
+2. **Q1 — soft 404**: decide whether in-tree `notFound()` should return a
    real 404 (small code change, real SEO hygiene).
-4. **Q2 — media alt text**: 2,854 library files lack alt text; an assisted
+3. **Q2 — media alt text**: 2,854 library files lack alt text; an assisted
    alt-writing pass can be scheduled.
-5. **`hf_` grading pass**: one afternoon over the two big sessions (08-28,
+4. **`hf_` grading pass**: one afternoon over the two big sessions (08-28,
    09-04) using `DRIVE-HF-INDEX.md`.
-6. **`demoContentPublic` switch** (Studio → Content Lab): currently ON with
+5. **`demoContentPublic` switch** (Studio → Content Lab): currently ON with
    zero demo rows — harmless; switch off for tidiness if you prefer
    (OWNER-REVIEW.md §4).
-7. Re-running `npm run seed:starter` in future is safe — it will report
+6. Re-running `npm run seed:starter` in future is safe — it will report
    `0 to create · 92 already present`.

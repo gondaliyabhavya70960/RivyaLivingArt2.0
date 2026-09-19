@@ -23,7 +23,7 @@ enhancements optional) · **Gap** (something from the prompt is missing).
 | Large Format `/large-resin-art` | Complete | Four kinds of large work, plan-first philosophy, 4-step commission run, "what makes a quote quick" (room photo, measurements incl. doorway, use, references), materials, past work, FAQ, pieces. Maps one-to-one onto the prompt's brief→quote list |
 | Bespoke / Custom Order `/custom-order` | Complete | Hero with honest timeframes (small 7–10 days, statement 3–6 weeks, 24–72 h/layer), four commission starters, 4-step how-it-works (progress photos named in step 3), the brief form, FAQ, recent work |
 | Workshops `/workshops` | Complete | Session format (2.5 h, max 8, materials included, Surat), three reasons, 5-step afternoon, take-homes, private/corporate, the room |
-| Portfolio `/portfolio` | **Gap** | **Renders the empty state** ("Commission stories are being written — yours could be first") while 23 genuine cases exist in the database and their detail pages render fully. See Finding 1 |
+| Portfolio `/portfolio` | Complete | 12 tiles on page 1, 8 on page 2, 7 category filter chips with counts, closing invitation band. Verified in a real browser after an initial misread — see Finding 1 |
 | Portfolio detail `/portfolio/[slug]` | Complete | Verified on `case-varmala-preservation-clock`: story (4 paragraphs), material/technique meta, tags, final-piece section, three related cases, commission-similar CTA |
 | Journal `/blog` | Complete | Lead story + archive grid with category filters (6 chips) across five pages; 55 articles |
 | Journal post `/blog/[slug]` | Complete | Full article renders in browser; streams behind the loading boundary for plain-HTTP clients (Finding 2) |
@@ -34,27 +34,25 @@ enhancements optional) · **Gap** (something from the prompt is missing).
 | Privacy `/privacy` | Complete | Plain-language policy: collection, use, no-payments, storage (Neon/Blob), retention, rights, children, contact |
 | Terms `/terms` | Complete | 10 sections incl. quotes & payment, made-to-order, timelines, shipping & damage, returns, IP, workshop bookings, governing law. Streams behind the loading boundary (Finding 2) |
 
-## Finding 1 — the portfolio index hides 23 case studies (top action)
+## Finding 1 — RESOLVED: the portfolio index was never broken (correction)
 
-`/portfolio` renders its empty state — "Commission stories are being
-written — yours could be first" — followed by the custom-order CTA and the
-footer. No case cards. Yet:
+_This finding was filed from a plain-HTTP fetch and was wrong. Corrected
+2026-09-19 after browser verification._
 
-- `prisma/seed-portfolio-cases.ts` holds 23 genuine cases, and
-  `docs/content/CONTENT-AUDIT.md` records them as the live portfolio,
-- detail pages render fully (`/portfolio/case-varmala-preservation-clock`
-  verified end-to-end, with three related cases in "from the same bench"),
-- the index header still prints the real stats ("20 commissions · 2026 ·
-  7 collections").
+The first fetch of `/portfolio` extracted the hero stats and the closing
+commission band ("Commission stories are being written — yours could be
+first" — which is the page's designed *closing invitation*, not an empty
+state) but none of the lazy tile imagery, and the audit read that as "the
+index renders its empty state". It does not. Verified in a real browser and
+in the raw HTML: the wall renders 12 tiles on page 1 and 8 on page 2
+(`View project` links to every case), the 7 category filter chips carry live
+counts (Varmala 3, Trays 3, Candles 1, Jewelry 5, Decor 1, Tablespace 3,
+Festive & Pooja 4), project numbers run 001–020, and the Studio confirms
+all 20 cases are PUBLISHED and non-demo.
 
-So the cases exist and are reachable by URL, but the index shows none. Two
-plausible causes, distinguishable only from inside: the index query filters
-them out (a status/visibility/`isDemo` clause mismatch between index and
-detail readers), or the index grid failed to stream and the page fell back
-to the empty state. Either way, the studio's strongest trust asset is
-invisible from its own index page. **Check the portfolio index query in
-production before any new portfolio content is written** — concept studies
-included.
+The lesson is the audit's own rule, sharpened: **a fetch artifact is not a
+finding.** Anything that looks like missing content gets browser-verified
+before it is reported. No code change was needed; no content was harmed.
 
 ## Finding 2 — v2 detail pages stream behind a branded loading boundary
 
@@ -105,10 +103,11 @@ negotiable in chat). Recorded as by design, not a gap.
 
 ## Recommended actions, in order
 
-1. **Investigate the portfolio index query** (Finding 1) — the only true
-   gap found in this audit.
+1. ~~Investigate the portfolio index query~~ — withdrawn (Finding 1 was a
+   fetch artifact; the index is healthy).
 2. Run `npm run seed:starter -- --apply` to land the 42-FAQ library (PR
-   #118), moving FAQ from Strong to Complete.
+   #118), moving FAQ from Strong to Complete. **Done 2026-09-19 via Studio
+   → Content Health.**
 3. Optional: one explicit "Living Art" name line on About; per-workflow
    tracks on Process — enhancements, not repairs.
 
