@@ -46,8 +46,8 @@ places (A5 — built once in PR-2, consumed by all three boards).
 - **A3 (P2):** button canonical rule recorded (PR-7).
 - **A4 (P2):** Orders board has filters, bulk moves and optimistic updates (PR-5).
 - **A5 (P2):** the shared Kanban foundation exists (PR-2).
-- **Q2 (P2):** media alt-text backlog (2,854 files) recorded for the assisted
-  batch pass — untouched this sequence, by design.
+- **Q2 (P2):** media alt-text backlog (2,854 files). Mechanism + batch-01 (124)
+  landed in PR #132; batch-02 (117 remaining bundled images) is the next apply.
 
 ## Orders Kanban (PR-5)
 
@@ -65,7 +65,7 @@ Four real `ContentStatus` lanes in workflow order; compact cards (cover,
 title→editor, category, tier badge or "No tier yet", rewrite warning, demo,
 stock, price band, updated); **every card offers every status and the server
 guards decide** — a refused publish toasts exactly why (no tier / concept
-placeholder / no photograph / scraped rewrite). Table\|Board toggle with URL
+placeholder / no photograph / scraped rewrite). Table|Board toggle with URL
 + localStorage; the table and its complete bulk system untouched.
 
 ## Scraped Products Kanban (PR-4)
@@ -75,7 +75,7 @@ state machine is the menu** — Confirmed appears only on Shortlisted cards
 (the gate), Confirmed cards return only to Shortlisted; moves via
 `setShortlistState` with the inbox's exact toast wording; grid and board
 share the SAME extracted detail sheet (move-with-reason, edit-before-import,
-note, tags). Grid\|Board toggle; the grid keeps its bulk and per-state slice.
+note, tags). Grid|Board toggle; the grid keeps its bulk and per-state slice.
 
 ## Before vs After
 
@@ -120,7 +120,7 @@ existing models.
 1. **A1 after-measurement** — owner re-runs Lighthouse on home + shop (one
    command, RESULTS.md); paste the After column.
 2. **A3 button migration** — owner visual review, then a small mechanical PR.
-3. **Q2 media alt text** — assisted batch pass (2,854 files), reviewed per folder.
+3. **Q2 media alt text** — mechanism + batch-01 (124) merged in PR #132; batch-02 (117 bundled images) ready to apply. Owner-uploaded Blob library (~2,700) is batch-03+ and needs the pictures.
 4. Orders board detail drawer — declined with reason recorded (the detail
    page is one click and strictly richer); reopen only with a real use case.
 
